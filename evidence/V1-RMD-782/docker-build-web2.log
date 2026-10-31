@@ -1,0 +1,292 @@
+ Image alkaros-web Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.80kB 0.1s done
+#1 DONE 0.1s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 11.07kB 0.0s done
+#2 DONE 0.0s
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#4 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#4 DONE 0.9s
+
+#5 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#5 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#5 CACHED
+
+#6 [internal] load metadata for docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#6 DONE 0.0s
+
+#7 [internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#7 ...
+
+#8 [auth] library/node:pull token for registry-1.docker.io
+#8 DONE 0.0s
+
+#7 [internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#7 DONE 0.8s
+
+#9 [internal] load .dockerignore
+#9 transferring context: 901B done
+#9 DONE 0.0s
+
+#10 [web 1/6] FROM docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#10 resolve docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0 0.0s done
+#10 DONE 0.0s
+
+#11 [internal] load build context
+#11 transferring context: 43.45kB 0.0s done
+#11 DONE 0.0s
+
+#12 [frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#12 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.0s done
+#12 DONE 0.1s
+
+#13 [frontend-build  2/10] WORKDIR /src
+#13 CACHED
+
+#14 [frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#14 CACHED
+
+#15 [frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#15 CACHED
+
+#16 [frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#16 DONE 0.2s
+
+#17 [frontend-build  6/10] RUN pnpm build
+#17 1.764 ? Verifying lockfile against supply-chain policies (176 entries)...
+#17 1.780 Lockfile is up to date, resolution step is skipped
+#17 1.985 Already up to date
+#17 3.179 ✓ Lockfile passes supply-chain policies (176 entries in 1.4s)
+#17 3.263 
+#17 3.298 Done in 2.2s using pnpm v11.19.0
+#17 3.357 $ pnpm run lint && tsc --noEmit && vite build
+#17 4.102 $ oxlint -c .oxlintrc.json --max-warnings=20 src
+#17 4.385 
+#17 4.385   ! react(globals): Cannot reassign variables declared outside of the component/hook
+#17 4.385     ,-[src/router.test.tsx:14:3]
+#17 4.385  13 | function Probe() {
+#17 4.385  14 |   seen = useRouter();
+#17 4.385     :   ^^|^
+#17 4.385     :     `-- `seen` cannot be reassigned
+#17 4.385  15 |   return <span>{seen.path}</span>;
+#17 4.385     `----
+#17 4.385   help: Variable `seen` is declared outside of the component/hook. Reassigning this value during render is a side effect which can cause unpredictable behavior. If this variable is used in rendering, use useState instead. Otherwise, update it in an effect
+#17 4.385   note: React Compiler skipped optimizing this component or hook. Additional guidance: https://react.dev/reference/eslint-plugin-react-hooks/lints/globals
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#17 4.385      ,-[src/design-system/primitives.tsx:139:8]
+#17 4.385  138 |     <div className="ds-dialog-backdrop">
+#17 4.385  139 |       <div ref={dialogRef} className="ds-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={(event) => {
+#17 4.385      :        ^^^
+#17 4.385  140 |         if (event.key === "Escape") { event.preventDefault(); onClose(); return; }
+#17 4.385      `----
+#17 4.385   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#17 4.385      ,-[src/design-system/primitives.tsx:162:6]
+#17 4.385  161 |   return (
+#17 4.385  162 |     <aside ref={drawerRef} className={`ds-drawer ds-drawer--${presentation}`} aria-labelledby={titleId} aria-modal={presentation === "sheet" ? true : undefined} role={presentation === "sheet" ? "dialog" : undefined} onKeyDown={presentation === "sheet" ? (event) => {
+#17 4.385      :      ^^^^^
+#17 4.385  163 |       if (event.key === "Escape" && onClose) { event.preventDefault(); onClose(); return; }
+#17 4.385      `----
+#17 4.385   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#17 4.385 
+#17 4.385   ! eslint(no-unused-vars): Parameter 'init' is declared but never used. Unused parameters should start with a '_'.
+#17 4.385     ,-[src/routes/Cashier.logout-clears-storage.test.tsx:52:67]
+#17 4.385  51 | 
+#17 4.385  52 |     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+#17 4.385     :                                                                   ^^|^
+#17 4.385     :                                                                     `-- 'init' is declared here
+#17 4.385  53 |       const path = String(input);
+#17 4.385     `----
+#17 4.385   help: Consider removing this parameter.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/RelaySettings.tsx:178:115]
+#17 4.385  177 |             Kullanıcı adı
+#17 4.385  178 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385      :                                                                                                                   ^^^^^^^^^
+#17 4.385  179 |           </label>
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385     ,-[src/routes/SecurityAdministration.tsx:98:115]
+#17 4.385  97 |             Kullanıcı adı
+#17 4.385  98 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385     :                                                                                                                   ^^^^^^^^^
+#17 4.385  99 |           </label>
+#17 4.385     `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/ReservationStation.tsx:126:115]
+#17 4.385  125 |             Kullanıcı adı
+#17 4.385  126 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385      :                                                                                                                   ^^^^^^^^^
+#17 4.385  127 |           </label>
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/TokenTerminalSettings.tsx:174:115]
+#17 4.385  173 |             Kullanıcı adı
+#17 4.385  174 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385      :                                                                                                                   ^^^^^^^^^
+#17 4.385  175 |           </label>
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! eslint(no-unused-vars): Function 'nextItemState' is declared but never used.
+#17 4.385     ,-[src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:89:10]
+#17 4.385  88 | 
+#17 4.385  89 | function nextItemState(status: KitchenTicketItem["status"]): KitchenTicketItem["status"] | null {
+#17 4.385     :          ^^^^^^|^^^^^^
+#17 4.385     :                `-- 'nextItemState' is declared here
+#17 4.385  90 |   if (status === "Queued") return "Preparing";
+#17 4.385     `----
+#17 4.385   help: Consider removing this declaration.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/QnbCredentialSettings.tsx:158:115]
+#17 4.385  157 |             Kullanıcı adı
+#17 4.385  158 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385      :                                                                                                                   ^^^^^^^^^
+#17 4.385  159 |           </label>
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/CustomerDisplayScreensaverSettings.tsx:189:115]
+#17 4.385  188 |             Kullanıcı adı
+#17 4.385  189 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385      :                                                                                                                   ^^^^^^^^^
+#17 4.385  190 |           </label>
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/BusinessIdentitySettings.tsx:271:115]
+#17 4.385  270 |             Kullanıcı adı
+#17 4.385  271 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#17 4.385      :                                                                                                                   ^^^^^^^^^
+#17 4.385  272 |           </label>
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385   ! react-hooks(exhaustive-deps): The ref's value `.current` is accessed directly in the effect cleanup function.
+#17 4.385      ,-[src/routes/Cashier.tsx:301:18]
+#17 4.385  300 |     first?.focus();
+#17 4.385  301 |     return () => pairingTrigger.current?.focus();
+#17 4.385      :                  ^^^^^^^^^^^^^^^^^^^^^^
+#17 4.385  302 |   }, [pairingOpen]);
+#17 4.385      `----
+#17 4.385   help: The ref value will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by react, copy it to a variable inside the effect and use that variable in the cleanup function.
+#17 4.385 
+#17 4.385   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#17 4.385      ,-[src/routes/Cashier.tsx:475:15]
+#17 4.385  474 |               autoComplete="username"
+#17 4.385  475 |               autoFocus
+#17 4.385      :               ^^^^^^^^^
+#17 4.385  476 |             />
+#17 4.385      `----
+#17 4.385   help: Remove the `autoFocus` attribute.
+#17 4.385 
+#17 4.385 Found 14 warnings and 0 errors.
+#17 4.385 Finished in 217ms on 257 files with 134 rules using 8 threads.
+#17 6.321 vite v8.2.2 building client environment for production...
+#17 6.347 transforming...
+#17 6.547 ✓ 247 modules transformed.
+#17 6.683 rendering chunks...
+#17 6.788 computing gzip size...
+#17 6.796 dist/index.html                                                1.25 kB │ gzip:  0.61 kB
+#17 6.796 dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+#17 6.796 dist/assets/Cashier-C2XeD3Fd.css                               0.24 kB │ gzip:  0.18 kB
+#17 6.796 dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+#17 6.796 dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+#17 6.796 dist/assets/management-security-system-C6fZZsnO.css            2.33 kB │ gzip:  0.69 kB
+#17 6.796 dist/assets/NfcOrder-KNdAOhPu.css                              4.71 kB │ gzip:  1.35 kB
+#17 6.796 dist/assets/design-system-CFu97vtJ.css                         6.32 kB │ gzip:  1.88 kB
+#17 6.796 dist/assets/index-DtHO7omm.css                                27.42 kB │ gzip:  6.88 kB
+#17 6.796 dist/assets/workspace-rnXlCwZi.css                            90.51 kB │ gzip: 13.53 kB
+#17 6.796 dist/assets/format-C2ZSrFr6.js                                 0.18 kB │ gzip:  0.14 kB
+#17 6.796 dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+#17 6.796 dist/assets/rolldown-runtime-EyZ2wyi3.js                       0.61 kB │ gzip:  0.39 kB
+#17 6.796 dist/assets/SecurityAdministration-BasJBY8J.js                 2.42 kB │ gzip:  1.02 kB
+#17 6.796 dist/assets/ReservationStation-NpHzn2ZM.js                     3.93 kB │ gzip:  1.39 kB
+#17 6.796 dist/assets/TokenTerminalSettings-BuPl7MFY.js                  5.55 kB │ gzip:  1.95 kB
+#17 6.796 dist/assets/RelaySettings-BY3PY1fu.js                          6.14 kB │ gzip:  1.91 kB
+#17 6.796 dist/assets/CustomerDisplayScreensaverSettings-vMef5VRT.js     6.16 kB │ gzip:  2.11 kB
+#17 6.796 dist/assets/api-EqMyBbE4.js                                    6.62 kB │ gzip:  2.10 kB
+#17 6.796 dist/assets/design-system-Bd1HO1LB.js                          6.76 kB │ gzip:  2.51 kB
+#17 6.796 dist/assets/QnbCredentialSettings-SzLSwPQS.js                  8.66 kB │ gzip:  2.81 kB
+#17 6.796 dist/assets/BusinessIdentitySettings-Dsg7bhN1.js               9.33 kB │ gzip:  2.82 kB
+#17 6.796 dist/assets/NfcOrder-CX7wVLsC.js                               9.62 kB │ gzip:  3.16 kB
+#17 6.796 dist/assets/CustomerDisplay-CokaY_pc.js                       10.87 kB │ gzip:  3.55 kB
+#17 6.796 dist/assets/management-security-system-C7PMyJ0E.js            17.61 kB │ gzip:  5.16 kB
+#17 6.796 dist/assets/Cashier-CvIJ0h4v.js                               24.17 kB │ gzip:  7.06 kB
+#17 6.796 dist/assets/HubConnectionBuilder-BSoreM0u.js                  54.78 kB │ gzip: 14.03 kB
+#17 6.796 dist/assets/index-zQsIkle-.js                                236.88 kB │ gzip: 76.37 kB
+#17 6.796 dist/assets/workspace-OOCPVGn-.js                            365.75 kB │ gzip: 87.70 kB
+#17 6.796 
+#17 6.797 ✓ built in 474ms
+#17 DONE 6.9s
+
+#18 [frontend-build  7/10] RUN pnpm build:nfc-standalone
+#18 0.928 $ vite build --config vite.nfc.config.ts && node -e "require('fs').renameSync('dist-nfc/nfc.html','dist-nfc/index.html')"
+#18 1.224 vite v8.2.2 building client environment for production...
+#18 1.242 transforming...
+#18 1.352 ✓ 24 modules transformed.
+#18 1.412 rendering chunks...
+#18 1.485 computing gzip size...
+#18 1.491 dist-nfc/nfc.html                   1.31 kB │ gzip:  0.73 kB
+#18 1.491 dist-nfc/assets/nfc-BLOZWIM0.css   11.04 kB │ gzip:  2.85 kB
+#18 1.491 dist-nfc/assets/nfc-GqDhiPQM.js   208.97 kB │ gzip: 65.94 kB
+#18 1.491 
+#18 1.492 ✓ built in 266ms
+#18 DONE 1.6s
+
+#19 [frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#19 DONE 0.3s
+
+#20 [frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#20 DONE 0.1s
+
+#21 [frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#21 DONE 0.1s
+
+#22 [web 2/6] COPY deploy/docker/Caddyfile /etc/caddy/Caddyfile
+#22 CACHED
+
+#23 [web 3/6] COPY --from=frontend-build /out/app /srv/app
+#23 DONE 0.1s
+
+#24 [web 4/6] COPY --from=frontend-build /src/dist-nfc /srv/nfc-app
+#24 DONE 0.1s
+
+#25 [web 5/6] COPY src/Apps/CustomerWeb/Menu/wwwroot /srv/qr-app
+#25 DONE 0.1s
+
+#26 [web 6/6] COPY src/Apps/CustomerWeb/OrderEntry/wwwroot /srv/qr-app
+#26 DONE 0.1s
+
+#27 exporting to image
+#27 exporting layers
+#27 exporting layers 0.2s done
+#27 exporting manifest sha256:af49032d6e8b3a2b4cbd23fa43fa5c50d5754c84305d3355a50fc471467cd8af 0.0s done
+#27 exporting config sha256:9111ff872cffcf56b125fbcf82312fc372d9becd24542ae9ee0132924211e2e8 0.0s done
+#27 exporting attestation manifest sha256:1d8c5795c55b452b7a8cd51cd21efd9a1aa124b2acc2ef2598e72c9120bac33f
+#27 exporting attestation manifest sha256:1d8c5795c55b452b7a8cd51cd21efd9a1aa124b2acc2ef2598e72c9120bac33f 0.0s done
+#27 exporting manifest list sha256:04cce2c124a3db1403753e09b6db007eef5ac86c5149f21b6cae06f66db7d73c 0.0s done
+#27 naming to docker.io/library/alkaros-web:latest done
+#27 unpacking to docker.io/library/alkaros-web:latest 0.1s done
+#27 DONE 0.6s
+
+#28 resolving provenance for metadata file
+#28 DONE 0.0s
+ Image alkaros-web Built 

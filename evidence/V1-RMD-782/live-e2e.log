@@ -1,0 +1,15 @@
+login: 200 {"userId": "324d0781-a643-4450-bec7-c569412b5015", "displayName": "ALKAROS Manager", "roleName": "Manager", "terminalId": "d60b3df9-6396-447e-81ba-7babfcf0e205", "capabilities": ["bills.cancel", "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.session.override", "cat
+catalog: 200
+product: Adana Kebap 260.0
+table-draft: 200 {"orderId": "a320e38f-c714-4bf4-b224-f0d713baa2e6", "tableId": "00000000-0000-0000-0000-000000000001", "tableNumber": "KASA-1", "status": "Draft", "rowVersion": 2, "totalAmount": 480.0, "items": [{"itemId": "2b987ccb-5aaf-4ae0-a226-e75ca9db9232", "productId": "d0000000-0000-0000-0000-000000000001", 
+submit-draft: 200 {"orderId": "a320e38f-c714-4bf4-b224-f0d713baa2e6", "tableId": "00000000-0000-0000-0000-000000000001", "tableNumber": "KASA-1", "status": "Submitted", "rowVersion": 3, "totalAmount": 480.0, "items": [{"itemId": "2b987ccb-5aaf-4ae0-a226-e75ca9db9232", "productId": "d0000000-0000-0000-0000-00000000000
+health: 200 {"status": "Ready"}
+table-draft #2 (stays Draft): 200 {"orderId": "a320e38f-c714-4bf4-b224-f0d713baa2e6", "tableId": "00000000-0000-0000-0000-000000000001", "tableNumber": "KASA-1", "status": "Submitted", "rowVersion": 4, "totalAmount": 740.0, "items": [{"itemId": "2b987ccb-5aaf-4ae0-a226-e75ca9db9232", "productId": "d0000000-0000-0000-0000-00000000000
+send-to-cashier on Draft (expect 409 ORDER_NOT_SUBMITTED): 200 {"orderId": "a320e38f-c714-4bf4-b224-f0d713baa2e6", "tableId": "00000000-0000-0000-0000-000000000001", "alreadySent": false}
+draft2 orderId: a320e38f-c714-4bf4-b224-f0d713baa2e6
+qr list: 200 [{"tableId": "b0000000-0000-0000-0000-000000000001", "tableNumber": "S1", "zoneName": "Salon", "tableActive": true, "qrIssuedAt": null}, {"tableId": "b0000000-0000-0000-0000-000000000002", "tableNumber": "S2", "zoneName": "Salon", "tableActive": true, "qrIssuedAt": null}, {"tableId": "b0000000-0000-
+send-to-cashier: 200 {"orderId": "a320e38f-c714-4bf4-b224-f0d713baa2e6", "tableId": "00000000-0000-0000-0000-000000000001", "alreadySent": true}
+bill from-order: 200 {"billId": "e3776af7-e236-48e9-888d-a9bb25b29cf6", "billNumber": "BILL-TBL-KASA-1-21474691-a320e38f", "billStatus": "Open", "currencyCode": "TRY", "payableAmount": 480.0, "taxTotal": 0.0, "billRowVersion": 1, "mode": "None", "executionState": "DesignOnly", "allowedCommands": ["SaveEqual", "SaveItems
+billId: e3776af7-e236-48e9-888d-a9bb25b29cf6 payable: 480.0
+cash-tender: 200 {"paymentId": "404f7be0-f7c5-4206-99fc-4876e56c503f", "paymentAllocationId": "d0e2a931-4833-4d46-ae6e-9688747e1774", "cashTransactionId": "9f3a6817-c37c-4de6-a29a-bae81d02ce6b", "approvedAmount": 480.0, "changeAmount": 0.0, "wasReplayed": false}
+orderId: a320e38f-c714-4bf4-b224-f0d713baa2e6 billId: e3776af7-e236-48e9-888d-a9bb25b29cf6

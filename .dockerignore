@@ -30,6 +30,5 @@ pytest.ini
 .env
 .env.*
 !.env.example
-.git
 deploy/docker/db_password
 deploy/docker/admin_password

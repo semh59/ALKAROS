@@ -17,6 +17,7 @@ const retryDelay = (attempt: number) => Math.min(15_000, 1_000 * 2 ** Math.min(a
 export function CustomerDisplay() {
   const [displayId] = useState(() => savedId("alkaros.customer-display-id"));
   const [pairing, setPairing] = useState<PairingCreated | null>(null);
+  const [pairingMinutes, setPairingMinutes] = useState(1);
   const [pairingError, setPairingError] = useState("");
   const [displaySession, setDisplaySession] = useState<DisplaySession>("checking");
   const [freshness, setFreshness] = useState<DisplayFreshness>({
@@ -40,7 +41,9 @@ export function CustomerDisplay() {
     setPairing(null);
     setPairingError("");
     try {
-      setPairing(await api.createPairing(displayId));
+      const created = await api.createPairing(displayId);
+      setPairingMinutes(Math.max(1, Math.round((new Date(created.expiresAt).getTime() - Date.now()) / 60_000)));
+      setPairing(created);
     } catch (reason) {
       setPairingError(reason instanceof ApiError ? reason.message : "Eşleştirme başlatılamadı.");
       setDisplaySession("error");
@@ -241,7 +244,7 @@ export function CustomerDisplay() {
             <>
               <p>Bu kodu kasadaki “Ekranı eşleştir” düğmesiyle açılan pencereye girin.</p>
               <div className="pairing-code">{pairing.code}</div>
-              <small>Kod {Math.max(1, Math.round((new Date(pairing.expiresAt).getTime() - Date.now()) / 60_000))} dakika sonra otomatik olarak yenilenir.</small>
+              <small>Kod {pairingMinutes} dakika sonra otomatik olarak yenilenir.</small>
             </>
           ) : <><span className="loading-spinner" aria-hidden="true" /><p>Güvenli eşleştirme kodu hazırlanıyor…</p></>}
         </section>

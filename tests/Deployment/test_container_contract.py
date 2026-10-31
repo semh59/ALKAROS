@@ -33,6 +33,20 @@ def test_dockerfile_is_multi_stage_and_uses_pinned_toolchains() -> None:
     assert "COPY --from=frontend-build /out/app /srv/app" in dockerfile
 
 
+def test_build_context_keeps_git_for_the_commit_provenance_target() -> None:
+    props = (ROOT / "Directory.Build.props").read_text(encoding="utf-8")
+    assert "git rev-parse HEAD" in props
+    ignored = (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()
+    assert not [line for line in ignored if re.fullmatch(r"(\*\*/)?\.git(/.*)?", line.strip())]
+    assert re.search(r"^COPY \. \.$", DOCKERFILE.read_text(encoding="utf-8"), re.MULTILINE)
+
+
+def test_api_image_supports_the_turkish_culture() -> None:
+    api_stage = DOCKERFILE.read_text(encoding="utf-8").split(" AS api\n")[1].split(" AS connector\n")[0]
+    assert "icu-libs" in api_stage
+    assert "ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false" in api_stage
+
+
 def test_api_image_is_headless_http_only() -> None:
     dockerfile = DOCKERFILE.read_text(encoding="utf-8")
     api_stage = dockerfile.split("AS api", 1)[1].split("AS web", 1)[0]

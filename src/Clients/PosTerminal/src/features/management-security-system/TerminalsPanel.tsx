@@ -33,7 +33,7 @@ export function TerminalsPanel({ client }: { client?: SecurityClient }) {
       <p className="msys__hint">{t.hint}</p>
       <Notice notice={notice} />
       {list.length === 0 ? <p className="msys__empty">{t.empty}</p> : <table>
-        <thead><tr><th>{t.terminal}</th><th>{t.lastUser}</th><th>{t.lastLogin}</th><th>{t.state}</th><th /></tr></thead>
+        <thead><tr><th>{t.terminal}</th><th>{t.lastUser}</th><th>{t.lastLogin}</th><th>{t.state}</th><th>{t.reset}</th></tr></thead>
         <tbody>{list.map((terminal) => <tr key={terminal.terminalId}>
           <td>{shortId(terminal.terminalId)}</td>
           <td>{terminal.lastUserName ?? "—"}</td>

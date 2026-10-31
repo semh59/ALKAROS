@@ -1,0 +1,528 @@
+ Image alkaros-provision Building 
+ Image alkaros-watchdog Building 
+ Image alkaros-web Building 
+ Image alkaros-migrate Building 
+ Image alkaros-api Building 
+ Image alkaros-connector Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.77kB 0.0s done
+#1 DONE 0.0s
+
+#2 [web internal] load build definition from Dockerfile
+#2 DONE 0.0s
+
+#2 [watchdog internal] load build definition from Dockerfile
+#2 transferring dockerfile: 10.90kB 0.0s done
+#2 DONE 0.0s
+
+#3 [connector] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 0.6s
+
+#4 [web] docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#4 CACHED
+
+#5 [migrate internal] load build definition from Dockerfile
+#5 transferring dockerfile: 10.90kB done
+#5 DONE 0.0s
+
+#6 [connector internal] load build definition from Dockerfile
+#6 transferring dockerfile: 10.90kB done
+#6 DONE 0.0s
+
+#7 [web internal] load build definition from Dockerfile
+#7 transferring dockerfile: 10.90kB done
+#7 DONE 0.0s
+
+#8 [watchdog internal] load build definition from Dockerfile
+#8 transferring dockerfile: 10.90kB done
+#8 DONE 0.0s
+
+#9 [api internal] load build definition from Dockerfile
+#9 transferring dockerfile: 10.90kB 0.0s done
+#9 DONE 0.1s
+
+#10 [provision internal] load build definition from Dockerfile
+#10 transferring dockerfile: 10.90kB 0.0s done
+#10 DONE 0.1s
+
+#11 [api internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#11 DONE 0.1s
+
+#12 [provision internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#12 DONE 0.4s
+
+#13 [migrate internal] load metadata for mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#13 DONE 0.4s
+
+#14 [migrate internal] load .dockerignore
+#14 transferring context: 901B done
+#14 DONE 0.0s
+
+#15 [connector internal] load metadata for mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83
+#15 DONE 0.4s
+
+#16 [watchdog internal] load .dockerignore
+#16 transferring context: 901B done
+#16 DONE 0.0s
+
+#17 [provision internal] load .dockerignore
+#17 transferring context: 901B done
+#17 DONE 0.0s
+
+#18 [api internal] load .dockerignore
+#18 transferring context: 901B done
+#18 DONE 0.0s
+
+#19 [connector internal] load .dockerignore
+#19 transferring context: 901B 0.0s done
+#19 DONE 0.0s
+
+#20 [auth] library/caddy:pull token for registry-1.docker.io
+#20 DONE 0.0s
+
+#21 [watchdog internal] load build context
+#21 DONE 0.0s
+
+#22 [connector internal] load build context
+#22 DONE 0.0s
+
+#23 [provision internal] load build context
+#23 DONE 0.0s
+
+#24 [api backend-build 1/6] FROM mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#24 resolve mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#24 resolve mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 0.1s done
+#24 DONE 0.1s
+
+#25 [api internal] load build context
+#25 DONE 0.0s
+
+#26 [migrate api  1/10] FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#26 resolve mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 0.1s done
+#26 DONE 0.1s
+
+#27 [migrate frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#27 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.1s done
+#27 DONE 0.1s
+
+#28 [connector connector 1/5] FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83
+#28 resolve mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83 0.1s done
+#28 DONE 0.1s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#30 [web internal] load metadata for docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#30 DONE 1.0s
+
+#21 [watchdog internal] load build context
+#21 transferring context: 366.01kB 0.4s done
+#21 DONE 0.4s
+
+#31 [web internal] load .dockerignore
+#31 transferring context: 901B 0.0s done
+#31 DONE 0.0s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#27 [web frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#27 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.1s done
+#27 DONE 0.1s
+
+#32 [watchdog frontend-build  6/10] RUN pnpm build
+#32 CACHED
+
+#33 [watchdog frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#33 CACHED
+
+#34 [watchdog frontend-build  2/10] WORKDIR /src
+#34 CACHED
+
+#35 [watchdog api  8/10] COPY src/Apps/CustomerWeb/OrderEntry/wwwroot ./qr-web
+#35 CACHED
+
+#36 [watchdog api  9/10] COPY src/Apps/CustomerWeb/Bill/wwwroot ./qr-web
+#36 CACHED
+
+#37 [watchdog api  4/10] COPY --from=backend-build /out/api ./
+#37 CACHED
+
+#38 [watchdog backend-build 5/6] RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+#38 CACHED
+
+#39 [watchdog api  6/10] COPY build/project-manifest.json ./build/project-manifest.json
+#39 CACHED
+
+#40 [watchdog frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#40 CACHED
+
+#41 [watchdog api  3/10] WORKDIR /app
+#41 CACHED
+
+#42 [watchdog backend-build 3/6] COPY . .
+#42 CACHED
+
+#43 [watchdog frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#43 CACHED
+
+#44 [watchdog backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#44 CACHED
+
+#45 [watchdog frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#45 CACHED
+
+#46 [watchdog frontend-build  7/10] RUN pnpm build:nfc-standalone
+#46 CACHED
+
+#47 [watchdog api  2/10] RUN apk update     && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 postgresql-client tzdata ca-certificates curl     && rm -rf /var/cache/apk/*
+#47 CACHED
+
+#48 [watchdog frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#48 CACHED
+
+#49 [watchdog backend-build 2/6] WORKDIR /src
+#49 CACHED
+
+#50 [watchdog frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#50 CACHED
+
+#51 [watchdog api  5/10] COPY database ./database
+#51 CACHED
+
+#52 [watchdog backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#52 CACHED
+
+#53 [watchdog api  7/10] COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
+#53 CACHED
+
+#29 [migrate internal] load build context
+#29 ...
+
+#54 [watchdog api 10/10] COPY --from=frontend-build /src/dist-nfc ./nfc-web
+#54 CACHED
+
+#55 [web web 1/6] FROM docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#55 resolve docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0 0.1s done
+#55 DONE 0.1s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#56 [web internal] load build context
+#56 transferring context: 36.08kB 0.4s done
+#56 DONE 0.4s
+
+#57 [web web 2/6] COPY deploy/docker/Caddyfile /etc/caddy/Caddyfile
+#57 CACHED
+
+#58 [web frontend-build  7/10] RUN pnpm build:nfc-standalone
+#58 CACHED
+
+#59 [web web 3/6] COPY --from=frontend-build /out/app /srv/app
+#59 CACHED
+
+#60 [web frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#60 CACHED
+
+#61 [web frontend-build  6/10] RUN pnpm build
+#61 CACHED
+
+#62 [web frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#62 CACHED
+
+#63 [web frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#63 CACHED
+
+#64 [web web 5/6] COPY src/Apps/CustomerWeb/Menu/wwwroot /srv/qr-app
+#64 CACHED
+
+#34 [web frontend-build  2/10] WORKDIR /src
+#34 CACHED
+
+#65 [web frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#65 CACHED
+
+#66 [web frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#66 CACHED
+
+#67 [web frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#67 CACHED
+
+#68 [web web 4/6] COPY --from=frontend-build /src/dist-nfc /srv/nfc-app
+#68 CACHED
+
+#29 [migrate internal] load build context
+#29 ...
+
+#69 [web web 6/6] COPY src/Apps/CustomerWeb/OrderEntry/wwwroot /srv/qr-app
+#69 CACHED
+
+#70 [watchdog] exporting to image
+#70 exporting layers 0.1s done
+#70 exporting manifest sha256:686dfa66783a390c6b26bb7b464c4bdbe54340e5080f010bba0dda8f3b0a1d4c 0.0s done
+#70 exporting config sha256:868b6acfc8af8835a1db585c74af69eeb10c90ffef831980dbb54cff1133a155 0.1s done
+#70 exporting attestation manifest sha256:db62514675e2f7c06429acd32f94b0ea257c56de3ee5a9c2b6a8c29afce6f2be 0.0s done
+#70 exporting manifest list sha256:ecddf732a0b004518e33fa7510662ac235dcc26d3380f733f400f4826238dcd5 0.0s done
+#70 naming to docker.io/library/alkaros-watchdog:latest done
+#70 unpacking to docker.io/library/alkaros-watchdog:latest 0.1s done
+#70 DONE 0.6s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#71 [web] exporting to image
+#71 exporting layers 0.0s done
+#71 exporting manifest sha256:bebd2838ff4591fbd261674963cd88b04757c501083991a5d47798a3a8ce9c99 done
+#71 exporting config sha256:4121003938893d2d18cc67f1eed0d7e0932a640cade9b6b8b5f48b6fb859bd50 0.0s done
+#71 exporting attestation manifest sha256:753f483117856d9617ee0d5009699f6a1db9ede293d403bf8bbf19dd13a3535f 0.0s done
+#71 exporting manifest list sha256:684ab867796db4124c0f72501113574c33980ae022212bf7b06adf4d310bb390 0.0s done
+#71 naming to docker.io/library/alkaros-web:latest done
+#71 unpacking to docker.io/library/alkaros-web:latest 0.0s done
+#71 DONE 0.4s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#72 [web] resolving provenance for metadata file
+#72 DONE 0.0s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#73 [watchdog] resolving provenance for metadata file
+#73 DONE 0.0s
+
+#29 [migrate internal] load build context
+#29 transferring context: 29.00MB 6.2s
+#29 ...
+
+#23 [provision internal] load build context
+#23 ...
+
+#29 [migrate internal] load build context
+#29 ...
+
+#22 [connector internal] load build context
+#22 ...
+
+#25 [api internal] load build context
+#25 ...
+
+#29 [migrate internal] load build context
+#29 ...
+
+#25 [api internal] load build context
+#25 transferring context: 66.32MB 10.4s done
+#25 DONE 10.4s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#74 [api api  6/10] COPY build/project-manifest.json ./build/project-manifest.json
+#74 CACHED
+
+#75 [api frontend-build  7/10] RUN pnpm build:nfc-standalone
+#75 CACHED
+
+#41 [api api  3/10] WORKDIR /app
+#41 CACHED
+
+#49 [api backend-build 2/6] WORKDIR /src
+#49 CACHED
+
+#76 [api backend-build 3/6] COPY . .
+#76 CACHED
+
+#77 [api backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#77 CACHED
+
+#78 [api frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#78 CACHED
+
+#79 [api api  7/10] COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
+#79 CACHED
+
+#80 [api frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#80 CACHED
+
+#81 [api backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#81 CACHED
+
+#82 [api frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#82 CACHED
+
+#83 [api frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#83 CACHED
+
+#84 [api frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#84 CACHED
+
+#85 [api api  4/10] COPY --from=backend-build /out/api ./
+#85 CACHED
+
+#86 [api backend-build 5/6] RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+#86 CACHED
+
+#87 [api api  9/10] COPY src/Apps/CustomerWeb/Bill/wwwroot ./qr-web
+#87 CACHED
+
+#47 [api api  2/10] RUN apk update     && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 postgresql-client tzdata ca-certificates curl     && rm -rf /var/cache/apk/*
+#47 CACHED
+
+#88 [api api  8/10] COPY src/Apps/CustomerWeb/OrderEntry/wwwroot ./qr-web
+#88 CACHED
+
+#89 [api frontend-build  6/10] RUN pnpm build
+#89 CACHED
+
+#34 [api frontend-build  2/10] WORKDIR /src
+#34 CACHED
+
+#90 [api api  5/10] COPY database ./database
+#90 CACHED
+
+#91 [api frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#91 CACHED
+
+#92 [api api 10/10] COPY --from=frontend-build /src/dist-nfc ./nfc-web
+#92 CACHED
+
+#29 [migrate internal] load build context
+#29 ...
+
+#23 [provision internal] load build context
+#23 transferring context: 66.32MB 10.8s done
+#23 DONE 10.8s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#92 [provision api 10/10] COPY --from=frontend-build /src/dist-nfc ./nfc-web
+#92 CACHED
+
+#93 [api] exporting to image
+#93 exporting layers 0.1s done
+#93 exporting manifest sha256:31fc43a512accba2993b07d42db790dfcaed86fb0c945c57837292ad0ba462ce done
+#93 exporting config sha256:34b0094b1b52b45ce1b999c3752099eb929b04c5e7fe042f32021f6f4dea3909 done
+#93 exporting attestation manifest sha256:04382191dce7914355f72bc38747c2c9698a9b319141d9a52b0f7769b00dbc7c 0.0s done
+#93 exporting manifest list sha256:10cfb490dcbbd4f5570b921091113b98774555288b904fa9da720cf58340af12 0.0s done
+#93 naming to docker.io/library/alkaros-api:latest done
+#93 unpacking to docker.io/library/alkaros-api:latest 0.1s done
+#93 DONE 0.5s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#22 [connector internal] load build context
+#22 transferring context: 66.32MB 11.2s done
+#22 DONE 11.3s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#81 [provision backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#81 CACHED
+
+#29 [migrate internal] load build context
+#29 ...
+
+#94 [connector connector 3/5] RUN curl -fsSL -o /usr/local/bin/cloudflared         https://github.com/cloudflare/cloudflared/releases/download/2026.8.3/cloudflared-linux-amd64     && echo "f29324fe934d1e100617484c78deef803c4dc2cd351d645bbde42e96b4fccc5e  /usr/local/bin/cloudflared" | sha256sum -c -     && chmod +x /usr/local/bin/cloudflared     && apk del curl     && rm -rf /var/cache/apk/*
+#94 CACHED
+
+#95 [connector connector 2/5] RUN apk update     && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 ca-certificates curl     && rm -rf /var/cache/apk/*
+#95 CACHED
+
+#96 [connector connector 4/5] WORKDIR /app
+#96 CACHED
+
+#97 [connector backend-build 5/6] RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+#97 CACHED
+
+#98 [connector backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#98 CACHED
+
+#99 [connector backend-build 3/6] COPY . .
+#99 CACHED
+
+#100 [connector backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#100 CACHED
+
+#49 [connector backend-build 2/6] WORKDIR /src
+#49 CACHED
+
+#29 [migrate internal] load build context
+#29 ...
+
+#101 [provision] exporting to image
+#101 exporting layers 0.1s done
+#101 exporting manifest sha256:5ede786df17dbf1bf23c9b850de8ef12787826316c0ff1ebb8a481ec2d8be0b6 0.0s done
+#101 exporting config sha256:ab4a9e3d44c3255072c7fc1659455f0e2b0fdefb4238ad35029b31c2ed6e4eac 0.0s done
+#101 exporting attestation manifest sha256:3a7e86a2c93bae4f21b73ea0b490fdc748947854314f25d98dfa0bd7d2f72ea3 0.0s done
+#101 exporting manifest list sha256:299116e8e2778300ad98895af2e374c1abe81520711b25cdfe4f3422ace0f20e 0.0s done
+#101 naming to docker.io/library/alkaros-provision:latest done
+#101 unpacking to docker.io/library/alkaros-provision:latest 0.1s done
+#101 DONE 0.5s
+
+#29 [migrate internal] load build context
+#29 ...
+
+#102 [connector connector 5/5] COPY --from=backend-build /out/connector ./
+#102 DONE 0.5s
+
+#103 [connector] exporting to image
+#103 ...
+
+#81 [migrate backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#81 CACHED
+
+#29 [migrate internal] load build context
+#29 transferring context: 66.32MB 12.2s done
+#29 DONE 12.3s
+
+#103 [connector] exporting to image
+#103 exporting layers 0.4s done
+#103 ...
+
+#92 [migrate api 10/10] COPY --from=frontend-build /src/dist-nfc ./nfc-web
+#92 CACHED
+
+#103 [connector] exporting to image
+#103 exporting manifest sha256:7cfbfa2cfaed629c2d4c9ccafeb0fd935bda9f92ee5de0080757100fc4227466 0.0s done
+#103 exporting config sha256:9d36c930c739f686fe1548a5ac63b15e99baa2061c6063903a5802c8ab24477c 0.0s done
+#103 exporting attestation manifest sha256:4dbfa35f70284f9ea52c35928933c9e9e524316d4a3da32060367746af1f7589
+#103 exporting attestation manifest sha256:4dbfa35f70284f9ea52c35928933c9e9e524316d4a3da32060367746af1f7589 0.0s done
+#103 exporting manifest list sha256:a94998fd6e50d21d8bc6c0e61ee61d3e7c2a2e0563aa689f46dd7aaeb539a717 0.0s done
+#103 naming to docker.io/library/alkaros-connector:latest 0.0s done
+#103 unpacking to docker.io/library/alkaros-connector:latest
+#103 unpacking to docker.io/library/alkaros-connector:latest 0.2s done
+#103 DONE 0.9s
+
+#104 [migrate] exporting to image
+#104 exporting layers 0.0s done
+#104 exporting manifest sha256:e574e35c41e9489a14c6c77ac2203013161ef58beff8621e9e8302e4dca9955f 0.0s done
+#104 exporting config sha256:b2c0159fdcd4f26bf3c8b4ad6e22c6721fb87ff5b3e1a45454bece2a98187f04 0.0s done
+#104 exporting attestation manifest sha256:b07304a5962e4c92ce936ce869c7ca3339578f44d37a40c96eda8ab62b3c8658 0.1s done
+#104 exporting manifest list sha256:38fc56c0b7c6a476bb43d35074bfc02337d101012e2aa41a0f4d6d7136c55bf6 0.0s done
+#104 naming to docker.io/library/alkaros-migrate:latest done
+#104 unpacking to docker.io/library/alkaros-migrate:latest 0.1s done
+#104 DONE 0.4s
+
+#105 [api] resolving provenance for metadata file
+#105 DONE 0.0s
+
+#106 [provision] resolving provenance for metadata file
+#106 DONE 0.0s
+
+#107 [connector] resolving provenance for metadata file
+#107 DONE 0.0s
+
+#108 [migrate] resolving provenance for metadata file
+#108 DONE 0.0s
+ Image alkaros-connector Built 
+ Image alkaros-migrate Built 
+ Image alkaros-provision Built 
+ Image alkaros-watchdog Built 
+ Image alkaros-web Built 
+ Image alkaros-api Built 

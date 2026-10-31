@@ -1,0 +1,9 @@
+login: 200 {"userId": "324d0781-a643-4450-bec7-c569412b5015", "displayName": "ALKAROS Manager", "roleName": "Manager", "terminalId": "d60b3df9-6396-447e-81ba-7babfcf0e205", "capabilities": ["bills.cancel", "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.session.override", "cat
+catalog: 200
+product: Adana Kebap 260.0
+table-draft S1: 200 {"orderId": "1d3f1031-93cd-4383-b68a-d0517e2fb5af", "tableId": "b0000000-0000-0000-0000-000000000001", "tableNumber": "S1", "status": "Draft", "rowVersion": 1, "totalAmount": 260.0, "items": [{"itemId": "4371fe12-aee7-4491-aef4-bb9eb7ba9950", "productId": "d0000000-0000-0000-0000-000000000002", "pro
+send-to-cashier on Draft (expect 409 ORDER_NOT_SUBMITTED): 409 {"error": {"code": "ORDER_NOT_SUBMITTED", "message": "Sipariþ henüz mutfaða gönderilmedi; kasaya gönderilemez."}}
+draft orderId: 1d3f1031-93cd-4383-b68a-d0517e2fb5af
+qr list: 200 [{"tableId": "b0000000-0000-0000-0000-000000000001", "tableNumber": "S1", "zoneName": "Salon", "tableActive": true, "qrIssuedAt": null}, {"tableId": "b0000000-0000-0000-0000-000000000002", "tableNumber": "S2", "zoneName": "Salon", "tableActive": true, "qrIssuedAt": null}, {"tableId": "b0000000-0000-
+qr issue S1 (expect not an error route): 409 {"error": {"code": "RELAY_NOT_READY", "message": "Uzaktan sipariþ baðlantýsý henüz etkinleþtirilmedi; önce baðlantý ayarlarýndan etkinleþtirin.", "status": 409, "traceId": "71a32f03668ffb88e63b5bcb8bf435ae"}}
+terminal binding reset: 200 {"terminalId": "d60b3df9-6396-447e-81ba-7babfcf0e205"}

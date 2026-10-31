@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createSecurityClient, type SecurityClient } from "./api";
 import { SecuritySection } from "./SecuritySection";
@@ -27,6 +28,13 @@ describe("terminals panel", () => {
     expect(document.body.textContent).toContain("Ayşe Kasiyer");
     expect(document.body.textContent).toContain("Tarayıcıya bağlı");
     expect(document.body.textContent).toContain("Bağlı değil");
+  });
+
+  it("gives every column header, including the action column, an accessible name", async () => {
+    await render(<TerminalsPanel client={fakeClient()} />);
+    const names = [...document.querySelectorAll("th")].map((header) => header.textContent);
+    expect(names).toEqual(["Terminal", "Son giriş yapan", "Son giriş", "Durum", "Bağlantıyı kaldır"]);
+    expect((await axe.run(document.body)).violations).toEqual([]);
   });
 
   it("releases a bound terminal and reloads the list; an unbound one has nothing to release", async () => {

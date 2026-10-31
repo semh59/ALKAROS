@@ -1,0 +1,34 @@
+ Volume alkaros_alkaros-offsite-backup Creating 
+ Volume alkaros_alkaros-offsite-backup Created 
+ Container alkaros-postgres-1 Running 
+ Container alkaros-migrate-1 Recreate 
+ Container alkaros-migrate-1 Recreated 
+ Container alkaros-provision-1 Recreate 
+ Container alkaros-provision-1 Recreated 
+ Container alkaros-api-1 Recreate 
+ Container alkaros-api-1 Recreated 
+ Container alkaros-watchdog-1 Recreate 
+ Container alkaros-connector-1 Recreate 
+ Container alkaros-web-1 Recreate 
+ Container alkaros-connector-1 Recreated 
+ Container alkaros-watchdog-1 Recreated 
+ Container alkaros-web-1 Recreated 
+ Container alkaros-postgres-1 Waiting 
+ Container alkaros-postgres-1 Healthy 
+ Container alkaros-migrate-1 Starting 
+ Container alkaros-migrate-1 Started 
+ Container alkaros-migrate-1 Waiting 
+ Container alkaros-migrate-1 Exited 
+ Container alkaros-provision-1 Starting 
+ Container alkaros-provision-1 Started 
+ Container alkaros-provision-1 Waiting 
+ Container alkaros-provision-1 Exited 
+ Container alkaros-api-1 Starting 
+ Container alkaros-api-1 Started 
+ Container alkaros-api-1 Waiting 
+ Container alkaros-api-1 Waiting 
+ Container alkaros-api-1 Waiting 
+ Container alkaros-api-1 Error dependency api failed to start
+ Container alkaros-api-1 Error dependency api failed to start
+ Container alkaros-api-1 Error dependency api failed to start
+dependency failed to start: container alkaros-api-1 is unhealthy
