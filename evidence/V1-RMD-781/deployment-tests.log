@@ -1,0 +1,81 @@
+..F.FFF..                                                                [100%]
+================================== FAILURES ===================================
+________ test_compose_core_has_web_and_api_and_no_published_datastore _________
+
+    def test_compose_core_has_web_and_api_and_no_published_datastore() -> None:
+        compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
+    
+        assert compose.startswith("name: alkaros\n")
+        assert re.search(r"postgres:18@sha256:[0-9a-f]{64}", compose)
+        assert "\n  api:\n" in compose
+        assert "\n  web:\n" in compose
+        assert "\n  host:\n" not in compose and "\n  proxy:\n" not in compose
+        assert "dockerfile: deploy/docker/Dockerfile" in compose
+        assert "target: api" in compose
+        assert "target: web" in compose
+        assert "alkaros-postgres:/var/lib/postgresql" in compose
+        assert "condition: service_healthy" in compose
+        assert "condition: service_completed_successfully" in compose
+        assert "health/ready" in compose
+        assert "restart: unless-stopped" in compose
+        assert 'ports:\n      - "8443:443"' in compose
+        assert "8444:" not in compose
+        assert "alkaros-host-tls" not in compose
+        assert '["CMD", "wget", "-q", "--spider", "https://localhost/health/ready"]' in compose
+        assert "5432:" not in compose and "5080:" not in compose
+        assert "ALKAROS_DB_PASSWORD:" not in compose
+>       assert compose.count("export ALKAROS_DB_PASSWORD=\"$$(tr -d '\\r\\n' < /run/secrets/db_password)\"") == 4
+E       assert 2 == 4
+E        +  where 2 = <built-in method count of str object at 0x000002AE93241EB0>('export ALKAROS_DB_PASSWORD="$$(tr -d \'\\r\\n\' < /run/secrets/db_password)"')
+E        +    where <built-in method count of str object at 0x000002AE93241EB0> = 'name: alkaros\n\n# Core stack, brought up with:\n#   docker compose up --detach --build --wait\n#\n# Frontend / backe...o it must\n  # stay this exact value.\n  relay-internal:\n    ipam:\n      config:\n        - subnet: 172.28.90.0/28\n'.count
+
+tests\Deployment\test_container_contract.py:80: AssertionError
+______________ test_operator_tools_are_split_into_an_ops_overlay ______________
+
+    def test_operator_tools_are_split_into_an_ops_overlay() -> None:
+        core = (ROOT / "compose.yaml").read_text(encoding="utf-8")
+        ops = (ROOT / "compose.ops.yaml").read_text(encoding="utf-8")
+    
+        for service in ("backup:", "basebackup:", "housekeeping:", "audit-disposal:"):
+>           assert service not in core, f"{service} must not be in the core `up` stack"
+E           AssertionError: backup: must not be in the core `up` stack
+E           assert 'backup:' not in 'name: alkar...28.90.0/28\n'
+E             
+E             'backup:' is contained here:
+E               s-offsite-backup:/offsite-backup
+E             ?           +++++++
+E                   # Longer than the host's own shutdown timeout (DualScreenApplication.ShutdownTimeout) so in-flight
+E                   # requests finish before Docker sends SIGKILL.
+E                   stop_grace_period: 50s...
+E             
+E             ...Full output truncated (216 lines hidden), use '-vv' to show
+
+tests\Deployment\test_container_contract.py:111: AssertionError
+___________ test_dev_overlay_serves_plain_http_and_publishes_ports ____________
+
+    def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
+        dev = (ROOT / "compose.dev.yaml").read_text(encoding="utf-8")
+        caddy_dev = (ROOT / "deploy" / "docker" / "Caddyfile.dev").read_text(encoding="utf-8")
+    
+        assert dev.startswith("name: alkaros\n")
+>       assert '"5433:5432"' in dev          # 5432 is often taken by a standalone test db
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert '"5433:5432"' in 'name: alkaros\n\n# Local debugging overlay:\n#\n#   docker compose -f compose.yaml -f compose.dev.yaml up -d --build ...      exec psql "postgresql://alkaros@postgres:5432/alkaros" -v ON_ERROR_STOP=1 -f /seed-demo.sql\n    restart: "no"\n'
+
+tests\Deployment\test_container_contract.py:127: AssertionError
+___________ test_services_load_the_password_from_the_mounted_secret ___________
+
+    def test_services_load_the_password_from_the_mounted_secret() -> None:
+        compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
+    
+        assert compose.count('entrypoint: ["/bin/sh", "-eu", "-c"]') == 4
+>       assert "exec dotnet ALKAROS.Host.dll --order-manifest" in compose
+E       AssertionError: assert 'exec dotnet ALKAROS.Host.dll --order-manifest' in 'name: alkaros\n\n# Core stack, brought up with:\n#   docker compose up --detach --build --wait\n#\n# Frontend / backe...o it must\n  # stay this exact value.\n  relay-internal:\n    ipam:\n      config:\n        - subnet: 172.28.90.0/28\n'
+
+tests\Deployment\test_container_contract.py:159: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/Deployment/test_container_contract.py::test_compose_core_has_web_and_api_and_no_published_datastore
+FAILED tests/Deployment/test_container_contract.py::test_operator_tools_are_split_into_an_ops_overlay
+FAILED tests/Deployment/test_container_contract.py::test_dev_overlay_serves_plain_http_and_publishes_ports
+FAILED tests/Deployment/test_container_contract.py::test_services_load_the_password_from_the_mounted_secret
+4 failed, 5 passed in 0.18s

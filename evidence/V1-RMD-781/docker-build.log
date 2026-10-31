@@ -1,0 +1,471 @@
+ Image alkaros-migrate Building 
+ Image alkaros-provision Building 
+ Image alkaros-api Building 
+ Image alkaros-connector Building 
+ Image alkaros-web Building 
+ Image alkaros-watchdog Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.77kB 0.0s done
+#1 DONE 0.0s
+
+#2 [watchdog internal] load build definition from Dockerfile
+#2 transferring dockerfile: 10.90kB 0.0s done
+#2 DONE 0.1s
+
+#3 [api] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 ...
+
+#4 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 [migrate] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 1.7s
+
+#5 [migrate] docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#5 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#5 CACHED
+
+#6 [provision internal] load build definition from Dockerfile
+#6 transferring dockerfile: 10.90kB 0.0s done
+#6 DONE 0.0s
+
+#7 [web internal] load build definition from Dockerfile
+#7 transferring dockerfile: 10.90kB done
+#7 DONE 0.0s
+
+#8 [connector internal] load build definition from Dockerfile
+#8 transferring dockerfile: 10.90kB done
+#8 DONE 0.1s
+
+#9 [api internal] load build definition from Dockerfile
+#9 transferring dockerfile: 10.90kB done
+#9 DONE 0.1s
+
+#10 [watchdog internal] load build definition from Dockerfile
+#10 transferring dockerfile: 10.90kB done
+#10 DONE 0.1s
+
+#11 [watchdog internal] load metadata for mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#11 ...
+
+#12 [migrate internal] load build definition from Dockerfile
+#12 transferring dockerfile: 10.90kB 0.0s done
+#12 DONE 0.1s
+
+#11 [migrate internal] load metadata for mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#11 DONE 0.4s
+
+#13 [watchdog internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#13 DONE 0.4s
+
+#14 [connector internal] load metadata for mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83
+#14 DONE 0.5s
+
+#15 [auth] library/node:pull token for registry-1.docker.io
+#15 DONE 0.0s
+
+#16 [auth] library/caddy:pull token for registry-1.docker.io
+#16 DONE 0.0s
+
+#17 [migrate internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#17 ...
+
+#18 [connector internal] load .dockerignore
+#18 transferring context: 906B done
+#18 DONE 0.0s
+
+#19 [connector internal] load build context
+#19 DONE 0.0s
+
+#20 [connector backend-build 1/6] FROM mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#20 resolve mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 0.0s done
+#20 DONE 0.0s
+
+#21 [connector connector 1/5] FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83
+#21 resolve mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83 0.0s done
+#21 DONE 0.0s
+
+#17 [web internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#17 DONE 0.8s
+
+#22 [web internal] load metadata for docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#22 DONE 0.9s
+
+#23 [provision internal] load .dockerignore
+#23 transferring context: 906B 0.0s done
+#23 DONE 0.0s
+
+#24 [watchdog internal] load .dockerignore
+#24 transferring context: 906B 0.0s done
+#24 DONE 0.0s
+
+#25 [migrate internal] load .dockerignore
+#25 transferring context: 906B 0.0s done
+#25 DONE 0.1s
+
+#26 [api internal] load .dockerignore
+#26 transferring context: 906B 0.0s done
+#26 DONE 0.1s
+
+#27 [web internal] load .dockerignore
+#27 transferring context: 906B done
+#27 DONE 0.2s
+
+#20 [api backend-build 1/6] FROM mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#20 resolve mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 0.0s done
+#20 DONE 0.0s
+
+#28 [api frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#28 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#28 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.2s done
+#28 DONE 0.2s
+
+#29 [api api  1/10] FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#29 resolve mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 0.1s done
+#29 DONE 0.2s
+
+#30 [provision internal] load build context
+#30 ...
+
+#28 [web frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#28 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.2s done
+#28 DONE 0.2s
+
+#30 [provision internal] load build context
+#30 ...
+
+#31 [web web 1/6] FROM docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#31 resolve docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0 0.1s done
+#31 DONE 0.3s
+
+#30 [provision internal] load build context
+#30 ...
+
+#32 [web internal] load build context
+#32 transferring context: 2.93MB 1.0s done
+#32 DONE 1.2s
+
+#30 [provision internal] load build context
+#30 ...
+
+#31 [web web 1/6] FROM docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#31 CACHED
+
+#33 [watchdog frontend-build  2/10] WORKDIR /src
+#33 CACHED
+
+#30 [provision internal] load build context
+#30 ...
+
+#34 [web web 2/6] COPY deploy/docker/Caddyfile /etc/caddy/Caddyfile
+#34 DONE 0.4s
+
+#35 [web frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#35 DONE 0.5s
+
+#36 [web frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#36 1.969 Preparing pnpm@11.19.0 for immediate activation...
+#36 ...
+
+#19 [connector internal] load build context
+#19 transferring context: 11.10MB 4.7s done
+#19 DONE 4.8s
+
+#37 [watchdog backend-build 2/6] WORKDIR /src
+#37 CACHED
+
+#30 [provision internal] load build context
+#30 ...
+
+#38 [api internal] load build context
+#38 transferring context: 11.10MB 4.4s done
+#38 DONE 4.8s
+
+#30 [provision internal] load build context
+#30 ...
+
+#35 [api frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#35 DONE 0.5s
+
+#30 [provision internal] load build context
+#30 ...
+
+#39 [watchdog internal] load build context
+#39 transferring context: 11.10MB 4.6s done
+#39 DONE 5.1s
+
+#35 [watchdog frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#35 DONE 0.5s
+
+#40 [migrate internal] load build context
+#40 transferring context: 11.10MB 4.8s done
+#40 DONE 5.2s
+
+#30 [provision internal] load build context
+#30 ...
+
+#35 [migrate frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#35 DONE 0.5s
+
+#30 [provision internal] load build context
+#30 transferring context: 24.81MB 8.2s done
+#30 DONE 8.2s
+
+#35 [provision frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#35 DONE 0.5s
+
+#41 [provision backend-build 3/6] COPY . .
+#41 DONE 5.3s
+
+#42 [watchdog backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#42 ...
+
+#36 [provision frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#36 7.814 ? Verifying lockfile against supply-chain policies (176 entries)...
+#36 7.830 Lockfile is up to date, resolution step is skipped
+#36 8.055 Progress: resolved 1, reused 0, downloaded 0, added 0
+#36 8.110 Packages: +114
+#36 8.110 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#36 9.130 Progress: resolved 114, reused 0, downloaded 6, added 0
+#36 9.141 Packages are hard linked from the content-addressable store to the virtual store.
+#36 9.141   Content-addressable store is at: /root/.local/share/pnpm/store/v11
+#36 9.141   Virtual store is at:             node_modules/.pnpm
+#36 10.16 Progress: resolved 114, reused 0, downloaded 90, added 12
+#36 11.19 Progress: resolved 114, reused 0, downloaded 110, added 61
+#36 12.20 Progress: resolved 114, reused 0, downloaded 111, added 111
+#36 13.25 
+#36 13.25    ╭───────────────────────────────────────────────╮
+#36 13.25    │                                               │
+#36 13.25    │     Update available! 11.19.0 → 12.16.1.      │
+#36 13.25    │     Changelog: https://pnpm.io/v/12.16.1      │
+#36 13.25    │   To update, run: corepack use pnpm@12.16.1   │
+#36 13.25    │                                               │
+#36 13.25    ╰───────────────────────────────────────────────╯
+#36 13.25 
+#36 13.25 Progress: resolved 114, reused 0, downloaded 113, added 113
+#36 14.63 Progress: resolved 114, reused 0, downloaded 114, added 113
+#36 14.64 Progress: resolved 114, reused 0, downloaded 114, added 114, done
+#36 15.33 ✓ Lockfile passes supply-chain policies (176 entries in 7.5s)
+#36 15.45 
+#36 15.45 dependencies:
+#36 15.45 + @microsoft/signalr 10.0.0
+#36 15.45 + lean-qr 2.7.4
+#36 15.45 + react 19.2.8
+#36 15.45 + react-dom 19.2.8
+#36 15.45 
+#36 15.45 devDependencies:
+#36 15.45 + @types/node 26.2.0
+#36 15.45 + @types/react 19.2.18
+#36 15.45 + @types/react-dom 19.2.5
+#36 15.45 + axe-core 4.10.3
+#36 15.45 + jsdom 26.1.0
+#36 15.45 + oxlint 1.85.0
+#36 15.45 + typescript 7.0.2
+#36 15.45 + vite 8.2.2
+#36 15.45 + vitest 4.1.11
+#36 15.45 
+#36 15.52 Done in 9s using pnpm v11.19.0
+#36 DONE 16.2s
+
+#42 [watchdog backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#42 ...
+
+#36 [provision frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#36 DONE 16.2s
+
+#43 [watchdog frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#43 DONE 0.7s
+
+#42 [watchdog backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#42 ...
+
+#43 [web frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#43 DONE 0.7s
+
+#44 [provision frontend-build  6/10] RUN pnpm build
+#44 2.881 ? Verifying lockfile against supply-chain policies (176 entries)...
+#44 2.905 Lockfile is up to date, resolution step is skipped
+#44 3.282 Already up to date
+#44 5.291 ✓ Lockfile passes supply-chain policies (176 entries in 2.4s)
+#44 5.425 
+#44 5.494 Done in 3.7s using pnpm v11.19.0
+#44 5.603 $ pnpm run lint && tsc --noEmit && vite build
+#44 6.735 $ oxlint -c .oxlintrc.json --max-warnings=20 src
+#44 7.285 
+#44 7.285   x jsx-a11y(control-has-associated-label): A control must be associated with a text label.
+#44 7.285     ,-[src/features/management-security-system/TerminalsPanel.tsx:36:102]
+#44 7.285  35 |       {list.length === 0 ? <p className="msys__empty">{t.empty}</p> : <table>
+#44 7.285  36 |         <thead><tr><th>{t.terminal}</th><th>{t.lastUser}</th><th>{t.lastLogin}</th><th>{t.state}</th><th /></tr></thead>
+#44 7.285     :                                                                                                      ^^^^^^
+#44 7.285  37 |         <tbody>{list.map((terminal) => <tr key={terminal.terminalId}>
+#44 7.285     `----
+#44 7.285   help: Add a text label to the control element. This can be done by adding text content, an `aria-label` attribute, or an `aria-labelledby` attribute.
+#44 7.285 
+#44 7.285   x react(purity): Cannot call impure function during render
+#44 7.285      ,-[src/routes/CustomerDisplay.tsx:244:91]
+#44 7.285  243 |               <div className="pairing-code">{pairing.code}</div>
+#44 7.285  244 |               <small>Kod {Math.max(1, Math.round((new Date(pairing.expiresAt).getTime() - Date.now()) / 60_000))} dakika sonra otomatik olarak yenilenir.</small>
+#44 7.285      :                                                                                           ^^^^^|^^^^
+#44 7.285      :                                                                                                `-- Cannot call impure function
+#44 7.285  245 |             </>
+#44 7.285      `----
+#44 7.285   help: `Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component re-renders
+#44 7.285   note: React Compiler skipped optimizing this component or hook. Additional guidance: https://react.dev/reference/eslint-plugin-react-hooks/lints/purity
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.285      ,-[src/routes/RelaySettings.tsx:178:115]
+#44 7.285  177 |             Kullanıcı adı
+#44 7.285  178 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.285      :                                                                                                                   ^^^^^^^^^
+#44 7.285  179 |           </label>
+#44 7.285      `----
+#44 7.285   help: Remove the `autoFocus` attribute.
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.285     ,-[src/routes/SecurityAdministration.tsx:98:115]
+#44 7.285  97 |             Kullanıcı adı
+#44 7.285  98 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.285     :                                                                                                                   ^^^^^^^^^
+#44 7.285  99 |           </label>
+#44 7.285     `----
+#44 7.285   help: Remove the `autoFocus` attribute.
+#44 7.285 
+#44 7.285   ! eslint(no-unused-vars): Function 'nextItemState' is declared but never used.
+#44 7.285     ,-[src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:89:10]
+#44 7.285  88 | 
+#44 7.285  89 | function nextItemState(status: KitchenTicketItem["status"]): KitchenTicketItem["status"] | null {
+#44 7.285     :          ^^^^^^|^^^^^^
+#44 7.285     :                `-- 'nextItemState' is declared here
+#44 7.285  90 |   if (status === "Queued") return "Preparing";
+#44 7.285     `----
+#44 7.285   help: Consider removing this declaration.
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.285      ,-[src/routes/QnbCredentialSettings.tsx:158:115]
+#44 7.285  157 |             Kullanıcı adı
+#44 7.285  158 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.285      :                                                                                                                   ^^^^^^^^^
+#44 7.285  159 |           </label>
+#44 7.285      `----
+#44 7.285   help: Remove the `autoFocus` attribute.
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.285      ,-[src/routes/BusinessIdentitySettings.tsx:271:115]
+#44 7.285  270 |             Kullanıcı adı
+#44 7.285  271 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.285      :                                                                                                                   ^^^^^^^^^
+#44 7.285  272 |           </label>
+#44 7.285      `----
+#44 7.285   help: Remove the `autoFocus` attribute.
+#44 7.285 
+#44 7.285   ! eslint(no-unused-vars): Parameter 'init' is declared but never used. Unused parameters should start with a '_'.
+#44 7.285     ,-[src/routes/Cashier.logout-clears-storage.test.tsx:52:67]
+#44 7.285  51 | 
+#44 7.285  52 |     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+#44 7.285     :                                                                   ^^|^
+#44 7.285     :                                                                     `-- 'init' is declared here
+#44 7.285  53 |       const path = String(input);
+#44 7.285     `----
+#44 7.285   help: Consider removing this parameter.
+#44 7.285 
+#44 7.285   ! react(globals): Cannot reassign variables declared outside of the component/hook
+#44 7.285     ,-[src/router.test.tsx:14:3]
+#44 7.285  13 | function Probe() {
+#44 7.285  14 |   seen = useRouter();
+#44 7.285     :   ^^|^
+#44 7.285     :     `-- `seen` cannot be reassigned
+#44 7.285  15 |   return <span>{seen.path}</span>;
+#44 7.285     `----
+#44 7.285   help: Variable `seen` is declared outside of the component/hook. Reassigning this value during render is a side effect which can cause unpredictable behavior. If this variable is used in rendering, use useState instead. Otherwise, update it in an effect
+#44 7.285   note: React Compiler skipped optimizing this component or hook. Additional guidance: https://react.dev/reference/eslint-plugin-react-hooks/lints/globals
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#44 7.285      ,-[src/design-system/primitives.tsx:139:8]
+#44 7.285  138 |     <div className="ds-dialog-backdrop">
+#44 7.285  139 |       <div ref={dialogRef} className="ds-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={(event) => {
+#44 7.285      :        ^^^
+#44 7.285  140 |         if (event.key === "Escape") { event.preventDefault(); onClose(); return; }
+#44 7.285      `----
+#44 7.285   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#44 7.285      ,-[src/design-system/primitives.tsx:162:6]
+#44 7.285  161 |   return (
+#44 7.285  162 |     <aside ref={drawerRef} className={`ds-drawer ds-drawer--${presentation}`} aria-labelledby={titleId} aria-modal={presentation === "sheet" ? true : undefined} role={presentation === "sheet" ? "dialog" : undefined} onKeyDown={presentation === "sheet" ? (event) => {
+#44 7.285      :      ^^^^^
+#44 7.285  163 |       if (event.key === "Escape" && onClose) { event.preventDefault(); onClose(); return; }
+#44 7.285      `----
+#44 7.285   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.285      ,-[src/routes/ReservationStation.tsx:126:115]
+#44 7.285  125 |             Kullanıcı adı
+#44 7.285  126 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.285      :                                                                                                                   ^^^^^^^^^
+#44 7.285  127 |           </label>
+#44 7.285      `----
+#44 7.285   help: Remove the `autoFocus` attribute.
+#44 7.285 
+#44 7.285   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.285      ,-[src/routes/CustomerDisplayScreensaverSettings.tsx:189:115]
+#44 7.285  188 |             Kullanıcı adı
+#44 7.285  189 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.285      :                                                                                                                   ^^^^^^^^^
+#44 7.285  190 |           </label>
+#44 7.285      `----
+#44 7.285   help: Remove the `autoFocus` attribute.
+#44 7.286 
+#44 7.286   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.286      ,-[src/routes/TokenTerminalSettings.tsx:174:115]
+#44 7.286  173 |             Kullanıcı adı
+#44 7.286  174 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#44 7.286      :                                                                                                                   ^^^^^^^^^
+#44 7.286  175 |           </label>
+#44 7.286      `----
+#44 7.286   help: Remove the `autoFocus` attribute.
+#44 7.286 
+#44 7.286   ! react-hooks(exhaustive-deps): The ref's value `.current` is accessed directly in the effect cleanup function.
+#44 7.286      ,-[src/routes/Cashier.tsx:301:18]
+#44 7.286  300 |     first?.focus();
+#44 7.286  301 |     return () => pairingTrigger.current?.focus();
+#44 7.286      :                  ^^^^^^^^^^^^^^^^^^^^^^
+#44 7.286  302 |   }, [pairingOpen]);
+#44 7.286      `----
+#44 7.286   help: The ref value will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by react, copy it to a variable inside the effect and use that variable in the cleanup function.
+#44 7.286 
+#44 7.286   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#44 7.286      ,-[src/routes/Cashier.tsx:475:15]
+#44 7.286  474 |               autoComplete="username"
+#44 7.286  475 |               autoFocus
+#44 7.286      :               ^^^^^^^^^
+#44 7.286  476 |             />
+#44 7.286      `----
+#44 7.286   help: Remove the `autoFocus` attribute.
+#44 7.286 
+#44 7.286 Found 14 warnings and 2 errors.
+#44 7.286 Finished in 407ms on 257 files with 134 rules using 8 threads.
+#44 7.354 [ELIFECYCLE] Command failed with exit code 1.
+#44 7.435 [ELIFECYCLE] Command failed with exit code 1.
+#44 ERROR: process "/bin/sh -c pnpm build" did not complete successfully: exit code: 1
+
+#42 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#42 9.694   Determining projects to restore...
+#42 CANCELED
+
+#42 [connector backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#42 CANCELED
+------
+ > [api frontend-build  6/10] RUN pnpm build:
+7.286  475 |               autoFocus
+7.286      :               ^^^^^^^^^
+7.286  476 |             />
+7.286      `----
+7.286   help: Remove the `autoFocus` attribute.
+7.286 
+7.286 Found 14 warnings and 2 errors.
+7.286 Finished in 407ms on 257 files with 134 rules using 8 threads.
+7.354 [ELIFECYCLE] Command failed with exit code 1.
+7.435 [ELIFECYCLE] Command failed with exit code 1.
+------
+target api: failed to solve: process "/bin/sh -c pnpm build" did not complete successfully: exit code: 1
+

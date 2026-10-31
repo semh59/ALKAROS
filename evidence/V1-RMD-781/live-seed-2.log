@@ -1,0 +1,21 @@
+ Container alkaros-postgres-1 Running 
+ Container alkaros-postgres-1 Waiting 
+ Container alkaros-postgres-1 Healthy 
+ Container alkaros-seed-run-393b5fb545c0 Creating 
+ Container alkaros-seed-run-393b5fb545c0 Created 
+BEGIN
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+COMMIT
+ zones | tables | categories | products 
+-------+--------+------------+----------
+     2 |      6 |          2 |        6
+(1 row)
+

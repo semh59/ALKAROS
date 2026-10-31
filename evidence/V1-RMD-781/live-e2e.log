@@ -1,0 +1,11 @@
+login: 200 {"userId": "324d0781-a643-4450-bec7-c569412b5015", "displayName": "ALKAROS Manager", "roleName": "Manager", "terminalId": "d60b3df9-6396-447e-81ba-7babfcf0e205", "capabilities": ["bills.cancel", "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.session.override", "cat
+catalog: 200
+product: Adana Kebap 260.0
+table-draft: 200 {"orderId": "d795ff57-325c-4ae1-b4c5-124f2ea6576f", "tableId": "00000000-0000-0000-0000-000000000001", "tableNumber": "KASA-1", "status": "Draft", "rowVersion": 1, "totalAmount": 520.0, "items": [{"itemId": "3288bcaa-24a6-4383-a802-e6092554ec63", "productId": "d0000000-0000-0000-0000-000000000002", 
+submit-draft: 200 {"orderId": "d795ff57-325c-4ae1-b4c5-124f2ea6576f", "tableId": "00000000-0000-0000-0000-000000000001", "tableNumber": "KASA-1", "status": "Submitted", "rowVersion": 2, "totalAmount": 520.0, "items": [{"itemId": "3288bcaa-24a6-4383-a802-e6092554ec63", "productId": "d0000000-0000-0000-0000-00000000000
+send-to-cashier: 200 {"orderId": "d795ff57-325c-4ae1-b4c5-124f2ea6576f", "tableId": "00000000-0000-0000-0000-000000000001", "alreadySent": false}
+bill from-order: 200 {"billId": "6d96ecce-92ca-484e-b156-78ca42416827", "billNumber": "BILL-TBL-KASA-1-22502044-d795ff57", "billStatus": "Open", "currencyCode": "TRY", "payableAmount": 520.0, "taxTotal": 0.0, "billRowVersion": 1, "mode": "None", "executionState": "DesignOnly", "allowedCommands": ["SaveEqual", "SaveItems
+billId: 6d96ecce-92ca-484e-b156-78ca42416827 payable: 520.0
+open cash session: 201 {"cashSessionId": "d43943fc-30cd-4b5a-9b75-fb6f73c30b1e", "cashierUserId": "324d0781-a643-4450-bec7-c569412b5015", "terminalId": "d60b3df9-6396-447e-81ba-7babfcf0e205", "status": "Open", "openingBalance": 0, "expectedCash": 0, "actualCash": 0, "difference": 0, "openedAt": "2026-10-31T22:50:20.708681
+cash-tender: 200 {"paymentId": "f53a28e5-9eba-41f3-a3da-95f21a15d6b1", "paymentAllocationId": "865409a9-6c09-4ce2-8b0f-8e74fbcb96f5", "cashTransactionId": "e01ca2a2-c33e-4068-84ef-4d0d01a78239", "approvedAmount": 520.0, "changeAmount": 0.0, "wasReplayed": false}
+orderId: d795ff57-325c-4ae1-b4c5-124f2ea6576f billId: 6d96ecce-92ca-484e-b156-78ca42416827

@@ -1,0 +1,24 @@
+ Container alkaros-postgres-1 Recreate 
+ Container alkaros-postgres-1 Recreated 
+ Container alkaros-postgres-1 Starting 
+ Container alkaros-postgres-1 Started 
+ Container alkaros-postgres-1 Waiting 
+ Container alkaros-postgres-1 Healthy 
+ Container alkaros-seed-run-431bff52040e Creating 
+ Container alkaros-seed-run-431bff52040e Created 
+BEGIN
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 0
+INSERT 0 1
+INSERT 0 6
+INSERT 0 6
+INSERT 0 6
+INSERT 0 6
+COMMIT
+ zones | tables | categories | products 
+-------+--------+------------+----------
+     2 |      6 |          2 |        6
+(1 row)
+

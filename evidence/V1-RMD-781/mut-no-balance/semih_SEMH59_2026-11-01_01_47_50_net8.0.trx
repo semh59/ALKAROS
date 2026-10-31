@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f1ee0e02-6376-4220-a578-8e077222147f" name="semih@SEMH59 2026-11-01 01:47:50" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T01:47:50.6488833+03:00" queuing="2026-11-01T01:47:50.6488836+03:00" start="2026-11-01T01:47:48.3294862+03:00" finish="2026-11-01T01:47:51.5414876+03:00" />
+  <TestSettings name="default" id="e4f4c195-bdd8-4fc4-80db-58972fd33857">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_01_47_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="37b30302-5f0a-45ea-ad8d-f3ce0f90597c" testId="6d959524-dc80-3ec2-9ae8-3854915e2d0a" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.EveryDemoSeedProductMapsToStockWhoseBalanceEqualsItsLedger" computerName="SEMH59" duration="00:00:00.0517001" startTime="2026-11-01T01:47:50.9220607+03:00" endTime="2026-11-01T01:47:50.9220610+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37b30302-5f0a-45ea-ad8d-f3ce0f90597c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 6&#xD;
+Actual:   0</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.EveryDemoSeedProductMapsToStockWhoseBalanceEqualsItsLedger() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\OrderManagementTableDraftHttpTests.cs:line 351&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5e8221b2-22be-41e8-a0ed-7e3f6ebc7170" testId="239019f2-b3e6-bf84-f0ea-b96ea4155336" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows" computerName="SEMH59" duration="00:00:00.0141319" startTime="2026-11-01T01:47:51.4648339+03:00" endTime="2026-11-01T01:47:51.4648341+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e8221b2-22be-41e8-a0ed-7e3f6ebc7170">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 112&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 113&#xD;
+   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\OrderManagementTableDraftHttpTests.cs:line 383&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3c7ec545-1702-4e02-9e9d-8733ebaa8357" testId="3480a163-cb81-fcdc-212a-452cef4b5349" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ADemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance" computerName="SEMH59" duration="00:00:00.0345549" startTime="2026-11-01T01:47:50.3362345+03:00" endTime="2026-11-01T01:47:50.3362600+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c7ec545-1702-4e02-9e9d-8733ebaa8357">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.NotNull() Failure: Value is null</Message>
+          <StackTrace>   at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 112&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 113&#xD;
+   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ADemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\OrderManagementTableDraftHttpTests.cs:line 371&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ADemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance" storage="d:\project\alkaros\tests\host\experience\orders\tabledraft\bin\debug\net8.0\alkaros.host.experience.orders.tabledraft.tests.dll" id="3480a163-cb81-fcdc-212a-452cef4b5349">
+      <Execution id="3c7ec545-1702-4e02-9e9d-8733ebaa8357" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests" name="ADemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows" storage="d:\project\alkaros\tests\host\experience\orders\tabledraft\bin\debug\net8.0\alkaros.host.experience.orders.tabledraft.tests.dll" id="239019f2-b3e6-bf84-f0ea-b96ea4155336">
+      <Execution id="5e8221b2-22be-41e8-a0ed-7e3f6ebc7170" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests" name="ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.EveryDemoSeedProductMapsToStockWhoseBalanceEqualsItsLedger" storage="d:\project\alkaros\tests\host\experience\orders\tabledraft\bin\debug\net8.0\alkaros.host.experience.orders.tabledraft.tests.dll" id="6d959524-dc80-3ec2-9ae8-3854915e2d0a">
+      <Execution id="37b30302-5f0a-45ea-ad8d-f3ce0f90597c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests" name="EveryDemoSeedProductMapsToStockWhoseBalanceEqualsItsLedger" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6d959524-dc80-3ec2-9ae8-3854915e2d0a" executionId="37b30302-5f0a-45ea-ad8d-f3ce0f90597c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="239019f2-b3e6-bf84-f0ea-b96ea4155336" executionId="5e8221b2-22be-41e8-a0ed-7e3f6ebc7170" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3480a163-cb81-fcdc-212a-452cef4b5349" executionId="3c7ec545-1702-4e02-9e9d-8733ebaa8357" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.16]   Discovering: ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:00.27]   Discovered:  ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:01.16]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:01.16]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.16]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(112,0): at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql)&#xD;
+[xUnit.net 00:00:01.16]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(113,0): at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql)&#xD;
+[xUnit.net 00:00:01.16]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\OrderManagementTableDraftHttpTests.cs(371,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ADemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance()&#xD;
+[xUnit.net 00:00:01.16]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.74]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.74]       Expected: 6&#xD;
+[xUnit.net 00:00:01.74]       Actual:   0&#xD;
+[xUnit.net 00:00:01.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.74]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\OrderManagementTableDraftHttpTests.cs(351,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.EveryDemoSeedProductMapsToStockWhoseBalanceEqualsItsLedger()&#xD;
+[xUnit.net 00:00:01.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.29]       Assert.NotNull() Failure: Value is null&#xD;
+[xUnit.net 00:00:02.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.29]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(112,0): at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql)&#xD;
+[xUnit.net 00:00:02.29]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(113,0): at ALKAROS.TestHelpers.PgTestDatabase.ScalarAsync[T](String sql)&#xD;
+[xUnit.net 00:00:02.29]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\OrderManagementTableDraftHttpTests.cs(383,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows()&#xD;
+[xUnit.net 00:00:02.29]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.29]   Finished:    ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T01:47:50.3333814+03:00">
+        <Text>[xUnit.net 00:00:01.16]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ADemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T01:47:50.9213765+03:00">
+        <Text>[xUnit.net 00:00:01.74]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.EveryDemoSeedProductMapsToStockWhoseBalanceEqualsItsLedger [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T01:47:51.4649532+03:00">
+        <Text>[xUnit.net 00:00:02.29]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

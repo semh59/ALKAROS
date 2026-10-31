@@ -32,6 +32,11 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
     }
 
+    /// <summary>Loads the Docker demo seed file as shipped (fresh stack: zones, tables, menu, stock).</summary>
+    public async Task ApplyDemoSeedAsync()
+        => await RunAsync(DataSource, await File.ReadAllTextAsync(
+            Path.Combine(AppContext.BaseDirectory, "Fixtures", "seed", "seed-demo.sql")));
+
     /// <summary>V1-RMD-113: counts kitchen tickets dispatched for an order.</summary>
     /// <summary>Seeds a bill for an order, optionally with an approved payment allocated to it.</summary>
     public async Task<Guid> SeedBillForOrderAsync(Guid orderId, decimal payable, string status, decimal allocated = 0m)

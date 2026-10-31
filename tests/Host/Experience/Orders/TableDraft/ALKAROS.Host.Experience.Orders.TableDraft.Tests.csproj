@@ -80,6 +80,8 @@
          exercises — missing from this project until now, so that race
          relied on luck instead of the actual database constraint. -->
     <None Include="../../../../../database/migrations/V1/V1-RMD-123/076-orders-table-submission-idempotency-index.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The Docker demo seed itself, loaded by the demo-seed tests; not under Fixtures\sql, so it is never applied as a migration. -->
+    <None Include="../../../../../deploy/docker/seed-demo.sql" Link="Fixtures\seed\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

@@ -332,6 +332,90 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(1, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
+    private const string DemoFirstTableId = "b0000000-0000-0000-0000-000000000001";
+
+    // Counts the demo stock items whose balance is exactly the expected quantity AND equals what the ledger sums to.
+    private static string DemoItemsHoldingLedgerBackedQuantitySql(int expectedOnHand)
+        => $"""
+        SELECT count(*) FROM inventory.stock_items i
+        JOIN inventory.stock_balances b ON b.stock_item_id = i.id AND b.stock_location_id = i.default_location_id
+        WHERE i.code LIKE 'DEMO-%'
+          AND b.on_hand_quantity = {expectedOnHand}
+          AND b.available_quantity = {expectedOnHand}
+          AND {expectedOnHand} = (
+              SELECT COALESCE(SUM(CASE s.direction WHEN 'In' THEN s.quantity WHEN 'Out' THEN -s.quantity END), 0)
+              FROM inventory.stock_movements s
+              WHERE s.stock_item_id = i.id AND s.stock_location_id = i.default_location_id);
+        """;
+
+    [Fact]
+    public async Task EveryDemoSeedProductMapsOnceToStockWhoseBalanceEqualsItsLedger()
+    {
+        await _database.ApplyDemoSeedAsync();
+
+        Assert.Equal(6, await _database.ScalarAsync<long>("SELECT count(*) FROM catalog.products;"));
+        Assert.Equal(6, await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.product_stock_mappings;"));
+        Assert.Equal(6, await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.stock_balances;"));
+        Assert.Equal(6, await _database.ScalarAsync<long>(
+            """
+            SELECT count(*) FROM catalog.products p
+            JOIN inventory.product_stock_mappings m ON m.product_id = p.product_id AND m.quantity_multiplier = 1
+            JOIN inventory.stock_items i ON i.id = m.stock_item_id AND i.default_location_id IS NOT NULL;
+            """));
+        Assert.Equal(6, await _database.ScalarAsync<long>(DemoItemsHoldingLedgerBackedQuantitySql(500)));
+    }
+
+    [Fact]
+    public async Task EveryDemoSeedProductSubmitsAndTakesItsQuantityOutOfTheSeededBalance()
+    {
+        await _database.ApplyDemoSeedAsync();
+        await using var app = await StartAsync();
+
+        await SubmitEveryDemoProductAsync(app, quantity: 2);
+
+        Assert.Equal(6, await _database.ScalarAsync<long>(DemoItemsHoldingLedgerBackedQuantitySql(498)));
+    }
+
+    [Fact]
+    public async Task ReapplyingTheDemoSeedAfterSalesKeepsTheRemainingStockAndAddsNoRows()
+    {
+        await _database.ApplyDemoSeedAsync();
+        await using var app = await StartAsync();
+        await SubmitEveryDemoProductAsync(app, quantity: 2);
+        var movementsAfterSale = await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.stock_movements;");
+
+        await _database.ApplyDemoSeedAsync();
+
+        Assert.Equal(6, await _database.ScalarAsync<long>(DemoItemsHoldingLedgerBackedQuantitySql(498)));
+        Assert.Equal(movementsAfterSale, await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.stock_movements;"));
+        Assert.Equal(6, await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.stock_items;"));
+        Assert.Equal(6, await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.product_stock_mappings;"));
+        Assert.Equal(6, await _database.ScalarAsync<long>("SELECT count(*) FROM inventory.stock_balances;"));
+    }
+
+    private async Task SubmitEveryDemoProductAsync(WebApplication app, int quantity)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var items = Enumerable.Range(1, 6)
+            .Select(n => new OrderItemDraftDto(
+                Guid.NewGuid(), Guid.Parse($"d0000000-0000-0000-0000-{n:D12}"), "Demo " + n, quantity, 100m))
+            .ToList();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(Guid.Parse(DemoFirstTableId), "S1", items)));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+    }
+
     [Fact]
     public async Task RetryingASubmitWithTheSameOperationIdReplaysWithoutASecondKitchenTicket()
     {
