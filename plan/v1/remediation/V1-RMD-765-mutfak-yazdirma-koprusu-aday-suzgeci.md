@@ -35,6 +35,7 @@ Aday sorgusu yalnız etkin yazıcısı olan istasyonların, hâlâ hazırlanmakt
 ## Dependencies
 
 - V1-RMD-130
+- V1-RMD-766
 
 ## Acceptance evidence
 
