@@ -13,3 +13,6 @@ Kod incelemesi ve test/kanıt incelemesi ayrı ajanlarla, HEAD 27d0dc52 üzerind
 - Kırmızı koşu doğru nedenle düştü; 3 mutant öldü; dört kaynak dosya temiz ve hash'ler `green.json` ile aynı.
 - Düşük: Rejected durumu yeni Host testinde yok; `EachItemCarriesItsIdAndTheUnitsAlreadyAskedToBeRefundedButNotTheRejectedOnes` Rejected'ın `refundedQuantity`'ye girmediğini kanıtlar ve yeni alan `status = 'Completed'` ile saydığı için Rejected yapısal olarak dışarıdadır.
 - `split-payment-item-refund.test.js` yardımcısı o testi zayıflatmaz (kalan adedi sınar, fiş satırını değil).
+
+## Kapsam
+`scope-final-vs-27d0dc52.json` valid=true (kapanis commit tabani). InProgress baseline f80529f4 ile HEAD karsilastirmasi sonradan acilan 758-762 gorevlerinin dosyalarini da gosterir; 757 icin gecerli kanit `scope-vs-f80529f4.json` (48e8fbe7 aninda).
