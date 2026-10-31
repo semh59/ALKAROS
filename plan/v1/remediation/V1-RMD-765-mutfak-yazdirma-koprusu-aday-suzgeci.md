@@ -1,7 +1,7 @@
 # V1-RMD-765 - Mutfak yazdırma köprüsü yalnız basılabilir biletleri aday alır
 
 - Task ID: V1-RMD-765
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
