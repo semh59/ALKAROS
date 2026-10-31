@@ -1,0 +1,44 @@
+✓ Lockfile passes supply-chain policies (verified 2m ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +1
++
+Progress: resolved 1, reused 1, downloaded 0, added 1, done
+
+dependencies:
++ lean-qr 2.7.4
+
+Done in 831ms using pnpm v11.19.0
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-table-qr/TableQrSection.test.tsx (11 tests | 1 failed) 358ms
+     × draws the three finder patterns and every dark module of the generated code 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-table-qr/TableQrSection.test.tsx > table QR management section > draws the three finder patterns and every dark module of the generated code
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/management-table-qr/TableQrSection.test.tsx:97:39
+     95|           const ring = x === 0 || x === 6 || y === 0 || y === 6;
+     96|           const centre = x >= 2 && x <= 4 && y >= 2 && y <= 4;
+     97|           expect(has(ox + x, oy + y)).toBe(ring || centre);
+       |                                       ^
+     98|         }
+     99|       }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  23:42:40
+   Duration  2.82s (transform 761ms, setup 0ms, import 1.11s, tests 358ms, environment 1.11s)
+

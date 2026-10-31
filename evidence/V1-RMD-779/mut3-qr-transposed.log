@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-table-qr/TableQrSection.test.tsx (15 tests | 1 failed) 426ms
+     × orients the code correctly: fixed dark module, timing patterns, and no mirror symmetry 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-table-qr/TableQrSection.test.tsx > table QR management section > orients the code correctly: fixed dark module, timing patterns, and no mirror symmetry
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/management-table-qr/TableQrSection.test.tsx:114:30
+    112|
+    113|     // ISO 18004: the module left of the bottom-left finder's right ed…
+    114|     expect(has(8, size - 8)).toBe(true);
+       |                              ^
+    115|     // Timing patterns alternate dark/light along row 6 and column 6 b…
+    116|     for (let i = 8; i < size - 8; i += 1) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  23:47:45
+   Duration  2.79s (transform 798ms, setup 0ms, import 1.16s, tests 426ms, environment 948ms)
+

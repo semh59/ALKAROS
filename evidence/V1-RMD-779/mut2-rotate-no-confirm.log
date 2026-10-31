@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-table-qr/TableQrSection.test.tsx (11 tests | 1 failed) 339ms
+     × asks before rotating and before revoking, and does nothing when the manager backs out 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-table-qr/TableQrSection.test.tsx > table QR management section > asks before rotating and before revoking, and does nothing when the manager backs out
+AssertionError: expected 'Her masanın kalıcı bir QR etiketi var…' to contain 'hemen çalışmaz hale gelecek'
+
+Expected: "hemen çalışmaz hale gelecek"
+Received: "Her masanın kalıcı bir QR etiketi vardır; müşteri okutunca menüyü açar. QR yalnızca üretildiği veya yenilendiği anda görünür ve yazdırılır. Etiketi kaybederseniz veya yanlış ellere geçtiyse "Yenile" ile yeni QR basın; eski QR hemen geçersiz olur.Masa QR kodlarıMasaQR durumuİşlemler1 · SalonQR yokQR üret2 · BölgesizQR var — üretim: 31.10.2026 13:00:00Yenileİptal etMasa QR kodu×2 · BölgesizSipariş vermek için QR kodu telefonunuzla okutunBu QR yalnızca şimdi görünür; pencereyi kapatınca tekrar gösterilemez. Önce yazdırın. Kaybolursa "Yenile" ile yeni QR basın.YazdırKapat"
+
+ ❯ src/features/management-table-qr/TableQrSection.test.tsx:108:39
+    106|
+    107|     await click(byLabel("Yenile 2 · Bölgesiz"));
+    108|     expect(document.body.textContent).toContain("hemen çalışmaz hale g…
+       |                                       ^
+    109|     expect(api.rotate).not.toHaveBeenCalled();
+    110|     await press("Vazgeç");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  23:42:44
+   Duration  2.56s (transform 754ms, setup 0ms, import 1.11s, tests 339ms, environment 874ms)
+

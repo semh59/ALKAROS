@@ -14,6 +14,7 @@ import { OrderInvoicesSection } from "../management-order-invoices";
 import { ErrorEventsSection } from "../management-error-events";
 import { UserJourneysSection } from "../management-user-journeys";
 import { PerformanceBudgetsSection } from "../management-performance-budgets";
+import { TableQrSection } from "../management-table-qr";
 import { managementText } from "../../strings";
 
 export interface ManagementSectionProps {
@@ -47,5 +48,6 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "purchase-invoices", label: managementText.purchaseInvoices.tab, requiredCapability: "purchasing.manage", component: PurchaseInvoicesSection },
   { id: "product-margin", label: managementText.productMargin.tab, requiredCapability: "reports.view", component: ProductMarginSection },
   { id: "order-invoices", label: managementText.orderInvoices.tab, requiredCapability: "reports.view", component: OrderInvoicesSection },
+  { id: "table-qr", label: managementText.tableQr.tab, requiredCapability: "integrations.manage", component: TableQrSection },
   { id: "settings-history", label: managementText.settingsHistory.tab, requiredCapability: "settings.manage", component: SettingsHistorySection },
 ];
