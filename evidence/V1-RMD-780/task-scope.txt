@@ -1,0 +1,5 @@
+FAIL: Scope violations for V1-RMD-780
+  FINDING: .playwright-mcp/console-2026-10-31t21-46-39-570z.log (untracked) — path not in task allowlist
+  FINDING: .playwright-mcp/console-2026-10-31t21-46-44-539z.log (untracked) — path not in task allowlist
+  FINDING: .playwright-mcp/page-2026-10-31t21-46-39-858z.yml (untracked) — path not in task allowlist
+  FINDING: .playwright-mcp/page-2026-10-31t21-46-45-190z.yml (untracked) — path not in task allowlist

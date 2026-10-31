@@ -1,0 +1,748 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4c35d478-ef49-453a-8d0f-5477b1239f33" name="semih@SEMH59 2026-11-01 00:43:05" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:43:05.9251223+03:00" queuing="2026-11-01T00:43:05.9251225+03:00" start="2026-11-01T00:42:57.8955017+03:00" finish="2026-11-01T00:44:04.3174209+03:00" />
+  <TestSettings name="default" id="705c8299-3a60-4c15-b5ef-88443601a16d">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_43_05" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="93410087-befb-4fac-96ff-2899741c0b7e" testId="81fe108f-4cfe-81b0-cb6d-991cecb57347" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.AModifierStockMappingCanBeAssignedListedAndRemoved" computerName="SEMH59" duration="00:00:00.2103658" startTime="2026-11-01T00:43:12.4869374+03:00" endTime="2026-11-01T00:43:12.4869375+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93410087-befb-4fac-96ff-2899741c0b7e" />
+    <UnitTestResult executionId="56f46560-4336-4ead-9e9d-d8ffbfdc636e" testId="e895ac56-a320-3290-507a-78e1e8355046" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.WasteNeedsAReasonAndAKnownSourceAndASession" computerName="SEMH59" duration="00:00:00.1288729" startTime="2026-11-01T00:43:22.7939605+03:00" endTime="2026-11-01T00:43:22.7939606+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56f46560-4336-4ead-9e9d-d8ffbfdc636e" />
+    <UnitTestResult executionId="3af6a467-9a20-4df7-84ba-ecf26b4c7b76" testId="5c13bce8-e005-b0e6-e58d-97d6ec488674" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingAPhysicalCountForAnUnknownStockItemIsNotFound" computerName="SEMH59" duration="00:00:00.0686242" startTime="2026-11-01T00:43:54.9412653+03:00" endTime="2026-11-01T00:43:54.9412654+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3af6a467-9a20-4df7-84ba-ecf26b4c7b76" />
+    <UnitTestResult executionId="5b44dfc6-3fa0-4c9d-af71-69622311f749" testId="25ba6097-a533-e68f-9d81-0ec930c46087" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.UnmappedProductHasAnEmptyMappingList" computerName="SEMH59" duration="00:00:00.0843407" startTime="2026-11-01T00:43:19.4741061+03:00" endTime="2026-11-01T00:43:19.4741063+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b44dfc6-3fa0-4c9d-af71-69622311f749" />
+    <UnitTestResult executionId="d30ce7d8-669d-4584-8de3-f4d1be3b5081" testId="858fd7f7-67ce-d160-b5eb-15474983b222" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RemovingANonExistentMappingIsRefusedWithNotFound" computerName="SEMH59" duration="00:00:00.0570492" startTime="2026-11-01T00:43:49.1335053+03:00" endTime="2026-11-01T00:43:49.1335054+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d30ce7d8-669d-4584-8de3-f4d1be3b5081" />
+    <UnitTestResult executionId="2bace15f-e085-4550-8ca3-42ecbbc23730" testId="5f7abc2d-35f3-d86b-f1bf-b1124c3117fb" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingWasteRemovesRealStockOnceEvenWhenTheRequestIsRepeated" computerName="SEMH59" duration="00:00:00.4273078" startTime="2026-11-01T00:43:05.8919960+03:00" endTime="2026-11-01T00:43:05.8920243+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2bace15f-e085-4550-8ca3-42ecbbc23730" />
+    <UnitTestResult executionId="c520382d-7ec7-4f31-8525-04cc17ea6252" testId="487daa93-c2b8-2cc6-52af-448e789ae8f9" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.DuplicateStockItemCodeIsRejectedWithConflict" computerName="SEMH59" duration="00:00:00.0706724" startTime="2026-11-01T00:44:01.1216697+03:00" endTime="2026-11-01T00:44:01.1216701+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c520382d-7ec7-4f31-8525-04cc17ea6252" />
+    <UnitTestResult executionId="123fd1ed-bec8-4593-b1b9-7a8fb111f1d2" testId="c8fd56d6-1ece-ff18-a8a6-3211fe20444a" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.CreatingAStockItemOverHttpPersistsIt" computerName="SEMH59" duration="00:00:00.0855395" startTime="2026-11-01T00:43:29.3123807+03:00" endTime="2026-11-01T00:43:29.3123810+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="123fd1ed-bec8-4593-b1b9-7a8fb111f1d2" />
+    <UnitTestResult executionId="3f85f889-d452-49fc-828d-10167a132fce" testId="312da607-b704-35c9-1bac-596565a8d675" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingAPhysicalCountWithoutASessionIsRejected" computerName="SEMH59" duration="00:00:00.0525782" startTime="2026-11-01T00:43:40.7228876+03:00" endTime="2026-11-01T00:43:40.7228880+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f85f889-d452-49fc-828d-10167a132fce" />
+    <UnitTestResult executionId="a22f421b-62eb-47fb-b9a5-fe743145269d" testId="fdd5ca7e-0d4f-808e-c9fb-b4778a5754d4" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.MappingAgainstAnUnknownStockItemIsRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0931556" startTime="2026-11-01T00:44:04.1825672+03:00" endTime="2026-11-01T00:44:04.1825674+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a22f421b-62eb-47fb-b9a5-fe743145269d" />
+    <UnitTestResult executionId="6702cfe3-1c96-4681-a103-2d0af78070c8" testId="d5ef3583-c2b1-de94-3948-d83545a06da7" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.AssigningAndListingAProductStockMappingComputesAvailableQuantity" computerName="SEMH59" duration="00:00:00.0879264" startTime="2026-11-01T00:43:43.4286653+03:00" endTime="2026-11-01T00:43:43.4286654+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6702cfe3-1c96-4681-a103-2d0af78070c8" />
+    <UnitTestResult executionId="3a8dd522-3177-457b-ab50-884d040f872c" testId="ec59f85b-672c-86e0-5286-f16f37949572" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.SettingAReorderPointForAnUnknownStockItemIsNotFound" computerName="SEMH59" duration="00:00:00.0561868" startTime="2026-11-01T00:43:32.0100469+03:00" endTime="2026-11-01T00:43:32.0100473+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3a8dd522-3177-457b-ab50-884d040f872c" />
+    <UnitTestResult executionId="fa055b03-93aa-4a83-a86a-3c2f1d60c140" testId="c06abf9d-17e3-5a45-5a09-a3a98152ff49" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.WasteRecordsCanBeListedBySourceReference" computerName="SEMH59" duration="00:00:00.0947233" startTime="2026-11-01T00:43:46.3649462+03:00" endTime="2026-11-01T00:43:46.3649467+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa055b03-93aa-4a83-a86a-3c2f1d60c140" />
+    <UnitTestResult executionId="a4ee3c82-5f0a-4fa1-bc90-eab5dccd48cf" testId="2ab45fda-908f-ac72-56a6-23d703440d3b" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingAPhysicalCountAppliesTheDeltaAndReturnsIt" computerName="SEMH59" duration="00:00:00.0865366" startTime="2026-11-01T00:43:35.0079196+03:00" endTime="2026-11-01T00:43:35.0079197+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4ee3c82-5f0a-4fa1-bc90-eab5dccd48cf" />
+    <UnitTestResult executionId="e8bd8101-6c3c-479f-97a6-c9faa2ee463e" testId="bd7da5fa-f942-7ca0-d0a4-896731fa82a5" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RemovingAProductStockMappingDeletesItAndOnlyIt" computerName="SEMH59" duration="00:00:00.1133194" startTime="2026-11-01T00:43:37.8783181+03:00" endTime="2026-11-01T00:43:37.8783182+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8bd8101-6c3c-479f-97a6-c9faa2ee463e" />
+    <UnitTestResult executionId="1f4e9fb3-7e06-4327-9305-fc53c2eaa1f3" testId="9be14e0b-78a6-cb69-e386-d0f68dbc73ce" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.CreatingAStockLocationOverHttpPersistsIt" computerName="SEMH59" duration="00:00:00.1024827" startTime="2026-11-01T00:43:26.1638259+03:00" endTime="2026-11-01T00:43:26.1638261+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f4e9fb3-7e06-4327-9305-fc53c2eaa1f3" />
+    <UnitTestResult executionId="d8b06a07-998e-414a-b8b2-f0ab33f37584" testId="9294eb19-5a60-e23a-037a-d3916a2aaa33" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.WasteBiggerThanTheShelfIsRefusedAndNothingChanges" computerName="SEMH59" duration="00:00:00.1003410" startTime="2026-11-01T00:43:09.1841182+03:00" endTime="2026-11-01T00:43:09.1841184+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d8b06a07-998e-414a-b8b2-f0ab33f37584" />
+    <UnitTestResult executionId="51933dc3-de56-480a-a9e7-ff78575ee60b" testId="1d3dc5c2-ba5e-9667-0438-989989da2d7c" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.SettingAndClearingAReorderPointPersistsIt" computerName="SEMH59" duration="00:00:00.1065828" startTime="2026-11-01T00:43:57.9787899+03:00" endTime="2026-11-01T00:43:57.9787900+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51933dc3-de56-480a-a9e7-ff78575ee60b" />
+    <UnitTestResult executionId="6ee73aca-98ca-44ae-90d3-68ce63e4a99b" testId="1a813689-cd61-3f73-7725-d261783a6942" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RemovingAModifierMappingThatDoesNotExistIsNotFound" computerName="SEMH59" duration="00:00:00.0705107" startTime="2026-11-01T00:43:16.2794518+03:00" endTime="2026-11-01T00:43:16.2794523+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6ee73aca-98ca-44ae-90d3-68ce63e4a99b" />
+    <UnitTestResult executionId="799207fe-228d-4336-81d2-5cca7e22df27" testId="b1a0f212-eae5-660b-1714-3069705683bf" testName="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0598351" startTime="2026-11-01T00:43:51.8218917+03:00" endTime="2026-11-01T00:43:51.8218918+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="799207fe-228d-4336-81d2-5cca7e22df27" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.WasteBiggerThanTheShelfIsRefusedAndNothingChanges" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="9294eb19-5a60-e23a-037a-d3916a2aaa33">
+      <Execution id="d8b06a07-998e-414a-b8b2-f0ab33f37584" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="WasteBiggerThanTheShelfIsRefusedAndNothingChanges" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.CreatingAStockItemOverHttpPersistsIt" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="c8fd56d6-1ece-ff18-a8a6-3211fe20444a">
+      <Execution id="123fd1ed-bec8-4593-b1b9-7a8fb111f1d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="CreatingAStockItemOverHttpPersistsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingAPhysicalCountForAnUnknownStockItemIsNotFound" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="5c13bce8-e005-b0e6-e58d-97d6ec488674">
+      <Execution id="3af6a467-9a20-4df7-84ba-ecf26b4c7b76" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RecordingAPhysicalCountForAnUnknownStockItemIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="b1a0f212-eae5-660b-1714-3069705683bf">
+      <Execution id="799207fe-228d-4336-81d2-5cca7e22df27" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingAPhysicalCountWithoutASessionIsRejected" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="312da607-b704-35c9-1bac-596565a8d675">
+      <Execution id="3f85f889-d452-49fc-828d-10167a132fce" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RecordingAPhysicalCountWithoutASessionIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.WasteNeedsAReasonAndAKnownSourceAndASession" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="e895ac56-a320-3290-507a-78e1e8355046">
+      <Execution id="56f46560-4336-4ead-9e9d-d8ffbfdc636e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="WasteNeedsAReasonAndAKnownSourceAndASession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.MappingAgainstAnUnknownStockItemIsRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="fdd5ca7e-0d4f-808e-c9fb-b4778a5754d4">
+      <Execution id="a22f421b-62eb-47fb-b9a5-fe743145269d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="MappingAgainstAnUnknownStockItemIsRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.UnmappedProductHasAnEmptyMappingList" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="25ba6097-a533-e68f-9d81-0ec930c46087">
+      <Execution id="5b44dfc6-3fa0-4c9d-af71-69622311f749" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="UnmappedProductHasAnEmptyMappingList" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.SettingAReorderPointForAnUnknownStockItemIsNotFound" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="ec59f85b-672c-86e0-5286-f16f37949572">
+      <Execution id="3a8dd522-3177-457b-ab50-884d040f872c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="SettingAReorderPointForAnUnknownStockItemIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RemovingANonExistentMappingIsRefusedWithNotFound" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="858fd7f7-67ce-d160-b5eb-15474983b222">
+      <Execution id="d30ce7d8-669d-4584-8de3-f4d1be3b5081" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RemovingANonExistentMappingIsRefusedWithNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingAPhysicalCountAppliesTheDeltaAndReturnsIt" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="2ab45fda-908f-ac72-56a6-23d703440d3b">
+      <Execution id="a4ee3c82-5f0a-4fa1-bc90-eab5dccd48cf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RecordingAPhysicalCountAppliesTheDeltaAndReturnsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.DuplicateStockItemCodeIsRejectedWithConflict" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="487daa93-c2b8-2cc6-52af-448e789ae8f9">
+      <Execution id="c520382d-7ec7-4f31-8525-04cc17ea6252" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="DuplicateStockItemCodeIsRejectedWithConflict" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.WasteRecordsCanBeListedBySourceReference" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="c06abf9d-17e3-5a45-5a09-a3a98152ff49">
+      <Execution id="fa055b03-93aa-4a83-a86a-3c2f1d60c140" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="WasteRecordsCanBeListedBySourceReference" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.SettingAndClearingAReorderPointPersistsIt" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="1d3dc5c2-ba5e-9667-0438-989989da2d7c">
+      <Execution id="51933dc3-de56-480a-a9e7-ff78575ee60b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="SettingAndClearingAReorderPointPersistsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.AModifierStockMappingCanBeAssignedListedAndRemoved" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="81fe108f-4cfe-81b0-cb6d-991cecb57347">
+      <Execution id="93410087-befb-4fac-96ff-2899741c0b7e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="AModifierStockMappingCanBeAssignedListedAndRemoved" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RemovingAProductStockMappingDeletesItAndOnlyIt" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="bd7da5fa-f942-7ca0-d0a4-896731fa82a5">
+      <Execution id="e8bd8101-6c3c-479f-97a6-c9faa2ee463e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RemovingAProductStockMappingDeletesItAndOnlyIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.CreatingAStockLocationOverHttpPersistsIt" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="9be14e0b-78a6-cb69-e386-d0f68dbc73ce">
+      <Execution id="1f4e9fb3-7e06-4327-9305-fc53c2eaa1f3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="CreatingAStockLocationOverHttpPersistsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RemovingAModifierMappingThatDoesNotExistIsNotFound" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="1a813689-cd61-3f73-7725-d261783a6942">
+      <Execution id="6ee73aca-98ca-44ae-90d3-68ce63e4a99b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RemovingAModifierMappingThatDoesNotExistIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.AssigningAndListingAProductStockMappingComputesAvailableQuantity" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="d5ef3583-c2b1-de94-3948-d83545a06da7">
+      <Execution id="6702cfe3-1c96-4681-a103-2d0af78070c8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="AssigningAndListingAProductStockMappingComputesAvailableQuantity" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.RecordingWasteRemovesRealStockOnceEvenWhenTheRequestIsRepeated" storage="d:\project\alkaros\tests\host\experience\inventory\bin\debug\net8.0\alkaros.host.experience.inventory.tests.dll" id="5f7abc2d-35f3-d86b-f1bf-b1124c3117fb">
+      <Execution id="2bace15f-e085-4550-8ca3-42ecbbc23730" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests" name="RecordingWasteRemovesRealStockOnceEvenWhenTheRequestIsRepeated" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="81fe108f-4cfe-81b0-cb6d-991cecb57347" executionId="93410087-befb-4fac-96ff-2899741c0b7e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e895ac56-a320-3290-507a-78e1e8355046" executionId="56f46560-4336-4ead-9e9d-d8ffbfdc636e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5c13bce8-e005-b0e6-e58d-97d6ec488674" executionId="3af6a467-9a20-4df7-84ba-ecf26b4c7b76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25ba6097-a533-e68f-9d81-0ec930c46087" executionId="5b44dfc6-3fa0-4c9d-af71-69622311f749" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="858fd7f7-67ce-d160-b5eb-15474983b222" executionId="d30ce7d8-669d-4584-8de3-f4d1be3b5081" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f7abc2d-35f3-d86b-f1bf-b1124c3117fb" executionId="2bace15f-e085-4550-8ca3-42ecbbc23730" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="487daa93-c2b8-2cc6-52af-448e789ae8f9" executionId="c520382d-7ec7-4f31-8525-04cc17ea6252" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8fd56d6-1ece-ff18-a8a6-3211fe20444a" executionId="123fd1ed-bec8-4593-b1b9-7a8fb111f1d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="312da607-b704-35c9-1bac-596565a8d675" executionId="3f85f889-d452-49fc-828d-10167a132fce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdd5ca7e-0d4f-808e-c9fb-b4778a5754d4" executionId="a22f421b-62eb-47fb-b9a5-fe743145269d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5ef3583-c2b1-de94-3948-d83545a06da7" executionId="6702cfe3-1c96-4681-a103-2d0af78070c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec59f85b-672c-86e0-5286-f16f37949572" executionId="3a8dd522-3177-457b-ab50-884d040f872c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c06abf9d-17e3-5a45-5a09-a3a98152ff49" executionId="fa055b03-93aa-4a83-a86a-3c2f1d60c140" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ab45fda-908f-ac72-56a6-23d703440d3b" executionId="a4ee3c82-5f0a-4fa1-bc90-eab5dccd48cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bd7da5fa-f942-7ca0-d0a4-896731fa82a5" executionId="e8bd8101-6c3c-479f-97a6-c9faa2ee463e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9be14e0b-78a6-cb69-e386-d0f68dbc73ce" executionId="1f4e9fb3-7e06-4327-9305-fc53c2eaa1f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9294eb19-5a60-e23a-037a-d3916a2aaa33" executionId="d8b06a07-998e-414a-b8b2-f0ab33f37584" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d3dc5c2-ba5e-9667-0438-989989da2d7c" executionId="51933dc3-de56-480a-a9e7-ff78575ee60b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a813689-cd61-3f73-7725-d261783a6942" executionId="6ee73aca-98ca-44ae-90d3-68ce63e4a99b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b1a0f212-eae5-660b-1714-3069705683bf" executionId="799207fe-228d-4336-81d2-5cca7e22df27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="20" executed="20" passed="20" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.65]   Discovering: ALKAROS.Host.Experience.Inventory.Tests&#xD;
+[xUnit.net 00:00:00.69]   Discovered:  ALKAROS.Host.Experience.Inventory.Tests&#xD;
+[xUnit.net 00:00:00.69]   Starting:    ALKAROS.Host.Experience.Inventory.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50442&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50442/api/v1/management/inventory/stock-items/d2f90acd-1100-4208-b6e5-300a65f483f1/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecordWasteResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50442/api/v1/management/inventory/stock-items/d2f90acd-1100-4208-b6e5-300a65f483f1/waste - 200 - application/json;+charset=utf-8 226.4381ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50442/api/v1/management/inventory/stock-items/d2f90acd-1100-4208-b6e5-300a65f483f1/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecordWasteResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50442/api/v1/management/inventory/stock-items/d2f90acd-1100-4208-b6e5-300a65f483f1/waste - 200 - application/json;+charset=utf-8 16.1255ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54256&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54256/api/v1/management/inventory/stock-items/d2c8130d-2808-4713-a6ce-788387c04b2a/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54256/api/v1/management/inventory/stock-items/d2c8130d-2808-4713-a6ce-788387c04b2a/waste - 409 - application/json;+charset=utf-8 79.7048ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53065&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ModifierStockMappingV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings - 200 - application/json;+charset=utf-8 73.6532ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings - 200 - application/json;+charset=utf-8 90.7022ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings/39a03f0a-5ff8-414d-b50a-247904dd3ab1 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings/39a03f0a-5ff8-414d-b50a-247904dd3ab1 - 204 - - 12.6507ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53065/api/v1/management/inventory/modifiers/4716e574-d691-4ba1-affd-62ec6b58c791/stock-mappings - 200 - application/json;+charset=utf-8 7.5293ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53348&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:53348/api/v1/management/inventory/modifiers/5a0b4ae1-950b-48b5-a174-041fd5c755e4/stock-mappings/6ace94a5-0838-42b8-ae39-174cdb26fcad - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:53348/api/v1/management/inventory/modifiers/5a0b4ae1-950b-48b5-a174-041fd5c755e4/stock-mappings/6ace94a5-0838-42b8-ae39-174cdb26fcad - 404 - application/json;+charset=utf-8 66.9770ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59258&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:59258/api/v1/management/inventory/products/4ed7546b-1b5a-404e-867d-d4a32d880ab5/stock-mappings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:59258/api/v1/management/inventory/products/4ed7546b-1b5a-404e-867d-d4a32d880ab5/stock-mappings - 200 - application/json;+charset=utf-8 79.0817ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:64968&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64968/api/v1/management/inventory/stock-items/2db5b190-ba77-4649-93f8-75269988d678/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64968/api/v1/management/inventory/stock-items/2db5b190-ba77-4649-93f8-75269988d678/waste - 400 - application/json;+charset=utf-8 84.8671ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64968/api/v1/management/inventory/stock-items/2db5b190-ba77-4649-93f8-75269988d678/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64968/api/v1/management/inventory/stock-items/2db5b190-ba77-4649-93f8-75269988d678/waste - 400 - application/json;+charset=utf-8 11.1731ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64968/api/v1/management/inventory/stock-items/2db5b190-ba77-4649-93f8-75269988d678/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64968/api/v1/management/inventory/stock-items/2db5b190-ba77-4649-93f8-75269988d678/waste - 401 - application/json;+charset=utf-8 9.1140ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:61384&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:61384/api/v1/management/inventory/stock-locations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'StockLocationV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:61384/api/v1/management/inventory/stock-locations - 201 - application/json;+charset=utf-8 76.6116ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:61384/api/v1/management/inventory/stock-locations?activeOnly=true - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'StockLocationV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:61384/api/v1/management/inventory/stock-locations?activeOnly=true - 200 - application/json;+charset=utf-8 16.7650ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53142&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53142/api/v1/management/inventory/stock-items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'StockItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53142/api/v1/management/inventory/stock-items - 201 - application/json;+charset=utf-8 62.0821ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53142/api/v1/management/inventory/stock-items?activeOnly=true - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'StockItemV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53142/api/v1/management/inventory/stock-items?activeOnly=true - 200 - application/json;+charset=utf-8 10.3830ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54795&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:54795/api/v1/management/inventory/stock-items/3c626da8-eb0b-44a3-a14b-03d9ee21e21b/reorder-point - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:54795/api/v1/management/inventory/stock-items/3c626da8-eb0b-44a3-a14b-03d9ee21e21b/reorder-point - 404 - application/json;+charset=utf-8 50.9338ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57105&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57105/api/v1/management/inventory/stock-items/f6732fac-6d3c-4dec-ba27-c95ae1d1a874/physical-counts - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PhysicalCountResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57105/api/v1/management/inventory/stock-items/f6732fac-6d3c-4dec-ba27-c95ae1d1a874/physical-counts - 200 - application/json;+charset=utf-8 67.8107ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52184&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductStockMapping' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings - 200 - application/json;+charset=utf-8 65.2089ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductStockMapping' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings - 200 - application/json;+charset=utf-8 9.1553ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings/9225cf6d-77e9-4499-b62f-fc1685453108 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/inventory/products/{productId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/inventory/products/{productId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings/9225cf6d-77e9-4499-b62f-fc1685453108 - 204 - - 12.2106ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52184/api/v1/management/inventory/products/3036b1b7-07f5-4835-8701-34c3263d72b4/stock-mappings - 200 - application/json;+charset=utf-8 8.1941ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57226&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57226/api/v1/management/inventory/stock-items/467413a4-e7d5-41c0-a2d8-8f33af9a7ea7/physical-counts - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57226/api/v1/management/inventory/stock-items/467413a4-e7d5-41c0-a2d8-8f33af9a7ea7/physical-counts - 401 - application/json;+charset=utf-8 43.4257ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:65250&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:65250/api/v1/management/inventory/products/0ae0f0f6-ad8b-4416-b8ef-4955e01774ff/stock-mappings - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductStockMapping' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:65250/api/v1/management/inventory/products/0ae0f0f6-ad8b-4416-b8ef-4955e01774ff/stock-mappings - 200 - application/json;+charset=utf-8 60.5719ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:65250/api/v1/management/inventory/products/0ae0f0f6-ad8b-4416-b8ef-4955e01774ff/stock-mappings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:65250/api/v1/management/inventory/products/0ae0f0f6-ad8b-4416-b8ef-4955e01774ff/stock-mappings - 200 - application/json;+charset=utf-8 8.3111ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57560&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57560/api/v1/management/inventory/stock-items/02c082bb-ed82-4ef0-a205-9debd6edea98/waste - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecordWasteResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57560/api/v1/management/inventory/stock-items/02c082bb-ed82-4ef0-a205-9debd6edea98/waste - 200 - application/json;+charset=utf-8 66.8200ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57560/api/v1/management/inventory/waste?wasteSource=Production&amp;sourceReferenceId=42b011c9-0021-4d61-8ed5-6088f95c900f - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/waste'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'WasteRecordV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/waste'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57560/api/v1/management/inventory/waste?wasteSource=Production&amp;sourceReferenceId=42b011c9-0021-4d61-8ed5-6088f95c900f - 200 - application/json;+charset=utf-8 12.4297ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60268&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:60268/api/v1/management/inventory/products/e7ae1441-d0e6-475f-9697-e4f4dab70623/stock-mappings/51ff6045-c4ab-498b-b8b2-8957a9938f53 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/inventory/products/{productId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/inventory/products/{productId:guid}/stock-mappings/{stockItemId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:60268/api/v1/management/inventory/products/e7ae1441-d0e6-475f-9697-e4f4dab70623/stock-mappings/51ff6045-c4ab-498b-b8b2-8957a9938f53 - 404 - application/json;+charset=utf-8 53.8191ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51553&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51553/api/v1/management/inventory/stock-locations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51553/api/v1/management/inventory/stock-locations - 401 - application/json;+charset=utf-8 41.1706ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51553/api/v1/management/inventory/stock-locations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-locations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51553/api/v1/management/inventory/stock-locations - 403 - application/json;+charset=utf-8 11.6290ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53406&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53406/api/v1/management/inventory/stock-items/5012c08d-b2ad-49b6-9a24-809659adbb21/physical-counts - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53406/api/v1/management/inventory/stock-items/5012c08d-b2ad-49b6-9a24-809659adbb21/physical-counts - 404 - application/json;+charset=utf-8 61.3590ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54080/api/v1/management/inventory/stock-items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'StockItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54080/api/v1/management/inventory/stock-items - 201 - application/json;+charset=utf-8 69.7011ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:54080/api/v1/management/inventory/stock-items/eee11150-35d8-4423-bd3c-bca333525179/reorder-point - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'StockItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:54080/api/v1/management/inventory/stock-items/eee11150-35d8-4423-bd3c-bca333525179/reorder-point - 200 - application/json;+charset=utf-8 15.2567ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:54080/api/v1/management/inventory/stock-items/eee11150-35d8-4423-bd3c-bca333525179/reorder-point - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'StockItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:54080/api/v1/management/inventory/stock-items/eee11150-35d8-4423-bd3c-bca333525179/reorder-point - 200 - application/json;+charset=utf-8 15.6079ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58657&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58657/api/v1/management/inventory/stock-items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'StockItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58657/api/v1/management/inventory/stock-items - 201 - application/json;+charset=utf-8 58.7335ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58657/api/v1/management/inventory/stock-items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/stock-items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58657/api/v1/management/inventory/stock-items - 409 - application/json;+charset=utf-8 8.2358ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:49651&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:49651/api/v1/management/inventory/products/987d9565-755e-48b2-a1fb-649327474fdd/stock-mappings - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'StockMasterApiErrorEnvelopeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:49651/api/v1/management/inventory/products/987d9565-755e-48b2-a1fb-649327474fdd/stock-mappings - 404 - application/json;+charset=utf-8 84.3386ms&#xD;
+[xUnit.net 00:01:03.77]   Finished:    ALKAROS.Host.Experience.Inventory.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

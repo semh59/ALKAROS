@@ -10,6 +10,57 @@ namespace ALKAROS.Inventory.CrossChannelReservation;
 /// </summary>
 public sealed class PostgresReservationAwareConsumptionGuard : IReservationAwareConsumptionGuard
 {
+    public async Task RecordDirectSaleAsync(
+        DirectSale sale,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sale);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        if (new[] { sale.OrderId, sale.OrderItemId, sale.StockItemId, sale.StockLocationId, sale.DailyMenuItemId, sale.ActorId }
+                .Contains(Guid.Empty)
+            || sale.StockQuantity <= 0m
+            || sale.PortionCount <= 0m)
+            throw new InvalidCrossChannelReservationException("A direct sale needs its ids, a stock quantity and a portion count above zero.");
+
+        var reservationId = Guid.NewGuid();
+        var now = DateTimeOffset.UtcNow;
+        var metadata = DailyMenuPortionEvents.BuildMetadata(
+            sale.Channel, sale.ChannelOrderReference, sale.DailyMenuItemId, sale.PortionCount);
+
+        const string sql = @"
+            INSERT INTO inventory.portion_reservations (
+                id, order_id, order_item_id, stock_item_id, stock_location_id, quantity, unit_code, status, version,
+                idempotency_key, reserved_at, transitioned_at, transition_reason, created_by, transitioned_by, metadata
+            )
+            SELECT $1::uuid, $2::uuid, $3::uuid, $4::uuid, $5::uuid, $6::numeric, $7::varchar, 'Consumed', 1,
+                   $8::varchar, $9::timestamptz, $9::timestamptz, 'Consumed on direct sale', $10::uuid, $10::uuid, $11::jsonb
+            WHERE NOT EXISTS (SELECT 1 FROM inventory.portion_reservations WHERE order_item_id = $3::uuid)
+            RETURNING id;";
+
+        await using (var cmd = new NpgsqlCommand(sql, connection, transaction))
+        {
+            cmd.Parameters.AddWithValue(reservationId);
+            cmd.Parameters.AddWithValue(sale.OrderId);
+            cmd.Parameters.AddWithValue(sale.OrderItemId);
+            cmd.Parameters.AddWithValue(sale.StockItemId);
+            cmd.Parameters.AddWithValue(sale.StockLocationId);
+            cmd.Parameters.AddWithValue(sale.StockQuantity);
+            cmd.Parameters.AddWithValue(sale.UnitCode);
+            cmd.Parameters.AddWithValue($"dsale:{sale.OrderItemId:N}");
+            cmd.Parameters.AddWithValue(now);
+            cmd.Parameters.AddWithValue(sale.ActorId);
+            cmd.Parameters.AddWithValue(metadata);
+            if (await cmd.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is null)
+                return;
+        }
+
+        await DailyMenuPortionEvents.PublishAsync(
+            reservationId, "Consumed", metadata, now, connection, transaction, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<bool> ConvertOwnHoldsAndCheckAvailableAsync(
         Guid orderItemId,
         Guid stockItemId,

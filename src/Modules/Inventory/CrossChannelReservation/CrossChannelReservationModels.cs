@@ -6,7 +6,8 @@ public enum ReservationChannel
     Cashier,
     Waiter,
     Qr,
-    Online
+    Online,
+    Nfc
 }
 
 public enum CrossChannelReservationOutcome
@@ -53,6 +54,24 @@ public sealed record CrossChannelReservationRequest(
     Guid OrderId,
     Guid ActorId,
     IReadOnlyList<CrossChannelReservationLine> Lines);
+
+/// <summary>
+/// A sale that consumed stock directly, with no hold taken first (waiter, cashier and NFC orders), of an order
+/// item sold from a daily menu item. The stock side is its first stock mapping; the portion count is the ordered
+/// quantity.
+/// </summary>
+public sealed record DirectSale(
+    Guid OrderId,
+    Guid OrderItemId,
+    ReservationChannel Channel,
+    string ChannelOrderReference,
+    Guid StockItemId,
+    Guid StockLocationId,
+    decimal StockQuantity,
+    string UnitCode,
+    Guid DailyMenuItemId,
+    decimal PortionCount,
+    Guid ActorId);
 
 /// <summary>A hold on one stock item for one order item.</summary>
 public sealed record CrossChannelHold(

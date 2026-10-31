@@ -1,0 +1,579 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e3ac8076-e20b-409c-a0fc-151d2cd4f665" name="semih@SEMH59 2026-11-01 00:42:21" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:42:21.3181629+03:00" queuing="2026-11-01T00:42:21.3181632+03:00" start="2026-11-01T00:42:11.6887463+03:00" finish="2026-11-01T00:42:41.7169126+03:00" />
+  <TestSettings name="default" id="0a8608d9-2aba-4203-9048-a0f5e5909af6">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_42_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ea18b617-093f-4d47-8727-66367633bda1" testId="576b888a-fe1c-37b3-91d5-3c71cbdee5de" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.ManagerCanRunTheFullDailyMenuLifecycleOverHttp" computerName="SEMH59" duration="00:00:00.3295618" startTime="2026-11-01T00:42:29.0306253+03:00" endTime="2026-11-01T00:42:29.0306255+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea18b617-093f-4d47-8727-66367633bda1" />
+    <UnitTestResult executionId="d3fdd5e8-85c6-4b7a-bba8-84a0a49ea83a" testId="0f954282-9d09-5be8-cc38-478ab118f945" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.CounterRepairIsForMenuManagersAndAnUnknownMenuIsNotFound" computerName="SEMH59" duration="00:00:00.2358806" startTime="2026-11-01T00:42:25.1090683+03:00" endTime="2026-11-01T00:42:25.1090684+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3fdd5e8-85c6-4b7a-bba8-84a0a49ea83a" />
+    <UnitTestResult executionId="79f44b79-b8b9-4516-809d-624240e1d7c6" testId="88c7b47d-bb08-f129-9750-697cfc02b7e8" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0937983" startTime="2026-11-01T00:42:41.6354253+03:00" endTime="2026-11-01T00:42:41.6354269+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79f44b79-b8b9-4516-809d-624240e1d7c6" />
+    <UnitTestResult executionId="f7b67e8d-d9c0-4465-b8c1-584d10eec6a0" testId="844b784c-8773-73ab-230b-2eb03abb6007" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.ManagerCanDetectAndRepairCounterDriftOverHttp" computerName="SEMH59" duration="00:00:00.1745226" startTime="2026-11-01T00:42:38.7178473+03:00" endTime="2026-11-01T00:42:38.7178476+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7b67e8d-d9c0-4465-b8c1-584d10eec6a0" />
+    <UnitTestResult executionId="9c11f426-3ff4-4f65-b495-6b43b07519b4" testId="8cc067a1-4368-69a6-1dde-37119b7aee2b" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.ManagerCanCreateComposeAndReorderAStaticMenuOverHttp" computerName="SEMH59" duration="00:00:01.7026178" startTime="2026-11-01T00:42:21.2733685+03:00" endTime="2026-11-01T00:42:21.2733977+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c11f426-3ff4-4f65-b495-6b43b07519b4" />
+    <UnitTestResult executionId="084bcd5b-3de2-4787-8099-8926b66fd93f" testId="1c1e328e-f81d-0c0b-f334-83a71fd61d50" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.CreatingAMenuWithADuplicateCodeIsRejected" computerName="SEMH59" duration="00:00:00.0849944" startTime="2026-11-01T00:42:32.1299222+03:00" endTime="2026-11-01T00:42:32.1299225+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="084bcd5b-3de2-4787-8099-8926b66fd93f" />
+    <UnitTestResult executionId="98d79024-5600-412c-82d8-300e9fc16b81" testId="92a00eee-485f-be99-5c4d-d574c3f452f5" testName="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.UnknownDailyMenuByDateReturnsNotFound" computerName="SEMH59" duration="00:00:00.1264905" startTime="2026-11-01T00:42:35.4872408+03:00" endTime="2026-11-01T00:42:35.4872410+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98d79024-5600-412c-82d8-300e9fc16b81" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="88c7b47d-bb08-f129-9750-697cfc02b7e8">
+      <Execution id="79f44b79-b8b9-4516-809d-624240e1d7c6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.ManagerCanDetectAndRepairCounterDriftOverHttp" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="844b784c-8773-73ab-230b-2eb03abb6007">
+      <Execution id="f7b67e8d-d9c0-4465-b8c1-584d10eec6a0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="ManagerCanDetectAndRepairCounterDriftOverHttp" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.CounterRepairIsForMenuManagersAndAnUnknownMenuIsNotFound" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="0f954282-9d09-5be8-cc38-478ab118f945">
+      <Execution id="d3fdd5e8-85c6-4b7a-bba8-84a0a49ea83a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="CounterRepairIsForMenuManagersAndAnUnknownMenuIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.CreatingAMenuWithADuplicateCodeIsRejected" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="1c1e328e-f81d-0c0b-f334-83a71fd61d50">
+      <Execution id="084bcd5b-3de2-4787-8099-8926b66fd93f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="CreatingAMenuWithADuplicateCodeIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.ManagerCanCreateComposeAndReorderAStaticMenuOverHttp" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="8cc067a1-4368-69a6-1dde-37119b7aee2b">
+      <Execution id="9c11f426-3ff4-4f65-b495-6b43b07519b4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="ManagerCanCreateComposeAndReorderAStaticMenuOverHttp" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.UnknownDailyMenuByDateReturnsNotFound" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="92a00eee-485f-be99-5c4d-d574c3f452f5">
+      <Execution id="98d79024-5600-412c-82d8-300e9fc16b81" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="UnknownDailyMenuByDateReturnsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests.ManagerCanRunTheFullDailyMenuLifecycleOverHttp" storage="d:\project\alkaros\tests\host\experience\menu\bin\debug\net8.0\alkaros.host.experience.menu.tests.dll" id="576b888a-fe1c-37b3-91d5-3c71cbdee5de">
+      <Execution id="ea18b617-093f-4d47-8727-66367633bda1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0\ALKAROS.Host.Experience.Menu.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Menu.Tests.MenuManagementHttpTests" name="ManagerCanRunTheFullDailyMenuLifecycleOverHttp" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="576b888a-fe1c-37b3-91d5-3c71cbdee5de" executionId="ea18b617-093f-4d47-8727-66367633bda1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f954282-9d09-5be8-cc38-478ab118f945" executionId="d3fdd5e8-85c6-4b7a-bba8-84a0a49ea83a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88c7b47d-bb08-f129-9750-697cfc02b7e8" executionId="79f44b79-b8b9-4516-809d-624240e1d7c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="844b784c-8773-73ab-230b-2eb03abb6007" executionId="f7b67e8d-d9c0-4465-b8c1-584d10eec6a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8cc067a1-4368-69a6-1dde-37119b7aee2b" executionId="9c11f426-3ff4-4f65-b495-6b43b07519b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c1e328e-f81d-0c0b-f334-83a71fd61d50" executionId="084bcd5b-3de2-4787-8099-8926b66fd93f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92a00eee-485f-be99-5c4d-d574c3f452f5" executionId="98d79024-5600-412c-82d8-300e9fc16b81" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.90]   Discovering: ALKAROS.Host.Experience.Menu.Tests&#xD;
+[xUnit.net 00:00:00.93]   Discovered:  ALKAROS.Host.Experience.Menu.Tests&#xD;
+[xUnit.net 00:00:00.94]   Starting:    ALKAROS.Host.Experience.Menu.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63007&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'MenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus - 201 - application/json;+charset=utf-8 1328.0133ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9/items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'MenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9/items - 201 - application/json;+charset=utf-8 37.6599ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9/items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'MenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9/items - 201 - application/json;+charset=utf-8 20.0816ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/menus/{menuId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'MenuCompositionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/menus/{menuId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9 - 200 - application/json;+charset=utf-8 92.5109ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9/items/reorder - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items/reorder'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items/reorder'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9/items/reorder - 204 - - 35.5535ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9 - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/menus/{menuId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'MenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/menus/{menuId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:63007/api/v1/management/menus-and-specials/menus/9e5a5471-ac78-4680-99e1-34a1c821f9b9 - 200 - application/json;+charset=utf-8 16.3594ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60851&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/drift - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Menu.MenuManagementUnauthorizedException: A valid menu manager session is required.&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 297&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 326&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/drift - 401 - application/json;+charset=utf-8 135.8029ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/rebuild - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Menu.MenuManagementUnauthorizedException: A valid menu manager session is required.&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 297&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 326&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/rebuild - 401 - application/json;+charset=utf-8 8.1824ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/drift - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '31fcfcff-2d85-48e8-8f13-984b405576d1' denied permission 'menu.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 329&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/drift - 403 - application/json;+charset=utf-8 33.6977ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/rebuild - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '31fcfcff-2d85-48e8-8f13-984b405576d1' denied permission 'menu.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 329&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/rebuild - 403 - application/json;+charset=utf-8 12.3365ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/drift - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Menu.DailyMenuLifecycle.DailyMenuNotFoundException: Daily menu with ID 'c6f76717-2afb-4885-b5f1-c3343e5476c3' was not found.&#xD;
+         at ALKAROS.Menu.DailyMenuLifecycle.DailyMenuService.GetDailyMenuDetailsAsync(Guid dailyMenuId, Boolean activeOnly, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\DailyMenuLifecycle\DailyMenuService.cs:line 233&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagementEndpoints.&lt;&gt;c.&lt;&lt;MapMenuManagement&gt;b__3_16&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 265&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 334&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/drift - 404 - application/json;+charset=utf-8 25.5111ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/rebuild - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Menu.DailyMenuLifecycle.DailyMenuNotFoundException: Daily menu with ID 'c6f76717-2afb-4885-b5f1-c3343e5476c3' was not found.&#xD;
+         at ALKAROS.Menu.DailyMenuLifecycle.DailyMenuService.GetDailyMenuDetailsAsync(Guid dailyMenuId, Boolean activeOnly, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\DailyMenuLifecycle\DailyMenuService.cs:line 233&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagementEndpoints.&lt;&gt;c.&lt;&lt;MapMenuManagement&gt;b__3_17&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 275&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 334&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60851/api/v1/management/menus-and-specials/daily-menus/c6f76717-2afb-4885-b5f1-c3343e5476c3/counters/rebuild - 404 - application/json;+charset=utf-8 10.1638ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54047&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'DailyMenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus - 201 - application/json;+charset=utf-8 95.3679ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Menu.DailyMenuLifecycle.DuplicateDailyMenuBusinessDateException: A daily menu already exists for business date '2029-06-28'. Exactly one menu per service day is allowed.&#xD;
+         at ALKAROS.Menu.DailyMenuLifecycle.DailyMenuService.CreateDailyMenuAsync(CreateDailyMenuCommand command, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\DailyMenuLifecycle\DailyMenuService.cs:line 38&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagementEndpoints.&lt;&gt;c.&lt;&lt;MapMenuManagement&gt;b__3_9&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 171&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 334&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus - 409 - application/json;+charset=utf-8 14.2580ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/open'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/open'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/open - 200 - application/json;+charset=utf-8 23.5245ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'DailyMenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/items - 201 - application/json;+charset=utf-8 33.3684ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/items/154afe47-2e05-4ce2-96c3-70f7a8ba5b6c/price - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/price'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/price'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/items/154afe47-2e05-4ce2-96c3-70f7a8ba5b6c/price - 200 - application/json;+charset=utf-8 26.6476ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/items/154afe47-2e05-4ce2-96c3-70f7a8ba5b6c/planned-portions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/planned-portions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/planned-portions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/items/154afe47-2e05-4ce2-96c3-70f7a8ba5b6c/planned-portions - 200 - application/json;+charset=utf-8 21.6673ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/items/154afe47-2e05-4ce2-96c3-70f7a8ba5b6c/status - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/status'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/status'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/items/154afe47-2e05-4ce2-96c3-70f7a8ba5b6c/status - 200 - application/json;+charset=utf-8 21.4535ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/by-date/2029-06-28 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/by-date/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuDetailsV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/by-date/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/by-date/2029-06-28 - 200 - application/json;+charset=utf-8 18.9167ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/close - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/close'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/close'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/close - 200 - application/json;+charset=utf-8 16.4337ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Menu.DailyMenuLifecycle.DailyMenuClosedException: Daily menu for date '2029-06-28' is closed and cannot accept modifications or new operational items.&#xD;
+         at ALKAROS.Menu.DailyMenuLifecycle.DailyMenu.AssertModifiable() in D:\PROJECT\ALKAROS\src\Modules\Menu\DailyMenuLifecycle\DailyMenu.cs:line 88&#xD;
+         at ALKAROS.Menu.DailyMenuLifecycle.DailyMenuService.AddDailyMenuItemAsync(AddDailyMenuItemCommand command, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\DailyMenuLifecycle\DailyMenuService.cs:line 94&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagementEndpoints.&lt;&gt;c.&lt;&lt;MapMenuManagement&gt;b__3_12&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 209&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 334&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54047/api/v1/management/menus-and-specials/daily-menus/9874869f-2c22-48e9-ad8e-c5632f92050e/items - 409 - application/json;+charset=utf-8 18.4143ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56763&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56763/api/v1/management/menus-and-specials/menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'MenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56763/api/v1/management/menus-and-specials/menus - 201 - application/json;+charset=utf-8 71.7613ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56763/api/v1/management/menus-and-specials/menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Menu.StaticMenu.DuplicateMenuCodeException: A menu with code 'DUP-310e9643' already exists.&#xD;
+         at ALKAROS.Menu.StaticMenu.StaticMenuService.CreateMenuAsync(CreateMenuCommand command, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\StaticMenu\StaticMenuService.cs:line 31&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagementEndpoints.&lt;&gt;c.&lt;&lt;MapMenuManagement&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 81&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 334&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56763/api/v1/management/menus-and-specials/menus - 409 - application/json;+charset=utf-8 9.4140ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55611&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55611/api/v1/management/menus-and-specials/daily-menus/by-date/2076-10-31 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/by-date/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/by-date/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55611/api/v1/management/menus-and-specials/daily-menus/by-date/2076-10-31 - 404 - application/json;+charset=utf-8 123.4303ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50651&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'DailyMenuV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus - 201 - application/json;+charset=utf-8 77.6041ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'DailyMenuItemV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/items - 201 - application/json;+charset=utf-8 15.5600ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/counters/drift - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuCounterDriftV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/counters/drift - 200 - application/json;+charset=utf-8 25.6579ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/counters/rebuild - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuCounterRebuildV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/counters/rebuild - 200 - application/json;+charset=utf-8 25.8081ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/counters/drift - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'DailyMenuCounterDriftV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/drift'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50651/api/v1/management/menus-and-specials/daily-menus/5985dd74-2d19-4c38-b66e-9b81975944cb/counters/drift - 200 - application/json;+charset=utf-8 8.7325ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53069&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Menu\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53069/api/v1/management/menus-and-specials/menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Menu.MenuManagementUnauthorizedException: A valid menu manager session is required.&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 297&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 326&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53069/api/v1/management/menus-and-specials/menus - 401 - application/json;+charset=utf-8 71.8584ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53069/api/v1/management/menus-and-specials/menus - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/menus-and-specials/menus'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '31fcfcff-2d85-48e8-8f13-984b405576d1' denied permission 'menu.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Menu.MenuManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Menu\MenuManagementEndpoints.cs:line 329&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53069/api/v1/management/menus-and-specials/menus - 403 - application/json;+charset=utf-8 10.3314ms&#xD;
+[xUnit.net 00:00:27.68]   Finished:    ALKAROS.Host.Experience.Menu.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

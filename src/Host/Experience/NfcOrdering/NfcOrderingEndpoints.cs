@@ -7,6 +7,7 @@ using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Measurements;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using ALKAROS.Recipes.CatalogMapping;
@@ -74,6 +75,8 @@ public static class NfcOrderingEndpoints
         services.TryAddSingleton<IUnitConverter, UnitConverter>();
         // V12-STK-001: consumption respects every other order's holds.
         services.TryAddSingleton<IReservationAwareConsumptionGuard, PostgresReservationAwareConsumptionGuard>();
+        services.TryAddSingleton<IBusinessDateProvider, BusinessDateProvider>();
+        services.TryAddSingleton<IDailyMenuItemLocator, PostgresDailyMenuItemLocator>();
         services.TryAddSingleton<OrderStockConsumptionService>();
         services.TryAddSingleton<NfcOrderingStore>();
         services.TryAddTransient<NfcOrderingExceptionFilter>();

@@ -273,7 +273,7 @@ public static class ModuleBoundaryTests
         new(StringComparer.Ordinal)
         {
             ["ALKAROS.Host.Experience.Orders.OrderStockConsumption"] =
-                ["ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Recipes"],
+                ["ALKAROS.Inventory", "ALKAROS.Menu", "ALKAROS.Orders", "ALKAROS.Recipes"],
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders"] =
@@ -317,7 +317,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Menu"] =
                 ["ALKAROS.Identity", "ALKAROS.Menu"],
             ["ALKAROS.Host.Experience.NfcOrdering"] =
-                ["ALKAROS.Orders", "ALKAROS.Kitchen", "ALKAROS.Recipes", "ALKAROS.Inventory"],
+                ["ALKAROS.Orders", "ALKAROS.Kitchen", "ALKAROS.Recipes", "ALKAROS.Inventory", "ALKAROS.Menu"],
             ["ALKAROS.Host.Experience.OfflineReconciliation"] =
                 ["ALKAROS.Identity"],
             ["ALKAROS.Host.Experience.OnlineOrdering"] =

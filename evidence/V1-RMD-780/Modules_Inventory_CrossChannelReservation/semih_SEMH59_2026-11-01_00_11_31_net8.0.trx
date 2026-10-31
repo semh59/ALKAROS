@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="62c143a1-bf13-42e1-b6bd-cb5edd487756" name="semih@SEMH59 2026-11-01 00:11:31" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:11:31.9481037+03:00" queuing="2026-11-01T00:11:31.9481042+03:00" start="2026-11-01T00:11:27.1823189+03:00" finish="2026-11-01T00:11:33.6191133+03:00" />
+  <TestSettings name="default" id="c2910338-7d84-4afa-b3ec-de9f5c8c8ef1">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_11_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="6656c67e-eee0-490d-a03e-30b7a3accfed" testId="076bf680-da05-3d05-5aab-5d0303cd194e" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ProviderRejectionBeforeTheKitchenStartsReleasesTheHoldOnce" computerName="SEMH59" duration="00:00:00.0564464" startTime="2026-11-01T00:11:32.9890419+03:00" endTime="2026-11-01T00:11:32.9890423+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6656c67e-eee0-490d-a03e-30b7a3accfed" />
+    <UnitTestResult executionId="80d5afed-c442-4919-87e9-d2a64a0bea2a" testId="81644613-340e-d115-2c06-2a978c1ed4da" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.HoldsRollBackWithTheCallersTransaction" computerName="SEMH59" duration="00:00:00.0349051" startTime="2026-11-01T00:11:32.8270119+03:00" endTime="2026-11-01T00:11:32.8270125+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80d5afed-c442-4919-87e9-d2a64a0bea2a" />
+    <UnitTestResult executionId="dc884aec-d3df-4473-9ca9-1363fa49e52b" testId="5a377816-f929-c44d-1871-285fa064870e" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.LinesSharingAStockItemAreCheckedAgainstTheirCombinedNeed" computerName="SEMH59" duration="00:00:00.0352914" startTime="2026-11-01T00:11:31.9703693+03:00" endTime="2026-11-01T00:11:31.9703698+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc884aec-d3df-4473-9ca9-1363fa49e52b" />
+    <UnitTestResult executionId="d185f064-ebd7-4ba4-9f23-93337bd969db" testId="e2d4130d-d5e1-f068-5495-d2e1d09fde49" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ArbiterHardeningTests.TheLastPortionGoesToExactlyOneBuyerWhenSalesAndHoldsRaceAsInProduction" computerName="SEMH59" duration="00:00:00.7251339" startTime="2026-11-01T00:11:31.8760432+03:00" endTime="2026-11-01T00:11:31.8760433+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d185f064-ebd7-4ba4-9f23-93337bd969db" />
+    <UnitTestResult executionId="239ccb34-513b-4ed6-9226-b2e0172e2402" testId="ea313802-7575-d28d-ff3f-bf7ffb98ca3f" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas(kitchenStarted: True)" computerName="SEMH59" duration="00:00:00.0703990" startTime="2026-11-01T00:11:32.0145266+03:00" endTime="2026-11-01T00:11:32.0145273+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="239ccb34-513b-4ed6-9226-b2e0172e2402" />
+    <UnitTestResult executionId="85c69dc0-8fab-4694-892e-38467fa55118" testId="7479913c-d78a-afef-6342-9edb4a014153" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.RejectionAfterPreparationStartedIsWasteDecidedByTheCancellationLifecycle" computerName="SEMH59" duration="00:00:00.7246224" startTime="2026-11-01T00:11:31.8752992+03:00" endTime="2026-11-01T00:11:31.8752996+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85c69dc0-8fab-4694-892e-38467fa55118" />
+    <UnitTestResult executionId="7602f1c2-651f-4710-9eb7-240b50032996" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;empty actor&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_4(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0201885" startTime="2026-11-01T00:11:33.2027448+03:00" endTime="2026-11-01T00:11:33.2027450+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7602f1c2-651f-4710-9eb7-240b50032996" />
+    <UnitTestResult executionId="0f565a1a-e63e-418c-9f02-8a74bc6c1a58" testId="6a46db66-9833-edb5-772a-267f761ad659" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.AWasteInterruptedBeforeItsMovementIsCompletedByTheRepeatExactlyOnce" computerName="SEMH59" duration="00:00:00.7249819" startTime="2026-11-01T00:11:31.8756532+03:00" endTime="2026-11-01T00:11:31.8756535+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f565a1a-e63e-418c-9f02-8a74bc6c1a58" />
+    <UnitTestResult executionId="a940f03f-06ac-4076-9423-cdcd04202b2a" testId="21e4e446-2230-7e1b-6475-d13d603c8dd7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.CompensationRequiresAnActorAndAReason" computerName="SEMH59" duration="00:00:00.0291825" startTime="2026-11-01T00:11:32.7409310+03:00" endTime="2026-11-01T00:11:32.7409314+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a940f03f-06ac-4076-9423-cdcd04202b2a" />
+    <UnitTestResult executionId="ff926d9c-ea3d-4de2-909a-eff01e2226b6" testId="4756aacd-7c3d-5c80-1208-d3f41af1312a" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.AHoldAndADirectSaleRacingForTheLastPortionHaveExactlyOneWinner" computerName="SEMH59" duration="00:00:00.4575832" startTime="2026-11-01T00:11:32.3552339+03:00" endTime="2026-11-01T00:11:32.3552346+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ff926d9c-ea3d-4de2-909a-eff01e2226b6" />
+    <UnitTestResult executionId="e24b0d62-8535-4604-9739-b6aa8e437e31" testId="99c70470-53df-5d40-259a-0de7612d63ed" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ReplayingWithDifferentLinesIsAConflict" computerName="SEMH59" duration="00:00:00.0380821" startTime="2026-11-01T00:11:33.0919646+03:00" endTime="2026-11-01T00:11:33.0919652+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e24b0d62-8535-4604-9739-b6aa8e437e31" />
+    <UnitTestResult executionId="207932b7-1999-4e5f-b4f8-31c2bb3877a0" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;zero quantity&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_6(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0200931" startTime="2026-11-01T00:11:33.2432189+03:00" endTime="2026-11-01T00:11:33.2432193+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="207932b7-1999-4e5f-b4f8-31c2bb3877a0" />
+    <UnitTestResult executionId="d9f88d6b-7bc5-4bc0-bf34-fbd35d2029a7" testId="594f7547-b26a-0255-eb9b-c1326eb0dbe2" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.AReleaseInterruptedBeforeItsProjectionIsCompletedByTheRepeatExactlyOnce" computerName="SEMH59" duration="00:00:00.0442987" startTime="2026-11-01T00:11:33.4279620+03:00" endTime="2026-11-01T00:11:33.4279624+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9f88d6b-7bc5-4bc0-bf34-fbd35d2029a7" />
+    <UnitTestResult executionId="e257d691-8df9-4b2b-a39c-ebca27d193fe" testId="3c3074f2-c3c7-16a8-811e-3b8cfe1ec887" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.AnOrdersOwnHoldBecomesItsConsumption" computerName="SEMH59" duration="00:00:00.6664046" startTime="2026-11-01T00:11:31.8234678+03:00" endTime="2026-11-01T00:11:31.8234938+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e257d691-8df9-4b2b-a39c-ebca27d193fe" />
+    <UnitTestResult executionId="60a51d5e-1750-4343-afd4-ab90e67cbf26" testId="ed03902c-9269-2b7e-4c13-7aece6ec4648" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.AnOrderIsHeldAllOrNothingAcrossItsLines" computerName="SEMH59" duration="00:00:00.0422890" startTime="2026-11-01T00:11:32.9320461+03:00" endTime="2026-11-01T00:11:32.9320464+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60a51d5e-1750-4343-afd4-ab90e67cbf26" />
+    <UnitTestResult executionId="7a2b17bf-7553-4ce2-980d-a6dfd1d226bd" testId="3a7834ee-a795-d411-b24b-ac7cb56de9fa" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock" computerName="SEMH59" duration="00:00:00.7284695" startTime="2026-11-01T00:11:32.7259657+03:00" endTime="2026-11-01T00:11:32.7259667+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7a2b17bf-7553-4ce2-980d-a6dfd1d226bd">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected losers to contain 3 item(s), but found 4: &#xD;
+{&#xD;
+    ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+    {&#xD;
+        Holds = {empty}, &#xD;
+        IsHeld = False, &#xD;
+        Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+        {&#xD;
+        Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+            {&#xD;
+                AvailableQuantity = 0.0000M, &#xD;
+                OrderItemIds = {{012b4d41-69d4-4974-a1e4-dcdff946e693}}, &#xD;
+                RequiredQuantity = 1.0000M, &#xD;
+                StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+                StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+                    }&#xD;
+        }, &#xD;
+        UnconfiguredLines = {empty}&#xD;
+    }, &#xD;
+    ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+    {&#xD;
+        Holds = {empty}, &#xD;
+        IsHeld = False, &#xD;
+        Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+        Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+        {&#xD;
+            {&#xD;
+                AvailableQuantity = 0.0000M, &#xD;
+                OrderItemIds = {{ae014bb1-d5ae-4641-9744-bcf0431454d0}}, &#xD;
+                RequiredQuantity = 1.0000M, &#xD;
+                StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+                StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+            }&#xD;
+        }, &#xD;
+        UnconfiguredLines = {empty}&#xD;
+    }, &#xD;
+    ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+    {&#xD;
+        Holds = {empty}, &#xD;
+        IsHeld = False, &#xD;
+        Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+        Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+        {&#xD;
+            {&#xD;
+                AvailableQuantity = 0.0000M, &#xD;
+                OrderItemIds = {{048db4ee-f458-4f05-b1d7-93a7559f518a}}, &#xD;
+                RequiredQuantity = 1.0000M, &#xD;
+                StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+                StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+            }&#xD;
+        }, &#xD;
+        UnconfiguredLines = {empty}&#xD;
+    }, &#xD;
+    ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+    {&#xD;
+        Holds = {empty}, &#xD;
+        IsHeld = False, &#xD;
+        Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+        Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+        {&#xD;
+            {&#xD;
+                AvailableQuantity = 0.0000M, &#xD;
+                OrderItemIds = {{4decd875-c592-4863-98ac-307d1e536327}}, &#xD;
+                RequiredQuantity = 1.0000M, &#xD;
+                StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+                StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+            }&#xD;
+        }, &#xD;
+        UnconfiguredLines = {empty}&#xD;
+    }&#xD;
+}.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.HaveCount(Int32 expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock() in D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\CrossChannelPortionArbiterTests.cs:line 48&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e56cd480-4585-4ad6-aa9a-73bd63f6a836" testId="c674a4b3-131a-d62f-6fe7-4b61abaa8a8f" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.WithoutHoldsADirectSaleSeesTheWholeOnHand" computerName="SEMH59" duration="00:00:00.0312087" startTime="2026-11-01T00:11:31.8568396+03:00" endTime="2026-11-01T00:11:31.8568398+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e56cd480-4585-4ad6-aa9a-73bd63f6a836" />
+    <UnitTestResult executionId="b0c6385d-2c9e-4666-8a5c-99b8a5ea7eb3" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;unknown channel&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_0(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0202712" startTime="2026-11-01T00:11:33.1241940+03:00" endTime="2026-11-01T00:11:33.1241944+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0c6385d-2c9e-4666-8a5c-99b8a5ea7eb3" />
+    <UnitTestResult executionId="530eb361-af5f-408d-85fc-3e5b4b58a1a2" testId="cd865166-ba36-4489-2d73-f59a284e15ff" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.HoldsAndTheirOutcomesMatchAFullProjectionRebuild" computerName="SEMH59" duration="00:00:00.0632390" startTime="2026-11-01T00:11:33.0530311+03:00" endTime="2026-11-01T00:11:33.0530316+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="530eb361-af5f-408d-85fc-3e5b4b58a1a2" />
+    <UnitTestResult executionId="cf14e332-9080-4210-827f-dcbb2cf3e7a8" testId="c9dab56b-fa85-a9bf-3bb2-3492b6cb7888" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.ACompensationLocksStockRowsInTheSameOrderAsAReservationWhateverTheHoldOrder" computerName="SEMH59" duration="00:00:00.7167488" startTime="2026-11-01T00:11:32.7334953+03:00" endTime="2026-11-01T00:11:32.7334957+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf14e332-9080-4210-827f-dcbb2cf3e7a8" />
+    <UnitTestResult executionId="cd30a7e0-829d-442b-b177-6751a7ff0140" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;duplicate order item&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_8(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0200444" startTime="2026-11-01T00:11:33.2868522+03:00" endTime="2026-11-01T00:11:33.2868525+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd30a7e0-829d-442b-b177-6751a7ff0140" />
+    <UnitTestResult executionId="80f1da65-0888-4900-9b2d-7c313b13745c" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;no lines&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_5(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0194321" startTime="2026-11-01T00:11:33.2226157+03:00" endTime="2026-11-01T00:11:33.2226162+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80f1da65-0888-4900-9b2d-7c313b13745c" />
+    <UnitTestResult executionId="ee84614e-741c-4cd6-8436-2ca0eba09973" testId="71fb7525-1cce-ba64-6f70-b95f44cc1326" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.AnUnmappedProductOrAStockItemWithoutLocationIsATypedRefusal" computerName="SEMH59" duration="00:00:00.0616384" startTime="2026-11-01T00:11:32.8891886+03:00" endTime="2026-11-01T00:11:32.8891892+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee84614e-741c-4cd6-8436-2ca0eba09973" />
+    <UnitTestResult executionId="35567f9d-aa40-41d3-8ef6-cfab78aa4f3a" testId="7733c099-8405-a3c0-93c5-9c71ca98bcdd" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.WhileAWasteIsBeingRecordedACompetingSaleWaitsAndThenFindsThePortionGone" computerName="SEMH59" duration="00:00:00.5750380" startTime="2026-11-01T00:11:33.3830404+03:00" endTime="2026-11-01T00:11:33.3830408+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="35567f9d-aa40-41d3-8ef6-cfab78aa4f3a" />
+    <UnitTestResult executionId="f4603466-1885-4519-97c5-94dfa75e3530" testId="3dd5ba7e-0653-2bdd-d260-e56950794475" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.ADirectSaleCannotTakeAPortionAnotherOrderHolds" computerName="SEMH59" duration="00:00:00.0393529" startTime="2026-11-01T00:11:31.8968320+03:00" endTime="2026-11-01T00:11:31.8968326+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4603466-1885-4519-97c5-94dfa75e3530" />
+    <UnitTestResult executionId="22d01fa2-7c46-4b05-ad2d-f0954d30e86d" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;empty product&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_7(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0224532" startTime="2026-11-01T00:11:33.2663146+03:00" endTime="2026-11-01T00:11:33.2663149+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22d01fa2-7c46-4b05-ad2d-f0954d30e86d" />
+    <UnitTestResult executionId="9a63039f-864d-4766-b4a9-64dc2fd8328b" testId="2b478f9e-b604-a4f3-2986-9e723fada306" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.TheChannelReferenceIsStoredAsDataNeverAsSql" computerName="SEMH59" duration="00:00:00.0307832" startTime="2026-11-01T00:11:33.3185180+03:00" endTime="2026-11-01T00:11:33.3185183+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a63039f-864d-4766-b4a9-64dc2fd8328b" />
+    <UnitTestResult executionId="e5eaa206-9a52-4bfb-9e75-cf65b919a085" testId="0716bfb2-22dc-0d7c-6336-368325dd78dc" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ArbiterHardeningTests.AnOrderWhoseHoldsWereConsumedIsNeverHeldAgain" computerName="SEMH59" duration="00:00:00.0559913" startTime="2026-11-01T00:11:31.9325903+03:00" endTime="2026-11-01T00:11:31.9325910+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5eaa206-9a52-4bfb-9e75-cf65b919a085" />
+    <UnitTestResult executionId="809cde98-d8d6-4898-a8be-873dec073464" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;empty order&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_3(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0192148" startTime="2026-11-01T00:11:33.1821122+03:00" endTime="2026-11-01T00:11:33.1821125+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="809cde98-d8d6-4898-a8be-873dec073464" />
+    <UnitTestResult executionId="78619bed-dbd4-44c9-8295-f33af073798a" testId="e4f4ca58-cfff-7b90-a209-19445ab3ec26" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas(kitchenStarted: False)" computerName="SEMH59" duration="00:00:00.0663220" startTime="2026-11-01T00:11:31.9432679+03:00" endTime="2026-11-01T00:11:31.9432682+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78619bed-dbd4-44c9-8295-f33af073798a" />
+    <UnitTestResult executionId="649832d6-16b3-4832-a6d5-ee4db4f43e14" testId="c40b38ca-cdf5-2055-9d23-d46dec3a0065" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ReplayingTheSameRequestHoldsOnlyOnce" computerName="SEMH59" duration="00:00:00.0499197" startTime="2026-11-01T00:11:32.7914350+03:00" endTime="2026-11-01T00:11:32.7914353+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="649832d6-16b3-4832-a6d5-ee4db4f43e14" />
+    <UnitTestResult executionId="848b0e47-1894-46d2-954b-1a6f02fbc079" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;blank reference&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_1(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0182644" startTime="2026-11-01T00:11:33.1434751+03:00" endTime="2026-11-01T00:11:33.1434755+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="848b0e47-1894-46d2-954b-1a6f02fbc079" />
+    <UnitTestResult executionId="285003d0-c7b7-4cd2-8f5d-e6c3a77390fa" testId="7fd72c24-05db-88e9-efdf-814a56eb86c2" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.AWasteAnEarlierRunRecordedUnderAnotherKeyIsNeverRecordedAgain" computerName="SEMH59" duration="00:00:00.0732425" startTime="2026-11-01T00:11:32.8074389+03:00" endTime="2026-11-01T00:11:32.8074393+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="285003d0-c7b7-4cd2-8f5d-e6c3a77390fa" />
+    <UnitTestResult executionId="9b7027fa-3076-41cd-be2c-464b01508b6a" testId="a2dabf75-85b6-9d8a-b12f-23a921b47cc7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.WithoutACallerTransactionTheWasteLeavesOnHandBeforeTheHoldIsLowered" computerName="SEMH59" duration="00:00:00.0605314" startTime="2026-11-01T00:11:33.4891472+03:00" endTime="2026-11-01T00:11:33.4891475+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9b7027fa-3076-41cd-be2c-464b01508b6a" />
+    <UnitTestResult executionId="95247bbb-3244-41eb-b609-32d5d8ca50e3" testId="3a6544be-33e1-ce73-1101-f6170dfecda7" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock(_: &quot;reference too long&quot;, corrupt: Func`2 { Method = ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest &lt;get_InvalidRequests&gt;b__20_2(ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationRequest), Target = &lt;&gt;c { } })" computerName="SEMH59" duration="00:00:00.0183236" startTime="2026-11-01T00:11:33.1622731+03:00" endTime="2026-11-01T00:11:33.1622735+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95247bbb-3244-41eb-b609-32d5d8ca50e3" />
+    <UnitTestResult executionId="7122a4d2-cca5-49c9-979d-acd53f654539" testId="788433d7-15bf-0060-8cfa-66f3fe988945" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ConcurrentReplaysOfOneOrderStillHoldOnlyOnce" computerName="SEMH59" duration="00:00:00.0582371" startTime="2026-11-01T00:11:31.9343460+03:00" endTime="2026-11-01T00:11:31.9343464+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7122a4d2-cca5-49c9-979d-acd53f654539" />
+    <UnitTestResult executionId="e9fa4c82-5537-4e1c-b8d9-fe841835c191" testId="8b5d356d-b315-c1ac-507a-d0219f305982" testName="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.AConsumedHoldIsNeverConvertedTwice" computerName="SEMH59" duration="00:00:00.1402363" startTime="2026-11-01T00:11:32.4966042+03:00" endTime="2026-11-01T00:11:32.4966046+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e9fa4c82-5537-4e1c-b8d9-fe841835c191" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas(kitchenStarted: True)" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="ea313802-7575-d28d-ff3f-bf7ffb98ca3f">
+      <Execution id="239ccb34-513b-4ed6-9226-b2e0172e2402" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.HoldsAndTheirOutcomesMatchAFullProjectionRebuild" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="cd865166-ba36-4489-2d73-f59a284e15ff">
+      <Execution id="530eb361-af5f-408d-85fc-3e5b4b58a1a2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="HoldsAndTheirOutcomesMatchAFullProjectionRebuild" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.AWasteInterruptedBeforeItsMovementIsCompletedByTheRepeatExactlyOnce" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="6a46db66-9833-edb5-772a-267f761ad659">
+      <Execution id="0f565a1a-e63e-418c-9f02-8a74bc6c1a58" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="AWasteInterruptedBeforeItsMovementIsCompletedByTheRepeatExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.WithoutACallerTransactionTheWasteLeavesOnHandBeforeTheHoldIsLowered" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="a2dabf75-85b6-9d8a-b12f-23a921b47cc7">
+      <Execution id="9b7027fa-3076-41cd-be2c-464b01508b6a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="WithoutACallerTransactionTheWasteLeavesOnHandBeforeTheHoldIsLowered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ConcurrentReplaysOfOneOrderStillHoldOnlyOnce" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="788433d7-15bf-0060-8cfa-66f3fe988945">
+      <Execution id="7122a4d2-cca5-49c9-979d-acd53f654539" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="ConcurrentReplaysOfOneOrderStillHoldOnlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.WithoutHoldsADirectSaleSeesTheWholeOnHand" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="c674a4b3-131a-d62f-6fe7-4b61abaa8a8f">
+      <Execution id="e56cd480-4585-4ad6-aa9a-73bd63f6a836" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests" name="WithoutHoldsADirectSaleSeesTheWholeOnHand" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.LinesSharingAStockItemAreCheckedAgainstTheirCombinedNeed" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="5a377816-f929-c44d-1871-285fa064870e">
+      <Execution id="dc884aec-d3df-4473-9ca9-1363fa49e52b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="LinesSharingAStockItemAreCheckedAgainstTheirCombinedNeed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.RejectionAfterPreparationStartedIsWasteDecidedByTheCancellationLifecycle" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="7479913c-d78a-afef-6342-9edb4a014153">
+      <Execution id="85c69dc0-8fab-4694-892e-38467fa55118" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="RejectionAfterPreparationStartedIsWasteDecidedByTheCancellationLifecycle" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.AnOrdersOwnHoldBecomesItsConsumption" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="3c3074f2-c3c7-16a8-811e-3b8cfe1ec887">
+      <Execution id="e257d691-8df9-4b2b-a39c-ebca27d193fe" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests" name="AnOrdersOwnHoldBecomesItsConsumption" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.MalformedRequestsAreRejectedBeforeTouchingStock" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="3a6544be-33e1-ce73-1101-f6170dfecda7">
+      <Execution id="b0c6385d-2c9e-4666-8a5c-99b8a5ea7eb3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="MalformedRequestsAreRejectedBeforeTouchingStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.AnOrderIsHeldAllOrNothingAcrossItsLines" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="ed03902c-9269-2b7e-4c13-7aece6ec4648">
+      <Execution id="60a51d5e-1750-4343-afd4-ab90e67cbf26" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="AnOrderIsHeldAllOrNothingAcrossItsLines" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.CompensationRequiresAnActorAndAReason" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="21e4e446-2230-7e1b-6475-d13d603c8dd7">
+      <Execution id="a940f03f-06ac-4076-9423-cdcd04202b2a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="CompensationRequiresAnActorAndAReason" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.WhileAWasteIsBeingRecordedACompetingSaleWaitsAndThenFindsThePortionGone" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="7733c099-8405-a3c0-93c5-9c71ca98bcdd">
+      <Execution id="35567f9d-aa40-41d3-8ef6-cfab78aa4f3a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="WhileAWasteIsBeingRecordedACompetingSaleWaitsAndThenFindsThePortionGone" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.AWasteAnEarlierRunRecordedUnderAnotherKeyIsNeverRecordedAgain" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="7fd72c24-05db-88e9-efdf-814a56eb86c2">
+      <Execution id="285003d0-c7b7-4cd2-8f5d-e6c3a77390fa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="AWasteAnEarlierRunRecordedUnderAnotherKeyIsNeverRecordedAgain" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.AConsumedHoldIsNeverConvertedTwice" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="8b5d356d-b315-c1ac-507a-d0219f305982">
+      <Execution id="e9fa4c82-5537-4e1c-b8d9-fe841835c191" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests" name="AConsumedHoldIsNeverConvertedTwice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="3a7834ee-a795-d411-b24b-ac7cb56de9fa">
+      <Execution id="7a2b17bf-7553-4ce2-980d-a6dfd1d226bd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.AHoldAndADirectSaleRacingForTheLastPortionHaveExactlyOneWinner" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="4756aacd-7c3d-5c80-1208-d3f41af1312a">
+      <Execution id="ff926d9c-ea3d-4de2-909a-eff01e2226b6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests" name="AHoldAndADirectSaleRacingForTheLastPortionHaveExactlyOneWinner" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ArbiterHardeningTests.TheLastPortionGoesToExactlyOneBuyerWhenSalesAndHoldsRaceAsInProduction" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="e2d4130d-d5e1-f068-5495-d2e1d09fde49">
+      <Execution id="d185f064-ebd7-4ba4-9f23-93337bd969db" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ArbiterHardeningTests" name="TheLastPortionGoesToExactlyOneBuyerWhenSalesAndHoldsRaceAsInProduction" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ArbiterHardeningTests.AnOrderWhoseHoldsWereConsumedIsNeverHeldAgain" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="0716bfb2-22dc-0d7c-6336-368325dd78dc">
+      <Execution id="e5eaa206-9a52-4bfb-9e75-cf65b919a085" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ArbiterHardeningTests" name="AnOrderWhoseHoldsWereConsumedIsNeverHeldAgain" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.ACompensationLocksStockRowsInTheSameOrderAsAReservationWhateverTheHoldOrder" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="c9dab56b-fa85-a9bf-3bb2-3492b6cb7888">
+      <Execution id="cf14e332-9080-4210-827f-dcbb2cf3e7a8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="ACompensationLocksStockRowsInTheSameOrderAsAReservationWhateverTheHoldOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.HoldsRollBackWithTheCallersTransaction" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="81644613-340e-d115-2c06-2a978c1ed4da">
+      <Execution id="80d5afed-c442-4919-87e9-d2a64a0bea2a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="HoldsRollBackWithTheCallersTransaction" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ProviderRejectionBeforeTheKitchenStartsReleasesTheHoldOnce" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="076bf680-da05-3d05-5aab-5d0303cd194e">
+      <Execution id="6656c67e-eee0-490d-a03e-30b7a3accfed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="ProviderRejectionBeforeTheKitchenStartsReleasesTheHoldOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests.ADirectSaleCannotTakeAPortionAnotherOrderHolds" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="3dd5ba7e-0653-2bdd-d260-e56950794475">
+      <Execution id="f4603466-1885-4519-97c5-94dfa75e3530" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.ReservationAwareConsumptionGuardTests" name="ADirectSaleCannotTakeAPortionAnotherOrderHolds" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.TheChannelReferenceIsStoredAsDataNeverAsSql" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="2b478f9e-b604-a4f3-2986-9e723fada306">
+      <Execution id="9a63039f-864d-4766-b4a9-64dc2fd8328b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="TheChannelReferenceIsStoredAsDataNeverAsSql" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.AnUnmappedProductOrAStockItemWithoutLocationIsATypedRefusal" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="71fb7525-1cce-ba64-6f70-b95f44cc1326">
+      <Execution id="ee84614e-741c-4cd6-8436-2ca0eba09973" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="AnUnmappedProductOrAStockItemWithoutLocationIsATypedRefusal" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ReplayingTheSameRequestHoldsOnlyOnce" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="c40b38ca-cdf5-2055-9d23-d46dec3a0065">
+      <Execution id="649832d6-16b3-4832-a6d5-ee4db4f43e14" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="ReplayingTheSameRequestHoldsOnlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.AReleaseInterruptedBeforeItsProjectionIsCompletedByTheRepeatExactlyOnce" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="594f7547-b26a-0255-eb9b-c1326eb0dbe2">
+      <Execution id="d9f88d6b-7bc5-4bc0-bf34-fbd35d2029a7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="AReleaseInterruptedBeforeItsProjectionIsCompletedByTheRepeatExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests.ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas(kitchenStarted: False)" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="e4f4ca58-cfff-7b90-a209-19445ab3ec26">
+      <Execution id="78619bed-dbd4-44c9-8295-f33af073798a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.AtomicCompensationTests" name="ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.ReplayingWithDifferentLinesIsAConflict" storage="d:\project\alkaros\tests\modules\inventory\crosschannelreservation\bin\debug\net8.0\alkaros.inventory.crosschannelreservation.tests.dll" id="99c70470-53df-5d40-259a-0de7612d63ed">
+      <Execution id="e24b0d62-8535-4604-9739-b6aa8e437e31" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\bin\Debug\net8.0\ALKAROS.Inventory.CrossChannelReservation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests" name="ReplayingWithDifferentLinesIsAConflict" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="076bf680-da05-3d05-5aab-5d0303cd194e" executionId="6656c67e-eee0-490d-a03e-30b7a3accfed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="81644613-340e-d115-2c06-2a978c1ed4da" executionId="80d5afed-c442-4919-87e9-d2a64a0bea2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a377816-f929-c44d-1871-285fa064870e" executionId="dc884aec-d3df-4473-9ca9-1363fa49e52b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e2d4130d-d5e1-f068-5495-d2e1d09fde49" executionId="d185f064-ebd7-4ba4-9f23-93337bd969db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea313802-7575-d28d-ff3f-bf7ffb98ca3f" executionId="239ccb34-513b-4ed6-9226-b2e0172e2402" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7479913c-d78a-afef-6342-9edb4a014153" executionId="85c69dc0-8fab-4694-892e-38467fa55118" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="7602f1c2-651f-4710-9eb7-240b50032996" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a46db66-9833-edb5-772a-267f761ad659" executionId="0f565a1a-e63e-418c-9f02-8a74bc6c1a58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21e4e446-2230-7e1b-6475-d13d603c8dd7" executionId="a940f03f-06ac-4076-9423-cdcd04202b2a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4756aacd-7c3d-5c80-1208-d3f41af1312a" executionId="ff926d9c-ea3d-4de2-909a-eff01e2226b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99c70470-53df-5d40-259a-0de7612d63ed" executionId="e24b0d62-8535-4604-9739-b6aa8e437e31" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="207932b7-1999-4e5f-b4f8-31c2bb3877a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="594f7547-b26a-0255-eb9b-c1326eb0dbe2" executionId="d9f88d6b-7bc5-4bc0-bf34-fbd35d2029a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c3074f2-c3c7-16a8-811e-3b8cfe1ec887" executionId="e257d691-8df9-4b2b-a39c-ebca27d193fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ed03902c-9269-2b7e-4c13-7aece6ec4648" executionId="60a51d5e-1750-4343-afd4-ab90e67cbf26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a7834ee-a795-d411-b24b-ac7cb56de9fa" executionId="7a2b17bf-7553-4ce2-980d-a6dfd1d226bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c674a4b3-131a-d62f-6fe7-4b61abaa8a8f" executionId="e56cd480-4585-4ad6-aa9a-73bd63f6a836" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="b0c6385d-2c9e-4666-8a5c-99b8a5ea7eb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd865166-ba36-4489-2d73-f59a284e15ff" executionId="530eb361-af5f-408d-85fc-3e5b4b58a1a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9dab56b-fa85-a9bf-3bb2-3492b6cb7888" executionId="cf14e332-9080-4210-827f-dcbb2cf3e7a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="cd30a7e0-829d-442b-b177-6751a7ff0140" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="80f1da65-0888-4900-9b2d-7c313b13745c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71fb7525-1cce-ba64-6f70-b95f44cc1326" executionId="ee84614e-741c-4cd6-8436-2ca0eba09973" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7733c099-8405-a3c0-93c5-9c71ca98bcdd" executionId="35567f9d-aa40-41d3-8ef6-cfab78aa4f3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3dd5ba7e-0653-2bdd-d260-e56950794475" executionId="f4603466-1885-4519-97c5-94dfa75e3530" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="22d01fa2-7c46-4b05-ad2d-f0954d30e86d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b478f9e-b604-a4f3-2986-9e723fada306" executionId="9a63039f-864d-4766-b4a9-64dc2fd8328b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0716bfb2-22dc-0d7c-6336-368325dd78dc" executionId="e5eaa206-9a52-4bfb-9e75-cf65b919a085" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="809cde98-d8d6-4898-a8be-873dec073464" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4f4ca58-cfff-7b90-a209-19445ab3ec26" executionId="78619bed-dbd4-44c9-8295-f33af073798a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c40b38ca-cdf5-2055-9d23-d46dec3a0065" executionId="649832d6-16b3-4832-a6d5-ee4db4f43e14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="848b0e47-1894-46d2-954b-1a6f02fbc079" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fd72c24-05db-88e9-efdf-814a56eb86c2" executionId="285003d0-c7b7-4cd2-8f5d-e6c3a77390fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a2dabf75-85b6-9d8a-b12f-23a921b47cc7" executionId="9b7027fa-3076-41cd-be2c-464b01508b6a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3a6544be-33e1-ce73-1101-f6170dfecda7" executionId="95247bbb-3244-41eb-b609-32d5d8ca50e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="788433d7-15bf-0060-8cfa-66f3fe988945" executionId="7122a4d2-cca5-49c9-979d-acd53f654539" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b5d356d-b315-c1ac-507a-d0219f305982" executionId="e9fa4c82-5537-4e1c-b8d9-fe841835c191" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="37" executed="37" passed="36" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.04]   Discovering: ALKAROS.Inventory.CrossChannelReservation.Tests&#xD;
+[xUnit.net 00:00:01.12]   Discovered:  ALKAROS.Inventory.CrossChannelReservation.Tests&#xD;
+[xUnit.net 00:00:01.12]   Starting:    ALKAROS.Inventory.CrossChannelReservation.Tests&#xD;
+[xUnit.net 00:00:03.23]       Expected losers to contain 3 item(s), but found 4: &#xD;
+[xUnit.net 00:00:03.24]       {&#xD;
+[xUnit.net 00:00:03.24]           ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+[xUnit.net 00:00:03.24]           {&#xD;
+[xUnit.net 00:00:03.24]               Holds = {empty}, &#xD;
+[xUnit.net 00:00:03.24]               IsHeld = False, &#xD;
+[xUnit.net 00:00:03.24]               Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+[xUnit.net 00:00:03.24]               {&#xD;
+[xUnit.net 00:00:03.24]               Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+[xUnit.net 00:00:03.24]                   {&#xD;
+[xUnit.net 00:00:03.24]                       AvailableQuantity = 0.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       OrderItemIds = {{012b4d41-69d4-4974-a1e4-dcdff946e693}}, &#xD;
+[xUnit.net 00:00:03.24]                       RequiredQuantity = 1.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+[xUnit.net 00:00:03.24]                       StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+[xUnit.net 00:00:03.24]                           }&#xD;
+[xUnit.net 00:00:03.24]               }, &#xD;
+[xUnit.net 00:00:03.24]               UnconfiguredLines = {empty}&#xD;
+[xUnit.net 00:00:03.24]           }, &#xD;
+[xUnit.net 00:00:03.24]           ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+[xUnit.net 00:00:03.24]           {&#xD;
+[xUnit.net 00:00:03.24]               Holds = {empty}, &#xD;
+[xUnit.net 00:00:03.24]               IsHeld = False, &#xD;
+[xUnit.net 00:00:03.24]               Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+[xUnit.net 00:00:03.24]               Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+[xUnit.net 00:00:03.24]               {&#xD;
+[xUnit.net 00:00:03.24]                   {&#xD;
+[xUnit.net 00:00:03.24]                       AvailableQuantity = 0.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       OrderItemIds = {{ae014bb1-d5ae-4641-9744-bcf0431454d0}}, &#xD;
+[xUnit.net 00:00:03.24]                       RequiredQuantity = 1.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+[xUnit.net 00:00:03.24]                       StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+[xUnit.net 00:00:03.24]                   }&#xD;
+[xUnit.net 00:00:03.24]               }, &#xD;
+[xUnit.net 00:00:03.24]               UnconfiguredLines = {empty}&#xD;
+[xUnit.net 00:00:03.24]           }, &#xD;
+[xUnit.net 00:00:03.24]           ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+[xUnit.net 00:00:03.24]           {&#xD;
+[xUnit.net 00:00:03.24]               Holds = {empty}, &#xD;
+[xUnit.net 00:00:03.24]               IsHeld = False, &#xD;
+[xUnit.net 00:00:03.24]               Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+[xUnit.net 00:00:03.24]               Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+[xUnit.net 00:00:03.24]               {&#xD;
+[xUnit.net 00:00:03.24]                   {&#xD;
+[xUnit.net 00:00:03.24]                       AvailableQuantity = 0.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       OrderItemIds = {{048db4ee-f458-4f05-b1d7-93a7559f518a}}, &#xD;
+[xUnit.net 00:00:03.24]                       RequiredQuantity = 1.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+[xUnit.net 00:00:03.24]                       StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+[xUnit.net 00:00:03.24]                   }&#xD;
+[xUnit.net 00:00:03.24]               }, &#xD;
+[xUnit.net 00:00:03.24]               UnconfiguredLines = {empty}&#xD;
+[xUnit.net 00:00:03.24]           }, &#xD;
+[xUnit.net 00:00:03.24]           ALKAROS.Inventory.CrossChannelReservation.CrossChannelReservationResult&#xD;
+[xUnit.net 00:00:03.24]           {&#xD;
+[xUnit.net 00:00:03.24]               Holds = {empty}, &#xD;
+[xUnit.net 00:00:03.24]               IsHeld = False, &#xD;
+[xUnit.net 00:00:03.24]               Outcome = CrossChannelReservationOutcome.OutOfStock {value: 3}, &#xD;
+[xUnit.net 00:00:03.24]               Shortages = ALKAROS.Inventory.CrossChannelReservation.StockShortage&#xD;
+[xUnit.net 00:00:03.24]               {&#xD;
+[xUnit.net 00:00:03.24]                   {&#xD;
+[xUnit.net 00:00:03.24]                       AvailableQuantity = 0.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       OrderItemIds = {{4decd875-c592-4863-98ac-307d1e536327}}, &#xD;
+[xUnit.net 00:00:03.24]                       RequiredQuantity = 1.0000M, &#xD;
+[xUnit.net 00:00:03.24]                       StockItemId = {d17b1065-df84-4cb1-825d-c890e07abc2b}, &#xD;
+[xUnit.net 00:00:03.24]                       StockLocationId = {f01a2ae3-a1ce-481f-9ed8-c2a570e8cfc0}&#xD;
+[xUnit.net 00:00:03.24]                   }&#xD;
+[xUnit.net 00:00:03.24]               }, &#xD;
+[xUnit.net 00:00:03.24]               UnconfiguredLines = {empty}&#xD;
+[xUnit.net 00:00:03.24]           }&#xD;
+[xUnit.net 00:00:03.24]       }.&#xD;
+[xUnit.net 00:00:03.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:03.24]            at FluentAssertions.Collections.GenericCollectionAssertions`3.HaveCount(Int32 expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:03.24]         D:\PROJECT\ALKAROS\tests\Modules\Inventory\CrossChannelReservation\CrossChannelPortionArbiterTests.cs(48,0): at ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock()&#xD;
+[xUnit.net 00:00:03.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.06]   Finished:    ALKAROS.Inventory.CrossChannelReservation.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:11:32.7155255+03:00">
+        <Text>[xUnit.net 00:00:03.23]     ALKAROS.Inventory.CrossChannelReservation.Tests.CrossChannelPortionArbiterTests.FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

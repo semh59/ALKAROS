@@ -27,7 +27,7 @@ public sealed class CrossChannelPortionArbiterTests : IClassFixture<CrossChannel
         _db.InTransactionAsync((connection, transaction) => _arbiter.ReserveAsync(request, connection, transaction));
 
     [Fact]
-    public async Task FourChannelsRacingForTheLastPortionYieldOneHoldAndThreeOutOfStock()
+    public async Task EveryChannelRacingForTheLastPortionYieldsOneHoldAndOutOfStockForTheRest()
     {
         var stock = await _db.SeedStockAsync(onHand: 1m);
         var start = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -45,7 +45,7 @@ public sealed class CrossChannelPortionArbiterTests : IClassFixture<CrossChannel
 
         results.Count(r => r.Outcome == CrossChannelReservationOutcome.Reserved).Should().Be(1);
         var losers = results.Where(r => r.Outcome != CrossChannelReservationOutcome.Reserved).ToList();
-        losers.Should().HaveCount(3);
+        losers.Should().HaveCount(requests.Count - 1);
         losers.Should().OnlyContain(r => r.Outcome == CrossChannelReservationOutcome.OutOfStock && r.Holds.Count == 0);
         losers.SelectMany(r => r.Shortages).Should().OnlyContain(s =>
             s.StockItemId == stock.StockItemId && s.RequiredQuantity == 1m && s.AvailableQuantity == 0m);

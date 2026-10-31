@@ -1,0 +1,7 @@
+tests/Modules/Inventory/CrossChannelReservation exit=1 Başarısız! - Başarısız:     1, Başarılı:    36, Atlanan:     0, Toplam:    37, Süre: 2 s
+tests/Modules/Inventory/PortionReservations exit=1 
+tests/Modules/Inventory/ReservationBalanceProjection exit=0 Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 1 s
+tests/Modules/Menu/CounterProjection exit=0 Başarılı!  - Başarısız:     0, Başarılı:    20, Atlanan:     0, Toplam:    20, Süre: 1 s
+tests/Modules/Menu/DailyMenuLifecycle exit=0 Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 741 ms
+tests/Modules/Reporting/MenuInventory exit=0 Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 418 ms
+tests/Modules/Production/StockEffects exit=0 Başarılı!  - Başarısız:     0, Başarılı:    11, Atlanan:     0, Toplam:    11, Süre: 885 ms

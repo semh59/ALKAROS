@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bb8fcde9-6012-4ed5-9a61-8a06b09f0fb3" name="semih@SEMH59 2026-11-01 00:07:09" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:07:09.4656435+03:00" queuing="2026-11-01T00:07:09.4656437+03:00" start="2026-11-01T00:07:05.9429272+03:00" finish="2026-11-01T00:07:10.7506504+03:00" />
+  <TestSettings name="default" id="353a29e5-4f48-4158-b325-1ae5b2e77473">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_07_09" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="574fbc97-f184-4900-806c-fd5b33f45db5" testId="e58dfa44-f92f-97ce-59e2-cb59835119a3" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.SubmittingAWaiterOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" computerName="SEMH59" duration="00:00:00.5230065" startTime="2026-11-01T00:07:09.7387327+03:00" endTime="2026-11-01T00:07:09.7387332+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="574fbc97-f184-4900-806c-fd5b33f45db5" />
+    <UnitTestResult executionId="1e7cd853-6947-4e23-a164-3fd362ae785a" testId="7b596e9c-55dd-b241-ac85-1692cfaaf390" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.AWaiterOrderForAProductWithTwoStockMappingsCountsOnePortionPerOrderedUnit" computerName="SEMH59" duration="00:00:00.4551257" startTime="2026-11-01T00:07:10.6444504+03:00" endTime="2026-11-01T00:07:10.6444509+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1e7cd853-6947-4e23-a164-3fd362ae785a" />
+    <UnitTestResult executionId="7e8e2cef-0f61-4cfb-bb57-1fd281fb4195" testId="967806ac-bf1c-4336-10d2-3e438e7a7334" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.AWaiterOrderForAProductNotOnTodaysMenuIsNotCounted" computerName="SEMH59" duration="00:00:01.2385562" startTime="2026-11-01T00:07:08.7160313+03:00" endTime="2026-11-01T00:07:08.7160591+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e8e2cef-0f61-4cfb-bb57-1fd281fb4195" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.AWaiterOrderForAProductNotOnTodaysMenuIsNotCounted" storage="d:\project\alkaros\tests\host\experience\orders\tabledraft\bin\debug\net8.0\alkaros.host.experience.orders.tabledraft.tests.dll" id="967806ac-bf1c-4336-10d2-3e438e7a7334">
+      <Execution id="7e8e2cef-0f61-4cfb-bb57-1fd281fb4195" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests" name="AWaiterOrderForAProductNotOnTodaysMenuIsNotCounted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.SubmittingAWaiterOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" storage="d:\project\alkaros\tests\host\experience\orders\tabledraft\bin\debug\net8.0\alkaros.host.experience.orders.tabledraft.tests.dll" id="e58dfa44-f92f-97ce-59e2-cb59835119a3">
+      <Execution id="574fbc97-f184-4900-806c-fd5b33f45db5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests" name="SubmittingAWaiterOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests.AWaiterOrderForAProductWithTwoStockMappingsCountsOnePortionPerOrderedUnit" storage="d:\project\alkaros\tests\host\experience\orders\tabledraft\bin\debug\net8.0\alkaros.host.experience.orders.tabledraft.tests.dll" id="7b596e9c-55dd-b241-ac85-1692cfaaf390">
+      <Execution id="1e7cd853-6947-4e23-a164-3fd362ae785a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.OrderManagementTableDraftHttpTests" name="AWaiterOrderForAProductWithTwoStockMappingsCountsOnePortionPerOrderedUnit" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e58dfa44-f92f-97ce-59e2-cb59835119a3" executionId="574fbc97-f184-4900-806c-fd5b33f45db5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b596e9c-55dd-b241-ac85-1692cfaaf390" executionId="1e7cd853-6947-4e23-a164-3fd362ae785a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="967806ac-bf1c-4336-10d2-3e438e7a7334" executionId="7e8e2cef-0f61-4cfb-bb57-1fd281fb4195" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="3" executed="3" passed="3" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.24]   Discovering: ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:00.30]   Discovered:  ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:00.31]   Starting:    ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54387&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54387/api/v1/terminals/1ad0fffb-b1a1-47dd-a058-38d52b33a44d/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54387/api/v1/terminals/1ad0fffb-b1a1-47dd-a058-38d52b33a44d/orders/table-draft - 200 - application/json;+charset=utf-8 403.8831ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54387/api/v1/terminals/1ad0fffb-b1a1-47dd-a058-38d52b33a44d/orders/174eb5bf-2c4f-40c0-b344-5bda861126b9/submit-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54387/api/v1/terminals/1ad0fffb-b1a1-47dd-a058-38d52b33a44d/orders/174eb5bf-2c4f-40c0-b344-5bda861126b9/submit-draft - 200 - application/json;+charset=utf-8 183.8236ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54393&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54393/api/v1/terminals/8a2ebbb6-d5d3-4638-a589-8b3478571794/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54393/api/v1/terminals/8a2ebbb6-d5d3-4638-a589-8b3478571794/orders/table-draft - 200 - application/json;+charset=utf-8 204.6334ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54393/api/v1/terminals/8a2ebbb6-d5d3-4638-a589-8b3478571794/orders/fe7c2856-8d07-4b9b-a6cf-a9e567a1d79e/submit-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54393/api/v1/terminals/8a2ebbb6-d5d3-4638-a589-8b3478571794/orders/fe7c2856-8d07-4b9b-a6cf-a9e567a1d79e/submit-draft - 200 - application/json;+charset=utf-8 85.1775ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54399&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54399/api/v1/terminals/7f20e9f9-751b-47f0-9606-0d835fae3612/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54399/api/v1/terminals/7f20e9f9-751b-47f0-9606-0d835fae3612/orders/table-draft - 200 - application/json;+charset=utf-8 191.3421ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54399/api/v1/terminals/7f20e9f9-751b-47f0-9606-0d835fae3612/orders/6f21f492-67a5-40d2-bc61-269e9b88712c/submit-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54399/api/v1/terminals/7f20e9f9-751b-47f0-9606-0d835fae3612/orders/6f21f492-67a5-40d2-bc61-269e9b88712c/submit-draft - 200 - application/json;+charset=utf-8 65.4927ms&#xD;
+[xUnit.net 00:00:04.18]   Finished:    ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

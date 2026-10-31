@@ -1,0 +1,706 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f37364f3-f39b-4a24-856f-bf41ef29bd26" name="semih@SEMH59 2026-11-01 00:18:18" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:18:18.8581069+03:00" queuing="2026-11-01T00:18:18.8581072+03:00" start="2026-11-01T00:18:16.7214496+03:00" finish="2026-11-01T00:18:51.9837556+03:00" />
+  <TestSettings name="default" id="930a6b37-b781-4098-9e10-99331d89b1e9">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_18_18" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="481c4616-415d-4b18-821d-715c5bfd95e2" testId="3e63bea2-f603-9b29-a972-74a544083a60" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ADelegationIsRefusedWhenItBreaksAnyOfItsBounds" computerName="SEMH59" duration="00:00:00.2474627" startTime="2026-11-01T00:18:32.9681941+03:00" endTime="2026-11-01T00:18:32.9681943+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="481c4616-415d-4b18-821d-715c5bfd95e2" />
+    <UnitTestResult executionId="ce08a49d-aa68-4414-9b8f-60cda564e0d8" testId="d7627c2d-c548-7df8-7c84-9738d9309007" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.TheThreeListsCarryTheDisplayNamesOfThePeopleInThem" computerName="SEMH59" duration="00:00:00.1221830" startTime="2026-11-01T00:18:51.8918095+03:00" endTime="2026-11-01T00:18:51.8918098+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce08a49d-aa68-4414-9b8f-60cda564e0d8" />
+    <UnitTestResult executionId="a7d8441e-cbf4-472e-968e-04e9eb418d88" testId="6e7cc8ba-3851-081c-696c-6f6676a9e316" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DelegationsAndTighteningsCanBeListedRevokedAndCleared" computerName="SEMH59" duration="00:00:00.1486696" startTime="2026-11-01T00:18:39.4381510+03:00" endTime="2026-11-01T00:18:39.4381512+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a7d8441e-cbf4-472e-968e-04e9eb418d88" />
+    <UnitTestResult executionId="b9df379b-0bc4-4811-9c3e-557c4d0f5bc5" testId="169bc303-fd3e-028c-a60b-a0ae189f44b8" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotApproveOrDenyTheirOwnGrantRequest" computerName="SEMH59" duration="00:00:00.0894390" startTime="2026-11-01T00:18:45.9072911+03:00" endTime="2026-11-01T00:18:45.9072916+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9df379b-0bc4-4811-9c3e-557c4d0f5bc5" />
+    <UnitTestResult executionId="7d407ca0-0cc7-4ba1-8985-df32644afad8" testId="79f9abd6-50a0-5fcc-2116-b9b93bfd2283" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed" computerName="SEMH59" duration="00:00:01.7513780" startTime="2026-11-01T00:18:22.9323387+03:00" endTime="2026-11-01T00:18:22.9323391+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d407ca0-0cc7-4ba1-8985-df32644afad8" />
+    <UnitTestResult executionId="2a2ddbd1-9bfc-4c13-bd93-aa555367d0f4" testId="193ff330-b241-e364-9306-ab330b5d78a5" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DecisionSurfaceEnforcesSessionAndPermission" computerName="SEMH59" duration="00:00:00.0695067" startTime="2026-11-01T00:18:48.9037474+03:00" endTime="2026-11-01T00:18:48.9037476+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a2ddbd1-9bfc-4c13-bd93-aa555367d0f4" />
+    <UnitTestResult executionId="98735e46-8d69-4418-99d3-9b9360e1c181" testId="78ddae40-1710-b077-cdf6-b0dcce6d2d92" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.FirstResponderResolvesTheGrantAndTheSecondGetsAConflict" computerName="SEMH59" duration="00:00:00.2239457" startTime="2026-11-01T00:18:26.2534086+03:00" endTime="2026-11-01T00:18:26.2534087+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98735e46-8d69-4418-99d3-9b9360e1c181" />
+    <UnitTestResult executionId="8b780186-7db0-4907-96ec-181afc4ed4f3" testId="f2d19613-3b31-8ac6-cf5b-7c0813c8f988" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.AnApproverWhoCannotDoTheRequestedThingThemselvesIsRefused" computerName="SEMH59" duration="00:00:00.1858852" startTime="2026-11-01T00:18:42.7889000+03:00" endTime="2026-11-01T00:18:42.7889001+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8b780186-7db0-4907-96ec-181afc4ed4f3" />
+    <UnitTestResult executionId="b6d267af-e1a0-422c-8629-6d1bfae2b549" testId="88287f5d-b424-e544-ace8-c7c9ae2ae604" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotClearTheirOwnBehaviouralTightening" computerName="SEMH59" duration="00:00:00.1069750" startTime="2026-11-01T00:18:36.2152822+03:00" endTime="2026-11-01T00:18:36.2152825+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6d267af-e1a0-422c-8629-6d1bfae2b549" />
+    <UnitTestResult executionId="af118c2d-b09b-4a2f-828d-711d687bf676" testId="fafa7d21-2473-b911-0702-46ac941a51f4" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionRegistrationTests.RegistrationPublishesTheDecisionRoutes" computerName="SEMH59" duration="00:00:00.3415942" startTime="2026-11-01T00:18:18.0344820+03:00" endTime="2026-11-01T00:18:18.0345120+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af118c2d-b09b-4a2f-828d-711d687bf676" />
+    <UnitTestResult executionId="6930df28-c16d-4b12-b45a-929a215ae06d" testId="18fa75b1-b67f-ea03-90fc-9c778a044f3e" testName="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DenyRecordsAManualRefusal" computerName="SEMH59" duration="00:00:00.1062827" startTime="2026-11-01T00:18:29.4936394+03:00" endTime="2026-11-01T00:18:29.4936398+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6930df28-c16d-4b12-b45a-929a215ae06d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.FirstResponderResolvesTheGrantAndTheSecondGetsAConflict" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="78ddae40-1710-b077-cdf6-b0dcce6d2d92">
+      <Execution id="98735e46-8d69-4418-99d3-9b9360e1c181" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="FirstResponderResolvesTheGrantAndTheSecondGetsAConflict" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.AnApproverWhoCannotDoTheRequestedThingThemselvesIsRefused" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="f2d19613-3b31-8ac6-cf5b-7c0813c8f988">
+      <Execution id="8b780186-7db0-4907-96ec-181afc4ed4f3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="AnApproverWhoCannotDoTheRequestedThingThemselvesIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotApproveOrDenyTheirOwnGrantRequest" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="169bc303-fd3e-028c-a60b-a0ae189f44b8">
+      <Execution id="b9df379b-0bc4-4811-9c3e-557c4d0f5bc5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="ManagerCannotApproveOrDenyTheirOwnGrantRequest" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DecisionSurfaceEnforcesSessionAndPermission" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="193ff330-b241-e364-9306-ab330b5d78a5">
+      <Execution id="2a2ddbd1-9bfc-4c13-bd93-aa555367d0f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="DecisionSurfaceEnforcesSessionAndPermission" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="79f9abd6-50a0-5fcc-2116-b9b93bfd2283">
+      <Execution id="7d407ca0-0cc7-4ba1-8985-df32644afad8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionRegistrationTests.RegistrationPublishesTheDecisionRoutes" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="fafa7d21-2473-b911-0702-46ac941a51f4">
+      <Execution id="af118c2d-b09b-4a2f-828d-711d687bf676" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionRegistrationTests" name="RegistrationPublishesTheDecisionRoutes" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotClearTheirOwnBehaviouralTightening" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="88287f5d-b424-e544-ace8-c7c9ae2ae604">
+      <Execution id="b6d267af-e1a0-422c-8629-6d1bfae2b549" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="ManagerCannotClearTheirOwnBehaviouralTightening" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.TheThreeListsCarryTheDisplayNamesOfThePeopleInThem" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="d7627c2d-c548-7df8-7c84-9738d9309007">
+      <Execution id="ce08a49d-aa68-4414-9b8f-60cda564e0d8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="TheThreeListsCarryTheDisplayNamesOfThePeopleInThem" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DelegationsAndTighteningsCanBeListedRevokedAndCleared" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="6e7cc8ba-3851-081c-696c-6f6676a9e316">
+      <Execution id="a7d8441e-cbf4-472e-968e-04e9eb418d88" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="DelegationsAndTighteningsCanBeListedRevokedAndCleared" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DenyRecordsAManualRefusal" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="18fa75b1-b67f-ea03-90fc-9c778a044f3e">
+      <Execution id="6930df28-c16d-4b12-b45a-929a215ae06d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="DenyRecordsAManualRefusal" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ADelegationIsRefusedWhenItBreaksAnyOfItsBounds" storage="d:\project\alkaros\tests\host\experience\authorization\bin\debug\net8.0\alkaros.host.experience.authorization.tests.dll" id="3e63bea2-f603-9b29-a972-74a544083a60">
+      <Execution id="481c4616-415d-4b18-821d-715c5bfd95e2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0\ALKAROS.Host.Experience.Authorization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests" name="ADelegationIsRefusedWhenItBreaksAnyOfItsBounds" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3e63bea2-f603-9b29-a972-74a544083a60" executionId="481c4616-415d-4b18-821d-715c5bfd95e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7627c2d-c548-7df8-7c84-9738d9309007" executionId="ce08a49d-aa68-4414-9b8f-60cda564e0d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e7cc8ba-3851-081c-696c-6f6676a9e316" executionId="a7d8441e-cbf4-472e-968e-04e9eb418d88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="169bc303-fd3e-028c-a60b-a0ae189f44b8" executionId="b9df379b-0bc4-4811-9c3e-557c4d0f5bc5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79f9abd6-50a0-5fcc-2116-b9b93bfd2283" executionId="7d407ca0-0cc7-4ba1-8985-df32644afad8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="193ff330-b241-e364-9306-ab330b5d78a5" executionId="2a2ddbd1-9bfc-4c13-bd93-aa555367d0f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78ddae40-1710-b077-cdf6-b0dcce6d2d92" executionId="98735e46-8d69-4418-99d3-9b9360e1c181" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2d19613-3b31-8ac6-cf5b-7c0813c8f988" executionId="8b780186-7db0-4907-96ec-181afc4ed4f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88287f5d-b424-e544-ace8-c7c9ae2ae604" executionId="b6d267af-e1a0-422c-8629-6d1bfae2b549" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fafa7d21-2473-b911-0702-46ac941a51f4" executionId="af118c2d-b09b-4a2f-828d-711d687bf676" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18fa75b1-b67f-ea03-90fc-9c778a044f3e" executionId="6930df28-c16d-4b12-b45a-929a215ae06d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.27]   Discovering: ALKAROS.Host.Experience.Authorization.Tests&#xD;
+[xUnit.net 00:00:00.30]   Discovered:  ALKAROS.Host.Experience.Authorization.Tests&#xD;
+[xUnit.net 00:00:00.31]   Starting:    ALKAROS.Host.Experience.Authorization.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58577&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58577/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ActiveDelegationV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58577/api/v1/management/authorization/delegations - 201 - application/json;+charset=utf-8 1448.3079ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58577/api/v1/management/authorization/delegations - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ActiveDelegationV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58577/api/v1/management/authorization/delegations - 200 - application/json;+charset=utf-8 103.5176ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58583&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58583/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingGrantV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58583/api/v1/management/authorization/pending-grants - 200 - application/json;+charset=utf-8 83.6404ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58583/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingGrantV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58583/api/v1/management/authorization/pending-grants - 200 - application/json;+charset=utf-8 10.0721ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58583/api/v1/management/authorization/grants/b224dea0-9e76-4fa9-b045-3c5274dc5019/approve - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ResolvedGrantV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58583/api/v1/management/authorization/grants/b224dea0-9e76-4fa9-b045-3c5274dc5019/approve - 200 - application/json;+charset=utf-8 28.1621ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58583/api/v1/management/authorization/grants/b224dea0-9e76-4fa9-b045-3c5274dc5019/approve - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.Grants.AuthorizationGrantAlreadyResolvedException: Authorization grant b224dea0-9e76-4fa9-b045-3c5274dc5019 is already resolved.&#xD;
+         at ALKAROS.Identity.Authorization.Grants.PostgresAuthorizationGrantRepository.ResolveAsync(Guid grantId, GrantStatus status, PolicyPath path, Nullable`1 approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Grants\PostgresAuthorizationGrantRepository.cs:line 108&#xD;
+         at ALKAROS.Identity.Authorization.Grants.PostgresAuthorizationGrantRepository.ResolveAsync(Guid grantId, GrantStatus status, PolicyPath path, Nullable`1 approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Grants\PostgresAuthorizationGrantRepository.cs:line 110&#xD;
+         at ALKAROS.Identity.Authorization.Grants.PostgresAuthorizationGrantRepository.ResolveAsync(Guid grantId, GrantStatus status, PolicyPath path, Nullable`1 approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Grants\PostgresAuthorizationGrantRepository.cs:line 110&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ResolveAsync(Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 87&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 64&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58583/api/v1/management/authorization/grants/b224dea0-9e76-4fa9-b045-3c5274dc5019/approve - 409 - application/json;+charset=utf-8 51.0962ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58583/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingGrantV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58583/api/v1/management/authorization/pending-grants - 200 - application/json;+charset=utf-8 6.7744ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58589&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58589/api/v1/management/authorization/grants/7964dd48-d98e-4b36-8882-30bb25c3083d/deny - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/deny'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ResolvedGrantV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/deny'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58589/api/v1/management/authorization/grants/7964dd48-d98e-4b36-8882-30bb25c3083d/deny - 200 - application/json;+charset=utf-8 68.4068ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58595&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Authorization.DelegatorLacksPermissionException: The delegator does not hold 'bills.void' and cannot delegate it.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_4&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 101&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - 403 - application/json;+charset=utf-8 103.5175ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: Only bills.void, bills.comp and bills.discount can be delegated. (Parameter 'request')&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_4&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 94&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - 400 - application/json;+charset=utf-8 10.1698ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: A delegation cannot name the same user as grantee and delegator.&#xD;
+         at ALKAROS.Identity.Authorization.Delegations.DelegationRequest.Validate(DateTimeOffset now) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Delegations\AuthorizationDelegation.cs:line 47&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.CreateDelegationAsync(CreateDelegationRequestV1 request, Guid delegatorUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 140&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_4&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 104&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - 400 - application/json;+charset=utf-8 15.8790ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: A delegation may last at most 24 hours. (Parameter 'request')&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.CreateDelegationAsync(CreateDelegationRequestV1 request, Guid delegatorUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 136&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_4&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 104&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - 400 - application/json;+charset=utf-8 12.0018ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: A delegation LimitAmount must not be negative.&#xD;
+         at ALKAROS.Identity.Authorization.Delegations.DelegationRequest.Validate(DateTimeOffset now) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Delegations\AuthorizationDelegation.cs:line 49&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.CreateDelegationAsync(CreateDelegationRequestV1 request, Guid delegatorUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 140&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_4&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 104&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - 400 - application/json;+charset=utf-8 13.1456ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Authorization.DelegationGranteeNotFoundException: Grantee 'c0adb3ad-c804-495a-9111-ba9fdc0a13d7' is not a known user.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.CreateDelegationAsync(CreateDelegationRequestV1 request, Guid delegatorUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 149&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_4&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 104&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58595/api/v1/management/authorization/delegations - 404 - application/json;+charset=utf-8 19.7737ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58595/api/v1/management/authorization/delegations - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ActiveDelegationV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58595/api/v1/management/authorization/delegations - 200 - application/json;+charset=utf-8 11.1254ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58601&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58601/api/v1/management/authorization/behavioural-tightenings/78e00b3d-a1f8-4246-928c-fdf0eeebc0e9/clear - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.Behavioural.BehaviouralTighteningSelfClearException: User 75fccef3-2842-4ff5-bbc0-ed80dc5fd3c4 cannot clear their own behavioural tightening 78e00b3d-a1f8-4246-928c-fdf0eeebc0e9.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ClearTighteningAsync(Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 190&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_7&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 126&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58601/api/v1/management/authorization/behavioural-tightenings/78e00b3d-a1f8-4246-928c-fdf0eeebc0e9/clear - 403 - application/json;+charset=utf-8 67.5789ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58601/api/v1/management/authorization/behavioural-tightenings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/behavioural-tightenings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OpenTighteningV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/behavioural-tightenings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58601/api/v1/management/authorization/behavioural-tightenings - 200 - application/json;+charset=utf-8 14.9295ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58607&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58607/api/v1/management/authorization/delegations - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ActiveDelegationV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58607/api/v1/management/authorization/delegations - 200 - application/json;+charset=utf-8 61.0626ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/delegations/3a261900-1c4d-4d7f-b7ce-502fde9fb973/revoke - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations/{delegationId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations/{delegationId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/delegations/3a261900-1c4d-4d7f-b7ce-502fde9fb973/revoke - 204 - - 11.1812ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/delegations/3a261900-1c4d-4d7f-b7ce-502fde9fb973/revoke - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/delegations/{delegationId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/delegations/{delegationId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/delegations/3a261900-1c4d-4d7f-b7ce-502fde9fb973/revoke - 404 - application/json;+charset=utf-8 12.8252ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58607/api/v1/management/authorization/behavioural-tightenings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/behavioural-tightenings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OpenTighteningV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/behavioural-tightenings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58607/api/v1/management/authorization/behavioural-tightenings - 200 - application/json;+charset=utf-8 8.3053ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/behavioural-tightenings/20440f0f-c0a6-41f7-a6ee-43c5724f4c61/clear - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/behavioural-tightenings/20440f0f-c0a6-41f7-a6ee-43c5724f4c61/clear - 204 - - 10.5493ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/behavioural-tightenings/20440f0f-c0a6-41f7-a6ee-43c5724f4c61/clear - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.Behavioural.BehaviouralTighteningAlreadyClearedException: Behavioural tightening 20440f0f-c0a6-41f7-a6ee-43c5724f4c61 is already cleared or does not exist.&#xD;
+         at ALKAROS.Identity.Authorization.Behavioural.PostgresBehaviouralTighteningRepository.ClearAsync(Guid tighteningId, Guid clearedByUserId, DateTimeOffset at, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Behavioural\PostgresBehaviouralTighteningRepository.cs:line 91&#xD;
+         at ALKAROS.Identity.Authorization.Behavioural.PostgresBehaviouralTighteningRepository.ClearAsync(Guid tighteningId, Guid clearedByUserId, DateTimeOffset at, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Behavioural\PostgresBehaviouralTighteningRepository.cs:line 93&#xD;
+         at ALKAROS.Identity.Authorization.Behavioural.PostgresBehaviouralTighteningRepository.ClearAsync(Guid tighteningId, Guid clearedByUserId, DateTimeOffset at, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\Behavioural\PostgresBehaviouralTighteningRepository.cs:line 93&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ClearTighteningAsync(Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 192&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_7&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 126&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58607/api/v1/management/authorization/behavioural-tightenings/20440f0f-c0a6-41f7-a6ee-43c5724f4c61/clear - 409 - application/json;+charset=utf-8 9.4950ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58613&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58613/api/v1/management/authorization/grants/30aa9246-add1-4af3-86ec-6d815201dcd9/approve - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Authorization.ApproverLacksPermissionException: The approver does not hold 'bills.comp'.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ResolveAsync(Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 83&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 64&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58613/api/v1/management/authorization/grants/30aa9246-add1-4af3-86ec-6d815201dcd9/approve - 403 - application/json;+charset=utf-8 87.0274ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58613/api/v1/management/authorization/grants/30aa9246-add1-4af3-86ec-6d815201dcd9/deny - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/deny'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/deny'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Authorization.ApproverLacksPermissionException: The approver does not hold 'bills.comp'.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ResolveAsync(Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 83&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 68&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58613/api/v1/management/authorization/grants/30aa9246-add1-4af3-86ec-6d815201dcd9/deny - 403 - application/json;+charset=utf-8 34.8985ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58613/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingGrantV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58613/api/v1/management/authorization/pending-grants - 200 - application/json;+charset=utf-8 23.4464ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58619&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58619/api/v1/management/authorization/grants/1ec626b9-c1fe-4eb9-bf72-6ff00eb159cc/approve - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/approve'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.Grants.AuthorizationSelfApprovalException: User 67b91832-3334-4922-b1c9-861addaa27c8 cannot resolve their own authorization grant 1ec626b9-c1fe-4eb9-bf72-6ff00eb159cc.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ResolveAsync(Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 72&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 64&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58619/api/v1/management/authorization/grants/1ec626b9-c1fe-4eb9-bf72-6ff00eb159cc/approve - 403 - application/json;+charset=utf-8 47.0290ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58619/api/v1/management/authorization/grants/1ec626b9-c1fe-4eb9-bf72-6ff00eb159cc/deny - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/deny'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/authorization/grants/{grantId:guid}/deny'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.Grants.AuthorizationSelfApprovalException: User 67b91832-3334-4922-b1c9-861addaa27c8 cannot resolve their own authorization grant 1ec626b9-c1fe-4eb9-bf72-6ff00eb159cc.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionStore.ResolveAsync(Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionStore.cs:line 72&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpoints.&lt;&gt;c.&lt;&lt;MapAuthorizationDecisionApi&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 68&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 198&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58619/api/v1/management/authorization/grants/1ec626b9-c1fe-4eb9-bf72-6ff00eb159cc/deny - 403 - application/json;+charset=utf-8 8.4954ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58619/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingGrantV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58619/api/v1/management/authorization/pending-grants - 200 - application/json;+charset=utf-8 12.3491ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58625&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58625/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Authorization.AuthorizationDecisionUnauthorizedException: A valid manager or supervisor session is required.&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 173&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 194&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58625/api/v1/management/authorization/pending-grants - 401 - application/json;+charset=utf-8 26.0239ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58625/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User 'dbdbfa45-c51f-44a7-aed0-ff6088538a5a' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Authorization.AuthorizationDecisionEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Authorization\AuthorizationDecisionEndpoints.cs:line 195&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58625/api/v1/management/authorization/pending-grants - 403 - application/json;+charset=utf-8 30.2923ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58631&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Authorization\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/pending-grants - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingGrantV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/pending-grants'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/pending-grants - 200 - application/json;+charset=utf-8 51.3643ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/delegations - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ActiveDelegationV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/delegations - 200 - application/json;+charset=utf-8 9.7840ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/delegations - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ActiveDelegationV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/delegations'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/delegations - 200 - application/json;+charset=utf-8 10.2839ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/behavioural-tightenings - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/authorization/behavioural-tightenings'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OpenTighteningV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/authorization/behavioural-tightenings'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58631/api/v1/management/authorization/behavioural-tightenings - 200 - application/json;+charset=utf-8 7.5032ms&#xD;
+[xUnit.net 00:00:34.55]   Finished:    ALKAROS.Host.Experience.Authorization.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

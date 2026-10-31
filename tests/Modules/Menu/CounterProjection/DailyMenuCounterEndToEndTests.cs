@@ -338,4 +338,55 @@ public sealed class DailyMenuCounterEndToEndTests : IClassFixture<CounterProject
         else
             found.Should().BeEmpty();
     }
+
+    private async Task SellDirectlyAsync(Seeded seed, Guid orderItemId, decimal portions, ReservationChannel channel)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var tx = await conn.BeginTransactionAsync();
+        var location = await LocationOfAsync(conn, tx, seed.StockItemIds[0]);
+        await new PostgresReservationAwareConsumptionGuard().RecordDirectSaleAsync(
+            new DirectSale(
+                Guid.NewGuid(), orderItemId, channel, "order-ref", seed.StockItemIds[0], location, portions * 0.15m, "kg",
+                seed.MenuItemId, portions, Actor),
+            conn,
+            tx);
+        await tx.CommitAsync();
+    }
+
+    [Fact]
+    public async Task DirectSalesFillConsumedPortionsOncePerOrderItemAndMatchRebuildAndDrift()
+    {
+        var seed = await SeedAsync(mappings: 2);
+        var waiter = Guid.NewGuid();
+        var nfc = Guid.NewGuid();
+        await SellDirectlyAsync(seed, waiter, 3m, ReservationChannel.Waiter);
+        await SellDirectlyAsync(seed, waiter, 3m, ReservationChannel.Waiter);
+        await SellDirectlyAsync(seed, nfc, 2m, ReservationChannel.Nfc);
+        await SellDirectlyAsync(seed, Guid.NewGuid(), 1m, ReservationChannel.Cashier);
+
+        (await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)).Should().Be(3, "the repeated sale writes nothing");
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(6m);
+        counters.ReservedPortions.Should().Be(0m);
+        (await ReservationsOfAsync(waiter)).Should().ContainSingle();
+
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        (await CountersAsync(seed.MenuItemId)).Should().Be(counters);
+    }
+
+    [Fact]
+    public async Task AnItemAlreadyHeldByAnotherChannelIsNotCountedAgainByTheDirectSale()
+    {
+        var seed = await SeedAsync();
+        var order = await ReserveAsync(seed, 2m);
+        await ConsumeAsync(order.OrderItemId, seed.StockItemIds[0]);
+
+        await SellDirectlyAsync(seed, order.OrderItemId, 2m, ReservationChannel.Waiter);
+
+        (await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)).Should().Be(2, "the hold's own reserve and consume events");
+        (await ReservationsOfAsync(order.OrderItemId)).Should().ContainSingle();
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+    }
 }

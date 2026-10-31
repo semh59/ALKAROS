@@ -4,6 +4,7 @@ using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Measurements;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Recipes.CatalogMapping;
 using ALKAROS.Recipes.TheoreticalConsumption;
@@ -52,6 +53,7 @@ public sealed class OrderStockConsumptionService
     private readonly ITheoreticalConsumptionRecordRepository _theoreticalConsumption;
     private readonly IUnitConverter _unitConverter;
     private readonly IReservationAwareConsumptionGuard _reservationGuard;
+    private readonly IDailyMenuItemLocator _dailyMenuItems;
 
     public OrderStockConsumptionService(
         IProductStockMappingRepository mappings,
@@ -63,8 +65,10 @@ public sealed class OrderStockConsumptionService
         IRecipeVersionRepository recipeVersions,
         ITheoreticalConsumptionRecordRepository theoreticalConsumption,
         IUnitConverter unitConverter,
-        IReservationAwareConsumptionGuard reservationGuard)
+        IReservationAwareConsumptionGuard reservationGuard,
+        IDailyMenuItemLocator dailyMenuItems)
     {
+        _dailyMenuItems = dailyMenuItems ?? throw new ArgumentNullException(nameof(dailyMenuItems));
         _mappings = mappings ?? throw new ArgumentNullException(nameof(mappings));
         _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
         _balances = balances ?? throw new ArgumentNullException(nameof(balances));
@@ -139,6 +143,10 @@ public sealed class OrderStockConsumptionService
         // particular order happened to list its items in.
         await LockStockRowsAsync(items, connection, transaction, cancellationToken).ConfigureAwait(false);
 
+        var menuItems = await _dailyMenuItems.FindPublishedItemIdsAsync(
+            items.Where(i => i.Status != OrderItemState.Cancelled).Select(i => i.ProductId).Distinct().ToList(),
+            cancellationToken).ConfigureAwait(false);
+
         foreach (var item in items)
         {
             // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
@@ -191,6 +199,27 @@ public sealed class OrderStockConsumptionService
                     reason: $"Order {order.OrderNumber}, item {item.Id:D} ({item.ProductNameSnapshot}) {trigger}",
                     createdBy: actorId);
                 await _movements.AppendAsync(movement, connection, transaction, cancellationToken);
+
+                // The ordered quantity is the portion count; the guard keeps one row per order item, so only the first mapping writes it.
+                if (menuItems.TryGetValue(item.ProductId, out var dailyMenuItemId))
+                {
+                    await _reservationGuard.RecordDirectSaleAsync(
+                        new DirectSale(
+                            order.Id,
+                            item.Id,
+                            Enum.Parse<ReservationChannel>(order.Source.ToString()),
+                            order.Id.ToString("D"),
+                            mapping.StockItemId,
+                            locationId,
+                            consumeQuantity,
+                            stockItem.TrackingUnitCode.Trim().ToLowerInvariant(),
+                            dailyMenuItemId,
+                            item.Quantity,
+                            actorId),
+                        connection,
+                        transaction,
+                        cancellationToken).ConfigureAwait(false);
+                }
             }
 
             await ConsumeModifiersAsync(order, item, trigger, actorId, connection, transaction, cancellationToken);

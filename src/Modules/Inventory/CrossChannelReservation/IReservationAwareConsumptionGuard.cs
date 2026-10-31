@@ -25,4 +25,16 @@ public interface IReservationAwareConsumptionGuard
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Counts a sale that consumed stock without a hold as consumed portions of its daily menu item: a
+    /// <c>Consumed</c> reservation row carrying the portion keys, plus the counter event, in
+    /// <paramref name="transaction"/>. Does nothing when the order item already has any reservation row (QR and
+    /// online orders are counted from their hold), so an item is never counted twice.
+    /// </summary>
+    Task RecordDirectSaleAsync(
+        DirectSale sale,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

@@ -68,6 +68,25 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         Assert.Equal(1, await _database.KitchenTicketCountAsync(order.OrderId));
     }
 
+    [Fact]
+    public async Task AnNfcOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(product);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 2)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var counters = await _database.DeliverDailyMenuEventsAsync(menuItemId);
+        Assert.Equal(2m, counters.ConsumedPortions);
+        Assert.Equal(0m, counters.ReservedPortions);
+    }
+
     [Theory]
     [InlineData(200, HttpStatusCode.OK)]
     [InlineData(201, HttpStatusCode.BadRequest)]

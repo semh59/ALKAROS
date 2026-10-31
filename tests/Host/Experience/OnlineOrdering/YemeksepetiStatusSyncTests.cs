@@ -176,6 +176,24 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold()
+    {
+        var (productId, sku) = await _database.SeedSellableProductAsync(2m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(productId);
+        var externalId = Guid.NewGuid().ToString("D");
+        await StoreAsync(Event(externalId, "RECEIVED", "t1", sku, "LOGISTICS_DELIVERY"));
+        await DrainAsync();
+        var orderId = Assert.Single(await _database.OnlineOrdersAsync(externalId)).OrderId;
+
+        Assert.Equal(OnlineOrderActionOutcome.Applied, await Sync.HandOverAsync(orderId, Guid.NewGuid()));
+
+        Assert.Equal(new[] { ("Consumed", "Online") }, await _database.HoldsAsync(orderId));
+        var counters = await _database.DeliverDailyMenuEventsAsync(menuItemId);
+        Assert.Equal(1m, counters.ConsumedPortions);
+        Assert.Equal(0m, counters.ReservedPortions);
+    }
+
+    [Fact]
     public async Task AHandoverConsumesTheHoldCompletesTheOrderAndTellsTheProviderOnce()
     {
         var (productId, _, externalId, orderId) = await AcceptedOrderAsync(onHand: 2m);

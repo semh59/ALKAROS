@@ -1,0 +1,1110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="df954df7-3e4f-4a1f-a777-91b0a83a1f7e" name="semih@SEMH59 2026-11-01 00:35:15" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:35:15.3623491+03:00" queuing="2026-11-01T00:35:15.3623495+03:00" start="2026-11-01T00:35:09.8698143+03:00" finish="2026-11-01T00:35:28.3137185+03:00" />
+  <TestSettings name="default" id="7eca871f-61b6-4ad0-8c6b-feda0b61cef4">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_35_15" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9a828445-8a8f-4d4a-ad14-7bf636a6f5c3" testId="a2a0bbaa-6cd7-f93d-d84d-f225be5332c5" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:25.1401774+03:00" endTime="2026-11-01T00:35:25.1401776+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a828445-8a8f-4d4a-ad14-7bf636a6f5c3">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6258adad-1ab6-43b9-9ceb-c1ee21b2e405" testId="c108d5f5-9155-78bf-5dcd-17390838ab90" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:24.1061674+03:00" endTime="2026-11-01T00:35:24.1061682+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6258adad-1ab6-43b9-9ceb-c1ee21b2e405">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="04677dc1-cc88-4d0c-8c88-338051047f15" testId="dbed7528-3471-1c58-d72a-e40b67515e81" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemRestoresItsModifierStockToo" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:23.0690478+03:00" endTime="2026-11-01T00:35:23.0690480+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="04677dc1-cc88-4d0c-8c88-338051047f15">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4708cfa9-0335-4048-9174-e1fb0ba52623" testId="2fc74bd1-5f4e-3fc1-e520-412cf2b3f936" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:28.1269008+03:00" endTime="2026-11-01T00:35:28.1269011+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4708cfa9-0335-4048-9174-e1fb0ba52623">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="991dd274-afaa-4e7b-b9ab-fc045f1b8154" testId="54d44ddb-8613-a89b-5558-4e5808826d29" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemBeforeTheKitchenStartedRestoresItsStock" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:22.5188061+03:00" endTime="2026-11-01T00:35:22.5188064+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="991dd274-afaa-4e7b-b9ab-fc045f1b8154">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4019cace-678d-4da5-9a27-dd3c497381de" testId="bca134a6-15a4-ce12-19b5-8a22e9a6d1eb" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:22.0373382+03:00" endTime="2026-11-01T00:35:22.0373383+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4019cace-678d-4da5-9a27-dd3c497381de">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8f33e494-ba34-402c-9226-cb2b5b8a4c6e" testId="347f07fa-da3c-2e90-aa56-75d664af9478" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:20.8900344+03:00" endTime="2026-11-01T00:35:20.8900346+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f33e494-ba34-402c-9226-cb2b5b8a4c6e">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="01723c4f-9720-479d-8ac0-57ee470fe59a" testId="6b89a130-0a83-f0d2-a5ee-9e88235b5c47" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:15.1332021+03:00" endTime="2026-11-01T00:35:15.1332421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="01723c4f-9720-479d-8ac0-57ee470fe59a">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8efdfe3e-61ff-41fe-90ea-acf9c35082e8" testId="4652c3c4-3123-5b11-234b-1aedff0f69a8" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.APendingVoidRequestCarriesTheItemsRealAmount" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:17.8725662+03:00" endTime="2026-11-01T00:35:17.8725665+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8efdfe3e-61ff-41fe-90ea-acf9c35082e8">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a4c278b9-b8ef-43c8-b7a3-eb14f3165455" testId="dbf137c7-7ab9-05aa-eda7-58181f04462a" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:18.4988177+03:00" endTime="2026-11-01T00:35:18.4988178+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4c278b9-b8ef-43c8-b7a3-eb14f3165455">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f10c75f6-7ae7-48ac-aeb6-e49603924d97" testId="e669f979-3a00-77c5-81e0-880d1cb880c6" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:23.6072158+03:00" endTime="2026-11-01T00:35:23.6072160+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f10c75f6-7ae7-48ac-aeb6-e49603924d97">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9115d847-5d7f-467f-9ccf-2699fec2ca58" testId="7cef501e-e598-5b01-aeae-dc899e44f9f3" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:24.6627852+03:00" endTime="2026-11-01T00:35:24.6627853+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9115d847-5d7f-467f-9ccf-2699fec2ca58">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="873b341b-3ece-4f34-a2b1-a99ae06c2912" testId="5a23339b-b7a2-8864-902e-8755bf903c9b" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnInvalidReasonCodeIsRejected" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:25.6218613+03:00" endTime="2026-11-01T00:35:25.6218616+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="873b341b-3ece-4f34-a2b1-a99ae06c2912">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="77cd4553-2b52-4805-bf4d-cf9a1a00eb22" testId="d0cc507c-6d99-5f8f-d103-dd3b833b872d" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.NoSessionCookieIsUnauthorized" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:27.6205253+03:00" endTime="2026-11-01T00:35:27.6205256+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77cd4553-2b52-4805-bf4d-cf9a1a00eb22">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="34089248-c2dc-46ac-a9f2-5c7b7d55d104" testId="cd6af327-bd2e-193a-5b41-5eaaa586aad7" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleWithoutBillsVoidEscalatesToPending" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:16.6348126+03:00" endTime="2026-11-01T00:35:16.6348128+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34089248-c2dc-46ac-a9f2-5c7b7d55d104">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="70435172-7c18-4dba-b6a5-23acc3a5094c" testId="e93d3c24-8ac8-c09c-dc07-aec140282012" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:27.1629732+03:00" endTime="2026-11-01T00:35:27.1629733+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70435172-7c18-4dba-b6a5-23acc3a5094c">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="748825eb-0df9-4457-8048-917bcdf8a2ec" testId="e6b0cb55-5ba5-9e17-a430-262e36075a89" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:17.0758617+03:00" endTime="2026-11-01T00:35:17.0758619+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="748825eb-0df9-4457-8048-917bcdf8a2ec">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0671e5cc-2fea-4ad8-a5e6-8e6278858a89" testId="ab18919a-bc74-9275-2546-607aeede7ca3" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemAlreadyServedIsRejected" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:15.6640878+03:00" endTime="2026-11-01T00:35:15.6640880+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0671e5cc-2fea-4ad8-a5e6-8e6278858a89">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="90c87e1c-b882-4b3d-8989-ef2d9fd1d678" testId="269e729b-0721-a38a-823b-ce2d9b43df67" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:21.4454430+03:00" endTime="2026-11-01T00:35:21.4454431+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90c87e1c-b882-4b3d-8989-ef2d9fd1d678">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="00ad3127-63d8-43f8-af89-e1192417a3fc" testId="f99239d1-0818-227b-dff5-b276865d66db" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAPreparingItemDoesNotRestoreItsStock" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:26.2404761+03:00" endTime="2026-11-01T00:35:26.2404763+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00ad3127-63d8-43f8-af89-e1192417a3fc">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="62a35749-33d0-40ac-9a53-b8c87818ce6a" testId="918eebe2-0f9a-1fe1-9b3a-9833312e4fd1" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemStillNotSentIsRejected" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:19.4465768+03:00" endTime="2026-11-01T00:35:19.4465771+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="62a35749-33d0-40ac-9a53-b8c87818ce6a">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5ab647eb-9b3f-4dc0-bda6-bce2f48b78e6" testId="50fba127-bba2-4871-f560-2394d7789947" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.TheSameKeyWithADifferentVoidRequestIsRefused" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:20.1769133+03:00" endTime="2026-11-01T00:35:20.1769137+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ab647eb-9b3f-4dc0-bda6-bce2f48b78e6">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="1a0bfa63-c938-4f69-9ef0-95e95f7b77d1" testId="f53ee795-16ca-595b-68eb-7b1ddf638268" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenIsNotMade" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:26.7646549+03:00" endTime="2026-11-01T00:35:26.7646552+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1a0bfa63-c938-4f69-9ef0-95e95f7b77d1">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c12cb742-5c9a-4565-bda1-b4a92148fecb" testId="130764b2-506e-10d7-ff53-edcf11cec22a" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed" computerName="SEMH59" duration="00:00:00.0010000" startTime="2026-11-01T00:35:16.2000392+03:00" endTime="2026-11-01T00:35:16.2000393+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c12cb742-5c9a-4565-bda1-b4a92148fecb">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs:line 29&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76&#xD;
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemBeforeTheKitchenStartedRestoresItsStock" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="54d44ddb-8613-a89b-5558-4e5808826d29">
+      <Execution id="991dd274-afaa-4e7b-b9ab-fc045f1b8154" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingASentItemBeforeTheKitchenStartedRestoresItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenIsNotMade" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="f53ee795-16ca-595b-68eb-7b1ddf638268">
+      <Execution id="1a0bfa63-c938-4f69-9ef0-95e95f7b77d1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseAuditRecordCannotBeWrittenIsNotMade" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemRestoresItsModifierStockToo" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="dbed7528-3471-1c58-d72a-e40b67515e81">
+      <Execution id="04677dc1-cc88-4d0c-8c88-338051047f15" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingASentItemRestoresItsModifierStockToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="dbf137c7-7ab9-05aa-eda7-58181f04462a">
+      <Execution id="a4c278b9-b8ef-43c8-b7a3-eb14f3165455" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleWithoutBillsVoidEscalatesToPending" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="cd6af327-bd2e-193a-5b41-5eaaa586aad7">
+      <Execution id="34089248-c2dc-46ac-a9f2-5c7b7d55d104" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARoleWithoutBillsVoidEscalatesToPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemStillNotSentIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="918eebe2-0f9a-1fe1-9b3a-9833312e4fd1">
+      <Execution id="62a35749-33d0-40ac-9a53-b8c87818ce6a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AnItemStillNotSentIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAPreparingItemDoesNotRestoreItsStock" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="f99239d1-0818-227b-dff5-b276865d66db">
+      <Execution id="00ad3127-63d8-43f8-af89-e1192417a3fc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingAPreparingItemDoesNotRestoreItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="c108d5f5-9155-78bf-5dcd-17390838ab90">
+      <Execution id="6258adad-1ab6-43b9-9ceb-c1ee21b2e405" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.APendingVoidRequestCarriesTheItemsRealAmount" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="4652c3c4-3123-5b11-234b-1aedff0f69a8">
+      <Execution id="8efdfe3e-61ff-41fe-90ea-acf9c35082e8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="APendingVoidRequestCarriesTheItemsRealAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="347f07fa-da3c-2e90-aa56-75d664af9478">
+      <Execution id="8f33e494-ba34-402c-9226-cb2b5b8a4c6e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemAlreadyServedIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="ab18919a-bc74-9275-2546-607aeede7ca3">
+      <Execution id="0671e5cc-2fea-4ad8-a5e6-8e6278858a89" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AnItemAlreadyServedIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="bca134a6-15a4-ce12-19b5-8a22e9a6d1eb">
+      <Execution id="4019cace-678d-4da5-9a27-dd3c497381de" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="269e729b-0721-a38a-823b-ce2d9b43df67">
+      <Execution id="90c87e1c-b882-4b3d-8989-ef2d9fd1d678" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="a2a0bbaa-6cd7-f93d-d84d-f225be5332c5">
+      <Execution id="9a828445-8a8f-4d4a-ad14-7bf636a6f5c3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e93d3c24-8ac8-c09c-dc07-aec140282012">
+      <Execution id="70435172-7c18-4dba-b6a5-23acc3a5094c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="2fc74bd1-5f4e-3fc1-e520-412cf2b3f936">
+      <Execution id="4708cfa9-0335-4048-9174-e1fb0ba52623" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e6b0cb55-5ba5-9e17-a430-262e36075a89">
+      <Execution id="748825eb-0df9-4457-8048-917bcdf8a2ec" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="7cef501e-e598-5b01-aeae-dc899e44f9f3">
+      <Execution id="9115d847-5d7f-467f-9ccf-2699fec2ca58" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnInvalidReasonCodeIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="5a23339b-b7a2-8864-902e-8755bf903c9b">
+      <Execution id="873b341b-3ece-4f34-a2b1-a99ae06c2912" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AnInvalidReasonCodeIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e669f979-3a00-77c5-81e0-880d1cb880c6">
+      <Execution id="f10c75f6-7ae7-48ac-aeb6-e49603924d97" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="130764b2-506e-10d7-ff53-edcf11cec22a">
+      <Execution id="c12cb742-5c9a-4565-bda1-b4a92148fecb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.TheSameKeyWithADifferentVoidRequestIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="50fba127-bba2-4871-f560-2394d7789947">
+      <Execution id="5ab647eb-9b3f-4dc0-bda6-bce2f48b78e6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="TheSameKeyWithADifferentVoidRequestIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="6b89a130-0a83-f0d2-a5ee-9e88235b5c47">
+      <Execution id="01723c4f-9720-479d-8ac0-57ee470fe59a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.NoSessionCookieIsUnauthorized" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="d0cc507c-6d99-5f8f-d103-dd3b833b872d">
+      <Execution id="77cd4553-2b52-4805-bf4d-cf9a1a00eb22" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="NoSessionCookieIsUnauthorized" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a2a0bbaa-6cd7-f93d-d84d-f225be5332c5" executionId="9a828445-8a8f-4d4a-ad14-7bf636a6f5c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c108d5f5-9155-78bf-5dcd-17390838ab90" executionId="6258adad-1ab6-43b9-9ceb-c1ee21b2e405" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbed7528-3471-1c58-d72a-e40b67515e81" executionId="04677dc1-cc88-4d0c-8c88-338051047f15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fc74bd1-5f4e-3fc1-e520-412cf2b3f936" executionId="4708cfa9-0335-4048-9174-e1fb0ba52623" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54d44ddb-8613-a89b-5558-4e5808826d29" executionId="991dd274-afaa-4e7b-b9ab-fc045f1b8154" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bca134a6-15a4-ce12-19b5-8a22e9a6d1eb" executionId="4019cace-678d-4da5-9a27-dd3c497381de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="347f07fa-da3c-2e90-aa56-75d664af9478" executionId="8f33e494-ba34-402c-9226-cb2b5b8a4c6e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b89a130-0a83-f0d2-a5ee-9e88235b5c47" executionId="01723c4f-9720-479d-8ac0-57ee470fe59a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4652c3c4-3123-5b11-234b-1aedff0f69a8" executionId="8efdfe3e-61ff-41fe-90ea-acf9c35082e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbf137c7-7ab9-05aa-eda7-58181f04462a" executionId="a4c278b9-b8ef-43c8-b7a3-eb14f3165455" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e669f979-3a00-77c5-81e0-880d1cb880c6" executionId="f10c75f6-7ae7-48ac-aeb6-e49603924d97" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cef501e-e598-5b01-aeae-dc899e44f9f3" executionId="9115d847-5d7f-467f-9ccf-2699fec2ca58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a23339b-b7a2-8864-902e-8755bf903c9b" executionId="873b341b-3ece-4f34-a2b1-a99ae06c2912" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0cc507c-6d99-5f8f-d103-dd3b833b872d" executionId="77cd4553-2b52-4805-bf4d-cf9a1a00eb22" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd6af327-bd2e-193a-5b41-5eaaa586aad7" executionId="34089248-c2dc-46ac-a9f2-5c7b7d55d104" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e93d3c24-8ac8-c09c-dc07-aec140282012" executionId="70435172-7c18-4dba-b6a5-23acc3a5094c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6b0cb55-5ba5-9e17-a430-262e36075a89" executionId="748825eb-0df9-4457-8048-917bcdf8a2ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab18919a-bc74-9275-2546-607aeede7ca3" executionId="0671e5cc-2fea-4ad8-a5e6-8e6278858a89" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="269e729b-0721-a38a-823b-ce2d9b43df67" executionId="90c87e1c-b882-4b3d-8989-ef2d9fd1d678" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f99239d1-0818-227b-dff5-b276865d66db" executionId="00ad3127-63d8-43f8-af89-e1192417a3fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="918eebe2-0f9a-1fe1-9b3a-9833312e4fd1" executionId="62a35749-33d0-40ac-9a53-b8c87818ce6a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50fba127-bba2-4871-f560-2394d7789947" executionId="5ab647eb-9b3f-4dc0-bda6-bce2f48b78e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f53ee795-16ca-595b-68eb-7b1ddf638268" executionId="1a0bfa63-c938-4f69-9ef0-95e95f7b77d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="130764b2-506e-10d7-ff53-edcf11cec22a" executionId="c12cb742-5c9a-4565-bda1-b4a92148fecb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="24" executed="24" passed="0" failed="24" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.63]   Discovering: ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:01.69]   Discovered:  ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:01.70]   Starting:    ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:03.09]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:03.09]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:03.09]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:03.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:03.09]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:03.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:03.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:03.63]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:03.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:03.63]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:03.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:03.63]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:03.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:03.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:04.16]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:04.16]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:04.16]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.16]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:04.16]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:04.16]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:04.16]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:04.16]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:04.60]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:04.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:04.60]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.60]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:04.60]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:04.60]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:04.60]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:04.60]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:05.04]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:05.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:05.04]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.04]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:05.04]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:05.04]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:05.04]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:05.04]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:05.83]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:05.83]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.83]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:05.83]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:05.83]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.83]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.84]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.84]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.84]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.84]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.84]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:05.84]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:05.84]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:05.84]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:05.84]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:05.84]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:06.46]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:06.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:06.46]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:06.46]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:06.46]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:06.46]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:06.46]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:06.46]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:07.41]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:07.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:07.41]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:07.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:07.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:07.41]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:07.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:07.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:08.14]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:08.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:08.14]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.14]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:08.14]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:08.14]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:08.14]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:08.14]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:08.85]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:08.85]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:08.85]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:08.85]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:08.85]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:08.85]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:08.85]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:08.85]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:09.41]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:09.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:09.41]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:09.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:09.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:09.41]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:09.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:09.41]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:10.00]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:10.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:10.00]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.00]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:10.00]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:10.00]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:10.00]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:10.00]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:10.48]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:10.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:10.48]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:10.48]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:10.48]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:10.48]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:10.48]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:10.48]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:11.03]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:11.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:11.03]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.03]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:11.03]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:11.03]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:11.03]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:11.03]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:11.57]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:11.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:11.57]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:11.57]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:11.57]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:11.57]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:11.57]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:11.57]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:12.07]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:12.07]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:12.07]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.07]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:12.07]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:12.07]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:12.07]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:12.07]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:12.63]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:12.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:12.63]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:12.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:12.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:12.63]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:12.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:12.63]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:13.10]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:13.10]       Stack Trace:&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:13.10]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.10]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:13.10]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:13.10]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:13.10]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:13.10]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:13.58]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:13.58]       Stack Trace:&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:13.58]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:13.58]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:13.59]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:13.59]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:13.59]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:13.59]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.20]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:14.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:14.20]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.20]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:14.20]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:14.20]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:14.20]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.20]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.73]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:14.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:14.73]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:14.73]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:14.73]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:14.73]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:14.73]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:14.73]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:15.13]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:15.13]       Stack Trace:&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:15.13]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.13]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:15.13]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:15.13]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:15.13]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:15.13]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:15.58]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:15.58]       Stack Trace:&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:15.58]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:15.58]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:15.58]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:15.58]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:15.58]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:15.58]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:16.09]       Npgsql.PostgresException : 42P01: relation "recipe.recipe_versions" does not exist&#xD;
+[xUnit.net 00:00:16.09]       Stack Trace:&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:16.09]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:16.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:16.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(63,0): at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql)&#xD;
+[xUnit.net 00:00:16.09]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentTestDatabase.cs(29,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentTestDatabase.ApplySqlAsync()&#xD;
+[xUnit.net 00:00:16.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:16.09]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs(76,0): at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync()&#xD;
+[xUnit.net 00:00:16.10]   Finished:    ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:15.1269828+03:00">
+        <Text>[xUnit.net 00:00:03.09]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:15.6624378+03:00">
+        <Text>[xUnit.net 00:00:03.63]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemAlreadyServedIsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:16.1994852+03:00">
+        <Text>[xUnit.net 00:00:04.16]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:16.6336282+03:00">
+        <Text>[xUnit.net 00:00:04.60]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleWithoutBillsVoidEscalatesToPending [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:17.0746260+03:00">
+        <Text>[xUnit.net 00:00:05.04]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:17.8713363+03:00">
+        <Text>[xUnit.net 00:00:05.83]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.APendingVoidRequestCarriesTheItemsRealAmount [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:18.4974986+03:00">
+        <Text>[xUnit.net 00:00:06.46]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:19.4464962+03:00">
+        <Text>[xUnit.net 00:00:07.41]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemStillNotSentIsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:20.1762243+03:00">
+        <Text>[xUnit.net 00:00:08.14]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.TheSameKeyWithADifferentVoidRequestIsRefused [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:20.8893938+03:00">
+        <Text>[xUnit.net 00:00:08.85]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:21.4444791+03:00">
+        <Text>[xUnit.net 00:00:09.41]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:22.0365792+03:00">
+        <Text>[xUnit.net 00:00:10.00]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:22.5180637+03:00">
+        <Text>[xUnit.net 00:00:10.48]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemBeforeTheKitchenStartedRestoresItsStock [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:23.0685447+03:00">
+        <Text>[xUnit.net 00:00:11.03]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemRestoresItsModifierStockToo [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:23.6066608+03:00">
+        <Text>[xUnit.net 00:00:11.57]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:24.1054181+03:00">
+        <Text>[xUnit.net 00:00:12.07]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:24.6619509+03:00">
+        <Text>[xUnit.net 00:00:12.62]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:25.1402696+03:00">
+        <Text>[xUnit.net 00:00:13.10]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:25.6211987+03:00">
+        <Text>[xUnit.net 00:00:13.58]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnInvalidReasonCodeIsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:26.2399399+03:00">
+        <Text>[xUnit.net 00:00:14.20]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAPreparingItemDoesNotRestoreItsStock [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:26.7639026+03:00">
+        <Text>[xUnit.net 00:00:14.73]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenIsNotMade [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:27.1623842+03:00">
+        <Text>[xUnit.net 00:00:15.13]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:27.6199963+03:00">
+        <Text>[xUnit.net 00:00:15.58]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.NoSessionCookieIsUnauthorized [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T00:35:28.1258579+03:00">
+        <Text>[xUnit.net 00:00:16.09]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

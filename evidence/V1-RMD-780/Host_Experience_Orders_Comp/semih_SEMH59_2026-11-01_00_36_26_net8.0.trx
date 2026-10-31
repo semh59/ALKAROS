@@ -1,0 +1,1207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="efc8f78e-0969-4924-a276-1969c5f4be61" name="semih@SEMH59 2026-11-01 00:36:26" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:36:26.2771205+03:00" queuing="2026-11-01T00:36:26.2771208+03:00" start="2026-11-01T00:36:19.9548155+03:00" finish="2026-11-01T00:36:40.3603885+03:00" />
+  <TestSettings name="default" id="171489c3-bc3a-4c9f-891a-c51137d8f163">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_36_26" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7ecfd2d7-6aed-451a-a78c-980cf76f20c5" testId="185cccfe-dcb8-8869-5c37-a6d8ee968e9a" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleThatHoldsBillsCompOutrightAppliesDirectly" computerName="SEMH59" duration="00:00:00.3260210" startTime="2026-11-01T00:36:31.7894046+03:00" endTime="2026-11-01T00:36:31.7894050+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ecfd2d7-6aed-451a-a78c-980cf76f20c5" />
+    <UnitTestResult executionId="a571385b-a1a8-4b21-bf89-5bb3a0d66540" testId="1f0d6eac-8894-6b2b-b55f-2e7e5e938f00" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnOpenBehaviouralTighteningForcesEscalationEvenWithAnAlwaysAllowPolicy" computerName="SEMH59" duration="00:00:00.2722644" startTime="2026-11-01T00:36:30.3013188+03:00" endTime="2026-11-01T00:36:30.3013192+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a571385b-a1a8-4b21-bf89-5bb3a0d66540" />
+    <UnitTestResult executionId="9fe33e36-3d69-47dd-9d55-9a776b576a4c" testId="c75150bd-96e0-c36d-3f1a-d8f2e29e2f93" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnItemWithAPricedModifierCanBeCompedAndItsBillLineIsWritten" computerName="SEMH59" duration="00:00:00.3271682" startTime="2026-11-01T00:36:29.7454487+03:00" endTime="2026-11-01T00:36:29.7454491+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fe33e36-3d69-47dd-9d55-9a776b576a4c" />
+    <UnitTestResult executionId="8e9cd5e2-f13b-4689-b9e6-96946dd07ba9" testId="a6e112d3-b47e-5c61-023c-5bb3d892b669" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterAtTheDailyCapEscalatesTheNextCompToPendingInsteadOfOverspendingTheBudget" computerName="SEMH59" duration="00:00:00.6528891" startTime="2026-11-01T00:36:27.1924366+03:00" endTime="2026-11-01T00:36:27.1924368+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e9cd5e2-f13b-4689-b9e6-96946dd07ba9" />
+    <UnitTestResult executionId="d633c072-db8c-41a3-983f-4c0bfd6a1d5c" testId="c681aa6c-6475-96a4-feb5-503d757d5b8f" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ResendingAnAppliedCompWithTheSameKeyAnswersWithTheFirstResultInsteadOfAConflict" computerName="SEMH59" duration="00:00:00.2974524" startTime="2026-11-01T00:36:27.7818692+03:00" endTime="2026-11-01T00:36:27.7818696+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d633c072-db8c-41a3-983f-4c0bfd6a1d5c" />
+    <UnitTestResult executionId="9fbc048c-ff62-416b-be57-d987053c8b69" testId="db7b7cae-e80f-27de-58c7-840572c35fd7" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ApprovingAPendingGrantThenRetryingTheSameIdempotencyKeyCompletesIt" computerName="SEMH59" duration="00:00:00.3890432" startTime="2026-11-01T00:36:28.4874525+03:00" endTime="2026-11-01T00:36:28.4874526+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fbc048c-ff62-416b-be57-d987053c8b69" />
+    <UnitTestResult executionId="1ba19092-cf07-4bf1-977b-f844bba02d5b" testId="54082019-bf72-989e-9d44-0a072c461730" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterWithinTheDailyPersonalBudgetAppliesDirectlyWithoutAManager" computerName="SEMH59" duration="00:00:00.3419129" startTime="2026-11-01T00:36:34.4738934+03:00" endTime="2026-11-01T00:36:34.4738935+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ba19092-cf07-4bf1-977b-f844bba02d5b" />
+    <UnitTestResult executionId="5b580113-3173-4b06-afbd-a33a5b56d751" testId="6cbf473a-9d12-6177-ab2c-108290c61e72" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole" computerName="SEMH59" duration="00:00:01.8819519" startTime="2026-11-01T00:36:26.2459927+03:00" endTime="2026-11-01T00:36:26.2460126+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b580113-3173-4b06-afbd-a33a5b56d751" />
+    <UnitTestResult executionId="cd3c2a1b-597c-4548-8dce-9a16b9648c42" testId="d0b856d9-b759-ce6e-e088-2123790afdaa" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnInvalidReasonCodeIsRejected" computerName="SEMH59" duration="00:00:00.2554232" startTime="2026-11-01T00:36:36.2651282+03:00" endTime="2026-11-01T00:36:36.2651283+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd3c2a1b-597c-4548-8dce-9a16b9648c42" />
+    <UnitTestResult executionId="2e72cf37-c707-4009-9813-3c0a938ea179" testId="f8a27a3a-346c-ac7c-839d-a1a4b2360993" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ACompOnAnItemWhoseBillIsAlreadyPaidIsRefusedAndTheItemStaysActive" computerName="SEMH59" duration="00:00:00.3148726" startTime="2026-11-01T00:36:37.8937198+03:00" endTime="2026-11-01T00:36:37.8937202+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e72cf37-c707-4009-9813-3c0a938ea179" />
+    <UnitTestResult executionId="7186580c-96a1-4fbc-92a1-48090ee769c6" testId="296eed73-67e9-1cd7-2a92-2048218a9f9d" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ACompOnAnOrderThatIsAlreadyCompletedIsRefused" computerName="SEMH59" duration="00:00:00.3015281" startTime="2026-11-01T00:36:32.4414685+03:00" endTime="2026-11-01T00:36:32.4414689+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7186580c-96a1-4fbc-92a1-48090ee769c6" />
+    <UnitTestResult executionId="c93b0312-c284-4792-99a3-447526498067" testId="51b63288-60c7-099f-27cd-ad93ff27b7ec" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.NoSessionCookieIsUnauthorized" computerName="SEMH59" duration="00:00:00.2990431" startTime="2026-11-01T00:36:33.7666279+03:00" endTime="2026-11-01T00:36:33.7666281+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c93b0312-c284-4792-99a3-447526498067" />
+    <UnitTestResult executionId="b43e9338-9e89-4985-8448-1e382ca4a22d" testId="181469af-5531-1e11-39c3-96049d5daa1f" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleWithoutBillsCompAndNoPolicyOrDelegationEscalatesToPending" computerName="SEMH59" duration="00:00:00.3694350" startTime="2026-11-01T00:36:33.1282385+03:00" endTime="2026-11-01T00:36:33.1282387+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b43e9338-9e89-4985-8448-1e382ca4a22d" />
+    <UnitTestResult executionId="e8bbc128-3c37-40e9-bd20-aaa5778798fd" testId="7dca0f05-d965-e3c8-4560-586113dc39ab" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder" computerName="SEMH59" duration="00:00:00.2788853" startTime="2026-11-01T00:36:35.0283010+03:00" endTime="2026-11-01T00:36:35.0283013+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8bbc128-3c37-40e9-bd20-aaa5778798fd" />
+    <UnitTestResult executionId="9da1ac14-a5e6-4fbd-bd61-4338697bfc69" testId="9b50c828-3820-ad11-c479-ddb4c70cebf2" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.TheSameKeyWithADifferentCompRequestIsRefused" computerName="SEMH59" duration="00:00:00.3170977" startTime="2026-11-01T00:36:35.6493748+03:00" endTime="2026-11-01T00:36:35.6493749+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9da1ac14-a5e6-4fbd-bd61-4338697bfc69" />
+    <UnitTestResult executionId="3ec8406b-c9d0-4d55-889b-48fac6618d5a" testId="dc18828b-43c9-a18d-c8b4-5f234888ea76" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterOverThePerItemCapStillEscalatesToPendingInsteadOfUsingTheBudget" computerName="SEMH59" duration="00:00:00.3228480" startTime="2026-11-01T00:36:29.1302758+03:00" endTime="2026-11-01T00:36:29.1302761+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3ec8406b-c9d0-4d55-889b-48fac6618d5a" />
+    <UnitTestResult executionId="ce869e6d-c306-42a1-a094-b1ef03df3df6" testId="5baf9c3a-3d8e-e8fc-97e1-110475d07e4e" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnActiveDelegationResolvesTheGrantAndAppliesDirectly" computerName="SEMH59" duration="00:00:00.4412163" startTime="2026-11-01T00:36:31.0653817+03:00" endTime="2026-11-01T00:36:31.0653819+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce869e6d-c306-42a1-a094-b1ef03df3df6" />
+    <UnitTestResult executionId="8af23bdc-b46f-462a-9dbd-907328056f89" testId="ac28d6ab-e101-2d9c-138f-2a44c7bddb3a" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnotherServersCheckIsRefusedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.2517609" startTime="2026-11-01T00:36:39.4638936+03:00" endTime="2026-11-01T00:36:39.4638938+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8af23bdc-b46f-462a-9dbd-907328056f89" />
+    <UnitTestResult executionId="e8556bcc-c41b-4ecf-9834-8e1d57680c48" testId="c2333e71-0b79-6277-e616-8f21ac8f964f" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.2991286" startTime="2026-11-01T00:36:40.2522709+03:00" endTime="2026-11-01T00:36:40.2522713+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8556bcc-c41b-4ecf-9834-8e1d57680c48" />
+    <UnitTestResult executionId="7da2a9d4-b9c4-4715-8a6d-3c53498a4122" testId="babaec2f-2ca9-4c65-4730-0a11487e5122" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.2494502" startTime="2026-11-01T00:36:38.6949279+03:00" endTime="2026-11-01T00:36:38.6949283+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7da2a9d4-b9c4-4715-8a6d-3c53498a4122" />
+    <UnitTestResult executionId="df6f4ee5-5f07-4a2a-9336-f57b5ee67626" testId="82f07538-f513-fb42-88fe-0fa21735d9a5" testName="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.TwoGenuinelyConcurrentCompsThatWouldTogetherExceedTheDailyCapProduceExactlyOneWinner" computerName="SEMH59" duration="00:00:00.4511684" startTime="2026-11-01T00:36:37.0355242+03:00" endTime="2026-11-01T00:36:37.0355243+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df6f4ee5-5f07-4a2a-9336-f57b5ee67626" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.NoSessionCookieIsUnauthorized" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="51b63288-60c7-099f-27cd-ad93ff27b7ec">
+      <Execution id="c93b0312-c284-4792-99a3-447526498067" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="NoSessionCookieIsUnauthorized" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnotherServersCheckIsRefusedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="ac28d6ab-e101-2d9c-138f-2a44c7bddb3a">
+      <Execution id="8af23bdc-b46f-462a-9dbd-907328056f89" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AWaiterCompingAnotherServersCheckIsRefusedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ApprovingAPendingGrantThenRetryingTheSameIdempotencyKeyCompletesIt" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="db7b7cae-e80f-27de-58c7-840572c35fd7">
+      <Execution id="9fbc048c-ff62-416b-be57-d987053c8b69" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ApprovingAPendingGrantThenRetryingTheSameIdempotencyKeyCompletesIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnOpenBehaviouralTighteningForcesEscalationEvenWithAnAlwaysAllowPolicy" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="1f0d6eac-8894-6b2b-b55f-2e7e5e938f00">
+      <Execution id="a571385b-a1a8-4b21-bf89-5bb3a0d66540" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AnOpenBehaviouralTighteningForcesEscalationEvenWithAnAlwaysAllowPolicy" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="c2333e71-0b79-6277-e616-8f21ac8f964f">
+      <Execution id="e8556bcc-c41b-4ecf-9834-8e1d57680c48" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterOverThePerItemCapStillEscalatesToPendingInsteadOfUsingTheBudget" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="dc18828b-43c9-a18d-c8b4-5f234888ea76">
+      <Execution id="3ec8406b-c9d0-4d55-889b-48fac6618d5a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AWaiterOverThePerItemCapStillEscalatesToPendingInsteadOfUsingTheBudget" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="babaec2f-2ca9-4c65-4730-0a11487e5122">
+      <Execution id="7da2a9d4-b9c4-4715-8a6d-3c53498a4122" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterWithinTheDailyPersonalBudgetAppliesDirectlyWithoutAManager" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="54082019-bf72-989e-9d44-0a072c461730">
+      <Execution id="1ba19092-cf07-4bf1-977b-f844bba02d5b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AWaiterWithinTheDailyPersonalBudgetAppliesDirectlyWithoutAManager" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.TwoGenuinelyConcurrentCompsThatWouldTogetherExceedTheDailyCapProduceExactlyOneWinner" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="82f07538-f513-fb42-88fe-0fa21735d9a5">
+      <Execution id="df6f4ee5-5f07-4a2a-9336-f57b5ee67626" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="TwoGenuinelyConcurrentCompsThatWouldTogetherExceedTheDailyCapProduceExactlyOneWinner" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnInvalidReasonCodeIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="d0b856d9-b759-ce6e-e088-2123790afdaa">
+      <Execution id="cd3c2a1b-597c-4548-8dce-9a16b9648c42" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AnInvalidReasonCodeIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleWithoutBillsCompAndNoPolicyOrDelegationEscalatesToPending" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="181469af-5531-1e11-39c3-96049d5daa1f">
+      <Execution id="b43e9338-9e89-4985-8448-1e382ca4a22d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ARoleWithoutBillsCompAndNoPolicyOrDelegationEscalatesToPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.TheSameKeyWithADifferentCompRequestIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="9b50c828-3820-ad11-c479-ddb4c70cebf2">
+      <Execution id="9da1ac14-a5e6-4fbd-bd61-4338697bfc69" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="TheSameKeyWithADifferentCompRequestIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ResendingAnAppliedCompWithTheSameKeyAnswersWithTheFirstResultInsteadOfAConflict" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="c681aa6c-6475-96a4-feb5-503d757d5b8f">
+      <Execution id="d633c072-db8c-41a3-983f-4c0bfd6a1d5c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ResendingAnAppliedCompWithTheSameKeyAnswersWithTheFirstResultInsteadOfAConflict" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ACompOnAnItemWhoseBillIsAlreadyPaidIsRefusedAndTheItemStaysActive" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="f8a27a3a-346c-ac7c-839d-a1a4b2360993">
+      <Execution id="2e72cf37-c707-4009-9813-3c0a938ea179" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ACompOnAnItemWhoseBillIsAlreadyPaidIsRefusedAndTheItemStaysActive" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleThatHoldsBillsCompOutrightAppliesDirectly" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="185cccfe-dcb8-8869-5c37-a6d8ee968e9a">
+      <Execution id="7ecfd2d7-6aed-451a-a78c-980cf76f20c5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ARoleThatHoldsBillsCompOutrightAppliesDirectly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnItemWithAPricedModifierCanBeCompedAndItsBillLineIsWritten" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="c75150bd-96e0-c36d-3f1a-d8f2e29e2f93">
+      <Execution id="9fe33e36-3d69-47dd-9d55-9a776b576a4c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AnItemWithAPricedModifierCanBeCompedAndItsBillLineIsWritten" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ACompOnAnOrderThatIsAlreadyCompletedIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="296eed73-67e9-1cd7-2a92-2048218a9f9d">
+      <Execution id="7186580c-96a1-4fbc-92a1-48090ee769c6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ACompOnAnOrderThatIsAlreadyCompletedIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="6cbf473a-9d12-6177-ab2c-108290c61e72">
+      <Execution id="5b580113-3173-4b06-afbd-a33a5b56d751" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="7dca0f05-d965-e3c8-4560-586113dc39ab">
+      <Execution id="e8bbc128-3c37-40e9-bd20-aaa5778798fd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnActiveDelegationResolvesTheGrantAndAppliesDirectly" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="5baf9c3a-3d8e-e8fc-97e1-110475d07e4e">
+      <Execution id="ce869e6d-c306-42a1-a094-b1ef03df3df6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AnActiveDelegationResolvesTheGrantAndAppliesDirectly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterAtTheDailyCapEscalatesTheNextCompToPendingInsteadOfOverspendingTheBudget" storage="d:\project\alkaros\tests\host\experience\orders\comp\bin\debug\net8.0\alkaros.host.experience.orders.comp.tests.dll" id="a6e112d3-b47e-5c61-023c-5bb3d892b669">
+      <Execution id="8e9cd5e2-f13b-4689-b9e6-96946dd07ba9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests" name="AWaiterAtTheDailyCapEscalatesTheNextCompToPendingInsteadOfOverspendingTheBudget" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="185cccfe-dcb8-8869-5c37-a6d8ee968e9a" executionId="7ecfd2d7-6aed-451a-a78c-980cf76f20c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f0d6eac-8894-6b2b-b55f-2e7e5e938f00" executionId="a571385b-a1a8-4b21-bf89-5bb3a0d66540" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c75150bd-96e0-c36d-3f1a-d8f2e29e2f93" executionId="9fe33e36-3d69-47dd-9d55-9a776b576a4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a6e112d3-b47e-5c61-023c-5bb3d892b669" executionId="8e9cd5e2-f13b-4689-b9e6-96946dd07ba9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c681aa6c-6475-96a4-feb5-503d757d5b8f" executionId="d633c072-db8c-41a3-983f-4c0bfd6a1d5c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db7b7cae-e80f-27de-58c7-840572c35fd7" executionId="9fbc048c-ff62-416b-be57-d987053c8b69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54082019-bf72-989e-9d44-0a072c461730" executionId="1ba19092-cf07-4bf1-977b-f844bba02d5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6cbf473a-9d12-6177-ab2c-108290c61e72" executionId="5b580113-3173-4b06-afbd-a33a5b56d751" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0b856d9-b759-ce6e-e088-2123790afdaa" executionId="cd3c2a1b-597c-4548-8dce-9a16b9648c42" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8a27a3a-346c-ac7c-839d-a1a4b2360993" executionId="2e72cf37-c707-4009-9813-3c0a938ea179" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="296eed73-67e9-1cd7-2a92-2048218a9f9d" executionId="7186580c-96a1-4fbc-92a1-48090ee769c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51b63288-60c7-099f-27cd-ad93ff27b7ec" executionId="c93b0312-c284-4792-99a3-447526498067" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="181469af-5531-1e11-39c3-96049d5daa1f" executionId="b43e9338-9e89-4985-8448-1e382ca4a22d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7dca0f05-d965-e3c8-4560-586113dc39ab" executionId="e8bbc128-3c37-40e9-bd20-aaa5778798fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b50c828-3820-ad11-c479-ddb4c70cebf2" executionId="9da1ac14-a5e6-4fbd-bd61-4338697bfc69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dc18828b-43c9-a18d-c8b4-5f234888ea76" executionId="3ec8406b-c9d0-4d55-889b-48fac6618d5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5baf9c3a-3d8e-e8fc-97e1-110475d07e4e" executionId="ce869e6d-c306-42a1-a094-b1ef03df3df6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac28d6ab-e101-2d9c-138f-2a44c7bddb3a" executionId="8af23bdc-b46f-462a-9dbd-907328056f89" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2333e71-0b79-6277-e616-8f21ac8f964f" executionId="e8556bcc-c41b-4ecf-9834-8e1d57680c48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="babaec2f-2ca9-4c65-4730-0a11487e5122" executionId="7da2a9d4-b9c4-4715-8a6d-3c53498a4122" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82f07538-f513-fb42-88fe-0fa21735d9a5" executionId="df6f4ee5-5f07-4a2a-9336-f57b5ee67626" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="21" executed="21" passed="21" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.17]   Discovering: ALKAROS.Host.Experience.Orders.Comp.Tests&#xD;
+[xUnit.net 00:00:01.21]   Discovered:  ALKAROS.Host.Experience.Orders.Comp.Tests&#xD;
+[xUnit.net 00:00:01.21]   Starting:    ALKAROS.Host.Experience.Orders.Comp.Tests&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:65471&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:65471/api/v1/terminals/0924f8cb-3337-4653-85a0-0a951cbb55db/orders/df2e34b3-7685-42d6-af6b-f66ae9acd681/items/23b91ab6-c1e6-4bf1-a2d3-68be1e2a60df/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:65471/api/v1/terminals/0924f8cb-3337-4653-85a0-0a951cbb55db/orders/df2e34b3-7685-42d6-af6b-f66ae9acd681/items/23b91ab6-c1e6-4bf1-a2d3-68be1e2a60df/comp - 403 - application/json;+charset=utf-8 356.2443ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55686&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/eb1d561a-1284-40ac-a9ae-506166bc747a/items/c6dbd3ca-c8d3-479a-aac7-e87bae0895ec/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/eb1d561a-1284-40ac-a9ae-506166bc747a/items/c6dbd3ca-c8d3-479a-aac7-e87bae0895ec/comp - 200 - application/json;+charset=utf-8 330.1092ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/78a034c5-2cf2-42ee-a132-469c8c1b6bee/items/3baffb1d-3aa4-4dda-9a08-d7f0a25c69f5/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/78a034c5-2cf2-42ee-a132-469c8c1b6bee/items/3baffb1d-3aa4-4dda-9a08-d7f0a25c69f5/comp - 200 - application/json;+charset=utf-8 58.1322ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/5c58ebb6-7411-4c98-8114-4e7c63c0d852/items/f11a2a1d-741d-4cf3-91fd-163e8cb185d5/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/5c58ebb6-7411-4c98-8114-4e7c63c0d852/items/f11a2a1d-741d-4cf3-91fd-163e8cb185d5/comp - 200 - application/json;+charset=utf-8 44.7646ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/b9d7a8e4-e4ae-45c0-b632-a37f9461339f/items/58739065-7013-4643-b8be-81276211b1cf/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55686/api/v1/terminals/d07d4745-64d5-4eec-a8e7-d7ce925c908e/orders/b9d7a8e4-e4ae-45c0-b632-a37f9461339f/items/58739065-7013-4643-b8be-81276211b1cf/comp - 202 - application/json;+charset=utf-8 26.0236ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55166&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55166/api/v1/terminals/764eed50-de7b-4178-94c8-a6520d7d0748/orders/3abdc2f1-f1ef-46ce-bc8a-256dd03745c1/items/b4247d60-c630-4c97-8463-dfa0c79b3094/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55166/api/v1/terminals/764eed50-de7b-4178-94c8-a6520d7d0748/orders/3abdc2f1-f1ef-46ce-bc8a-256dd03745c1/items/b4247d60-c630-4c97-8463-dfa0c79b3094/comp - 200 - application/json;+charset=utf-8 131.5408ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55166/api/v1/terminals/764eed50-de7b-4178-94c8-a6520d7d0748/orders/3abdc2f1-f1ef-46ce-bc8a-256dd03745c1/items/b4247d60-c630-4c97-8463-dfa0c79b3094/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55166/api/v1/terminals/764eed50-de7b-4178-94c8-a6520d7d0748/orders/3abdc2f1-f1ef-46ce-bc8a-256dd03745c1/items/b4247d60-c630-4c97-8463-dfa0c79b3094/comp - 200 - application/json;+charset=utf-8 11.7438ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56641&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56641/api/v1/terminals/5b43eca9-a4f4-4b17-9325-9dd17fe3aa9e/orders/67ec706b-856c-4031-b2be-93d255461447/items/b7aaa40a-4388-401e-bcb1-8e0187be5a19/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56641/api/v1/terminals/5b43eca9-a4f4-4b17-9325-9dd17fe3aa9e/orders/67ec706b-856c-4031-b2be-93d255461447/items/b7aaa40a-4388-401e-bcb1-8e0187be5a19/comp - 202 - application/json;+charset=utf-8 175.6408ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56641/api/v1/terminals/5b43eca9-a4f4-4b17-9325-9dd17fe3aa9e/orders/67ec706b-856c-4031-b2be-93d255461447/items/b7aaa40a-4388-401e-bcb1-8e0187be5a19/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56641/api/v1/terminals/5b43eca9-a4f4-4b17-9325-9dd17fe3aa9e/orders/67ec706b-856c-4031-b2be-93d255461447/items/b7aaa40a-4388-401e-bcb1-8e0187be5a19/comp - 200 - application/json;+charset=utf-8 47.2759ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54032&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54032/api/v1/terminals/deae4f4f-efaa-40ee-8437-c3902d0d8f40/orders/516cf6ef-560d-4e37-a21f-38a22795b245/items/a1dea086-9422-4cef-bfb0-ce47f3907d42/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54032/api/v1/terminals/deae4f4f-efaa-40ee-8437-c3902d0d8f40/orders/516cf6ef-560d-4e37-a21f-38a22795b245/items/a1dea086-9422-4cef-bfb0-ce47f3907d42/comp - 202 - application/json;+charset=utf-8 183.9076ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57824&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57824/api/v1/terminals/54f5d707-309e-4e01-b013-bbcee2b307b1/orders/ded83167-ff18-4a23-85ca-af818dea60c6/items/b6c24f18-b8e2-476d-8ba9-b7907f2333c2/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57824/api/v1/terminals/54f5d707-309e-4e01-b013-bbcee2b307b1/orders/ded83167-ff18-4a23-85ca-af818dea60c6/items/b6c24f18-b8e2-476d-8ba9-b7907f2333c2/comp - 200 - application/json;+charset=utf-8 152.6866ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51784&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51784/api/v1/terminals/d5ee4c0d-543c-499d-abfd-3e8813704e9b/orders/52b38e61-b124-4992-9d58-4f7cd90f1084/items/46a223ef-d848-49fc-9a2b-ee91b8c27243/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51784/api/v1/terminals/d5ee4c0d-543c-499d-abfd-3e8813704e9b/orders/52b38e61-b124-4992-9d58-4f7cd90f1084/items/46a223ef-d848-49fc-9a2b-ee91b8c27243/comp - 202 - application/json;+charset=utf-8 127.6065ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52112&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52112/api/v1/terminals/8f84f830-b40c-48c2-aa70-602802ce40fc/orders/b79c3d25-3262-47e8-b9cb-eda4835657f1/items/9ea995a4-c3ef-4904-a047-9ef62e36afe3/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52112/api/v1/terminals/8f84f830-b40c-48c2-aa70-602802ce40fc/orders/b79c3d25-3262-47e8-b9cb-eda4835657f1/items/9ea995a4-c3ef-4904-a047-9ef62e36afe3/comp - 200 - application/json;+charset=utf-8 251.3128ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:61144&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:61144/api/v1/terminals/7e1f8b1e-3a93-4c42-a865-3cd1df79125a/orders/08c6c35d-2423-4fd5-96a5-2fd0944b3f3e/items/c58d9af4-9a6b-4b32-9be0-8d886552af98/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:61144/api/v1/terminals/7e1f8b1e-3a93-4c42-a865-3cd1df79125a/orders/08c6c35d-2423-4fd5-96a5-2fd0944b3f3e/items/c58d9af4-9a6b-4b32-9be0-8d886552af98/comp - 200 - application/json;+charset=utf-8 180.0110ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57510&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57510/api/v1/terminals/64848681-3244-43b1-9915-5e2e2cae5425/orders/f8defcc7-dcd7-4f8d-8dc7-182e33ec54bf/items/45668de2-8a47-4eed-9d50-ec8b7250c04e/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57510/api/v1/terminals/64848681-3244-43b1-9915-5e2e2cae5425/orders/f8defcc7-dcd7-4f8d-8dc7-182e33ec54bf/items/45668de2-8a47-4eed-9d50-ec8b7250c04e/comp - 409 - application/json;+charset=utf-8 143.0478ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50557&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50557/api/v1/terminals/a215e738-6bf5-4fd5-8419-0500d6007652/orders/fb2edbf7-c85b-45ed-b3cd-8f8b3b29b108/items/4199a0a9-e84f-4fbf-a442-fd1c8a24e5c1/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50557/api/v1/terminals/a215e738-6bf5-4fd5-8419-0500d6007652/orders/fb2edbf7-c85b-45ed-b3cd-8f8b3b29b108/items/4199a0a9-e84f-4fbf-a442-fd1c8a24e5c1/comp - 202 - application/json;+charset=utf-8 221.3695ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:65417&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:65417/api/v1/terminals/a821bc39-ab3b-45c0-9883-6caa790dc1ff/orders/7a9122e4-b5e1-4a01-b5a5-623761670520/items/e5c8af90-b7bf-4bb1-868a-a4cd968106ee/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:65417/api/v1/terminals/a821bc39-ab3b-45c0-9883-6caa790dc1ff/orders/7a9122e4-b5e1-4a01-b5a5-623761670520/items/e5c8af90-b7bf-4bb1-868a-a4cd968106ee/comp - 401 - application/json;+charset=utf-8 149.1820ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57318&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57318/api/v1/terminals/ae703a07-0f85-4d2d-8434-c4012e10e5b0/orders/bebf84e3-f1b6-48cf-89a8-b92794c59777/items/0f777b43-ce9b-48c7-ac8c-abd018fb2742/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57318/api/v1/terminals/ae703a07-0f85-4d2d-8434-c4012e10e5b0/orders/bebf84e3-f1b6-48cf-89a8-b92794c59777/items/0f777b43-ce9b-48c7-ac8c-abd018fb2742/comp - 200 - application/json;+charset=utf-8 208.4402ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:64104&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64104/api/v1/terminals/3a2a525d-57c6-4219-b946-2b640d0545d0/orders/faf85735-0c8d-4f22-8784-404db22bd447/items/c1a9d250-f171-4a79-9057-7060651b7f35/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64104/api/v1/terminals/3a2a525d-57c6-4219-b946-2b640d0545d0/orders/faf85735-0c8d-4f22-8784-404db22bd447/items/c1a9d250-f171-4a79-9057-7060651b7f35/comp - 200 - application/json;+charset=utf-8 138.8754ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56646&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56646/api/v1/terminals/447c04fc-af78-49cf-a0de-6c4bf15a4053/orders/367cd0f5-d2b9-4dab-a2e0-ab1b402ff289/items/3a9acd14-a30e-4a3b-989e-eb1d996e612c/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56646/api/v1/terminals/447c04fc-af78-49cf-a0de-6c4bf15a4053/orders/367cd0f5-d2b9-4dab-a2e0-ab1b402ff289/items/3a9acd14-a30e-4a3b-989e-eb1d996e612c/comp - 200 - application/json;+charset=utf-8 181.7731ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56646/api/v1/terminals/447c04fc-af78-49cf-a0de-6c4bf15a4053/orders/367cd0f5-d2b9-4dab-a2e0-ab1b402ff289/items/3a9acd14-a30e-4a3b-989e-eb1d996e612c/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56646/api/v1/terminals/447c04fc-af78-49cf-a0de-6c4bf15a4053/orders/367cd0f5-d2b9-4dab-a2e0-ab1b402ff289/items/3a9acd14-a30e-4a3b-989e-eb1d996e612c/comp - 409 - application/json;+charset=utf-8 11.6490ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:49835&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:49835/api/v1/terminals/2a358c2a-2654-419d-b4ce-27c46a8dba2b/orders/d491f328-e66d-418a-9566-2650464a5ca5/items/a762aedc-d967-4723-b8ef-bfc1aa5169eb/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:49835/api/v1/terminals/2a358c2a-2654-419d-b4ce-27c46a8dba2b/orders/d491f328-e66d-418a-9566-2650464a5ca5/items/a762aedc-d967-4723-b8ef-bfc1aa5169eb/comp - 400 - application/json;+charset=utf-8 121.9113ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58469&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/2b2b6da5-b312-4364-bde6-e3883a5c66e1/items/16a15278-ff5e-4a29-a0f8-a6da8fc5d3e0/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/2b2b6da5-b312-4364-bde6-e3883a5c66e1/items/16a15278-ff5e-4a29-a0f8-a6da8fc5d3e0/comp - 200 - application/json;+charset=utf-8 187.3855ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/c80fbe91-f8c2-4b9f-90c1-6e571ccc3ef7/items/59b1e350-17c3-4a83-9d93-bbe068e6b115/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/c80fbe91-f8c2-4b9f-90c1-6e571ccc3ef7/items/59b1e350-17c3-4a83-9d93-bbe068e6b115/comp - 200 - application/json;+charset=utf-8 52.5273ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/abec66e7-eec4-4365-9dae-b3b74f68172e/items/9b4c8651-8528-4a6d-a56b-22960752e1b6/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/24530419-bf57-4187-9e3c-3d6948246c20/items/7fee6399-a459-488f-b8ee-52431fc47c03/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/24530419-bf57-4187-9e3c-3d6948246c20/items/7fee6399-a459-488f-b8ee-52431fc47c03/comp - 202 - application/json;+charset=utf-8 42.2984ms&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58469/api/v1/terminals/40e9be01-27d7-4c82-be28-65e977f05bcb/orders/abec66e7-eec4-4365-9dae-b3b74f68172e/items/9b4c8651-8528-4a6d-a56b-22960752e1b6/comp - 200 - application/json;+charset=utf-8 65.7989ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55524&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55524/api/v1/terminals/c93d2faf-7ae9-43b3-93a2-a22285631787/orders/f7542238-51bc-4052-8969-40803366d9ae/items/d153c392-3fb5-4d52-bb05-1c3c3e962ace/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55524/api/v1/terminals/c93d2faf-7ae9-43b3-93a2-a22285631787/orders/f7542238-51bc-4052-8969-40803366d9ae/items/d153c392-3fb5-4d52-bb05-1c3c3e962ace/comp - 409 - application/json;+charset=utf-8 137.0785ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52395&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52395/api/v1/terminals/c7fc84ea-607f-41f4-91ab-4c9dbd93b33f/orders/134665c6-15b0-4a28-bdaf-8a70c1fac5a8/items/3234959a-0a24-4824-8aee-4d617b61ac72/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52395/api/v1/terminals/c7fc84ea-607f-41f4-91ab-4c9dbd93b33f/orders/134665c6-15b0-4a28-bdaf-8a70c1fac5a8/items/3234959a-0a24-4824-8aee-4d617b61ac72/comp - 403 - application/json;+charset=utf-8 102.1360ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55804&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55804/api/v1/terminals/9aaf04d8-9568-467d-a41e-53c002e2a1ae/orders/481c5207-6774-4126-8c9d-c3ebc5a65f9f/items/7bde5f49-2938-43e9-af32-176abad64c1b/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55804/api/v1/terminals/9aaf04d8-9568-467d-a41e-53c002e2a1ae/orders/481c5207-6774-4126-8c9d-c3ebc5a65f9f/items/7bde5f49-2938-43e9-af32-176abad64c1b/comp - 403 - application/json;+charset=utf-8 118.6887ms&#xD;
+fail: ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService[5520]&#xD;
+      QR order expiry loop iteration failed; retrying after the interval.&#xD;
+      Npgsql.PostgresException (0x80004005): 42P01: relation "kitchen.kitchen_tickets" does not exist&#xD;
+      POSITION: 411&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 166&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.FindOverdueQrOrdersAsync(NpgsqlDataSource dataSource, TimeSpan timeout, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 170&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(NpgsqlDataSource dataSource, PendingOrderConfirmationStore store, TimeSpan timeout, ILogger logger, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 112&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.QrOrderExpiryHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\QrOrderExpiryHostedService.cs:line 79&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 42P01&#xD;
+          MessageText: relation "kitchen.kitchen_tickets" does not exist&#xD;
+          Position: 411&#xD;
+          File: parse_relation.c&#xD;
+          Line: 1477&#xD;
+          Routine: parserOpenTable&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52329&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52329/api/v1/terminals/e89cf637-2761-4cfc-9803-85a87b8d24a6/orders/4ac30865-ca15-4729-bccc-3f2ff2f1c9ee/items/031c588d-9076-4d8b-b403-0124bc33111b/comp - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52329/api/v1/terminals/e89cf637-2761-4cfc-9803-85a87b8d24a6/orders/4ac30865-ca15-4729-bccc-3f2ff2f1c9ee/items/031c588d-9076-4d8b-b403-0124bc33111b/comp - 202 - application/json;+charset=utf-8 168.5964ms&#xD;
+[xUnit.net 00:00:18.12]   Finished:    ALKAROS.Host.Experience.Orders.Comp.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,5 @@
+tests/Host/Errors exit=0 Başarılı!  - Başarısız:     0, Başarılı:   199, Atlanan:     0, Toplam:   199, Süre: 417 ms
+tests/Host/Experience/Authorization exit=0 Başarılı!  - Başarısız:     0, Başarılı:    11, Atlanan:     0, Toplam:    11, Süre: 34 s
+tests/Host/Experience/Billing exit=0 Başarılı!  - Başarısız:     0, Başarılı:   113, Atlanan:     0, Toplam:   113, Süre: 6 m 46 s
+tests/Host/Experience/CashSession exit=0 Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 3 m
+tests/Host/Experience/Catalog exit=0 Başarılı!  - Başarısız:     0, Başarılı:    23, Atlanan:     0, Toplam:    23, Süre: 5 s

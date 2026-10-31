@@ -1,0 +1,778 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a0e1d2a1-a03e-4e94-86c2-5999b26edffc" name="semih@SEMH59 2026-11-01 00:45:02" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:45:02.0271825+03:00" queuing="2026-11-01T00:45:02.0271827+03:00" start="2026-11-01T00:44:56.9393154+03:00" finish="2026-11-01T00:45:50.9697630+03:00" />
+  <TestSettings name="default" id="54c30073-96d6-4800-a382-f8e74cb735ef">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_45_02" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1530504f-1528-4efa-97c8-7bb9f725431c" testId="30efd368-ff80-f6dd-b133-edd4e6ce922b" testName="ALKAROS.Host.Experience.Recipes.Tests.UnitConversionLoaderRetryTests.AStartupLoadThatFailsIsRetriedUntilTheConversionsArrive" computerName="SEMH59" duration="00:00:00.0689493" startTime="2026-11-01T00:45:00.5511746+03:00" endTime="2026-11-01T00:45:00.5511749+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1530504f-1528-4efa-97c8-7bb9f725431c" />
+    <UnitTestResult executionId="0530d90b-7148-416a-a047-bbecb4fcf675" testId="571f7b10-3906-9451-8f56-8ad986176314" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.AssigningAMappingToANonExistentRecipeReturnsValidationError" computerName="SEMH59" duration="00:00:00.0586758" startTime="2026-11-01T00:45:27.8278899+03:00" endTime="2026-11-01T00:45:27.8278901+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0530d90b-7148-416a-a047-bbecb4fcf675" />
+    <UnitTestResult executionId="1d7b4804-75cd-44e8-adc2-29c66c6062df" testId="0d91bad4-84a9-4b0f-365e-a443b2e34770" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.OmittingTheStockUnitMappingIsRejectedWithItsOwnErrorCode" computerName="SEMH59" duration="00:00:00.0390989" startTime="2026-11-01T00:45:19.3522297+03:00" endTime="2026-11-01T00:45:19.3522298+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d7b4804-75cd-44e8-adc2-29c66c6062df" />
+    <UnitTestResult executionId="66275b41-f03e-4baa-a68c-f2578186bad0" testId="e290a1d0-9caa-802e-24c3-de66387a95b4" testName="ALKAROS.Host.Experience.Recipes.Tests.UnitConversionLoaderRetryTests.StoppingEndsTheRetryLoop" computerName="SEMH59" duration="00:00:00.5048156" startTime="2026-11-01T00:45:00.4808787+03:00" endTime="2026-11-01T00:45:00.4809011+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66275b41-f03e-4baa-a68c-f2578186bad0" />
+    <UnitTestResult executionId="63104eb3-8227-46a6-831e-e7dea481d8cc" testId="6e70d060-8e7f-d6d5-856d-a4b28ac30037" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.AssigningAMappingOverHttpPersistsAndReadsBack" computerName="SEMH59" duration="00:00:00.0653931" startTime="2026-11-01T00:45:25.0878442+03:00" endTime="2026-11-01T00:45:25.0878446+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63104eb3-8227-46a6-831e-e7dea481d8cc" />
+    <UnitTestResult executionId="13c354a7-2fea-4112-8005-b2bbe42489ef" testId="8bb3c544-2b3b-de99-7cf1-750b9b824996" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.UnknownRecipesAndBadDraftInputAreRefused" computerName="SEMH59" duration="00:00:00.0850070" startTime="2026-11-01T00:45:39.8492691+03:00" endTime="2026-11-01T00:45:39.8492694+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13c354a7-2fea-4112-8005-b2bbe42489ef" />
+    <UnitTestResult executionId="a326bcbf-f3d9-4ac3-adcc-671865991d69" testId="dcf7de59-f032-fabb-b150-76c0d207f69a" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.CreatingTheSameSnapshotTwiceIsRejected" computerName="SEMH59" duration="00:00:00.0618502" startTime="2026-11-01T00:45:16.6034975+03:00" endTime="2026-11-01T00:45:16.6034977+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a326bcbf-f3d9-4ac3-adcc-671865991d69" />
+    <UnitTestResult executionId="5e21c841-18f7-4503-9ab2-26c9e0fbd5f1" testId="50c7b70c-8ad2-b1c6-871e-a8591f6a37f5" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.NoEffectiveSnapshotIsNotFound" computerName="SEMH59" duration="00:00:00.0295113" startTime="2026-11-01T00:45:13.5466419+03:00" endTime="2026-11-01T00:45:13.5466421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e21c841-18f7-4503-9ab2-26c9e0fbd5f1" />
+    <UnitTestResult executionId="c47feba9-2116-4268-b89c-949db1c288aa" testId="c686e66b-079c-c2d5-011e-980703b36a7d" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.DeletingAnExistingMappingRemovesIt" computerName="SEMH59" duration="00:00:00.1089448" startTime="2026-11-01T00:45:22.1175096+03:00" endTime="2026-11-01T00:45:22.1175099+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c47feba9-2116-4268-b89c-949db1c288aa" />
+    <UnitTestResult executionId="d043c987-bc35-4077-b1e3-48f8ee09e764" testId="3f714d3c-c3b0-951a-1962-1c88d2852480" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.AManagerBuildsActivatesAndThenCannotChangeAVersionedRecipe" computerName="SEMH59" duration="00:00:00.1892826" startTime="2026-11-01T00:45:45.5463460+03:00" endTime="2026-11-01T00:45:45.5463465+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d043c987-bc35-4077-b1e3-48f8ee09e764" />
+    <UnitTestResult executionId="5ccc7de7-2604-4f89-8edb-92bae6b1827a" testId="e0bb5b81-af5d-1ed3-cb33-c5a75a1b4b9e" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.AddingACustomConversionMakesItImmediatelyUsableByTheSharedRuntimeConverter" computerName="SEMH59" duration="00:00:00.0589866" startTime="2026-11-01T00:45:48.3150385+03:00" endTime="2026-11-01T00:45:48.3150389+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ccc7de7-2604-4f89-8edb-92bae6b1827a" />
+    <UnitTestResult executionId="1816f5c0-fa17-4b94-ae07-f1ad4e667abc" testId="9a90f442-db91-0d28-375a-5589e321638a" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.AManagerCanCreateASnapshotAndItsCostPerPortionIsCorrect" computerName="SEMH59" duration="00:00:01.5329917" startTime="2026-11-01T00:45:05.2747457+03:00" endTime="2026-11-01T00:45:05.2747458+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1816f5c0-fa17-4b94-ae07-f1ad4e667abc" />
+    <UnitTestResult executionId="fa0e0832-40af-4951-a931-0849209e7fd3" testId="8ed58f8d-658d-03e8-59ed-12dd09a68fdb" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.1136698" startTime="2026-11-01T00:45:34.1300841+03:00" endTime="2026-11-01T00:45:34.1300842+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa0e0832-40af-4951-a931-0849209e7fd3" />
+    <UnitTestResult executionId="520370fa-2747-431e-bae7-d1020a9cabf2" testId="6b939dd1-6495-81cc-1244-e695e3699bf2" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0701403" startTime="2026-11-01T00:45:08.0545871+03:00" endTime="2026-11-01T00:45:08.0545874+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="520370fa-2747-431e-bae7-d1020a9cabf2" />
+    <UnitTestResult executionId="5ac3db0b-6625-4e3e-9092-3bf953b62267" testId="1f900305-3167-9c2c-e1eb-783dbc9e18ee" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.RecipeManagementNeedsAManagerSession" computerName="SEMH59" duration="00:00:00.0577250" startTime="2026-11-01T00:45:42.5398689+03:00" endTime="2026-11-01T00:45:42.5398693+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ac3db0b-6625-4e3e-9092-3bf953b62267" />
+    <UnitTestResult executionId="bf948cbc-5bcc-4592-ad2c-e4cafecc9e77" testId="c696564a-9636-33b8-05ca-3ed6e83f3455" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.AConversionAlreadyPersistedBeforeStartupIsUsableFromTheFirstRequest" computerName="SEMH59" duration="00:00:00.0133344" startTime="2026-11-01T00:45:50.8867400+03:00" endTime="2026-11-01T00:45:50.8867401+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf948cbc-5bcc-4592-ad2c-e4cafecc9e77" />
+    <UnitTestResult executionId="71a7446c-eb57-41a0-b7ef-92bb7108218f" testId="adfff460-d72b-b294-ac5e-9d659f1a11e1" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.AnIngredientWithNoCostBasisAtAllIsRejected" computerName="SEMH59" duration="00:00:00.0481125" startTime="2026-11-01T00:45:10.8248970+03:00" endTime="2026-11-01T00:45:10.8248971+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71a7446c-eb57-41a0-b7ef-92bb7108218f" />
+    <UnitTestResult executionId="f94c06aa-d51b-4c8e-884b-64bf33998472" testId="4fd9345c-fb98-5ab7-4380-03a39fb9762e" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.CustomUnitConversionsCanBeAddedListedAndReplacedPerPair" computerName="SEMH59" duration="00:00:00.0862715" startTime="2026-11-01T00:45:37.0329434+03:00" endTime="2026-11-01T00:45:37.0329439+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f94c06aa-d51b-4c8e-884b-64bf33998472" />
+    <UnitTestResult executionId="e80bf8a8-bc39-4060-b050-020b50255400" testId="72f25041-0610-9262-611a-15933c217437" testName="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.DeletingAMissingMappingReturnsNotFound" computerName="SEMH59" duration="00:00:00.0528421" startTime="2026-11-01T00:45:30.6865456+03:00" endTime="2026-11-01T00:45:30.6865490+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e80bf8a8-bc39-4060-b050-020b50255400" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.AssigningAMappingToANonExistentRecipeReturnsValidationError" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="571f7b10-3906-9451-8f56-8ad986176314">
+      <Execution id="0530d90b-7148-416a-a047-bbecb4fcf675" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests" name="AssigningAMappingToANonExistentRecipeReturnsValidationError" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.RecipeManagementNeedsAManagerSession" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="1f900305-3167-9c2c-e1eb-783dbc9e18ee">
+      <Execution id="5ac3db0b-6625-4e3e-9092-3bf953b62267" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests" name="RecipeManagementNeedsAManagerSession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="6b939dd1-6495-81cc-1244-e695e3699bf2">
+      <Execution id="520370fa-2747-431e-bae7-d1020a9cabf2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.OmittingTheStockUnitMappingIsRejectedWithItsOwnErrorCode" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="0d91bad4-84a9-4b0f-365e-a443b2e34770">
+      <Execution id="1d7b4804-75cd-44e8-adc2-29c66c6062df" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests" name="OmittingTheStockUnitMappingIsRejectedWithItsOwnErrorCode" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.NoEffectiveSnapshotIsNotFound" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="50c7b70c-8ad2-b1c6-871e-a8591f6a37f5">
+      <Execution id="5e21c841-18f7-4503-9ab2-26c9e0fbd5f1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests" name="NoEffectiveSnapshotIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.UnitConversionLoaderRetryTests.StoppingEndsTheRetryLoop" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="e290a1d0-9caa-802e-24c3-de66387a95b4">
+      <Execution id="66275b41-f03e-4baa-a68c-f2578186bad0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.UnitConversionLoaderRetryTests" name="StoppingEndsTheRetryLoop" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.AConversionAlreadyPersistedBeforeStartupIsUsableFromTheFirstRequest" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="c696564a-9636-33b8-05ca-3ed6e83f3455">
+      <Execution id="bf948cbc-5bcc-4592-ad2c-e4cafecc9e77" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests" name="AConversionAlreadyPersistedBeforeStartupIsUsableFromTheFirstRequest" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.CustomUnitConversionsCanBeAddedListedAndReplacedPerPair" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="4fd9345c-fb98-5ab7-4380-03a39fb9762e">
+      <Execution id="f94c06aa-d51b-4c8e-884b-64bf33998472" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests" name="CustomUnitConversionsCanBeAddedListedAndReplacedPerPair" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.UnitConversionLoaderRetryTests.AStartupLoadThatFailsIsRetriedUntilTheConversionsArrive" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="30efd368-ff80-f6dd-b133-edd4e6ce922b">
+      <Execution id="1530504f-1528-4efa-97c8-7bb9f725431c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.UnitConversionLoaderRetryTests" name="AStartupLoadThatFailsIsRetriedUntilTheConversionsArrive" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.AManagerBuildsActivatesAndThenCannotChangeAVersionedRecipe" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="3f714d3c-c3b0-951a-1962-1c88d2852480">
+      <Execution id="d043c987-bc35-4077-b1e3-48f8ee09e764" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests" name="AManagerBuildsActivatesAndThenCannotChangeAVersionedRecipe" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.DeletingAMissingMappingReturnsNotFound" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="72f25041-0610-9262-611a-15933c217437">
+      <Execution id="e80bf8a8-bc39-4060-b050-020b50255400" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests" name="DeletingAMissingMappingReturnsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.CreatingTheSameSnapshotTwiceIsRejected" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="dcf7de59-f032-fabb-b150-76c0d207f69a">
+      <Execution id="a326bcbf-f3d9-4ac3-adcc-671865991d69" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests" name="CreatingTheSameSnapshotTwiceIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="8ed58f8d-658d-03e8-59ed-12dd09a68fdb">
+      <Execution id="fa0e0832-40af-4951-a931-0849209e7fd3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.DeletingAnExistingMappingRemovesIt" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="c686e66b-079c-c2d5-011e-980703b36a7d">
+      <Execution id="c47feba9-2116-4268-b89c-949db1c288aa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests" name="DeletingAnExistingMappingRemovesIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests.AssigningAMappingOverHttpPersistsAndReadsBack" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="6e70d060-8e7f-d6d5-856d-a4b28ac30037">
+      <Execution id="63104eb3-8227-46a6-831e-e7dea481d8cc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCatalogMappingHttpTests" name="AssigningAMappingOverHttpPersistsAndReadsBack" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.UnknownRecipesAndBadDraftInputAreRefused" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="8bb3c544-2b3b-de99-7cf1-750b9b824996">
+      <Execution id="13c354a7-2fea-4112-8005-b2bbe42489ef" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests" name="UnknownRecipesAndBadDraftInputAreRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.AManagerCanCreateASnapshotAndItsCostPerPortionIsCorrect" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="9a90f442-db91-0d28-375a-5589e321638a">
+      <Execution id="1816f5c0-fa17-4b94-ae07-f1ad4e667abc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests" name="AManagerCanCreateASnapshotAndItsCostPerPortionIsCorrect" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests.AddingACustomConversionMakesItImmediatelyUsableByTheSharedRuntimeConverter" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="e0bb5b81-af5d-1ed3-cb33-c5a75a1b4b9e">
+      <Execution id="5ccc7de7-2604-4f89-8edb-92bae6b1827a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeManagementHttpTests" name="AddingACustomConversionMakesItImmediatelyUsableByTheSharedRuntimeConverter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests.AnIngredientWithNoCostBasisAtAllIsRejected" storage="d:\project\alkaros\tests\host\experience\recipes\bin\debug\net8.0\alkaros.host.experience.recipes.tests.dll" id="adfff460-d72b-b294-ac5e-9d659f1a11e1">
+      <Execution id="71a7446c-eb57-41a0-b7ef-92bb7108218f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0\ALKAROS.Host.Experience.Recipes.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Recipes.Tests.RecipeCostSnapshotHttpTests" name="AnIngredientWithNoCostBasisAtAllIsRejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="30efd368-ff80-f6dd-b133-edd4e6ce922b" executionId="1530504f-1528-4efa-97c8-7bb9f725431c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="571f7b10-3906-9451-8f56-8ad986176314" executionId="0530d90b-7148-416a-a047-bbecb4fcf675" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d91bad4-84a9-4b0f-365e-a443b2e34770" executionId="1d7b4804-75cd-44e8-adc2-29c66c6062df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e290a1d0-9caa-802e-24c3-de66387a95b4" executionId="66275b41-f03e-4baa-a68c-f2578186bad0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e70d060-8e7f-d6d5-856d-a4b28ac30037" executionId="63104eb3-8227-46a6-831e-e7dea481d8cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8bb3c544-2b3b-de99-7cf1-750b9b824996" executionId="13c354a7-2fea-4112-8005-b2bbe42489ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dcf7de59-f032-fabb-b150-76c0d207f69a" executionId="a326bcbf-f3d9-4ac3-adcc-671865991d69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50c7b70c-8ad2-b1c6-871e-a8591f6a37f5" executionId="5e21c841-18f7-4503-9ab2-26c9e0fbd5f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c686e66b-079c-c2d5-011e-980703b36a7d" executionId="c47feba9-2116-4268-b89c-949db1c288aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3f714d3c-c3b0-951a-1962-1c88d2852480" executionId="d043c987-bc35-4077-b1e3-48f8ee09e764" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e0bb5b81-af5d-1ed3-cb33-c5a75a1b4b9e" executionId="5ccc7de7-2604-4f89-8edb-92bae6b1827a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a90f442-db91-0d28-375a-5589e321638a" executionId="1816f5c0-fa17-4b94-ae07-f1ad4e667abc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ed58f8d-658d-03e8-59ed-12dd09a68fdb" executionId="fa0e0832-40af-4951-a931-0849209e7fd3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b939dd1-6495-81cc-1244-e695e3699bf2" executionId="520370fa-2747-431e-bae7-d1020a9cabf2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f900305-3167-9c2c-e1eb-783dbc9e18ee" executionId="5ac3db0b-6625-4e3e-9092-3bf953b62267" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c696564a-9636-33b8-05ca-3ed6e83f3455" executionId="bf948cbc-5bcc-4592-ad2c-e4cafecc9e77" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="adfff460-d72b-b294-ac5e-9d659f1a11e1" executionId="71a7446c-eb57-41a0-b7ef-92bb7108218f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4fd9345c-fb98-5ab7-4380-03a39fb9762e" executionId="f94c06aa-d51b-4c8e-884b-64bf33998472" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72f25041-0610-9262-611a-15933c217437" executionId="e80bf8a8-bc39-4060-b050-020b50255400" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="19" executed="19" passed="19" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.86]   Discovering: ALKAROS.Host.Experience.Recipes.Tests&#xD;
+[xUnit.net 00:00:00.90]   Discovered:  ALKAROS.Host.Experience.Recipes.Tests&#xD;
+[xUnit.net 00:00:00.90]   Starting:    ALKAROS.Host.Experience.Recipes.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56767&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56767/api/v1/management/recipes/b2dc672e-a96e-4e9d-8167-ccdcd7c4f90a/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'RecipeCostSnapshotV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56767/api/v1/management/recipes/b2dc672e-a96e-4e9d-8167-ccdcd7c4f90a/cost-snapshots/ - 201 - application/json;+charset=utf-8 1374.1053ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56767/api/v1/management/recipes/b2dc672e-a96e-4e9d-8167-ccdcd7c4f90a/cost-snapshots/effective?asOfDate=2026-06-01 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/effective'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecipeCostSnapshotV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/effective'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56767/api/v1/management/recipes/b2dc672e-a96e-4e9d-8167-ccdcd7c4f90a/cost-snapshots/effective?asOfDate=2026-06-01 - 200 - application/json;+charset=utf-8 19.7552ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53845&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53845/api/v1/management/recipes/add94b08-48f4-4e56-a278-3fffa3075a5a/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotUnauthorizedException: A valid recipe cost snapshot manager session is required.&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 134&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 156&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53845/api/v1/management/recipes/add94b08-48f4-4e56-a278-3fffa3075a5a/cost-snapshots/ - 401 - application/json;+charset=utf-8 36.9822ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53845/api/v1/management/recipes/add94b08-48f4-4e56-a278-3fffa3075a5a/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '868a0d3f-7c0e-441e-8ed5-2f7ac3d72509' denied permission 'inventory.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 159&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53845/api/v1/management/recipes/add94b08-48f4-4e56-a278-3fffa3075a5a/cost-snapshots/ - 403 - application/json;+charset=utf-8 19.7919ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59287&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59287/api/v1/management/recipes/8a2c5e52-7e1b-4220-8110-2254dc49ff27/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Recipes.CostSnapshots.MissingCostBasisException: Cost basis could not be resolved for stock item 'a4f716d3-7022-4933-bff7-85dc998d026b' on or before 2026-01-01.&#xD;
+         at ALKAROS.Recipes.CostSnapshots.RecipeCostSnapshotService.CreateSnapshotAsync(CreateSnapshotCommand command, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\CostSnapshots\IRecipeCostSnapshotService.cs:line 92&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpoints.&lt;&gt;c.&lt;&lt;MapRecipeCostSnapshotApi&gt;b__3_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 59&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 163&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59287/api/v1/management/recipes/8a2c5e52-7e1b-4220-8110-2254dc49ff27/cost-snapshots/ - 400 - application/json;+charset=utf-8 33.3048ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63113&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:63113/api/v1/management/recipes/1d1e625a-5111-4e50-b702-b3794c8079d3/cost-snapshots/effective?asOfDate=2026-01-01 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/effective'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/effective'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:63113/api/v1/management/recipes/1d1e625a-5111-4e50-b702-b3794c8079d3/cost-snapshots/effective?asOfDate=2026-01-01 - 404 - application/json;+charset=utf-8 19.2838ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52893&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52893/api/v1/management/recipes/f4143e1a-0c7a-42f1-b8ca-2efb74c712f7/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'RecipeCostSnapshotV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52893/api/v1/management/recipes/f4143e1a-0c7a-42f1-b8ca-2efb74c712f7/cost-snapshots/ - 201 - application/json;+charset=utf-8 33.3769ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52893/api/v1/management/recipes/f4143e1a-0c7a-42f1-b8ca-2efb74c712f7/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Recipes.CostSnapshots.DuplicateCostSnapshotException: Cost snapshot already exists for recipe version 'f4143e1a-0c7a-42f1-b8ca-2efb74c712f7' on 2026-01-01.&#xD;
+         at ALKAROS.Recipes.CostSnapshots.RecipeCostSnapshotService.CreateSnapshotAsync(CreateSnapshotCommand command, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\CostSnapshots\IRecipeCostSnapshotService.cs:line 51&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpoints.&lt;&gt;c.&lt;&lt;MapRecipeCostSnapshotApi&gt;b__3_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 59&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 163&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52893/api/v1/management/recipes/f4143e1a-0c7a-42f1-b8ca-2efb74c712f7/cost-snapshots/ - 409 - application/json;+charset=utf-8 15.4667ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60679&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60679/api/v1/management/recipes/935cc560-17f7-4af0-ac8d-835af633eddf/cost-snapshots/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Recipes.CostSnapshots.MissingStockUnitMappingException: No stock tracking unit was supplied for stock item 'e6eeff45-f2c5-4c36-889e-0a4dddb60a8a'; refusing to assume it matches the recipe's own native unit.&#xD;
+         at ALKAROS.Recipes.CostSnapshots.RecipeCostSnapshotService.CreateSnapshotAsync(CreateSnapshotCommand command, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\CostSnapshots\IRecipeCostSnapshotService.cs:line 74&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpoints.&lt;&gt;c.&lt;&lt;MapRecipeCostSnapshotApi&gt;b__3_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 59&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Recipes.RecipeCostSnapshotEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\RecipeCostSnapshotEndpoints.cs:line 163&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60679/api/v1/management/recipes/935cc560-17f7-4af0-ac8d-835af633eddf/cost-snapshots/ - 400 - application/json;+charset=utf-8 20.3623ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57920&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57920/api/v1/management/recipes/products/06ea4af5-5deb-4abd-8131-1374779ee3f8/mapping - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductRecipeMappingV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57920/api/v1/management/recipes/products/06ea4af5-5deb-4abd-8131-1374779ee3f8/mapping - 200 - application/json;+charset=utf-8 72.9983ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:57920/api/v1/management/recipes/products/06ea4af5-5deb-4abd-8131-1374779ee3f8/mapping - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:57920/api/v1/management/recipes/products/06ea4af5-5deb-4abd-8131-1374779ee3f8/mapping - 204 - - 12.2518ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57920/api/v1/management/recipes/products/06ea4af5-5deb-4abd-8131-1374779ee3f8/mapping - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57920/api/v1/management/recipes/products/06ea4af5-5deb-4abd-8131-1374779ee3f8/mapping - 404 - application/json;+charset=utf-8 10.9649ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57171&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57171/api/v1/management/recipes/products/8beef448-01dd-4fe1-aa95-85d96fbdddcb/mapping - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductRecipeMappingV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57171/api/v1/management/recipes/products/8beef448-01dd-4fe1-aa95-85d96fbdddcb/mapping - 200 - application/json;+charset=utf-8 49.1159ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57171/api/v1/management/recipes/products/8beef448-01dd-4fe1-aa95-85d96fbdddcb/mapping - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductRecipeMappingV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57171/api/v1/management/recipes/products/8beef448-01dd-4fe1-aa95-85d96fbdddcb/mapping - 200 - application/json;+charset=utf-8 6.6849ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52495&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52495/api/v1/management/recipes/products/1b085d09-4261-4059-9c48-979ce02adcd8/mapping - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52495/api/v1/management/recipes/products/1b085d09-4261-4059-9c48-979ce02adcd8/mapping - 400 - application/json;+charset=utf-8 56.1040ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50361&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:50361/api/v1/management/recipes/products/5afb4f30-3b64-4b62-a91f-b60fd08cfa59/mapping - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:50361/api/v1/management/recipes/products/5afb4f30-3b64-4b62-a91f-b60fd08cfa59/mapping - 404 - application/json;+charset=utf-8 50.1763ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56096&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56096/api/v1/management/recipes/products/58ddcbe1-4654-4130-ab42-24c3b5fe1377/mapping - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56096/api/v1/management/recipes/products/58ddcbe1-4654-4130-ab42-24c3b5fe1377/mapping - 401 - application/json;+charset=utf-8 61.1925ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56096/api/v1/management/recipes/products/58ddcbe1-4654-4130-ab42-24c3b5fe1377/mapping - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56096/api/v1/management/recipes/products/58ddcbe1-4654-4130-ab42-24c3b5fe1377/mapping - 403 - application/json;+charset=utf-8 17.1434ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56096/api/v1/management/recipes/products/58ddcbe1-4654-4130-ab42-24c3b5fe1377/mapping - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/products/{productId:guid}/mapping'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56096/api/v1/management/recipes/products/58ddcbe1-4654-4130-ab42-24c3b5fe1377/mapping - 404 - application/json;+charset=utf-8 20.4615ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58885&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'UnitConversionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - 201 - application/json;+charset=utf-8 51.5432ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'UnitConversionV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - 200 - application/json;+charset=utf-8 9.3194ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'UnitConversionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - 201 - application/json;+charset=utf-8 10.1688ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'UnitConversionV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58885/api/v1/management/recipes/unit-conversions - 200 - application/json;+charset=utf-8 5.6352ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63100&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:63100/api/v1/management/recipes/f43db8cd-1031-4d9a-aeaf-cd9f603586e7/versions - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:63100/api/v1/management/recipes/f43db8cd-1031-4d9a-aeaf-cd9f603586e7/versions - 404 - application/json;+charset=utf-8 49.9216ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63100/api/v1/management/recipes - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'RecipeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63100/api/v1/management/recipes - 201 - application/json;+charset=utf-8 14.8110ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63100/api/v1/management/recipes/2858f807-bc6c-484c-815d-bb1f6b89ead2/versions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63100/api/v1/management/recipes/2858f807-bc6c-484c-815d-bb1f6b89ead2/versions - 400 - application/json;+charset=utf-8 14.1788ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59655&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:59655/api/v1/management/recipes - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:59655/api/v1/management/recipes - 401 - application/json;+charset=utf-8 44.0490ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59655/api/v1/management/recipes - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59655/api/v1/management/recipes - 403 - application/json;+charset=utf-8 8.7929ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51887&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'RecipeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes - 201 - application/json;+charset=utf-8 47.2148ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes - 409 - application/json;+charset=utf-8 6.2557ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'RecipeVersionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions - 201 - application/json;+charset=utf-8 24.4795ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/versions/069c9785-3646-4138-af31-597c42d9e9a7/ingredients - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/versions/{versionId:guid}/ingredients'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecipeVersionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/versions/{versionId:guid}/ingredients'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/versions/069c9785-3646-4138-af31-597c42d9e9a7/ingredients - 200 - application/json;+charset=utf-8 24.1725ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions/1/activate - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions/{versionNumber:int}/activate'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions/{versionNumber:int}/activate'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions/1/activate - 204 - - 19.5992ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecipeVersionV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions - 200 - application/json;+charset=utf-8 11.9773ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/versions/069c9785-3646-4138-af31-597c42d9e9a7/ingredients - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/versions/{versionId:guid}/ingredients'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/versions/{versionId:guid}/ingredients'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/versions/069c9785-3646-4138-af31-597c42d9e9a7/ingredients - 409 - application/json;+charset=utf-8 9.4890ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions/next - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions/next'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'RecipeVersionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/{recipeId:guid}/versions/next'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions/next - 201 - application/json;+charset=utf-8 16.8091ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RecipeVersionV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/recipes/{recipeId:guid}/versions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:51887/api/v1/management/recipes/2bb3f81e-8114-4afa-a7db-8b8d47e9e972/versions - 200 - application/json;+charset=utf-8 9.7009ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54186&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54186/api/v1/management/recipes/unit-conversions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'UnitConversionV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/recipes/unit-conversions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54186/api/v1/management/recipes/unit-conversions - 201 - application/json;+charset=utf-8 55.6437ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50828&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50829&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Recipes\bin\Debug\net8.0&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:51.86]   Finished:    ALKAROS.Host.Experience.Recipes.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

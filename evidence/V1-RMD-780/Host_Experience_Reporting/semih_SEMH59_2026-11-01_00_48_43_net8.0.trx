@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="85e176fb-bcf0-46f3-ac52-6fbf459888f7" name="semih@SEMH59 2026-11-01 00:48:43" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:48:43.9328854+03:00" queuing="2026-11-01T00:48:43.9328857+03:00" start="2026-11-01T00:48:36.4930311+03:00" finish="2026-11-01T00:49:11.6442165+03:00" />
+  <TestSettings name="default" id="0cea1449-6bca-41a5-9680-8f82f5d76b94">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_48_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ab419a40-a5c4-4222-8b54-74b383189763" testId="d2fd2980-75f0-6769-bbe9-8d77518768a7" testName="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayRefundNettingTests.ARefundLowersTheRevenueOfTheDayItWasPaidBackNotTheDayOfThePayment" computerName="SEMH59" duration="00:00:00.1962682" startTime="2026-11-01T00:48:43.9368776+03:00" endTime="2026-11-01T00:48:43.9368780+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab419a40-a5c4-4222-8b54-74b383189763" />
+    <UnitTestResult executionId="28fd0350-3980-4c50-b48c-20e67ca1a580" testId="5c509156-4d1d-1f7a-9a37-cee914542ba9" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.ANonExistentDayIsNotFound" computerName="SEMH59" duration="00:00:00.0400938" startTime="2026-11-01T00:48:56.9385063+03:00" endTime="2026-11-01T00:48:56.9385065+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28fd0350-3980-4c50-b48c-20e67ca1a580" />
+    <UnitTestResult executionId="85bf7bda-cd0d-4a26-a671-9660504b6eaf" testId="97d55c58-71dd-1755-bb53-a98e6b75261e" testName="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests.AnOrderWhoseEveryPaymentWasRefundedIsNotCounted" computerName="SEMH59" duration="00:00:00.0162033" startTime="2026-11-01T00:48:49.5676312+03:00" endTime="2026-11-01T00:48:49.5676316+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85bf7bda-cd0d-4a26-a671-9660504b6eaf" />
+    <UnitTestResult executionId="8492a210-dd63-49e3-9ac7-4a9acf9e6e26" testId="03757066-62ed-855e-5a05-421748c62e30" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.CloseCountsTableAndQrOrdersButNotPlatformOrders" computerName="SEMH59" duration="00:00:00.0741839" startTime="2026-11-01T00:49:05.9507696+03:00" endTime="2026-11-01T00:49:05.9507699+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8492a210-dd63-49e3-9ac7-4a9acf9e6e26" />
+    <UnitTestResult executionId="3fa17ace-ee0e-45b3-a566-fbf9da930614" testId="c6885513-1101-9508-c223-2151c9939acb" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.OpeningTheSameDayTwiceIsRejected" computerName="SEMH59" duration="00:00:01.4235126" startTime="2026-11-01T00:48:53.8520465+03:00" endTime="2026-11-01T00:48:53.8520468+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fa17ace-ee0e-45b3-a566-fbf9da930614" />
+    <UnitTestResult executionId="693cc24a-ca13-4a52-9075-72ad3c78fb54" testId="d5e05d19-6533-3efc-542b-7e31fa332821" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow" computerName="SEMH59" duration="00:00:00.0781476" startTime="2026-11-01T00:49:08.8465807+03:00" endTime="2026-11-01T00:49:08.8465808+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="693cc24a-ca13-4a52-9075-72ad3c78fb54" />
+    <UnitTestResult executionId="603430a4-9d29-4263-8f20-00672a9f9be2" testId="e01d0cdb-f0b6-0196-99d5-f480a3001f53" testName="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests.AnOrderWithAnOpenBillAndOneRefundedPaymentIsStillCounted" computerName="SEMH59" duration="00:00:00.0143892" startTime="2026-11-01T00:48:46.8617083+03:00" endTime="2026-11-01T00:48:46.8617086+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="603430a4-9d29-4263-8f20-00672a9f9be2" />
+    <UnitTestResult executionId="08eb0c77-cabd-41e7-b167-d505995c37c9" testId="15c7e8c7-3f49-4414-b5d7-9e1db08fd7c0" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.AManagerCanOpenCloseAndReadTheFullReport" computerName="SEMH59" duration="00:00:00.1182938" startTime="2026-11-01T00:49:03.0107482+03:00" endTime="2026-11-01T00:49:03.0107483+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08eb0c77-cabd-41e7-b167-d505995c37c9" />
+    <UnitTestResult executionId="ffd9b630-d45e-49d4-8b31-83afca233163" testId="10e61bee-daff-3477-97ad-384d7ae6683d" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0459997" startTime="2026-11-01T00:49:00.0383030+03:00" endTime="2026-11-01T00:49:00.0383032+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ffd9b630-d45e-49d4-8b31-83afca233163" />
+    <UnitTestResult executionId="854045db-0fd2-4f25-b867-348268fcde27" testId="ca1c780c-467d-64b0-a026-ca0ce628e519" testName="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.ASupervisorCanReadButNotOpenOrCloseADay" computerName="SEMH59" duration="00:00:00.0717829" startTime="2026-11-01T00:49:11.5607987+03:00" endTime="2026-11-01T00:49:11.5607990+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="854045db-0fd2-4f25-b867-348268fcde27" />
+    <UnitTestResult executionId="134983ba-815a-4aeb-bc41-1a51cad8468c" testId="f782dd9f-084e-bc64-2ffb-0308f2cd10ad" testName="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests.AnOrderWithAPaidBillOrAnUnrelatedCancelledBillIsStillCounted" computerName="SEMH59" duration="00:00:00.1977349" startTime="2026-11-01T00:48:43.8972638+03:00" endTime="2026-11-01T00:48:43.8972865+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="134983ba-815a-4aeb-bc41-1a51cad8468c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.ASupervisorCanReadButNotOpenOrCloseADay" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="ca1c780c-467d-64b0-a026-ca0ce628e519">
+      <Execution id="854045db-0fd2-4f25-b867-348268fcde27" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="ASupervisorCanReadButNotOpenOrCloseADay" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.ANonExistentDayIsNotFound" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="5c509156-4d1d-1f7a-9a37-cee914542ba9">
+      <Execution id="28fd0350-3980-4c50-b48c-20e67ca1a580" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="ANonExistentDayIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="10e61bee-daff-3477-97ad-384d7ae6683d">
+      <Execution id="ffd9b630-d45e-49d4-8b31-83afca233163" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests.AnOrderWhoseEveryPaymentWasRefundedIsNotCounted" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="97d55c58-71dd-1755-bb53-a98e6b75261e">
+      <Execution id="85bf7bda-cd0d-4a26-a671-9660504b6eaf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests" name="AnOrderWhoseEveryPaymentWasRefundedIsNotCounted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.AManagerCanOpenCloseAndReadTheFullReport" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="15c7e8c7-3f49-4414-b5d7-9e1db08fd7c0">
+      <Execution id="08eb0c77-cabd-41e7-b167-d505995c37c9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="AManagerCanOpenCloseAndReadTheFullReport" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.OpeningTheSameDayTwiceIsRejected" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="c6885513-1101-9508-c223-2151c9939acb">
+      <Execution id="3fa17ace-ee0e-45b3-a566-fbf9da930614" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="OpeningTheSameDayTwiceIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="d5e05d19-6533-3efc-542b-7e31fa332821">
+      <Execution id="693cc24a-ca13-4a52-9075-72ad3c78fb54" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests.AnOrderWithAPaidBillOrAnUnrelatedCancelledBillIsStillCounted" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="f782dd9f-084e-bc64-2ffb-0308f2cd10ad">
+      <Execution id="134983ba-815a-4aeb-bc41-1a51cad8468c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests" name="AnOrderWithAPaidBillOrAnUnrelatedCancelledBillIsStillCounted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests.AnOrderWithAnOpenBillAndOneRefundedPaymentIsStillCounted" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="e01d0cdb-f0b6-0196-99d5-f480a3001f53">
+      <Execution id="603430a4-9d29-4263-8f20-00672a9f9be2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayOrderCountRefundTests" name="AnOrderWithAnOpenBillAndOneRefundedPaymentIsStillCounted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayRefundNettingTests.ARefundLowersTheRevenueOfTheDayItWasPaidBackNotTheDayOfThePayment" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="d2fd2980-75f0-6769-bbe9-8d77518768a7">
+      <Execution id="ab419a40-a5c4-4222-8b54-74b383189763" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.BusinessDayRefundNettingTests" name="ARefundLowersTheRevenueOfTheDayItWasPaidBackNotTheDayOfThePayment" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.CloseCountsTableAndQrOrdersButNotPlatformOrders" storage="d:\project\alkaros\tests\host\experience\reporting\bin\debug\net8.0\alkaros.host.experience.reporting.tests.dll" id="03757066-62ed-855e-5a05-421748c62e30">
+      <Execution id="8492a210-dd63-49e3-9ac7-4a9acf9e6e26" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0\ALKAROS.Host.Experience.Reporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests" name="CloseCountsTableAndQrOrdersButNotPlatformOrders" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d2fd2980-75f0-6769-bbe9-8d77518768a7" executionId="ab419a40-a5c4-4222-8b54-74b383189763" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5c509156-4d1d-1f7a-9a37-cee914542ba9" executionId="28fd0350-3980-4c50-b48c-20e67ca1a580" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="97d55c58-71dd-1755-bb53-a98e6b75261e" executionId="85bf7bda-cd0d-4a26-a671-9660504b6eaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03757066-62ed-855e-5a05-421748c62e30" executionId="8492a210-dd63-49e3-9ac7-4a9acf9e6e26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c6885513-1101-9508-c223-2151c9939acb" executionId="3fa17ace-ee0e-45b3-a566-fbf9da930614" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5e05d19-6533-3efc-542b-7e31fa332821" executionId="693cc24a-ca13-4a52-9075-72ad3c78fb54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e01d0cdb-f0b6-0196-99d5-f480a3001f53" executionId="603430a4-9d29-4263-8f20-00672a9f9be2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15c7e8c7-3f49-4414-b5d7-9e1db08fd7c0" executionId="08eb0c77-cabd-41e7-b167-d505995c37c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10e61bee-daff-3477-97ad-384d7ae6683d" executionId="ffd9b630-d45e-49d4-8b31-83afca233163" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca1c780c-467d-64b0-a026-ca0ce628e519" executionId="854045db-0fd2-4f25-b867-348268fcde27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f782dd9f-084e-bc64-2ffb-0308f2cd10ad" executionId="134983ba-815a-4aeb-bc41-1a51cad8468c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.13]   Discovering: ALKAROS.Host.Experience.Reporting.Tests&#xD;
+[xUnit.net 00:00:01.17]   Discovered:  ALKAROS.Host.Experience.Reporting.Tests&#xD;
+[xUnit.net 00:00:01.17]   Starting:    ALKAROS.Host.Experience.Reporting.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60908&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60908/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'BusinessDayV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60908/api/v1/management/reporting/business-day/open - 201 - application/json;+charset=utf-8 1280.4733ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60908/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Reporting.V1Operations.BusinessDayAlreadyOpenException: Business day for date '2026-01-04' is already open.&#xD;
+         at ALKAROS.Reporting.V1Operations.PostgresOperationalReportRepository.OpenBusinessDayAsync(DateOnly businessDate, DateTimeOffset openedAt, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reporting\V1Operations\PostgresOperationalReportRepository.cs:line 118&#xD;
+         at ALKAROS.Reporting.V1Operations.PostgresOperationalReportRepository.OpenBusinessDayAsync(DateOnly businessDate, DateTimeOffset openedAt, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reporting\V1Operations\PostgresOperationalReportRepository.cs:line 119&#xD;
+         at ALKAROS.Reporting.V1Operations.PostgresOperationalReportRepository.OpenBusinessDayAsync(DateOnly businessDate, DateTimeOffset openedAt, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reporting\V1Operations\PostgresOperationalReportRepository.cs:line 140&#xD;
+         at ALKAROS.Reporting.V1Operations.PostgresOperationalReportRepository.OpenBusinessDayAsync(DateOnly businessDate, DateTimeOffset openedAt, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reporting\V1Operations\PostgresOperationalReportRepository.cs:line 140&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpoints.&lt;&gt;c.&lt;&lt;MapEndOfDayApi&gt;b__4_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 65&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 217&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60908/api/v1/management/reporting/business-day/open - 409 - application/json;+charset=utf-8 48.2878ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53174&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53174/api/v1/management/reporting/business-day/2026-12-31 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Reporting.V1Operations.BusinessDayNotFoundException: Business day for date '2026-12-31' was not found.&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpoints.&lt;&gt;c.&lt;&lt;MapEndOfDayApi&gt;b__4_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 96&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 217&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53174/api/v1/management/reporting/business-day/2026-12-31 - 404 - application/json;+charset=utf-8 35.9735ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57116&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57116/api/v1/management/reporting/business-day/2026-01-01 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reporting.EndOfDayUnauthorizedException: A valid EOD reporting session is required.&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 190&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 214&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57116/api/v1/management/reporting/business-day/2026-01-01 - 401 - application/json;+charset=utf-8 18.4032ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57116/api/v1/management/reporting/business-day/2026-01-01 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '2cb60d4a-dcb9-48d6-a36e-54e5f0a175c6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 215&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57116/api/v1/management/reporting/business-day/2026-01-01 - 403 - application/json;+charset=utf-8 23.0712ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60315&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60315/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'BusinessDayV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60315/api/v1/management/reporting/business-day/open - 201 - application/json;+charset=utf-8 29.8112ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60315/api/v1/management/reporting/business-day/2026-01-03/close - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'BusinessDayReportV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60315/api/v1/management/reporting/business-day/2026-01-03/close - 200 - application/json;+charset=utf-8 53.0280ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60315/api/v1/management/reporting/business-day/2026-01-03/full-report - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}/full-report'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'BusinessDayReportV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}/full-report'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60315/api/v1/management/reporting/business-day/2026-01-03/full-report - 200 - application/json;+charset=utf-8 16.3890ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62654&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62654/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'BusinessDayV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62654/api/v1/management/reporting/business-day/open - 201 - application/json;+charset=utf-8 32.5166ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62654/api/v1/management/reporting/business-day/2026-01-06/close - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'BusinessDayReportV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62654/api/v1/management/reporting/business-day/2026-01-06/close - 200 - application/json;+charset=utf-8 24.1261ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50126&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50126/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'BusinessDayV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50126/api/v1/management/reporting/business-day/open - 201 - application/json;+charset=utf-8 31.0949ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50126/api/v1/management/reporting/business-day/2026-01-05/close - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'BusinessDayReportV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50126/api/v1/management/reporting/business-day/2026-01-05/close - 200 - application/json;+charset=utf-8 18.4732ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60636&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60636/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'BusinessDayV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60636/api/v1/management/reporting/business-day/open - 201 - application/json;+charset=utf-8 30.6800ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60636/api/v1/management/reporting/business-day/2026-01-02 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'BusinessDayV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reporting/business-day/{businessDate}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60636/api/v1/management/reporting/business-day/2026-01-02 - 200 - application/json;+charset=utf-8 8.2998ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60636/api/v1/management/reporting/business-day/open - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/open'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User 'a78b4f50-da21-42d1-b7b8-dcb2ad83cfd1' denied permission 'reports.close-day': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpoints.&lt;&gt;c.&lt;&lt;MapEndOfDayApi&gt;b__4_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 64&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 217&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60636/api/v1/management/reporting/business-day/open - 403 - application/json;+charset=utf-8 15.1173ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60636/api/v1/management/reporting/business-day/2026-01-02/close - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reporting/business-day/{businessDate}/close'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User 'a78b4f50-da21-42d1-b7b8-dcb2ad83cfd1' denied permission 'reports.close-day': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpoints.&lt;&gt;c.&lt;&lt;MapEndOfDayApi&gt;b__4_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 79&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reporting.EndOfDayEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\EndOfDayEndpoints.cs:line 217&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60636/api/v1/management/reporting/business-day/2026-01-02/close - 403 - application/json;+charset=utf-8 11.4913ms&#xD;
+[xUnit.net 00:00:32.80]   Finished:    ALKAROS.Host.Experience.Reporting.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,524 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1f1b41ae-14b8-447e-b5db-f2e9e575ff92" name="semih@SEMH59 2026-11-01 00:44:23" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:44:23.8666649+03:00" queuing="2026-11-01T00:44:23.8666651+03:00" start="2026-11-01T00:44:20.0295724+03:00" finish="2026-11-01T00:44:41.4883345+03:00" />
+  <TestSettings name="default" id="c63baccd-bfe9-481c-8fa7-d9a119c23a32">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_44_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="754902a0-28db-4ff5-a16d-d209cc90800c" testId="e65861e1-9ead-829c-c63d-6a1b2632387f" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.SecondScanWithTheSameCriticalItemDoesNotReBroadcast" computerName="SEMH59" duration="00:00:00.1622461" startTime="2026-11-01T00:44:23.3773559+03:00" endTime="2026-11-01T00:44:23.3773792+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="754902a0-28db-4ff5-a16d-d209cc90800c" />
+    <UnitTestResult executionId="48dc1564-6bb8-4ffd-afde-06010448b234" testId="a5e671c5-3030-f044-dff5-86a4bd0e830d" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.FirstScanBroadcastsEveryCriticalItem" computerName="SEMH59" duration="00:00:00.0028503" startTime="2026-11-01T00:44:23.3811339+03:00" endTime="2026-11-01T00:44:23.3811340+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48dc1564-6bb8-4ffd-afde-06010448b234" />
+    <UnitTestResult executionId="b6640acc-f7c0-43bb-98ee-bf30431c3901" testId="3ebf1936-61a4-0c67-92d0-8ef92164f91c" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHubSessionTests.ARevokedManagerSessionIsDroppedByTheSweepAndNothingElseIs" computerName="SEMH59" duration="00:00:00.0215664" startTime="2026-11-01T00:44:38.7085395+03:00" endTime="2026-11-01T00:44:38.7085399+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6640acc-f7c0-43bb-98ee-bf30431c3901" />
+    <UnitTestResult executionId="36d774c9-b62a-406b-ab85-314b5682af5c" testId="827f46f3-d5f5-61e7-ecad-43915be7ce20" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHubSessionTests.DisconnectingReleasesTheTrackedConnection" computerName="SEMH59" duration="00:00:00.0048505" startTime="2026-11-01T00:44:41.4120338+03:00" endTime="2026-11-01T00:44:41.4120340+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36d774c9-b62a-406b-ab85-314b5682af5c" />
+    <UnitTestResult executionId="c7b4e4bf-6dec-4fed-8c64-cf0c25af97be" testId="084bd0af-d30e-ac16-a3d4-639a0855c1d0" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ReturnsCriticalStockReportUsingThePersistedReorderPoint" computerName="SEMH59" duration="00:00:00.1923642" startTime="2026-11-01T00:44:27.3338139+03:00" endTime="2026-11-01T00:44:27.3338142+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7b4e4bf-6dec-4fed-8c64-cf0c25af97be" />
+    <UnitTestResult executionId="3c5c72d7-40ef-436e-b0f4-936d68a35e5a" testId="1cffd2cf-5bee-8371-86fa-5d7b70556226" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ActualVsTheoreticalRequiresFromAndTo" computerName="SEMH59" duration="00:00:00.0264317" startTime="2026-11-01T00:44:30.1645434+03:00" endTime="2026-11-01T00:44:30.1645437+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c5c72d7-40ef-436e-b0f4-936d68a35e5a" />
+    <UnitTestResult executionId="5a200fde-5eef-440d-a06b-bf44bc543b21" testId="0b227368-0d95-00ae-bf63-7aa70a489463" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.NoCriticalItemsBroadcastsNothing" computerName="SEMH59" duration="00:00:00.0004781" startTime="2026-11-01T00:44:23.3849981+03:00" endTime="2026-11-01T00:44:23.3849982+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5a200fde-5eef-440d-a06b-bf44bc543b21" />
+    <UnitTestResult executionId="d638806b-beed-481d-a035-4b5aa3113cf5" testId="c905e567-f798-3b10-0b6c-b1549c049798" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ActualVsTheoreticalReturnsAnEmptyReportWhenNoPhysicalCountsExist" computerName="SEMH59" duration="00:00:00.0381594" startTime="2026-11-01T00:44:32.9314872+03:00" endTime="2026-11-01T00:44:32.9314873+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d638806b-beed-481d-a035-4b5aa3113cf5" />
+    <UnitTestResult executionId="057c2566-613d-4ec9-a37f-6faaf67a8b71" testId="67af5d4a-f59c-94bc-ac31-1760f3a4d522" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.RecoveringThenGoingCriticalAgainReBroadcasts" computerName="SEMH59" duration="00:00:00.0010571" startTime="2026-11-01T00:44:23.3807412+03:00" endTime="2026-11-01T00:44:23.3807413+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="057c2566-613d-4ec9-a37f-6faaf67a8b71" />
+    <UnitTestResult executionId="40bfd1db-14d2-4792-88a7-2e345d5ac6f5" testId="27ea21fa-fd01-1628-e747-70678a0acd92" testName="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.MissingAndUnpermissionedSessionsAreRejected" computerName="SEMH59" duration="00:00:00.0291933" startTime="2026-11-01T00:44:35.9247757+03:00" endTime="2026-11-01T00:44:35.9247759+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40bfd1db-14d2-4792-88a7-2e345d5ac6f5" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHubSessionTests.ARevokedManagerSessionIsDroppedByTheSweepAndNothingElseIs" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="3ebf1936-61a4-0c67-92d0-8ef92164f91c">
+      <Execution id="b6640acc-f7c0-43bb-98ee-bf30431c3901" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHubSessionTests" name="ARevokedManagerSessionIsDroppedByTheSweepAndNothingElseIs" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ActualVsTheoreticalReturnsAnEmptyReportWhenNoPhysicalCountsExist" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="c905e567-f798-3b10-0b6c-b1549c049798">
+      <Execution id="d638806b-beed-481d-a035-4b5aa3113cf5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests" name="ActualVsTheoreticalReturnsAnEmptyReportWhenNoPhysicalCountsExist" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ReturnsCriticalStockReportUsingThePersistedReorderPoint" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="084bd0af-d30e-ac16-a3d4-639a0855c1d0">
+      <Execution id="c7b4e4bf-6dec-4fed-8c64-cf0c25af97be" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests" name="ReturnsCriticalStockReportUsingThePersistedReorderPoint" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.MissingAndUnpermissionedSessionsAreRejected" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="27ea21fa-fd01-1628-e747-70678a0acd92">
+      <Execution id="40bfd1db-14d2-4792-88a7-2e345d5ac6f5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests" name="MissingAndUnpermissionedSessionsAreRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ActualVsTheoreticalRequiresFromAndTo" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="1cffd2cf-5bee-8371-86fa-5d7b70556226">
+      <Execution id="3c5c72d7-40ef-436e-b0f4-936d68a35e5a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests" name="ActualVsTheoreticalRequiresFromAndTo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.RecoveringThenGoingCriticalAgainReBroadcasts" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="67af5d4a-f59c-94bc-ac31-1760f3a4d522">
+      <Execution id="057c2566-613d-4ec9-a37f-6faaf67a8b71" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests" name="RecoveringThenGoingCriticalAgainReBroadcasts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHubSessionTests.DisconnectingReleasesTheTrackedConnection" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="827f46f3-d5f5-61e7-ecad-43915be7ce20">
+      <Execution id="36d774c9-b62a-406b-ab85-314b5682af5c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHubSessionTests" name="DisconnectingReleasesTheTrackedConnection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.SecondScanWithTheSameCriticalItemDoesNotReBroadcast" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="e65861e1-9ead-829c-c63d-6a1b2632387f">
+      <Execution id="754902a0-28db-4ff5-a16d-d209cc90800c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests" name="SecondScanWithTheSameCriticalItemDoesNotReBroadcast" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.FirstScanBroadcastsEveryCriticalItem" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="a5e671c5-3030-f044-dff5-86a4bd0e830d">
+      <Execution id="48dc1564-6bb8-4ffd-afde-06010448b234" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests" name="FirstScanBroadcastsEveryCriticalItem" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.NoCriticalItemsBroadcastsNothing" storage="d:\project\alkaros\tests\host\experience\inventoryreporting\bin\debug\net8.0\alkaros.host.experience.inventoryreporting.tests.dll" id="0b227368-0d95-00ae-bf63-7aa70a489463">
+      <Execution id="5a200fde-5eef-440d-a06b-bf44bc543b21" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0\ALKAROS.Host.Experience.InventoryReporting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests" name="NoCriticalItemsBroadcastsNothing" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="e65861e1-9ead-829c-c63d-6a1b2632387f" executionId="754902a0-28db-4ff5-a16d-d209cc90800c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5e671c5-3030-f044-dff5-86a4bd0e830d" executionId="48dc1564-6bb8-4ffd-afde-06010448b234" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ebf1936-61a4-0c67-92d0-8ef92164f91c" executionId="b6640acc-f7c0-43bb-98ee-bf30431c3901" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="827f46f3-d5f5-61e7-ecad-43915be7ce20" executionId="36d774c9-b62a-406b-ab85-314b5682af5c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="084bd0af-d30e-ac16-a3d4-639a0855c1d0" executionId="c7b4e4bf-6dec-4fed-8c64-cf0c25af97be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cffd2cf-5bee-8371-86fa-5d7b70556226" executionId="3c5c72d7-40ef-436e-b0f4-936d68a35e5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b227368-0d95-00ae-bf63-7aa70a489463" executionId="5a200fde-5eef-440d-a06b-bf44bc543b21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c905e567-f798-3b10-0b6c-b1549c049798" executionId="d638806b-beed-481d-a035-4b5aa3113cf5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="67af5d4a-f59c-94bc-ac31-1760f3a4d522" executionId="057c2566-613d-4ec9-a37f-6faaf67a8b71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27ea21fa-fd01-1628-e747-70678a0acd92" executionId="40bfd1db-14d2-4792-88a7-2e345d5ac6f5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.79]   Discovering: ALKAROS.Host.Experience.InventoryReporting.Tests&#xD;
+[xUnit.net 00:00:00.83]   Discovered:  ALKAROS.Host.Experience.InventoryReporting.Tests&#xD;
+[xUnit.net 00:00:00.83]   Starting:    ALKAROS.Host.Experience.InventoryReporting.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53872&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53872/api/v1/management/inventory/reports/critical-stock?locationId=0c61df13-c35b-4c35-8ad5-d8bfe6041239 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/reports/critical-stock'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'CriticalStockReport' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/reports/critical-stock'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53872/api/v1/management/inventory/reports/critical-stock?locationId=0c61df13-c35b-4c35-8ad5-d8bfe6041239 - 200 - application/json;+charset=utf-8 92.3813ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63799&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:63799/api/v1/management/inventory/reports/actual-vs-theoretical - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/reports/actual-vs-theoretical'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/reports/actual-vs-theoretical'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:63799/api/v1/management/inventory/reports/actual-vs-theoretical - 400 - application/json;+charset=utf-8 22.7445ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59104&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:59104/api/v1/management/inventory/reports/actual-vs-theoretical?from=2026-10-24T21%3A44%3A32.8071218%2B00%3A00&amp;to=2026-10-31T21%3A44%3A32.8076528%2B00%3A00 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/reports/actual-vs-theoretical'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ActualVsTheoreticalReport' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/reports/actual-vs-theoretical'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:59104/api/v1/management/inventory/reports/actual-vs-theoretical?from=2026-10-24T21%3A44%3A32.8071218%2B00%3A00&amp;to=2026-10-31T21%3A44%3A32.8076528%2B00%3A00 - 200 - application/json;+charset=utf-8 31.8587ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59624&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:59624/api/v1/management/inventory/reports/critical-stock - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/reports/critical-stock'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/reports/critical-stock'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:59624/api/v1/management/inventory/reports/critical-stock - 401 - application/json;+charset=utf-8 9.5040ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:59624/api/v1/management/inventory/reports/critical-stock - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/inventory/reports/critical-stock'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/inventory/reports/critical-stock'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:59624/api/v1/management/inventory/reports/critical-stock - 403 - application/json;+charset=utf-8 12.6622ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Host\Experience\InventoryReporting\InventoryReportingHttpTests.cs:line 47&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.DisposeAsync()&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)&#xD;
+         at Xunit.Sdk.TestInvoker`1.&lt;RunAsync&gt;b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Xunit.Sdk.TestInvoker`1.InvokeTestMethodAsync(Object testClassInstance) in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 283&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Xunit.Sdk.AsyncTestSyncContext.&lt;&gt;c__DisplayClass7_0.&lt;Post&gt;b__0() in /_/src/xunit.execution/Sdk/AsyncTestSyncContext.cs:line 58&#xD;
+         at Xunit.Sdk.XunitWorkerThread.&lt;&gt;c.&lt;QueueUserWorkItem&gt;b__5_0(Object _) in /_/src/common/XunitWorkerThread.cs:line 37&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task&amp; currentTaskSlot, Thread threadPoolThread)&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:19.08]   Finished:    ALKAROS.Host.Experience.InventoryReporting.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

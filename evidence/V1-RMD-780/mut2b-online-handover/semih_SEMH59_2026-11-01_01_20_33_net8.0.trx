@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ca9c45ab-c6bb-4507-a687-e78482f25b40" name="semih@SEMH59 2026-11-01 01:20:33" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T01:20:33.1038317+03:00" queuing="2026-11-01T01:20:33.1038319+03:00" start="2026-11-01T01:20:30.2666469+03:00" finish="2026-11-01T01:20:33.1139517+03:00" />
+  <TestSettings name="default" id="c14f7334-033d-456e-852a-8cceb159950b">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_01_20_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b3436989-0371-4966-857d-8d65e94587d5" testId="29a8d9af-6ca6-38e3-298d-b4494282e978" testName="ALKAROS.Host.Experience.OnlineOrdering.Tests.YemeksepetiStatusSyncTests.AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold" computerName="SEMH59" duration="00:00:00.6231553" startTime="2026-11-01T01:20:32.9991304+03:00" endTime="2026-11-01T01:20:32.9991489+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b3436989-0371-4966-857d-8d65e94587d5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Collections differ&#xD;
+Expected: ValueTuple&lt;string, string&gt;[]     [Tuple ("Consumed", "Online")]&#xD;
+Actual:   List&lt;ValueTuple&lt;string, string&gt;&gt; [Tuple ("Consumed", "Online"), Tuple ("Consumed", "Online")]&#xD;
+                                                                          ↑ (pos 1)</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.OnlineOrdering.Tests.YemeksepetiStatusSyncTests.AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold() in D:\PROJECT\ALKAROS\tests\Host\Experience\OnlineOrdering\YemeksepetiStatusSyncTests.cs:line 190&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.OnlineOrdering.Tests.YemeksepetiStatusSyncTests.AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold" storage="d:\project\alkaros\tests\host\experience\onlineordering\bin\debug\net8.0\alkaros.host.experience.onlineordering.tests.dll" id="29a8d9af-6ca6-38e3-298d-b4494282e978">
+      <Execution id="b3436989-0371-4966-857d-8d65e94587d5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\OnlineOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.OnlineOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.OnlineOrdering.Tests.YemeksepetiStatusSyncTests" name="AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="29a8d9af-6ca6-38e3-298d-b4494282e978" executionId="b3436989-0371-4966-857d-8d65e94587d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.29]   Discovering: ALKAROS.Host.Experience.OnlineOrdering.Tests&#xD;
+[xUnit.net 00:00:00.40]   Discovered:  ALKAROS.Host.Experience.OnlineOrdering.Tests&#xD;
+[xUnit.net 00:00:00.41]   Starting:    ALKAROS.Host.Experience.OnlineOrdering.Tests&#xD;
+[xUnit.net 00:00:02.01]       Assert.Equal() Failure: Collections differ&#xD;
+[xUnit.net 00:00:02.01]       Expected: ValueTuple&lt;string, string&gt;[]     [Tuple ("Consumed", "Online")]&#xD;
+[xUnit.net 00:00:02.01]       Actual:   List&lt;ValueTuple&lt;string, string&gt;&gt; [Tuple ("Consumed", "Online"), Tuple ("Consumed", "Online")]&#xD;
+[xUnit.net 00:00:02.01]                                                                                 ↑ (pos 1)&#xD;
+[xUnit.net 00:00:02.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.01]         D:\PROJECT\ALKAROS\tests\Host\Experience\OnlineOrdering\YemeksepetiStatusSyncTests.cs(190,0): at ALKAROS.Host.Experience.OnlineOrdering.Tests.YemeksepetiStatusSyncTests.AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold()&#xD;
+[xUnit.net 00:00:02.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.02]   Finished:    ALKAROS.Host.Experience.OnlineOrdering.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T01:20:32.9970888+03:00">
+        <Text>[xUnit.net 00:00:02.01]     ALKAROS.Host.Experience.OnlineOrdering.Tests.YemeksepetiStatusSyncTests.AHandoverOfAProductOnTodaysMenuCountsItsPortionsOnceThroughTheHold [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

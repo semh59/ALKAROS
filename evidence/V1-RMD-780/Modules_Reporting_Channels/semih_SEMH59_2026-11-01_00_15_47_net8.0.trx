@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f78b0161-39a0-427d-8da4-b0779279b547" name="semih@SEMH59 2026-11-01 00:15:47" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T00:15:47.6826422+03:00" queuing="2026-11-01T00:15:47.6826424+03:00" start="2026-11-01T00:15:40.1673606+03:00" finish="2026-11-01T00:15:47.6898457+03:00" />
+  <TestSettings name="default" id="14944b9b-7377-4a7f-9549-cddf4a0e7b34">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_00_15_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c220235f-fcd7-40b6-835c-47563e5fe123" testId="eb846d85-effe-0cc0-429c-22a06078f455" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.APlatformsRefusalCountsEvenWhenAnotherPlatformHasAnOrderWithThatNumber" computerName="SEMH59" duration="00:00:00.0166674" startTime="2026-11-01T00:15:47.3976469+03:00" endTime="2026-11-01T00:15:47.3976472+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c220235f-fcd7-40b6-835c-47563e5fe123" />
+    <UnitTestResult executionId="83ead0c2-598c-44df-a60f-fa1baaf2185f" testId="17abc712-7347-4e0c-f925-5922dd6fcce5" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.ADayWithOnlyProviderRefusalsStillAppears" computerName="SEMH59" duration="00:00:00.1305482" startTime="2026-11-01T00:15:47.1500101+03:00" endTime="2026-11-01T00:15:47.1500347+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83ead0c2-598c-44df-a60f-fa1baaf2185f" />
+    <UnitTestResult executionId="55a81891-ca7e-45c9-a3af-6273ce7af9dd" testId="96447b79-2fe8-3193-caa4-7295f28a96d3" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnInvalidRangeOrSourceIsRefused" computerName="SEMH59" duration="00:00:00.0226400" startTime="2026-11-01T00:15:47.3539575+03:00" endTime="2026-11-01T00:15:47.3539579+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="55a81891-ca7e-45c9-a3af-6273ce7af9dd" />
+    <UnitTestResult executionId="a3079119-e570-4d5a-b54c-0b756b83c7af" testId="7b57a4b6-5edf-afd5-a8ef-78a603fec43c" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger" computerName="SEMH59" duration="00:00:00.1525494" startTime="2026-11-01T00:15:47.3043688+03:00" endTime="2026-11-01T00:15:47.3043692+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3079119-e570-4d5a-b54c-0b756b83c7af" />
+    <UnitTestResult executionId="891d00f0-79b6-4628-abce-1444692ecf4a" testId="759c2abb-6561-9c0e-54c3-5b2bdf5f16c9" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.EachPlatformHasItsOwnOnlineRowEvenWithTheSameOrderNumber" computerName="SEMH59" duration="00:00:00.0204901" startTime="2026-11-01T00:15:47.4572724+03:00" endTime="2026-11-01T00:15:47.4572727+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="891d00f0-79b6-4628-abce-1444692ecf4a" />
+    <UnitTestResult executionId="034c279c-7827-477e-980d-39209afa5d54" testId="0f322676-17d7-0c90-eab2-fa6a69c4103e" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.MoneyPaidBackForAnOrdersBillIsShownOnTheOrdersDayAndLeavesTheGrossValueAlone" computerName="SEMH59" duration="00:00:00.0381148" startTime="2026-11-01T00:15:47.4362434+03:00" endTime="2026-11-01T00:15:47.4362438+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="034c279c-7827-477e-980d-39209afa5d54" />
+    <UnitTestResult executionId="9109d635-5f07-4077-91d4-d468007d27f2" testId="2ebfe806-25dc-6ea4-ec19-9236ee965135" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnOrderStatusNoBucketKnowsUnbalancesTheReport" computerName="SEMH59" duration="00:00:00.0259287" startTime="2026-11-01T00:15:47.3307675+03:00" endTime="2026-11-01T00:15:47.3307678+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9109d635-5f07-4077-91d4-d468007d27f2" />
+    <UnitTestResult executionId="a2822c58-a56f-4493-82f7-425865a42fdc" testId="fd5a54e3-3afa-b306-0149-c0b8742cc190" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.ASourceFilterKeepsOnlyThatChannelAndItsOwnLedgerTotal" computerName="SEMH59" duration="00:00:00.0330569" startTime="2026-11-01T00:15:47.4908417+03:00" endTime="2026-11-01T00:15:47.4908424+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2822c58-a56f-4493-82f7-425865a42fdc" />
+    <UnitTestResult executionId="ef162f46-2d55-47b2-bac9-901276d4d311" testId="061a8bc1-51c1-14ed-ce94-69038d9375f3" testName="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnOrderFirstRefusedBeforeTheRangeIsNotARefusalInIt" computerName="SEMH59" duration="00:00:00.0259991" startTime="2026-11-01T00:15:47.3804210+03:00" endTime="2026-11-01T00:15:47.3804214+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef162f46-2d55-47b2-bac9-901276d4d311" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnOrderFirstRefusedBeforeTheRangeIsNotARefusalInIt" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="061a8bc1-51c1-14ed-ce94-69038d9375f3">
+      <Execution id="ef162f46-2d55-47b2-bac9-901276d4d311" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="AnOrderFirstRefusedBeforeTheRangeIsNotARefusalInIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnOrderStatusNoBucketKnowsUnbalancesTheReport" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="2ebfe806-25dc-6ea4-ec19-9236ee965135">
+      <Execution id="9109d635-5f07-4077-91d4-d468007d27f2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="AnOrderStatusNoBucketKnowsUnbalancesTheReport" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.MoneyPaidBackForAnOrdersBillIsShownOnTheOrdersDayAndLeavesTheGrossValueAlone" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="0f322676-17d7-0c90-eab2-fa6a69c4103e">
+      <Execution id="034c279c-7827-477e-980d-39209afa5d54" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="MoneyPaidBackForAnOrdersBillIsShownOnTheOrdersDayAndLeavesTheGrossValueAlone" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.ASourceFilterKeepsOnlyThatChannelAndItsOwnLedgerTotal" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="fd5a54e3-3afa-b306-0149-c0b8742cc190">
+      <Execution id="a2822c58-a56f-4493-82f7-425865a42fdc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="ASourceFilterKeepsOnlyThatChannelAndItsOwnLedgerTotal" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.EachPlatformHasItsOwnOnlineRowEvenWithTheSameOrderNumber" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="759c2abb-6561-9c0e-54c3-5b2bdf5f16c9">
+      <Execution id="891d00f0-79b6-4628-abce-1444692ecf4a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="EachPlatformHasItsOwnOnlineRowEvenWithTheSameOrderNumber" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.ADayWithOnlyProviderRefusalsStillAppears" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="17abc712-7347-4e0c-f925-5922dd6fcce5">
+      <Execution id="83ead0c2-598c-44df-a60f-fa1baaf2185f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="ADayWithOnlyProviderRefusalsStillAppears" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="7b57a4b6-5edf-afd5-a8ef-78a603fec43c">
+      <Execution id="a3079119-e570-4d5a-b54c-0b756b83c7af" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.APlatformsRefusalCountsEvenWhenAnotherPlatformHasAnOrderWithThatNumber" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="eb846d85-effe-0cc0-429c-22a06078f455">
+      <Execution id="c220235f-fcd7-40b6-835c-47563e5fe123" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="APlatformsRefusalCountsEvenWhenAnotherPlatformHasAnOrderWithThatNumber" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnInvalidRangeOrSourceIsRefused" storage="d:\project\alkaros\tests\modules\reporting\channels\bin\debug\net8.0\alkaros.reporting.channels.tests.dll" id="96447b79-2fe8-3193-caa4-7295f28a96d3">
+      <Execution id="55a81891-ca7e-45c9-a3af-6273ce7af9dd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.Channels.Tests.ChannelReportTests" name="AnInvalidRangeOrSourceIsRefused" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="eb846d85-effe-0cc0-429c-22a06078f455" executionId="c220235f-fcd7-40b6-835c-47563e5fe123" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="17abc712-7347-4e0c-f925-5922dd6fcce5" executionId="83ead0c2-598c-44df-a60f-fa1baaf2185f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="96447b79-2fe8-3193-caa4-7295f28a96d3" executionId="55a81891-ca7e-45c9-a3af-6273ce7af9dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b57a4b6-5edf-afd5-a8ef-78a603fec43c" executionId="a3079119-e570-4d5a-b54c-0b756b83c7af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="759c2abb-6561-9c0e-54c3-5b2bdf5f16c9" executionId="891d00f0-79b6-4628-abce-1444692ecf4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f322676-17d7-0c90-eab2-fa6a69c4103e" executionId="034c279c-7827-477e-980d-39209afa5d54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ebfe806-25dc-6ea4-ec19-9236ee965135" executionId="9109d635-5f07-4077-91d4-d468007d27f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd5a54e3-3afa-b306-0149-c0b8742cc190" executionId="a2822c58-a56f-4493-82f7-425865a42fdc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="061a8bc1-51c1-14ed-ce94-69038d9375f3" executionId="ef162f46-2d55-47b2-bac9-901276d4d311" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.16]   Discovering: ALKAROS.Reporting.Channels.Tests&#xD;
+[xUnit.net 00:00:01.20]   Discovered:  ALKAROS.Reporting.Channels.Tests&#xD;
+[xUnit.net 00:00:01.20]   Starting:    ALKAROS.Reporting.Channels.Tests&#xD;
+[xUnit.net 00:00:05.36]   Finished:    ALKAROS.Reporting.Channels.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

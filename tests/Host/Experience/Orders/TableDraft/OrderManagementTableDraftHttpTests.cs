@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.TypedSettings;
 using ALKAROS.Settings.WaiterMaxActiveTables;
 using Microsoft.AspNetCore.Builder;
@@ -1145,6 +1147,117 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
         Assert.Equal(3m, await _database.OnHandQuantityAsync(stockItemId));
         Assert.Equal(1, await _database.ConsumptionMovementCountAsync(itemId));
+    }
+
+    [Fact]
+    public async Task SubmittingAWaiterOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Adana", 520m);
+        await _database.SeedStockForProductAsync(product, 5m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(product);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var draft = await CreateDraftAsync(client, terminalId, cookie, tableId, product, quantity: 2);
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        var counters = await _database.DeliverDailyMenuEventsAsync(menuItemId);
+        Assert.Equal(2m, counters.ConsumedPortions);
+        Assert.Equal(0m, counters.ReservedPortions);
+    }
+
+    [Fact]
+    public async Task AWaiterOrderForAProductWithTwoStockMappingsCountsOnePortionPerOrderedUnit()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Karışık Izgara", 640m);
+        await _database.SeedStockForProductAsync(product, 5m);
+        await _database.SeedStockForProductAsync(product, 5m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(product);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var draft = await CreateDraftAsync(client, terminalId, cookie, tableId, product, quantity: 3);
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        Assert.Equal(3m, (await _database.DeliverDailyMenuEventsAsync(menuItemId)).ConsumedPortions);
+    }
+
+    [Fact]
+    public async Task AWaiterOrderForAProductNotOnTodaysMenuIsNotCounted()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var onMenu = await _database.SeedProductAsync("Günün Çorbası", 90m);
+        var offMenu = await _database.SeedProductAsync("Adana", 520m);
+        await _database.SeedStockForProductAsync(onMenu, 5m);
+        await _database.SeedStockForProductAsync(offMenu, 5m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(onMenu);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var draft = await CreateDraftAsync(client, terminalId, cookie, tableId, offMenu, quantity: 1);
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        Assert.Equal(0m, (await _database.DeliverDailyMenuEventsAsync(menuItemId)).ConsumedPortions);
+    }
+
+    [Fact]
+    public void EveryOrderSourceNamesAReservationChannelForThePortionMetadata()
+    {
+        Assert.Equal(
+            Enum.GetNames<OrderSource>().Order(),
+            Enum.GetNames<ALKAROS.Inventory.CrossChannelReservation.ReservationChannel>().Order());
+    }
+
+    [Fact]
+    public async Task ACancelledLineIsNeitherConsumedNorCountedAsPortions()
+    {
+        var product = await _database.SeedProductAsync("Adana", 520m);
+        var stockItemId = await _database.SeedStockForProductAsync(product, 5m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(product);
+        var orderId = Guid.NewGuid();
+        var kept = new OrderItem(Guid.NewGuid(), orderId, product, "Adana", 2m, 520m, 10m, status: OrderItemState.Active);
+        var cancelled = new OrderItem(Guid.NewGuid(), orderId, product, "Adana", 1m, 520m, 10m, status: OrderItemState.Cancelled);
+        var order = new Order(orderId, OrderSource.Waiter, "T-780", [kept, cancelled], servingUserId: Guid.NewGuid());
+        await using var app = await StartAsync();
+
+        await using (var connection = await _database.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await app.Services.GetRequiredService<OrderStockConsumptionService>()
+                .ConsumeItemsAsync(order, order.Items, "submitted", Guid.NewGuid(), connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        Assert.Equal(3m, await _database.OnHandQuantityAsync(stockItemId));
+        Assert.Equal(0, await _database.ConsumptionMovementCountAsync(cancelled.Id));
+        Assert.Equal(2m, (await _database.DeliverDailyMenuEventsAsync(menuItemId)).ConsumedPortions);
+    }
+
+    private static async Task<OrderDto> CreateDraftAsync(
+        HttpClient client, Guid terminalId, string cookie, Guid tableId, Guid productId, int quantity)
+    {
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-" + Guid.NewGuid().ToString("N")[..6],
+                [new OrderItemDraftDto(Guid.NewGuid(), productId, "Ürün", quantity, 100m)])));
+        return (await response.Content.ReadFromJsonAsync<OrderDto>())!;
     }
 
     [Fact]

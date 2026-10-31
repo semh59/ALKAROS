@@ -1,5 +1,7 @@
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Menu.CounterProjection;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.TestHelpers;
 
 namespace ALKAROS.Host.Experience.Orders.TableDraft.Tests;
@@ -452,4 +454,30 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         => ScalarAsync<long>(
             "SELECT count(*) FROM inventory.stock_movements " +
             $"WHERE source_type = 'Order' AND source_reference_id = '{orderItemId:D}' AND movement_type = 'Consumption';");
+
+    /// <summary>Puts the product on today's published daily menu (creating the menu once) and returns the menu item.</summary>
+    public async Task<Guid> SeedPublishedDailyMenuItemAsync(Guid productId)
+    {
+        var menuItemId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO menu.daily_menus (daily_menu_id, business_date, status) VALUES (@menu, @date, 'Open')
+            ON CONFLICT (business_date) DO NOTHING;
+            INSERT INTO menu.daily_menu_items (daily_menu_item_id, daily_menu_id, product_id, product_name_snapshot, price)
+            SELECT @item, daily_menu_id, @product, 'Günün Yemeği', 180 FROM menu.daily_menus WHERE business_date = @date;
+            """,
+            ("menu", Guid.NewGuid()),
+            ("date", new BusinessDateProvider().GetCurrentBusinessDate()),
+            ("item", menuItemId),
+            ("product", productId));
+        return menuItemId;
+    }
+
+    /// <summary>Delivers the pending outbox events to the Menu counter consumer, then reads the item's counters.</summary>
+    public async Task<DailyMenuItemCounters> DeliverDailyMenuEventsAsync(Guid menuItemId)
+    {
+        var projector = new PostgresDailyMenuCounterProjector(DataSource);
+        await OutboxTestDrain.DrainAsync(DataSource, [new DailyMenuCounterEventConsumer(projector)]);
+        return (await projector.GetCountersAsync(menuItemId))!;
+    }
 }
