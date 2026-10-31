@@ -1,7 +1,7 @@
 # V1-RMD-777 - Günlük menü sayaçları gerçek siparişlerle ve üretimle dolsun
 
 - Task ID: V1-RMD-777
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
