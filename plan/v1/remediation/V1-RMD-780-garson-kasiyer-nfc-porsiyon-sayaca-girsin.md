@@ -1,8 +1,8 @@
 # V1-RMD-780 - Garson, kasiyer ve NFC siparişleri günlük menü sayaçlarına girsin
 
 - Task ID: V1-RMD-780
-- Status: InProgress
-- Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
+- Status: Planned
+- Assignee: Unassigned
 - Work type: implementation
 - Surface state: Existing
 
@@ -29,6 +29,7 @@ V1-RMD-777 günlük menü sayaçlarını QR kabulü ve çevrimiçi siparişler i
   - tests/Host/Experience/Orders/TableDraft/ (V1-RMD-106) — garson ve kasiyer gönderimi testleri.
   - tests/Host/Experience/Orders/VoidSent/ (V1-IAM-027) — tüketim şeması: günlük menü ve outbox tabloları fixture listesine eklenir.
   - tests/Host/Experience/NfcOrdering/ (V12-NFC-001) — NFC kabulü testi; fixture listesine günlük menü ve outbox tabloları.
+  - tests/Host/Experience/OnlineOrdering/ (V12-ONL-001) — çevrimiçi teslimde çift sayım olmadığını gösteren test.
   - tests/Modules/Inventory/CrossChannelReservation/ (V12-STK-001) — doğrudan satış, çift sayım ve tekrar testleri.
   - tests/Modules/Menu/CounterProjection/ (V11-MNU-002) — uçtan uca sayaç, rebuild, drift ve rapor testi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
