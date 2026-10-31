@@ -1,0 +1,444 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ced216cc-8803-4591-85f4-215ee00c2c45" name="semih@SEMH59 2026-10-31 13:49:47" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T13:49:47.1573535+03:00" queuing="2026-10-31T13:49:47.1573537+03:00" start="2026-10-31T13:49:46.2677988+03:00" finish="2026-10-31T13:49:52.2674669+03:00" />
+  <TestSettings name="default" id="de1a8587-9eba-46aa-9f82-e387f057ee35">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_13_49_47" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b20ed372-949b-44e3-99de-7219a19bafbe" testId="703eef5e-b489-d2bf-177d-a665388c8c5d" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkPrintingRequiresActiveLeaseBySameWorker" computerName="SEMH59" duration="00:00:00.0031056" startTime="2026-10-31T13:49:47.1230993+03:00" endTime="2026-10-31T13:49:47.1230994+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b20ed372-949b-44e3-99de-7219a19bafbe" />
+    <UnitTestResult executionId="b828c765-0e30-41da-a9ae-38e3c52ef34d" testId="0f2a7460-704a-a87a-994a-f7b693908d43" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857(profile: Epson, selectTable: [27, 116, 13])" computerName="SEMH59" duration="00:00:00.5044129" startTime="2026-10-31T13:49:48.1069674+03:00" endTime="2026-10-31T13:49:48.1069679+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b828c765-0e30-41da-a9ae-38e3c52ef34d" />
+    <UnitTestResult executionId="186cd939-70b7-4ede-9dd0-c03879db5757" testId="e593d79f-77ae-3b3b-5387-dae4bb36de53" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAnInvalidPort(port: 0)" computerName="SEMH59" duration="00:00:00.0005234" startTime="2026-10-31T13:49:49.6543328+03:00" endTime="2026-10-31T13:49:49.6543330+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="186cd939-70b7-4ede-9dd0-c03879db5757" />
+    <UnitTestResult executionId="d7f2e71f-d39f-4dcd-b841-75d45f55f0ff" testId="23415389-e4e6-95f6-1935-7314cd0a8403" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkAwaitingOperatorReviewSetsTerminalStatusWithoutSchedulingARetry" computerName="SEMH59" duration="00:00:00.0007046" startTime="2026-10-31T13:49:47.1230334+03:00" endTime="2026-10-31T13:49:47.1230335+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7f2e71f-d39f-4dcd-b841-75d45f55f0ff" />
+    <UnitTestResult executionId="a64d1c28-d22c-4703-9a54-ea2c8bcb1dad" testId="5f0822cc-4331-324b-6635-a01221e7b557" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.EndToEndPrintingWithEscPosFormatterAndKitchenPrinterSimulator" computerName="SEMH59" duration="00:00:00.0288030" startTime="2026-10-31T13:49:49.7916349+03:00" endTime="2026-10-31T13:49:49.7916350+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a64d1c28-d22c-4703-9a54-ea2c8bcb1dad" />
+    <UnitTestResult executionId="7c28b820-8357-457b-a3b8-abad920bab88" testId="41a5b4fb-f2d7-d332-94e2-5e7c9919f5aa" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.TheAsciiProfileSelectsNoTableAndFoldsTurkishLetters" computerName="SEMH59" duration="00:00:00.5053970" startTime="2026-10-31T13:49:49.6259673+03:00" endTime="2026-10-31T13:49:49.6259676+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c28b820-8357-457b-a3b8-abad920bab88" />
+    <UnitTestResult executionId="aec00a8e-35f7-4a94-a794-bb915aa2ade9" testId="9ede0fdf-3322-4759-7627-3db5d90f44f2" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 50, reason: &quot;out of paper&quot;)" computerName="SEMH59" duration="00:00:00.0027072" startTime="2026-10-31T13:49:49.6466569+03:00" endTime="2026-10-31T13:49:49.6466571+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aec00a8e-35f7-4a94-a794-bb915aa2ade9" />
+    <UnitTestResult executionId="c7e3fe7f-8af1-47ae-9192-41e61434534e" testId="3549884c-f90d-046e-4177-51d705a39b45" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.KitchenPrinterSimulatorHandlesSuccessAndSimulatedErrors" computerName="SEMH59" duration="00:00:00.0026419" startTime="2026-10-31T13:49:47.1233447+03:00" endTime="2026-10-31T13:49:47.1233447+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7e3fe7f-8af1-47ae-9192-41e61434534e" />
+    <UnitTestResult executionId="cf2ac1c1-924b-4e7d-a2e4-65da3ba4793b" testId="8fce413f-5f6c-c143-5392-cdcfca432209" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing" computerName="SEMH59" duration="00:00:00.0297292" startTime="2026-10-31T13:49:50.4138786+03:00" endTime="2026-10-31T13:49:50.4138789+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf2ac1c1-924b-4e7d-a2e4-65da3ba4793b">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+&#xD;
+POSITION: 852</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing() in D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs:line 276&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fe1a91af-62fd-4499-84b7-64efebe46531" testId="ede0ceb9-f79b-56c6-5cf5-dfa493207141" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAMissingIpAddress(ipAddress: &quot;   &quot;)" computerName="SEMH59" duration="00:00:00.0006421" startTime="2026-10-31T13:49:47.0755624+03:00" endTime="2026-10-31T13:49:47.0755624+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe1a91af-62fd-4499-84b7-64efebe46531" />
+    <UnitTestResult executionId="c1644a63-dce7-4b3a-8eca-46d737910c23" testId="13a85bee-c1f1-4274-218c-6ba580b48d22" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint" computerName="SEMH59" duration="00:00:00.2114228" startTime="2026-10-31T13:49:47.8888641+03:00" endTime="2026-10-31T13:49:47.8888642+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1644a63-dce7-4b3a-8eca-46d737910c23">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+&#xD;
+POSITION: 852</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint() in D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs:line 234&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="093ba271-a7e6-4be8-bf78-6f65b99960f0" testId="16ae4f50-dfce-ece7-9232-2bafcb4b8f53" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 82, reason: &quot;in an error state&quot;)" computerName="SEMH59" duration="00:00:00.0028565" startTime="2026-10-31T13:49:49.6499159+03:00" endTime="2026-10-31T13:49:49.6499162+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="093ba271-a7e6-4be8-bf78-6f65b99960f0" />
+    <UnitTestResult executionId="478bc7b6-988b-455b-b8fc-28d0e83857e1" testId="347f5cf2-00f0-6319-0567-a49bbf55748e" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 18, reason: &quot;offline&quot;)" computerName="SEMH59" duration="00:00:00.0137631" startTime="2026-10-31T13:49:49.6402183+03:00" endTime="2026-10-31T13:49:49.6402187+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="478bc7b6-988b-455b-b8fc-28d0e83857e1" />
+    <UnitTestResult executionId="bf727b84-2bf8-4a77-979d-aeb9f594ea6f" testId="d82c008c-3c00-ee84-bdd2-dfac4ad50bd4" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857(profile: Bixolon, selectTable: [27, 116, 37])" computerName="SEMH59" duration="00:00:00.5243359" startTime="2026-10-31T13:49:47.6014191+03:00" endTime="2026-10-31T13:49:47.6014196+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf727b84-2bf8-4a77-979d-aeb9f594ea6f" />
+    <UnitTestResult executionId="07210111-759f-4052-b73d-38b53e8b0ae1" testId="8ae3dc35-bfd6-0be4-74e5-b0a343a832eb" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AProfileGivenWithTheCallWinsOverTheTransportDefault" computerName="SEMH59" duration="00:00:00.5058143" startTime="2026-10-31T13:49:52.1898788+03:00" endTime="2026-10-31T13:49:52.1898791+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="07210111-759f-4052-b73d-38b53e8b0ae1" />
+    <UnitTestResult executionId="94c3b304-45d3-48f3-9de0-13ac75a2705d" testId="fd0816dc-4054-d9af-8e76-dabf8b2e7e5e" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAMissingIpAddress(ipAddress: &quot;&quot;)" computerName="SEMH59" duration="00:00:00.0172942" startTime="2026-10-31T13:49:47.0752543+03:00" endTime="2026-10-31T13:49:47.0752544+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94c3b304-45d3-48f3-9de0-13ac75a2705d" />
+    <UnitTestResult executionId="6b93fb43-23cd-4ffc-a7ed-a61005be0fac" testId="cdba078b-d39d-f52f-1a3f-a68956bea037" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkSucceededSetsTerminalPrintedStatusAndPrintedAt" computerName="SEMH59" duration="00:00:00.0020965" startTime="2026-10-31T13:49:47.0901129+03:00" endTime="2026-10-31T13:49:47.0901134+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b93fb43-23cd-4ffc-a7ed-a61005be0fac" />
+    <UnitTestResult executionId="77cbd1db-3afd-47fe-8271-5c406bc732e8" testId="c9827b21-ba38-d13e-b1f0-a2d2d28f9391" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ProcessEligibleJobsExecutesAndMarksSucceededOnSuccess" computerName="SEMH59" duration="00:00:00.0287204" startTime="2026-10-31T13:49:50.0344952+03:00" endTime="2026-10-31T13:49:50.0344955+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77cbd1db-3afd-47fe-8271-5c406bc732e8" />
+    <UnitTestResult executionId="3c058071-a62b-41f7-bfea-f01f540a1da1" testId="88cf2fb5-20e8-a883-7ac4-f4c2d0886ff6" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 22, reason: &quot;cover open&quot;)" computerName="SEMH59" duration="00:00:00.0029660" startTime="2026-10-31T13:49:49.6435581+03:00" endTime="2026-10-31T13:49:49.6435583+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3c058071-a62b-41f7-bfea-f01f540a1da1" />
+    <UnitTestResult executionId="a4fa9423-d4b4-45a8-a003-2a151ad9a95a" testId="0c65d1af-ce50-2de6-bee1-1cd27dcd8d92" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload" computerName="SEMH59" duration="00:00:00.0268887" startTime="2026-10-31T13:49:49.0836982+03:00" endTime="2026-10-31T13:49:49.0836986+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4fa9423-d4b4-45a8-a003-2a151ad9a95a">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+&#xD;
+POSITION: 852</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload() in D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs:line 254&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7e0394a1-d451-42a8-9789-cce6c6587e31" testId="9aeb97c9-c084-20f6-00cd-d32e2775a566" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkAwaitingOperatorReviewRequiresActivePrintingOrLeasedState" computerName="SEMH59" duration="00:00:00.0023742" startTime="2026-10-31T13:49:47.1234068+03:00" endTime="2026-10-31T13:49:47.1234069+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e0394a1-d451-42a8-9789-cce6c6587e31" />
+    <UnitTestResult executionId="438b5c46-4ae4-4d89-a0c5-edd3caeadaa9" testId="a7f13f48-6ee6-a1ed-7743-87405a70198b" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAnInvalidPort(port: 70000)" computerName="SEMH59" duration="00:00:00.0011892" startTime="2026-10-31T13:49:49.6512338+03:00" endTime="2026-10-31T13:49:49.6512341+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="438b5c46-4ae4-4d89-a0c5-edd3caeadaa9" />
+    <UnitTestResult executionId="8c4aa686-e59e-4df3-a5cc-d36822108dae" testId="1c769fd8-69fa-7403-f1ec-c9c4e857161e" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableWhenNothingIsListening" computerName="SEMH59" duration="00:00:02.0287733" startTime="2026-10-31T13:49:51.6835922+03:00" endTime="2026-10-31T13:49:51.6835924+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c4aa686-e59e-4df3-a5cc-d36822108dae" />
+    <UnitTestResult executionId="502f7c76-c4dd-4947-9996-488d9977515c" testId="5dd212a5-91e7-4c8e-a524-91230f94f02a" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ProcessEligibleJobsRoutesAnUncertainTransmissionToOperatorReviewInsteadOfRetrying" computerName="SEMH59" duration="00:00:00.0327632" startTime="2026-10-31T13:49:48.4637622+03:00" endTime="2026-10-31T13:49:48.4637626+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="502f7c76-c4dd-4947-9996-488d9977515c" />
+    <UnitTestResult executionId="389a95b7-0178-4d91-bef5-2adfb16211a1" testId="e4524133-c046-744b-a564-98193b641c8b" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.ClaimLeaseTransitionsPendingToLeasedWithExpiration" computerName="SEMH59" duration="00:00:00.0004965" startTime="2026-10-31T13:49:47.1232658+03:00" endTime="2026-10-31T13:49:47.1232659+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="389a95b7-0178-4d91-bef5-2adfb16211a1" />
+    <UnitTestResult executionId="fb551b6b-5834-43b4-b3a8-1f8ef70f5c6b" testId="894d3c4f-0953-5f71-3d8d-5e230151e2d9" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ClaimEligibleJobsAcquiresLeaseAndPreventsConcurrentDoubleClaim" computerName="SEMH59" duration="00:00:00.0246697" startTime="2026-10-31T13:49:48.7764738+03:00" endTime="2026-10-31T13:49:48.7764740+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb551b6b-5834-43b4-b3a8-1f8ef70f5c6b" />
+    <UnitTestResult executionId="34a3b2bd-939f-4ec2-bfff-07eaf5d1030a" testId="c7a5d4db-bfd6-081f-da6c-df2dba142078" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.TheKitchenTicketStatesThatItHasNoFiscalValue" computerName="SEMH59" duration="00:00:00.0002816" startTime="2026-10-31T13:49:47.1254741+03:00" endTime="2026-10-31T13:49:47.1254741+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34a3b2bd-939f-4ec2-bfff-07eaf5d1030a" />
+    <UnitTestResult executionId="a93882bc-b68c-4541-b2d5-8f356bba9ecb" testId="c2ea13b9-cb75-daf0-1acc-b5066876a00c" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesResetsStaleJobsToPending" computerName="SEMH59" duration="00:00:00.0313490" startTime="2026-10-31T13:49:48.2118610+03:00" endTime="2026-10-31T13:49:48.2118612+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a93882bc-b68c-4541-b2d5-8f356bba9ecb">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+&#xD;
+POSITION: 852</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs:line 320&#xD;
+   at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesResetsStaleJobsToPending() in D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs:line 215&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="003458a3-5378-4551-bc70-73c19cc26582" testId="4aa7bf1f-5b82-75d2-33c3-76004a8c490a" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.FactoryCreatesPendingJobWithCanonicalDefaults" computerName="SEMH59" duration="00:00:00.0031627" startTime="2026-10-31T13:49:47.0933383+03:00" endTime="2026-10-31T13:49:47.0933385+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="003458a3-5378-4551-bc70-73c19cc26582" />
+    <UnitTestResult executionId="66abe161-53c1-4174-a6b2-57eb7014fc05" testId="fdb4c802-dff7-08a0-827d-b46b33194868" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueMigrationTests.UpAndDownMigrationsApplyAndRevertCleanly" computerName="SEMH59" duration="00:00:00.0502603" startTime="2026-10-31T13:49:47.8497331+03:00" endTime="2026-10-31T13:49:47.8497333+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66abe161-53c1-4174-a6b2-57eb7014fc05" />
+    <UnitTestResult executionId="2d1c4c75-0ca3-48cf-b0db-4ab29d33bb31" testId="d224e9eb-12a7-d41b-f6d5-6d49f723c13f" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ProcessEligibleJobsRecordsFailureAndDoesNotDeleteOrderOrTicket" computerName="SEMH59" duration="00:00:00.0363554" startTime="2026-10-31T13:49:49.5586482+03:00" endTime="2026-10-31T13:49:49.5586486+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d1c4c75-0ca3-48cf-b0db-4ab29d33bb31" />
+    <UnitTestResult executionId="ed654b52-5575-4ddc-828b-1363c118289c" testId="82e0d228-a04a-ab36-55cc-b2485e795575" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.ResetExpiredLeaseSendsAStalePrintingJobToOperatorReviewInsteadOfPending" computerName="SEMH59" duration="00:00:00.0115481" startTime="2026-10-31T13:49:47.0718983+03:00" endTime="2026-10-31T13:49:47.0719190+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed654b52-5575-4ddc-828b-1363c118289c" />
+    <UnitTestResult executionId="726d48a3-e870-4928-97d1-9c2a41a82a3e" testId="adab8511-fd03-7a2b-3511-7fa646235a1c" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncDeliversTheEscPosWrappedPayloadToTheListener" computerName="SEMH59" duration="00:00:00.5079386" startTime="2026-10-31T13:49:49.1200688+03:00" endTime="2026-10-31T13:49:49.1200690+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="726d48a3-e870-4928-97d1-9c2a41a82a3e" />
+    <UnitTestResult executionId="301f8ee7-b9e9-421a-9f42-c00730a83791" testId="5a2882df-b285-8577-ef1b-4f6b091b0936" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.EscPosFormatterRendersStandard80MmThermalTicket" computerName="SEMH59" duration="00:00:00.0012832" startTime="2026-10-31T13:49:47.1229585+03:00" endTime="2026-10-31T13:49:47.1229586+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="301f8ee7-b9e9-421a-9f42-c00730a83791" />
+    <UnitTestResult executionId="f4457a6b-636b-478f-9496-ce9ad5683125" testId="1cef5b0e-73f4-c9c1-7e12-d1f73adafcdf" testName="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.EnqueueJobIsIdempotentAndReturnsExistingJobOnDuplicate" computerName="SEMH59" duration="00:00:00.0153750" startTime="2026-10-31T13:49:49.3094880+03:00" endTime="2026-10-31T13:49:49.3094881+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4457a6b-636b-478f-9496-ce9ad5683125" />
+    <UnitTestResult executionId="464c8525-e18a-479c-98dd-952c69891506" testId="d23d6ec1-63e0-4406-45d4-7a59db6af4e3" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.RecordFailureTransitionsToDeadLetterWhenMaxAttemptsExceeded" computerName="SEMH59" duration="00:00:00.0005479" startTime="2026-10-31T13:49:47.1234690+03:00" endTime="2026-10-31T13:49:47.1234691+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="464c8525-e18a-479c-98dd-952c69891506" />
+    <UnitTestResult executionId="6bfaf711-b4fc-4a64-8981-c668b537e1b3" testId="23e650b7-b99f-a854-dfa2-fa777d39b456" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.EscPosFormatterSelectsTheTurkishTableOfTheProfileAndEncodesTurkishLettersInIt" computerName="SEMH59" duration="00:00:00.0165706" startTime="2026-10-31T13:49:47.0879208+03:00" endTime="2026-10-31T13:49:47.0879211+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6bfaf711-b4fc-4a64-8981-c668b537e1b3" />
+    <UnitTestResult executionId="bb6fde06-8500-4507-b5c1-d696f10ae9fb" testId="51066822-35e1-14bf-dd24-e39de6af916b" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.EscPosFormatterGeneratesValidEscPosBytesWithCutCommand" computerName="SEMH59" duration="00:00:00.0022494" startTime="2026-10-31T13:49:47.1231919+03:00" endTime="2026-10-31T13:49:47.1231920+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb6fde06-8500-4507-b5c1-d696f10ae9fb" />
+    <UnitTestResult executionId="82d3a9bc-4edf-4aa0-900b-9634143d0104" testId="e5c78175-2f2c-c542-0975-55d3884c48db" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.CancelSetsTerminalCancelledStatus" computerName="SEMH59" duration="00:00:00.0008850" startTime="2026-10-31T13:49:47.1253968+03:00" endTime="2026-10-31T13:49:47.1253969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82d3a9bc-4edf-4aa0-900b-9634143d0104" />
+    <UnitTestResult executionId="ed40ac14-de23-4447-a822-1e108235c094" testId="b49de9c6-a005-9d8c-0fad-a331571c766a" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.ResetExpiredLeaseResetsStaleLeaseToPending" computerName="SEMH59" duration="00:00:00.0004505" startTime="2026-10-31T13:49:47.1226857+03:00" endTime="2026-10-31T13:49:47.1226859+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed40ac14-de23-4447-a822-1e108235c094" />
+    <UnitTestResult executionId="d7ed82d3-9463-4d56-93d1-0ef684972dd5" testId="5c30151c-e2a4-e70d-82e9-41392e7376f5" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857(profile: Star, selectTable: [27, 29, 116, 12])" computerName="SEMH59" duration="00:00:00.5042539" startTime="2026-10-31T13:49:48.6117105+03:00" endTime="2026-10-31T13:49:48.6117108+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7ed82d3-9463-4d56-93d1-0ef684972dd5" />
+    <UnitTestResult executionId="45d4ccd2-8652-4046-98f6-087fac0cf27d" testId="fd281e25-c733-e37d-ce4e-c54d50fc014e" testName="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.RecordFailureIncrementsAttemptCountAndCalculatesBackoff" computerName="SEMH59" duration="00:00:00.0004182" startTime="2026-10-31T13:49:47.1253093+03:00" endTime="2026-10-31T13:49:47.1253094+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45d4ccd2-8652-4046-98f6-087fac0cf27d" />
+    <UnitTestResult executionId="85794985-2a88-41a9-b9da-2239b07fb29f" testId="82de5343-6a91-4bdb-3dd2-c7d5c59f9f51" testName="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOnlinePrinterIsNotAnError" computerName="SEMH59" duration="00:00:00.0042001" startTime="2026-10-31T13:49:52.1945106+03:00" endTime="2026-10-31T13:49:52.1945110+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85794985-2a88-41a9-b9da-2239b07fb29f" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 18, reason: &quot;offline&quot;)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="347f5cf2-00f0-6319-0567-a49bbf55748e">
+      <Execution id="478bc7b6-988b-455b-b8fc-28d0e83857e1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 22, reason: &quot;cover open&quot;)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="88cf2fb5-20e8-a883-7ac4-f4c2d0886ff6">
+      <Execution id="3c058071-a62b-41f7-bfea-f01f540a1da1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.ClaimLeaseTransitionsPendingToLeasedWithExpiration" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="e4524133-c046-744b-a564-98193b641c8b">
+      <Execution id="389a95b7-0178-4d91-bef5-2adfb16211a1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="ClaimLeaseTransitionsPendingToLeasedWithExpiration" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AProfileGivenWithTheCallWinsOverTheTransportDefault" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="8ae3dc35-bfd6-0be4-74e5-b0a343a832eb">
+      <Execution id="07210111-759f-4052-b73d-38b53e8b0ae1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="AProfileGivenWithTheCallWinsOverTheTransportDefault" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAMissingIpAddress(ipAddress: &quot;   &quot;)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="ede0ceb9-f79b-56c6-5cf5-dfa493207141">
+      <Execution id="fe1a91af-62fd-4499-84b7-64efebe46531" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="SendAsyncThrowsPrinterUnreachableForAMissingIpAddress" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ProcessEligibleJobsRoutesAnUncertainTransmissionToOperatorReviewInsteadOfRetrying" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="5dd212a5-91e7-4c8e-a524-91230f94f02a">
+      <Execution id="502f7c76-c4dd-4947-9996-488d9977515c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="ProcessEligibleJobsRoutesAnUncertainTransmissionToOperatorReviewInsteadOfRetrying" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.KitchenPrinterSimulatorHandlesSuccessAndSimulatedErrors" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="3549884c-f90d-046e-4177-51d705a39b45">
+      <Execution id="c7e3fe7f-8af1-47ae-9192-41e61434534e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="KitchenPrinterSimulatorHandlesSuccessAndSimulatedErrors" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableWhenNothingIsListening" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="1c769fd8-69fa-7403-f1ec-c9c4e857161e">
+      <Execution id="8c4aa686-e59e-4df3-a5cc-d36822108dae" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="SendAsyncThrowsPrinterUnreachableWhenNothingIsListening" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.ResetExpiredLeaseResetsStaleLeaseToPending" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="b49de9c6-a005-9d8c-0fad-a331571c766a">
+      <Execution id="ed40ac14-de23-4447-a822-1e108235c094" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="ResetExpiredLeaseResetsStaleLeaseToPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ClaimEligibleJobsAcquiresLeaseAndPreventsConcurrentDoubleClaim" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="894d3c4f-0953-5f71-3d8d-5e230151e2d9">
+      <Execution id="fb551b6b-5834-43b4-b3a8-1f8ef70f5c6b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="ClaimEligibleJobsAcquiresLeaseAndPreventsConcurrentDoubleClaim" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="8fce413f-5f6c-c143-5392-cdcfca432209">
+      <Execution id="cf2ac1c1-924b-4e7d-a2e4-65da3ba4793b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.FactoryCreatesPendingJobWithCanonicalDefaults" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="4aa7bf1f-5b82-75d2-33c3-76004a8c490a">
+      <Execution id="003458a3-5378-4551-bc70-73c19cc26582" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="FactoryCreatesPendingJobWithCanonicalDefaults" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.TheAsciiProfileSelectsNoTableAndFoldsTurkishLetters" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="41a5b4fb-f2d7-d332-94e2-5e7c9919f5aa">
+      <Execution id="7c28b820-8357-457b-a3b8-abad920bab88" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="TheAsciiProfileSelectsNoTableAndFoldsTurkishLetters" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.EscPosFormatterSelectsTheTurkishTableOfTheProfileAndEncodesTurkishLettersInIt" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="23e650b7-b99f-a854-dfa2-fa777d39b456">
+      <Execution id="6bfaf711-b4fc-4a64-8981-c668b537e1b3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="EscPosFormatterSelectsTheTurkishTableOfTheProfileAndEncodesTurkishLettersInIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOnlinePrinterIsNotAnError" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="82de5343-6a91-4bdb-3dd2-c7d5c59f9f51">
+      <Execution id="85794985-2a88-41a9-b9da-2239b07fb29f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="AnOnlinePrinterIsNotAnError" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncDeliversTheEscPosWrappedPayloadToTheListener" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="adab8511-fd03-7a2b-3511-7fa646235a1c">
+      <Execution id="726d48a3-e870-4928-97d1-9c2a41a82a3e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="SendAsyncDeliversTheEscPosWrappedPayloadToTheListener" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.RecordFailureTransitionsToDeadLetterWhenMaxAttemptsExceeded" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="d23d6ec1-63e0-4406-45d4-7a59db6af4e3">
+      <Execution id="464c8525-e18a-479c-98dd-952c69891506" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="RecordFailureTransitionsToDeadLetterWhenMaxAttemptsExceeded" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="0c65d1af-ce50-2de6-bee1-1cd27dcd8d92">
+      <Execution id="a4fa9423-d4b4-45a8-a003-2a151ad9a95a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.RecordFailureIncrementsAttemptCountAndCalculatesBackoff" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="fd281e25-c733-e37d-ce4e-c54d50fc014e">
+      <Execution id="45d4ccd2-8652-4046-98f6-087fac0cf27d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="RecordFailureIncrementsAttemptCountAndCalculatesBackoff" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueMigrationTests.UpAndDownMigrationsApplyAndRevertCleanly" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="fdb4c802-dff7-08a0-827d-b46b33194868">
+      <Execution id="66abe161-53c1-4174-a6b2-57eb7014fc05" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueMigrationTests" name="UpAndDownMigrationsApplyAndRevertCleanly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.EscPosFormatterRendersStandard80MmThermalTicket" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="5a2882df-b285-8577-ef1b-4f6b091b0936">
+      <Execution id="301f8ee7-b9e9-421a-9f42-c00730a83791" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="EscPosFormatterRendersStandard80MmThermalTicket" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkAwaitingOperatorReviewSetsTerminalStatusWithoutSchedulingARetry" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="23415389-e4e6-95f6-1935-7314cd0a8403">
+      <Execution id="d7f2e71f-d39f-4dcd-b841-75d45f55f0ff" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="MarkAwaitingOperatorReviewSetsTerminalStatusWithoutSchedulingARetry" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAnInvalidPort(port: 70000)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="a7f13f48-6ee6-a1ed-7743-87405a70198b">
+      <Execution id="438b5c46-4ae4-4d89-a0c5-edd3caeadaa9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="SendAsyncThrowsPrinterUnreachableForAnInvalidPort" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAnInvalidPort(port: 0)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="e593d79f-77ae-3b3b-5387-dae4bb36de53">
+      <Execution id="186cd939-70b7-4ede-9dd0-c03879db5757" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="SendAsyncThrowsPrinterUnreachableForAnInvalidPort" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="13a85bee-c1f1-4274-218c-6ba580b48d22">
+      <Execution id="c1644a63-dce7-4b3a-8eca-46d737910c23" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ProcessEligibleJobsRecordsFailureAndDoesNotDeleteOrderOrTicket" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="d224e9eb-12a7-d41b-f6d5-6d49f723c13f">
+      <Execution id="2d1c4c75-0ca3-48cf-b0db-4ab29d33bb31" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="ProcessEligibleJobsRecordsFailureAndDoesNotDeleteOrderOrTicket" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.CancelSetsTerminalCancelledStatus" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="e5c78175-2f2c-c542-0975-55d3884c48db">
+      <Execution id="82d3a9bc-4edf-4aa0-900b-9634143d0104" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="CancelSetsTerminalCancelledStatus" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857(profile: Epson, selectTable: [27, 116, 13])" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="0f2a7460-704a-a87a-994a-f7b693908d43">
+      <Execution id="b828c765-0e30-41da-a9ae-38e3c52ef34d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.EndToEndPrintingWithEscPosFormatterAndKitchenPrinterSimulator" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="5f0822cc-4331-324b-6635-a01221e7b557">
+      <Execution id="a64d1c28-d22c-4703-9a54-ea2c8bcb1dad" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="EndToEndPrintingWithEscPosFormatterAndKitchenPrinterSimulator" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ProcessEligibleJobsExecutesAndMarksSucceededOnSuccess" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="c9827b21-ba38-d13e-b1f0-a2d2d28f9391">
+      <Execution id="77cbd1db-3afd-47fe-8271-5c406bc732e8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="ProcessEligibleJobsExecutesAndMarksSucceededOnSuccess" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.TheKitchenTicketStatesThatItHasNoFiscalValue" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="c7a5d4db-bfd6-081f-da6c-df2dba142078">
+      <Execution id="34a3b2bd-939f-4ec2-bfff-07eaf5d1030a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="TheKitchenTicketStatesThatItHasNoFiscalValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.ResetExpiredLeaseSendsAStalePrintingJobToOperatorReviewInsteadOfPending" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="82e0d228-a04a-ab36-55cc-b2485e795575">
+      <Execution id="ed654b52-5575-4ddc-828b-1363c118289c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="ResetExpiredLeaseSendsAStalePrintingJobToOperatorReviewInsteadOfPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.EscPosFormatterGeneratesValidEscPosBytesWithCutCommand" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="51066822-35e1-14bf-dd24-e39de6af916b">
+      <Execution id="bb6fde06-8500-4507-b5c1-d696f10ae9fb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="EscPosFormatterGeneratesValidEscPosBytesWithCutCommand" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 82, reason: &quot;in an error state&quot;)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="16ae4f50-dfce-ece7-9232-2bafcb4b8f53">
+      <Execution id="093ba271-a7e6-4be8-bf78-6f65b99960f0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkAwaitingOperatorReviewRequiresActivePrintingOrLeasedState" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="9aeb97c9-c084-20f6-00cd-d32e2775a566">
+      <Execution id="7e0394a1-d451-42a8-9789-cce6c6587e31" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="MarkAwaitingOperatorReviewRequiresActivePrintingOrLeasedState" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery(cause: 50, reason: &quot;out of paper&quot;)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="9ede0fdf-3322-4759-7627-3db5d90f44f2">
+      <Execution id="aec00a8e-35f7-4a94-a794-bb915aa2ade9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="AnOfflinePrinterIsReportedWithItsCauseAsAnUnconfirmedDelivery" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkSucceededSetsTerminalPrintedStatusAndPrintedAt" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="cdba078b-d39d-f52f-1a3f-a68956bea037">
+      <Execution id="6b93fb43-23cd-4ffc-a7ed-a61005be0fac" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="MarkSucceededSetsTerminalPrintedStatusAndPrintedAt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests.MarkPrintingRequiresActiveLeaseBySameWorker" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="703eef5e-b489-d2bf-177d-a665388c8c5d">
+      <Execution id="b20ed372-949b-44e3-99de-7219a19bafbe" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PrintQueueUnitTests" name="MarkPrintingRequiresActiveLeaseBySameWorker" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857(profile: Star, selectTable: [27, 29, 116, 12])" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="5c30151c-e2a4-e70d-82e9-41392e7376f5">
+      <Execution id="d7ed82d3-9463-4d56-93d1-0ef684972dd5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.EnqueueJobIsIdempotentAndReturnsExistingJobOnDuplicate" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="1cef5b0e-73f4-c9c1-7e12-d1f73adafcdf">
+      <Execution id="f4457a6b-636b-478f-9496-ce9ad5683125" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="EnqueueJobIsIdempotentAndReturnsExistingJobOnDuplicate" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.SendAsyncThrowsPrinterUnreachableForAMissingIpAddress(ipAddress: &quot;&quot;)" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="fd0816dc-4054-d9af-8e76-dabf8b2e7e5e">
+      <Execution id="94c3b304-45d3-48f3-9de0-13ac75a2705d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="SendAsyncThrowsPrinterUnreachableForAMissingIpAddress" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests.EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857(profile: Bixolon, selectTable: [27, 116, 37])" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="d82c008c-3c00-ee84-bdd2-dfac4ad50bd4">
+      <Execution id="bf727b84-2bf8-4a77-979d-aeb9f594ea6f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPosPrinterTransportTests" name="EachProfileSelectsItsOwnTurkishTableAndSendsCodePage857" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesResetsStaleJobsToPending" storage="d:\project\alkaros\tests\modules\kitchen\printqueue\bin\debug\net8.0\alkaros.kitchen.printqueue.tests.dll" id="c2ea13b9-cb75-daf0-1acc-b5066876a00c">
+      <Execution id="a93882bc-b68c-4541-b2d5-8f356bba9ecb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\bin\Debug\net8.0\ALKAROS.Kitchen.PrintQueue.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests" name="RecoverExpiredLeasesResetsStaleJobsToPending" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="703eef5e-b489-d2bf-177d-a665388c8c5d" executionId="b20ed372-949b-44e3-99de-7219a19bafbe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f2a7460-704a-a87a-994a-f7b693908d43" executionId="b828c765-0e30-41da-a9ae-38e3c52ef34d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e593d79f-77ae-3b3b-5387-dae4bb36de53" executionId="186cd939-70b7-4ede-9dd0-c03879db5757" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23415389-e4e6-95f6-1935-7314cd0a8403" executionId="d7f2e71f-d39f-4dcd-b841-75d45f55f0ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f0822cc-4331-324b-6635-a01221e7b557" executionId="a64d1c28-d22c-4703-9a54-ea2c8bcb1dad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="41a5b4fb-f2d7-d332-94e2-5e7c9919f5aa" executionId="7c28b820-8357-457b-a3b8-abad920bab88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9ede0fdf-3322-4759-7627-3db5d90f44f2" executionId="aec00a8e-35f7-4a94-a794-bb915aa2ade9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3549884c-f90d-046e-4177-51d705a39b45" executionId="c7e3fe7f-8af1-47ae-9192-41e61434534e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8fce413f-5f6c-c143-5392-cdcfca432209" executionId="cf2ac1c1-924b-4e7d-a2e4-65da3ba4793b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ede0ceb9-f79b-56c6-5cf5-dfa493207141" executionId="fe1a91af-62fd-4499-84b7-64efebe46531" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13a85bee-c1f1-4274-218c-6ba580b48d22" executionId="c1644a63-dce7-4b3a-8eca-46d737910c23" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16ae4f50-dfce-ece7-9232-2bafcb4b8f53" executionId="093ba271-a7e6-4be8-bf78-6f65b99960f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="347f5cf2-00f0-6319-0567-a49bbf55748e" executionId="478bc7b6-988b-455b-b8fc-28d0e83857e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d82c008c-3c00-ee84-bdd2-dfac4ad50bd4" executionId="bf727b84-2bf8-4a77-979d-aeb9f594ea6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8ae3dc35-bfd6-0be4-74e5-b0a343a832eb" executionId="07210111-759f-4052-b73d-38b53e8b0ae1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd0816dc-4054-d9af-8e76-dabf8b2e7e5e" executionId="94c3b304-45d3-48f3-9de0-13ac75a2705d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cdba078b-d39d-f52f-1a3f-a68956bea037" executionId="6b93fb43-23cd-4ffc-a7ed-a61005be0fac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9827b21-ba38-d13e-b1f0-a2d2d28f9391" executionId="77cbd1db-3afd-47fe-8271-5c406bc732e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="88cf2fb5-20e8-a883-7ac4-f4c2d0886ff6" executionId="3c058071-a62b-41f7-bfea-f01f540a1da1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c65d1af-ce50-2de6-bee1-1cd27dcd8d92" executionId="a4fa9423-d4b4-45a8-a003-2a151ad9a95a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9aeb97c9-c084-20f6-00cd-d32e2775a566" executionId="7e0394a1-d451-42a8-9789-cce6c6587e31" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a7f13f48-6ee6-a1ed-7743-87405a70198b" executionId="438b5c46-4ae4-4d89-a0c5-edd3caeadaa9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c769fd8-69fa-7403-f1ec-c9c4e857161e" executionId="8c4aa686-e59e-4df3-a5cc-d36822108dae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5dd212a5-91e7-4c8e-a524-91230f94f02a" executionId="502f7c76-c4dd-4947-9996-488d9977515c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e4524133-c046-744b-a564-98193b641c8b" executionId="389a95b7-0178-4d91-bef5-2adfb16211a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="894d3c4f-0953-5f71-3d8d-5e230151e2d9" executionId="fb551b6b-5834-43b4-b3a8-1f8ef70f5c6b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7a5d4db-bfd6-081f-da6c-df2dba142078" executionId="34a3b2bd-939f-4ec2-bfff-07eaf5d1030a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2ea13b9-cb75-daf0-1acc-b5066876a00c" executionId="a93882bc-b68c-4541-b2d5-8f356bba9ecb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4aa7bf1f-5b82-75d2-33c3-76004a8c490a" executionId="003458a3-5378-4551-bc70-73c19cc26582" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdb4c802-dff7-08a0-827d-b46b33194868" executionId="66abe161-53c1-4174-a6b2-57eb7014fc05" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d224e9eb-12a7-d41b-f6d5-6d49f723c13f" executionId="2d1c4c75-0ca3-48cf-b0db-4ab29d33bb31" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82e0d228-a04a-ab36-55cc-b2485e795575" executionId="ed654b52-5575-4ddc-828b-1363c118289c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="adab8511-fd03-7a2b-3511-7fa646235a1c" executionId="726d48a3-e870-4928-97d1-9c2a41a82a3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a2882df-b285-8577-ef1b-4f6b091b0936" executionId="301f8ee7-b9e9-421a-9f42-c00730a83791" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cef5b0e-73f4-c9c1-7e12-d1f73adafcdf" executionId="f4457a6b-636b-478f-9496-ce9ad5683125" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d23d6ec1-63e0-4406-45d4-7a59db6af4e3" executionId="464c8525-e18a-479c-98dd-952c69891506" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23e650b7-b99f-a854-dfa2-fa777d39b456" executionId="6bfaf711-b4fc-4a64-8981-c668b537e1b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51066822-35e1-14bf-dd24-e39de6af916b" executionId="bb6fde06-8500-4507-b5c1-d696f10ae9fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5c78175-2f2c-c542-0975-55d3884c48db" executionId="82d3a9bc-4edf-4aa0-900b-9634143d0104" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b49de9c6-a005-9d8c-0fad-a331571c766a" executionId="ed40ac14-de23-4447-a822-1e108235c094" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5c30151c-e2a4-e70d-82e9-41392e7376f5" executionId="d7ed82d3-9463-4d56-93d1-0ef684972dd5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fd281e25-c733-e37d-ce4e-c54d50fc014e" executionId="45d4ccd2-8652-4046-98f6-087fac0cf27d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82de5343-6a91-4bdb-3dd2-c7d5c59f9f51" executionId="85794985-2a88-41a9-b9da-2239b07fb29f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="43" executed="43" passed="39" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.20]   Discovering: ALKAROS.Kitchen.PrintQueue.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  ALKAROS.Kitchen.PrintQueue.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    ALKAROS.Kitchen.PrintQueue.Tests&#xD;
+[xUnit.net 00:00:01.13]       Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+[xUnit.net 00:00:01.13]       &#xD;
+[xUnit.net 00:00:01.13]       POSITION: 852&#xD;
+[xUnit.net 00:00:01.13]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.13]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:01.13]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:01.13]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.13]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.13]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.13]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.13]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.13]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.13]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.13]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.13]         D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs(234,0): at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint()&#xD;
+[xUnit.net 00:00:01.13]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.45]       Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+[xUnit.net 00:00:01.45]       &#xD;
+[xUnit.net 00:00:01.45]       POSITION: 852&#xD;
+[xUnit.net 00:00:01.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.45]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:01.45]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:01.45]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.45]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.45]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.45]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.45]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.45]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.45]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.45]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.45]         D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs(215,0): at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesResetsStaleJobsToPending()&#xD;
+[xUnit.net 00:00:01.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.33]       Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+[xUnit.net 00:00:02.33]       &#xD;
+[xUnit.net 00:00:02.33]       POSITION: 852&#xD;
+[xUnit.net 00:00:02.33]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.33]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.33]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.33]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.33]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.33]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.33]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.33]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.33]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.33]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.33]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.33]         D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs(254,0): at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload()&#xD;
+[xUnit.net 00:00:02.33]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.66]       Npgsql.PostgresException : 42P01: relation "kitchen.physical_print_deliveries" does not exist&#xD;
+[xUnit.net 00:00:03.66]       &#xD;
+[xUnit.net 00:00:03.66]       POSITION: 852&#xD;
+[xUnit.net 00:00:03.66]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.66]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:03.66]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:03.66]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.66]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.66]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.66]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.66]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:03.66]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.66]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.66]         D:\PROJECT\ALKAROS\src\Modules\Kitchen\PrintQueue\PostgresPrintQueueRepository.cs(320,0): at ALKAROS.Kitchen.PrintQueue.PostgresPrintQueueRepository.RecoverExpiredLeasesAsync(DateTimeOffset now, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.66]         D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\PostgresPrintQueueIntegrationTests.cs(276,0): at ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing()&#xD;
+[xUnit.net 00:00:03.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.44]   Finished:    ALKAROS.Kitchen.PrintQueue.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:49:47.8863193+03:00">
+        <Text>[xUnit.net 00:00:01.13]     ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:49:48.2111059+03:00">
+        <Text>[xUnit.net 00:00:01.45]     ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoverExpiredLeasesResetsStaleJobsToPending [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:49:49.0830296+03:00">
+        <Text>[xUnit.net 00:00:02.33]     ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:49:50.4127244+03:00">
+        <Text>[xUnit.net 00:00:03.66]     ALKAROS.Kitchen.PrintQueue.Tests.PostgresPrintQueueIntegrationTests.RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

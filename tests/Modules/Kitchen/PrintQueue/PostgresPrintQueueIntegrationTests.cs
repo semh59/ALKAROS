@@ -1,5 +1,6 @@
 namespace ALKAROS.Kitchen.PrintQueue.Tests;
 
+using ALKAROS.Kitchen.PhysicalPrintRecovery;
 using ALKAROS.Kitchen.PrintQueue;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
@@ -239,6 +240,50 @@ public sealed class PostgresPrintQueueIntegrationTests : IAsyncLifetime
         reloaded.LastError.Should().NotBeNullOrWhiteSpace();
         var eligible = await _queueRepo.ClaimEligibleJobsAsync("NextWorker", 5, TimeSpan.FromMinutes(1), DateTimeOffset.UtcNow);
         eligible.Should().NotContain(j => j.Id == job.Id);
+    }
+
+    [Fact]
+    public async Task ARecoveredPrintingJobAppearsInTheOperatorReviewListWithItsPayload()
+    {
+        var job = PrintJob.Create(_testTicket.Id, _testPrinterId, "Ticket body", idempotencyKey: "key-recover-visible");
+        await _queueRepo.EnqueueJobAsync(job);
+        var past = DateTimeOffset.UtcNow.AddMinutes(-10);
+        var claimed = await _queueRepo.ClaimEligibleJobsAsync("CrashedWorker", 5, TimeSpan.FromMinutes(1), past);
+        await _queueRepo.SaveAsync(claimed.Single(j => j.Id == job.Id).MarkPrinting("CrashedWorker", past));
+
+        await _queueRepo.RecoverExpiredLeasesAsync(DateTimeOffset.UtcNow);
+
+        var unknown = await new PostgresPhysicalPrintRecoveryRepository(_db.DataSource)
+            .GetPendingUnknownDeliveriesAsync();
+        var delivery = unknown.Single(d => d.PrintJobId == job.Id);
+        delivery.TicketId.Should().Be(_testTicket.Id);
+        delivery.PrinterId.Should().Be(_testPrinterId);
+        delivery.PayloadSnapshot.Should().Be("Ticket body");
+        delivery.CrashWindowReason.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task RecoveringALeasedAndAPrintingJobTogetherTreatsEachOneRightAndTheSecondPassAddsNothing()
+    {
+        var leased = PrintJob.Create(_testTicket.Id, _testPrinterId, "A", idempotencyKey: "key-mixed-leased");
+        var printing = PrintJob.Create(_testTicket.Id, _testPrinterId, "B", idempotencyKey: "key-mixed-printing");
+        await _queueRepo.EnqueueJobAsync(leased);
+        await _queueRepo.EnqueueJobAsync(printing);
+        var past = DateTimeOffset.UtcNow.AddMinutes(-10);
+        var claimed = await _queueRepo.ClaimEligibleJobsAsync("CrashedWorker", 5, TimeSpan.FromMinutes(1), past);
+        await _queueRepo.SaveAsync(claimed.Single(j => j.Id == printing.Id).MarkPrinting("CrashedWorker", past));
+
+        var first = await _queueRepo.RecoverExpiredLeasesAsync(DateTimeOffset.UtcNow);
+        var second = await _queueRepo.RecoverExpiredLeasesAsync(DateTimeOffset.UtcNow);
+
+        first.Should().Be(2);
+        second.Should().Be(0);
+        (await _queueRepo.GetByIdAsync(leased.Id))!.Status.Should().Be(PrintJobStatus.Pending);
+        (await _queueRepo.GetByIdAsync(printing.Id))!.Status.Should().Be(PrintJobStatus.AwaitingOperatorReview);
+        var deliveries = await new PostgresPhysicalPrintRecoveryRepository(_db.DataSource)
+            .GetPendingUnknownDeliveriesAsync();
+        deliveries.Count(d => d.PrintJobId == printing.Id).Should().Be(1);
+        deliveries.Should().NotContain(d => d.PrintJobId == leased.Id);
     }
 
     [Fact]

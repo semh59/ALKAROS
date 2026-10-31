@@ -289,18 +289,31 @@ public sealed class PostgresPrintQueueRepository : IPrintQueueRepository
               AND lease_expires_at < @now;
 
             -- A job that was already printing may have reached the printer before the worker died: resending it blindly
-            -- could print the ticket twice, so it waits for an operator like an uncertain transmission does.
-            UPDATE kitchen.print_jobs
-            SET status = 'AwaitingOperatorReview',
-                leased_by = NULL,
-                lease_expires_at = NULL,
-                next_attempt_at = NULL,
-                failed_at = @now,
-                last_error = 'Lease expired while printing; the printer output is unknown and needs an operator review.',
-                updated_at = @now,
-                row_version = row_version + 1
-            WHERE status = 'Printing'
-              AND lease_expires_at < @now;
+            -- could print the ticket twice, so it waits for an operator like an uncertain transmission does. The operator
+            -- list and the reprint decision work on a delivery record, so the same statement writes the Unknown one.
+            WITH recovered AS (
+                UPDATE kitchen.print_jobs
+                SET status = 'AwaitingOperatorReview',
+                    leased_by = NULL,
+                    lease_expires_at = NULL,
+                    next_attempt_at = NULL,
+                    failed_at = @now,
+                    last_error = 'Lease expired while printing; the printer output is unknown and needs an operator review.',
+                    updated_at = @now,
+                    row_version = row_version + 1
+                WHERE status = 'Printing'
+                  AND lease_expires_at < @now
+                RETURNING id, ticket_id, printer_id, payload, attempt_count
+            )
+            INSERT INTO kitchen.physical_print_deliveries (
+                id, print_job_id, ticket_id, printer_id, status, attempt_number,
+                is_reprint, crash_window_reason, payload_snapshot, created_at)
+            SELECT gen_random_uuid(), r.id, r.ticket_id, r.printer_id, 'Unknown', GREATEST(r.attempt_count, 1),
+                   FALSE, 'Print worker lease expired while printing; the printer output is unknown.', r.payload, @now
+            FROM recovered r
+            WHERE NOT EXISTS (
+                SELECT 1 FROM kitchen.physical_print_deliveries d
+                WHERE d.print_job_id = r.id AND d.status IN ('InFlight', 'Unknown', 'ReprintInFlight'));
             """;
         cmd.Parameters.AddWithValue("now", now);
 
