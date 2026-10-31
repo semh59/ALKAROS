@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using ALKAROS.Host.Experience.Orders;
 
 namespace ALKAROS.Host.DualScreen;
 
@@ -53,7 +54,7 @@ public sealed record CatalogProductDto(
 /// V1-RMD-148: one option group of a product. <paramref name="SelectionType"/>
 /// is "Single" or "Multiple" (catalog.modifier_groups.selection_type 1 or 2);
 /// the selection bounds are reported so a client can require a mandatory
-/// group, but the server does not enforce them yet.
+/// group; the order path enforces them.
 /// </summary>
 public sealed record CatalogModifierGroupDto(
     Guid ModifierGroupId,
@@ -104,7 +105,15 @@ public sealed record StartOrderRequest(Guid? TableId = null, long? ExpectedTable
 
 public sealed record StartOrderResponse(Guid OrderId, string OrderNumber, long Revision);
 
-public sealed record AddOrderItemRequest(Guid ProductId, decimal Quantity, long ExpectedRevision);
+/// <remarks>
+/// <paramref name="Modifiers"/> are the options picked for the line; name and price delta come from the catalog,
+/// never from the request. A product whose option group requires a selection is refused without one.
+/// </remarks>
+public sealed record AddOrderItemRequest(
+    Guid ProductId,
+    decimal Quantity,
+    long ExpectedRevision,
+    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null);
 
 public sealed record ChangeOrderItemQuantityRequest(decimal Quantity, long ExpectedRevision);
 

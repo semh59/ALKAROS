@@ -1,5 +1,6 @@
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Tests.Fixtures;
 using ALKAROS.Identity.DeviceSessions;
 using Npgsql;
@@ -163,6 +164,110 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         Assert.Equal(1L, await ScalarAsync<long>(
             "SELECT count(*) FROM orders.order_item_modifiers m JOIN orders.order_items i USING (order_item_id) WHERE i.order_id = @order_id;",
             ("order_id", order.OrderId)));
+    }
+
+    [Fact]
+    public async Task ARequiredOptionGroupRefusesALineWithoutASelection()
+    {
+        await SeedOptionGroupAsync(minSelections: 1, maxSelections: 1);
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None));
+
+        Assert.Equal(0L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+    }
+
+    [Fact]
+    public async Task ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine()
+    {
+        var (first, _) = await SeedOptionGroupAsync(minSelections: 1, maxSelections: 1);
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var selection = new[] { new OrderItemModifierSelectionDto(first) };
+
+        var added = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, selection), CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, added.Revision, selection), CancellationToken.None);
+
+        Assert.Equal(2L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+        Assert.Equal(2L, await ScalarAsync<long>(
+            """
+            SELECT count(*) FROM orders.order_item_modifiers m JOIN orders.order_items i USING (order_item_id)
+            WHERE i.order_id = @order_id AND m.modifier_id = @modifier_id
+              AND m.modifier_name_snapshot = 'Büyük boy' AND m.price_delta = 5.00;
+            """,
+            ("order_id", order.OrderId), ("modifier_id", first)));
+    }
+
+    [Fact]
+    public async Task RaisingTheQuantityOfALineWithAnOptionChargesTheOptionOnEveryPortion()
+    {
+        var (first, _) = await SeedOptionGroupAsync(minSelections: 1, maxSelections: 1);
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var added = await _store.AddItemAsync(
+            terminalId,
+            order.OrderId,
+            new AddOrderItemRequest(_productId, 1m, order.Revision, [new OrderItemModifierSelectionDto(first)]),
+            CancellationToken.None);
+        var itemId = await ScalarAsync<Guid>(
+            "SELECT order_item_id FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId));
+
+        await _store.ChangeItemQuantityAsync(
+            terminalId, order.OrderId, itemId, new ChangeOrderItemQuantityRequest(3m, added.Revision), CancellationToken.None);
+
+        Assert.Equal(3m, await ScalarAsync<decimal>(
+            "SELECT quantity FROM orders.order_item_modifiers WHERE order_item_id = @id;", ("id", itemId)));
+        Assert.Equal(18m, await ScalarAsync<decimal>(
+            "SELECT gross_amount FROM orders.order_items WHERE order_item_id = @id;", ("id", itemId)));
+    }
+
+    [Fact]
+    public async Task AnOptionQuantityBeyondTheWaiterPathLimitIsRefused()
+    {
+        var (first, _) = await SeedOptionGroupAsync(minSelections: 0, maxSelections: 1);
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _store.AddItemAsync(
+            terminalId,
+            order.OrderId,
+            new AddOrderItemRequest(_productId, 1m, order.Revision, [new OrderItemModifierSelectionDto(first, 10000m)]),
+            CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task AnOptionThatDoesNotBelongToTheProductIsRefused()
+    {
+        await SeedOptionGroupAsync(minSelections: 0, maxSelections: 1);
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        await Assert.ThrowsAsync<DualScreenNotFoundException>(() => _store.AddItemAsync(
+            terminalId,
+            order.OrderId,
+            new AddOrderItemRequest(_productId, 1m, order.Revision, [new OrderItemModifierSelectionDto(Guid.NewGuid())]),
+            CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task MoreSelectionsThanTheGroupAllowsAreRefused()
+    {
+        var (first, second) = await SeedOptionGroupAsync(minSelections: 0, maxSelections: 1);
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _store.AddItemAsync(
+            terminalId,
+            order.OrderId,
+            new AddOrderItemRequest(
+                _productId, 1m, order.Revision, [new OrderItemModifierSelectionDto(first), new OrderItemModifierSelectionDto(second)]),
+            CancellationToken.None));
     }
 
     [Fact]
@@ -702,6 +807,33 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         {
             return new MutationAttempt<T>(null, exception);
         }
+    }
+
+    private async Task<(Guid First, Guid Second)> SeedOptionGroupAsync(int minSelections, int maxSelections)
+    {
+        var groupId = Guid.NewGuid();
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        var suffix = groupId.ToString("N")[..12];
+        await using var seed = _dataSource!.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@group_id, @code, 'Boy', 1, @min, @max, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@first, @group_id, @code || 'A', 'Büyük boy', 5.00, true),
+                   (@second, @group_id, @code || 'B', 'Küçük boy', 0, true);
+            INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+            VALUES (gen_random_uuid(), @product_id, @group_id);
+            """);
+        seed.Parameters.AddWithValue("group_id", groupId);
+        seed.Parameters.AddWithValue("code", "OPT" + suffix);
+        seed.Parameters.AddWithValue("min", minSelections);
+        seed.Parameters.AddWithValue("max", maxSelections);
+        seed.Parameters.AddWithValue("first", first);
+        seed.Parameters.AddWithValue("second", second);
+        seed.Parameters.AddWithValue("product_id", _productId);
+        await seed.ExecuteNonQueryAsync();
+        return (first, second);
     }
 
     private async Task SeedProductAsync(Guid productId)

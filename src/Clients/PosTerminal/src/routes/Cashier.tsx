@@ -18,6 +18,7 @@ import { playNewItemChime } from "../audioAlerts";
 import { onlineHubTabFor } from "../features/online-hub";
 import { useNewOrderChime } from "../features/online-operations/useNewOrderChime";
 import { usePendingChecksAlert } from "../features/pending-checks";
+import { CashierModifierPicker } from "./CashierModifierPicker";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 
 type CashierSession = "checking" | "anonymous" | "ready";
@@ -92,6 +93,7 @@ export function Cashier() {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
+  const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
@@ -690,12 +692,10 @@ export function Cashier() {
                 className="product-card"
                 key={product.productId}
                 disabled={busy || !activeOrder?.editable}
-                onClick={() => execute(() => api.addItem(
-                  terminalId,
-                  activeOrder!.orderId!,
-                  product.productId,
-                  activeOrder!.revision,
-                ))}
+                onClick={() => {
+                  if (product.modifierGroups?.length) setPickingProduct(product);
+                  else void execute(() => api.addItem(terminalId, activeOrder!.orderId!, product.productId, activeOrder!.revision));
+                }}
               >
                 <span className="product-category">{product.categoryName}</span>
                 <strong>{product.name}</strong>
@@ -802,6 +802,16 @@ export function Cashier() {
 
         </aside>
       </div>
+      {pickingProduct && (
+        <CashierModifierPicker
+          product={pickingProduct}
+          onCancel={() => setPickingProduct(null)}
+          onConfirm={(modifierIds) => {
+            setPickingProduct(null);
+            void execute(() => api.addItem(terminalId, activeOrder!.orderId!, pickingProduct.productId, activeOrder!.revision, modifierIds));
+          }}
+        />
+      )}
       {pairingOpen && (
         <div className="dialog-backdrop" role="presentation" onKeyDown={trapPairingFocus} onMouseDown={(event) => {
           if (event.target === event.currentTarget) closePairing();

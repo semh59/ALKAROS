@@ -197,10 +197,21 @@ export const api = {
         body: JSON.stringify({ tableId, expectedTableRowVersion }),
       },
     ),
-  addItem: (terminalId: string, orderId: string, productId: string, expectedRevision: number) =>
+  addItem: (
+    terminalId: string,
+    orderId: string,
+    productId: string,
+    expectedRevision: number,
+    modifierIds: string[] = [],
+  ) =>
     request<MutationResult>(`/api/v1/terminals/${terminalId}/orders/${orderId}/items`, {
       method: "POST",
-      body: JSON.stringify({ productId, quantity: 1, expectedRevision }),
+      body: JSON.stringify({
+        productId,
+        quantity: 1,
+        expectedRevision,
+        ...(modifierIds.length > 0 ? { modifiers: modifierIds.map((modifierId) => ({ modifierId })) } : {}),
+      }),
     }),
   changeQuantity: (
     terminalId: string,

@@ -2,6 +2,8 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.TableDraft;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
@@ -221,6 +223,10 @@ public sealed partial class DualScreenStore
     {
         if (request.Quantity <= 0 || request.Quantity > 999)
             throw new ArgumentOutOfRangeException(nameof(request), request.Quantity, "Quantity must be between 0 and 999.");
+        if (request.Modifiers is { } selections
+            && (selections.Count > TableDraftService.MaximumModifiersPerItem
+                || selections.Any(s => s.Quantity > TableDraftService.MaximumOrderQuantity)))
+            throw new ArgumentOutOfRangeException(nameof(request), "Too many options or an option quantity is too large.");
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -252,9 +258,27 @@ public sealed partial class DualScreenStore
         // DualScreenStoreTests cover exactly this.
         var order = await PostgresOrderRepository.GetByIdAsync(orderId, connection, transaction, cancellationToken)
             ?? throw new DualScreenNotFoundException("Active order was not found for this terminal.");
+
+        // Same option rules the waiter path enforces: names and prices come from the catalog, and a required group
+        // cannot be skipped.
+        var draft = new OrderItemDraftDto(Guid.NewGuid(), request.ProductId, product.Name, request.Quantity, product.UnitPrice, request.Modifiers);
+        var modifierCatalog = await TableDraftService.ResolveModifiersAsync(connection, transaction, [draft], cancellationToken);
+        var applicableGroups = await TableDraftService.ResolveApplicableModifierGroupsAsync(
+            connection, transaction, [request.ProductId], cancellationToken);
+        List<OrderItemModifier>? modifiers;
+        try
+        {
+            modifiers = TableDraftService.BuildModifiers(draft, modifierCatalog);
+        }
+        catch (KeyNotFoundException exception)
+        {
+            throw new DualScreenNotFoundException(exception.Message);
+        }
+        TableDraftService.ValidateModifierGroupSelections(draft, modifierCatalog, applicableGroups);
+
         // Only a bare line of the same product at today's price takes the extra quantity; a line with modifiers, a
         // note, a seat, a course or a discount is a different line and would pass its extras on to the new portions.
-        var existing = order.Items.FirstOrDefault(i =>
+        var existing = modifiers is not null ? null : order.Items.FirstOrDefault(i =>
             i.ProductId == request.ProductId
             && i.Status == OrderItemState.Draft
             && i.Modifiers.Count == 0
@@ -275,8 +299,8 @@ public sealed partial class DualScreenStore
         else
         {
             var newItem = new OrderItem(
-                Guid.NewGuid(), orderId, request.ProductId, product.Name, request.Quantity, product.UnitPrice, product.TaxRate,
-                skuSnapshot: product.Sku);
+                draft.Id, orderId, request.ProductId, product.Name, request.Quantity, product.UnitPrice, product.TaxRate,
+                skuSnapshot: product.Sku, modifiers: modifiers);
             updated = order.AddItem(newItem);
         }
 

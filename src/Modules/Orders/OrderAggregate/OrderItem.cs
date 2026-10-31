@@ -249,6 +249,13 @@ public sealed class OrderItem
         if (quantity <= 0)
             throw new ArgumentException("Quantity must be positive.", nameof(quantity));
 
+        // An option goes on every portion, so its quantity follows the portion count (a fractional portion still
+        // counts as one plate).
+        var newPortions = Math.Max(1m, Math.Ceiling(quantity));
+        var oldPortions = Math.Max(1m, Math.Ceiling(Quantity));
+        var scaledModifiers = Modifiers.Select(m => new OrderItemModifier(
+            m.Id, Id, m.ModifierId, m.ModifierNameSnapshot, m.PriceDelta, m.Quantity * newPortions / oldPortions)).ToArray();
+
         return new OrderItem(
             Id,
             OrderId,
@@ -259,7 +266,7 @@ public sealed class OrderItem
             TaxRate,
             SkuSnapshot,
             DiscountAmount,
-            Modifiers,
+            scaledModifiers,
             Status,
             KitchenState,
             PortionReservationStatus,

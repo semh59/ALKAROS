@@ -297,6 +297,43 @@ public class OrderItemQuantityAndRemovalTests
         changed.GrossAmount.Should().Be(150m);
     }
 
+    [Fact]
+    public void ChangeQuantityKeepsTheOptionOnEveryPortion()
+    {
+        var id = Guid.NewGuid();
+        var item = new OrderItem(
+            id, Guid.NewGuid(), Guid.NewGuid(), "Pide", 1, 100m, 10m,
+            modifiers: [new OrderItemModifier(Guid.NewGuid(), id, Guid.NewGuid(), "Büyük boy", 5m, 1m)]);
+
+        var changed = item.ChangeQuantity(3);
+
+        changed.Modifiers.Single().Quantity.Should().Be(3m);
+        changed.GrossAmount.Should().Be(315m);
+        changed.ChangeQuantity(1).Modifiers.Single().Quantity.Should().Be(1m);
+    }
+
+    [Theory]
+    [InlineData(3, 2, 3, 2)]
+    [InlineData(2, 3, 2, 3)]
+    [InlineData(0.5, 2, 1, 2)]
+    [InlineData(2.5, 1, 3, 1)]
+    public void ChangeQuantityScalesEveryOptionByTheChangeInPortions(
+        double fromQuantity, double toQuantity, double optionQuantity, double expected)
+    {
+        var id = Guid.NewGuid();
+        var item = new OrderItem(
+            id, Guid.NewGuid(), Guid.NewGuid(), "Pide", (decimal)fromQuantity, 100m, 10m,
+            modifiers:
+            [
+                new OrderItemModifier(Guid.NewGuid(), id, Guid.NewGuid(), "Büyük boy", 5m, (decimal)optionQuantity),
+                new OrderItemModifier(Guid.NewGuid(), id, Guid.NewGuid(), "Sos", 0m, (decimal)optionQuantity),
+            ]);
+
+        var changed = item.ChangeQuantity((decimal)toQuantity);
+
+        changed.Modifiers.Select(m => m.Quantity).Should().AllBeEquivalentTo((decimal)expected);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]

@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="7f64a2f8-e714-4f3d-93ee-92f6a28fd745" name="semih@SEMH59 2026-10-31 15:22:04" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T15:22:04.4298838+03:00" queuing="2026-10-31T15:22:04.4298840+03:00" start="2026-10-31T15:21:46.9669021+03:00" finish="2026-10-31T15:26:50.8152079+03:00" />
+  <TestSettings name="default" id="95285a3c-895e-49a7-8482-01e9d53734f6">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_15_22_04" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f4efb253-dd39-4df5-aab3-73b3fd05777d" testId="89324e5f-52d6-8ce3-e671-f26eb7711277" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnUnknownLineIsNotFoundButALineThatIsNoLongerDraftIsAConflict" computerName="SEMH59" duration="00:00:00.0393393" startTime="2026-10-31T15:25:56.1180342+03:00" endTime="2026-10-31T15:25:56.1180345+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4efb253-dd39-4df5-aab3-73b3fd05777d" />
+    <UnitTestResult executionId="86a1e4ae-075c-463a-860f-d369449a6b39" testId="8d76475f-62ed-3387-2d02-67889cd8519d" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.SequentialAddsCommit999AndRejectCumulative1000WithoutChangingRevision" computerName="SEMH59" duration="00:00:00.0293241" startTime="2026-10-31T15:26:28.9427162+03:00" endTime="2026-10-31T15:26:28.9427165+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86a1e4ae-075c-463a-860f-d369449a6b39" />
+    <UnitTestResult executionId="3856ebaa-be00-4eef-8ff3-77e655988edc" testId="91fc1579-2128-5982-40b5-6af443fb50b1" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused" computerName="SEMH59" duration="00:00:00.0276322" startTime="2026-10-31T15:25:01.1343769+03:00" endTime="2026-10-31T15:25:01.1343770+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3856ebaa-be00-4eef-8ff3-77e655988edc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentOutOfRangeException)</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs:line 228&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8a737063-7764-4f65-8d49-5de683e18aee" testId="f8166fc7-b01b-de4c-236f-2f8686a5b88a" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.APairingIsApprovedThenCompletedWithExpiriesFromTheDatabaseClock" computerName="SEMH59" duration="00:00:00.0376298" startTime="2026-10-31T15:22:26.8837925+03:00" endTime="2026-10-31T15:22:26.8837928+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a737063-7764-4f65-8d49-5de683e18aee" />
+    <UnitTestResult executionId="93bb1dc0-89a7-46d1-b9e6-7f901c453c68" testId="2156a6dc-362f-1ade-601a-4f8ad9d8f02a" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping" computerName="SEMH59" duration="00:00:00.0174259" startTime="2026-10-31T15:25:12.2894833+03:00" endTime="2026-10-31T15:25:12.2894836+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93bb1dc0-89a7-46d1-b9e6-7f901c453c68" />
+    <UnitTestResult executionId="df3129a1-5dd1-4afc-a165-af8e4a9c3a28" testId="a7f3e4f2-b9a5-d1c5-1015-ea0424f15e36" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings" computerName="SEMH59" duration="00:00:00.1088058" startTime="2026-10-31T15:22:59.6785757+03:00" endTime="2026-10-31T15:22:59.6785760+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df3129a1-5dd1-4afc-a165-af8e4a9c3a28" />
+    <UnitTestResult executionId="08ddad88-79ea-4561-8eec-eeefffe4d9fd" testId="024f49eb-7db9-08d0-ab93-02930c38eb00" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieRejectsUnknownToken" computerName="SEMH59" duration="00:00:00.0038928" startTime="2026-10-31T15:25:23.4701967+03:00" endTime="2026-10-31T15:25:23.4701971+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08ddad88-79ea-4561-8eec-eeefffe4d9fd" />
+    <UnitTestResult executionId="869153c3-49f7-4354-a296-557faeb4c2e1" testId="9871493e-8e8f-053a-ede8-21a330562c46" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnExpiredPairingCannotBeCompleted" computerName="SEMH59" duration="00:00:00.0171665" startTime="2026-10-31T15:22:37.9577713+03:00" endTime="2026-10-31T15:22:37.9577716+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="869153c3-49f7-4354-a296-557faeb4c2e1" />
+    <UnitTestResult executionId="e6e9b31d-d12c-41fb-a453-722ce07f07a8" testId="9b93189c-2b21-e2b6-8254-17a6062ae37a" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct" computerName="SEMH59" duration="00:00:00.0239952" startTime="2026-10-31T15:23:42.8857939+03:00" endTime="2026-10-31T15:23:42.8857945+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6e9b31d-d12c-41fb-a453-722ce07f07a8" />
+    <UnitTestResult executionId="8461bd8b-4872-4f28-9b1d-9041c5c28f26" testId="cb72483f-9e23-5f96-3eb2-78bfd63744f4" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieResolvesBoundTerminalFromDeviceId" computerName="SEMH59" duration="00:00:00.0294805" startTime="2026-10-31T15:22:04.3964279+03:00" endTime="2026-10-31T15:22:04.3964488+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8461bd8b-4872-4f28-9b1d-9041c5c28f26" />
+    <UnitTestResult executionId="0ccfe60a-c0a5-422d-ab93-784f08556990" testId="b14bb1df-afd8-028c-2d43-56f163faa890" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow" computerName="SEMH59" duration="00:00:00.0219027" startTime="2026-10-31T15:24:26.7497190+03:00" endTime="2026-10-31T15:24:26.7497193+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ccfe60a-c0a5-422d-ab93-784f08556990" />
+    <UnitTestResult executionId="f088671e-8d64-4eed-970c-837460e2f291" testId="05cd0d2f-1681-13b8-0818-e2eed7d3727f" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.StaleTableVersionStillSeatsAnAvailableTableButBusyTableIsRejected" computerName="SEMH59" duration="00:00:00.0267237" startTime="2026-10-31T15:24:04.5382212+03:00" endTime="2026-10-31T15:24:04.5382215+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f088671e-8d64-4eed-970c-837460e2f291" />
+    <UnitTestResult executionId="c2ef6800-dfa0-427b-86a2-bbd2ee830869" testId="13243b9b-42a5-61bc-16b8-8f75815fa15f" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.EveryOrderMutationWorksOnASingleConnectionPool" computerName="SEMH59" duration="00:00:00.0681375" startTime="2026-10-31T15:25:34.5662608+03:00" endTime="2026-10-31T15:25:34.5662611+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2ef6800-dfa0-427b-86a2-bbd2ee830869" />
+    <UnitTestResult executionId="3870ad54-9271-4827-b56d-264d8ebb8c8d" testId="4779c62e-9c82-9c35-cf19-a677bd215f0d" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncReturnsRemainingCountFromDirectStockMapping" computerName="SEMH59" duration="00:00:00.0227275" startTime="2026-10-31T15:26:18.0602242+03:00" endTime="2026-10-31T15:26:18.0602244+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3870ad54-9271-4827-b56d-264d8ebb8c8d" />
+    <UnitTestResult executionId="39373d89-7529-496b-a0af-1cd9b3d54558" testId="cd7b698e-ce5a-c82d-3a62-bd3e71518153" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineIsShownAtItsTaxInclusivePriceNotWithTaxAddedOnTop" computerName="SEMH59" duration="00:00:00.0337985" startTime="2026-10-31T15:23:10.5078171+03:00" endTime="2026-10-31T15:23:10.5078174+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39373d89-7529-496b-a0af-1cd9b3d54558" />
+    <UnitTestResult executionId="cc2e09c1-f8ff-45ce-972e-ceeee5b3be9d" testId="93359382-d705-70d4-d796-e9c8cffa2bd2" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine" computerName="SEMH59" duration="00:00:00.0402128" startTime="2026-10-31T15:23:32.1463189+03:00" endTime="2026-10-31T15:23:32.1463192+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc2e09c1-f8ff-45ce-972e-ceeee5b3be9d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 2&#xD;
+Actual:   1</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs:line 196&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3279be8a-bb51-4fa0-a0df-ea20fe2ed84c" testId="43708c34-5abe-653b-bc5b-5dce066a6804" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineWithAModifierIsShownAtItsFullPrice" computerName="SEMH59" duration="00:00:00.0294746" startTime="2026-10-31T15:23:21.3564987+03:00" endTime="2026-10-31T15:23:21.3564990+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3279be8a-bb51-4fa0-a0df-ea20fe2ed84c" />
+    <UnitTestResult executionId="b59ed26e-ba1c-4ea6-83cd-d74f5dca6bec" testId="d88cd86a-3b7d-b2be-a138-169ad44e1197" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainDoesNotMergeIntoALineWithModifiers" computerName="SEMH59" duration="00:00:00.0354477" startTime="2026-10-31T15:24:38.4041774+03:00" endTime="2026-10-31T15:24:38.4041777+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b59ed26e-ba1c-4ea6-83cd-d74f5dca6bec" />
+    <UnitTestResult executionId="7decace9-d791-403d-b384-0b394730c6d1" testId="ed44550c-2c6b-a6ec-dde8-8affac0642a0" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TheCatalogIsOrderedByTurkishAlphabetAcrossPages" computerName="SEMH59" duration="00:00:00.0505062" startTime="2026-10-31T15:25:45.3389982+03:00" endTime="2026-10-31T15:25:45.3389985+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7decace9-d791-403d-b384-0b394730c6d1" />
+    <UnitTestResult executionId="f9f5e6ed-7a16-4bd7-b488-debfe4d0dd87" testId="63bc30d5-9287-933f-f156-051d8046e174" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentAddsWithSameRevisionCannotCommitCumulative1000" computerName="SEMH59" duration="00:00:00.0336100" startTime="2026-10-31T15:26:39.8378885+03:00" endTime="2026-10-31T15:26:39.8378888+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9f5e6ed-7a16-4bd7-b488-debfe4d0dd87" />
+    <UnitTestResult executionId="118d0cfc-d3ce-4896-a450-5d79ac3a616e" testId="bc48bc46-2c23-5221-3dab-f9fd70d96932" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.NonAvailableTableIsRejectedEvenWithAMatchingVersion" computerName="SEMH59" duration="00:00:00.0098570" startTime="2026-10-31T15:23:53.6385406+03:00" endTime="2026-10-31T15:23:53.6385409+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="118d0cfc-d3ce-4896-a450-5d79ac3a616e" />
+    <UnitTestResult executionId="277d90ca-d540-4a81-994f-e282dca0af76" testId="417b20e5-aa6a-bd48-edba-fa2b4ee30424" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TableBoundOrderCommitsOrderAndTablePointersTogether" computerName="SEMH59" duration="00:00:00.0186441" startTime="2026-10-31T15:24:15.5666420+03:00" endTime="2026-10-31T15:24:15.5666423+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="277d90ca-d540-4a81-994f-e282dca0af76" />
+    <UnitTestResult executionId="2c1399b1-2424-4bd4-8d41-6bf06052e098" testId="eba195b2-7a98-5f3e-2229-3bb1e12db297" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncDropsProductWhenStockExhausted" computerName="SEMH59" duration="00:00:00.0231827" startTime="2026-10-31T15:26:07.0603897+03:00" endTime="2026-10-31T15:26:07.0603900+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c1399b1-2424-4bd4-8d41-6bf06052e098" />
+    <UnitTestResult executionId="db81a164-aa6e-491d-aff0-8cb0ce0ea439" testId="385f69ce-aa68-12d3-8daa-bc051e8185ea" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentTableStartsAllowOnlyOneOrderAndLeaveConsistentPointers" computerName="SEMH59" duration="00:00:00.0605093" startTime="2026-10-31T15:22:15.8639583+03:00" endTime="2026-10-31T15:22:15.8639586+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db81a164-aa6e-491d-aff0-8cb0ce0ea439" />
+    <UnitTestResult executionId="7414ed5a-a122-4c3e-a122-76f68b0b1806" testId="661aa4dd-c49b-179b-84b8-75317f19f4a7" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection" computerName="SEMH59" duration="00:00:00.0571745" startTime="2026-10-31T15:22:48.8272164+03:00" endTime="2026-10-31T15:22:48.8272166+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7414ed5a-a122-4c3e-a122-76f68b0b1806">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentOutOfRangeException)</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs:line 176&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4af65ccb-1c2f-48d9-ac46-4662295e9562" testId="f68980a3-d19e-b5e6-f1db-b1a306aa31c7" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused" computerName="SEMH59" duration="00:00:00.0240388" startTime="2026-10-31T15:24:49.9809622+03:00" endTime="2026-10-31T15:24:49.9809624+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4af65ccb-1c2f-48d9-ac46-4662295e9562">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(ALKAROS.Host.DualScreen.DualScreenNotFoundException)</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs:line 214&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="293bed71-a00c-402c-b812-f39289e76e70" testId="3f287624-c2d0-3251-7b1b-5b9cd8a52326" testName="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainMergesOnlyIntoABareLine" computerName="SEMH59" duration="00:00:00.1077286" startTime="2026-10-31T15:26:50.7382321+03:00" endTime="2026-10-31T15:26:50.7382324+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="293bed71-a00c-402c-b812-f39289e76e70" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentTableStartsAllowOnlyOneOrderAndLeaveConsistentPointers" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="385f69ce-aa68-12d3-8daa-bc051e8185ea">
+      <Execution id="db81a164-aa6e-491d-aff0-8cb0ce0ea439" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="ConcurrentTableStartsAllowOnlyOneOrderAndLeaveConsistentPointers" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.EveryOrderMutationWorksOnASingleConnectionPool" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="13243b9b-42a5-61bc-16b8-8f75815fa15f">
+      <Execution id="c2ef6800-dfa0-427b-86a2-bbd2ee830869" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="EveryOrderMutationWorksOnASingleConnectionPool" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentAddsWithSameRevisionCannotCommitCumulative1000" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="63bc30d5-9287-933f-f156-051d8046e174">
+      <Execution id="f9f5e6ed-7a16-4bd7-b488-debfe4d0dd87" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="ConcurrentAddsWithSameRevisionCannotCommitCumulative1000" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncDropsProductWhenStockExhausted" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="eba195b2-7a98-5f3e-2229-3bb1e12db297">
+      <Execution id="2c1399b1-2424-4bd4-8d41-6bf06052e098" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="GetCatalogAsyncDropsProductWhenStockExhausted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnUnknownLineIsNotFoundButALineThatIsNoLongerDraftIsAConflict" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="89324e5f-52d6-8ce3-e671-f26eb7711277">
+      <Execution id="f4efb253-dd39-4df5-aab3-73b3fd05777d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AnUnknownLineIsNotFoundButALineThatIsNoLongerDraftIsAConflict" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="a7f3e4f2-b9a5-d1c5-1015-ea0424f15e36">
+      <Execution id="df3129a1-5dd1-4afc-a165-af8e4a9c3a28" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.StaleTableVersionStillSeatsAnAvailableTableButBusyTableIsRejected" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="05cd0d2f-1681-13b8-0818-e2eed7d3727f">
+      <Execution id="f088671e-8d64-4eed-970c-837460e2f291" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="StaleTableVersionStillSeatsAnAvailableTableButBusyTableIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TableBoundOrderCommitsOrderAndTablePointersTogether" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="417b20e5-aa6a-bd48-edba-fa2b4ee30424">
+      <Execution id="277d90ca-d540-4a81-994f-e282dca0af76" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="TableBoundOrderCommitsOrderAndTablePointersTogether" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.NonAvailableTableIsRejectedEvenWithAMatchingVersion" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="bc48bc46-2c23-5221-3dab-f9fd70d96932">
+      <Execution id="118d0cfc-d3ce-4896-a450-5d79ac3a616e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="NonAvailableTableIsRejectedEvenWithAMatchingVersion" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TheCatalogIsOrderedByTurkishAlphabetAcrossPages" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="ed44550c-2c6b-a6ec-dde8-8affac0642a0">
+      <Execution id="7decace9-d791-403d-b384-0b394730c6d1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="TheCatalogIsOrderedByTurkishAlphabetAcrossPages" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="9b93189c-2b21-e2b6-8254-17a6062ae37a">
+      <Execution id="e6e9b31d-d12c-41fb-a453-722ce07f07a8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="2156a6dc-362f-1ade-601a-4f8ad9d8f02a">
+      <Execution id="93bb1dc0-89a7-46d1-b9e6-7f901c453c68" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieRejectsUnknownToken" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="024f49eb-7db9-08d0-ab93-02930c38eb00">
+      <Execution id="08ddad88-79ea-4561-8eec-eeefffe4d9fd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AuthenticateCashierByCookieRejectsUnknownToken" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="b14bb1df-afd8-028c-2d43-56f163faa890">
+      <Execution id="0ccfe60a-c0a5-422d-ab93-784f08556990" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainDoesNotMergeIntoALineWithModifiers" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="d88cd86a-3b7d-b2be-a138-169ad44e1197">
+      <Execution id="b59ed26e-ba1c-4ea6-83cd-d74f5dca6bec" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AddingTheSameProductAgainDoesNotMergeIntoALineWithModifiers" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="f68980a3-d19e-b5e6-f1db-b1a306aa31c7">
+      <Execution id="4af65ccb-1c2f-48d9-ac46-4662295e9562" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AnOptionThatDoesNotBelongToTheProductIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncReturnsRemainingCountFromDirectStockMapping" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="4779c62e-9c82-9c35-cf19-a677bd215f0d">
+      <Execution id="3870ad54-9271-4827-b56d-264d8ebb8c8d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="GetCatalogAsyncReturnsRemainingCountFromDirectStockMapping" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineIsShownAtItsTaxInclusivePriceNotWithTaxAddedOnTop" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="cd7b698e-ce5a-c82d-3a62-bd3e71518153">
+      <Execution id="39373d89-7529-496b-a0af-1cd9b3d54558" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AComplimentaryLineIsShownAtItsTaxInclusivePriceNotWithTaxAddedOnTop" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineWithAModifierIsShownAtItsFullPrice" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="43708c34-5abe-653b-bc5b-5dce066a6804">
+      <Execution id="3279be8a-bb51-4fa0-a0df-ea20fe2ed84c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AComplimentaryLineWithAModifierIsShownAtItsFullPrice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainMergesOnlyIntoABareLine" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="3f287624-c2d0-3251-7b1b-5b9cd8a52326">
+      <Execution id="293bed71-a00c-402c-b812-f39289e76e70" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AddingTheSameProductAgainMergesOnlyIntoABareLine" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnExpiredPairingCannotBeCompleted" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="9871493e-8e8f-053a-ede8-21a330562c46">
+      <Execution id="869153c3-49f7-4354-a296-557faeb4c2e1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AnExpiredPairingCannotBeCompleted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.APairingIsApprovedThenCompletedWithExpiriesFromTheDatabaseClock" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="f8166fc7-b01b-de4c-236f-2f8686a5b88a">
+      <Execution id="8a737063-7764-4f65-8d49-5de683e18aee" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="APairingIsApprovedThenCompletedWithExpiriesFromTheDatabaseClock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="91fc1579-2128-5982-40b5-6af443fb50b1">
+      <Execution id="3856ebaa-be00-4eef-8ff3-77e655988edc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="MoreSelectionsThanTheGroupAllowsAreRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieResolvesBoundTerminalFromDeviceId" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="cb72483f-9e23-5f96-3eb2-78bfd63744f4">
+      <Execution id="8461bd8b-4872-4f28-9b1d-9041c5c28f26" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="AuthenticateCashierByCookieResolvesBoundTerminalFromDeviceId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.SequentialAddsCommit999AndRejectCumulative1000WithoutChangingRevision" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="8d76475f-62ed-3387-2d02-67889cd8519d">
+      <Execution id="86a1e4ae-075c-463a-860f-d369449a6b39" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="SequentialAddsCommit999AndRejectCumulative1000WithoutChangingRevision" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="661aa4dd-c49b-179b-84b8-75317f19f4a7">
+      <Execution id="7414ed5a-a122-4c3e-a122-76f68b0b1806" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="ARequiredOptionGroupRefusesALineWithoutASelection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="93359382-d705-70d4-d796-e9c8cffa2bd2">
+      <Execution id="cc2e09c1-f8ff-45ce-972e-ceeee5b3be9d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests" name="ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="89324e5f-52d6-8ce3-e671-f26eb7711277" executionId="f4efb253-dd39-4df5-aab3-73b3fd05777d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d76475f-62ed-3387-2d02-67889cd8519d" executionId="86a1e4ae-075c-463a-860f-d369449a6b39" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="91fc1579-2128-5982-40b5-6af443fb50b1" executionId="3856ebaa-be00-4eef-8ff3-77e655988edc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8166fc7-b01b-de4c-236f-2f8686a5b88a" executionId="8a737063-7764-4f65-8d49-5de683e18aee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2156a6dc-362f-1ade-601a-4f8ad9d8f02a" executionId="93bb1dc0-89a7-46d1-b9e6-7f901c453c68" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a7f3e4f2-b9a5-d1c5-1015-ea0424f15e36" executionId="df3129a1-5dd1-4afc-a165-af8e4a9c3a28" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="024f49eb-7db9-08d0-ab93-02930c38eb00" executionId="08ddad88-79ea-4561-8eec-eeefffe4d9fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9871493e-8e8f-053a-ede8-21a330562c46" executionId="869153c3-49f7-4354-a296-557faeb4c2e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b93189c-2b21-e2b6-8254-17a6062ae37a" executionId="e6e9b31d-d12c-41fb-a453-722ce07f07a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb72483f-9e23-5f96-3eb2-78bfd63744f4" executionId="8461bd8b-4872-4f28-9b1d-9041c5c28f26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b14bb1df-afd8-028c-2d43-56f163faa890" executionId="0ccfe60a-c0a5-422d-ab93-784f08556990" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05cd0d2f-1681-13b8-0818-e2eed7d3727f" executionId="f088671e-8d64-4eed-970c-837460e2f291" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="13243b9b-42a5-61bc-16b8-8f75815fa15f" executionId="c2ef6800-dfa0-427b-86a2-bbd2ee830869" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4779c62e-9c82-9c35-cf19-a677bd215f0d" executionId="3870ad54-9271-4827-b56d-264d8ebb8c8d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd7b698e-ce5a-c82d-3a62-bd3e71518153" executionId="39373d89-7529-496b-a0af-1cd9b3d54558" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="93359382-d705-70d4-d796-e9c8cffa2bd2" executionId="cc2e09c1-f8ff-45ce-972e-ceeee5b3be9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43708c34-5abe-653b-bc5b-5dce066a6804" executionId="3279be8a-bb51-4fa0-a0df-ea20fe2ed84c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d88cd86a-3b7d-b2be-a138-169ad44e1197" executionId="b59ed26e-ba1c-4ea6-83cd-d74f5dca6bec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ed44550c-2c6b-a6ec-dde8-8affac0642a0" executionId="7decace9-d791-403d-b384-0b394730c6d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63bc30d5-9287-933f-f156-051d8046e174" executionId="f9f5e6ed-7a16-4bd7-b488-debfe4d0dd87" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc48bc46-2c23-5221-3dab-f9fd70d96932" executionId="118d0cfc-d3ce-4896-a450-5d79ac3a616e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="417b20e5-aa6a-bd48-edba-fa2b4ee30424" executionId="277d90ca-d540-4a81-994f-e282dca0af76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eba195b2-7a98-5f3e-2229-3bb1e12db297" executionId="2c1399b1-2424-4bd4-8d41-6bf06052e098" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="385f69ce-aa68-12d3-8daa-bc051e8185ea" executionId="db81a164-aa6e-491d-aff0-8cb0ce0ea439" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="661aa4dd-c49b-179b-84b8-75317f19f4a7" executionId="7414ed5a-a122-4c3e-a122-76f68b0b1806" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f68980a3-d19e-b5e6-f1db-b1a306aa31c7" executionId="4af65ccb-1c2f-48d9-ac46-4662295e9562" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3f287624-c2d0-3251-7b1b-5b9cd8a52326" executionId="293bed71-a00c-402c-b812-f39289e76e70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="27" executed="27" passed="23" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.58]   Discovering: ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.67]   Discovered:  ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.67]   Starting:    ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:01:01.16]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:01:01.16]       Expected: typeof(System.ArgumentOutOfRangeException)&#xD;
+[xUnit.net 00:01:01.16]       Stack Trace:&#xD;
+[xUnit.net 00:01:01.16]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs(176,0): at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection()&#xD;
+[xUnit.net 00:01:01.16]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:01:44.48]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:01:44.48]       Expected: 2&#xD;
+[xUnit.net 00:01:44.48]       Actual:   1&#xD;
+[xUnit.net 00:01:44.48]       Stack Trace:&#xD;
+[xUnit.net 00:01:44.48]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs(196,0): at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine()&#xD;
+[xUnit.net 00:01:44.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:03:02.31]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:03:02.31]       Expected: typeof(ALKAROS.Host.DualScreen.DualScreenNotFoundException)&#xD;
+[xUnit.net 00:03:02.31]       Stack Trace:&#xD;
+[xUnit.net 00:03:02.31]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs(214,0): at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused()&#xD;
+[xUnit.net 00:03:02.31]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:03:13.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:03:13.47]       Expected: typeof(System.ArgumentOutOfRangeException)&#xD;
+[xUnit.net 00:03:13.47]       Stack Trace:&#xD;
+[xUnit.net 00:03:13.47]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs(228,0): at ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused()&#xD;
+[xUnit.net 00:03:13.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:05:03.08]   Finished:    ALKAROS.Host.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T15:22:48.8256868+03:00">
+        <Text>[xUnit.net 00:01:01.16]     ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T15:23:32.1456804+03:00">
+        <Text>[xUnit.net 00:01:44.48]     ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T15:24:49.9805048+03:00">
+        <Text>[xUnit.net 00:03:02.31]     ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T15:25:01.1343953+03:00">
+        <Text>[xUnit.net 00:03:13.46]     ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

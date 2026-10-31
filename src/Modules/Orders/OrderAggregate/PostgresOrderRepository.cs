@@ -432,6 +432,15 @@ public sealed class PostgresOrderRepository : IOrderRepository
             throw new InvalidOperationException(
                 $"Order item {item.Id} not found or concurrent modification " +
                 $"(expected row version {item.RowVersion}).");
+
+        foreach (var modifier in item.Modifiers)
+        {
+            await using var modifierCommand = CreateCommand(connection, transaction,
+                $"UPDATE {Modifiers} SET quantity = @quantity WHERE order_item_modifier_id = @id AND quantity <> @quantity;");
+            modifierCommand.Parameters.AddWithValue("quantity", modifier.Quantity);
+            modifierCommand.Parameters.AddWithValue("id", modifier.Id);
+            await modifierCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     private static async Task DeleteItemAsync(

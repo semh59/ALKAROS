@@ -39,10 +39,10 @@ public sealed class TableDraftService
     // rendering the ticket) with no clear error at worst. These are
     // generous, not tight: comfortably above anything a real kitchen order
     // needs, so no real request is expected to ever hit them.
-    private const decimal MaximumOrderQuantity = 9999m;
+    internal const decimal MaximumOrderQuantity = 9999m;
     private const int MaximumItemsPerDraft = 200;
     private const int MaximumNoteLength = 1000;
-    private const int MaximumModifiersPerItem = 50;
+    internal const int MaximumModifiersPerItem = 50;
 
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;

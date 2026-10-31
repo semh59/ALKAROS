@@ -1,0 +1,43 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx (3 tests | 2 failed) 2396ms
+     × opens the picker for a product with a required group and sends the choice with the line 88ms
+     × sells nothing when the picker is cancelled 77ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.modifier-picker.test.tsx > Cashier asks for a product's options before selling it > opens the picker for a product with a required group and sends the choice with the line
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:119:68
+    117|     await click(card("Pide"));
+    118|
+    119|     expect(document.querySelector('[role="dialog"]')?.textContent).toC…
+       |                                                                    ^
+    120|     expect(added).toEqual([]);
+    121|     expect(button("Siparişe ekle").disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.modifier-picker.test.tsx > Cashier asks for a product's options before selling it > sells nothing when the picker is cancelled
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:94:11
+     92|
+     93| const click = (element: Element) => act(async () => {
+     94|   element.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+       |           ^
+     95|   await new Promise((resolve) => setTimeout(resolve, 0));
+     96| });
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/Cashier.modifier-picker.test.tsx:93:37
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:135:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  15:27:17
+   Duration  5.32s (transform 1.75s, setup 0ms, import 239ms, tests 2.40s, environment 1.98s)
+
+exit=1
