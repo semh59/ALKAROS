@@ -1,8 +1,8 @@
 # V1-RMD-780 - Garson, kasiyer ve NFC siparişleri günlük menü sayaçlarına girsin
 
 - Task ID: V1-RMD-780
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
 
