@@ -294,7 +294,8 @@ public sealed class Bill
     }
 
     /// <summary>
-    /// Creates a Bill directly from an Order, adding all active/non-cancelled order items.
+    /// Creates a Bill directly from an Order, adding every order item that was ordered: cancelled items and
+    /// Draft items (never fired to the kitchen, so never produced) stay off the bill.
     /// Sets order.TableId and order.Id as initial metadata.
     /// </summary>
     public static Bill FromOrder(
@@ -310,7 +311,7 @@ public sealed class Bill
             throw new ArgumentException("Bill number cannot be empty.", nameof(billNumber));
 
         var billItems = order.Items
-            .Where(i => i.Status != OrderItemState.Cancelled)
+            .Where(i => i.Status is not (OrderItemState.Cancelled or OrderItemState.Draft))
             .Select(i => BillItem.FromOrderItem(billId, i))
             .ToList();
 

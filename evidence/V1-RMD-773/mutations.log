@@ -1,0 +1,14 @@
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+exit=1
+[xUnit.net 00:00:01.09]     ALKAROS.Billing.BillFoundation.Tests.PostgresBillTests.ABillFromAnOrderLeavesOutTheLinesThatNeverWentToTheKitchen [FAIL]
+Başarısız! - Başarısız:     1, Başarılı:    49, Atlanan:     0, Toplam:    50, Süre: 830 ms - ALKAROS.Billing.BillFoundation.Tests.dll (net8.0)
+restored1
+ 1 file changed, 16 insertions(+)
+exit=1
+[xUnit.net 00:00:11.88]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.CheckLifecycleHttpTests.ACheckThatNeverWentToTheKitchenCannotBeSentToTheCashier [FAIL]
+Başarısız! - Başarısız:     1, Başarılı:   106, Atlanan:     0, Toplam:   107, Süre: 1 m 13 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0)
+restored2
+exit=1
+[xUnit.net 00:01:20.63]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADraftOrderGetsNoBillBecauseNothingOnItWentToTheKitchen [FAIL]
+Başarısız! - Başarısız:     1, Başarılı:   112, Atlanan:     0, Toplam:   113, Süre: 5 m 4 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+restored3

@@ -40,6 +40,16 @@ public sealed class CashierHandoffStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
+        // A Draft order was never fired to the kitchen and the till queue only lists Submitted checks: sending it
+        // would free the table and leave the order on no screen.
+        await using (var readStatus = new NpgsqlCommand(
+            "SELECT status FROM orders.orders WHERE order_id = @order_id;", connection, transaction))
+        {
+            readStatus.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+            if (await readStatus.ExecuteScalarAsync(cancellationToken) is "Draft")
+                throw new CheckNotYetOrderedException(orderId);
+        }
+
         await using (var detach = new NpgsqlCommand(
             """
             UPDATE table_mgmt.tables
@@ -295,6 +305,12 @@ public sealed class CashierHandoffStore
         }
         return results;
     }
+}
+
+/// <summary>The check is still a Draft: nothing on it went to the kitchen, so it cannot go to the till.</summary>
+public sealed class CheckNotYetOrderedException : Exception
+{
+    public CheckNotYetOrderedException(Guid orderId) : base($"Check {orderId} has not been submitted.") { }
 }
 
 /// <summary>V1-RMD-281: the check is not (or no longer) waiting at the till for this table.</summary>

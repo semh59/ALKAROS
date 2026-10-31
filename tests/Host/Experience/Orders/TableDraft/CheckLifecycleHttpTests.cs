@@ -502,6 +502,32 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.True((await second.Content.ReadFromJsonAsync<SendCheckToCashierResultV1>())!.AlreadySent);
     }
 
+    [Fact]
+    public async Task ACheckThatNeverWentToTheKitchenCannotBeSentToTheCashier()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-05", [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)], Id: Guid.NewGuid())));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var sent = await client.SendAsync(JsonRequest(
+            SendToCashierPath(terminalId, draft!.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+
+        Assert.Equal(HttpStatusCode.Conflict, sent.StatusCode);
+        Assert.Contains("ORDER_NOT_SUBMITTED", await sent.Content.ReadAsStringAsync());
+        Assert.True(await _database.TableHasOpenCheckAsync(tableId));
+        Assert.NotEqual("Cleaning", await _database.TableStatusAsync(tableId));
+        Assert.Empty(_queueAnnouncer.Changes);
+    }
+
     // ── V1-RMD-154: the kitchen wall, end to end ─────────────────────────
     //
     // The handler's "already sent to the kitchen" rule was always there and

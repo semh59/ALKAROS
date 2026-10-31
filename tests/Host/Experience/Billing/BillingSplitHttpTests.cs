@@ -426,6 +426,24 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADraftOrderGetsNoBillBecauseNothingOnItWentToTheKitchen()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true);
+        var orderId = await _database.SeedOrderWithoutBillAsync();
+        await _database.SetOrderStatusByIdAsync(orderId, "Draft");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/from-order/{orderId:D}", cookie));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("UNSUPPORTED_ORDER_STATE", (await ErrorOf(response)).Code);
+        Assert.Equal(0L, await _database.BillCountForOrderAsync(orderId));
+    }
+
+    [Fact]
     public async Task ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill()
     {
         // Regression test for an independent audit finding (2026-09-05, H1):
@@ -1873,14 +1891,15 @@ internal sealed class BillingSplitTestDatabase
             ("second_sku", "SKU-" + secondProductId.ToString("N")[..8]));
 
         var orderId = Guid.NewGuid();
-        var firstOrderItem = new OrderItem(Guid.NewGuid(), orderId, firstProductId, "Main course", 2m, 100m, taxRate);
-        var secondOrderItem = new OrderItem(Guid.NewGuid(), orderId, secondProductId, "Drink", 1m, 50m, taxRate);
+        var firstOrderItem = new OrderItem(Guid.NewGuid(), orderId, firstProductId, "Main course", 2m, 100m, taxRate, status: OrderItemState.Active);
+        var secondOrderItem = new OrderItem(Guid.NewGuid(), orderId, secondProductId, "Drink", 1m, 50m, taxRate, status: OrderItemState.Active);
         var order = new Order(
             orderId,
             OrderSource.Cashier,
             "ORD-" + orderId.ToString("N"),
             [firstOrderItem, secondOrderItem],
-            tableId);
+            tableId,
+            status: OrderState.Submitted);
         await new PostgresOrderRepository(DataSource).AddAsync(order);
 
         var bill = Bill.FromOrder(Guid.NewGuid(), "BIL-" + orderId.ToString("N"), order);
@@ -1901,8 +1920,8 @@ internal sealed class BillingSplitTestDatabase
             ("sku", "SKU-" + productId.ToString("N")[..8]));
 
         var orderId = Guid.NewGuid();
-        var orderItem = new OrderItem(Guid.NewGuid(), orderId, productId, "Main course", 1m, 100m, 10m);
-        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + orderId.ToString("N"), [orderItem]);
+        var orderItem = new OrderItem(Guid.NewGuid(), orderId, productId, "Main course", 1m, 100m, 10m, status: OrderItemState.Active);
+        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + orderId.ToString("N"), [orderItem], status: OrderState.Submitted);
         await new PostgresOrderRepository(DataSource).AddAsync(order);
         return orderId;
     }

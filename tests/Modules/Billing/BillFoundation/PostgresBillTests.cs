@@ -383,7 +383,7 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
     {
         var product = await SeedProduct("Mercimek", 60m);
         var table = await SeedTable("Masa 4");
-        var order = await CreateAndSaveOrder(product, "Mercimek", 60m, table);
+        var order = await CreateAndSaveOrder(product, "Mercimek", 60m, table, OrderItemState.Active);
 
         var bill = Bill.FromOrder(Guid.NewGuid(), UniqueBillNumber(), order);
         await _bills.AddAsync(bill);
@@ -433,7 +433,30 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
         return tableId;
     }
 
-    private async Task<Order> CreateAndSaveOrder(Guid productId, string productName, decimal price = 100m, Guid? tableId = null)
+    [Fact]
+    public async Task ABillFromAnOrderLeavesOutTheLinesThatNeverWentToTheKitchen()
+    {
+        var product = await SeedProduct("Izgara", 120m);
+        var orderId = Guid.NewGuid();
+        var fired = new OrderItem(Guid.NewGuid(), orderId, product, "Izgara", 1, 120m, 10m, status: OrderItemState.Active);
+        var held = new OrderItem(Guid.NewGuid(), orderId, product, "Tatli", 1, 80m, 10m, status: OrderItemState.Draft);
+        var order = new Order(
+            orderId, OrderSource.Waiter, "ORD-" + Guid.NewGuid().ToString("N")[..8], new[] { fired, held },
+            status: OrderState.Submitted);
+        await _orders.AddAsync(order);
+
+        var bill = Bill.FromOrder(Guid.NewGuid(), UniqueBillNumber(), order);
+        await _bills.AddAsync(bill);
+
+        var reloaded = await _bills.GetByIdAsync(bill.Id);
+        Assert.NotNull(reloaded);
+        Assert.Equal(fired.Id, Assert.Single(reloaded.Items).OrderItemId);
+        Assert.Equal(120m, reloaded.PayableAmount);
+    }
+
+    private async Task<Order> CreateAndSaveOrder(
+        Guid productId, string productName, decimal price = 100m, Guid? tableId = null,
+        OrderItemState status = OrderItemState.Draft)
     {
         var orderId = Guid.NewGuid();
         var item = new OrderItem(
@@ -443,7 +466,8 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
             productNameSnapshot: productName,
             quantity: 1,
             unitPrice: price,
-            taxRate: 10m);
+            taxRate: 10m,
+            status: status);
 
         var order = new Order(
             id: orderId,

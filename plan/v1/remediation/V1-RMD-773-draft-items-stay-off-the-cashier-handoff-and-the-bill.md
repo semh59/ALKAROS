@@ -1,7 +1,7 @@
 # V1-RMD-773 - Ateşlenmemiş Draft sipariş kasaya gitmesin, Draft kalem faturaya girmesin
 
 - Task ID: V1-RMD-773
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing

@@ -424,7 +424,7 @@ public sealed class BillingSplitStore
         var order = await _orders.GetByIdAsync(orderId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.", "sipariş");
 
-        if (order.Status is OrderState.Cancelled or OrderState.Rejected)
+        if (order.Status is OrderState.Cancelled or OrderState.Rejected or OrderState.Draft)
             throw new UnsupportedOrderStateException($"Cannot create a bill from an order in '{order.Status}' state.");
 
         var billId = Guid.NewGuid();
