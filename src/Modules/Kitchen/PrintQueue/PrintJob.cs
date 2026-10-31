@@ -310,6 +310,13 @@ public sealed class PrintJob
         if (LeaseExpiresAt.HasValue && LeaseExpiresAt.Value >= now)
             return this; // Lease is still active
 
+        if (Status == PrintJobStatus.Printing)
+        {
+            // The worker may have reached the printer before it died; a blind resend could print the ticket twice.
+            return MarkAwaitingOperatorReview(
+                "Lease expired while printing; the printer output is unknown and needs an operator review.", now);
+        }
+
         return new PrintJob(
             Id,
             TicketId,

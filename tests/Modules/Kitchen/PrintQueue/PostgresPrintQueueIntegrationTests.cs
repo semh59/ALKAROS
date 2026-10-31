@@ -220,6 +220,28 @@ public sealed class PostgresPrintQueueIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RecoverExpiredLeasesSendsAJobThatWasPrintingToOperatorReviewAndLeavesNoDuplicateToPrint()
+    {
+        var job = PrintJob.Create(_testTicket.Id, _testPrinterId, "Payload", idempotencyKey: "key-recover-printing");
+        await _queueRepo.EnqueueJobAsync(job);
+
+        var past = DateTimeOffset.UtcNow.AddMinutes(-10);
+        var claimed = await _queueRepo.ClaimEligibleJobsAsync("CrashedWorker", 5, TimeSpan.FromMinutes(1), past);
+        // The worker saved Printing and then died while sending; its lease ran out.
+        await _queueRepo.SaveAsync(claimed.Single(j => j.Id == job.Id).MarkPrinting("CrashedWorker", past));
+
+        var recoveredCount = await _queueRepo.RecoverExpiredLeasesAsync(DateTimeOffset.UtcNow);
+
+        recoveredCount.Should().Be(1);
+        var reloaded = await _queueRepo.GetByIdAsync(job.Id);
+        reloaded!.Status.Should().Be(PrintJobStatus.AwaitingOperatorReview);
+        reloaded.LeasedBy.Should().BeNull();
+        reloaded.LastError.Should().NotBeNullOrWhiteSpace();
+        var eligible = await _queueRepo.ClaimEligibleJobsAsync("NextWorker", 5, TimeSpan.FromMinutes(1), DateTimeOffset.UtcNow);
+        eligible.Should().NotContain(j => j.Id == job.Id);
+    }
+
+    [Fact]
     public async Task EndToEndPrintingWithEscPosFormatterAndKitchenPrinterSimulator()
     {
         var simulator = new KitchenPrinterSimulator(_testPrinterId, "Station1-POSPrinter", PrinterSimulatedState.Online);

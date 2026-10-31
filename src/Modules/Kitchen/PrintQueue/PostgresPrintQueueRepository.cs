@@ -285,7 +285,21 @@ public sealed class PostgresPrintQueueRepository : IPrintQueueRepository
                 last_error = 'Lease expired and reset to Pending during recovery.',
                 updated_at = @now,
                 row_version = row_version + 1
-            WHERE status IN ('Leased', 'Printing')
+            WHERE status = 'Leased'
+              AND lease_expires_at < @now;
+
+            -- A job that was already printing may have reached the printer before the worker died: resending it blindly
+            -- could print the ticket twice, so it waits for an operator like an uncertain transmission does.
+            UPDATE kitchen.print_jobs
+            SET status = 'AwaitingOperatorReview',
+                leased_by = NULL,
+                lease_expires_at = NULL,
+                next_attempt_at = NULL,
+                failed_at = @now,
+                last_error = 'Lease expired while printing; the printer output is unknown and needs an operator review.',
+                updated_at = @now,
+                row_version = row_version + 1
+            WHERE status = 'Printing'
               AND lease_expires_at < @now;
             """;
         cmd.Parameters.AddWithValue("now", now);

@@ -172,6 +172,28 @@ public sealed class PrintQueueUnitTests
     }
 
     [Fact]
+    public void ResetExpiredLeaseSendsAStalePrintingJobToOperatorReviewInsteadOfPending()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var staleJob = new PrintJob(
+            Guid.NewGuid(),
+            _ticketId,
+            _printerId,
+            "key-printing",
+            Payload,
+            status: PrintJobStatus.Printing,
+            leasedBy: "DeadWorker",
+            leaseExpiresAt: now.AddMinutes(-5));
+
+        var recovered = staleJob.ResetExpiredLease(now);
+
+        recovered.Status.Should().Be(PrintJobStatus.AwaitingOperatorReview);
+        recovered.LeasedBy.Should().BeNull();
+        recovered.LeaseExpiresAt.Should().BeNull();
+        recovered.LastError.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
     public void CancelSetsTerminalCancelledStatus()
     {
         var job = PrintJob.Create(_ticketId, _printerId, Payload);
