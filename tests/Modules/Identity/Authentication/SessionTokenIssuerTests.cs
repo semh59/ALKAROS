@@ -18,6 +18,28 @@ public sealed class SessionTokenIssuerTests
     }
 
     [Fact]
+    public void FormattingAnIssuedTokenNeverShowsTheTokenOrItsHash()
+    {
+        var issued = SessionTokenIssuer.Issue(Now);
+
+        var text = issued.ToString();
+
+        Assert.DoesNotContain(issued.Token, text);
+        Assert.DoesNotContain(issued.TokenHash, text);
+        Assert.Equal(44, issued.Token.Length);
+    }
+
+    [Fact]
+    public void FormattingALoginSuccessNeverShowsTheSessionToken()
+    {
+        var issued = SessionTokenIssuer.Issue(Now);
+        var success = new LoginSuccess(Guid.NewGuid(), "Kasiyer", issued);
+
+        Assert.DoesNotContain(issued.Token, success.ToString());
+        Assert.DoesNotContain(issued.TokenHash, success.ToString());
+    }
+
+    [Fact]
     public void IssueTokensAreUnique()
     {
         var first = SessionTokenIssuer.Issue(Now);

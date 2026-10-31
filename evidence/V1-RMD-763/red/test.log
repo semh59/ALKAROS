@@ -1,0 +1,1458 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Identity.Authentication.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\bin\Debug\net8.0\ALKAROS.Identity.Authentication.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.39]     ALKAROS.Identity.Authentication.Tests.SessionTokenIssuerTests.FormattingALoginSuccessNeverShowsTheSessionToken [FAIL]
+[xUnit.net 00:00:00.39]     ALKAROS.Identity.Authentication.Tests.SessionTokenIssuerTests.FormattingAnIssuedTokenNeverShowsTheTokenOrItsHash [FAIL]
+  Başarısız ALKAROS.Identity.Authentication.Tests.SessionTokenIssuerTests.FormattingALoginSuccessNeverShowsTheSessionToken [20 ms]
+  Hata İletisi:
+   Assert.DoesNotContain() Failure: Sub-string found
+                                ↓ (pos 124)
+String: ···"sionToken { Token = pGx9rEtKmCbeBmZrHw58L"···
+Found:  "pGx9rEtKmCbeBmZrHw58LgiH/Ofoi2/z/gXVuhVKs"···
+  Yığın İzleme:
+     at ALKAROS.Identity.Authentication.Tests.SessionTokenIssuerTests.FormattingALoginSuccessNeverShowsTheSessionToken() in D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\SessionTokenIssuerTests.cs:line 38
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Başarısız ALKAROS.Identity.Authentication.Tests.SessionTokenIssuerTests.FormattingAnIssuedTokenNeverShowsTheTokenOrItsHash [< 1 ms]
+  Hata İletisi:
+   Assert.DoesNotContain() Failure: Sub-string found
+                                ↓ (pos 29)
+String: ···"sionToken { Token = 8h65Cvv6BMmC+PA/oxzS0"···
+Found:  "8h65Cvv6BMmC+PA/oxzS0iLp007TtJr6bexeMy56m"···
+  Yığın İzleme:
+     at ALKAROS.Identity.Authentication.Tests.SessionTokenIssuerTests.FormattingAnIssuedTokenNeverShowsTheTokenOrItsHash() in D:\PROJECT\ALKAROS\tests\Modules\Identity\Authentication\SessionTokenIssuerTests.cs:line 27
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:04.51]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryCanReLockOnNewWindow [FAIL]
+[xUnit.net 00:00:04.52]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.FiveWrongPinsLockThePinButLeaveTheAccountSignInWorking [FAIL]
+[xUnit.net 00:00:04.52]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.UnknownUsernameFailsWithoutLeakingUserExistence [FAIL]
+[xUnit.net 00:00:04.52]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.ForceUnlockAlsoClearsThePinLockAndItsCounter [FAIL]
+[xUnit.net 00:00:04.52]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ACorrectPinUnlocksAndClearsTheAttemptCounter [FAIL]
+[xUnit.net 00:00:04.52]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.ConcurrentFailuresReachTheLockoutThresholdWithoutLostUpdates [FAIL]
+[xUnit.net 00:00:04.53]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockoutArmsAfterMaxFailuresAndRejectsEvenTheCorrectPassword [FAIL]
+[xUnit.net 00:00:04.53]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameIsCaseSensitive [FAIL]
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryCanReLockOnNewWindow [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.FiveWrongPinsLockThePinButLeaveTheAccountSignInWorking [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.UnknownUsernameFailsWithoutLeakingUserExistence [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.ForceUnlockAlsoClearsThePinLockAndItsCounter [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ACorrectPinUnlocksAndClearsTheAttemptCounter [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.ConcurrentFailuresReachTheLockoutThresholdWithoutLostUpdates [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockoutArmsAfterMaxFailuresAndRejectsEvenTheCorrectPassword [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameIsCaseSensitive [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+[xUnit.net 00:00:04.54]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.UnlockingIsRefusedWhenNoPinWasEverSet [FAIL]
+[xUnit.net 00:00:04.54]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryRestartsTheCounter [FAIL]
+[xUnit.net 00:00:04.54]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.InactiveUserIsRejectedWithInvalidCredentials [FAIL]
+[xUnit.net 00:00:04.54]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameReturnsNullForUnknownUser [FAIL]
+[xUnit.net 00:00:04.54]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ValidCredentialsLoginSucceedsAndIssuesSession [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordOperationsOnMissingUserReturnNoUpdate [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginSuccessClearsFailuresAndSetsLastLogin [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ConcurrentWrongPasswordsDoNotLoseAttemptsAndArmLockout [FAIL]
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.UnlockingIsRefusedWhenNoPinWasEverSet [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryRestartsTheCounter [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.InactiveUserIsRejectedWithInvalidCredentials [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameReturnsNullForUnknownUser [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ValidCredentialsLoginSucceedsAndIssuesSession [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordOperationsOnMissingUserReturnNoUpdate [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginSuccessClearsFailuresAndSetsLastLogin [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ConcurrentWrongPasswordsDoNotLoseAttemptsAndArmLockout [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginSuccessBumpsRowVersion [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.RepeatedFailuresIncrementCounterAndPersistIt [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailurePersistsAttemptsAndLock [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockExpiryAllowsLoginAgain [FAIL]
+[xUnit.net 00:00:04.55]     ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameReturnsTheStoredUser [FAIL]
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SettingAPinRequiresTheCurrentPassword [FAIL]
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.WrongPasswordFailsWithoutLeakingCredentials [FAIL]
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockedOutAttemptDoesNotIncrementFailureCounter [FAIL]
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ClearingThePinTurnsUnlockingOffAgain [FAIL]
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginSuccessBumpsRowVersion [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.RepeatedFailuresIncrementCounterAndPersistIt [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailurePersistsAttemptsAndLock [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockExpiryAllowsLoginAgain [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameReturnsTheStoredUser [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SettingAPinRequiresTheCurrentPassword [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.WrongPasswordFailsWithoutLeakingCredentials [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockedOutAttemptDoesNotIncrementFailureCounter [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ClearingThePinTurnsUnlockingOffAgain [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SuccessfulLoginClearsFailureCounterAndSetsLastLogin [FAIL]
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ExpiredLockRestartsFailureCountingAndReLocksOnlyAfterNewMaxFailures [FAIL]
+[xUnit.net 00:00:04.56]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.WrongPasswordsOnThePinEndpointCountTowardsTheAccountLock [FAIL]
+[xUnit.net 00:00:04.57]     ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SuccessfulLoginUpgradesLegacyPasswordHashToCurrentWorkFactor [FAIL]
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SuccessfulLoginClearsFailureCounterAndSetsLastLogin [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ExpiredLockRestartsFailureCountingAndReLocksOnlyAfterNewMaxFailures [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.WrongPasswordsOnThePinEndpointCountTowardsTheAccountLock [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SuccessfulLoginUpgradesLegacyPasswordHashToCurrentWorkFactor [1 ms]
+  Hata İletisi:
+   Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 72
+   at ALKAROS.TestHelpers.PgTestDatabase.InitializeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 76
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+[xUnit.net 00:00:08.60]     [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)] Npgsql.NpgsqlException
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameReturnsTheStoredUser [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.ForceUnlockAlsoClearsThePinLockAndItsCounter [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameReturnsNullForUnknownUser [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.GetByUsernameIsCaseSensitive [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailurePersistsAttemptsAndLock [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginSuccessClearsFailuresAndSetsLastLogin [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginSuccessBumpsRowVersion [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordOperationsOnMissingUserReturnNoUpdate [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryRestartsTheCounter [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.RecordLoginFailureAfterLockExpiryCanReLockOnNewWindow [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+[xUnit.net 00:00:08.61]     [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)] Npgsql.NpgsqlException
+  Başarısız ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests.ConcurrentFailuresReachTheLockoutThresholdWithoutLostUpdates [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.PostgresUserStoreTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ValidCredentialsLoginSucceedsAndIssuesSession [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SuccessfulLoginUpgradesLegacyPasswordHashToCurrentWorkFactor [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SuccessfulLoginClearsFailureCounterAndSetsLastLogin [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.UnknownUsernameFailsWithoutLeakingUserExistence [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.WrongPasswordFailsWithoutLeakingCredentials [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.InactiveUserIsRejectedWithInvalidCredentials [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.RepeatedFailuresIncrementCounterAndPersistIt [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockoutArmsAfterMaxFailuresAndRejectsEvenTheCorrectPassword [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockExpiryAllowsLoginAgain [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.LockedOutAttemptDoesNotIncrementFailureCounter [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ExpiredLockRestartsFailureCountingAndReLocksOnlyAfterNewMaxFailures [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ConcurrentWrongPasswordsDoNotLoseAttemptsAndArmLockout [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ACorrectPinUnlocksAndClearsTheAttemptCounter [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.FiveWrongPinsLockThePinButLeaveTheAccountSignInWorking [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.UnlockingIsRefusedWhenNoPinWasEverSet [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.SettingAPinRequiresTheCurrentPassword [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.WrongPasswordsOnThePinEndpointCountTowardsTheAccountLock [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests.ClearingThePinTurnsUnlockingOffAgain [1 ms]
+  Hata İletisi:
+   [Test Class Cleanup Failure (ALKAROS.Identity.Authentication.Tests.AuthenticationServiceTests)]: Npgsql.NpgsqlException : Failed to connect to 127.0.0.1:5432
+---- System.Net.Sockets.SocketException : Hedef makine etkin olarak reddettiğinden bağlantı kurulamadı.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.RawOpen(SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.<Open>g__OpenCore|214_1(NpgsqlConnector conn, SslMode sslMode, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.Open(NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.OpenNewConnector(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.PoolingDataSource.<Get>g__RentAsync|33_0(NpgsqlConnection conn, NpgsqlTimeout timeout, Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlConnection.<Open>g__OpenAsync|42_0(Boolean async, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.RunAsync(NpgsqlDataSource dataSource, String sql) in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 63
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+   at ALKAROS.TestHelpers.PgTestDatabase.DisposeAsync() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\Fixtures\PgTestDatabase.cs:line 91
+----- Inner Stack Trace -----
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Npgsql.TaskTimeoutAndCancellation.ExecuteAsync(Func`2 getTaskFunc, NpgsqlTimeout timeout, CancellationToken cancellationToken)
+   at Npgsql.Internal.NpgsqlConnector.ConnectAsync(NpgsqlTimeout timeout, CancellationToken cancellationToken)
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-763\red\semih_SEMH59_2026-10-31_13_01_03_net8.0.trx
+
+Başarısız! - Başarısız:    60, Başarılı:    32, Atlanan:     0, Toplam:    92, Süre: 8 s - ALKAROS.Identity.Authentication.Tests.dll (net8.0)

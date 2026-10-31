@@ -7,7 +7,11 @@ namespace ALKAROS.Identity.Authentication;
 /// itself is only ever returned to the caller; persistence and revocation of
 /// its SHA-256 hash belong to V1-IAM-003 (device_sessions).
 /// </summary>
-public sealed record IssuedSessionToken(string Token, string TokenHash, DateTimeOffset ExpiresAt);
+public sealed record IssuedSessionToken(string Token, string TokenHash, DateTimeOffset ExpiresAt)
+{
+    // The generated ToString would print the live token into any log line or exception message.
+    public override string ToString() => $"IssuedSessionToken {{ ExpiresAt = {ExpiresAt:O} }}";
+}
 
 /// <summary>
 /// Produces cryptographically random session tokens with a default lifetime
