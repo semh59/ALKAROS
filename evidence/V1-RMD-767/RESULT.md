@@ -13,3 +13,9 @@ Düzeltme: sözlükler kopyalandıktan sonra `ReadOnlyDictionary` ile sarılır.
 ## Sınırlar
 - `SensitiveEnvelope` üzerindeki `init` erişimcileri ve `with` ifadesiyle yeniden atama (kopya ve sarma atlanır) kapsam dışıdır; değişmezlik kısmen sağlanır.
 - Kopyanın kaldırılmasına karşı mutasyon yapılmadı.
+
+## İnceleme
+- Kod/güvenlik ve test/kanıt incelemesi, engelleyici bulgu yok. `src`'de zarf veya yük üzerinde `with` kullanımı ve `Dictionary` aşağı çevirmesi yoktur (grep); `with` yalnız testlerde geçer. AAD sıralaması sözlük türünden bağımsızdır (`OrderBy` Ordinal).
+- İnceleme önerisiyle yük testine arayüz üzerinden yazma denemesi eklendi (`NotSupportedException` beklenir). `green-final/` 39/39 exit 0; `mutation-payload-unwrapped-final/` (sarmalayıcı HEAD baseline sürümüne geri alınınca) yük testi düştü; kaynak `cmp` ile geri yüklendi.
+- Doğrulanamayanlar: `red/` ve `green/` log sonlarındaki toplam sayıları (37/39) incelemede okunamadı; `IDictionary` yazma davranışı yalnız .NET bilgisi ve yeni testle gösterildi.
+- Kalan düşük açık: `SensitiveEnvelope.FieldCategories` `init` erişimcisi; bir `with { FieldCategories = ... }` ham sözlük atar (üretimde kullanım yok).

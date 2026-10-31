@@ -42,6 +42,8 @@ public static class PayloadRedactionTests
         Assert.False(SamplePayload.Categories is Dictionary<string, SensitiveCategory>);
         Assert.False(SamplePayload.Fields is Dictionary<string, string>);
         Assert.Equal(SensitiveCategory.Payment, SamplePayload.Categories["card-number"]);
+        Assert.Throws<NotSupportedException>(
+            () => ((IDictionary<string, SensitiveCategory>)SamplePayload.Categories)["card-number"] = SensitiveCategory.Public);
     }
 
     [Fact]
