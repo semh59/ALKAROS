@@ -24,6 +24,7 @@ kılmak; lease expiry sonrası yeniden teslim yolunu testlerle kapatmak.
 - C52 lease-token `InboxMessage.cs` and redelivery-contract surface is transferred to V1-FND-019; this historical task
   remains closed.
 - V1-RMD-739 doğrulama notu (2026-10-28): src/BuildingBlocks/Messaging/IInboxHandler.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
+- V1-RMD-770 notu (2026-10-31): bu görevin teslimatı, sıfır tüketicisi olduğu için V1-RMD-134 ile (commit 6b54f9ae) silindi (Messaging içindeki Inbox kalıbı: InboxStore, IInboxHandler, InboxMessage, InboxEnvelope, InboxStatus). Kabul kanıtları silinen koda aittir.
 
 ## In scope
 

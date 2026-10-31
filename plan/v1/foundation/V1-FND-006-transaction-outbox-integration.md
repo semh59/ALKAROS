@@ -22,6 +22,7 @@ Transaction commit ile durable Outbox enqueue/dispatch sınırını tek crash-sa
 - Kapsam genişletme onayı (2026-08-01 kullanıcı onayı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı (Npgsql zaten `Directory.Packages.props` merkezi paketindedir).
 - Bu görev, transaction veya Inbox/Outbox owner surface'lerini değiştiremez.
+- V1-RMD-770 notu (2026-10-31): bu görevin teslimatı, sıfır tüketicisi olduğu için V1-RMD-134 ile (commit 6b54f9ae) silindi (src/BuildingBlocks/TransactionOutboxIntegration yoktur; Outbox'ın kendisi src/BuildingBlocks/Messaging/OutboxStore.cs içinde canlıdır). Görev tarihsel olarak kapalı kalır; kabul kanıtları silinen koda aittir.
 
 ## In scope
 

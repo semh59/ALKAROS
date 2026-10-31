@@ -18,6 +18,7 @@ probe ile yeniden üretmek ve atomiklik sonucunu bağımsız doğrulamak.
 ## Owned surface
 
 - `evidence/V1-FND-018/**`
+- V1-RMD-770 notu (2026-10-31): bu görevin Idempotency kütüphanesi (IdempotencyKeyStore yüzeyi V1-RMD-035'e devredilmişti), sıfır tüketicisi olduğu için V1-RMD-134 ile (commit 6b54f9ae) silindi (src/BuildingBlocks/Idempotency yoktur). Kabul kanıtları silinen koda aittir.
 - PO:2026-08-28 deep code audit kararıyla IdempotencyKeyStore.cs ve test yüzeyi V1-RMD-035'e devredildi; bu historical task closed kalır.
 
 ## In scope

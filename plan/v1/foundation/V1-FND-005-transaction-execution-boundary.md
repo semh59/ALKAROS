@@ -22,6 +22,7 @@ V0-ARC-001 ve V0-ARC-003 kararlarını tek transaction, rollback ve retry yürü
 - Kapsam genişletme onayı (2026-07-31 kullanıcı talimatı): bu task'ın yeni projelerinin `ALKAROS.slnx` ve
   `build/project-manifest.json` içine kaydı.
 - Bu görev domain workflow veya module repository yüzeyini değiştiremez.
+- V1-RMD-770 notu (2026-10-31): bu görevin teslimatı, sıfır tüketicisi olduğu için V1-RMD-134 ile (commit 6b54f9ae) silindi (src/BuildingBlocks/Transactions yoktur). Görev tarihsel olarak kapalı kalır; kabul kanıtları silinen koda aittir ve bugün canlı bir yüzeyi doğrulamaz.
 
 ## In scope
 
