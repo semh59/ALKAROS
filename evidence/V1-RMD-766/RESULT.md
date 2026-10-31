@@ -11,3 +11,8 @@ Düzeltme: sahte sınıfa eksik aşırı yükleme eklendi (diğerleri gibi `NotS
 ## Sınırlar
 - Yalnız bu proje denetlendi; diğer test projelerinin derleme durumu bu görevde taranmadı.
 - Düzeltme test sahtesidir, üretim kodu değişmedi; mutasyon uygulanmaz (eklenen üye hiçbir davranışı doğrulamaz, yalnız derlemeyi açar).
+
+## İnceleme
+- Kod/kapsam ve süreç/kanıt incelemesi, engelleyici bulgu yok. İmza arayüzle birebir; arayüzün 8 üyesinin hepsi fake'te var; loglar RESULT.md ile örtüşüyor.
+- Ek tarama: son dönemde değişen arayüzlerin fake'lerini taşıyan 6 test projesi derlendi (Inventory.BalanceProjection, WasteRecording, PortionReservations.CancellationEffects, Identity.Authentication, Identity.Authorization, Reporting.V1Operations): hepsi exit 0. Kalan yaklaşık 25 test projesinin derlendiği doğrulanmadı.
+- Kapsam: `scope-vs-b381300d.json` valid=true.
