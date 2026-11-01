@@ -52,15 +52,20 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_rsv ON auth_rsv.item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id,
+                       SUM((metadata->>'portion_count')::numeric
+                           - COALESCE((metadata->>'portions_returned')::numeric, 0)
+                           - COALESCE((metadata->>'portions_wasted')::numeric, 0)) AS qty
                 FROM inventory.portion_reservations
                 WHERE status = 'Consumed' AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_cons ON auth_cons.item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id,
+                       SUM(CASE WHEN status = 'Waste' THEN (metadata->>'portion_count')::numeric
+                                ELSE COALESCE((metadata->>'portions_wasted')::numeric, 0) END) AS qty
                 FROM inventory.portion_reservations
-                WHERE status = 'Waste' AND metadata->>'daily_menu_item_id' IS NOT NULL
+                WHERE status IN ('Waste', 'Consumed') AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_waste ON auth_waste.item_id = dmi.daily_menu_item_id
             WHERE (@fromDate::date IS NULL OR dm.business_date >= @fromDate::date)

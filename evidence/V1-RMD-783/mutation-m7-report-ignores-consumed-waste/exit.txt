@@ -1,0 +1,2 @@
+exit=1
+restored=hash-identical 0d0eb6ddd6cdee1f5226d73a4f7c6649c3f3f03745d2654a55e2195f7c1f0053

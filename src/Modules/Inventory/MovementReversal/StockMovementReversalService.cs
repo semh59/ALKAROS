@@ -1,4 +1,5 @@
 using ALKAROS.Inventory.BalanceProjection;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
 using Npgsql;
@@ -130,6 +131,14 @@ public sealed class StockMovementReversalService : IStockMovementReversalService
             written.Add(returned);
         }
 
+        // The daily menu counts the order item's ordered units as portions, so they come back in the same share.
+        await DailyMenuPortionEvents.ReturnShareAsync(
+            request.OrderItemId,
+            request.PreviouslyReturnedQuantity + request.ReturnedQuantity,
+            request.TotalQuantity,
+            connection,
+            transaction,
+            ct);
         return written;
     }
 

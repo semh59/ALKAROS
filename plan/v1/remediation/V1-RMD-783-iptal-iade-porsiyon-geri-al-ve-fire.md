@@ -1,7 +1,7 @@
 # V1-RMD-783 - İptal ve iadede günlük menü porsiyonu geri alınsın, hazırlanmış kalem fire sayılsın
 
 - Task ID: V1-RMD-783
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Planned

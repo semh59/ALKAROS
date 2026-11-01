@@ -315,6 +315,130 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
         }
     }
 
+    public async Task<ApplyCounterResult> ApplyReservationAdjustmentAsync(
+        ReservationAdjustmentCounterEvent evt,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(evt);
+        if (evt.DailyMenuItemId == Guid.Empty)
+            throw new ArgumentException("DailyMenuItemId cannot be empty.", nameof(evt));
+        if (evt.ReservationId == Guid.Empty)
+            throw new ArgumentException("ReservationId cannot be empty.", nameof(evt));
+        if (evt.ReturnedPortions < 0m || evt.WastedPortions < 0m)
+            throw new InvalidCounterDeltaException(
+                $"Adjusted portions cannot be negative, got returned {evt.ReturnedPortions} and wasted {evt.WastedPortions}.");
+
+        await using var conn = await _dataSource.OpenConnectionAsync(ct);
+        await using var tx = await conn.BeginTransactionAsync(ct);
+
+        try
+        {
+            // Serialises deliveries for one reservation so the previously applied amount read below cannot go stale.
+            await using (var lockCmd = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtextextended($1, 0));", conn, tx))
+            {
+                lockCmd.Parameters.AddWithValue(evt.ReservationId.ToString());
+                await lockCmd.ExecuteNonQueryAsync(ct);
+            }
+
+            var returnedDelta = await AdvanceAdjustmentAsync(conn, tx, evt, "Returned", evt.ReturnedPortions, ct);
+            var wastedDelta = await AdvanceAdjustmentAsync(conn, tx, evt, "Wasted", evt.WastedPortions, ct);
+            if (returnedDelta == 0m && wastedDelta == 0m)
+            {
+                await tx.RollbackAsync(ct);
+                var existing = await GetCountersAsync(evt.DailyMenuItemId, ct)
+                    ?? throw new DailyMenuItemNotFoundException(evt.DailyMenuItemId);
+                return new ApplyCounterResult(existing, IsIdempotentReplay: true);
+            }
+
+            // Both kinds leave consumed; wasted portions land in waste, so available (prepared less all four) is unchanged by waste.
+            const string updateSql = """
+                UPDATE menu.daily_menu_items
+                SET consumed_portions = GREATEST(0, consumed_portions - $1 - $2),
+                    waste_portions = waste_portions + $2,
+                    available_portions = GREATEST(0, prepared_portions - reserved_portions - GREATEST(0, consumed_portions - $1 - $2) - (waste_portions + $2)),
+                    out_of_stock = ((prepared_portions - reserved_portions - GREATEST(0, consumed_portions - $1 - $2) - (waste_portions + $2)) <= 0),
+                    updated_at = NOW()
+                WHERE daily_menu_item_id = $3
+                RETURNING daily_menu_item_id, planned_portions, prepared_portions, available_portions,
+                          reserved_portions, consumed_portions, waste_portions, out_of_stock;
+                """;
+
+            await using var updateCmd = new NpgsqlCommand(updateSql, conn, tx);
+            updateCmd.Parameters.AddWithValue(returnedDelta);
+            updateCmd.Parameters.AddWithValue(wastedDelta);
+            updateCmd.Parameters.AddWithValue(evt.DailyMenuItemId);
+
+            await using var reader = await updateCmd.ExecuteReaderAsync(ct);
+            if (!await reader.ReadAsync(ct))
+            {
+                await reader.CloseAsync();
+                await tx.RollbackAsync(ct);
+                throw new DailyMenuItemNotFoundException(evt.DailyMenuItemId);
+            }
+
+            var counters = MapRow(reader);
+            await reader.CloseAsync();
+
+            await tx.CommitAsync(ct);
+            return new ApplyCounterResult(counters, IsIdempotentReplay: false);
+        }
+        catch
+        {
+            await tx.RollbackAsync(ct);
+            throw;
+        }
+    }
+
+    /// <summary>Records the cumulative amount of an adjustment kind and returns how much of it is new; zero when nothing grew.</summary>
+    private static async Task<decimal> AdvanceAdjustmentAsync(
+        NpgsqlConnection conn,
+        NpgsqlTransaction tx,
+        ReservationAdjustmentCounterEvent evt,
+        string eventType,
+        decimal cumulative,
+        CancellationToken ct)
+    {
+        if (cumulative <= 0m)
+            return 0m;
+
+        decimal previous;
+        await using (var readCmd = new NpgsqlCommand(
+            """
+            SELECT quantity FROM menu.daily_menu_counter_applied_events
+            WHERE daily_menu_item_id = $1 AND event_type = $2 AND source_event_id = $3;
+            """,
+            conn,
+            tx))
+        {
+            readCmd.Parameters.AddWithValue(evt.DailyMenuItemId);
+            readCmd.Parameters.AddWithValue(eventType);
+            readCmd.Parameters.AddWithValue(evt.ReservationId);
+            previous = await readCmd.ExecuteScalarAsync(ct) as decimal? ?? 0m;
+        }
+
+        if (cumulative <= previous)
+            return 0m;
+
+        await using var writeCmd = new NpgsqlCommand(
+            """
+            INSERT INTO menu.daily_menu_counter_applied_events (
+                id, daily_menu_item_id, event_type, source_event_id, terminal_status, quantity, applied_at
+            ) VALUES ($1, $2, $3, $4, NULL, $5, $6)
+            ON CONFLICT (daily_menu_item_id, event_type, source_event_id)
+            DO UPDATE SET quantity = EXCLUDED.quantity, applied_at = EXCLUDED.applied_at;
+            """,
+            conn,
+            tx);
+        writeCmd.Parameters.AddWithValue(Guid.NewGuid());
+        writeCmd.Parameters.AddWithValue(evt.DailyMenuItemId);
+        writeCmd.Parameters.AddWithValue(eventType);
+        writeCmd.Parameters.AddWithValue(evt.ReservationId);
+        writeCmd.Parameters.AddWithValue(cumulative);
+        writeCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);
+        await writeCmd.ExecuteNonQueryAsync(ct);
+        return cumulative - previous;
+    }
+
     public async Task<DailyMenuCounterRebuildReport> RebuildDailyMenuCountersAsync(
         Guid dailyMenuId,
         CancellationToken ct = default)
@@ -402,7 +526,10 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                 // Authoritative reservations by status:
                 // Look up reservations where metadata->>'daily_menu_item_id' matches this item
                 const string rsvSql = """
-                    SELECT status, COALESCE(SUM((metadata->>'portion_count')::numeric), 0)
+                    SELECT status,
+                           COALESCE(SUM((metadata->>'portion_count')::numeric), 0),
+                           COALESCE(SUM(COALESCE((metadata->>'portions_returned')::numeric, 0)), 0),
+                           COALESCE(SUM(COALESCE((metadata->>'portions_wasted')::numeric, 0)), 0)
                     FROM inventory.portion_reservations
                     WHERE metadata->>'daily_menu_item_id' = $1
                     GROUP BY status;
@@ -423,7 +550,11 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                         if (string.Equals(status, "Reserved", StringComparison.OrdinalIgnoreCase))
                             authReserved += qty;
                         else if (string.Equals(status, "Consumed", StringComparison.OrdinalIgnoreCase))
-                            authConsumed += qty;
+                        {
+                            var wasted = rReader.GetDecimal(3);
+                            authConsumed += qty - rReader.GetDecimal(2) - wasted;
+                            authWaste += wasted;
+                        }
                         else if (string.Equals(status, "Waste", StringComparison.OrdinalIgnoreCase))
                             authWaste += qty;
                     }
@@ -460,6 +591,27 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                     repRsvCmd2.Parameters.AddWithValue(itemId);
                     repRsvCmd2.Parameters.AddWithValue(itemId.ToString());
                     await repRsvCmd2.ExecuteNonQueryAsync(ct);
+                }
+
+                // The returned and wasted shares of consumed rows are cumulative, so their applied-event records are rebuilt too.
+                foreach (var (eventType, key) in new[] { ("Returned", "portions_returned"), ("Wasted", "portions_wasted") })
+                {
+                    await using var adjustCmd = new NpgsqlCommand(
+                        $"""
+                        INSERT INTO menu.daily_menu_counter_applied_events (
+                            id, daily_menu_item_id, event_type, source_event_id, terminal_status, quantity, applied_at
+                        )
+                        SELECT gen_random_uuid(), $1, '{eventType}', id, NULL, (metadata->>'{key}')::numeric, NOW()
+                        FROM inventory.portion_reservations
+                        WHERE metadata->>'daily_menu_item_id' = $2 AND status = 'Consumed'
+                          AND COALESCE((metadata->>'{key}')::numeric, 0) > 0
+                        ON CONFLICT (daily_menu_item_id, event_type, source_event_id) DO NOTHING;
+                        """,
+                        conn,
+                        tx);
+                    adjustCmd.Parameters.AddWithValue(itemId);
+                    adjustCmd.Parameters.AddWithValue(itemId.ToString());
+                    await adjustCmd.ExecuteNonQueryAsync(ct);
                 }
 
                 var authAvailable = Math.Max(0m, authPrepared - authReserved - authConsumed - authWaste);
@@ -535,15 +687,20 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_rsv ON auth_rsv.item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id,
+                       SUM((metadata->>'portion_count')::numeric
+                           - COALESCE((metadata->>'portions_returned')::numeric, 0)
+                           - COALESCE((metadata->>'portions_wasted')::numeric, 0)) AS qty
                 FROM inventory.portion_reservations
                 WHERE status = 'Consumed' AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_cons ON auth_cons.item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id,
+                       SUM(CASE WHEN status = 'Waste' THEN (metadata->>'portion_count')::numeric
+                                ELSE COALESCE((metadata->>'portions_wasted')::numeric, 0) END) AS qty
                 FROM inventory.portion_reservations
-                WHERE status = 'Waste' AND metadata->>'daily_menu_item_id' IS NOT NULL
+                WHERE status IN ('Waste', 'Consumed') AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_waste ON auth_waste.item_id = dmi.daily_menu_item_id
             WHERE dmi.daily_menu_id = $1;

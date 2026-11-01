@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c8ccdc37-3dbc-4990-ac08-ef8377e448ca" name="semih@SEMH59 2026-11-01 11:16:45" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:16:45.8482711+03:00" queuing="2026-11-01T11:16:45.8482713+03:00" start="2026-11-01T11:16:36.2932269+03:00" finish="2026-11-01T11:16:49.3929486+03:00" />
+  <TestSettings name="default" id="f23949b0-abd0-4888-9ee8-1e1ec2e4244e">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_16_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="68a0130c-3dad-4193-bc16-b55cb4eb975b" testId="26a0ffa5-5c06-1c6b-13b9-5559f1dd339b" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Ready, returned: 0, wasted: 1)" computerName="SEMH59" duration="00:00:00.3633671" startTime="2026-11-01T11:16:48.5648201+03:00" endTime="2026-11-01T11:16:48.5648203+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68a0130c-3dad-4193-bc16-b55cb4eb975b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (0, 1, 1)&#xD;
+Actual:   Tuple (0, 0, 0)</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d5297b0c-ca0b-4132-a8aa-dbbae329b11a" testId="4d456638-cf87-9e3e-5103-5a6b1995aebc" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice" computerName="SEMH59" duration="00:00:00.3138002" startTime="2026-11-01T11:16:49.2982304+03:00" endTime="2026-11-01T11:16:49.2982306+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5297b0c-ca0b-4132-a8aa-dbbae329b11a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (1, 0, 1)&#xD;
+Actual:   Tuple (0, 0, 0)</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 597&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice() in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 597&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b5fdac1d-f913-4c68-9302-c1082cf10f68" testId="f486ee0a-86ae-ddfa-bfc5-13223b37b464" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Held, returned: 1, wasted: 0)" computerName="SEMH59" duration="00:00:00.3379376" startTime="2026-11-01T11:16:47.6078863+03:00" endTime="2026-11-01T11:16:47.6078865+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5fdac1d-f913-4c68-9302-c1082cf10f68">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (1, 0, 1)&#xD;
+Actual:   Tuple (0, 0, 0)</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0184dab3-d8b9-4249-b5f7-45fde3ef01a0" testId="9f6fd885-47f0-d54e-34e4-570b455b1a90" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Sent, returned: 1, wasted: 0)" computerName="SEMH59" duration="00:00:00.4050211" startTime="2026-11-01T11:16:46.6982546+03:00" endTime="2026-11-01T11:16:46.6982549+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0184dab3-d8b9-4249-b5f7-45fde3ef01a0">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (1, 0, 1)&#xD;
+Actual:   Tuple (0, 0, 0)</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="608afcfe-8ee2-48cf-88ba-24659b961a71" testId="e8dc8d8c-9123-bdf1-821a-90ae45a7470c" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Preparing, returned: 0, wasted: 1)" computerName="SEMH59" duration="00:00:02.1462665" startTime="2026-11-01T11:16:45.8004772+03:00" endTime="2026-11-01T11:16:45.8004969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="608afcfe-8ee2-48cf-88ba-24659b961a71">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (0, 1, 1)&#xD;
+Actual:   Tuple (0, 0, 0)</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+   at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs:line 575&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Sent, returned: 1, wasted: 0)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="9f6fd885-47f0-d54e-34e4-570b455b1a90">
+      <Execution id="0184dab3-d8b9-4249-b5f7-45fde3ef01a0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Preparing, returned: 0, wasted: 1)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e8dc8d8c-9123-bdf1-821a-90ae45a7470c">
+      <Execution id="608afcfe-8ee2-48cf-88ba-24659b961a71" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="4d456638-cf87-9e3e-5103-5a6b1995aebc">
+      <Execution id="d5297b0c-ca0b-4132-a8aa-dbbae329b11a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARepeatedVoidDoesNotAdjustThePortionsTwice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Held, returned: 1, wasted: 0)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="f486ee0a-86ae-ddfa-bfc5-13223b37b464">
+      <Execution id="b5fdac1d-f913-4c68-9302-c1082cf10f68" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Ready, returned: 0, wasted: 1)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="26a0ffa5-5c06-1c6b-13b9-5559f1dd339b">
+      <Execution id="68a0130c-3dad-4193-bc16-b55cb4eb975b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="26a0ffa5-5c06-1c6b-13b9-5559f1dd339b" executionId="68a0130c-3dad-4193-bc16-b55cb4eb975b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d456638-cf87-9e3e-5103-5a6b1995aebc" executionId="d5297b0c-ca0b-4132-a8aa-dbbae329b11a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f486ee0a-86ae-ddfa-bfc5-13223b37b464" executionId="b5fdac1d-f913-4c68-9302-c1082cf10f68" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f6fd885-47f0-d54e-34e4-570b455b1a90" executionId="0184dab3-d8b9-4249-b5f7-45fde3ef01a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8dc8d8c-9123-bdf1-821a-90ae45a7470c" executionId="608afcfe-8ee2-48cf-88ba-24659b961a71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.99]   Discovering: ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:02.08]   Discovered:  ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:02.08]   Starting:    ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60953&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60953/api/v1/terminals/018e8f20-7fbe-4713-b380-bcccdc3c489e/orders/69d378bd-63ad-4b3e-9369-b65c8a24b21f/items/c2ba0ebc-1a19-47c8-a196-a84279379456/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60953/api/v1/terminals/018e8f20-7fbe-4713-b380-bcccdc3c489e/orders/69d378bd-63ad-4b3e-9369-b65c8a24b21f/items/c2ba0ebc-1a19-47c8-a196-a84279379456/void-sent - 200 - application/json;+charset=utf-8 434.4430ms&#xD;
+[xUnit.net 00:00:05.63]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.63]       Expected: Tuple (0, 1, 1)&#xD;
+[xUnit.net 00:00:05.63]       Actual:   Tuple (0, 0, 0)&#xD;
+[xUnit.net 00:00:05.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.63]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:05.64]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:05.64]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:61555&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:61555/api/v1/terminals/58440c25-cb8a-4fa6-b72e-bf2c03fec03e/orders/68d1af61-4ccf-4f71-a600-00acab233a7b/items/5f73464b-a09a-4653-b190-b2271966a844/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:61555/api/v1/terminals/58440c25-cb8a-4fa6-b72e-bf2c03fec03e/orders/68d1af61-4ccf-4f71-a600-00acab233a7b/items/5f73464b-a09a-4653-b190-b2271966a844/void-sent - 200 - application/json;+charset=utf-8 211.0287ms&#xD;
+[xUnit.net 00:00:06.53]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:06.53]       Expected: Tuple (1, 0, 1)&#xD;
+[xUnit.net 00:00:06.53]       Actual:   Tuple (0, 0, 0)&#xD;
+[xUnit.net 00:00:06.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.53]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:06.53]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:06.53]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60092&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60092/api/v1/terminals/b221d927-5cca-473c-9091-e5c4af1fbc9b/orders/639259d8-81d4-4e53-aa33-072f2daef803/items/35551528-dabb-422f-94a6-37788ab601e2/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60092/api/v1/terminals/b221d927-5cca-473c-9091-e5c4af1fbc9b/orders/639259d8-81d4-4e53-aa33-072f2daef803/items/35551528-dabb-422f-94a6-37788ab601e2/void-sent - 200 - application/json;+charset=utf-8 171.3726ms&#xD;
+[xUnit.net 00:00:07.44]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:07.44]       Expected: Tuple (1, 0, 1)&#xD;
+[xUnit.net 00:00:07.44]       Actual:   Tuple (0, 0, 0)&#xD;
+[xUnit.net 00:00:07.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.44]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:07.44]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:07.44]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:61046&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:61046/api/v1/terminals/d5b7612c-4f75-4baf-8988-caf0b7a6838b/orders/a65420aa-6f73-4432-9af8-64822e25ce71/items/f6969259-c092-459a-b03b-b31db1a273ee/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:61046/api/v1/terminals/d5b7612c-4f75-4baf-8988-caf0b7a6838b/orders/a65420aa-6f73-4432-9af8-64822e25ce71/items/f6969259-c092-459a-b03b-b31db1a273ee/void-sent - 200 - application/json;+charset=utf-8 148.0177ms&#xD;
+[xUnit.net 00:00:08.40]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:08.40]       Expected: Tuple (0, 1, 1)&#xD;
+[xUnit.net 00:00:08.40]       Actual:   Tuple (0, 0, 0)&#xD;
+[xUnit.net 00:00:08.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.40]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:08.40]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(575,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(KitchenState kitchenState, Decimal returned, Decimal wasted)&#xD;
+[xUnit.net 00:00:08.40]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57862&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57862/api/v1/terminals/e5f7bc93-d64d-40e6-bff5-33f0ac66219a/orders/d7a09c91-c8fb-4a51-9312-90f6af4e1954/items/18603659-a985-475c-8149-4e48b2172e21/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57862/api/v1/terminals/e5f7bc93-d64d-40e6-bff5-33f0ac66219a/orders/d7a09c91-c8fb-4a51-9312-90f6af4e1954/items/18603659-a985-475c-8149-4e48b2172e21/void-sent - 200 - application/json;+charset=utf-8 155.1173ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57862/api/v1/terminals/e5f7bc93-d64d-40e6-bff5-33f0ac66219a/orders/d7a09c91-c8fb-4a51-9312-90f6af4e1954/items/18603659-a985-475c-8149-4e48b2172e21/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57862/api/v1/terminals/e5f7bc93-d64d-40e6-bff5-33f0ac66219a/orders/d7a09c91-c8fb-4a51-9312-90f6af4e1954/items/18603659-a985-475c-8149-4e48b2172e21/void-sent - 409 - application/json;+charset=utf-8 21.5936ms&#xD;
+[xUnit.net 00:00:09.13]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:09.13]       Expected: Tuple (1, 0, 1)&#xD;
+[xUnit.net 00:00:09.13]       Actual:   Tuple (0, 0, 0)&#xD;
+[xUnit.net 00:00:09.13]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.13]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(597,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice()&#xD;
+[xUnit.net 00:00:09.13]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\OrderManagementVoidSentHttpTests.cs(597,0): at ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice()&#xD;
+[xUnit.net 00:00:09.13]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.14]   Finished:    ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T11:16:45.7966504+03:00">
+        <Text>[xUnit.net 00:00:05.63]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Preparing, returned: 0, wasted: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T11:16:46.6979720+03:00">
+        <Text>[xUnit.net 00:00:06.53]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Sent, returned: 1, wasted: 0) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T11:16:47.6075406+03:00">
+        <Text>[xUnit.net 00:00:07.44]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Held, returned: 1, wasted: 0) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T11:16:48.5643796+03:00">
+        <Text>[xUnit.net 00:00:08.40]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Ready, returned: 0, wasted: 1) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T11:16:49.2980320+03:00">
+        <Text>[xUnit.net 00:00:09.13]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

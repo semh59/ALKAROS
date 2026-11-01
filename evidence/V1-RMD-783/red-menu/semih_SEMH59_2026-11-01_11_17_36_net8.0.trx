@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="c2acdfa3-dc36-4b39-bee5-389bddcd6d05" name="semih@SEMH59 2026-11-01 11:17:36" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:17:36.1941605+03:00" queuing="2026-11-01T11:17:36.1941608+03:00" start="2026-11-01T11:17:29.2670464+03:00" finish="2026-11-01T11:17:36.3447594+03:00" />
+  <TestSettings name="default" id="c607fae1-e321-4979-82a3-ae9a95dca94d">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_17_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ed2e7371-2278-4d45-89d5-fb65c2ec2c70" testId="04fa811a-cced-4aeb-58eb-6c739e1dd591" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift" computerName="SEMH59" duration="00:00:01.3888433" startTime="2026-11-01T11:17:36.0615949+03:00" endTime="2026-11-01T11:17:36.0616249+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed2e7371-2278-4d45-89d5-fb65c2ec2c70">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected (CountersAsync(seed.MenuItemId)).ConsumedPortions to be 2M, but found 3.000M (difference of 1.000).</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 439&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="04fa811a-cced-4aeb-58eb-6c739e1dd591">
+      <Execution id="ed2e7371-2278-4d45-89d5-fb65c2ec2c70" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="04fa811a-cced-4aeb-58eb-6c739e1dd591" executionId="ed2e7371-2278-4d45-89d5-fb65c2ec2c70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.45]   Discovering: ALKAROS.Menu.CounterProjection.Tests&#xD;
+[xUnit.net 00:00:01.52]   Discovered:  ALKAROS.Menu.CounterProjection.Tests&#xD;
+[xUnit.net 00:00:01.52]   Starting:    ALKAROS.Menu.CounterProjection.Tests&#xD;
+[xUnit.net 00:00:03.62]       Expected (CountersAsync(seed.MenuItemId)).ConsumedPortions to be 2M, but found 3.000M (difference of 1.000).&#xD;
+[xUnit.net 00:00:03.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:03.62]            at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:03.62]         D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs(439,0): at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift()&#xD;
+[xUnit.net 00:00:03.62]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.84]   Finished:    ALKAROS.Menu.CounterProjection.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-01T11:17:36.0577911+03:00">
+        <Text>[xUnit.net 00:00:03.62]     ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

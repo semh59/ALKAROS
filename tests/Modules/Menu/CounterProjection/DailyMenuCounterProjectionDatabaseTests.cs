@@ -69,6 +69,7 @@ public sealed class CounterProjectionTestDb : PgTestDatabase
         // 11. What the reservation arbiter, its cancellation and the outbox need
         foreach (var file in new[]
                  {
+                     "210-daily-menu-counter-adjustments.up.sql",
                      "063-waste-records.up.sql",
                      "065-reservation-balance-projection.up.sql",
                      "118-stock-items-reorder-point.up.sql",

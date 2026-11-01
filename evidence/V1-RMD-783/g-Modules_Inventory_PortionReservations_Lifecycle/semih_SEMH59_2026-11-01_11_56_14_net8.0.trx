@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="973996b3-3601-40b5-90b8-a9252f406954" name="semih@SEMH59 2026-11-01 11:56:14" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:56:14.1304930+03:00" queuing="2026-11-01T11:56:14.1304932+03:00" start="2026-11-01T11:56:10.7133124+03:00" finish="2026-11-01T11:56:14.4310355+03:00" />
+  <TestSettings name="default" id="f8c5ff39-e75b-4414-b0fd-e17b35cf0b78">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_56_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ce1b5765-a2b2-466c-9f42-2a6859e2a9c2" testId="8eba1d93-7215-76be-37c6-69de68445ba1" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDatabaseTests.ConsumeReleaseRaceAllowsExactlyOneTerminalTransition" computerName="SEMH59" duration="00:00:00.0293178" startTime="2026-11-01T11:56:14.3141969+03:00" endTime="2026-11-01T11:56:14.3141972+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce1b5765-a2b2-466c-9f42-2a6859e2a9c2" />
+    <UnitTestResult executionId="63d15e47-7f30-464d-905f-9781c7563f34" testId="94effba5-1e3d-0798-4b15-19c6f6b1f8cb" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDatabaseTests.FullReservationLifecyclePersistenceFlow" computerName="SEMH59" duration="00:00:00.3257519" startTime="2026-11-01T11:56:14.2831470+03:00" endTime="2026-11-01T11:56:14.2831473+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63d15e47-7f30-464d-905f-9781c7563f34" />
+    <UnitTestResult executionId="f9ef4993-d0b3-47c8-aba0-9414be515f00" testId="2fe8cab1-8216-e38a-5bb3-667b5bca6ea6" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.WasteReservationTransitionsStatusToWaste" computerName="SEMH59" duration="00:00:00.0028376" startTime="2026-11-01T11:56:13.7544533+03:00" endTime="2026-11-01T11:56:13.7544534+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9ef4993-d0b3-47c8-aba0-9414be515f00" />
+    <UnitTestResult executionId="503dee3c-ecc7-4345-8eeb-ff973da46a06" testId="1305dc38-c46a-488b-e30f-ec170b469089" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.CreateReservationWithValidDataInitializesInReservedStatus" computerName="SEMH59" duration="00:00:00.0021822" startTime="2026-11-01T11:56:13.7591098+03:00" endTime="2026-11-01T11:56:13.7591100+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="503dee3c-ecc7-4345-8eeb-ff973da46a06" />
+    <UnitTestResult executionId="3fcc237d-94c5-4f59-bd17-fcc4df70b342" testId="ee06115a-50f6-5207-c7c7-68d752b926ad" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.RepeatingSameTransitionIsIdempotentReplay" computerName="SEMH59" duration="00:00:00.0011777" startTime="2026-11-01T11:56:13.7672772+03:00" endTime="2026-11-01T11:56:13.7672777+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fcc237d-94c5-4f59-bd17-fcc4df70b342" />
+    <UnitTestResult executionId="d8547217-dd64-49c0-9fa1-a68d7addf07e" testId="c5483abb-471c-481d-b074-1f235badcf23" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.ConsumeReservationTransitionsStatusToConsumed" computerName="SEMH59" duration="00:00:00.0008805" startTime="2026-11-01T11:56:13.7568185+03:00" endTime="2026-11-01T11:56:13.7568186+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d8547217-dd64-49c0-9fa1-a68d7addf07e" />
+    <UnitTestResult executionId="3e09d563-e487-437c-97c2-85cbb6cda9b8" testId="f6f2ca77-e929-0372-0b4c-50f238f9cde8" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.CreateReservationWithDuplicateIdempotencyKeyReplaysOriginal" computerName="SEMH59" duration="00:00:00.0021566" startTime="2026-11-01T11:56:13.7558744+03:00" endTime="2026-11-01T11:56:13.7558745+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e09d563-e487-437c-97c2-85cbb6cda9b8" />
+    <UnitTestResult executionId="12d1e3bf-7f53-4663-acc5-a5cdd94d2b5a" testId="62afc1a5-a001-8a2b-1e2e-b3e42e1375cb" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.ReleaseReservationTransitionsStatusToReleased" computerName="SEMH59" duration="00:00:00.0067447" startTime="2026-11-01T11:56:13.7659593+03:00" endTime="2026-11-01T11:56:13.7659594+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12d1e3bf-7f53-4663-acc5-a5cdd94d2b5a" />
+    <UnitTestResult executionId="1eeec1ed-6364-4dfb-949b-c97577861fc0" testId="2422ceae-5e4e-6c9a-f934-01d35ee80e8e" testName="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.TransitionFromTerminalStateThrowsInvalidPortionReservationTransitionException" computerName="SEMH59" duration="00:00:00.2608252" startTime="2026-11-01T11:56:13.7511982+03:00" endTime="2026-11-01T11:56:13.7512205+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1eeec1ed-6364-4dfb-949b-c97577861fc0" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.RepeatingSameTransitionIsIdempotentReplay" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="ee06115a-50f6-5207-c7c7-68d752b926ad">
+      <Execution id="3fcc237d-94c5-4f59-bd17-fcc4df70b342" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="RepeatingSameTransitionIsIdempotentReplay" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.ConsumeReservationTransitionsStatusToConsumed" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="c5483abb-471c-481d-b074-1f235badcf23">
+      <Execution id="d8547217-dd64-49c0-9fa1-a68d7addf07e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="ConsumeReservationTransitionsStatusToConsumed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDatabaseTests.ConsumeReleaseRaceAllowsExactlyOneTerminalTransition" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="8eba1d93-7215-76be-37c6-69de68445ba1">
+      <Execution id="ce1b5765-a2b2-466c-9f42-2a6859e2a9c2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDatabaseTests" name="ConsumeReleaseRaceAllowsExactlyOneTerminalTransition" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.ReleaseReservationTransitionsStatusToReleased" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="62afc1a5-a001-8a2b-1e2e-b3e42e1375cb">
+      <Execution id="12d1e3bf-7f53-4663-acc5-a5cdd94d2b5a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="ReleaseReservationTransitionsStatusToReleased" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.CreateReservationWithDuplicateIdempotencyKeyReplaysOriginal" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="f6f2ca77-e929-0372-0b4c-50f238f9cde8">
+      <Execution id="3e09d563-e487-437c-97c2-85cbb6cda9b8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="CreateReservationWithDuplicateIdempotencyKeyReplaysOriginal" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.CreateReservationWithValidDataInitializesInReservedStatus" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="1305dc38-c46a-488b-e30f-ec170b469089">
+      <Execution id="503dee3c-ecc7-4345-8eeb-ff973da46a06" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="CreateReservationWithValidDataInitializesInReservedStatus" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDatabaseTests.FullReservationLifecyclePersistenceFlow" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="94effba5-1e3d-0798-4b15-19c6f6b1f8cb">
+      <Execution id="63d15e47-7f30-464d-905f-9781c7563f34" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDatabaseTests" name="FullReservationLifecyclePersistenceFlow" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.WasteReservationTransitionsStatusToWaste" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="2fe8cab1-8216-e38a-5bb3-667b5bca6ea6">
+      <Execution id="f9ef4993-d0b3-47c8-aba0-9414be515f00" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="WasteReservationTransitionsStatusToWaste" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests.TransitionFromTerminalStateThrowsInvalidPortionReservationTransitionException" storage="d:\project\alkaros\tests\modules\inventory\portionreservations\lifecycle\bin\debug\net8.0\alkaros.inventory.portionreservations.lifecycle.tests.dll" id="2422ceae-5e4e-6c9a-f934-01d35ee80e8e">
+      <Execution id="1eeec1ed-6364-4dfb-949b-c97577861fc0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PortionReservations\Lifecycle\bin\Debug\net8.0\ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.PortionReservationLifecycleDomainTests" name="TransitionFromTerminalStateThrowsInvalidPortionReservationTransitionException" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8eba1d93-7215-76be-37c6-69de68445ba1" executionId="ce1b5765-a2b2-466c-9f42-2a6859e2a9c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94effba5-1e3d-0798-4b15-19c6f6b1f8cb" executionId="63d15e47-7f30-464d-905f-9781c7563f34" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fe8cab1-8216-e38a-5bb3-667b5bca6ea6" executionId="f9ef4993-d0b3-47c8-aba0-9414be515f00" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1305dc38-c46a-488b-e30f-ec170b469089" executionId="503dee3c-ecc7-4345-8eeb-ff973da46a06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ee06115a-50f6-5207-c7c7-68d752b926ad" executionId="3fcc237d-94c5-4f59-bd17-fcc4df70b342" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c5483abb-471c-481d-b074-1f235badcf23" executionId="d8547217-dd64-49c0-9fa1-a68d7addf07e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6f2ca77-e929-0372-0b4c-50f238f9cde8" executionId="3e09d563-e487-437c-97c2-85cbb6cda9b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62afc1a5-a001-8a2b-1e2e-b3e42e1375cb" executionId="12d1e3bf-7f53-4663-acc5-a5cdd94d2b5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2422ceae-5e4e-6c9a-f934-01d35ee80e8e" executionId="1eeec1ed-6364-4dfb-949b-c97577861fc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.79]   Discovering: ALKAROS.Inventory.PortionReservations.Lifecycle.Tests&#xD;
+[xUnit.net 00:00:00.83]   Discovered:  ALKAROS.Inventory.PortionReservations.Lifecycle.Tests&#xD;
+[xUnit.net 00:00:00.83]   Starting:    ALKAROS.Inventory.PortionReservations.Lifecycle.Tests&#xD;
+[xUnit.net 00:00:01.75]   Finished:    ALKAROS.Inventory.PortionReservations.Lifecycle.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

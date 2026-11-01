@@ -1,0 +1,950 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="fb544f62-fdcc-498b-a76e-e939e6396b82" name="semih@SEMH59 2026-11-01 11:22:21" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:22:21.2393113+03:00" queuing="2026-11-01T11:22:21.2393117+03:00" start="2026-11-01T11:22:17.5036492+03:00" finish="2026-11-01T11:22:40.6655256+03:00" />
+  <TestSettings name="default" id="ebb104f8-7880-45d7-bd6f-e7166dfceacd">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_22_21" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d8818311-829e-4e8e-81d0-d0c74d2134f4" testId="5a23339b-b7a2-8864-902e-8755bf903c9b" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnInvalidReasonCodeIsRejected" computerName="SEMH59" duration="00:00:00.1915690" startTime="2026-11-01T11:22:36.8056326+03:00" endTime="2026-11-01T11:22:36.8056330+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d8818311-829e-4e8e-81d0-d0c74d2134f4" />
+    <UnitTestResult executionId="2b7031cc-6dd5-41e9-bedc-864ac84bef2d" testId="269e729b-0721-a38a-823b-ce2d9b43df67" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected" computerName="SEMH59" duration="00:00:00.2566273" startTime="2026-11-01T11:22:31.5278902+03:00" endTime="2026-11-01T11:22:31.5278903+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b7031cc-6dd5-41e9-bedc-864ac84bef2d" />
+    <UnitTestResult executionId="a48241b5-7f49-4005-bc6a-8e2943443c0a" testId="dbf137c7-7ab9-05aa-eda7-58181f04462a" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.2605859" startTime="2026-11-01T11:22:29.0238695+03:00" endTime="2026-11-01T11:22:29.0238696+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a48241b5-7f49-4005-bc6a-8e2943443c0a" />
+    <UnitTestResult executionId="17c8f811-81f1-48ca-b799-afffb573c2b3" testId="e93d3c24-8ac8-c09c-dc07-aec140282012" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.1880551" startTime="2026-11-01T11:22:39.3906179+03:00" endTime="2026-11-01T11:22:39.3906183+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17c8f811-81f1-48ca-b799-afffb573c2b3" />
+    <UnitTestResult executionId="ea0849a1-959d-43de-8320-5f9a2a1dfda1" testId="54d44ddb-8613-a89b-5558-4e5808826d29" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemBeforeTheKitchenStartedRestoresItsStock" computerName="SEMH59" duration="00:00:00.2807846" startTime="2026-11-01T11:22:32.8349999+03:00" endTime="2026-11-01T11:22:32.8350003+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea0849a1-959d-43de-8320-5f9a2a1dfda1" />
+    <UnitTestResult executionId="c990de06-c52d-4ef7-b315-71bb0d34fd3f" testId="bca134a6-15a4-ce12-19b5-8a22e9a6d1eb" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck" computerName="SEMH59" duration="00:00:00.2614836" startTime="2026-11-01T11:22:32.1479008+03:00" endTime="2026-11-01T11:22:32.1479016+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c990de06-c52d-4ef7-b315-71bb0d34fd3f" />
+    <UnitTestResult executionId="ba92cf71-1179-4893-8227-edbfea786a0c" testId="dbed7528-3471-1c58-d72a-e40b67515e81" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemRestoresItsModifierStockToo" computerName="SEMH59" duration="00:00:00.2823655" startTime="2026-11-01T11:22:33.4958399+03:00" endTime="2026-11-01T11:22:33.4958400+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba92cf71-1179-4893-8227-edbfea786a0c" />
+    <UnitTestResult executionId="907167e5-dabb-4412-839f-2a62a079b6bf" testId="4d456638-cf87-9e3e-5103-5a6b1995aebc" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice" computerName="SEMH59" duration="00:00:00.3502269" startTime="2026-11-01T11:22:38.8373237+03:00" endTime="2026-11-01T11:22:38.8373238+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="907167e5-dabb-4412-839f-2a62a079b6bf" />
+    <UnitTestResult executionId="974ab138-dc8c-43d3-ab4e-a7045cab1b0f" testId="26a0ffa5-5c06-1c6b-13b9-5559f1dd339b" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Ready, returned: 0, wasted: 1)" computerName="SEMH59" duration="00:00:00.2582356" startTime="2026-11-01T11:22:26.8610209+03:00" endTime="2026-11-01T11:22:26.8610211+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="974ab138-dc8c-43d3-ab4e-a7045cab1b0f" />
+    <UnitTestResult executionId="d451b193-c9cb-4af9-8b6c-9b538f6099fa" testId="918eebe2-0f9a-1fe1-9b3a-9833312e4fd1" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemStillNotSentIsRejected" computerName="SEMH59" duration="00:00:00.2384899" startTime="2026-11-01T11:22:29.6488461+03:00" endTime="2026-11-01T11:22:29.6488464+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d451b193-c9cb-4af9-8b6c-9b538f6099fa" />
+    <UnitTestResult executionId="7371efba-6d0d-4a2d-a67d-a4e5c97969bc" testId="c108d5f5-9155-78bf-5dcd-17390838ab90" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere" computerName="SEMH59" duration="00:00:00.2910177" startTime="2026-11-01T11:22:34.8892563+03:00" endTime="2026-11-01T11:22:34.8892566+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7371efba-6d0d-4a2d-a67d-a4e5c97969bc" />
+    <UnitTestResult executionId="be8150e7-ed35-4614-85fe-d26182bbe549" testId="f486ee0a-86ae-ddfa-bfc5-13223b37b464" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Held, returned: 1, wasted: 0)" computerName="SEMH59" duration="00:00:00.3950599" startTime="2026-11-01T11:22:26.1184869+03:00" endTime="2026-11-01T11:22:26.1184873+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="be8150e7-ed35-4614-85fe-d26182bbe549" />
+    <UnitTestResult executionId="d1d4ff09-4e6d-4a32-984f-15daa2077842" testId="a2a0bbaa-6cd7-f93d-d84d-f225be5332c5" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce" computerName="SEMH59" duration="00:00:00.2827056" startTime="2026-11-01T11:22:36.2289256+03:00" endTime="2026-11-01T11:22:36.2289257+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1d4ff09-4e6d-4a32-984f-15daa2077842" />
+    <UnitTestResult executionId="893ed602-2d4c-4dec-b426-caadf4c4b185" testId="f99239d1-0818-227b-dff5-b276865d66db" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAPreparingItemDoesNotRestoreItsStock" computerName="SEMH59" duration="00:00:00.2498135" startTime="2026-11-01T11:22:37.4183956+03:00" endTime="2026-11-01T11:22:37.4183960+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="893ed602-2d4c-4dec-b426-caadf4c4b185" />
+    <UnitTestResult executionId="88252501-6edc-4f9f-ae19-cb2dadfe5334" testId="6b89a130-0a83-f0d2-a5ee-9e88235b5c47" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse" computerName="SEMH59" duration="00:00:01.4056184" startTime="2026-11-01T11:22:21.2082252+03:00" endTime="2026-11-01T11:22:21.2082522+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88252501-6edc-4f9f-ae19-cb2dadfe5334" />
+    <UnitTestResult executionId="f3bd40fc-6b97-4465-a36d-471c1cf3bc58" testId="130764b2-506e-10d7-ff53-edcf11cec22a" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed" computerName="SEMH59" duration="00:00:00.4380153" startTime="2026-11-01T11:22:22.8297516+03:00" endTime="2026-11-01T11:22:22.8297519+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3bd40fc-6b97-4465-a36d-471c1cf3bc58" />
+    <UnitTestResult executionId="6d9ebb8e-e10e-424c-b96e-c7d5a24f2725" testId="7cef501e-e598-5b01-aeae-dc899e44f9f3" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill" computerName="SEMH59" duration="00:00:00.2533402" startTime="2026-11-01T11:22:35.5796054+03:00" endTime="2026-11-01T11:22:35.5796057+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6d9ebb8e-e10e-424c-b96e-c7d5a24f2725" />
+    <UnitTestResult executionId="60834af9-61ee-444f-9eb5-62f752f7ebd5" testId="ab18919a-bc74-9275-2546-607aeede7ca3" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemAlreadyServedIsRejected" computerName="SEMH59" duration="00:00:00.2867147" startTime="2026-11-01T11:22:21.9798153+03:00" endTime="2026-11-01T11:22:21.9798157+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60834af9-61ee-444f-9eb5-62f752f7ebd5" />
+    <UnitTestResult executionId="2e8c5b5c-a908-4382-8d1d-f6f5e8627407" testId="f53ee795-16ca-595b-68eb-7b1ddf638268" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenIsNotMade" computerName="SEMH59" duration="00:00:00.2640125" startTime="2026-11-01T11:22:38.0512616+03:00" endTime="2026-11-01T11:22:38.0512617+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e8c5b5c-a908-4382-8d1d-f6f5e8627407" />
+    <UnitTestResult executionId="d7055775-f97f-40c0-b426-16c0c8f4149d" testId="50fba127-bba2-4871-f560-2394d7789947" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.TheSameKeyWithADifferentVoidRequestIsRefused" computerName="SEMH59" duration="00:00:00.2711487" startTime="2026-11-01T11:22:30.3023364+03:00" endTime="2026-11-01T11:22:30.3023367+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7055775-f97f-40c0-b426-16c0c8f4149d" />
+    <UnitTestResult executionId="f269d8f9-7ecb-4f8d-90f6-b9f2482721f9" testId="347f07fa-da3c-2e90-aa56-75d664af9478" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard" computerName="SEMH59" duration="00:00:00.1911538" startTime="2026-11-01T11:22:30.8860831+03:00" endTime="2026-11-01T11:22:30.8860835+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f269d8f9-7ecb-4f8d-90f6-b9f2482721f9" />
+    <UnitTestResult executionId="0e501749-30fe-4937-9b05-be1373eccbfe" testId="d0cc507c-6d99-5f8f-d103-dd3b833b872d" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.NoSessionCookieIsUnauthorized" computerName="SEMH59" duration="00:00:00.1932353" startTime="2026-11-01T11:22:39.9581832+03:00" endTime="2026-11-01T11:22:39.9581836+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e501749-30fe-4937-9b05-be1373eccbfe" />
+    <UnitTestResult executionId="0c0e21cb-b9d6-4b3e-b37d-e04750a1a423" testId="2fc74bd1-5f4e-3fc1-e520-412cf2b3f936" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing" computerName="SEMH59" duration="00:00:00.2686582" startTime="2026-11-01T11:22:40.5838120+03:00" endTime="2026-11-01T11:22:40.5838121+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c0e21cb-b9d6-4b3e-b37d-e04750a1a423" />
+    <UnitTestResult executionId="724256e6-2c60-4564-aa88-0b7b2afe119b" testId="9f6fd885-47f0-d54e-34e4-570b455b1a90" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Sent, returned: 1, wasted: 0)" computerName="SEMH59" duration="00:00:00.3046633" startTime="2026-11-01T11:22:25.3002800+03:00" endTime="2026-11-01T11:22:25.3002801+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="724256e6-2c60-4564-aa88-0b7b2afe119b" />
+    <UnitTestResult executionId="f27c8c4b-2b7e-4a21-9576-b7aea57029c0" testId="e6b0cb55-5ba5-9e17-a430-262e36075a89" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce" computerName="SEMH59" duration="00:00:00.3422555" startTime="2026-11-01T11:22:27.5812764+03:00" endTime="2026-11-01T11:22:27.5812769+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f27c8c4b-2b7e-4a21-9576-b7aea57029c0" />
+    <UnitTestResult executionId="7459ed3f-40ca-47e9-97a6-f8823017c2e4" testId="cd6af327-bd2e-193a-5b41-5eaaa586aad7" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleWithoutBillsVoidEscalatesToPending" computerName="SEMH59" duration="00:00:00.3232827" startTime="2026-11-01T11:22:23.5778066+03:00" endTime="2026-11-01T11:22:23.5778067+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7459ed3f-40ca-47e9-97a6-f8823017c2e4" />
+    <UnitTestResult executionId="ae954e99-06ab-4ebf-9ec3-070e2494cde1" testId="e669f979-3a00-77c5-81e0-880d1cb880c6" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock" computerName="SEMH59" duration="00:00:00.2825698" startTime="2026-11-01T11:22:34.2129597+03:00" endTime="2026-11-01T11:22:34.2129601+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae954e99-06ab-4ebf-9ec3-070e2494cde1" />
+    <UnitTestResult executionId="77218d1f-92e9-4846-aba3-c15332b06c4e" testId="4652c3c4-3123-5b11-234b-1aedff0f69a8" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.APendingVoidRequestCarriesTheItemsRealAmount" computerName="SEMH59" duration="00:00:00.2760115" startTime="2026-11-01T11:22:28.2546007+03:00" endTime="2026-11-01T11:22:28.2546010+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77218d1f-92e9-4846-aba3-c15332b06c4e" />
+    <UnitTestResult executionId="eb4fb761-f998-4106-ba61-15e6f52c706c" testId="e8dc8d8c-9123-bdf1-821a-90ae45a7470c" testName="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Preparing, returned: 0, wasted: 1)" computerName="SEMH59" duration="00:00:00.3912757" startTime="2026-11-01T11:22:24.5440221+03:00" endTime="2026-11-01T11:22:24.5440223+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb4fb761-f998-4106-ba61-15e6f52c706c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="dbf137c7-7ab9-05aa-eda7-58181f04462a">
+      <Execution id="a48241b5-7f49-4005-bc6a-8e2943443c0a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Ready, returned: 0, wasted: 1)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="26a0ffa5-5c06-1c6b-13b9-5559f1dd339b">
+      <Execution id="974ab138-dc8c-43d3-ab4e-a7045cab1b0f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidDoesNotAdjustThePortionsTwice" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="4d456638-cf87-9e3e-5103-5a6b1995aebc">
+      <Execution id="907167e5-dabb-4412-839f-2a62a079b6bf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARepeatedVoidDoesNotAdjustThePortionsTwice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e6b0cb55-5ba5-9e17-a430-262e36075a89">
+      <Execution id="f27c8c4b-2b7e-4a21-9576-b7aea57029c0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e93d3c24-8ac8-c09c-dc07-aec140282012">
+      <Execution id="17c8f811-81f1-48ca-b799-afffb573c2b3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="347f07fa-da3c-2e90-aa56-75d664af9478">
+      <Execution id="f269d8f9-7ecb-4f8d-90f6-b9f2482721f9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="c108d5f5-9155-78bf-5dcd-17390838ab90">
+      <Execution id="7371efba-6d0d-4a2d-a67d-a4e5c97969bc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Held, returned: 1, wasted: 0)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="f486ee0a-86ae-ddfa-bfc5-13223b37b464">
+      <Execution id="be8150e7-ed35-4614-85fe-d26182bbe549" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleWithoutBillsVoidEscalatesToPending" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="cd6af327-bd2e-193a-5b41-5eaaa586aad7">
+      <Execution id="7459ed3f-40ca-47e9-97a6-f8823017c2e4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARoleWithoutBillsVoidEscalatesToPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnInvalidReasonCodeIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="5a23339b-b7a2-8864-902e-8755bf903c9b">
+      <Execution id="d8818311-829e-4e8e-81d0-d0c74d2134f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AnInvalidReasonCodeIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAPreparingItemDoesNotRestoreItsStock" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="f99239d1-0818-227b-dff5-b276865d66db">
+      <Execution id="893ed602-2d4c-4dec-b426-caadf4c4b185" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingAPreparingItemDoesNotRestoreItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="130764b2-506e-10d7-ff53-edcf11cec22a">
+      <Execution id="f3bd40fc-6b97-4465-a36d-471c1cf3bc58" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="a2a0bbaa-6cd7-f93d-d84d-f225be5332c5">
+      <Execution id="d1d4ff09-4e6d-4a32-984f-15daa2077842" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="bca134a6-15a4-ce12-19b5-8a22e9a6d1eb">
+      <Execution id="c990de06-c52d-4ef7-b315-71bb0d34fd3f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemBeforeTheKitchenStartedRestoresItsStock" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="54d44ddb-8613-a89b-5558-4e5808826d29">
+      <Execution id="ea0849a1-959d-43de-8320-5f9a2a1dfda1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingASentItemBeforeTheKitchenStartedRestoresItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Sent, returned: 1, wasted: 0)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="9f6fd885-47f0-d54e-34e4-570b455b1a90">
+      <Execution id="724256e6-2c60-4564-aa88-0b7b2afe119b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="269e729b-0721-a38a-823b-ce2d9b43df67">
+      <Execution id="2b7031cc-6dd5-41e9-bedc-864ac84bef2d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e669f979-3a00-77c5-81e0-880d1cb880c6">
+      <Execution id="ae954e99-06ab-4ebf-9ec3-070e2494cde1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemAlreadyServedIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="ab18919a-bc74-9275-2546-607aeede7ca3">
+      <Execution id="60834af9-61ee-444f-9eb5-62f752f7ebd5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AnItemAlreadyServedIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="6b89a130-0a83-f0d2-a5ee-9e88235b5c47">
+      <Execution id="88252501-6edc-4f9f-ae19-cb2dadfe5334" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseAuditRecordCannotBeWrittenIsNotMade" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="f53ee795-16ca-595b-68eb-7b1ddf638268">
+      <Execution id="2e8c5b5c-a908-4382-8d1d-f6f5e8627407" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseAuditRecordCannotBeWrittenIsNotMade" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemRestoresItsModifierStockToo" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="dbed7528-3471-1c58-d72a-e40b67515e81">
+      <Execution id="ba92cf71-1179-4893-8227-edbfea786a0c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingASentItemRestoresItsModifierStockToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.NoSessionCookieIsUnauthorized" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="d0cc507c-6d99-5f8f-d103-dd3b833b872d">
+      <Execution id="0e501749-30fe-4937-9b05-be1373eccbfe" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="NoSessionCookieIsUnauthorized" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="2fc74bd1-5f4e-3fc1-e520-412cf2b3f936">
+      <Execution id="0c0e21cb-b9d6-4b3e-b37d-e04750a1a423" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemStillNotSentIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="918eebe2-0f9a-1fe1-9b3a-9833312e4fd1">
+      <Execution id="d451b193-c9cb-4af9-8b6c-9b538f6099fa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="AnItemStillNotSentIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.TheSameKeyWithADifferentVoidRequestIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="50fba127-bba2-4871-f560-2394d7789947">
+      <Execution id="d7055775-f97f-40c0-b426-16c0c8f4149d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="TheSameKeyWithADifferentVoidRequestIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.APendingVoidRequestCarriesTheItemsRealAmount" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="4652c3c4-3123-5b11-234b-1aedff0f69a8">
+      <Execution id="77218d1f-92e9-4846-aba3-c15332b06c4e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="APendingVoidRequestCarriesTheItemsRealAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(kitchenState: Preparing, returned: 0, wasted: 1)" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="e8dc8d8c-9123-bdf1-821a-90ae45a7470c">
+      <Execution id="eb4fb761-f998-4106-ba61-15e6f52c706c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill" storage="d:\project\alkaros\tests\host\experience\orders\voidsent\bin\debug\net8.0\alkaros.host.experience.orders.voidsent.tests.dll" id="7cef501e-e598-5b01-aeae-dc899e44f9f3">
+      <Execution id="6d9ebb8e-e10e-424c-b96e-c7d5a24f2725" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests" name="ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5a23339b-b7a2-8864-902e-8755bf903c9b" executionId="d8818311-829e-4e8e-81d0-d0c74d2134f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="269e729b-0721-a38a-823b-ce2d9b43df67" executionId="2b7031cc-6dd5-41e9-bedc-864ac84bef2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbf137c7-7ab9-05aa-eda7-58181f04462a" executionId="a48241b5-7f49-4005-bc6a-8e2943443c0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e93d3c24-8ac8-c09c-dc07-aec140282012" executionId="17c8f811-81f1-48ca-b799-afffb573c2b3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54d44ddb-8613-a89b-5558-4e5808826d29" executionId="ea0849a1-959d-43de-8320-5f9a2a1dfda1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bca134a6-15a4-ce12-19b5-8a22e9a6d1eb" executionId="c990de06-c52d-4ef7-b315-71bb0d34fd3f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbed7528-3471-1c58-d72a-e40b67515e81" executionId="ba92cf71-1179-4893-8227-edbfea786a0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d456638-cf87-9e3e-5103-5a6b1995aebc" executionId="907167e5-dabb-4412-839f-2a62a079b6bf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="26a0ffa5-5c06-1c6b-13b9-5559f1dd339b" executionId="974ab138-dc8c-43d3-ab4e-a7045cab1b0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="918eebe2-0f9a-1fe1-9b3a-9833312e4fd1" executionId="d451b193-c9cb-4af9-8b6c-9b538f6099fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c108d5f5-9155-78bf-5dcd-17390838ab90" executionId="7371efba-6d0d-4a2d-a67d-a4e5c97969bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f486ee0a-86ae-ddfa-bfc5-13223b37b464" executionId="be8150e7-ed35-4614-85fe-d26182bbe549" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a2a0bbaa-6cd7-f93d-d84d-f225be5332c5" executionId="d1d4ff09-4e6d-4a32-984f-15daa2077842" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f99239d1-0818-227b-dff5-b276865d66db" executionId="893ed602-2d4c-4dec-b426-caadf4c4b185" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b89a130-0a83-f0d2-a5ee-9e88235b5c47" executionId="88252501-6edc-4f9f-ae19-cb2dadfe5334" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="130764b2-506e-10d7-ff53-edcf11cec22a" executionId="f3bd40fc-6b97-4465-a36d-471c1cf3bc58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cef501e-e598-5b01-aeae-dc899e44f9f3" executionId="6d9ebb8e-e10e-424c-b96e-c7d5a24f2725" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab18919a-bc74-9275-2546-607aeede7ca3" executionId="60834af9-61ee-444f-9eb5-62f752f7ebd5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f53ee795-16ca-595b-68eb-7b1ddf638268" executionId="2e8c5b5c-a908-4382-8d1d-f6f5e8627407" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="50fba127-bba2-4871-f560-2394d7789947" executionId="d7055775-f97f-40c0-b426-16c0c8f4149d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="347f07fa-da3c-2e90-aa56-75d664af9478" executionId="f269d8f9-7ecb-4f8d-90f6-b9f2482721f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0cc507c-6d99-5f8f-d103-dd3b833b872d" executionId="0e501749-30fe-4937-9b05-be1373eccbfe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fc74bd1-5f4e-3fc1-e520-412cf2b3f936" executionId="0c0e21cb-b9d6-4b3e-b37d-e04750a1a423" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f6fd885-47f0-d54e-34e4-570b455b1a90" executionId="724256e6-2c60-4564-aa88-0b7b2afe119b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6b0cb55-5ba5-9e17-a430-262e36075a89" executionId="f27c8c4b-2b7e-4a21-9576-b7aea57029c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd6af327-bd2e-193a-5b41-5eaaa586aad7" executionId="7459ed3f-40ca-47e9-97a6-f8823017c2e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e669f979-3a00-77c5-81e0-880d1cb880c6" executionId="ae954e99-06ab-4ebf-9ec3-070e2494cde1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4652c3c4-3123-5b11-234b-1aedff0f69a8" executionId="77218d1f-92e9-4846-aba3-c15332b06c4e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8dc8d8c-9123-bdf1-821a-90ae45a7470c" executionId="eb4fb761-f998-4106-ba61-15e6f52c706c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="29" executed="29" passed="29" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.98]   Discovering: ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:01.04]   Discovered:  ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+[xUnit.net 00:00:01.04]   Starting:    ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:61629&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:61629/api/v1/terminals/3fa82481-f049-4e69-b9e6-7fbc1aacc8fc/orders/9c0f4628-0ccb-4e72-a941-33e6a5e1a5b8/items/5e2a8d0b-4daa-4b60-8195-efacc581bf2b/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:61629/api/v1/terminals/3fa82481-f049-4e69-b9e6-7fbc1aacc8fc/orders/9c0f4628-0ccb-4e72-a941-33e6a5e1a5b8/items/5e2a8d0b-4daa-4b60-8195-efacc581bf2b/void-sent - 200 - application/json;+charset=utf-8 564.3440ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54726&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54726/api/v1/terminals/e4c5f285-1a02-4b2d-b508-19439db5d1d9/orders/c0d7091c-bf65-4a60-8f1b-c038127038b7/items/6fbbaae8-5093-45b2-af41-0fb56bdaa7d1/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54726/api/v1/terminals/e4c5f285-1a02-4b2d-b508-19439db5d1d9/orders/c0d7091c-bf65-4a60-8f1b-c038127038b7/items/6fbbaae8-5093-45b2-af41-0fb56bdaa7d1/void-sent - 409 - application/json;+charset=utf-8 135.1437ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59376&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59376/api/v1/terminals/bd9dee6b-514a-4347-acbc-de970780e5f9/orders/6778d869-425e-44ac-ae8c-9e3cc49a7d1e/items/8e021085-b156-450b-afd2-1315b96a85dc/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+fail: ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter[5200]&#xD;
+      Order management request failed on /api/v1/terminals/bd9dee6b-514a-4347-acbc-de970780e5f9/orders/6778d869-425e-44ac-ae8c-9e3cc49a7d1e/items/8e021085-b156-450b-afd2-1315b96a85dc/void-sent (0HNPNU4VR9NIG:00000001).&#xD;
+      Npgsql.PostgresException (0x80004005): P0001: audit write refused by the test&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Audit.EventStore.AuditEventWriter.WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, AuditEvent evt, IAuditSanitizer sanitizer, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Audit\EventStore\AuditEventWriter.cs:line 66&#xD;
+         at ALKAROS.Audit.EventStore.AuditEventWriter.WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, AuditEvent evt, IAuditSanitizer sanitizer, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Audit\EventStore\AuditEventWriter.cs:line 66&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 159&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 162&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 162&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c__DisplayClass3_1.&lt;&lt;MapOrderManagementApi&gt;b__23&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 842&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 52&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 61&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 61&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c.&lt;&lt;MapOrderManagementApi&gt;b__3_12&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 836&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 1152&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: P0001&#xD;
+          MessageText: audit write refused by the test&#xD;
+          Where: PL/pgSQL function audit.test_refuse_event() line 4 at RAISE&#xD;
+          File: pl_exec.c&#xD;
+          Line: 3909&#xD;
+          Routine: exec_stmt_raise&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 503.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59376/api/v1/terminals/bd9dee6b-514a-4347-acbc-de970780e5f9/orders/6778d869-425e-44ac-ae8c-9e3cc49a7d1e/items/8e021085-b156-450b-afd2-1315b96a85dc/void-sent - 503 - application/json;+charset=utf-8 252.9305ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53274&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53274/api/v1/terminals/a1cb460d-c4f0-4903-99a1-67d327a39f6a/orders/9bf26e53-624b-4952-a433-4bd054a4d88b/items/3bd36060-872c-4341-b487-7eaf831a6284/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53274/api/v1/terminals/a1cb460d-c4f0-4903-99a1-67d327a39f6a/orders/9bf26e53-624b-4952-a433-4bd054a4d88b/items/3bd36060-872c-4341-b487-7eaf831a6284/void-sent - 202 - application/json;+charset=utf-8 205.7652ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:49778&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:49778/api/v1/terminals/7d2f1091-d0a8-4dff-a046-adbb49456b72/orders/1ef57721-b04b-4596-b89c-1f591d16da2c/items/3536362e-695a-41c8-8bf8-92ed5609a36a/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:49778/api/v1/terminals/7d2f1091-d0a8-4dff-a046-adbb49456b72/orders/1ef57721-b04b-4596-b89c-1f591d16da2c/items/3536362e-695a-41c8-8bf8-92ed5609a36a/void-sent - 200 - application/json;+charset=utf-8 223.1904ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63070&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63070/api/v1/terminals/93d7089d-6808-4c7a-a337-853ec67a9d0c/orders/c743ee3e-04c3-4216-a67a-1485926d7d0b/items/b0669a5b-65ff-46de-b346-403f10a3747c/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63070/api/v1/terminals/93d7089d-6808-4c7a-a337-853ec67a9d0c/orders/c743ee3e-04c3-4216-a67a-1485926d7d0b/items/b0669a5b-65ff-46de-b346-403f10a3747c/void-sent - 200 - application/json;+charset=utf-8 163.8162ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62961&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62961/api/v1/terminals/cb010401-0966-4bba-8fed-035b7665f4c7/orders/5257eb5f-cace-48e0-9d43-a22336734f40/items/648b9e45-8761-4b6c-bf50-a2becdd13854/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62961/api/v1/terminals/cb010401-0966-4bba-8fed-035b7665f4c7/orders/5257eb5f-cace-48e0-9d43-a22336734f40/items/648b9e45-8761-4b6c-bf50-a2becdd13854/void-sent - 200 - application/json;+charset=utf-8 211.1158ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55166&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55166/api/v1/terminals/62dcabfd-5964-475f-9857-8a02874fdd9c/orders/4afb16bc-6ef6-4ee6-b20a-c5ba6325aea0/items/7c1d0f2c-e6e4-413b-9881-2fdc9a7b1dce/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55166/api/v1/terminals/62dcabfd-5964-475f-9857-8a02874fdd9c/orders/4afb16bc-6ef6-4ee6-b20a-c5ba6325aea0/items/7c1d0f2c-e6e4-413b-9881-2fdc9a7b1dce/void-sent - 200 - application/json;+charset=utf-8 123.0646ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56082&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56082/api/v1/terminals/6ef5be81-b37f-4661-8967-bd4535eb3c52/orders/65c348ca-6e5d-487d-aeef-3136001907c5/items/01878f24-13a2-48fa-8fcf-3ca3df97ffac/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56082/api/v1/terminals/6ef5be81-b37f-4661-8967-bd4535eb3c52/orders/65c348ca-6e5d-487d-aeef-3136001907c5/items/01878f24-13a2-48fa-8fcf-3ca3df97ffac/void-sent - 200 - application/json;+charset=utf-8 162.6496ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56082/api/v1/terminals/6ef5be81-b37f-4661-8967-bd4535eb3c52/orders/65c348ca-6e5d-487d-aeef-3136001907c5/items/01878f24-13a2-48fa-8fcf-3ca3df97ffac/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56082/api/v1/terminals/6ef5be81-b37f-4661-8967-bd4535eb3c52/orders/65c348ca-6e5d-487d-aeef-3136001907c5/items/01878f24-13a2-48fa-8fcf-3ca3df97ffac/void-sent - 200 - application/json;+charset=utf-8 13.1430ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53022&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53022/api/v1/terminals/d32281f2-a18a-4ade-bde6-9075a1d08b3d/orders/c18fd15e-6b31-4f72-86f2-9e6a7923d2d9/items/6bbc5b50-0c04-428a-9f35-9718d2f4fc7c/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53022/api/v1/terminals/d32281f2-a18a-4ade-bde6-9075a1d08b3d/orders/c18fd15e-6b31-4f72-86f2-9e6a7923d2d9/items/6bbc5b50-0c04-428a-9f35-9718d2f4fc7c/void-sent - 202 - application/json;+charset=utf-8 156.0676ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:49258&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:49258/api/v1/terminals/85c65342-7393-4145-9239-8fa494014043/orders/38ea9aad-600a-490d-9142-716cdb00700d/items/11448ca5-843f-479d-9631-a6a810f9e2e1/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:49258/api/v1/terminals/85c65342-7393-4145-9239-8fa494014043/orders/38ea9aad-600a-490d-9142-716cdb00700d/items/11448ca5-843f-479d-9631-a6a810f9e2e1/void-sent - 202 - application/json;+charset=utf-8 154.1773ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:61799&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:61799/api/v1/terminals/f01cfc41-81d4-4cef-94ee-396f9530661c/orders/76f861f9-161d-41a9-b3bb-b0df76a00f2b/items/5fe20746-3f3c-454e-9ad6-1ae00f0f01f0/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:61799/api/v1/terminals/f01cfc41-81d4-4cef-94ee-396f9530661c/orders/76f861f9-161d-41a9-b3bb-b0df76a00f2b/items/5fe20746-3f3c-454e-9ad6-1ae00f0f01f0/void-sent - 409 - application/json;+charset=utf-8 112.2782ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56645&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56645/api/v1/terminals/ad10a70e-4838-413e-97e9-b6afef2f1dc4/orders/4ce9a37b-d801-4d5a-8252-767dcf3f99ea/items/fdf0d866-2d7a-4c2a-a7ac-450fb3d2888b/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56645/api/v1/terminals/ad10a70e-4838-413e-97e9-b6afef2f1dc4/orders/4ce9a37b-d801-4d5a-8252-767dcf3f99ea/items/fdf0d866-2d7a-4c2a-a7ac-450fb3d2888b/void-sent - 200 - application/json;+charset=utf-8 131.2365ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56645/api/v1/terminals/ad10a70e-4838-413e-97e9-b6afef2f1dc4/orders/4ce9a37b-d801-4d5a-8252-767dcf3f99ea/items/fdf0d866-2d7a-4c2a-a7ac-450fb3d2888b/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56645/api/v1/terminals/ad10a70e-4838-413e-97e9-b6afef2f1dc4/orders/4ce9a37b-d801-4d5a-8252-767dcf3f99ea/items/fdf0d866-2d7a-4c2a-a7ac-450fb3d2888b/void-sent - 409 - application/json;+charset=utf-8 10.9446ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56655&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56655/api/v1/terminals/e9ffeb66-2460-4f4c-9bf7-d6cff87914e1/orders/a03f7b38-1055-477a-be58-3a77cfa0af0e/items/b108533b-e9d0-4631-8128-ac9ada02a7cd/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56655/api/v1/terminals/e9ffeb66-2460-4f4c-9bf7-d6cff87914e1/orders/a03f7b38-1055-477a-be58-3a77cfa0af0e/items/b108533b-e9d0-4631-8128-ac9ada02a7cd/void-sent - 403 - application/json;+charset=utf-8 91.3500ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54124&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54124/api/v1/terminals/f5021a32-41c2-4759-9371-890fce6df5cc/orders/58fd4cc3-4a44-4b07-ad83-9a17bb8e4853/items/5ffb840d-2f47-4f39-8564-30ff4f8fc51c/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54124/api/v1/terminals/f5021a32-41c2-4759-9371-890fce6df5cc/orders/58fd4cc3-4a44-4b07-ad83-9a17bb8e4853/items/5ffb840d-2f47-4f39-8564-30ff4f8fc51c/void-sent - 409 - application/json;+charset=utf-8 108.3057ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50403&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50403/api/v1/terminals/d7879924-6e55-4002-838e-2768a8917e5d/orders/17f8cc23-cca1-4ec6-90b8-9ec01c8892a0 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50403/api/v1/terminals/d7879924-6e55-4002-838e-2768a8917e5d/orders/17f8cc23-cca1-4ec6-90b8-9ec01c8892a0 - 200 - application/json;+charset=utf-8 111.0467ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50403/api/v1/terminals/d7879924-6e55-4002-838e-2768a8917e5d/orders/1d1610bc-41c0-40fd-bf37-6b101ecefa14 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50403/api/v1/terminals/d7879924-6e55-4002-838e-2768a8917e5d/orders/1d1610bc-41c0-40fd-bf37-6b101ecefa14 - 200 - application/json;+charset=utf-8 10.0189ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50403/api/v1/terminals/d7879924-6e55-4002-838e-2768a8917e5d/orders/4c4b4a82-4dfb-4aa7-8d61-f244bfbd6442 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50403/api/v1/terminals/d7879924-6e55-4002-838e-2768a8917e5d/orders/4c4b4a82-4dfb-4aa7-8d61-f244bfbd6442 - 200 - application/json;+charset=utf-8 8.1283ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51194&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51194/api/v1/terminals/92f55628-5b23-41fd-872a-b8a93e40d425/orders/e67fd275-658c-445c-afda-a785d404131b/items/a6da6689-3a57-4663-b3ff-eb8b09915499/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51194/api/v1/terminals/92f55628-5b23-41fd-872a-b8a93e40d425/orders/e67fd275-658c-445c-afda-a785d404131b/items/a6da6689-3a57-4663-b3ff-eb8b09915499/void-sent - 200 - application/json;+charset=utf-8 149.1715ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50603&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50603/api/v1/terminals/7a2688e9-31a2-44ba-8120-5d10bb00b271/orders/246b6064-c7e9-4374-bb52-8f4d69d976b0/items/5a302ed9-b1e9-4b79-9fcd-23cc4f2c5ce2/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50603/api/v1/terminals/7a2688e9-31a2-44ba-8120-5d10bb00b271/orders/246b6064-c7e9-4374-bb52-8f4d69d976b0/items/5a302ed9-b1e9-4b79-9fcd-23cc4f2c5ce2/void-sent - 200 - application/json;+charset=utf-8 156.9540ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:64472&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64472/api/v1/terminals/3e3b6e4e-29d9-4aee-b4bf-43794dad889f/orders/bd1e84c7-a81c-4e90-84b9-93affa83aa62/items/b2fe06d1-84c4-4187-88a5-e7fed8efc9ae/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64472/api/v1/terminals/3e3b6e4e-29d9-4aee-b4bf-43794dad889f/orders/bd1e84c7-a81c-4e90-84b9-93affa83aa62/items/b2fe06d1-84c4-4187-88a5-e7fed8efc9ae/void-sent - 200 - application/json;+charset=utf-8 144.7850ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55693&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55693/api/v1/terminals/094684b1-2378-4de2-82f0-12fa75dc7e39/orders/e419d90e-2aac-400c-8a44-a7ccef707933/items/f345f397-3518-416c-940f-8716bc482337/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+fail: ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter[5200]&#xD;
+      Order management request failed on /api/v1/terminals/094684b1-2378-4de2-82f0-12fa75dc7e39/orders/e419d90e-2aac-400c-8a44-a7ccef707933/items/f345f397-3518-416c-940f-8716bc482337/void-sent (0HNPNU4VR9NJ1:00000001).&#xD;
+      Npgsql.PostgresException (0x80004005): P0001: audit write refused by the test&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Audit.EventStore.AuditEventWriter.WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, AuditEvent evt, IAuditSanitizer sanitizer, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Audit\EventStore\AuditEventWriter.cs:line 66&#xD;
+         at ALKAROS.Audit.EventStore.AuditEventWriter.WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, AuditEvent evt, IAuditSanitizer sanitizer, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Audit\EventStore\AuditEventWriter.cs:line 66&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 160&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 162&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 162&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c__DisplayClass3_1.&lt;&lt;MapOrderManagementApi&gt;b__23&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 842&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 52&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 61&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 61&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c.&lt;&lt;MapOrderManagementApi&gt;b__3_12&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 836&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 1152&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: P0001&#xD;
+          MessageText: audit write refused by the test&#xD;
+          Where: PL/pgSQL function audit.test_refuse_event() line 4 at RAISE&#xD;
+          File: pl_exec.c&#xD;
+          Line: 3909&#xD;
+          Routine: exec_stmt_raise&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 503.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55693/api/v1/terminals/094684b1-2378-4de2-82f0-12fa75dc7e39/orders/e419d90e-2aac-400c-8a44-a7ccef707933/items/f345f397-3518-416c-940f-8716bc482337/void-sent - 503 - application/json;+charset=utf-8 148.7779ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51722&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51722/api/v1/terminals/04760dc0-854c-4b85-852a-3259228438ea/orders/9c59aa5e-f3db-4766-ab7f-7ccb785145ad/items/8b637083-068a-4b4e-b287-4db0b3957bbc/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51722/api/v1/terminals/04760dc0-854c-4b85-852a-3259228438ea/orders/9c59aa5e-f3db-4766-ab7f-7ccb785145ad/items/8b637083-068a-4b4e-b287-4db0b3957bbc/void-sent - 200 - application/json;+charset=utf-8 132.2320ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52613&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52613/api/v1/terminals/caaeb554-be9d-41ee-b35c-ae78848cd372/orders/0c363254-fbc1-4b52-96d8-5e4dbc238a66/items/1c6dfd67-0c3a-4241-a0b3-afcbb669cb8c/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52613/api/v1/terminals/caaeb554-be9d-41ee-b35c-ae78848cd372/orders/0c363254-fbc1-4b52-96d8-5e4dbc238a66/items/1c6dfd67-0c3a-4241-a0b3-afcbb669cb8c/void-sent - 200 - application/json;+charset=utf-8 143.3497ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52613/api/v1/terminals/caaeb554-be9d-41ee-b35c-ae78848cd372/orders/0c363254-fbc1-4b52-96d8-5e4dbc238a66/items/1c6dfd67-0c3a-4241-a0b3-afcbb669cb8c/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52613/api/v1/terminals/caaeb554-be9d-41ee-b35c-ae78848cd372/orders/0c363254-fbc1-4b52-96d8-5e4dbc238a66/items/1c6dfd67-0c3a-4241-a0b3-afcbb669cb8c/void-sent - 409 - application/json;+charset=utf-8 15.6109ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52056&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52056/api/v1/terminals/0533dec6-69c1-430c-b489-20c08ce073ab/orders/d4fd369c-be3b-46a8-b461-8c2b37d3feb3/items/7425bcc4-696d-4e91-8ff7-a21fb6eefa20/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52056/api/v1/terminals/0533dec6-69c1-430c-b489-20c08ce073ab/orders/d4fd369c-be3b-46a8-b461-8c2b37d3feb3/items/7425bcc4-696d-4e91-8ff7-a21fb6eefa20/void-sent - 400 - application/json;+charset=utf-8 81.0174ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:49312&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:49312/api/v1/terminals/ec40d623-86c2-447a-bedd-c053ec6e31a4/orders/e9866e5c-c6ed-4b46-af1d-bcbe45be9b73/items/fb498fcf-7461-4055-b25f-5a03ee153251/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:49312/api/v1/terminals/ec40d623-86c2-447a-bedd-c053ec6e31a4/orders/e9866e5c-c6ed-4b46-af1d-bcbe45be9b73/items/fb498fcf-7461-4055-b25f-5a03ee153251/void-sent - 200 - application/json;+charset=utf-8 137.8569ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59608&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59608/api/v1/terminals/efa0c9d7-fe73-4b95-8680-60f19f16b088/orders/161a8c2a-20dd-468c-aa0b-f9185ff637e5/items/cf89158d-7728-4bd0-a764-fb6d63cb8f4c/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+fail: ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter[5200]&#xD;
+      Order management request failed on /api/v1/terminals/efa0c9d7-fe73-4b95-8680-60f19f16b088/orders/161a8c2a-20dd-468c-aa0b-f9185ff637e5/items/cf89158d-7728-4bd0-a764-fb6d63cb8f4c/void-sent (0HNPNU4VR9NJ6:00000001).&#xD;
+      Npgsql.PostgresException (0x80004005): P0001: audit write refused by the test&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Audit.EventStore.AuditEventWriter.WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, AuditEvent evt, IAuditSanitizer sanitizer, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Audit\EventStore\AuditEventWriter.cs:line 66&#xD;
+         at ALKAROS.Audit.EventStore.AuditEventWriter.WriteAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, AuditEvent evt, IAuditSanitizer sanitizer, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Audit\EventStore\AuditEventWriter.cs:line 66&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 159&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 162&#xD;
+         at ALKAROS.Host.Experience.Orders.SentItemVoid.SentItemVoidStore.VoidAsync(SentItemVoidCommand command, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\SentItemVoid\SentItemVoidStore.cs:line 162&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c__DisplayClass3_1.&lt;&lt;MapOrderManagementApi&gt;b__23&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 842&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 52&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 61&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderCommandReplayStore.ExecuteAsync[T](String scope, String key, Object request, Func`1 action, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCommandReplayStore.cs:line 61&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c.&lt;&lt;MapOrderManagementApi&gt;b__3_12&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 836&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 1152&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: P0001&#xD;
+          MessageText: audit write refused by the test&#xD;
+          Where: PL/pgSQL function audit.test_refuse_event() line 4 at RAISE&#xD;
+          File: pl_exec.c&#xD;
+          Line: 3909&#xD;
+          Routine: exec_stmt_raise&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 503.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59608/api/v1/terminals/efa0c9d7-fe73-4b95-8680-60f19f16b088/orders/161a8c2a-20dd-468c-aa0b-f9185ff637e5/items/cf89158d-7728-4bd0-a764-fb6d63cb8f4c/void-sent - 503 - application/json;+charset=utf-8 133.9688ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57546&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57546/api/v1/terminals/426b686e-0039-4331-9927-940b131588a9/orders/a4eb7a77-6825-4fc7-a9ab-79a2378ac8f2/items/7427c77a-ecab-4f5b-8b21-58f1953adbf8/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'VoidSentItemResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57546/api/v1/terminals/426b686e-0039-4331-9927-940b131588a9/orders/a4eb7a77-6825-4fc7-a9ab-79a2378ac8f2/items/7427c77a-ecab-4f5b-8b21-58f1953adbf8/void-sent - 200 - application/json;+charset=utf-8 155.7391ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57546/api/v1/terminals/426b686e-0039-4331-9927-940b131588a9/orders/a4eb7a77-6825-4fc7-a9ab-79a2378ac8f2/items/7427c77a-ecab-4f5b-8b21-58f1953adbf8/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57546/api/v1/terminals/426b686e-0039-4331-9927-940b131588a9/orders/a4eb7a77-6825-4fc7-a9ab-79a2378ac8f2/items/7427c77a-ecab-4f5b-8b21-58f1953adbf8/void-sent - 409 - application/json;+charset=utf-8 15.4585ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62797&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62797/api/v1/terminals/161c3d6c-36b2-4b0e-ba67-53b172cb3e21/orders/371cd497-68f6-4b9f-860b-e5b23d9dd378/items/97299c89-3cfc-49f9-b396-437f19f13356/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62797/api/v1/terminals/161c3d6c-36b2-4b0e-ba67-53b172cb3e21/orders/371cd497-68f6-4b9f-860b-e5b23d9dd378/items/97299c89-3cfc-49f9-b396-437f19f13356/void-sent - 403 - application/json;+charset=utf-8 91.8631ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:64423&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64423/api/v1/terminals/59905e76-3930-43a9-8fde-5c892bc02a17/orders/480ed1c3-5ea6-498e-b3f0-e160148a51f2/items/40468d1c-edb3-4ebb-8fe8-295681e38451/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64423/api/v1/terminals/59905e76-3930-43a9-8fde-5c892bc02a17/orders/480ed1c3-5ea6-498e-b3f0-e160148a51f2/items/40468d1c-edb3-4ebb-8fe8-295681e38451/void-sent - 401 - application/json;+charset=utf-8 89.7162ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56774&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\VoidSent\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56774/api/v1/terminals/42cfd077-dd84-423e-9c88-7978dd836860/orders/4070fecd-c52f-4072-8b8d-fe0f753ac0d1/items/c0e4af54-98a7-4e7d-a6ec-aae02c5dcdad/void-sent - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56774/api/v1/terminals/42cfd077-dd84-423e-9c88-7978dd836860/orders/4070fecd-c52f-4072-8b8d-fe0f753ac0d1/items/c0e4af54-98a7-4e7d-a6ec-aae02c5dcdad/void-sent - 409 - application/json;+charset=utf-8 136.7508ms&#xD;
+[xUnit.net 00:00:22.48]   Finished:    ALKAROS.Host.Experience.Orders.VoidSent.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

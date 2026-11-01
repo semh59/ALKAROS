@@ -37,4 +37,27 @@ public interface IReservationAwareConsumptionGuard
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Takes back the portions of a consumed order item whose stock was given back: the counted portions are returned up
+    /// to <paramref name="returnedUnits"/> of <paramref name="totalUnits"/> in total (cumulative; repeating a call changes
+    /// nothing), in <paramref name="transaction"/>. Does nothing for an item that was not counted.
+    /// </summary>
+    Task ReturnPortionsAsync(
+        Guid orderItemId,
+        decimal returnedUnits,
+        decimal totalUnits,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Counts the portions of a consumed order item that were not given back as waste, for an item the kitchen had
+    /// already started when it was cancelled (its stock is not returned). Repeating the call changes nothing.
+    /// </summary>
+    Task WastePortionsAsync(
+        Guid orderItemId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

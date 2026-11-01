@@ -180,6 +180,60 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
     }
 
     [Fact]
+    public async Task ReturnedAndWastedPortionsOfAConsumedReservationReconcileWithTheCounters()
+    {
+        var (_, itemId, _, versionId, locationId) = await SeedDataAsync();
+        var batchId = Guid.NewGuid();
+        var stockItemId = Guid.NewGuid();
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        {
+            const string sql = """
+                INSERT INTO production.production_batches (
+                    production_batch_id, batch_number, recipe_version_id, daily_menu_item_id,
+                    status, planned_quantity, actual_quantity, destination_location_id, row_version
+                ) VALUES (@bId, @bNum, @vId, @iId, 'Completed', 20.000, 20.000, @loc, 1);
+
+                INSERT INTO production.production_outputs (
+                    production_output_id, production_batch_id, stock_location_id, quantity, unit_code
+                ) VALUES (gen_random_uuid(), @bId, @loc, 20.000, 'portion');
+
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version)
+                VALUES (@sId, @code, 'Portion Stock', 'FinishedProduct', 'portion', true, 1);
+
+                INSERT INTO inventory.portion_reservations (
+                    id, order_id, order_item_id, stock_item_id, stock_location_id,
+                    quantity, unit_code, status, version, created_by, metadata
+                ) VALUES
+                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 1.500, 'kg', 'Consumed', 2, gen_random_uuid(),
+                     jsonb_build_object('daily_menu_item_id', @iId::text, 'portion_count', 10, 'portions_returned', 2, 'portions_wasted', 3)),
+                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 0.300, 'kg', 'Waste', 2, gen_random_uuid(),
+                     jsonb_build_object('daily_menu_item_id', @iId::text, 'portion_count', 2));
+
+                UPDATE menu.daily_menu_items
+                SET prepared_portions = 20.000, reserved_portions = 0, consumed_portions = 5.000,
+                    waste_portions = 5.000, available_portions = 10.000
+                WHERE daily_menu_item_id = @iId;
+                """;
+            await using var cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("bId", batchId);
+            cmd.Parameters.AddWithValue("bNum", "PB-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("vId", versionId);
+            cmd.Parameters.AddWithValue("iId", itemId);
+            cmd.Parameters.AddWithValue("loc", locationId);
+            cmd.Parameters.AddWithValue("sId", stockItemId);
+            cmd.Parameters.AddWithValue("code", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var report = await _service.GetPortionConsumptionReportAsync(new PortionConsumptionReportQuery());
+
+        var item = report.Items.Single(i => i.DailyMenuItemId == itemId);
+        item.ConsumedPortions.Should().Be(5.000m);
+        item.WastePortions.Should().Be(5.000m);
+        item.IsReconciled.Should().BeTrue("the report's own sources agree with the counters");
+    }
+
+    [Fact]
     public async Task ProductionYieldReportComputesAccurateYieldRates()
     {
         var (_, itemId, _, versionId, locationId) = await SeedDataAsync();

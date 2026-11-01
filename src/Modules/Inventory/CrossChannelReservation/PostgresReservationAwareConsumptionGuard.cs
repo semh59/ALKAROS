@@ -61,6 +61,22 @@ public sealed class PostgresReservationAwareConsumptionGuard : IReservationAware
             reservationId, "Consumed", metadata, now, connection, transaction, cancellationToken).ConfigureAwait(false);
     }
 
+    public Task ReturnPortionsAsync(
+        Guid orderItemId,
+        decimal returnedUnits,
+        decimal totalUnits,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default) =>
+        DailyMenuPortionEvents.ReturnShareAsync(orderItemId, returnedUnits, totalUnits, connection, transaction, cancellationToken);
+
+    public Task WastePortionsAsync(
+        Guid orderItemId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default) =>
+        DailyMenuPortionEvents.WasteRemainingAsync(orderItemId, connection, transaction, cancellationToken);
+
     public async Task<bool> ConvertOwnHoldsAndCheckAvailableAsync(
         Guid orderItemId,
         Guid stockItemId,

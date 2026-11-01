@@ -33,6 +33,9 @@ public sealed class MovementReversalTestDb : PgTestDatabase
         var migration062 = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "062-stock-reversals.up.sql");
         var sql062 = await File.ReadAllTextAsync(migration062);
         await RunAsync(DataSource, sql062);
+
+        await RunAsync(DataSource, await File.ReadAllTextAsync(
+            Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "064-portion-reservations.up.sql")));
     }
 
     public async Task RollbackMigration062Async()

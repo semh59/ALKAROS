@@ -18,6 +18,7 @@ public sealed class DailyMenuCounterEventConsumer : IIntegrationEventConsumer
 
     public bool CanHandle(string eventType) =>
         eventType is DailyMenuCounterIntegrationEventTypes.PortionStatusChanged
+            or DailyMenuCounterIntegrationEventTypes.PortionAdjusted
             or DailyMenuCounterIntegrationEventTypes.ProductionOutputRecorded;
 
     public async Task HandleAsync(string eventType, ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
@@ -27,6 +28,28 @@ public sealed class DailyMenuCounterEventConsumer : IIntegrationEventConsumer
             var output = IntegrationEventSerializer.Deserialize<DailyMenuProductionOutputRecorded>(payload.Span);
             await _projector.ApplyProductionOutputAsync(
                 new ProductionOutputCounterEvent(output.DailyMenuItemId, output.ProductionOutputId, output.Quantity, output.OccurredAt),
+                cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (eventType == DailyMenuCounterIntegrationEventTypes.PortionAdjusted)
+        {
+            var adjusted = IntegrationEventSerializer.Deserialize<DailyMenuPortionAdjusted>(payload.Span);
+            // An adjustment can overtake the reservation's own events; the adjustment is only meaningful on top of its consumption.
+            await _projector.ApplyReservationReservedAsync(
+                new ReservationReservedCounterEvent(adjusted.DailyMenuItemId, adjusted.ReservationId, adjusted.PortionCount, adjusted.OccurredAt),
+                cancellationToken).ConfigureAwait(false);
+            await _projector.ApplyReservationTerminalAsync(
+                new ReservationTerminalCounterEvent(
+                    adjusted.DailyMenuItemId,
+                    adjusted.ReservationId,
+                    ReservationCounterTerminalStatus.Consumed,
+                    adjusted.PortionCount,
+                    adjusted.OccurredAt),
+                cancellationToken).ConfigureAwait(false);
+            await _projector.ApplyReservationAdjustmentAsync(
+                new ReservationAdjustmentCounterEvent(
+                    adjusted.DailyMenuItemId, adjusted.ReservationId, adjusted.ReturnedPortions, adjusted.WastedPortions, adjusted.OccurredAt),
                 cancellationToken).ConfigureAwait(false);
             return;
         }

@@ -2,6 +2,7 @@ using ALKAROS.IntegrationContracts;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Inventory.PortionReservations.CancellationEffects;
 using ALKAROS.Inventory.PortionReservations.Lifecycle;
 using ALKAROS.Inventory.ReservationBalanceProjection;
@@ -388,5 +389,293 @@ public sealed class DailyMenuCounterEndToEndTests : IClassFixture<CounterProject
         (await ReservationsOfAsync(order.OrderItemId)).Should().ContainSingle();
         (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
         (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+    }
+
+    private StockMovementReversalService ReversalService()
+    {
+        var movements = new PostgresStockMovementRepository(_db.DataSource);
+        var balances = new PostgresStockBalanceRepository(_db.DataSource);
+        var locations = new PostgresStockLocationRepository(_db.DataSource);
+        return new StockMovementReversalService(
+            movements, new PostgresStockItemRepository(_db.DataSource), locations,
+            new StockBalanceProjector(balances, movements, locations), balances);
+    }
+
+    private async Task RecordConsumptionAsync(Seeded seed, Guid orderItemId, decimal stockQuantity)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var tx = await conn.BeginTransactionAsync();
+        var location = await LocationOfAsync(conn, tx, seed.StockItemIds[0]);
+        await new PostgresStockMovementRepository(_db.DataSource).AppendAsync(
+            new StockMovement(
+                Guid.NewGuid(), seed.StockItemIds[0], location, StockMovementType.Consumption, MovementDirection.Out,
+                stockQuantity, "kg", StockMovementSourceType.Order, orderItemId, "test consumption", Actor),
+            conn,
+            tx);
+        await tx.CommitAsync();
+    }
+
+    private async Task ReturnShareAsync(Guid orderItemId, decimal returned, decimal previously, decimal total)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var tx = await conn.BeginTransactionAsync();
+        await ReversalService().ReturnConsumedShareAsync(
+            new StockShareReturnRequest(orderItemId, returned, previously, total, "refund", Actor), conn, tx);
+        await tx.CommitAsync();
+    }
+
+    [Fact]
+    public async Task ARefundThatPutsStockBackGivesTheSameShareOfPortionsBackOnceAndMatchesRebuildAndDrift()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 3m, ReservationChannel.Waiter);
+        await RecordConsumptionAsync(seed, orderItemId, 0.45m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(3m);
+
+        await ReturnShareAsync(orderItemId, returned: 1m, previously: 0m, total: 3m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+
+        await ReturnShareAsync(orderItemId, returned: 1m, previously: 0m, total: 3m);
+        (await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)).Should().Be(0, "the same cumulative share changes nothing");
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+
+        await ReturnShareAsync(orderItemId, returned: 2m, previously: 1m, total: 3m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(0m);
+        counters.WastePortions.Should().Be(0m);
+
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        (await CountersAsync(seed.MenuItemId)).Should().Be(counters);
+    }
+
+    private async Task AdjustAsync(Func<PostgresReservationAwareConsumptionGuard, NpgsqlConnection, NpgsqlTransaction, Task> adjust)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var tx = await conn.BeginTransactionAsync();
+        await adjust(new PostgresReservationAwareConsumptionGuard(), conn, tx);
+        await tx.CommitAsync();
+    }
+
+    private Task ReturnPortionsAsync(Guid orderItemId, decimal returned, decimal total) =>
+        AdjustAsync((guard, conn, tx) => guard.ReturnPortionsAsync(orderItemId, returned, total, conn, tx));
+
+    private Task WastePortionsAsync(Guid orderItemId) =>
+        AdjustAsync((guard, conn, tx) => guard.WastePortionsAsync(orderItemId, conn, tx));
+
+    private async Task ProduceAsync(Seeded seed, decimal quantity) =>
+        await new DailyMenuCounterEventConsumer(_projector).HandleAsync(
+            DailyMenuCounterIntegrationEventTypes.ProductionOutputRecorded,
+            IntegrationEventSerializer.Serialize(new DailyMenuProductionOutputRecorded(
+                Guid.NewGuid(), seed.MenuItemId, quantity, DateTimeOffset.UtcNow)),
+            CancellationToken.None);
+
+    [Fact]
+    public async Task ACancelledItemTheKitchenHadStartedMovesItsPortionsFromConsumedToWasteOnceAndKeepsAvailableAsItWas()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await ProduceAsync(seed, 10m);
+        await SellDirectlyAsync(seed, orderItemId, 3m, ReservationChannel.Waiter);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        var sold = await CountersAsync(seed.MenuItemId);
+        sold.ConsumedPortions.Should().Be(3m);
+        sold.AvailablePortions.Should().Be(7m);
+
+        await WastePortionsAsync(orderItemId);
+        await WastePortionsAsync(orderItemId);
+        (await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)).Should().Be(1, "the second cancellation announces nothing");
+
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(0m);
+        counters.WastePortions.Should().Be(3m);
+        counters.AvailablePortions.Should().Be(7m, "a wasted portion is used up just like a sold one");
+    }
+
+    [Fact]
+    public async Task AWasteAfterAPartialReturnMatchesRebuildAndDrift()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 4m, ReservationChannel.Cashier);
+        await ReturnPortionsAsync(orderItemId, 1m, 4m);
+        await WastePortionsAsync(orderItemId);
+        await ReturnPortionsAsync(orderItemId, 4m, 4m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(0m);
+        counters.WastePortions.Should().Be(3m);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        (await CountersAsync(seed.MenuItemId)).Should().Be(counters);
+    }
+
+    [Fact]
+    public async Task AGivenBackItemMakesItsPortionsAvailableAgainAndAWasteAfterAPartialReturnOnlyWastesTheRest()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await ProduceAsync(seed, 10m);
+        await SellDirectlyAsync(seed, orderItemId, 4m, ReservationChannel.Cashier);
+        await ReturnPortionsAsync(orderItemId, 1m, 4m);
+        await WastePortionsAsync(orderItemId);
+        await ReturnPortionsAsync(orderItemId, 4m, 4m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(0m);
+        counters.WastePortions.Should().Be(3m, "only the three portions not given back were wasted; a later return cannot take them back");
+        counters.AvailablePortions.Should().Be(7m);
+    }
+
+    [Fact]
+    public async Task AQrItemCancelledAfterAcceptanceGivesBackOnlyTheKeyedReservationOfItsTwoStockMappings()
+    {
+        var seed = await SeedAsync(mappings: 2);
+        var order = await ReserveAsync(seed, 2m);
+        foreach (var stockItemId in seed.StockItemIds)
+            await ConsumeAsync(order.OrderItemId, stockItemId);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+
+        await ReturnPortionsAsync(order.OrderItemId, 2m, 2m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(0m);
+        await using var cmd = _db.DataSource.CreateCommand(
+            "SELECT count(*) FROM inventory.portion_reservations WHERE order_item_id = $1 AND metadata->>'portions_returned' IS NOT NULL;");
+        cmd.Parameters.AddWithValue(order.OrderItemId);
+        ((long)(await cmd.ExecuteScalarAsync())!).Should().Be(1);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AnAdjustmentThatOvertakesItsConsumptionOrArrivesTwiceOrLateChangesTheCountersOnce()
+    {
+        var seed = await SeedAsync();
+        var consumer = new DailyMenuCounterEventConsumer(_projector);
+        var reservationId = Guid.NewGuid();
+
+        async Task AdjustedAsync(decimal returned, decimal wasted) => await consumer.HandleAsync(
+            DailyMenuCounterIntegrationEventTypes.PortionAdjusted,
+            IntegrationEventSerializer.Serialize(new DailyMenuPortionAdjusted(
+                reservationId, seed.MenuItemId, 3m, returned, wasted, DateTimeOffset.UtcNow)),
+            CancellationToken.None);
+
+        await AdjustedAsync(1m, 0m);
+        await consumer.HandleAsync(
+            DailyMenuCounterIntegrationEventTypes.PortionStatusChanged,
+            IntegrationEventSerializer.Serialize(new DailyMenuPortionStatusChanged(
+                reservationId, seed.MenuItemId, 3m, "Consumed", DateTimeOffset.UtcNow)),
+            CancellationToken.None);
+        await AdjustedAsync(1m, 0m);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+
+        await AdjustedAsync(2m, 1m);
+        await AdjustedAsync(1m, 0m);
+
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(0m);
+        counters.WastePortions.Should().Be(1m);
+        counters.ReservedPortions.Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task ARebuildBeforeTheAdjustmentIsDeliveredDoesNotLetTheDeliveryTakeThePortionsBackTwice()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 3m, ReservationChannel.Waiter);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        await ReturnPortionsAsync(orderItemId, 1m, 3m);
+
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(2m);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ARebuildBeforeAWasteIsDeliveredDoesNotLetTheDeliveryWasteThePortionsTwice()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 3m, ReservationChannel.Waiter);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        await WastePortionsAsync(orderItemId);
+
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.WastePortions.Should().Be(3m);
+        counters.ConsumedPortions.Should().Be(0m);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AFractionalShareRoundsToThreeDecimalsAndASmallerLaterShareTakesNothingBack()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 4m, ReservationChannel.Waiter);
+        await ReturnPortionsAsync(orderItemId, 2m, 3m);
+        await ReturnPortionsAsync(orderItemId, 1m, 3m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(1.333m);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task AnAdjustmentLargerThanWhatIsCountedNeverTakesTheCounterBelowZero()
+    {
+        var seed = await SeedAsync();
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 3m, ReservationChannel.Waiter);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        await using (var cmd = _db.DataSource.CreateCommand(
+            "UPDATE menu.daily_menu_items SET consumed_portions = 1 WHERE daily_menu_item_id = $1;"))
+        {
+            cmd.Parameters.AddWithValue(seed.MenuItemId);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        await ReturnPortionsAsync(orderItemId, 3m, 3m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task ANegativeAdjustmentIsRefused()
+    {
+        var seed = await SeedAsync();
+
+        var act = () => _projector.ApplyReservationAdjustmentAsync(
+            new ReservationAdjustmentCounterEvent(seed.MenuItemId, Guid.NewGuid(), -1m, 0m));
+
+        await act.Should().ThrowAsync<InvalidCounterDeltaException>();
+    }
+
+    [Fact]
+    public async Task AnItemThatWasNeverCountedIsNotAdjusted()
+    {
+        var seed = await SeedAsync(menuStatus: "Draft");
+        var order = await ReserveAsync(seed, 2m);
+        await ConsumeAsync(order.OrderItemId, seed.StockItemIds[0]);
+
+        await ReturnPortionsAsync(order.OrderItemId, 2m, 2m);
+        await WastePortionsAsync(order.OrderItemId);
+
+        (await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)).Should().Be(0);
+        (await CountersAsync(seed.MenuItemId)).WastePortions.Should().Be(0m);
     }
 }

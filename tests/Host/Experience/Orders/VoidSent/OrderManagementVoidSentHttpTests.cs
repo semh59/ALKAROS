@@ -551,6 +551,71 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.Equal(9m, await _database.GetOnHandQuantityAsync(stockItemId));
     }
 
+    [Theory]
+    [InlineData(KitchenState.Sent, 1, 0)]
+    [InlineData(KitchenState.Held, 1, 0)]
+    [InlineData(KitchenState.Preparing, 0, 1)]
+    [InlineData(KitchenState.Ready, 0, 1)]
+    public async Task VoidingACountedItemGivesItsPortionBackBeforeTheKitchenStartedAndWastesItAfter(
+        KitchenState kitchenState, decimal returned, decimal wasted)
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(kitchenState);
+        var (stockItemId, locationId) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        var reservationId = await _database.SeedCountedPortionsAsync(itemId, stockItemId, locationId, portions: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal((returned, wasted, 1L), await _database.ReadPortionAdjustmentAsync(reservationId));
+    }
+
+    [Fact]
+    public async Task AVoidThatFindsNoConsumptionToReverseLeavesThePortionsCounted()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, locationId) = await _database.SeedConsumedStockForItemAsync(Guid.NewGuid(), onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        var reservationId = await _database.SeedCountedPortionsAsync(itemId, stockItemId, locationId, portions: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal((0m, 0m, 0L), await _database.ReadPortionAdjustmentAsync(reservationId));
+    }
+
+    [Fact]
+    public async Task ARepeatedVoidDoesNotAdjustThePortionsTwice()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, locationId) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        var reservationId = await _database.SeedCountedPortionsAsync(itemId, stockItemId, locationId, portions: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        for (var attempt = 0; attempt < 2; attempt++)
+        {
+            using var response = await client.SendAsync(JsonRequest(
+                VoidSentPath(terminalId, orderId, itemId), cookie,
+                new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+            Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
+        }
+
+        Assert.Equal((1m, 0m, 1L), await _database.ReadPortionAdjustmentAsync(reservationId));
+    }
+
     [Fact]
     public async Task ARoleWithoutBillsVoidEscalatesToPending()
     {

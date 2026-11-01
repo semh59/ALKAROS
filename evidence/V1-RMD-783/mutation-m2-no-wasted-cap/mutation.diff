@@ -1,0 +1,4 @@
+41c41
+<                 Math.Max(returned, Math.Min(count - wasted, Math.Round(count * returnedUnits / totalUnits, 3, MidpointRounding.AwayFromZero))),
+---
+>                 Math.Max(returned, Math.Min(count, Math.Round(count * returnedUnits / totalUnits, 3, MidpointRounding.AwayFromZero))),

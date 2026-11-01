@@ -1,6 +1,7 @@
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Inventory.StockMaster;
@@ -43,6 +44,7 @@ public sealed class SentItemVoidStore
     private readonly IBillRepository _bills;
     private readonly IStockMovementRepository _stockMovements;
     private readonly IStockMovementReversalService _stockReversal;
+    private readonly IReservationAwareConsumptionGuard _portions;
     private readonly NpgsqlDataSource _dataSource;
     private readonly IAuditEventStore _auditEvents;
 
@@ -52,9 +54,11 @@ public sealed class SentItemVoidStore
         IBillRepository bills,
         IStockMovementRepository stockMovements,
         IStockMovementReversalService stockReversal,
+        IReservationAwareConsumptionGuard portions,
         NpgsqlDataSource dataSource,
         IAuditEventStore auditEvents)
     {
+        _portions = portions ?? throw new ArgumentNullException(nameof(portions));
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
@@ -140,6 +144,12 @@ public sealed class SentItemVoidStore
             stockRestored = restoresStock
                 && await RestoreStockForVoidedItemAsync(item, command, connection, transaction, cancellationToken)
                     .ConfigureAwait(false);
+            // The daily menu counts the line's ordered quantity as portions: given back with its stock, wasted once the kitchen started.
+            if (stockRestored)
+                await _portions.ReturnPortionsAsync(item.Id, item.Quantity, item.Quantity, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false);
+            else if (!restoresStock)
+                await _portions.WastePortionsAsync(item.Id, connection, transaction, cancellationToken).ConfigureAwait(false);
             kitchenCancelled = await CancelKitchenTicketItemAsync(
                 command.OrderId, command.OrderItemId, historyReason, now, connection, transaction, cancellationToken).ConfigureAwait(false);
             wasteConverted = billContext is not null

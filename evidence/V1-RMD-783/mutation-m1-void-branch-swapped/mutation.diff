@@ -1,0 +1,4 @@
+148c148
+<             if (restoresStock)
+---
+>             if (!restoresStock)

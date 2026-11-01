@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="bd06489a-c45c-4402-b250-5123360adb6d" name="semih@SEMH59 2026-11-01 11:27:27" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:27:27.4122116+03:00" queuing="2026-11-01T11:27:27.4122120+03:00" start="2026-11-01T11:27:23.7573842+03:00" finish="2026-11-01T11:27:28.2217077+03:00" />
+  <TestSettings name="default" id="6a5ca191-5924-406d-ad09-0a1531bf435a">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_27_27" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a71f3ffb-df91-426f-9631-757a940cbe04" testId="443cfb8a-e143-6c8a-4558-5fb2055e0098" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncRejectsEmptyDraftOrder" computerName="SEMH59" duration="00:00:00.0226379" startTime="2026-11-01T11:27:27.9685826+03:00" endTime="2026-11-01T11:27:27.9685830+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a71f3ffb-df91-426f-9631-757a940cbe04" />
+    <UnitTestResult executionId="45d78f9a-e5a5-47de-b458-48dbca41466f" testId="8cda6b65-53cb-30ec-2bbf-2c0b4af1100c" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncSubmitsDraftOrderSuccessfully" computerName="SEMH59" duration="00:00:00.0348191" startTime="2026-11-01T11:27:28.0040015+03:00" endTime="2026-11-01T11:27:28.0040020+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45d78f9a-e5a5-47de-b458-48dbca41466f" />
+    <UnitTestResult executionId="89cbab1b-121a-4c93-88cf-15fb7b0d82af" testId="e3fe38ba-190c-0fa2-3b2e-8cfaf110e605" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.RequestHashIsDeterministic" computerName="SEMH59" duration="00:00:00.0002135" startTime="2026-11-01T11:27:27.2077478+03:00" endTime="2026-11-01T11:27:27.2077479+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89cbab1b-121a-4c93-88cf-15fb7b0d82af" />
+    <UnitTestResult executionId="c7efe974-dc28-4847-a6f8-ea138f098df3" testId="1b9308c6-7330-bccf-b29b-f3bd6cdbf1ff" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncOnACheckWithNothingLeftToFireThrows" computerName="SEMH59" duration="00:00:00.0231056" startTime="2026-11-01T11:27:28.0621615+03:00" endTime="2026-11-01T11:27:28.0621619+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7efe974-dc28-4847-a6f8-ea138f098df3" />
+    <UnitTestResult executionId="8549d044-12f9-4105-b297-573b009139cb" testId="02ef1e9c-554c-c09d-9cc2-581a589147d1" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.SerializationRoundTripPreservesData" computerName="SEMH59" duration="00:00:00.0593230" startTime="2026-11-01T11:27:27.2714104+03:00" endTime="2026-11-01T11:27:27.2714107+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8549d044-12f9-4105-b297-573b009139cb" />
+    <UnitTestResult executionId="14ec98bf-29dd-408d-b444-72e2bfcb14d2" testId="07ec2040-d290-466f-2a8d-af83ceaf5133" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncStaleVersionStillFailsWhenTheOrderIsNoLongerOpen" computerName="SEMH59" duration="00:00:00.0538198" startTime="2026-11-01T11:27:27.9454842+03:00" endTime="2026-11-01T11:27:27.9454846+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="14ec98bf-29dd-408d-b444-72e2bfcb14d2" />
+    <UnitTestResult executionId="e54721c1-dcc4-44e1-b5a6-b3e8cb16c5ca" testId="f98b32d4-6ad3-56e7-fdc2-cdef5e6b5170" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncReusedKeyWithModifiedPayloadThrowsConflictException" computerName="SEMH59" duration="00:00:00.1582787" startTime="2026-11-01T11:27:27.7164897+03:00" endTime="2026-11-01T11:27:27.7164899+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e54721c1-dcc4-44e1-b5a6-b3e8cb16c5ca" />
+    <UnitTestResult executionId="5ccc5f4a-1f0f-4f90-8a73-2573c8dc6ad6" testId="eaa8dba4-7ea6-cd90-0d6b-1fe71d93c16a" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnInvalidRowVersion" computerName="SEMH59" duration="00:00:00.0041373" startTime="2026-11-01T11:27:27.2119870+03:00" endTime="2026-11-01T11:27:27.2119872+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ccc5f4a-1f0f-4f90-8a73-2573c8dc6ad6" />
+    <UnitTestResult executionId="d938d2db-c7ea-420a-a3a8-d62dee1c327d" testId="8873c668-a10e-39c3-3bdd-0d5d5ccac541" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncReplayReturnsExactCachedResponseWithIsReplayTrue" computerName="SEMH59" duration="00:00:00.0290968" startTime="2026-11-01T11:27:28.0917825+03:00" endTime="2026-11-01T11:27:28.0917827+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d938d2db-c7ea-420a-a3a8-d62dee1c327d" />
+    <UnitTestResult executionId="d90a41ca-943b-440b-aae5-9f9ebacf1acf" testId="5b19b187-2692-3921-9724-83ff44096dbe" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnEmptyOrderId" computerName="SEMH59" duration="00:00:00.0007059" startTime="2026-11-01T11:27:27.2722005+03:00" endTime="2026-11-01T11:27:27.2722008+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d90a41ca-943b-440b-aae5-9f9ebacf1acf" />
+    <UnitTestResult executionId="8e1fc188-7075-40e6-b13f-93f39d1b9b60" testId="1a353b0d-5198-8030-696e-382ba3ac5545" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.RequestHashDiffersOnModifiedPayload" computerName="SEMH59" duration="00:00:00.0003714" startTime="2026-11-01T11:27:27.2068643+03:00" endTime="2026-11-01T11:27:27.2068644+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e1fc188-7075-40e6-b13f-93f39d1b9b60" />
+    <UnitTestResult executionId="a6153f66-df4b-412d-903c-66644a2295b5" testId="dcf5f407-c5b2-ee9f-a6a2-1acb74a1aa20" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncStaleVersionStillSucceedsWhenTheOrderRemainsOpen" computerName="SEMH59" duration="00:00:00.0338790" startTime="2026-11-01T11:27:28.0385235+03:00" endTime="2026-11-01T11:27:28.0385239+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6153f66-df4b-412d-903c-66644a2295b5" />
+    <UnitTestResult executionId="d2337656-01c3-49d5-838d-b7cf6fd2b5db" testId="b8d73b32-58df-5937-9793-ba4bbd6f8db4" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncConcurrentSubmissionsWithSameKeySucceedsDeterministically" computerName="SEMH59" duration="00:00:00.0656270" startTime="2026-11-01T11:27:27.8911162+03:00" endTime="2026-11-01T11:27:27.8911166+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2337656-01c3-49d5-838d-b7cf6fd2b5db" />
+    <UnitTestResult executionId="d92f9444-ee09-4f37-971d-6809f65e6676" testId="bc8eaca7-981f-d7df-285f-9153b3f76f9c" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.ALostDeadlockIsRetriedAndLeftInTheLog" computerName="SEMH59" duration="00:00:00.1078520" startTime="2026-11-01T11:27:27.8249444+03:00" endTime="2026-11-01T11:27:27.8249447+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d92f9444-ee09-4f37-971d-6809f65e6676" />
+    <UnitTestResult executionId="d157366b-ef67-4106-a8b9-ecdc3c576458" testId="51186e99-13bd-28b5-a348-13a55acc0dce" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.RequestHashIgnoresSubmittedAtSoAGenuineRetryReplaysCleanly" computerName="SEMH59" duration="00:00:00.1455179" startTime="2026-11-01T11:27:27.1991778+03:00" endTime="2026-11-01T11:27:27.1992070+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d157366b-ef67-4106-a8b9-ecdc3c576458" />
+    <UnitTestResult executionId="f88aee58-ea41-4f3c-bd90-7a26946e0bc0" testId="60a66e95-7b25-01fd-cb3f-ad5ebf54ab4c" testName="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncOrderNotFoundThrowsOrderNotFoundException" computerName="SEMH59" duration="00:00:00.0713606" startTime="2026-11-01T11:27:27.5564792+03:00" endTime="2026-11-01T11:27:27.5564795+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f88aee58-ea41-4f3c-bd90-7a26946e0bc0" />
+    <UnitTestResult executionId="4526310a-918b-4a68-a3d4-283498e4ab57" testId="fdaffbdc-4738-5dc1-3555-a8ab84c9fca6" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnEmptyOperationId" computerName="SEMH59" duration="00:00:00.0078578" startTime="2026-11-01T11:27:27.2064061+03:00" endTime="2026-11-01T11:27:27.2064066+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4526310a-918b-4a68-a3d4-283498e4ab57" />
+    <UnitTestResult executionId="ea257d2e-bd81-4c2e-bc24-ef192ca5932e" testId="c3125c2f-defb-b380-c2c8-5a2a4271616b" testName="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnEmptyClientId" computerName="SEMH59" duration="00:00:00.0006214" startTime="2026-11-01T11:27:27.2074878+03:00" endTime="2026-11-01T11:27:27.2074879+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea257d2e-bd81-4c2e-bc24-ef192ca5932e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncSubmitsDraftOrderSuccessfully" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="8cda6b65-53cb-30ec-2bbf-2c0b4af1100c">
+      <Execution id="45d78f9a-e5a5-47de-b458-48dbca41466f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncSubmitsDraftOrderSuccessfully" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncOnACheckWithNothingLeftToFireThrows" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="1b9308c6-7330-bccf-b29b-f3bd6cdbf1ff">
+      <Execution id="c7efe974-dc28-4847-a6f8-ea138f098df3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncOnACheckWithNothingLeftToFireThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncStaleVersionStillFailsWhenTheOrderIsNoLongerOpen" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="07ec2040-d290-466f-2a8d-af83ceaf5133">
+      <Execution id="14ec98bf-29dd-408d-b444-72e2bfcb14d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncStaleVersionStillFailsWhenTheOrderIsNoLongerOpen" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.RequestHashIsDeterministic" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="e3fe38ba-190c-0fa2-3b2e-8cfaf110e605">
+      <Execution id="89cbab1b-121a-4c93-88cf-15fb7b0d82af" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="RequestHashIsDeterministic" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.ALostDeadlockIsRetriedAndLeftInTheLog" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="bc8eaca7-981f-d7df-285f-9153b3f76f9c">
+      <Execution id="d92f9444-ee09-4f37-971d-6809f65e6676" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="ALostDeadlockIsRetriedAndLeftInTheLog" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.RequestHashDiffersOnModifiedPayload" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="1a353b0d-5198-8030-696e-382ba3ac5545">
+      <Execution id="8e1fc188-7075-40e6-b13f-93f39d1b9b60" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="RequestHashDiffersOnModifiedPayload" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.RequestHashIgnoresSubmittedAtSoAGenuineRetryReplaysCleanly" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="51186e99-13bd-28b5-a348-13a55acc0dce">
+      <Execution id="d157366b-ef67-4106-a8b9-ecdc3c576458" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="RequestHashIgnoresSubmittedAtSoAGenuineRetryReplaysCleanly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncReusedKeyWithModifiedPayloadThrowsConflictException" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="f98b32d4-6ad3-56e7-fdc2-cdef5e6b5170">
+      <Execution id="e54721c1-dcc4-44e1-b5a6-b3e8cb16c5ca" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncReusedKeyWithModifiedPayloadThrowsConflictException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncStaleVersionStillSucceedsWhenTheOrderRemainsOpen" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="dcf5f407-c5b2-ee9f-a6a2-1acb74a1aa20">
+      <Execution id="a6153f66-df4b-412d-903c-66644a2295b5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncStaleVersionStillSucceedsWhenTheOrderRemainsOpen" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.SerializationRoundTripPreservesData" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="02ef1e9c-554c-c09d-9cc2-581a589147d1">
+      <Execution id="8549d044-12f9-4105-b297-573b009139cb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="SerializationRoundTripPreservesData" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnEmptyOperationId" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="fdaffbdc-4738-5dc1-3555-a8ab84c9fca6">
+      <Execution id="4526310a-918b-4a68-a3d4-283498e4ab57" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="ValidateThrowsOnEmptyOperationId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncRejectsEmptyDraftOrder" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="443cfb8a-e143-6c8a-4558-5fb2055e0098">
+      <Execution id="a71f3ffb-df91-426f-9631-757a940cbe04" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncRejectsEmptyDraftOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncOrderNotFoundThrowsOrderNotFoundException" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="60a66e95-7b25-01fd-cb3f-ad5ebf54ab4c">
+      <Execution id="f88aee58-ea41-4f3c-bd90-7a26946e0bc0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncOrderNotFoundThrowsOrderNotFoundException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnEmptyOrderId" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="5b19b187-2692-3921-9724-83ff44096dbe">
+      <Execution id="d90a41ca-943b-440b-aae5-9f9ebacf1acf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="ValidateThrowsOnEmptyOrderId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnInvalidRowVersion" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="eaa8dba4-7ea6-cd90-0d6b-1fe71d93c16a">
+      <Execution id="5ccc5f4a-1f0f-4f90-8a73-2573c8dc6ad6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="ValidateThrowsOnInvalidRowVersion" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests.ValidateThrowsOnEmptyClientId" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="c3125c2f-defb-b380-c2c8-5a2a4271616b">
+      <Execution id="ea257d2e-bd81-4c2e-bc24-ef192ca5932e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.SubmitOrderUnitTests" name="ValidateThrowsOnEmptyClientId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncReplayReturnsExactCachedResponseWithIsReplayTrue" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="8873c668-a10e-39c3-3bdd-0d5d5ccac541">
+      <Execution id="d938d2db-c7ea-420a-a3a8-d62dee1c327d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncReplayReturnsExactCachedResponseWithIsReplayTrue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests.HandleAsyncConcurrentSubmissionsWithSameKeySucceedsDeterministically" storage="d:\project\alkaros\tests\modules\orders\submitorder\bin\debug\net8.0\alkaros.orders.submitorder.tests.dll" id="b8d73b32-58df-5937-9793-ba4bbd6f8db4">
+      <Execution id="d2337656-01c3-49d5-838d-b7cf6fd2b5db" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Orders\SubmitOrder\bin\Debug\net8.0\ALKAROS.Orders.SubmitOrder.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.SubmitOrder.Tests.PostgresSubmitOrderIntegrationTests" name="HandleAsyncConcurrentSubmissionsWithSameKeySucceedsDeterministically" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="443cfb8a-e143-6c8a-4558-5fb2055e0098" executionId="a71f3ffb-df91-426f-9631-757a940cbe04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8cda6b65-53cb-30ec-2bbf-2c0b4af1100c" executionId="45d78f9a-e5a5-47de-b458-48dbca41466f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3fe38ba-190c-0fa2-3b2e-8cfaf110e605" executionId="89cbab1b-121a-4c93-88cf-15fb7b0d82af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b9308c6-7330-bccf-b29b-f3bd6cdbf1ff" executionId="c7efe974-dc28-4847-a6f8-ea138f098df3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02ef1e9c-554c-c09d-9cc2-581a589147d1" executionId="8549d044-12f9-4105-b297-573b009139cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07ec2040-d290-466f-2a8d-af83ceaf5133" executionId="14ec98bf-29dd-408d-b444-72e2bfcb14d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f98b32d4-6ad3-56e7-fdc2-cdef5e6b5170" executionId="e54721c1-dcc4-44e1-b5a6-b3e8cb16c5ca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eaa8dba4-7ea6-cd90-0d6b-1fe71d93c16a" executionId="5ccc5f4a-1f0f-4f90-8a73-2573c8dc6ad6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8873c668-a10e-39c3-3bdd-0d5d5ccac541" executionId="d938d2db-c7ea-420a-a3a8-d62dee1c327d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b19b187-2692-3921-9724-83ff44096dbe" executionId="d90a41ca-943b-440b-aae5-9f9ebacf1acf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a353b0d-5198-8030-696e-382ba3ac5545" executionId="8e1fc188-7075-40e6-b13f-93f39d1b9b60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dcf5f407-c5b2-ee9f-a6a2-1acb74a1aa20" executionId="a6153f66-df4b-412d-903c-66644a2295b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8d73b32-58df-5937-9793-ba4bbd6f8db4" executionId="d2337656-01c3-49d5-838d-b7cf6fd2b5db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bc8eaca7-981f-d7df-285f-9153b3f76f9c" executionId="d92f9444-ee09-4f37-971d-6809f65e6676" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51186e99-13bd-28b5-a348-13a55acc0dce" executionId="d157366b-ef67-4106-a8b9-ecdc3c576458" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60a66e95-7b25-01fd-cb3f-ad5ebf54ab4c" executionId="f88aee58-ea41-4f3c-bd90-7a26946e0bc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdaffbdc-4738-5dc1-3555-a8ab84c9fca6" executionId="4526310a-918b-4a68-a3d4-283498e4ab57" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c3125c2f-defb-b380-c2c8-5a2a4271616b" executionId="ea257d2e-bd81-4c2e-bc24-ef192ca5932e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="18" executed="18" passed="18" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.07]   Discovering: ALKAROS.Orders.SubmitOrder.Tests&#xD;
+[xUnit.net 00:00:01.10]   Discovered:  ALKAROS.Orders.SubmitOrder.Tests&#xD;
+[xUnit.net 00:00:01.10]   Starting:    ALKAROS.Orders.SubmitOrder.Tests&#xD;
+[xUnit.net 00:00:02.24]   Finished:    ALKAROS.Orders.SubmitOrder.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

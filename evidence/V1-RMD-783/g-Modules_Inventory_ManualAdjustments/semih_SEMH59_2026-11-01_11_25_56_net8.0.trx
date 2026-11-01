@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d2d3a89b-05b5-431b-9532-b71153bcb532" name="semih@SEMH59 2026-11-01 11:25:56" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:25:56.3463738+03:00" queuing="2026-11-01T11:25:56.3463741+03:00" start="2026-11-01T11:25:52.6947078+03:00" finish="2026-11-01T11:25:56.7541172+03:00" />
+  <TestSettings name="default" id="c5fb0982-5d54-4142-bb77-f41f14f5e63b">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_25_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="f9a12d9f-8b8f-4238-bdf0-2a515ca0af43" testId="d448e9ac-4445-61f2-4b67-f9360f227ecd" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentConvertsCompatibleUnitsAccurately" computerName="SEMH59" duration="00:00:00.0266829" startTime="2026-11-01T11:25:56.1604535+03:00" endTime="2026-11-01T11:25:56.1604537+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9a12d9f-8b8f-4238-bdf0-2a515ca0af43" />
+    <UnitTestResult executionId="54681929-49db-4a00-ba6f-7c105287b1a2" testId="d272a538-3e92-c905-a375-68947503360d" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.FullAdjustmentPersistenceFlowAppliesDeltasAndPreservesAuditTrail" computerName="SEMH59" duration="00:00:00.1287630" startTime="2026-11-01T11:25:56.4895496+03:00" endTime="2026-11-01T11:25:56.4895500+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="54681929-49db-4a00-ba6f-7c105287b1a2" />
+    <UnitTestResult executionId="e2c008ee-142d-46e2-8509-b2f9f5bb169c" testId="5fbba1d6-698f-33e0-f3c5-814a6a9fe390" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentWithoutAuthorizedByThrowsUnauthorizedAdjustmentException" computerName="SEMH59" duration="00:00:00.0034056" startTime="2026-11-01T11:25:56.1318980+03:00" endTime="2026-11-01T11:25:56.1318981+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2c008ee-142d-46e2-8509-b2f9f5bb169c" />
+    <UnitTestResult executionId="d4e3dd69-4050-4aba-a90b-917f8a58fdc1" testId="00244160-f181-ec5f-848d-945dff9773ea" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.DecreaseAdjustmentCreatesOutMovementAndUpdatesBalance" computerName="SEMH59" duration="00:00:00.0052245" startTime="2026-11-01T11:25:56.1702668+03:00" endTime="2026-11-01T11:25:56.1702671+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4e3dd69-4050-4aba-a90b-917f8a58fdc1" />
+    <UnitTestResult executionId="19572c6d-0c9f-41f2-8548-cb3dc116e12b" testId="e6cd50ff-cc4f-2e29-634b-c5292b46b72e" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentWithNonPositiveQuantityThrowsInvalidAdjustmentQuantityException" computerName="SEMH59" duration="00:00:00.1832556" startTime="2026-11-01T11:25:56.1272172+03:00" endTime="2026-11-01T11:25:56.1272560+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19572c6d-0c9f-41f2-8548-cb3dc116e12b" />
+    <UnitTestResult executionId="085787ea-4219-461e-9fe7-70f6900d8857" testId="2f6d754a-696d-5204-9627-f13262e05dec" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.DecreaseAdjustmentExceedingOnHandThrowsNegativeInventoryResultException" computerName="SEMH59" duration="00:00:00.0021457" startTime="2026-11-01T11:25:56.1769878+03:00" endTime="2026-11-01T11:25:56.1769880+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="085787ea-4219-461e-9fe7-70f6900d8857" />
+    <UnitTestResult executionId="096494bb-34df-4808-92c0-ea3088409624" testId="d3f1edc1-e7a6-e878-2a02-bea85a3ed99c" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.AdjustmentFailingNegativeConstraintDoesNotPersistAnyMovement" computerName="SEMH59" duration="00:00:00.0190961" startTime="2026-11-01T11:25:56.6193812+03:00" endTime="2026-11-01T11:25:56.6193816+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="096494bb-34df-4808-92c0-ea3088409624" />
+    <UnitTestResult executionId="4d42926c-4a82-4492-8f65-1102939f14b9" testId="7bfd652d-439f-2956-44ce-03015307ac42" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentWithoutReasonThrowsInvalidAdjustmentReasonException" computerName="SEMH59" duration="00:00:00.0025170" startTime="2026-11-01T11:25:56.1644417+03:00" endTime="2026-11-01T11:25:56.1644418+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d42926c-4a82-4492-8f65-1102939f14b9" />
+    <UnitTestResult executionId="0c120b07-4c91-4b56-aeda-d30aad5dd620" testId="693de348-22b6-0406-364f-b6fe735f3bdf" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.RetriesOfAKeyedAdjustmentMoveStockOnceAndAReusedKeyIsRefused" computerName="SEMH59" duration="00:00:00.1093966" startTime="2026-11-01T11:25:56.5995878+03:00" endTime="2026-11-01T11:25:56.5995881+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c120b07-4c91-4b56-aeda-d30aad5dd620" />
+    <UnitTestResult executionId="e67364f5-1889-4136-81b8-f9fce193f8b4" testId="d36816e4-be54-e85d-47bc-637089e2cacd" testName="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.IncreaseAdjustmentCreatesInMovementAndUpdatesBalance" computerName="SEMH59" duration="00:00:00.0039672" startTime="2026-11-01T11:25:56.1747355+03:00" endTime="2026-11-01T11:25:56.1747357+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e67364f5-1889-4136-81b8-f9fce193f8b4" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.AdjustmentFailingNegativeConstraintDoesNotPersistAnyMovement" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="d3f1edc1-e7a6-e878-2a02-bea85a3ed99c">
+      <Execution id="096494bb-34df-4808-92c0-ea3088409624" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests" name="AdjustmentFailingNegativeConstraintDoesNotPersistAnyMovement" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.FullAdjustmentPersistenceFlowAppliesDeltasAndPreservesAuditTrail" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="d272a538-3e92-c905-a375-68947503360d">
+      <Execution id="54681929-49db-4a00-ba6f-7c105287b1a2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests" name="FullAdjustmentPersistenceFlowAppliesDeltasAndPreservesAuditTrail" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentWithNonPositiveQuantityThrowsInvalidAdjustmentQuantityException" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="e6cd50ff-cc4f-2e29-634b-c5292b46b72e">
+      <Execution id="19572c6d-0c9f-41f2-8548-cb3dc116e12b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="AdjustmentWithNonPositiveQuantityThrowsInvalidAdjustmentQuantityException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentWithoutAuthorizedByThrowsUnauthorizedAdjustmentException" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="5fbba1d6-698f-33e0-f3c5-814a6a9fe390">
+      <Execution id="e2c008ee-142d-46e2-8509-b2f9f5bb169c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="AdjustmentWithoutAuthorizedByThrowsUnauthorizedAdjustmentException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.IncreaseAdjustmentCreatesInMovementAndUpdatesBalance" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="d36816e4-be54-e85d-47bc-637089e2cacd">
+      <Execution id="e67364f5-1889-4136-81b8-f9fce193f8b4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="IncreaseAdjustmentCreatesInMovementAndUpdatesBalance" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentWithoutReasonThrowsInvalidAdjustmentReasonException" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="7bfd652d-439f-2956-44ce-03015307ac42">
+      <Execution id="4d42926c-4a82-4492-8f65-1102939f14b9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="AdjustmentWithoutReasonThrowsInvalidAdjustmentReasonException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.AdjustmentConvertsCompatibleUnitsAccurately" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="d448e9ac-4445-61f2-4b67-f9360f227ecd">
+      <Execution id="f9a12d9f-8b8f-4238-bdf0-2a515ca0af43" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="AdjustmentConvertsCompatibleUnitsAccurately" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.RetriesOfAKeyedAdjustmentMoveStockOnceAndAReusedKeyIsRefused" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="693de348-22b6-0406-364f-b6fe735f3bdf">
+      <Execution id="0c120b07-4c91-4b56-aeda-d30aad5dd620" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests" name="RetriesOfAKeyedAdjustmentMoveStockOnceAndAReusedKeyIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.DecreaseAdjustmentExceedingOnHandThrowsNegativeInventoryResultException" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="2f6d754a-696d-5204-9627-f13262e05dec">
+      <Execution id="085787ea-4219-461e-9fe7-70f6900d8857" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="DecreaseAdjustmentExceedingOnHandThrowsNegativeInventoryResultException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests.DecreaseAdjustmentCreatesOutMovementAndUpdatesBalance" storage="d:\project\alkaros\tests\modules\inventory\manualadjustments\bin\debug\net8.0\alkaros.inventory.manualadjustments.tests.dll" id="00244160-f181-ec5f-848d-945dff9773ea">
+      <Execution id="d4e3dd69-4050-4aba-a90b-917f8a58fdc1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\ManualAdjustments\bin\Debug\net8.0\ALKAROS.Inventory.ManualAdjustments.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDomainTests" name="DecreaseAdjustmentCreatesOutMovementAndUpdatesBalance" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d448e9ac-4445-61f2-4b67-f9360f227ecd" executionId="f9a12d9f-8b8f-4238-bdf0-2a515ca0af43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d272a538-3e92-c905-a375-68947503360d" executionId="54681929-49db-4a00-ba6f-7c105287b1a2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5fbba1d6-698f-33e0-f3c5-814a6a9fe390" executionId="e2c008ee-142d-46e2-8509-b2f9f5bb169c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00244160-f181-ec5f-848d-945dff9773ea" executionId="d4e3dd69-4050-4aba-a90b-917f8a58fdc1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6cd50ff-cc4f-2e29-634b-c5292b46b72e" executionId="19572c6d-0c9f-41f2-8548-cb3dc116e12b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f6d754a-696d-5204-9627-f13262e05dec" executionId="085787ea-4219-461e-9fe7-70f6900d8857" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3f1edc1-e7a6-e878-2a02-bea85a3ed99c" executionId="096494bb-34df-4808-92c0-ea3088409624" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7bfd652d-439f-2956-44ce-03015307ac42" executionId="4d42926c-4a82-4492-8f65-1102939f14b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="693de348-22b6-0406-364f-b6fe735f3bdf" executionId="0c120b07-4c91-4b56-aeda-d30aad5dd620" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d36816e4-be54-e85d-47bc-637089e2cacd" executionId="e67364f5-1889-4136-81b8-f9fce193f8b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.02]   Discovering: ALKAROS.Inventory.ManualAdjustments.Tests&#xD;
+[xUnit.net 00:00:01.06]   Discovered:  ALKAROS.Inventory.ManualAdjustments.Tests&#xD;
+[xUnit.net 00:00:01.06]   Starting:    ALKAROS.Inventory.ManualAdjustments.Tests&#xD;
+[xUnit.net 00:00:01.85]   Finished:    ALKAROS.Inventory.ManualAdjustments.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

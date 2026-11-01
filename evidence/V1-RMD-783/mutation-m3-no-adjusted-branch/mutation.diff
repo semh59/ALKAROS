@@ -1,0 +1,4 @@
+35c35
+<         if (eventType == DailyMenuCounterIntegrationEventTypes.PortionAdjusted)
+---
+>         if (eventType == "none")

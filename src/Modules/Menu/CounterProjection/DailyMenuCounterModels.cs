@@ -26,6 +26,14 @@ public sealed record ReservationTerminalCounterEvent(
     decimal Quantity,
     DateTimeOffset? OccurredAt = null);
 
+/// <summary>The cumulative portions of an already consumed reservation that were given back and that were wasted.</summary>
+public sealed record ReservationAdjustmentCounterEvent(
+    Guid DailyMenuItemId,
+    Guid ReservationId,
+    decimal ReturnedPortions,
+    decimal WastedPortions,
+    DateTimeOffset? OccurredAt = null);
+
 public sealed record DailyMenuItemCounters(
     Guid DailyMenuItemId,
     decimal PlannedPortions,

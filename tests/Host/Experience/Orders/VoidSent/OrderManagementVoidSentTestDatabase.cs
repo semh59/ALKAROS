@@ -232,6 +232,48 @@ public sealed class OrderManagementVoidSentTestDatabase : PgTestDatabase
         return (stockItemId, locationId);
     }
 
+    /// <summary>The consumed reservation row a daily menu sale leaves behind: counted as <paramref name="portions"/> portions of a menu item.</summary>
+    public async Task<Guid> SeedCountedPortionsAsync(Guid orderItemId, Guid stockItemId, Guid locationId, decimal portions)
+    {
+        var reservationId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO inventory.portion_reservations (
+                id, order_id, order_item_id, stock_item_id, stock_location_id, quantity, unit_code, status, version,
+                idempotency_key, reserved_at, transitioned_at, created_by, transitioned_by, metadata)
+            VALUES (@id, @order_id, @item_id, @stock_item_id, @location_id, 1, 'adet', 'Consumed', 1,
+                @key, NOW(), NOW(), @actor, @actor,
+                jsonb_build_object('daily_menu_item_id', @menu_item_id::text, 'portion_count', @portions));
+            """,
+            ("id", reservationId),
+            ("order_id", Guid.NewGuid()),
+            ("item_id", orderItemId),
+            ("stock_item_id", stockItemId),
+            ("location_id", locationId),
+            ("key", "dsale:" + orderItemId.ToString("N")),
+            ("actor", Guid.NewGuid()),
+            ("menu_item_id", Guid.NewGuid()),
+            ("portions", portions));
+        return reservationId;
+    }
+
+    /// <summary>How many portions of the reservation were given back and wasted, and how many counter events announced it.</summary>
+    public async Task<(decimal Returned, decimal Wasted, long Events)> ReadPortionAdjustmentAsync(Guid reservationId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT COALESCE((metadata->>'portions_returned')::numeric, 0),
+                   COALESCE((metadata->>'portions_wasted')::numeric, 0),
+                   (SELECT count(*) FROM outbox_messages
+                    WHERE aggregate_id = @id AND event_type = 'inventory.daily-menu-portion-adjusted.v1')
+            FROM inventory.portion_reservations WHERE id = @id;
+            """);
+        command.Parameters.AddWithValue("id", reservationId);
+        await using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return (reader.GetDecimal(0), reader.GetDecimal(1), reader.GetInt64(2));
+    }
+
     /// <summary>V1-RMD-143 follow-up: the real on-hand quantity for one stock item — for asserting a reversal actually restored it.</summary>
     public async Task<decimal> GetOnHandQuantityAsync(Guid stockItemId)
     {

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2e5f6526-99b5-493b-a8d5-3b732c6cf9a7" name="semih@SEMH59 2026-11-01 11:26:52" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T11:26:52.3950696+03:00" queuing="2026-11-01T11:26:52.3950697+03:00" start="2026-11-01T11:26:48.6000962+03:00" finish="2026-11-01T11:26:52.7581293+03:00" />
+  <TestSettings name="default" id="a224edd8-a0c2-4946-9e39-b4fb3c154180">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-01_11_26_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="03b6b5fb-9648-45a3-bf96-ae292cd9b797" testId="1d65789f-13eb-5c3e-576d-1f80b2174d2e" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.GetWasteRecordsBySourceReturnsAllLinkedRecords" computerName="SEMH59" duration="00:00:00.1715277" startTime="2026-11-01T11:26:52.2229766+03:00" endTime="2026-11-01T11:26:52.2229991+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="03b6b5fb-9648-45a3-bf96-ae292cd9b797" />
+    <UnitTestResult executionId="fac1a6d7-4dcb-43ff-8127-6031f4202ceb" testId="2fae0cc5-c300-3ee7-922c-848c74aaee16" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDatabaseTests.IdempotentWasteRecordingInDatabasePreventsDuplicateMovements" computerName="SEMH59" duration="00:00:00.0309887" startTime="2026-11-01T11:26:52.6369328+03:00" endTime="2026-11-01T11:26:52.6369330+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fac1a6d7-4dcb-43ff-8127-6031f4202ceb" />
+    <UnitTestResult executionId="63f9bbf1-b9e2-4d2d-aa1c-d213985f0af3" testId="9fac59af-3cdd-f1de-15e1-2c18af14d34f" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithNonPositiveQuantityThrowsInvalidWasteQuantityException" computerName="SEMH59" duration="00:00:00.0032806" startTime="2026-11-01T11:26:52.2690684+03:00" endTime="2026-11-01T11:26:52.2690686+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="63f9bbf1-b9e2-4d2d-aa1c-d213985f0af3" />
+    <UnitTestResult executionId="32359c29-156b-4ce4-87b3-bcfc2603093d" testId="c4b0c359-6d62-49cc-275c-8820d12889ad" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithEmptyRecordedByThrowsUnauthorizedWasteRecorderException" computerName="SEMH59" duration="00:00:00.0032075" startTime="2026-11-01T11:26:52.2597193+03:00" endTime="2026-11-01T11:26:52.2597196+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32359c29-156b-4ce4-87b3-bcfc2603093d" />
+    <UnitTestResult executionId="b02158b3-a0ad-4df4-a671-501299fbeef2" testId="57108656-7974-51d4-3959-cc4650e04c87" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithCompatibleUnitConvertsQuantityCorrectly" computerName="SEMH59" duration="00:00:00.0053516" startTime="2026-11-01T11:26:52.2656477+03:00" endTime="2026-11-01T11:26:52.2656482+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b02158b3-a0ad-4df4-a671-501299fbeef2" />
+    <UnitTestResult executionId="a600f9e9-20b7-4979-a7e1-0df1b00152a7" testId="4e2dac7c-5b62-9924-baf2-ffa62b286897" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithInsufficientStockThrowsInsufficientStockForWasteException" computerName="SEMH59" duration="00:00:00.0046648" startTime="2026-11-01T11:26:52.2563676+03:00" endTime="2026-11-01T11:26:52.2563680+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a600f9e9-20b7-4979-a7e1-0df1b00152a7" />
+    <UnitTestResult executionId="cd746c6a-fd97-46a8-bd40-268d3a8d758f" testId="b8945c79-8b63-6ce8-d517-7992a9837e72" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithEmptyReasonThrowsInvalidWasteReasonException" computerName="SEMH59" duration="00:00:00.0105738" startTime="2026-11-01T11:26:52.2442569+03:00" endTime="2026-11-01T11:26:52.2442572+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd746c6a-fd97-46a8-bd40-268d3a8d758f" />
+    <UnitTestResult executionId="a6e99c8a-b460-459c-ba76-88fff9e0b513" testId="4f3d1023-7963-d74a-0c64-a007d1d1a7a8" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithValidRequestAppendsStockMovementAndDecrementsBalance" computerName="SEMH59" duration="00:00:00.0067535" startTime="2026-11-01T11:26:52.2515151+03:00" endTime="2026-11-01T11:26:52.2515155+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6e99c8a-b460-459c-ba76-88fff9e0b513" />
+    <UnitTestResult executionId="b0b3d835-1952-484a-a8e5-698d16d83adb" testId="aed588f4-d201-ca69-4269-25b57618cafe" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDatabaseTests.FullWasteRecordingLifecyclePersistsAndEnforcesImmutability" computerName="SEMH59" duration="00:00:00.1291433" startTime="2026-11-01T11:26:52.6055075+03:00" endTime="2026-11-01T11:26:52.6055083+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0b3d835-1952-484a-a8e5-698d16d83adb" />
+    <UnitTestResult executionId="90e1680c-0849-4254-8848-fcf86a50ad6b" testId="7a455ddb-973c-b4d3-480a-ec2978c2c8d2" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithDuplicateIdempotencyKeyReturnsExistingWithoutDuplicateLedgerEntry" computerName="SEMH59" duration="00:00:00.0046882" startTime="2026-11-01T11:26:52.2288217+03:00" endTime="2026-11-01T11:26:52.2288220+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90e1680c-0849-4254-8848-fcf86a50ad6b" />
+    <UnitTestResult executionId="c2447b08-932e-430e-87f7-79a2956a7260" testId="d15e6d18-63d9-f4f4-4fa2-0490884f674e" testName="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithIncompatibleUnitThrowsIncompatibleWasteUnitException" computerName="SEMH59" duration="00:00:00.0018742" startTime="2026-11-01T11:26:52.2710361+03:00" endTime="2026-11-01T11:26:52.2710362+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2447b08-932e-430e-87f7-79a2956a7260" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDatabaseTests.IdempotentWasteRecordingInDatabasePreventsDuplicateMovements" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="2fae0cc5-c300-3ee7-922c-848c74aaee16">
+      <Execution id="fac1a6d7-4dcb-43ff-8127-6031f4202ceb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDatabaseTests" name="IdempotentWasteRecordingInDatabasePreventsDuplicateMovements" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithEmptyRecordedByThrowsUnauthorizedWasteRecorderException" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="c4b0c359-6d62-49cc-275c-8820d12889ad">
+      <Execution id="32359c29-156b-4ce4-87b3-bcfc2603093d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithEmptyRecordedByThrowsUnauthorizedWasteRecorderException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithDuplicateIdempotencyKeyReturnsExistingWithoutDuplicateLedgerEntry" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="7a455ddb-973c-b4d3-480a-ec2978c2c8d2">
+      <Execution id="90e1680c-0849-4254-8848-fcf86a50ad6b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithDuplicateIdempotencyKeyReturnsExistingWithoutDuplicateLedgerEntry" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithEmptyReasonThrowsInvalidWasteReasonException" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="b8945c79-8b63-6ce8-d517-7992a9837e72">
+      <Execution id="cd746c6a-fd97-46a8-bd40-268d3a8d758f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithEmptyReasonThrowsInvalidWasteReasonException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.GetWasteRecordsBySourceReturnsAllLinkedRecords" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="1d65789f-13eb-5c3e-576d-1f80b2174d2e">
+      <Execution id="03b6b5fb-9648-45a3-bf96-ae292cd9b797" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="GetWasteRecordsBySourceReturnsAllLinkedRecords" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithNonPositiveQuantityThrowsInvalidWasteQuantityException" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="9fac59af-3cdd-f1de-15e1-2c18af14d34f">
+      <Execution id="63f9bbf1-b9e2-4d2d-aa1c-d213985f0af3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithNonPositiveQuantityThrowsInvalidWasteQuantityException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithIncompatibleUnitThrowsIncompatibleWasteUnitException" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="d15e6d18-63d9-f4f4-4fa2-0490884f674e">
+      <Execution id="c2447b08-932e-430e-87f7-79a2956a7260" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithIncompatibleUnitThrowsIncompatibleWasteUnitException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithValidRequestAppendsStockMovementAndDecrementsBalance" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="4f3d1023-7963-d74a-0c64-a007d1d1a7a8">
+      <Execution id="a6e99c8a-b460-459c-ba76-88fff9e0b513" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithValidRequestAppendsStockMovementAndDecrementsBalance" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDatabaseTests.FullWasteRecordingLifecyclePersistsAndEnforcesImmutability" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="aed588f4-d201-ca69-4269-25b57618cafe">
+      <Execution id="b0b3d835-1952-484a-a8e5-698d16d83adb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDatabaseTests" name="FullWasteRecordingLifecyclePersistsAndEnforcesImmutability" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithCompatibleUnitConvertsQuantityCorrectly" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="57108656-7974-51d4-3959-cc4650e04c87">
+      <Execution id="b02158b3-a0ad-4df4-a671-501299fbeef2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithCompatibleUnitConvertsQuantityCorrectly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests.RecordWasteWithInsufficientStockThrowsInsufficientStockForWasteException" storage="d:\project\alkaros\tests\modules\inventory\wasterecording\bin\debug\net8.0\alkaros.inventory.wasterecording.tests.dll" id="4e2dac7c-5b62-9924-baf2-ffa62b286897">
+      <Execution id="a600f9e9-20b7-4979-a7e1-0df1b00152a7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\WasteRecording\bin\Debug\net8.0\ALKAROS.Inventory.WasteRecording.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.WasteRecording.Tests.WasteRecordingDomainTests" name="RecordWasteWithInsufficientStockThrowsInsufficientStockForWasteException" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1d65789f-13eb-5c3e-576d-1f80b2174d2e" executionId="03b6b5fb-9648-45a3-bf96-ae292cd9b797" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fae0cc5-c300-3ee7-922c-848c74aaee16" executionId="fac1a6d7-4dcb-43ff-8127-6031f4202ceb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9fac59af-3cdd-f1de-15e1-2c18af14d34f" executionId="63f9bbf1-b9e2-4d2d-aa1c-d213985f0af3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4b0c359-6d62-49cc-275c-8820d12889ad" executionId="32359c29-156b-4ce4-87b3-bcfc2603093d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="57108656-7974-51d4-3959-cc4650e04c87" executionId="b02158b3-a0ad-4df4-a671-501299fbeef2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e2dac7c-5b62-9924-baf2-ffa62b286897" executionId="a600f9e9-20b7-4979-a7e1-0df1b00152a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b8945c79-8b63-6ce8-d517-7992a9837e72" executionId="cd746c6a-fd97-46a8-bd40-268d3a8d758f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4f3d1023-7963-d74a-0c64-a007d1d1a7a8" executionId="a6e99c8a-b460-459c-ba76-88fff9e0b513" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aed588f4-d201-ca69-4269-25b57618cafe" executionId="b0b3d835-1952-484a-a8e5-698d16d83adb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7a455ddb-973c-b4d3-480a-ec2978c2c8d2" executionId="90e1680c-0849-4254-8848-fcf86a50ad6b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d15e6d18-63d9-f4f4-4fa2-0490884f674e" executionId="c2447b08-932e-430e-87f7-79a2956a7260" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.07]   Discovering: ALKAROS.Inventory.WasteRecording.Tests&#xD;
+[xUnit.net 00:00:01.10]   Discovered:  ALKAROS.Inventory.WasteRecording.Tests&#xD;
+[xUnit.net 00:00:01.11]   Starting:    ALKAROS.Inventory.WasteRecording.Tests&#xD;
+[xUnit.net 00:00:01.79]   Finished:    ALKAROS.Inventory.WasteRecording.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>
