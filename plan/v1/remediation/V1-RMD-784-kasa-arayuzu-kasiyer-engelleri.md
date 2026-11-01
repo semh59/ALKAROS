@@ -1,7 +1,7 @@
 # V1-RMD-784 - Kasa arayüzü: kasiyeri engelleyen üst çubuk, gezinme, masa ve ekran metni kusurları
 
 - Task ID: V1-RMD-784
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
