@@ -1,7 +1,7 @@
 # V1-RMD-784 - Kasa arayüzü: kasiyeri engelleyen üst çubuk, gezinme, masa ve ekran metni kusurları
 
 - Task ID: V1-RMD-784
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
@@ -12,8 +12,8 @@ Canlı Docker kasa arayüzü bir kasiyer gibi denendi; kod ve arayüzde yeniden 
 
 1. PosTerminal ana kasa ekranı (`Cashier.tsx`) üst çubuğu 929 px genişlikte sığmıyor: "Çıkış" düğmesi x=1250'ye taşıyor, gövde `overflow-x: clip` olduğu için erişilemiyor. Üst çubuk dar pencerede sarılır, hiçbir eylem erişilemez kalmaz.
 2. `/cashier/payments/split-payment` ve `/cashier/payments/cash-session` sayfalarında kasaya dönen bağlantı yok (çıkış yolu yalnız tarayıcı geri tuşu). `customer-accounts` sayfasında "← Kasaya dön" zaten var ve çalışıyor; dokunulmaz.
-3. `/tables` ekranı "Tüm bölgeler" görünümünde ilk bölgenin kat planını istiyor; kat planı çizilmemiş bölge için sunucu tasarım gereği 404 döndürüyor ve istemci bunu her yenilemede (8 sn'de bir sessiz yenileme dahil) yeniden istiyor. Kat planı olmadığı bilinen bölge bir kez sorulur, sessiz yenilemelerde tekrar sorulmaz. Masa kartındaki hızlı işlem düğmesi (ör. "Müsait yap") kartı seçmeden işlem penceresini açtığı için yan panel önceki masada kalıyor; hızlı işlem aynı masayı seçer. (Kartın kendi seçme düğmesi zaten doğru çalışıyor, canlıda doğrulandı.)
-4. Ham teknik metinler: yönetim ekranlarında "Son güncelleme 2026-11-01T08:02:49.436Z" (ISO), mutfak başlığında ham istasyon kimliği (`{stationId} istasyonu`, CSS büyük harfte "KİTCHEN-MAİN"), "Sürüm 4" / "v4" / "tablo v3" etiketleri, "775.0 GB" (nokta) ve "12.3 dk" / "%4.5" gibi ondalık nokta. Türkçe yerel saat, "Mutfak ekranı" başlığı, etiketlerin kaldırılması ve Türkçe ondalık virgül.
+3. `/tables` ekranı "Tüm bölgeler" görünümünde ilk bölgenin kat planını istiyor; kat planı çizilmemiş bölge için sunucu tasarım gereği 404 döndürüyor ve istemci bunu her yenilemede (8 sn'de bir sessiz yenileme dahil) yeniden istiyor. Kat planı olmadığı bilinen bölge bir kez sorulur, sessiz yenilemelerde tekrar sorulmaz. "Seçili masa paneli tıklanan masayı izlemiyor" bulgusu doğrulanamadı: kartın seçme düğmesi paneli, masa sipariş bağlamını ve seçili kartı canlıda doğru güncelliyor; hızlı işlem düğmesi bilerek bağımsız bir kontrol (mevcut test) ve açtığı pencere masayı adıyla gösteriyor. Davranış değişmez.
+4. Ham teknik metinler: yönetim ekranlarında "Son güncelleme 2026-11-01T08:02:49.436Z" (ISO), mutfak başlığında ham istasyon kimliği (`{stationId} istasyonu`, CSS büyük harfte "KİTCHEN-MAİN"), "Sürüm 4" / "v4" / "tablo v3" etiketleri, "775.0 GB" (nokta) ve "12.3 dk" / "%4.5" gibi ondalık nokta. Türkçe yerel saat, sabit "Mutfak ekranı" başlığı (istasyon kodu etiketli ve büyük harfe çevrilmeden "İstasyon kodu: ..." satırında kalır; yapılandırmada ad alanı yok), etiketlerin kaldırılması ve Türkçe ondalık virgül. Aynı ISO saat kusuru katalog ve sistem sağlığı ekranlarında da var; üçü ortak yardımcıyla düzelir.
 5. Mutfak ekranında "Canlı" ile "Canlı senkron kapalı" birlikte çelişiyor: rozetin anlattığı şey garson bildirimidir (başlığı "Kalem hazır olduğunda garsona bildirim gitmiyor"); ekran kendi kendine yenilenmeye devam eder. Rozet metni "Garson bildirimi kapalı" olur.
 6. `/billing` hesap olmayan boş durumda "Hesap alınamadı" hata başlığı gösteriyor; "Aktif adisyon yok" bilgi durumu olur.
 7. Vanilla kasa (`/cashier`) dokunma hedefleri 48 px altında: kalem özel talimat alanı (25 px), "Servis eden" seçimi (36 px), "Kupürüm yok" düğmesi (33 px). Projenin dokunma standardı 48 px'tir (`--touch-target`).
@@ -31,7 +31,8 @@ Doğrulanmayan veya iş kuralı belirsiz bulgular bu görevde yapılmaz, raporla
   - src/Clients/PosTerminal/src/routes/Cashier.tsx (V1-RMD-114) — "Sürüm" etiketi kalkar.
   - src/Clients/PosTerminal/src/routes/workspace.tsx (V1-KDS-001) — kat planı bellek, saat biçimi, boş hesap durumu.
   - src/Clients/PosTerminal/src/routes/workspace.test.tsx (V1-IAM-025) — testler.
-  - src/Clients/PosTerminal/src/features/tables/ (V1-RMD-039) — hızlı işlem seçimi, sürüm etiketi.
+  - src/Clients/PosTerminal/src/routes/Cashier.sale-refresh.test.tsx (V1-RMD-719) — sürüm etiketi testi.
+  - src/Clients/PosTerminal/src/features/tables/ (V1-RMD-039) — salon planı sürüm etiketi, test.
   - src/Clients/PosTerminal/src/features/kitchen-operations/ (V1-KDS-001) — başlık, rozet, saat, ondalık.
   - src/Clients/PosTerminal/src/features/system-health/ (V1-RMD-372) — saat, ondalık.
   - src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx (V1-RMD-368) — saat biçimi.
@@ -52,7 +53,7 @@ Doğrulanmayan veya iş kuralı belirsiz bulgular bu görevde yapılmaz, raporla
 
 1. 768-1024 px genişlikte tüm üst çubuk eylemleri görünür ve tıklanabilir; geniş ekranda düzen bozulmaz.
 2. Split-payment ve cash-session sayfalarında her durumda görünen "← Kasaya dön" bağlantısı, 48 px hedef.
-3. Bilinen-kat-planı-yok bölge belleği; hızlı işlem düğmesi masayı seçer.
+3. Bilinen-kat-planı-yok bölge belleği.
 4. Türkçe saat, ondalık virgül, "Mutfak ekranı", etiket temizliği.
 5. Rozet metni, boş adisyon durumu, 48 px hedefler.
 6. Her düzeltme için önce kırmızı test, sonra yeşil.
@@ -62,6 +63,7 @@ Doğrulanmayan veya iş kuralı belirsiz bulgular bu görevde yapılmaz, raporla
 - Müşteri ekranı (V1-RMD-785), kart ödemesi, demo KDV/ürün adları, kasa oturumu beklenen nakit alanı.
 - "Masayı aç" ve "Masaları birleştir" iş kuralları; vanilla kasa siparişinin müşteri ekranına düşmesi (iş kuralı kararı bekler).
 - Mutfak kimliğinin insan okur adı: yapılandırmada ad alanı yok; kimlik başlıktan çıkarılır, ad kaynağı eklenmez.
+- Masa kartı hızlı işlem düğmesinin masayı seçmesi (mevcut testle bilerek bağımsız).
 
 ## Dependencies
 
