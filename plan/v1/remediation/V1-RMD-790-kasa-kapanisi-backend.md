@@ -1,8 +1,8 @@
 # V1-RMD-790 - Kasa kapanışı (backend): ayarlı tolerans, fark açıklaması, açık hesap uyarısı, oturum sahibi, kilitli kapanış
 
 - Task ID: V1-RMD-790
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
