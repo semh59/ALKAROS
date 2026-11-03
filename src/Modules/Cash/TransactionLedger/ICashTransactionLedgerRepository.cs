@@ -36,6 +36,10 @@ public interface ICashTransactionLedgerRepository
     /// </summary>
     Task<decimal> ComputeExpectedCashAsync(Guid cashSessionId, CancellationToken cancellationToken = default);
 
+    /// <summary>The same sum inside the caller's transaction (a close reads it while it holds the session row).</summary>
+    Task<decimal> ComputeExpectedCashAsync(
+        Guid cashSessionId, NpgsqlConnection connection, NpgsqlTransaction dbTransaction, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// locks the session row exclusively (so cash-outs and approvals on one drawer run one at a time),
     /// requires it to be Open and returns the expected cash read under that lock - the number a cash-out is

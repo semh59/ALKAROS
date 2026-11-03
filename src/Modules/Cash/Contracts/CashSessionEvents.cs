@@ -29,7 +29,9 @@ public sealed record CashCountRecordedEvent(
     DateTimeOffset Timestamp);
 
 /// <summary>
-/// Domain event published when a cash session is finalized and closed (V1-CSH-001).
+/// Domain event describing a closed cash session. It is returned to the caller and is not placed on the
+/// outbox: nothing consumes it (reconciliation reads <c>cash.cash_sessions.difference</c> itself). The close is
+/// recorded by the audit event written in the same transaction.
 /// </summary>
 public sealed record CashSessionClosedEvent(
     Guid CashSessionId,
@@ -39,6 +41,7 @@ public sealed record CashSessionClosedEvent(
     Guid ClosedBy,
     bool IsSupervisorOverride,
     string? OverrideReason,
+    string? DifferenceExplanation,
     DateTimeOffset Timestamp);
 
 /// <summary>
@@ -48,4 +51,5 @@ public sealed record CashSessionReconciledEvent(
     Guid CashSessionId,
     Guid ReconciledBy,
     string? Notes,
+    bool SelfApproved,
     DateTimeOffset Timestamp);

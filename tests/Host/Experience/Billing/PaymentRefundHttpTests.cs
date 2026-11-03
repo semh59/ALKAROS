@@ -667,6 +667,42 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACashApprovalMeetingASessionThatStartedCountingMeanwhileIsAConflictAndPaysNothing()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        var sessionId = await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var holder = await connection.BeginTransactionAsync();
+        await using (var lockRow = new NpgsqlCommand(
+            "SELECT 1 FROM cash.cash_sessions WHERE cash_session_id = @id FOR UPDATE;", connection, holder))
+        {
+            lockRow.Parameters.AddWithValue("id", sessionId);
+            await lockRow.ExecuteNonQueryAsync();
+        }
+        var approving = client.SendAsync(Post($"refund-requests/{request.RequestId:D}/approve", _managerCookie));
+        await Task.Delay(1500);
+        await using (var count = new NpgsqlCommand(
+            "UPDATE cash.cash_sessions SET status = 'Counting' WHERE cash_session_id = @id;", connection, holder))
+        {
+            count.Parameters.AddWithValue("id", sessionId);
+            await count.ExecuteNonQueryAsync();
+        }
+        await holder.CommitAsync();
+
+        using var response = await approving;
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("NO_OPEN_CASH_SESSION", await ErrorCode(response));
+        Assert.Equal(0L, await Scalar<long>(
+            "SELECT count(*) FROM cash.cash_transactions WHERE cash_session_id = @p AND type = 'Refund'", sessionId));
+    }
+
+    [Fact]
     public async Task OnlyAnOpenSessionOfTheRequesterSpendsTheAllowance()
     {
         var seeded = await _database.SeedBillAsync();

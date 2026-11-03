@@ -90,3 +90,58 @@ public sealed class CashVarianceThresholdExceededException : CashSessionExceptio
     public decimal Difference { get; }
     public decimal Threshold { get; }
 }
+
+/// <summary>Thrown when someone other than the session's cashier (and not a manager) counts, closes or starts counting it.</summary>
+public sealed class CashSessionOwnerRequiredException : CashSessionException
+{
+    public CashSessionOwnerRequiredException(Guid sessionId, Guid actorUserId)
+        : base($"User {actorUserId} is neither the cashier of cash session {sessionId} nor a manager.")
+    {
+        SessionId = sessionId;
+        ActorUserId = actorUserId;
+    }
+
+    public Guid SessionId { get; }
+    public Guid ActorUserId { get; }
+}
+
+/// <summary>Thrown when a session is closed before any physical count was recorded for it.</summary>
+public sealed class CashCountRequiredException(Guid sessionId)
+    : CashSessionException($"Cash session {sessionId} has no recorded count; count the drawer before closing.")
+{
+    public Guid SessionId { get; } = sessionId;
+}
+
+/// <summary>Thrown when the amount a session is closed with differs from the latest recorded count.</summary>
+public sealed class CashCountMismatchException(Guid sessionId, decimal recorded, decimal closingAmount)
+    : CashSessionException($"Cash session {sessionId} was counted as {recorded:F2} but closing with {closingAmount:F2}.")
+{
+    public Guid SessionId { get; } = sessionId;
+    public decimal Recorded { get; } = recorded;
+    public decimal ClosingAmount { get; } = closingAmount;
+}
+
+/// <summary>Thrown when a closing difference has no explanation (or one longer than the limit).</summary>
+public sealed class CashDifferenceExplanationRequiredException(Guid sessionId, decimal difference)
+    : CashSessionException($"Cash session {sessionId} closes with a difference of {difference:F2} and needs an explanation of 1-{CashSessionPolicy.MaxExplanationLength} characters.")
+{
+    public Guid SessionId { get; } = sessionId;
+    public decimal Difference { get; } = difference;
+}
+
+/// <summary>Thrown when the cashier or the closer of a session reconciles it while self reconciliation is not allowed.</summary>
+public sealed class CashReconcileSelfNotAllowedException(Guid sessionId, Guid reconcilerUserId)
+    : CashSessionException($"User {reconcilerUserId} ran or closed cash session {sessionId} and may not reconcile it.")
+{
+    public Guid SessionId { get; } = sessionId;
+    public Guid ReconcilerUserId { get; } = reconcilerUserId;
+}
+
+/// <summary>Thrown when a session is closed while bills or payments are unsettled and the cashier did not acknowledge it.</summary>
+public sealed class CashCloseUnsettledNotAcknowledgedException(Guid sessionId, int openBills, int unsettledPayments)
+    : CashSessionException($"Cash session {sessionId} closes with {openBills} open bill(s) and {unsettledPayments} unsettled payment(s) that were not acknowledged.")
+{
+    public Guid SessionId { get; } = sessionId;
+    public int OpenBills { get; } = openBills;
+    public int UnsettledPayments { get; } = unsettledPayments;
+}

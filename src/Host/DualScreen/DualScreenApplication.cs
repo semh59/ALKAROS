@@ -176,6 +176,7 @@ public static partial class DualScreenApplication
         builder.Services.AddScoped<ALKAROS.Host.Experience.CustomerAccounts.CustomerAccountsStore>();
         // manual cash-in/cash-out with the drawer ceiling and the manager approval above the threshold.
         builder.Services.AddScoped<CashMovementStore>();
+        builder.Services.AddScoped<CashCloseStore>();
         builder.Services.AddSingleton<SubmitOrderHandler>();
         builder.Services.AddTableManagementExperience();
         builder.Services.AddCatalogManagement();

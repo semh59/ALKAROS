@@ -92,7 +92,7 @@ public sealed class CashSessionLifecycleService : ICashSessionLifecycleService
 
         var record = await _repository.GetByIdAsync(command.CashSessionId, cancellationToken)
             ?? throw new CashSessionNotFoundException(command.CashSessionId);
-        _policy.ValidateCanStartCount(record.Snapshot, command.CashierUserId);
+        _policy.ValidateCanStartCount(record.Snapshot, command.CashierUserId, command.MayActForOwner);
 
         var now = DateTimeOffset.UtcNow;
         var updatedSnapshot = record.Snapshot with { Status = CashSessionStatus.Counting };
@@ -109,77 +109,112 @@ public sealed class CashSessionLifecycleService : ICashSessionLifecycleService
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
 
-        var record = await _repository.GetByIdAsync(command.CashSessionId, cancellationToken)
-            ?? throw new CashSessionNotFoundException(command.CashSessionId);
-        _policy.ValidateCanRecordCount(record.Snapshot, command.CountedAmount);
-
-        await _repository.RecordCountAsync(
-            command.CashSessionId, command.CountedAmount, command.CountedBy, command.Notes, cancellationToken);
-
-        return new CashCountRecordedEvent(
-            command.CashSessionId, command.CountedAmount, command.CountedBy, command.Notes, DateTimeOffset.UtcNow);
+        // Under the session row lock, so a count cannot land between a close's read of the latest count and its write.
+        return await _repository.InLockedSessionAsync(command.CashSessionId, async locked =>
+        {
+            _policy.ValidateCanRecordCount(locked.Record.Snapshot, command.CountedAmount, command.CountedBy, command.MayActForOwner);
+            await locked.RecordCountAsync(command.CountedAmount, command.CountedBy, command.Notes, cancellationToken);
+            return new CashCountRecordedEvent(
+                command.CashSessionId, command.CountedAmount, command.CountedBy, command.Notes, DateTimeOffset.UtcNow);
+        }, cancellationToken);
     }
 
     public async Task<(CashSessionSnapshot Session, CashSessionClosedEvent Event)> CloseSessionAsync(
-        CloseCashSessionCommand command, decimal expectedCash, CancellationToken cancellationToken = default)
+        CloseCashSessionCommand command,
+        decimal varianceTolerance,
+        Func<CashSessionClosedEvent, ILockedCashSession, CancellationToken, Task>? inTransaction = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
 
-        var record = await _repository.GetByIdAsync(command.CashSessionId, cancellationToken)
-            ?? throw new CashSessionNotFoundException(command.CashSessionId);
-
-        var difference = _policy.ValidateCanCloseSession(
-            record.Snapshot, command.ActualCash, expectedCash, command.IsSupervisorOverride);
-
-        var now = DateTimeOffset.UtcNow;
-        var updatedSnapshot = record.Snapshot with
+        return await _repository.InLockedSessionAsync(command.CashSessionId, async locked =>
         {
-            Status = CashSessionStatus.Closed,
-            ExpectedCash = expectedCash,
-            ActualCash = command.ActualCash,
-            Difference = difference,
-            ClosedAt = now,
-        };
-        var updatedRecord = record with
-        {
-            Snapshot = updatedSnapshot,
-            ClosedBy = command.ClosedBy,
-            IsSupervisorOverride = command.IsSupervisorOverride,
-            OverrideReason = command.OverrideReason,
-        };
-        var newRowVersion = await _repository.SaveAsync(updatedRecord, record.Snapshot.RowVersion, cancellationToken);
-        updatedSnapshot = updatedSnapshot with { RowVersion = newRowVersion };
+            var record = locked.Record;
+            var expectedCash = await locked.ReadExpectedCashAsync(cancellationToken);
+            var difference = _policy.ValidateCanCloseSession(
+                record.Snapshot,
+                new CashSessionCloseInput(
+                    command.ActualCash, expectedCash, await locked.ReadLatestCountAsync(cancellationToken),
+                    command.IsSupervisorOverride, varianceTolerance, command.DifferenceExplanation,
+                    command.ClosedBy, command.MayActForOwner));
+            var explanation = CashSessionPolicy.NormalizeExplanation(command.DifferenceExplanation);
 
-        return (updatedSnapshot, new CashSessionClosedEvent(
-            command.CashSessionId, expectedCash, command.ActualCash, difference,
-            command.ClosedBy, command.IsSupervisorOverride, command.OverrideReason, now));
+            var now = DateTimeOffset.UtcNow;
+            var updatedSnapshot = record.Snapshot with
+            {
+                Status = CashSessionStatus.Closed,
+                ExpectedCash = expectedCash,
+                ActualCash = command.ActualCash,
+                Difference = difference,
+                ClosedAt = now,
+            };
+            var updatedRecord = record with
+            {
+                Snapshot = updatedSnapshot,
+                ClosedBy = command.ClosedBy,
+                IsSupervisorOverride = command.IsSupervisorOverride,
+                OverrideReason = command.OverrideReason,
+                DifferenceExplanation = explanation,
+            };
+            updatedSnapshot = updatedSnapshot with { RowVersion = await locked.SaveAsync(updatedRecord, cancellationToken) };
+
+            // docs/domain/cash-session-design.md section 5: the final variance is posted to the ledger on closure.
+            // The row is an audit entry (it does not feed the expected cash); with it the ledger alone reads
+            // expected + signed difference = counted.
+            if (difference != 0)
+            {
+                await locked.PostLedgerEntryAsync(
+                    new CashTransaction(
+                        Guid.NewGuid(), command.CashSessionId, CashTransactionType.ClosingDifference, Math.Abs(difference),
+                        difference > 0 ? CashTransactionDirection.In : CashTransactionDirection.Out,
+                        notes: explanation, recordedBy: command.ClosedBy, occurredAt: now),
+                    cancellationToken);
+            }
+
+            var closedEvent = new CashSessionClosedEvent(
+                command.CashSessionId, expectedCash, command.ActualCash, difference,
+                command.ClosedBy, command.IsSupervisorOverride, command.OverrideReason, explanation, now);
+            if (inTransaction is not null)
+                await inTransaction(closedEvent, locked, cancellationToken);
+            return (updatedSnapshot, closedEvent);
+        }, cancellationToken);
     }
 
     public async Task<(CashSessionSnapshot Session, CashSessionReconciledEvent Event)> ReconcileSessionAsync(
-        ReconcileCashSessionCommand command, CancellationToken cancellationToken = default)
+        ReconcileCashSessionCommand command,
+        Func<CashSessionReconciledEvent, ILockedCashSession, CancellationToken, Task>? inTransaction = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
 
-        var record = await _repository.GetByIdAsync(command.CashSessionId, cancellationToken)
-            ?? throw new CashSessionNotFoundException(command.CashSessionId);
-        _policy.ValidateCanReconcile(record.Snapshot);
-
-        var now = DateTimeOffset.UtcNow;
-        var updatedSnapshot = record.Snapshot with { Status = CashSessionStatus.Reconciled };
-        var updatedRecord = record with
+        return await _repository.InLockedSessionAsync(command.CashSessionId, async locked =>
         {
-            Snapshot = updatedSnapshot,
-            ReconciledBy = command.ReconciledBy,
-            ReconciliationNotes = command.Notes,
-            ReconciledAt = now,
-        };
-        var newRowVersion = await _repository.SaveAsync(updatedRecord, record.Snapshot.RowVersion, cancellationToken);
-        updatedSnapshot = updatedSnapshot with { RowVersion = newRowVersion };
+            var record = locked.Record;
+            var handledBy = (await locked.ReadCountersAsync(cancellationToken))
+                .Concat(record.ClosedBy is { } closer ? [closer] : []).ToList();
+            var selfApproved = _policy.ValidateCanReconcile(
+                record.Snapshot, handledBy, command.ReconciledBy, command.SelfReconcileAllowed);
 
-        return (updatedSnapshot, new CashSessionReconciledEvent(
-            command.CashSessionId, command.ReconciledBy, command.Notes, now));
+            var now = DateTimeOffset.UtcNow;
+            var updatedSnapshot = record.Snapshot with { Status = CashSessionStatus.Reconciled };
+            var updatedRecord = record with
+            {
+                Snapshot = updatedSnapshot,
+                ReconciledBy = command.ReconciledBy,
+                ReconciliationNotes = command.Notes,
+                ReconciledAt = now,
+                ReconciledSelfApproved = selfApproved,
+            };
+            updatedSnapshot = updatedSnapshot with { RowVersion = await locked.SaveAsync(updatedRecord, cancellationToken) };
+
+            var reconciledEvent = new CashSessionReconciledEvent(
+                command.CashSessionId, command.ReconciledBy, command.Notes, selfApproved, now);
+            if (inTransaction is not null)
+                await inTransaction(reconciledEvent, locked, cancellationToken);
+            return (updatedSnapshot, reconciledEvent);
+        }, cancellationToken);
     }
 
     public Task<decimal?> GetSuggestedOpeningBalanceAsync(Guid terminalId, CancellationToken cancellationToken = default)

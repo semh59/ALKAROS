@@ -119,6 +119,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal("Open", (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
 
         Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/start-count", cookie, new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/counts", cookie, new { CountedAmount = 100m })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/close", cookie, new { ActualCash = 100m })).StatusCode);
     }
 
@@ -155,6 +156,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(sessionId, (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid());
 
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/counts", cookie, new { CountedAmount = 100m });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 100m });
 
@@ -173,6 +175,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
 
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/counts", cookie, new { CountedAmount = 300m });
         var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 300m });
 
@@ -345,6 +348,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(350m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
 
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/counts", cookie, new { CountedAmount = 350m });
         var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 350m });
         Assert.Equal(0m, (await close.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
@@ -478,8 +482,9 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         // Default tolerance (CashSessionPolicy.ValidateCanCloseSession) is
         // 50.00 - a 60 TL shortage must be rejected without an override.
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/counts", cookie, new { CountedAmount = 40m });
         var rejected = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
-            new { ActualCash = 40m });
+            new { ActualCash = 40m, DifferenceExplanation = "short by recount" });
         Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
         var body = await rejected.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("CASH_VARIANCE_THRESHOLD_EXCEEDED", body.GetProperty("error").GetProperty("code").GetString());
@@ -488,13 +493,13 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         // grant — the SAME cashier session that opened/counted the session
         // cannot self-declare an override.
         var deniedOverride = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
-            new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
+            new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short", DifferenceExplanation = "short by recount" });
         Assert.Equal(HttpStatusCode.Forbidden, deniedOverride.StatusCode);
 
         var supervisorCookie = await _database.SeedCashierSessionWithPermissionsAsync(
             terminalId, "csh004-variance-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
         var overridden = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", supervisorCookie,
-            new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
+            new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short", DifferenceExplanation = "short by recount" });
         Assert.Equal(HttpStatusCode.OK, overridden.StatusCode);
         Assert.Equal(-60m, (await overridden.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
     }
@@ -634,6 +639,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", ownerCookie, new { });
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/counts", ownerCookie, new { CountedAmount = 100m });
         var closed = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", ownerCookie,
             new { ActualCash = 100m });
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
@@ -931,6 +937,83 @@ internal sealed class CashSessionHttpTestDatabase
         command.Parameters.AddWithValue("session", cashSessionId);
         command.Parameters.AddWithValue("count", count);
         await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<string> SessionStatusAsync(Guid cashSessionId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status FROM cash.cash_sessions WHERE cash_session_id = @id;");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        return (string)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<(string Direction, decimal Amount, string? Notes)[]> ClosingDifferenceRowsAsync(Guid cashSessionId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT direction, amount, notes FROM cash.cash_transactions WHERE cash_session_id = @id AND type = 'ClosingDifference';");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        var rows = new List<(string, decimal, string?)>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            rows.Add((reader.GetString(0), reader.GetDecimal(1), reader.IsDBNull(2) ? null : reader.GetString(2)));
+        return [.. rows];
+    }
+
+    public async Task<string?> DifferenceExplanationAsync(Guid cashSessionId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT difference_explanation FROM cash.cash_sessions WHERE cash_session_id = @id;");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        return await command.ExecuteScalarAsync() as string;
+    }
+
+    public async Task<bool> ReconciledSelfApprovedAsync(Guid cashSessionId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT reconciled_self_approved FROM cash.cash_sessions WHERE cash_session_id = @id;");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        return (bool)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<decimal> LatestCountAsync(Guid cashSessionId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT counted_amount FROM cash.cash_counts WHERE cash_session_id = @id ORDER BY counted_at DESC LIMIT 1;");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        return (decimal)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<long> DenialCountAsync(Guid userId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM identity.denial_events WHERE user_id = @id;");
+        command.Parameters.AddWithValue("id", userId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task InsertPaymentAsync(Guid billId, string status)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, created_at, updated_at)
+            VALUES (gen_random_uuid(), @bill, @status, 10, 10, CASE WHEN @status = 'Approved' THEN 10 ELSE NULL END, now(), now(), now());
+            """);
+        command.Parameters.AddWithValue("bill", billId);
+        command.Parameters.AddWithValue("status", status);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public Task<JsonElement[]> CloseAuditAsync(Guid cashSessionId) => AuditStatesAsync(cashSessionId, "cash.session.closed");
+
+    public Task<JsonElement[]> ReconcileAuditAsync(Guid cashSessionId) => AuditStatesAsync(cashSessionId, "cash.session.reconciled");
+
+    private async Task<JsonElement[]> AuditStatesAsync(Guid aggregateId, string eventName)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT after_state_json::text FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @name ORDER BY occurred_at;");
+        command.Parameters.AddWithValue("id", aggregateId);
+        command.Parameters.AddWithValue("name", eventName);
+        var rows = new List<JsonElement>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            rows.Add(JsonDocument.Parse(reader.GetString(0)).RootElement.Clone());
+        return [.. rows];
     }
 
     public async Task<string[]> AuditEventTypesAsync(params Guid[] aggregateIds)

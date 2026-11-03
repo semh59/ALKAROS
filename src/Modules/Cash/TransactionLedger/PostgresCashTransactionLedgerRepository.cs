@@ -52,7 +52,7 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(dbTransaction);
 
-        if (transaction.Type is CashTransactionType.Sale or CashTransactionType.CashIn or CashTransactionType.CashOut)
+        if (transaction.Type is CashTransactionType.Sale or CashTransactionType.CashIn or CashTransactionType.CashOut or CashTransactionType.Refund)
             await LockOpenSessionAsync(transaction.CashSessionId, connection, dbTransaction, cancellationToken);
 
         var command = connection.CreateCommand();
@@ -197,6 +197,19 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
         await using var command = _dataSource.CreateCommand(ExpectedCashSql);
         command.Parameters.AddWithValue("cash_session_id", cashSessionId);
 
+        return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
+    public async Task<decimal> ComputeExpectedCashAsync(
+        Guid cashSessionId, NpgsqlConnection connection, NpgsqlTransaction dbTransaction, CancellationToken cancellationToken = default)
+    {
+        if (cashSessionId == Guid.Empty)
+            throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = dbTransaction;
+        command.CommandText = ExpectedCashSql;
+        command.Parameters.AddWithValue("cash_session_id", cashSessionId);
         return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 

@@ -8,6 +8,14 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
 {
     private const string Sessions = "cash.cash_sessions";
     private const string Counts = "cash.cash_counts";
+    private const string RecordColumns =
+        """
+        cash_session_id, cashier_user_id, terminal_id, status,
+        opening_balance, expected_cash, actual_cash, difference,
+        opened_at, closed_at, closed_by, is_supervisor_override,
+        override_reason, reconciled_at, reconciled_by, reconciliation_notes,
+        row_version, difference_explanation, reconciled_self_approved
+        """;
     private const int MaxUnpagedRows = 5000;
     private static readonly TimeSpan CountRetryWindow = TimeSpan.FromSeconds(30);
 
@@ -25,11 +33,7 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
 
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT cash_session_id, cashier_user_id, terminal_id, status,
-                   opening_balance, expected_cash, actual_cash, difference,
-                   opened_at, closed_at, closed_by, is_supervisor_override,
-                   override_reason, reconciled_at, reconciled_by, reconciliation_notes,
-                   row_version
+            SELECT {RecordColumns}
             FROM {Sessions}
             WHERE cash_session_id = @id;
             """);
@@ -141,7 +145,15 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
     {
         ArgumentNullException.ThrowIfNull(session);
 
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        return await UpdateSessionAsync(connection, null, session, expectedRowVersion, cancellationToken);
+    }
+
+    private static async Task<long> UpdateSessionAsync(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, CashSessionRecord session, long expectedRowVersion,
+        CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
             $"""
             UPDATE {Sessions}
             SET status = @status,
@@ -155,11 +167,13 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
                 reconciled_at = @reconciled_at,
                 reconciled_by = @reconciled_by,
                 reconciliation_notes = @reconciliation_notes,
+                difference_explanation = @difference_explanation,
+                reconciled_self_approved = @reconciled_self_approved,
                 updated_at = @updated_at,
                 row_version = row_version + 1
             WHERE cash_session_id = @cash_session_id AND row_version = @expected_row_version
             RETURNING row_version;
-            """);
+            """, connection, transaction);
         BindRecord(command, session);
         command.Parameters.AddWithValue("updated_at", DateTimeOffset.UtcNow);
         command.Parameters.AddWithValue("expected_row_version", expectedRowVersion);
@@ -173,32 +187,99 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
         return (long)result;
     }
 
-    public async Task<Guid> RecordCountAsync(
-        Guid cashSessionId,
-        decimal countedAmount,
-        Guid countedBy,
-        string? notes,
-        CancellationToken cancellationToken = default)
+    public async Task<T> InLockedSessionAsync<T>(
+        Guid cashSessionId, Func<ILockedCashSession, Task<T>> work, CancellationToken cancellationToken = default)
     {
         if (cashSessionId == Guid.Empty)
             throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
+        ArgumentNullException.ThrowIfNull(work);
 
-        // A retried request (same session, counter, amount and notes within the retry window) finds the row the first
-        // attempt wrote instead of adding a second identical one.
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        CashSessionRecord record;
+        await using (var command = new NpgsqlCommand(
+            $"SELECT {RecordColumns} FROM {Sessions} WHERE cash_session_id = @id FOR UPDATE;", connection, transaction))
+        {
+            command.Parameters.AddWithValue("id", cashSessionId);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            record = await reader.ReadAsync(cancellationToken)
+                ? ReadRecord(reader)
+                : throw new CashSessionNotFoundException(cashSessionId);
+        }
+
+        var result = await work(new LockedSession(_dataSource, connection, transaction, record));
+        await transaction.CommitAsync(cancellationToken);
+        return result;
+    }
+
+    private sealed class LockedSession(
+        NpgsqlDataSource dataSource, NpgsqlConnection connection, NpgsqlTransaction transaction, CashSessionRecord record)
+        : ILockedCashSession
+    {
+        public CashSessionRecord Record { get; } = record;
+        public NpgsqlConnection Connection { get; } = connection;
+        public NpgsqlTransaction Transaction { get; } = transaction;
+
+        public Task<decimal> ReadExpectedCashAsync(CancellationToken cancellationToken = default)
+            => new PostgresCashTransactionLedgerRepository(dataSource)
+                .ComputeExpectedCashAsync(Record.Snapshot.CashSessionId, Connection, Transaction, cancellationToken);
+
+        public async Task<decimal?> ReadLatestCountAsync(CancellationToken cancellationToken = default)
+        {
+            await using var command = new NpgsqlCommand(
+                $"SELECT counted_amount FROM {Counts} WHERE cash_session_id = @id ORDER BY counted_at DESC LIMIT 1;",
+                Connection, Transaction);
+            command.Parameters.AddWithValue("id", Record.Snapshot.CashSessionId);
+            return await command.ExecuteScalarAsync(cancellationToken) as decimal?;
+        }
+
+        public async Task<IReadOnlyList<Guid>> ReadCountersAsync(CancellationToken cancellationToken = default)
+        {
+            await using var command = new NpgsqlCommand(
+                $"SELECT DISTINCT counted_by FROM {Counts} WHERE cash_session_id = @id LIMIT {MaxUnpagedRows + 1};", Connection, Transaction);
+            command.Parameters.AddWithValue("id", Record.Snapshot.CashSessionId);
+            var counters = new List<Guid>();
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                counters.Add(reader.GetGuid(0));
+            if (counters.Count > MaxUnpagedRows)
+                throw new InvalidOperationException($"A session has more than {MaxUnpagedRows} distinct counters.");
+            return counters;
+        }
+
+        public Task<Guid> RecordCountAsync(decimal countedAmount, Guid countedBy, string? notes, CancellationToken cancellationToken = default)
+            => InsertCountAsync(Connection, Transaction, Record.Snapshot.CashSessionId, countedAmount, countedBy, notes, cancellationToken);
+
+        public Task<long> SaveAsync(CashSessionRecord updated, CancellationToken cancellationToken = default)
+            => UpdateSessionAsync(Connection, Transaction, updated, Record.Snapshot.RowVersion, cancellationToken);
+
+        public Task PostLedgerEntryAsync(CashTransaction entry, CancellationToken cancellationToken = default)
+            => new PostgresCashTransactionLedgerRepository(dataSource).RecordAsync(entry, Connection, Transaction, cancellationToken);
+    }
+
+    private static async Task<Guid> InsertCountAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid cashSessionId, decimal countedAmount, Guid countedBy,
+        string? notes, CancellationToken cancellationToken)
+    {
+        // A retried request (the session's newest count has the same counter, amount and notes and is inside the retry
+        // window) finds the row the first attempt wrote instead of adding a second identical one. Only the newest row
+        // counts: a later count with another amount must not be resurrected by an older identical one.
+        await using var command = new NpgsqlCommand(
             $"""
-            WITH existing AS (
-                SELECT cash_count_id FROM {Counts}
-                WHERE cash_session_id = @cash_session_id AND counted_by = @counted_by AND counted_amount = @counted_amount
-                  AND notes IS NOT DISTINCT FROM @notes::text AND counted_at > @retry_window_start
-                ORDER BY counted_at DESC LIMIT 1),
+            WITH latest AS (
+                SELECT cash_count_id, counted_by, counted_amount, notes, counted_at FROM {Counts}
+                WHERE cash_session_id = @cash_session_id ORDER BY counted_at DESC LIMIT 1),
+            existing AS (
+                SELECT cash_count_id FROM latest
+                WHERE counted_by = @counted_by AND counted_amount = @counted_amount
+                  AND notes IS NOT DISTINCT FROM @notes::text AND counted_at > @retry_window_start),
             inserted AS (
                 INSERT INTO {Counts} (cash_count_id, cash_session_id, counted_amount, counted_by, notes, counted_at)
                 SELECT @cash_count_id, @cash_session_id, @counted_amount, @counted_by, @notes::text, @counted_at
                 WHERE NOT EXISTS (SELECT 1 FROM existing)
                 RETURNING cash_count_id)
             SELECT cash_count_id FROM inserted UNION ALL SELECT cash_count_id FROM existing LIMIT 1;
-            """);
+            """, connection, transaction);
         var now = DateTimeOffset.UtcNow;
         command.Parameters.AddWithValue("cash_count_id", Guid.NewGuid());
         command.Parameters.AddWithValue("cash_session_id", cashSessionId);
@@ -264,6 +345,8 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
         command.Parameters.AddWithValue("reconciled_at", (object?)record.ReconciledAt ?? DBNull.Value);
         command.Parameters.AddWithValue("reconciled_by", (object?)record.ReconciledBy ?? DBNull.Value);
         command.Parameters.AddWithValue("reconciliation_notes", (object?)record.ReconciliationNotes ?? DBNull.Value);
+        command.Parameters.AddWithValue("difference_explanation", (object?)record.DifferenceExplanation ?? DBNull.Value);
+        command.Parameters.AddWithValue("reconciled_self_approved", record.ReconciledSelfApproved);
         command.Parameters.AddWithValue("row_version", snapshot.RowVersion);
     }
 
@@ -302,6 +385,8 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
             reader.IsDBNull(12) ? null : reader.GetString(12),
             reader.IsDBNull(14) ? null : reader.GetGuid(14),
             reader.IsDBNull(15) ? null : reader.GetString(15),
-            reader.IsDBNull(13) ? null : reader.GetDateTime(13));
+            reader.IsDBNull(13) ? null : reader.GetDateTime(13),
+            reader.IsDBNull(17) ? null : reader.GetString(17),
+            reader.GetBoolean(18));
     }
 }

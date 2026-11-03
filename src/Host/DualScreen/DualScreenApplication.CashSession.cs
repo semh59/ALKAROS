@@ -5,6 +5,9 @@ using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Settings.CashCloseTolerance;
+using ALKAROS.Settings.ManagerSelfApproval;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -86,12 +89,13 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var record = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var mayActForOwner = await MayActForOwnerAsync(record, principal.UserId, authorization, cancellationToken);
             // requests are decided before counting starts; nothing can be requested once the session leaves Open.
             if (await movements.HasPendingAsync(cashSessionId, cancellationToken))
                 throw new PendingCashMovementRequestsException(cashSessionId);
             var (session, _) = await sessions.StartCountAsync(
-                new StartCashCountCommand(cashSessionId, principal.UserId), cancellationToken);
+                new StartCashCountCommand(cashSessionId, principal.UserId, mayActForOwner), cancellationToken);
             return Results.Ok(session);
         });
 
@@ -107,9 +111,10 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var record = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var mayActForOwner = await MayActForOwnerAsync(record, principal.UserId, authorization, cancellationToken);
             var recorded = await sessions.RecordCountAsync(
-                new RecordCashCountCommand(cashSessionId, request.CountedAmount, principal.UserId, request.Notes),
+                new RecordCashCountCommand(cashSessionId, request.CountedAmount, principal.UserId, request.Notes, mayActForOwner),
                 cancellationToken);
             return Results.Ok(recorded);
         });
@@ -118,6 +123,8 @@ public static partial class DualScreenApplication
             Guid terminalId,
             Guid cashSessionId,
             ICashTransactionLedgerRepository ledger,
+            CashCloseStore closeStore,
+            ISettingsService settings,
             DualScreenStore store,
             IAuthorizationService authorization,
             HttpContext context,
@@ -127,7 +134,10 @@ public static partial class DualScreenApplication
             await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
             var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
-            return Results.Ok(new ExpectedCashResponseV1(expectedCash));
+            var unsettled = await closeStore.ReadUnsettledAsync(cancellationToken);
+            return Results.Ok(new ExpectedCashResponseV1(
+                expectedCash, await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken),
+                unsettled.OpenBills, unsettled.UnsettledPayments));
         });
 
         group.MapPost("/{cashSessionId:guid}/close", async (
@@ -135,8 +145,9 @@ public static partial class DualScreenApplication
             Guid cashSessionId,
             CloseCashSessionRequestV1 request,
             ICashSessionLifecycleService sessions,
-            ICashTransactionLedgerRepository ledger,
             CashMovementStore movements,
+            CashCloseStore closeStore,
+            ISettingsService settings,
             DualScreenStore store,
             IAuthorizationService authorization,
             HttpContext context,
@@ -144,7 +155,8 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var record = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var mayActForOwner = await MayActForOwnerAsync(record, principal.UserId, authorization, cancellationToken);
             // start-count already refuses open requests and none can be opened once the session left Open;
             // this guards the one request that was committed in the same instant as the count started.
             if (await movements.HasPendingAsync(cashSessionId, cancellationToken))
@@ -157,12 +169,15 @@ public static partial class DualScreenApplication
                 await authorization.AuthorizeAsync(
                     principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
             }
-            var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
+            var tolerance = await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken);
+            // The expected cash and the unsettled counts are read by the close itself under the session lock; the
+            // unacknowledged-warning check and the audit event run inside the same transaction, after every rule of the close was judged.
             var (session, closedEvent) = await sessions.CloseSessionAsync(
                 new CloseCashSessionCommand(
                     cashSessionId, request.ActualCash, principal.UserId,
-                    request.IsSupervisorOverride, request.OverrideReason),
-                expectedCash,
+                    request.IsSupervisorOverride, request.OverrideReason, request.DifferenceExplanation, mayActForOwner),
+                tolerance,
+                (closed, locked, token) => closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
                 cancellationToken);
             return Results.Ok(new CloseCashSessionResultV1(session, closedEvent.Difference));
         });
@@ -173,6 +188,8 @@ public static partial class DualScreenApplication
             ReconcileCashSessionRequestV1 request,
             ICashSessionLifecycleService sessions,
             ICashSessionRepository sessionRepository,
+            CashCloseStore closeStore,
+            ISettingsService settings,
             DualScreenStore store,
             IAuthorizationService authorization,
             HttpContext context,
@@ -180,18 +197,15 @@ public static partial class DualScreenApplication
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
-            // V1-RMD-400 (V1-RMD-393 F-09): reconciliation is a supervisor act (cash-session-design.md §6) and a
-            // four-eyes check — the cashier who ran the drawer never signs off their own session.
+            // Reconciliation is a manager act (cash.session.override) and a four-eyes
+            // check - the cashier who ran the drawer and the person who closed it do not sign it off, unless the shared
+            // self-approval setting is on (then the record is marked).
             await authorization.AuthorizeAsync(
                 principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
-            var reconciled = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken);
-            if (reconciled is not null && reconciled.Snapshot.CashierUserId == principal.UserId)
-            {
-                throw new AuthorizationDeniedException(
-                    principal.UserId, ApplicationPermissions.CashSessionOverride, "The session's own cashier cannot reconcile it.");
-            }
+            var selfReconcileAllowed = await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken);
             var (session, _) = await sessions.ReconcileSessionAsync(
-                new ReconcileCashSessionCommand(cashSessionId, principal.UserId, request.Notes),
+                new ReconcileCashSessionCommand(cashSessionId, principal.UserId, request.Notes, selfReconcileAllowed),
+                (reconciled, locked, token) => closeStore.AuditReconciledAsync(reconciled, locked, token),
                 cancellationToken);
             return Results.Ok(session);
         });
@@ -264,12 +278,34 @@ public static partial class DualScreenApplication
     /// not count, close, reconcile, move cash in or out of, or sell into terminal A's session by naming its id in B's
     /// route; a foreign session answers exactly like an unknown one.
     /// </summary>
-    private static async Task RequireSessionOnTerminalAsync(
+    private static async Task<CashSessionRecord> RequireSessionOnTerminalAsync(
         ICashSessionRepository sessionRepository, Guid cashSessionId, Guid terminalId, CancellationToken cancellationToken)
     {
         var session = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken);
         if (session is null || session.Snapshot.TerminalId != terminalId)
             throw new CashSessionNotFoundException(cashSessionId);
+        return session;
+    }
+
+    /// <summary>
+    /// A drawer session is counted and closed by the cashier who opened it; a manager (<c>cash.session.override</c>)
+    /// may act for them. The permission is asked only of someone else, so the cashier's own close never writes a
+    /// denial record.
+    /// </summary>
+    private static async Task<bool> MayActForOwnerAsync(
+        CashSessionRecord session, Guid userId, IAuthorizationService authorization, CancellationToken cancellationToken)
+    {
+        if (session.Snapshot.CashierUserId == userId)
+            return false;
+        try
+        {
+            await authorization.AuthorizeAsync(userId, ApplicationPermissions.CashSessionOverride, cancellationToken);
+            return true;
+        }
+        catch (AuthorizationDeniedException)
+        {
+            return false;
+        }
     }
 
     /// <summary>
@@ -293,8 +329,13 @@ public sealed record OpenCashSessionRequestV1(decimal OpeningBalance);
 
 public sealed record RecordCashCountRequestV1(decimal CountedAmount, string? Notes);
 
+/// <summary>
+/// <paramref name="DifferenceExplanation"/> is required whenever the counted cash differs from the expected cash;
+/// <paramref name="AcknowledgeUnsettled"/> is the cashier's deliberate "close anyway" when open bills or uncertain payments exist.
+/// </summary>
 public sealed record CloseCashSessionRequestV1(
-    decimal ActualCash, bool IsSupervisorOverride = false, string? OverrideReason = null);
+    decimal ActualCash, bool IsSupervisorOverride = false, string? OverrideReason = null,
+    string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false);
 
 public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decimal Difference);
 
@@ -305,9 +346,11 @@ public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decim
 /// Fark Teyidi screen found this live, showing a wrong "Beklenen" figure).
 /// This is a read-only preview of the same ComputeExpectedCashAsync the
 /// close endpoint itself uses, so the confirmation screen can show the real
-/// number before the cashier commits.
+/// number before the cashier commits. It also carries what the close screen needs besides the number: the manager-set
+/// difference tolerance and the business-wide counts of open bills and uncertain payments the close warns about.
 /// </summary>
-public sealed record ExpectedCashResponseV1(decimal ExpectedCash);
+public sealed record ExpectedCashResponseV1(
+    decimal ExpectedCash, decimal VarianceTolerance, int OpenBillCount, int UnsettledPaymentCount);
 
 public sealed record ReconcileCashSessionRequestV1(string? Notes);
 

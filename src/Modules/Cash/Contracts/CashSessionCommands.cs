@@ -33,7 +33,8 @@ public sealed record OpenCashSessionCommand(
 /// </summary>
 public sealed record StartCashCountCommand(
     Guid CashSessionId,
-    Guid CashierUserId)
+    Guid CashierUserId,
+    bool MayActForOwner = false)
 {
     public void Validate()
     {
@@ -52,7 +53,8 @@ public sealed record RecordCashCountCommand(
     Guid CashSessionId,
     decimal CountedAmount,
     Guid CountedBy,
-    string? Notes = null)
+    string? Notes = null,
+    bool MayActForOwner = false)
 {
     public void Validate()
     {
@@ -61,6 +63,8 @@ public sealed record RecordCashCountCommand(
 
         if (CountedBy == Guid.Empty)
             throw new ArgumentException("CountedBy user ID cannot be empty.", nameof(CountedBy));
+
+        CashSessionPolicy.RequireShortText(Notes, nameof(Notes));
 
         if (CountedAmount < 0)
             throw new NegativeCashAmountException(nameof(CountedAmount), CountedAmount);
@@ -78,7 +82,9 @@ public sealed record CloseCashSessionCommand(
     decimal ActualCash,
     Guid ClosedBy,
     bool IsSupervisorOverride = false,
-    string? OverrideReason = null)
+    string? OverrideReason = null,
+    string? DifferenceExplanation = null,
+    bool MayActForOwner = false)
 {
     public void Validate()
     {
@@ -96,6 +102,8 @@ public sealed record CloseCashSessionCommand(
 
         if (IsSupervisorOverride && string.IsNullOrWhiteSpace(OverrideReason))
             throw new ArgumentException("Override reason is required when performing supervisor override.", nameof(OverrideReason));
+
+        CashSessionPolicy.RequireShortText(OverrideReason, nameof(OverrideReason));
     }
 }
 
@@ -105,7 +113,8 @@ public sealed record CloseCashSessionCommand(
 public sealed record ReconcileCashSessionCommand(
     Guid CashSessionId,
     Guid ReconciledBy,
-    string? Notes = null)
+    string? Notes = null,
+    bool SelfReconcileAllowed = false)
 {
     public void Validate()
     {
@@ -114,6 +123,8 @@ public sealed record ReconcileCashSessionCommand(
 
         if (ReconciledBy == Guid.Empty)
             throw new ArgumentException("ReconciledBy user ID cannot be empty.", nameof(ReconciledBy));
+
+        CashSessionPolicy.RequireShortText(Notes, nameof(Notes));
     }
 }
 

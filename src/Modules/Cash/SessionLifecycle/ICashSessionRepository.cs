@@ -1,5 +1,6 @@
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TransactionLedger;
+using Npgsql;
 
 namespace ALKAROS.Cash.SessionLifecycle;
 
@@ -45,14 +46,48 @@ public interface ICashSessionRepository
     /// </summary>
     Task<long> SaveAsync(CashSessionRecord session, long expectedRowVersion, CancellationToken cancellationToken = default);
 
-    /// <summary>Appends a physical cash count entry against a session (does not change the session's own row).</summary>
-    Task<Guid> RecordCountAsync(
-        Guid cashSessionId,
-        decimal countedAmount,
-        Guid countedBy,
-        string? notes,
-        CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Runs <paramref name="work"/> in one transaction that holds the session row exclusively (<c>FOR UPDATE</c>):
+    /// counting, closing and reconciling wait for each other, and whatever <paramref name="work"/> reads (the latest
+    /// count, the expected cash) cannot change before it writes. The transaction commits when the work returns and
+    /// rolls back when it throws. Throws <see cref="CashSessionNotFoundException"/> for an unknown session.
+    /// </summary>
+    Task<T> InLockedSessionAsync<T>(
+        Guid cashSessionId, Func<ILockedCashSession, Task<T>> work, CancellationToken cancellationToken = default);
 
     /// <summary>Loads every count recorded against a session, oldest first.</summary>
     Task<IReadOnlyList<CashCountEntry>> GetCountsAsync(Guid cashSessionId, CancellationToken cancellationToken = default);
+}
+
+/// <summary>One cash session as seen from inside <see cref="ICashSessionRepository.InLockedSessionAsync{T}"/>.</summary>
+public interface ILockedCashSession
+{
+    /// <summary>The session as it stood when the lock was taken.</summary>
+    CashSessionRecord Record { get; }
+
+    /// <summary>The transaction's connection and transaction, for writes of the caller that must commit with the session.</summary>
+    NpgsqlConnection Connection { get; }
+
+    NpgsqlTransaction Transaction { get; }
+
+    /// <summary>The expected cash reconstructed from the session's ledger inside the lock.</summary>
+    Task<decimal> ReadExpectedCashAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>The newest recorded physical count, or null when none was recorded.</summary>
+    Task<decimal?> ReadLatestCountAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>The distinct users who recorded a count for the session.</summary>
+    Task<IReadOnlyList<Guid>> ReadCountersAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Appends a physical cash count entry against the session (does not change the session's own row). A retried
+    /// request (same counter, amount and notes within a short window) finds the row the first attempt wrote.
+    /// </summary>
+    Task<Guid> RecordCountAsync(decimal countedAmount, Guid countedBy, string? notes, CancellationToken cancellationToken = default);
+
+    /// <summary>Persists the changed session row; returns the incremented row version.</summary>
+    Task<long> SaveAsync(CashSessionRecord updated, CancellationToken cancellationToken = default);
+
+    /// <summary>Appends a ledger entry that commits or rolls back with the session change.</summary>
+    Task PostLedgerEntryAsync(CashTransaction entry, CancellationToken cancellationToken = default);
 }

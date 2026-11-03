@@ -29,6 +29,9 @@ binding contracts, state machines, terminal ownership models, variance formulas,
    - Each cash session is initiated by a specific cashier (`cashier_user_id`).
    - If a shift hand-over occurs, the current session MUST be closed (with physical count) and a new session opened by
      the incoming cashier.
+   - Starting the count, recording a count and closing are done by that cashier, or by a user holding
+     `cash.session.override` (a manager) acting for them (the close rules). The policy enforces it
+     (`CashSessionOwnerRequiredException`); a cashier's own actions never ask for the override permission.
 
 ---
 
@@ -78,10 +81,25 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
 
 - **`OpeningBalance >= 0`**: Negative opening float is strictly prohibited.
 - **`ActualCash >= 0`**: Physical counted cash cannot be negative.
-- **Variance Handling (`Difference != 0`)**:
-  - If $|\text{Difference}| > \text{VarianceToleranceThreshold}$ (e.g. 50.00 TL), standard cashier close is blocked;
-    **Supervisor approval** (`ManagerForceCloseSession` / `CashierSupervisorOverride`) is required with an explicit
-    reason logged to audit trail.
+- **Variance Handling (`Difference != 0`)** (PO decisions 2026-11-03):
+  - Any non-zero difference needs an explanation (1-500 characters, `difference_explanation`).
+  - If $|\text{Difference}| > \text{VarianceToleranceThreshold}$, standard cashier close is blocked; **Supervisor
+    approval** (`cash.session.override`) is required with an explicit reason logged to the audit trail. The threshold is
+    the manager setting `cash.close_variance_tolerance` (default 50 TL) with a hard ceiling of 500 TL, enforced when the
+    value is written and again when it is read.
+- **Counted amount**: a close needs at least one recorded count and the closing amount equals the latest count.
+- **Unsettled business**: open bills (not `Paid`/`Cancelled`) and payments whose result is unknown (`Pending`,
+  `Unknown`, `ReconciliationRequired`) are counted business-wide (bills and payments are not bound to a terminal). They
+  never block: the cashier sees the counts and acknowledges them, and the audit event `cash.session.closed` records the
+  counts the server saw and the acknowledgement.
+- **One transaction**: the close locks the session row, reads the expected cash and the latest count under that lock,
+  updates the session, posts the `ClosingDifference` ledger row and writes the audit event together; recording a count
+  takes the same lock.
+- **Reconciliation** is a manager act (`cash.session.override`) and a four-eyes check: the session's cashier and the
+  person who closed it do not reconcile it, unless the shared setting `approvals.manager_self_approval_enabled` is on;
+  then the record is marked (`reconciled_self_approved`) and the audit event `cash.session.reconciled` says so.
+- **Events**: `CashSessionClosedEvent` is returned to the caller and is not placed on the outbox; no module consumes it
+  (reconciliation reads `cash.cash_sessions.difference`). The audit event is the record of the close.
 
 ---
 
@@ -95,7 +113,10 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
    Manual `CashIn`/`CashOut` rules (V1-RMD-788, PO decision 2026-11-03): both always carry a reason (1-500 characters). A `CashOut` can never be more than the drawer's expected cash; the check and the insert run in one transaction under an exclusive lock on the session row. A `CashOut` above the manager-set threshold (`cash.cash_out_approval_threshold`, strictly greater) is not written to the ledger: it becomes a request that a user with `cash.session.override` approves or rejects (the requester may cancel). Approval re-checks the drawer and writes the `CashOut` row. The requester cannot approve their own request unless `approvals.manager_self_approval_enabled` is on; such an approval is marked `self_approved`. A session with open requests cannot be closed.
 5. **`Refund`**: Cash returned to customer for cancelled item or bill refund.
 6. **`CountAdjustment`**: Re-count adjustment recorded during counting phase.
-7. **`ClosingDifference`**: Final variance posted to general ledger on session closure.
+7. **`ClosingDifference`**: Final variance of a session, posted to the session's ledger in the closing transaction when
+   it is not zero (amount = |difference|, direction `In` for an overage and `Out` for a shortage, note = the cashier's
+   explanation). It is an audit entry and never feeds `ExpectedCash`; with it the ledger alone reads
+   `expected + signed difference = counted`.
 
 ---
 
@@ -105,26 +126,28 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
 | :--- | :--- | :--- |
 | `OpenSession` | Cashier, Supervisor, Admin | Terminal has NO other active session. Valid opening balance. |
 | `RecordTransaction` | Cashier, System (Payment) | Session status is `Open`. |
-| `StartCount` | Cashier, Supervisor | Session status is `Open`. |
-| `RecordCashCount` | Cashier, Supervisor | Session status is `Counting`. Counted amount >= 0. |
-| `CloseSession` | Cashier (within tolerance), Supervisor (any variance) | Session status is `Closing` or `Counting`. |
-| `ReconcileSession` | Supervisor, Accountant, Admin | Session status is `Closed`. |
+| `StartCount` | The session's cashier, or a user with `cash.session.override` | Session status is `Open`. |
+| `RecordCashCount` | The session's cashier, or a user with `cash.session.override` | Session status is `Counting`. Counted amount >= 0. |
+| `CloseSession` | The session's cashier (within tolerance), or a user with `cash.session.override` (any variance) | Session status is `Closing` or `Counting`. A count is recorded and equals the closing amount; any difference is explained. |
+| `ReconcileSession` | Users with `cash.session.override` other than the session's cashier and closer (unless self reconciliation is allowed) | Session status is `Closed`. |
+
+Reconciliation is bound to the `cash.session.override` permission, which the supervisor and manager roles hold. The
+earlier draft also named Accountant and Admin; no decision grants the Accountant that act, so the document follows the
+shipped permission (`129-cash-session-override-permission.up.sql`). Granting it to another role is a role-permission
+change, not a code change.
 
 ---
 
-## 7. Downstream Dependency Roadmap (Why Implementation Waits for V1.3)
+## 7. Implementation Map
 
 ```text
-V1-CSH-001 (Design & Contracts) [Current Task]
-       │
-       ▼
-V1.3 Implementation Milestone:
-       ├── V13-CSH-001: Cash Session Table & Repository Persistence
-       ├── V13-CSH-002: Cash Transaction Immutable Ledger
-       ├── V13-CSH-003: Cash Tender Command Handler
-       └── V13-PAY-001: Integration with Multi-Tender Payment Aggregate
+Policy, snapshot, commands, events   -> CashSessionPolicy (Cash.Contracts)
+Session persistence and lifecycle    -> cash.cash_sessions, CashSessionLifecycleService
+Append-only ledger                   -> cash.cash_transactions
+Cash tender                          -> Cash Tender Command Handler
+Manual movements, close, reconcile   -> sections 4 and 5
 ```
 
-**Rationale:** The execution of cash transactions requires atomic coordination with the **Payments Aggregate**
-(`V13-PAY-001`) and fiscal printer closure gates (`V13-FSC-002`). Implementing database tables prematurely in V1 without
-the payment executor would create orphan state and risk divergence.
+The state machine in section 3 is the one the code runs: a session leaves `Open` only through `StartCount`
+(`Open` -> `Counting`), closes from `Counting`, and `Closing` is accepted as a close source but no command enters it
+today.

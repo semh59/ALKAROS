@@ -1,0 +1,23 @@
+D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:04.38]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsAZeroOrNegativeAmount [FAIL]
+[xUnit.net 00:00:04.38]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementForAnUnknownSessionIsNotFound [FAIL]
+[xUnit.net 00:00:04.39]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.StartingTheCountWaitsForAMovementAlreadyInFlightSoTheCountSeesIt [FAIL]
+[xUnit.net 00:00:04.39]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncExcludesCountAdjustmentAndClosingDifferenceEntries [FAIL]
+[xUnit.net 00:00:04.39]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsASaleEntryWithNoRelatedPayment [FAIL]
+[xUnit.net 00:00:04.39]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ASaleIsRefusedOnceTheSessionIsNoLongerOpen [FAIL]
+[xUnit.net 00:00:04.40]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncReconstructsTheRunningTotalFromImmutableEntriesAlone [FAIL]
+[xUnit.net 00:00:04.40]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.RecordAsyncPersistsAndRoundTrips [FAIL]
+[xUnit.net 00:00:04.40]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsACountAdjustmentWithNoNotes [FAIL]
+[xUnit.net 00:00:04.41]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementIsRefusedOnceTheSessionIsNoLongerOpen(type: CashOut, direction: Out) [FAIL]
+[xUnit.net 00:00:04.41]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementIsRefusedOnceTheSessionIsNoLongerOpen(type: CashIn, direction: In) [FAIL]
+[xUnit.net 00:00:04.42]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.TheExclusiveSessionLockRefusesAClosedOrUnknownSession [FAIL]
+[xUnit.net 00:00:04.42]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.TheExclusiveSessionLockCountsEveryEntryTypeTheWayTheExpectedCashDoes [FAIL]
+[xUnit.net 00:00:04.42]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsAnEntryAgainstANonExistentSession [FAIL]
+[xUnit.net 00:00:04.42]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsADirectionThatDoesNotMatchAFixedDirectionType [FAIL]
+[xUnit.net 00:00:04.42]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncReturnsZeroForASessionWithNoEntriesYet [FAIL]
+[xUnit.net 00:00:04.43]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.RowsWrittenBeforeTheReasonRuleStillLoadWithoutOne [FAIL]
+[xUnit.net 00:00:04.43]     ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.TheExclusiveSessionLockReturnsTheExpectedCashAndMakesTheNextLockWaitForTheCommit [FAIL]
+[xUnit.net 00:00:08.49]     [Test Class Cleanup Failure (ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests)] Npgsql.NpgsqlException
+
+Başarısız! - Başarısız:    36, Başarılı:    28, Atlanan:     0, Toplam:    64, Süre: 8 s - ALKAROS.Cash.TransactionLedger.Tests.dll (net8.0)

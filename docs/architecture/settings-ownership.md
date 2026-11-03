@@ -59,7 +59,8 @@ history row naming who changed it).
 | `qr_ordering.pending_confirmation_timeout` | qr_ordering | Duration | 5 min | 1 min–24 h |
 | `reservations.dedicated_station_enabled` | tables | Toggle | false | true/false |
 | `cash.cash_out_approval_threshold` | cash | WholeNumber | 500 | 0–1,000,000 TRY; a cash-out above it needs manager approval, 0 = every cash-out |
-| `approvals.manager_self_approval_enabled` | cash | Toggle | false | true/false; lets a manager approve their own request (shared by every approval flow) |
+| `cash.close_variance_tolerance` | cash | WholeNumber | 50 | 0–500 TRY (hard ceiling, also applied when the value is read); the closing difference above which a manager override is needed |
+| `approvals.manager_self_approval_enabled` | cash | Toggle | false | true/false; lets a manager approve their own cash-out request or reconcile a session they ran or closed (shared by every approval flow) |
 | `garson.*_enabled` (nine feature switches) | waiter | Toggle | true | true/false |
 
 Reading rules: a missing, deactivated or unreadable value falls back to the

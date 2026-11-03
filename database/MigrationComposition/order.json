@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "212"
+    "max": "213"
   },
   "migrations": [
     {
@@ -1826,6 +1826,14 @@
       "tables": [
         "setting_history",
         "audit_events"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "213",
+      "phase": "B",
+      "tables": [
+        "cash_sessions"
       ],
       "deferredConstraints": []
     }

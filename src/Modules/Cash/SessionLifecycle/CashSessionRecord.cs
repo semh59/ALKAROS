@@ -16,7 +16,9 @@ public sealed record CashSessionRecord(
     string? OverrideReason,
     Guid? ReconciledBy,
     string? ReconciliationNotes,
-    DateTimeOffset? ReconciledAt);
+    DateTimeOffset? ReconciledAt,
+    string? DifferenceExplanation = null,
+    bool ReconciledSelfApproved = false);
 
 /// <summary>A single physical cash count entry (PDF:III.9.3) recorded against a session.</summary>
 public sealed record CashCountEntry(

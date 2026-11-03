@@ -188,6 +188,50 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCloseToleranceIsListedWithItsDefaultOfFiftyLira()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/settings/");
+
+        var tolerance = Assert.Single((await response.Content.ReadFromJsonAsync<SettingRecordV1[]>())!, r => r.Key == "cash.close_variance_tolerance");
+        Assert.Equal(("50", "WholeNumber", "cash"), (tolerance.Value, tolerance.DataType, tolerance.ModuleOwner));
+    }
+
+    [Fact]
+    public async Task OnlyAManagerMayChangeTheCloseTolerance()
+    {
+        using var manager = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var listing = await manager.GetAsync("/api/v1/management/settings/");
+        using var denied = CreateClient(SettingsManagementTestDatabase.DeniedToken);
+
+        using var response = await denied.PutAsJsonAsync(
+            "/api/v1/management/settings/cash.close_variance_tolerance", new UpdateSettingValueV1("400", ExpectedRowVersion: 1));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("50", await _database.GetRawValueAsync("cash.close_variance_tolerance"));
+    }
+
+    [Theory]
+    [InlineData("-1", false)]
+    [InlineData("501", false)]
+    [InlineData("5.5", false)]
+    [InlineData("abc", false)]
+    [InlineData("0", true)]
+    [InlineData("500", true)]
+    public async Task TheCloseToleranceAcceptsWholeLiraFromZeroToTheFiveHundredCeilingOnly(string value, bool accepted)
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var listing = await client.GetAsync("/api/v1/management/settings/");
+
+        using var response = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/cash.close_variance_tolerance", new UpdateSettingValueV1(value, ExpectedRowVersion: 1));
+
+        Assert.Equal(accepted ? HttpStatusCode.OK : HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(accepted ? value : "50", await _database.GetRawValueAsync("cash.close_variance_tolerance"));
+    }
+
+    [Fact]
     public async Task ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue()
     {
         // a change of the cash-out approval threshold, or of any other setting, is audited.

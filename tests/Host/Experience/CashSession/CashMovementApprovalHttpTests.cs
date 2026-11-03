@@ -240,6 +240,7 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
         await AssertErrorAsync(blocked, HttpStatusCode.Conflict, "CASH_MOVEMENT_REQUESTS_PENDING", "onay bekleyen");
         await till.DecideAsync(requestId, "cancel", till.Cashier);
         Assert.Equal(HttpStatusCode.OK, (await till.PostAsync("/start-count", new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await till.PostAsync("/counts", new { CountedAmount = 2000m })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await till.PostAsync("/close", new { ActualCash = 2000m })).StatusCode);
     }
 

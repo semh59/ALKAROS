@@ -200,6 +200,20 @@ public sealed class PostgresCashTransactionLedgerRepositoryTests : IClassFixture
     }
 
     [Fact]
+    public async Task ARefundIsRefusedOnceTheSessionIsNoLongerOpen()
+    {
+        var sessionId = await SeedCashSessionAsync();
+        var (payment, _) = await SeedTwoPaymentsAsync();
+        await SetSessionStatusAsync(sessionId, "Closed");
+
+        var act = () => _ledger.RecordAsync(
+            new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.Refund, 10m, CashTransactionDirection.Out, payment.Id));
+
+        await act.Should().ThrowAsync<ClosedCashSessionException>();
+        (await _ledger.GetBySessionIdAsync(sessionId)).Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task ASaleIsRefusedOnceTheSessionIsNoLongerOpen()
     {
         var sessionId = await SeedCashSessionAsync();

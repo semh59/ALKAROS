@@ -271,12 +271,15 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
 
     private async Task<Guid> SeedClosedSessionAsync()
     {
-        var sessionId = await SeedOpenSessionAsync();
-        await _sessionService.StartCountAsync(new StartCashCountCommand(sessionId, Guid.NewGuid()));
+        var cashier = Guid.NewGuid();
+        // No opening entry (the ledger stays empty), so the expected cash is 0 and an empty drawer closes without a difference.
+        var (session, _) = await _sessionService.OpenSessionAsync(
+            new OpenCashSessionCommand(Guid.NewGuid(), cashier, Guid.NewGuid(), 100m));
+        await _sessionService.StartCountAsync(new StartCashCountCommand(session.CashSessionId, cashier));
+        await _sessionService.RecordCountAsync(new RecordCashCountCommand(session.CashSessionId, 0m, cashier));
         await _sessionService.CloseSessionAsync(
-            new CloseCashSessionCommand(sessionId, ActualCash: 100m, ClosedBy: Guid.NewGuid()),
-            expectedCash: 100m);
-        return sessionId;
+            new CloseCashSessionCommand(session.CashSessionId, ActualCash: 0m, ClosedBy: cashier), varianceTolerance: 50m);
+        return session.CashSessionId;
     }
 
     private async Task<Guid> SeedBillAsync(decimal payable)
