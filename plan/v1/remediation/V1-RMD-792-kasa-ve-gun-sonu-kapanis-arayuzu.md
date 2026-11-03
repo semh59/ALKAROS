@@ -1,8 +1,8 @@
 # V1-RMD-792 - Kasa ve gün sonu kapanış arayüzü: uyarı ve onay, fark açıklaması, sahiplik hataları, gün sonu önizleme
 
 - Task ID: V1-RMD-792
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
