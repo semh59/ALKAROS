@@ -40,6 +40,7 @@ Kapsam dışı: backend (V1-RMD-790, 791); React kasa kabuğunda oturum bağlant
   - tests/E2E/Cashier/specs/06-cash-session-conflict.spec.js (V13-PUI-002) — uyum gerekirse.
   - tests/E2E/Cashier/specs/24-cash-session-accessibility.spec.js (V1-RMD-361) — `aria-live` değişikliği uyumu.
   - tests/E2E/Cashier/specs/28-cash-session-denomination-count.spec.js (V1-RMD-377) — kapanış adımı uyumu.
+  - tests/E2E/Cashier/specs/11-cross-client-payment-aware-transfer.spec.js (V1-RMD-261) — E2E paketinde kırık: hedef masa seçeneği artık yalnız masa numarasını yazıyor, spec "numara + boşluk" arıyordu.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
