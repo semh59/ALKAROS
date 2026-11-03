@@ -1,8 +1,8 @@
 # V1-RMD-789 - Kasa hareketi arayüzü: zorunlu açıklama, onay özeti, onay bekleyen çıkışlar, kaybolmayan taslak, sıfır sayım uyarısı
 
 - Task ID: V1-RMD-789
-- Status: Planned
-- Assignee: unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
