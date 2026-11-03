@@ -53,6 +53,8 @@ Kapsam dışı: arayüz (V1-RMD-792); kasa kapanışı (V1-RMD-790); fiskal/Z ra
   - tests/Modules/Reporting/V1Operations/BusinessDayWindowTests.cs (V1-RMD-421) — yeni dosya: pencere testleri (V1Operations test projesi BusinessDayTotals kaynağını derler).
   - tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj (V1-RPT-001) — elle seçilmiş göç listesine 214.
   - docs/compliance/money-tax-business-date.md (V0-CMP-002) — yalnız ek bölüm (onaylı karar satırları değişmez).
+  - tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs (V1-RMD-659) — yalnız Host.Experience.Reporting için Audit kenarı (kapanış denetim olayı).
+  - docs/architecture/module-dependency-rules.md (V1-RMD-659) — yalnız aynı kenarın tablo satırı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
