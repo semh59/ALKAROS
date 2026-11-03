@@ -1,7 +1,7 @@
 # V1-RMD-785 - Müşteri ekranı: kısmi ödeme kalan tutarı ve ödeme sayfasında açılan hesabın ekrana bağlanması
 
 - Task ID: V1-RMD-785
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
@@ -33,6 +33,7 @@ Doğrulanan ve düzeltilmeyen: müşteri ekranı eşleşirken `pairing-requests/
   - src/Clients/PosTerminal/src/stale.test.ts (V1-RMD-020) — tip alanları için örnek veri.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V13-PUI-001) — hesap yüklenince ekrana bağlama çağrısı.
   - tests/Clients/StaticApps/ (V1-RMD-109) — ödeme sayfası bağlama testi.
+  - tests/Architecture/ApiConventions/idempotency_allowlist.json (V1-RMD-430) — ekranı hesaba bağlayan uç kayıt oluşturmaz, tekrarı aynı sonucu verir.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
