@@ -48,6 +48,8 @@ Kapsam dışı: arayüz (V1-RMD-792; A bittiği an mevcut kapanış ekranı fark
   - src/Host/DualScreen/DualScreenApplication.CashSession.cs (V13-CSH-004) — sahiplik, kapanış, mutabakat, beklenen nakit yanıtı.
   - src/Host/DualScreen/DualScreenApplication.cs (V1-GOV-008) — yeni deponun kaydı.
   - src/Host/Composition/Errors/ApiErrorCatalog.cs (V1-RMD-431) — yeni hata kodları.
+  - src/Host/Experience/Billing/BillingSplitApplication.cs (V1-BIL-001) — nakit iade onayı kapanmış oturuma denk gelirse 409 (iade satırı artık oturum kilidi alır).
+  - tests/Host/Experience/Billing/PaymentRefundHttpTests.cs (V1-BIL-001) — bu yarışın testi.
   - tests/Host/Errors/ApiErrorCatalogTests.cs (V1-RMD-431) — yeni eşlemeler.
   - tests/Host/Experience/Settings/SettingsManagementHttpTests.cs (V1-RMD-683) — tolerans ayarı, tavan ve audit.
   - docs/architecture/settings-ownership.md (V1-RMD-686) — yeni ayar.
