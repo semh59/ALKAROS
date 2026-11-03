@@ -37,3 +37,25 @@ Backend (gerçek Postgres, port 55432), kırmızı sonra yeşil:
 - qa-backend: terminalde `Preparing` vb. durumda takılı sipariş bağlamayı engelliyordu; koruma yalnız `Draft` oldu (test: Submitted ve Preparing). Ödenmiş hesap artık bağlanmaz. Tamamlanmış/boş durumda hesap okumaları atlanır. Ekranda "Hesap toplamı" = ödenen + kalan (indirim ve bahşiş tutarlı). Kabul edilip değişmeyenler: hesabın şubesi denetlenmez (tek işletme; diğer hesap uçları da aynı), Attach hatası yutulmaz (sessiz catch yasak; okuma hatası zaten tüm anlık görüntüyü düşürürdü).
 - qa-frontend: 403/429 yanıtları artık konsola yazılır (test eklendi). Tipin zorunlu kalması bilinçli (sunucu her zaman gönderir). Sayfa yeniden yüklenince çağrının tekrarı zararsız (aynı sonuç).
 - qa-test-kalitesi: Completed/Idle ve siparişsiz anlık görüntüde hesap okunmaması, aynı hesabı tekrar bağlama, uç HTTP katmanı (yetki, 404, ekran oturumlu anlık görüntü ve `orders/active`) testleri eklendi. Tamamen iade edilen ödeme kapsamı projector'a aittir (mevcut `BillPaymentClosureProjectorTests`).
+
+## Docker yenileme ve canlı doğrulama
+
+- Yedek: `pg_dump -Fc` (8,7 MB) oturum scratchpad'inde `alkaros-pre785.dump`.
+- Derleme: `docker-build.log`, `docker-build-all.log` (exit 0, bugünkü HEAD); yığın `compose.yaml` + `compose.dev.yaml` ile `up -d --no-build --wait` (`up.log`, exit 0), volume'lara dokunulmadı, `down -v` / prune yok.
+- Migration: öncesi 208 kayıt / son 209 (`migrations-before.log`), sonrası 209 / son 210 (`migrations-after.log`); yeni migration bu görevden değil (785 şema değiştirmez), HEAD'deki önceki görevlerden; hata yok. Tüm kapsayıcılar sağlıklı.
+- Canlı uçtan uca (`live-e2e.log`, `live-e2e.py`): giriş, taslak, onay, kasaya gönder, hesap, ekran eşleştirme (display 8091 / kasa 8090), `show-on-display` -> `bound: true`, ekran anlık görüntüsü hesap açılınca sipariş + `remainingTotal` 260; ₺100 kısmi nakit sonrası `paidTotal` 100, `remainingTotal` 160, mesaj "Ödemenizin bir bölümü alındı; kalan tutar ödenecek.".
+- Terminal d60b3df9 Semih'in tarayıcısına bağlı (`TERMINAL_KEY_MISMATCH`); onun oturumunu bozmamak için sıfırlanmadı, betik yeni bir terminal kimliğiyle giriş yaptı (`live-terminal-id.txt`; sunucu bu girişe 2afb47c8-b7b5-4815-8bd4-df586660f92f terminalini verdi).
+- Müşteri ekranı tarayıcısı (UI) elle açılıp görsel kontrol yapılmadı; anlık görüntü API düzeyinde, arayüzün okuduğu aynı veriyle doğrulandı, arayüz davranışı vitest ile.
+
+## Test verisi (silinmedi)
+
+- Sipariş 8060b159-7d54-4fef-85e8-1dd2757f328a (KASA-1, Adana Kebap x1, 260 TL, Submitted).
+- Hesap e3e478be-6d4e-4e87-932e-6031464e96b1 (BILL-TBL-KASA-1-08123426-8060b159): ₺100 nakit alındı (ödeme 89865c8f-2426-4098-8ac4-26145eb84b02), ₺160 kalan.
+- Kasa oturumu f38d043c-3aba-4425-8e07-d0254718e9bb (terminal 2afb47c8, yeni açıldı, açık).
+- Müşteri ekranı a26b2f2a-cc4b-4be5-83e2-f34a1cadf096, terminal 2afb47c8'e eşleşti (oturum ~12 saat).
+- Stok bakiyesi Adana Kebap için 1 porsiyon düştü.
+
+## Açık risk
+
+- Hesabın şubesi/terminal eşleşmesi denetlenmiyor (tek işletme; diğer hesap uçları da aynı).
+- `/cashier` sepeti ödeme sayfası açılana kadar müşteri ekranında görünmez (ürün sahibi kararı).
