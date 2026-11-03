@@ -141,8 +141,109 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
             "waiter.max_active_tables", "kitchen.dense_mode_threshold", "kitchen.live_sync_enabled",
             "qr_ordering.pending_confirmation_timeout", "reservations.dedicated_station_enabled",
             "business.name", "business.accent_theme", "garson.party_size_enabled",
+            "cash.cash_out_approval_threshold", "approvals.manager_self_approval_enabled",
         })
             Assert.Contains(expected, keys);
+    }
+
+    [Fact]
+    public async Task TheCashSettingsAreListedWithTheirTypeOwnerAndDefault()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/settings/");
+
+        var records = (await response.Content.ReadFromJsonAsync<SettingRecordV1[]>())!;
+        var threshold = Assert.Single(records, r => r.Key == "cash.cash_out_approval_threshold");
+        var selfApproval = Assert.Single(records, r => r.Key == "approvals.manager_self_approval_enabled");
+        Assert.Equal(("500", "WholeNumber", "cash"), (threshold.Value, threshold.DataType, threshold.ModuleOwner));
+        Assert.Equal(("false", "Toggle", "cash"), (selfApproval.Value, selfApproval.DataType, selfApproval.ModuleOwner));
+    }
+
+    [Theory]
+    [InlineData("-1", false)]
+    [InlineData("1000001", false)]
+    [InlineData("5.5", false)]
+    [InlineData("abc", false)]
+    [InlineData("0", true)]
+    [InlineData("1000000", true)]
+    public async Task TheCashOutThresholdAcceptsWholeLiraFromZeroToOneMillionOnly(string value, bool accepted)
+    {
+        await _database.ExecuteAsync(
+            "INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner) VALUES (@id, 'cash.cash_out_approval_threshold', '500', 'Integer', 'Global', 'cash');",
+            ("id", Guid.NewGuid()));
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/cash.cash_out_approval_threshold", new UpdateSettingValueV1(value, ExpectedRowVersion: 1));
+
+        Assert.Equal(accepted ? HttpStatusCode.OK : HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(accepted ? value : "500", await _database.GetRawValueAsync("cash.cash_out_approval_threshold"));
+        if (!accepted && value is "-1" or "1000001")
+        {
+            var error = (await ReadErrorAsync(response)).Error;
+            Assert.Equal("VALUE_OUT_OF_RANGE", error.Code);
+            Assert.Contains("1.000.000", error.Message);
+        }
+    }
+
+    [Fact]
+    public async Task ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue()
+    {
+        // a change of the cash-out approval threshold, or of any other setting, is audited.
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var listing = await client.GetAsync("/api/v1/management/settings/");
+        Assert.Equal(0L, await AuditCountAsync());
+
+        using var changed = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/cash.cash_out_approval_threshold",
+            new UpdateSettingValueV1("800", ExpectedRowVersion: 1, Reason: "tedarikçi ödemeleri arttı"));
+        using var deactivated = await client.DeleteAsync(
+            "/api/v1/management/settings/cash.cash_out_approval_threshold?expectedRowVersion=2&reason=kapat");
+
+        Assert.Equal(HttpStatusCode.OK, changed.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, deactivated.StatusCode);
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            SELECT event_name, actor_id, actor_type, reason, before_state_json->>'key', before_state_json->>'value', after_state_json->>'value'
+            FROM audit.audit_events WHERE aggregate_type = 'Setting' ORDER BY occurred_at;
+            """);
+        await using var reader = await command.ExecuteReaderAsync();
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal(
+            ("settings.value_changed", SettingsManagementTestDatabase.ManagerUserId, "User", "tedarikçi ödemeleri arttı", "cash.cash_out_approval_threshold", "500", "800"),
+            (reader.GetString(0), reader.GetGuid(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), reader.GetString(6)));
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal(
+            ("settings.deactivated", "kapat", "800", "[Deactivated]"),
+            (reader.GetString(0), reader.GetString(3), reader.GetString(5), reader.GetString(6)));
+        Assert.False(await reader.ReadAsync());
+    }
+
+    [Fact]
+    public async Task ASystemChangeWithoutAnActorIsAuditedAsASystemEvent()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var listing = await client.GetAsync("/api/v1/management/settings/");
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO settings.setting_history (setting_history_id, setting_id, old_value, new_value, reason, changed_by, changed_at)
+            SELECT gen_random_uuid(), setting_id, 'false', 'true', 'bakım', NULL, now()
+            FROM settings.settings WHERE setting_key = 'approvals.manager_self_approval_enabled';
+            """);
+
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT actor_type, actor_id IS NULL, reason FROM audit.audit_events WHERE aggregate_type = 'Setting';");
+        await using var reader = await command.ExecuteReaderAsync();
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal(("System", true, "bakım"), (reader.GetString(0), reader.GetBoolean(1), reader.GetString(2)));
+        Assert.False(await reader.ReadAsync());
+    }
+
+    private async Task<long> AuditCountAsync()
+    {
+        await using var command = _database.DataSource.CreateCommand("SELECT count(*) FROM audit.audit_events WHERE aggregate_type = 'Setting';");
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     [Fact]

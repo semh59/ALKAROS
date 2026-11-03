@@ -91,6 +91,8 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
 2. **`Sale`**: Cash payment collected for an order/bill (`related_payment_id`, `related_bill_id`).
 3. **`CashIn`**: Mid-shift cash deposit (e.g. additional change float added from main safe).
 4. **`CashOut`**: Mid-shift petty cash disbursement (e.g. local vendor cash payment with receipt).
+
+   Manual `CashIn`/`CashOut` rules (V1-RMD-788, PO decision 2026-11-03): both always carry a reason (1-500 characters). A `CashOut` can never be more than the drawer's expected cash; the check and the insert run in one transaction under an exclusive lock on the session row. A `CashOut` above the manager-set threshold (`cash.cash_out_approval_threshold`, strictly greater) is not written to the ledger: it becomes a request that a user with `cash.session.override` approves or rejects (the requester may cancel). Approval re-checks the drawer and writes the `CashOut` row. The requester cannot approve their own request unless `approvals.manager_self_approval_enabled` is on; such an approval is marked `self_approved`. A session with open requests cannot be closed.
 5. **`Refund`**: Cash returned to customer for cancelled item or bill refund.
 6. **`CountAdjustment`**: Re-count adjustment recorded during counting phase.
 7. **`ClosingDifference`**: Final variance posted to general ledger on session closure.

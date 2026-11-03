@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="524bf56e-e2b4-496e-ad3d-43d9c3c8912d" name="semih@SEMH59 2026-11-03 19:40:36" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T19:40:36.0761875+03:00" queuing="2026-11-03T19:40:36.0761877+03:00" start="2026-11-03T19:40:30.5333118+03:00" finish="2026-11-03T19:40:36.2424041+03:00" />
+  <TestSettings name="default" id="d3316ce2-6825-4813-950a-75297d22fc69">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_19_40_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c96d0cc4-4eb4-4a5f-94a5-8d602eaee372" testId="59e5ebaa-4f31-f7b9-7701-48ae119fb183" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsNonZeroPaddedPosition" computerName="SEMH59" duration="00:00:00.0176719" startTime="2026-11-03T19:40:36.0180153+03:00" endTime="2026-11-03T19:40:36.0180157+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c96d0cc4-4eb4-4a5f-94a5-8d602eaee372" />
+    <UnitTestResult executionId="e7f2280b-bec7-41fc-bca2-341c10ed9db7" testId="f353b480-b204-2468-926d-c8be2bf4c178" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDuplicatePosition" computerName="SEMH59" duration="00:00:00.0761894" startTime="2026-11-03T19:40:35.9459578+03:00" endTime="2026-11-03T19:40:35.9459584+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7f2280b-bec7-41fc-bca2-341c10ed9db7" />
+    <UnitTestResult executionId="8e12c355-22ab-4c14-a9f0-7393393bbfba" testId="cd2381c0-92db-e0f1-7218-199652831f7d" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsInvalidPhase" computerName="SEMH59" duration="00:00:00.0080835" startTime="2026-11-03T19:40:36.0263409+03:00" endTime="2026-11-03T19:40:36.0263413+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e12c355-22ab-4c14-a9f0-7393393bbfba" />
+    <UnitTestResult executionId="e9c7307b-13fa-476a-a2cb-e1b9a35fee6c" testId="b56f90ac-0bb2-9cea-3718-0330451b4611" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsUnsupportedVersion" computerName="SEMH59" duration="00:00:00.0147747" startTime="2026-11-03T19:40:36.0413585+03:00" endTime="2026-11-03T19:40:36.0413588+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e9c7307b-13fa-476a-a2cb-e1b9a35fee6c" />
+    <UnitTestResult executionId="7eb48cc1-6357-416a-9a5a-60b3125955e1" testId="8eebbe50-83e5-134c-975f-61da0a637a73" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyMigrationList" computerName="SEMH59" duration="00:00:00.0120401" startTime="2026-11-03T19:40:36.0957418+03:00" endTime="2026-11-03T19:40:36.0957421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7eb48cc1-6357-416a-9a5a-60b3125955e1" />
+    <UnitTestResult executionId="2849905e-5216-4485-82eb-cb2d8ab30f1c" testId="69bc786f-ea2a-68f8-7912-359015106001" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered" computerName="SEMH59" duration="00:00:00.0083971" startTime="2026-11-03T19:40:36.1212068+03:00" endTime="2026-11-03T19:40:36.1212072+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2849905e-5216-4485-82eb-cb2d8ab30f1c" />
+    <UnitTestResult executionId="4b247e13-2784-49e9-b134-e38a7920a7b6" testId="a49491bb-872c-7afe-0e27-13f309194451" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyDeferredConstraint" computerName="SEMH59" duration="00:00:00.0179010" startTime="2026-11-03T19:40:36.0594655+03:00" endTime="2026-11-03T19:40:36.0594659+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b247e13-2784-49e9-b134-e38a7920a7b6" />
+    <UnitTestResult executionId="f5b3c7b1-64e7-40a4-a19d-41383f60aa88" testId="7ef8a1b8-e972-ca16-1c49-5e1cf013ed49" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAIdOutsideItsRange" computerName="SEMH59" duration="00:00:00.0167865" startTime="2026-11-03T19:40:36.0001532+03:00" endTime="2026-11-03T19:40:36.0001536+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5b3c7b1-64e7-40a4-a19d-41383f60aa88" />
+    <UnitTestResult executionId="dacc78dc-97be-4704-8a26-9efe7ca7cb85" testId="e367b460-37ec-8bcd-5c04-31018794125e" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDescendingPositions" computerName="SEMH59" duration="00:00:00.0128474" startTime="2026-11-03T19:40:35.9831078+03:00" endTime="2026-11-03T19:40:35.9831082+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dacc78dc-97be-4704-8a26-9efe7ca7cb85" />
+    <UnitTestResult executionId="66723d3b-9b33-4c9a-890e-29743a09e256" testId="ce863169-5a28-a1b5-e916-79f212f12ed4" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsMalformedJson" computerName="SEMH59" duration="00:00:00.0154605" startTime="2026-11-03T19:40:36.1613595+03:00" endTime="2026-11-03T19:40:36.1613597+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="66723d3b-9b33-4c9a-890e-29743a09e256" />
+    <UnitTestResult executionId="caf5f752-4cb3-4607-bf25-997c1027305c" testId="78627862-54d7-0ca4-657f-450135ae0786" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.RuntimeManifestContainsOnlyImplementedMigrationPairs" computerName="SEMH59" duration="00:00:00.0167257" startTime="2026-11-03T19:40:36.1381658+03:00" endTime="2026-11-03T19:40:36.1381663+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="caf5f752-4cb3-4607-bf25-997c1027305c" />
+    <UnitTestResult executionId="5fb6fbfc-df24-4a34-aae6-d51a2aadd26b" testId="cf62529d-d822-36d1-ba5a-98a67ae4834d" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadThrowsWhenFileIsMissing" computerName="SEMH59" duration="00:00:00.0127708" startTime="2026-11-03T19:40:35.8695773+03:00" endTime="2026-11-03T19:40:35.8695777+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5fb6fbfc-df24-4a34-aae6-d51a2aadd26b" />
+    <UnitTestResult executionId="1246bb67-887e-4715-82f1-8e27604815a7" testId="6bcad70c-4435-08db-47c0-62389c1be428" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadsWhenPositionsAreComplete" computerName="SEMH59" duration="00:00:00.0238110" startTime="2026-11-03T19:40:36.0834916+03:00" endTime="2026-11-03T19:40:36.0834919+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1246bb67-887e-4715-82f1-8e27604815a7" />
+    <UnitTestResult executionId="6e552335-f764-49c6-b29e-469c6f8940aa" testId="2dc60f99-0b96-ff85-7eff-91c7bf83d017" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces" computerName="SEMH59" duration="00:00:00.2007722" startTime="2026-11-03T19:40:35.8568840+03:00" endTime="2026-11-03T19:40:35.8569223+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e552335-f764-49c6-b29e-469c6f8940aa" />
+    <UnitTestResult executionId="449c435e-367e-45bc-a428-39502c6a48d3" testId="cabad244-b5c7-3a50-ace7-e0ca7dae618b" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseBIdOutsideItsRange" computerName="SEMH59" duration="00:00:00.0178138" startTime="2026-11-03T19:40:35.9639478+03:00" endTime="2026-11-03T19:40:35.9639479+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="449c435e-367e-45bc-a428-39502c6a48d3" />
+    <UnitTestResult executionId="1828824c-e7fa-4077-af54-545f345abe43" testId="0c7f9fb1-7e94-63c7-733c-8d8d2b9ce1b8" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAEntryWithoutTables" computerName="SEMH59" duration="00:00:00.0072827" startTime="2026-11-03T19:40:36.1456688+03:00" endTime="2026-11-03T19:40:36.1456691+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1828824c-e7fa-4077-af54-545f345abe43" />
+    <UnitTestResult executionId="dc29a88c-2a26-438c-ba8b-c91207a0889c" testId="45b62088-4ffe-0a73-a2e1-aab0e98bb134" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyPhaseBEntry" computerName="SEMH59" duration="00:00:00.0166895" startTime="2026-11-03T19:40:36.1126330+03:00" endTime="2026-11-03T19:40:36.1126334+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc29a88c-2a26-438c-ba8b-c91207a0889c" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyPhaseBEntry" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="45b62088-4ffe-0a73-a2e1-aab0e98bb134">
+      <Execution id="dc29a88c-2a26-438c-ba8b-c91207a0889c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsEmptyPhaseBEntry" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsMalformedJson" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="ce863169-5a28-a1b5-e916-79f212f12ed4">
+      <Execution id="66723d3b-9b33-4c9a-890e-29743a09e256" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsMalformedJson" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadsWhenPositionsAreComplete" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="6bcad70c-4435-08db-47c0-62389c1be428">
+      <Execution id="1246bb67-887e-4715-82f1-8e27604815a7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestLoadsWhenPositionsAreComplete" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyDeferredConstraint" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="a49491bb-872c-7afe-0e27-13f309194451">
+      <Execution id="4b247e13-2784-49e9-b134-e38a7920a7b6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsEmptyDeferredConstraint" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadThrowsWhenFileIsMissing" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="cf62529d-d822-36d1-ba5a-98a67ae4834d">
+      <Execution id="5fb6fbfc-df24-4a34-aae6-d51a2aadd26b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestLoadThrowsWhenFileIsMissing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="69bc786f-ea2a-68f8-7912-359015106001">
+      <Execution id="2849905e-5216-4485-82eb-cb2d8ab30f1c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyMigrationList" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="8eebbe50-83e5-134c-975f-61da0a637a73">
+      <Execution id="7eb48cc1-6357-416a-9a5a-60b3125955e1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsEmptyMigrationList" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="2dc60f99-0b96-ff85-7eff-91c7bf83d017">
+      <Execution id="6e552335-f764-49c6-b29e-469c6f8940aa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDescendingPositions" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="e367b460-37ec-8bcd-5c04-31018794125e">
+      <Execution id="dacc78dc-97be-4704-8a26-9efe7ca7cb85" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsDescendingPositions" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAEntryWithoutTables" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="0c7f9fb1-7e94-63c7-733c-8d8d2b9ce1b8">
+      <Execution id="1828824c-e7fa-4077-af54-545f345abe43" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsPhaseAEntryWithoutTables" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseBIdOutsideItsRange" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="cabad244-b5c7-3a50-ace7-e0ca7dae618b">
+      <Execution id="449c435e-367e-45bc-a428-39502c6a48d3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsPhaseBIdOutsideItsRange" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.RuntimeManifestContainsOnlyImplementedMigrationPairs" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="78627862-54d7-0ca4-657f-450135ae0786">
+      <Execution id="caf5f752-4cb3-4607-bf25-997c1027305c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="RuntimeManifestContainsOnlyImplementedMigrationPairs" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAIdOutsideItsRange" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="7ef8a1b8-e972-ca16-1c49-5e1cf013ed49">
+      <Execution id="f5b3c7b1-64e7-40a4-a19d-41383f60aa88" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsPhaseAIdOutsideItsRange" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDuplicatePosition" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="f353b480-b204-2468-926d-c8be2bf4c178">
+      <Execution id="e7f2280b-bec7-41fc-bca2-341c10ed9db7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsDuplicatePosition" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsUnsupportedVersion" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="b56f90ac-0bb2-9cea-3718-0330451b4611">
+      <Execution id="e9c7307b-13fa-476a-a2cb-e1b9a35fee6c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsUnsupportedVersion" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsNonZeroPaddedPosition" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="59e5ebaa-4f31-f7b9-7701-48ae119fb183">
+      <Execution id="c96d0cc4-4eb4-4a5f-94a5-8d602eaee372" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsNonZeroPaddedPosition" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsInvalidPhase" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="cd2381c0-92db-e0f1-7218-199652831f7d">
+      <Execution id="8e12c355-22ab-4c14-a9f0-7393393bbfba" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsInvalidPhase" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="59e5ebaa-4f31-f7b9-7701-48ae119fb183" executionId="c96d0cc4-4eb4-4a5f-94a5-8d602eaee372" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f353b480-b204-2468-926d-c8be2bf4c178" executionId="e7f2280b-bec7-41fc-bca2-341c10ed9db7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd2381c0-92db-e0f1-7218-199652831f7d" executionId="8e12c355-22ab-4c14-a9f0-7393393bbfba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b56f90ac-0bb2-9cea-3718-0330451b4611" executionId="e9c7307b-13fa-476a-a2cb-e1b9a35fee6c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8eebbe50-83e5-134c-975f-61da0a637a73" executionId="7eb48cc1-6357-416a-9a5a-60b3125955e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69bc786f-ea2a-68f8-7912-359015106001" executionId="2849905e-5216-4485-82eb-cb2d8ab30f1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a49491bb-872c-7afe-0e27-13f309194451" executionId="4b247e13-2784-49e9-b134-e38a7920a7b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ef8a1b8-e972-ca16-1c49-5e1cf013ed49" executionId="f5b3c7b1-64e7-40a4-a19d-41383f60aa88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e367b460-37ec-8bcd-5c04-31018794125e" executionId="dacc78dc-97be-4704-8a26-9efe7ca7cb85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce863169-5a28-a1b5-e916-79f212f12ed4" executionId="66723d3b-9b33-4c9a-890e-29743a09e256" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78627862-54d7-0ca4-657f-450135ae0786" executionId="caf5f752-4cb3-4607-bf25-997c1027305c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf62529d-d822-36d1-ba5a-98a67ae4834d" executionId="5fb6fbfc-df24-4a34-aae6-d51a2aadd26b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6bcad70c-4435-08db-47c0-62389c1be428" executionId="1246bb67-887e-4715-82f1-8e27604815a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2dc60f99-0b96-ff85-7eff-91c7bf83d017" executionId="6e552335-f764-49c6-b29e-469c6f8940aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cabad244-b5c7-3a50-ace7-e0ca7dae618b" executionId="449c435e-367e-45bc-a428-39502c6a48d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c7f9fb1-7e94-63c7-733c-8d8d2b9ce1b8" executionId="1828824c-e7fa-4077-af54-545f345abe43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45b62088-4ffe-0a73-a2e1-aab0e98bb134" executionId="dc29a88c-2a26-438c-ba8b-c91207a0889c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="17" executed="17" passed="17" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.80]   Discovering: ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:01.91]   Discovered:  ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:01.92]   Starting:    ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:02.49]   Finished:    ALKAROS.Host.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

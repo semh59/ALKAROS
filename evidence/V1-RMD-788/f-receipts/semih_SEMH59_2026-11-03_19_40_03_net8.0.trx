@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="5c38ca44-dfe3-498c-952d-f00d9b4e8d91" name="semih@SEMH59 2026-11-03 19:40:03" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T19:40:03.7466828+03:00" queuing="2026-11-03T19:40:03.7466831+03:00" start="2026-11-03T19:39:48.1216277+03:00" finish="2026-11-03T19:40:10.5244410+03:00" />
+  <TestSettings name="default" id="bdc51a8a-5922-4ed8-a7ae-05b95303c3d0">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_19_40_03" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9d53a9ef-b077-405f-9a79-44dcb346ea6a" testId="de88b4a2-9c93-4b66-3e29-ea66372f49f6" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.InvalidAmountsAndCurrenciesAreRefusedBeforeAnyWrite" computerName="SEMH59" duration="00:00:00.0231329" startTime="2026-11-03T19:40:03.4349297+03:00" endTime="2026-11-03T19:40:03.4349300+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d53a9ef-b077-405f-9a79-44dcb346ea6a" />
+    <UnitTestResult executionId="7bf0d71f-c7d4-44eb-afa9-28853e486e3a" testId="d5159c8c-7bfb-b317-78d8-9e9ae3398c2d" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptIntoASessionThatIsNotOpenIsRefused(status: &quot;Closed&quot;)" computerName="SEMH59" duration="00:00:00.0356276" startTime="2026-11-03T19:40:03.3360738+03:00" endTime="2026-11-03T19:40:03.3360740+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7bf0d71f-c7d4-44eb-afa9-28853e486e3a" />
+    <UnitTestResult executionId="5b3c046c-16a2-4ff3-89f4-f98c5f6d3891" testId="8b173b3b-e416-b0d6-41b7-aafe88643687" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AFailureAfterTheCashMovementRollsBackAllThreeRecords" computerName="SEMH59" duration="00:00:00.0559583" startTime="2026-11-03T19:40:03.7185220+03:00" endTime="2026-11-03T19:40:03.7185224+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b3c046c-16a2-4ff3-89f4-f98c5f6d3891" />
+    <UnitTestResult executionId="69b1e057-da0d-45de-b616-cdc05b5d6015" testId="19b2e19a-83c9-427d-bbf9-4ee06ec13903" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptIntoASessionThatIsNotOpenIsRefused(status: &quot;Counting&quot;)" computerName="SEMH59" duration="00:00:00.3574807" startTime="2026-11-03T19:40:03.2997742+03:00" endTime="2026-11-03T19:40:03.2998052+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69b1e057-da0d-45de-b616-cdc05b5d6015" />
+    <UnitTestResult executionId="ca8c62d2-7225-4890-b9b3-dd813449e580" testId="5f5607a1-b202-39b6-5f98-382fe8683271" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AnUnknownOrAnonymizedCustomerIsRefused" computerName="SEMH59" duration="00:00:00.0351867" startTime="2026-11-03T19:40:03.4707850+03:00" endTime="2026-11-03T19:40:03.4707854+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca8c62d2-7225-4890-b9b3-dd813449e580" />
+    <UnitTestResult executionId="1cde4563-1580-4f91-aeb8-676fdef28e55" testId="23e8943c-d1b9-8d83-09a4-ea00468767de" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptLargerThanTheDebtIsRefusedAndChangesNothing" computerName="SEMH59" duration="00:00:00.0359423" startTime="2026-11-03T19:40:03.6620550+03:00" endTime="2026-11-03T19:40:03.6620554+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1cde4563-1580-4f91-aeb8-676fdef28e55" />
+    <UnitTestResult executionId="2f913f33-5069-433f-ab26-e580299286f5" testId="688b4d84-1f61-a96e-8295-59f65b2b58de" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.TwoConcurrentReceiptsCannotTogetherPayMoreThanIsOwed" computerName="SEMH59" duration="00:00:00.0453229" startTime="2026-11-03T19:40:03.8215727+03:00" endTime="2026-11-03T19:40:03.8215730+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f913f33-5069-433f-ab26-e580299286f5" />
+    <UnitTestResult executionId="1a67ede7-e464-414a-959c-1325e89aad6e" testId="5fbfaafc-e591-fdc2-b243-b47a1f0a178c" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptWritesTheApprovedAccountPaymentTheCashInAndTheAccountPaymentEntryTogether" computerName="SEMH59" duration="00:00:00.0564921" startTime="2026-11-03T19:40:03.7756104+03:00" endTime="2026-11-03T19:40:03.7756107+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1a67ede7-e464-414a-959c-1325e89aad6e" />
+    <UnitTestResult executionId="c564d375-173a-4070-89dc-b1a4f3c63e64" testId="a8dd9ae2-a697-06c6-6029-56da1d0bb13d" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.RetryingTheSameKeyReplaysTheSameRecords" computerName="SEMH59" duration="00:00:00.0731640" startTime="2026-11-03T19:40:03.4111563+03:00" endTime="2026-11-03T19:40:03.4111568+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c564d375-173a-4070-89dc-b1a4f3c63e64" />
+    <UnitTestResult executionId="4be92a51-8822-40ed-8cca-088d67e4d2b2" testId="4d927a44-a544-566f-11a5-85820ead9003" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AKeyReusedForADifferentAmountIsRefused" computerName="SEMH59" duration="00:00:00.0499949" startTime="2026-11-03T19:40:03.6255741+03:00" endTime="2026-11-03T19:40:03.6255744+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4be92a51-8822-40ed-8cca-088d67e4d2b2" />
+    <UnitTestResult executionId="6a770acb-3d29-445a-9762-930e49b39383" testId="614b666b-47e5-f04e-f271-af34e9251fb1" testName="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.ConcurrentRetriesOfOneReceiptWriteItOnce" computerName="SEMH59" duration="00:00:00.1036528" startTime="2026-11-03T19:40:03.5750631+03:00" endTime="2026-11-03T19:40:03.5750634+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a770acb-3d29-445a-9762-930e49b39383" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AnUnknownOrAnonymizedCustomerIsRefused" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="5f5607a1-b202-39b6-5f98-382fe8683271">
+      <Execution id="ca8c62d2-7225-4890-b9b3-dd813449e580" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AnUnknownOrAnonymizedCustomerIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptIntoASessionThatIsNotOpenIsRefused(status: &quot;Closed&quot;)" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="d5159c8c-7bfb-b317-78d8-9e9ae3398c2d">
+      <Execution id="7bf0d71f-c7d4-44eb-afa9-28853e486e3a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AReceiptIntoASessionThatIsNotOpenIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptWritesTheApprovedAccountPaymentTheCashInAndTheAccountPaymentEntryTogether" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="5fbfaafc-e591-fdc2-b243-b47a1f0a178c">
+      <Execution id="1a67ede7-e464-414a-959c-1325e89aad6e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AReceiptWritesTheApprovedAccountPaymentTheCashInAndTheAccountPaymentEntryTogether" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptLargerThanTheDebtIsRefusedAndChangesNothing" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="23e8943c-d1b9-8d83-09a4-ea00468767de">
+      <Execution id="1cde4563-1580-4f91-aeb8-676fdef28e55" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AReceiptLargerThanTheDebtIsRefusedAndChangesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AKeyReusedForADifferentAmountIsRefused" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="4d927a44-a544-566f-11a5-85820ead9003">
+      <Execution id="4be92a51-8822-40ed-8cca-088d67e4d2b2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AKeyReusedForADifferentAmountIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AFailureAfterTheCashMovementRollsBackAllThreeRecords" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="8b173b3b-e416-b0d6-41b7-aafe88643687">
+      <Execution id="5b3c046c-16a2-4ff3-89f4-f98c5f6d3891" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AFailureAfterTheCashMovementRollsBackAllThreeRecords" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.RetryingTheSameKeyReplaysTheSameRecords" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="a8dd9ae2-a697-06c6-6029-56da1d0bb13d">
+      <Execution id="c564d375-173a-4070-89dc-b1a4f3c63e64" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="RetryingTheSameKeyReplaysTheSameRecords" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptIntoASessionThatIsNotOpenIsRefused(status: &quot;Counting&quot;)" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="19b2e19a-83c9-427d-bbf9-4ee06ec13903">
+      <Execution id="69b1e057-da0d-45de-b616-cdc05b5d6015" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="AReceiptIntoASessionThatIsNotOpenIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.InvalidAmountsAndCurrenciesAreRefusedBeforeAnyWrite" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="de88b4a2-9c93-4b66-3e29-ea66372f49f6">
+      <Execution id="9d53a9ef-b077-405f-9a79-44dcb346ea6a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="InvalidAmountsAndCurrenciesAreRefusedBeforeAnyWrite" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.TwoConcurrentReceiptsCannotTogetherPayMoreThanIsOwed" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="688b4d84-1f61-a96e-8295-59f65b2b58de">
+      <Execution id="2f913f33-5069-433f-ab26-e580299286f5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="TwoConcurrentReceiptsCannotTogetherPayMoreThanIsOwed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.ConcurrentRetriesOfOneReceiptWriteItOnce" storage="d:\project\alkaros\tests\modules\customeraccounts\cashreceipts\bin\debug\net8.0\alkaros.customeraccounts.cashreceipts.tests.dll" id="614b666b-47e5-f04e-f271-af34e9251fb1">
+      <Execution id="6a770acb-3d29-445a-9762-930e49b39383" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\CashReceipts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.CashReceipts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests" name="ConcurrentRetriesOfOneReceiptWriteItOnce" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="de88b4a2-9c93-4b66-3e29-ea66372f49f6" executionId="9d53a9ef-b077-405f-9a79-44dcb346ea6a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5159c8c-7bfb-b317-78d8-9e9ae3398c2d" executionId="7bf0d71f-c7d4-44eb-afa9-28853e486e3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b173b3b-e416-b0d6-41b7-aafe88643687" executionId="5b3c046c-16a2-4ff3-89f4-f98c5f6d3891" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19b2e19a-83c9-427d-bbf9-4ee06ec13903" executionId="69b1e057-da0d-45de-b616-cdc05b5d6015" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f5607a1-b202-39b6-5f98-382fe8683271" executionId="ca8c62d2-7225-4890-b9b3-dd813449e580" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23e8943c-d1b9-8d83-09a4-ea00468767de" executionId="1cde4563-1580-4f91-aeb8-676fdef28e55" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="688b4d84-1f61-a96e-8295-59f65b2b58de" executionId="2f913f33-5069-433f-ab26-e580299286f5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5fbfaafc-e591-fdc2-b243-b47a1f0a178c" executionId="1a67ede7-e464-414a-959c-1325e89aad6e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8dd9ae2-a697-06c6-6029-56da1d0bb13d" executionId="c564d375-173a-4070-89dc-b1a4f3c63e64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d927a44-a544-566f-11a5-85820ead9003" executionId="4be92a51-8822-40ed-8cca-088d67e4d2b2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="614b666b-47e5-f04e-f271-af34e9251fb1" executionId="6a770acb-3d29-445a-9762-930e49b39383" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:02.37]   Discovering: ALKAROS.CustomerAccounts.CashReceipts.Tests&#xD;
+[xUnit.net 00:00:02.47]   Discovered:  ALKAROS.CustomerAccounts.CashReceipts.Tests&#xD;
+[xUnit.net 00:00:02.48]   Starting:    ALKAROS.CustomerAccounts.CashReceipts.Tests&#xD;
+[xUnit.net 00:00:16.92]   Finished:    ALKAROS.CustomerAccounts.CashReceipts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

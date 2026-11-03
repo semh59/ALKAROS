@@ -73,3 +73,71 @@ public sealed class MissingCountAdjustmentReasonException : CashTransactionExcep
     {
     }
 }
+
+/// <summary>Thrown when a manual cash-in or cash-out has no reason, or one longer than the limit.</summary>
+public sealed class InvalidCashMovementReasonException : CashTransactionException
+{
+    public InvalidCashMovementReasonException()
+        : base($"A manual cash movement must state a reason of 1 to {CashTransaction.MaxReasonLength} characters.")
+    {
+    }
+}
+
+/// <summary>Thrown when a cash-out is more than the cash the drawer holds.</summary>
+public sealed class CashOutExceedsDrawerException : CashTransactionException
+{
+    public CashOutExceedsDrawerException(decimal requested, decimal available)
+        : base($"Cash-out of {requested} is more than the {available} the drawer holds.")
+    {
+        Requested = requested;
+        Available = available;
+    }
+
+    public decimal Requested { get; }
+    public decimal Available { get; }
+}
+
+/// <summary>Thrown when the request does not exist on the session named in the route.</summary>
+public sealed class CashMovementRequestNotFoundException : CashTransactionException
+{
+    public CashMovementRequestNotFoundException(Guid requestId)
+        : base($"Cash movement request {requestId} was not found.")
+    {
+    }
+}
+
+/// <summary>Thrown when a request that is no longer open is decided again.</summary>
+public sealed class CashMovementRequestStateException : CashTransactionException
+{
+    public CashMovementRequestStateException(Guid requestId, string status)
+        : base($"Cash movement request {requestId} is {status}.")
+    {
+    }
+}
+
+/// <summary>Thrown when a user approves their own cash-out while the self-approval setting is off.</summary>
+public sealed class CashMovementSelfApprovalException : CashTransactionException
+{
+    public CashMovementSelfApprovalException()
+        : base("The person who asked for a cash-out cannot approve it.")
+    {
+    }
+}
+
+/// <summary>Thrown when a session with open cash-out requests is closed.</summary>
+public sealed class PendingCashMovementRequestsException : CashTransactionException
+{
+    public PendingCashMovementRequestsException(Guid cashSessionId)
+        : base($"Cash session {cashSessionId} still has cash-out requests waiting for a decision.")
+    {
+    }
+}
+
+/// <summary>Thrown when an idempotency key already belongs to a different cash movement.</summary>
+public sealed class CashMovementKeyReusedException : CashTransactionException
+{
+    public CashMovementKeyReusedException()
+        : base("The idempotency key was already used for a different cash movement.")
+    {
+    }
+}

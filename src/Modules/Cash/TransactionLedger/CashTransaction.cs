@@ -27,6 +27,9 @@ public sealed class CashTransaction
     /// <summary>The largest value the NUMERIC(18,2) ledger column holds.</summary>
     public const decimal MaxAmount = 9_999_999_999_999_999.99m;
 
+    /// <summary>The longest reason a manual cash movement may carry.</summary>
+    public const int MaxReasonLength = 500;
+
     /// <summary>True for a positive amount with at most two decimals that fits the ledger column exactly.</summary>
     public static bool IsStorableAmount(decimal amount)
         => amount > 0 && amount <= MaxAmount && decimal.Round(amount, 2) == amount;
@@ -42,6 +45,28 @@ public sealed class CashTransaction
         Guid? recordedBy = null,
         DateTimeOffset? occurredAt = null,
         string? idempotencyKey = null)
+        : this(id, cashSessionId, type, amount, direction, relatedPaymentId, notes, recordedBy, occurredAt, idempotencyKey, requireMovementReason: true)
+    {
+    }
+
+    /// <summary>Rebuilds a stored row; rows written before the reason rule may have none and must still load.</summary>
+    internal static CashTransaction Restore(
+        Guid id, Guid cashSessionId, CashTransactionType type, decimal amount, CashTransactionDirection direction,
+        Guid? relatedPaymentId, string? notes, Guid? recordedBy, DateTimeOffset occurredAt, string? idempotencyKey)
+        => new(id, cashSessionId, type, amount, direction, relatedPaymentId, notes, recordedBy, occurredAt, idempotencyKey, requireMovementReason: false);
+
+    private CashTransaction(
+        Guid id,
+        Guid cashSessionId,
+        CashTransactionType type,
+        decimal amount,
+        CashTransactionDirection direction,
+        Guid? relatedPaymentId,
+        string? notes,
+        Guid? recordedBy,
+        DateTimeOffset? occurredAt,
+        string? idempotencyKey,
+        bool requireMovementReason)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Cash transaction id cannot be empty.", nameof(id));
@@ -67,6 +92,14 @@ public sealed class CashTransaction
         // always state why, never a bare unexplained number.
         if (type == CashTransactionType.CountAdjustment && string.IsNullOrWhiteSpace(notes))
             throw new MissingCountAdjustmentReasonException();
+
+        // A manual cash-in/cash-out is money moving without a sale: it always says why.
+        if (requireMovementReason && type is CashTransactionType.CashIn or CashTransactionType.CashOut)
+        {
+            notes = notes?.Trim();
+            if (string.IsNullOrEmpty(notes) || notes.Length > MaxReasonLength)
+                throw new InvalidCashMovementReasonException();
+        }
 
         Id = id;
         CashSessionId = cashSessionId;

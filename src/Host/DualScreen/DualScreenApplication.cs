@@ -174,6 +174,8 @@ public static partial class DualScreenApplication
         builder.Services.AddSingleton<DualScreenStore>();
         // V1-RMD-442: the till's customer account read model (list, statement, create).
         builder.Services.AddScoped<ALKAROS.Host.Experience.CustomerAccounts.CustomerAccountsStore>();
+        // manual cash-in/cash-out with the drawer ceiling and the manager approval above the threshold.
+        builder.Services.AddScoped<CashMovementStore>();
         builder.Services.AddSingleton<SubmitOrderHandler>();
         builder.Services.AddTableManagementExperience();
         builder.Services.AddCatalogManagement();

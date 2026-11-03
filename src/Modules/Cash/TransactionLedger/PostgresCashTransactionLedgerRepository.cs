@@ -8,6 +8,20 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
 {
     private const string Transactions = "cash.cash_transactions";
     private const int MaxUnpagedRows = 5000;
+    private const string KeyLookupSql =
+        $"""
+        SELECT cash_transaction_id, cash_session_id, type, direction, amount,
+               related_payment_id, notes, recorded_by, occurred_at, idempotency_key
+        FROM {Transactions}
+        WHERE cash_session_id = @cash_session_id AND idempotency_key = @idempotency_key;
+        """;
+    private const string ExpectedCashSql =
+        $"""
+        SELECT COALESCE(SUM(CASE WHEN direction = 'In' THEN amount ELSE -amount END), 0)
+        FROM {Transactions}
+        WHERE cash_session_id = @cash_session_id
+          AND type NOT IN ('CountAdjustment', 'ClosingDifference');
+        """;
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -88,24 +102,61 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
             throw new ClosedCashSessionException(cashSessionId, parsed);
     }
 
+    public async Task<decimal> LockOpenSessionAndReadExpectedCashAsync(
+        Guid cashSessionId, NpgsqlConnection connection, NpgsqlTransaction dbTransaction, CancellationToken cancellationToken = default)
+    {
+        await using (var lockCommand = connection.CreateCommand())
+        {
+            lockCommand.Transaction = dbTransaction;
+            lockCommand.CommandText = "SELECT status FROM cash.cash_sessions WHERE cash_session_id = @id FOR UPDATE;";
+            lockCommand.Parameters.AddWithValue("id", cashSessionId);
+            var status = await lockCommand.ExecuteScalarAsync(cancellationToken) as string
+                ?? throw new CashSessionNotFoundException(cashSessionId);
+            if (!Enum.TryParse<CashSessionStatus>(status, out var parsed))
+                throw new InvalidOperationException($"Cash session '{cashSessionId}' has an unknown status '{status}'.");
+            if (parsed != CashSessionStatus.Open)
+                throw new ClosedCashSessionException(cashSessionId, parsed);
+        }
+
+        await using var sum = connection.CreateCommand();
+        sum.Transaction = dbTransaction;
+        sum.CommandText = ExpectedCashSql;
+        sum.Parameters.AddWithValue("cash_session_id", cashSessionId);
+        return (decimal)(await sum.ExecuteScalarAsync(cancellationToken))!;
+    }
+
     public async Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
         Guid cashSessionId, string idempotencyKey, CancellationToken cancellationToken = default)
+    {
+        ValidateKeyLookup(cashSessionId, idempotencyKey);
+        await using var command = _dataSource.CreateCommand(KeyLookupSql);
+        return await ReadByKeyAsync(command, cashSessionId, idempotencyKey, cancellationToken);
+    }
+
+    public async Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
+        Guid cashSessionId, string idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction dbTransaction,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateKeyLookup(cashSessionId, idempotencyKey);
+        await using var command = connection.CreateCommand();
+        command.Transaction = dbTransaction;
+        command.CommandText = KeyLookupSql;
+        return await ReadByKeyAsync(command, cashSessionId, idempotencyKey, cancellationToken);
+    }
+
+    private static void ValidateKeyLookup(Guid cashSessionId, string idempotencyKey)
     {
         if (cashSessionId == Guid.Empty)
             throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
         if (string.IsNullOrWhiteSpace(idempotencyKey))
             throw new ArgumentException("Idempotency key cannot be empty.", nameof(idempotencyKey));
+    }
 
-        await using var command = _dataSource.CreateCommand(
-            $"""
-            SELECT cash_transaction_id, cash_session_id, type, direction, amount,
-                   related_payment_id, notes, recorded_by, occurred_at, idempotency_key
-            FROM {Transactions}
-            WHERE cash_session_id = @cash_session_id AND idempotency_key = @idempotency_key;
-            """);
+    private static async Task<CashTransaction?> ReadByKeyAsync(
+        NpgsqlCommand command, Guid cashSessionId, string idempotencyKey, CancellationToken cancellationToken)
+    {
         command.Parameters.AddWithValue("cash_session_id", cashSessionId);
         command.Parameters.AddWithValue("idempotency_key", idempotencyKey);
-
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         return await reader.ReadAsync(cancellationToken) ? ReadRow(reader) : null;
     }
@@ -143,19 +194,13 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
         if (cashSessionId == Guid.Empty)
             throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
 
-        await using var command = _dataSource.CreateCommand(
-            $"""
-            SELECT COALESCE(SUM(CASE WHEN direction = 'In' THEN amount ELSE -amount END), 0)
-            FROM {Transactions}
-            WHERE cash_session_id = @cash_session_id
-              AND type NOT IN ('CountAdjustment', 'ClosingDifference');
-            """);
+        await using var command = _dataSource.CreateCommand(ExpectedCashSql);
         command.Parameters.AddWithValue("cash_session_id", cashSessionId);
 
         return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
-    private static CashTransaction ReadRow(NpgsqlDataReader reader) => new(
+    private static CashTransaction ReadRow(NpgsqlDataReader reader) => CashTransaction.Restore(
         reader.GetGuid(0),
         reader.GetGuid(1),
         Enum.Parse<CashTransactionType>(reader.GetString(2)),

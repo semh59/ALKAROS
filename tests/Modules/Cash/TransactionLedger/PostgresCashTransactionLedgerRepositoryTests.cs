@@ -193,7 +193,7 @@ public sealed class PostgresCashTransactionLedgerRepositoryTests : IClassFixture
         var sessionId = await SeedCashSessionAsync();
         await SetSessionStatusAsync(sessionId, "Counting");
 
-        var act = () => _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, type, 10m, direction));
+        var act = () => _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, type, 10m, direction, notes: "reason"));
 
         await act.Should().ThrowAsync<ClosedCashSessionException>();
         (await _ledger.GetBySessionIdAsync(sessionId)).Should().BeEmpty();
@@ -216,9 +216,100 @@ public sealed class PostgresCashTransactionLedgerRepositoryTests : IClassFixture
     public async Task AMovementForAnUnknownSessionIsNotFound()
     {
         var act = () => _ledger.RecordAsync(
-            new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, 10m, CashTransactionDirection.In));
+            new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, 10m, CashTransactionDirection.In, notes: "reason"));
 
         await act.Should().ThrowAsync<CashSessionNotFoundException>();
+    }
+
+    [Fact]
+    public async Task TheExclusiveSessionLockReturnsTheExpectedCashAndMakesTheNextLockWaitForTheCommit()
+    {
+        // a cash-out is checked against this number and recorded in the same transaction; a second
+        // payout must not read it before the first one has been written.
+        var sessionId = await SeedCashSessionAsync();
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.Opening, 500m, CashTransactionDirection.In));
+        await using var firstConnection = await _dataSource.OpenConnectionAsync();
+        await using var firstTransaction = await firstConnection.BeginTransactionAsync();
+        (await _ledger.LockOpenSessionAndReadExpectedCashAsync(sessionId, firstConnection, firstTransaction)).Should().Be(500m);
+
+        await using var secondConnection = await _dataSource.OpenConnectionAsync();
+        await using var secondTransaction = await secondConnection.BeginTransactionAsync();
+        var second = _ledger.LockOpenSessionAndReadExpectedCashAsync(sessionId, secondConnection, secondTransaction);
+        await Task.Delay(500);
+        second.IsCompleted.Should().BeFalse("the second payout must wait for the first");
+
+        await _ledger.RecordAsync(
+            new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CashOut, 200m, CashTransactionDirection.Out, notes: "gider"),
+            firstConnection, firstTransaction);
+        await firstTransaction.CommitAsync();
+
+        (await second).Should().Be(300m);
+    }
+
+    [Fact]
+    public async Task TheExclusiveSessionLockCountsEveryEntryTypeTheWayTheExpectedCashDoes()
+    {
+        // Opening 500, CashIn 20, Sale 100, CashOut 15, Refund 5 = 600; a count adjustment and a closing difference are audit rows.
+        var sessionId = await SeedCashSessionAsync();
+        var (paymentA, paymentB) = await SeedTwoPaymentsAsync();
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.Opening, 500m, CashTransactionDirection.In));
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CashIn, 20m, CashTransactionDirection.In, notes: "takviye"));
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.Sale, 100m, CashTransactionDirection.In, paymentA.Id));
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CashOut, 15m, CashTransactionDirection.Out, notes: "gider"));
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.Refund, 5m, CashTransactionDirection.Out, paymentB.Id));
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CountAdjustment, 7m, CashTransactionDirection.Out, notes: "sayım"));
+        await _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.ClosingDifference, 3m, CashTransactionDirection.In));
+        await using var connection = await _dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        var locked = await _ledger.LockOpenSessionAndReadExpectedCashAsync(sessionId, connection, transaction);
+
+        locked.Should().Be(600m);
+        locked.Should().Be(await _ledger.ComputeExpectedCashAsync(sessionId));
+    }
+
+    [Fact]
+    public async Task RowsWrittenBeforeTheReasonRuleStillLoadWithoutOne()
+    {
+        var sessionId = await SeedCashSessionAsync();
+        var id = Guid.NewGuid();
+        await using (var command = _dataSource.CreateCommand(
+            """
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, notes, occurred_at, idempotency_key)
+            VALUES (@id, @session, 'CashOut', 'Out', 12, NULL, now(), 'legacy');
+            """))
+        {
+            command.Parameters.AddWithValue("id", id);
+            command.Parameters.AddWithValue("session", sessionId);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        var bySession = await _ledger.GetBySessionIdAsync(sessionId);
+        var byKey = await _ledger.GetBySessionAndIdempotencyKeyAsync(sessionId, "legacy");
+        await using var connection = await _dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var inTransaction = await _ledger.GetBySessionAndIdempotencyKeyAsync(sessionId, "legacy", connection, transaction);
+
+        bySession.Should().ContainSingle(t => t.Id == id && t.Notes == null);
+        byKey!.Id.Should().Be(id);
+        inTransaction!.Id.Should().Be(id);
+    }
+
+    [Fact]
+    public async Task TheExclusiveSessionLockRefusesAClosedOrUnknownSession()
+    {
+        var closed = await SeedCashSessionAsync();
+        await SetSessionStatusAsync(closed, "Counting");
+        await using var connection = await _dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        var onClosed = () => _ledger.LockOpenSessionAndReadExpectedCashAsync(closed, connection, transaction);
+        await onClosed.Should().ThrowAsync<ClosedCashSessionException>();
+        await transaction.RollbackAsync();
+        await using var other = await _dataSource.OpenConnectionAsync();
+        await using var otherTransaction = await other.BeginTransactionAsync();
+        var onUnknown = () => _ledger.LockOpenSessionAndReadExpectedCashAsync(Guid.NewGuid(), other, otherTransaction);
+        await onUnknown.Should().ThrowAsync<CashSessionNotFoundException>();
     }
 
     [Fact]
@@ -228,7 +319,7 @@ public sealed class PostgresCashTransactionLedgerRepositoryTests : IClassFixture
         await using var movementConnection = await _dataSource.OpenConnectionAsync();
         await using var movementTransaction = await movementConnection.BeginTransactionAsync();
         await _ledger.RecordAsync(
-            new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CashIn, 40m, CashTransactionDirection.In),
+            new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CashIn, 40m, CashTransactionDirection.In, notes: "reason"),
             movementConnection, movementTransaction);
 
         var counting = SetSessionStatusAsync(sessionId, "Counting");

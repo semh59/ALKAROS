@@ -17,7 +17,7 @@ public sealed class CashTransactionTests
     {
         var paymentId = type is CashTransactionType.Sale or CashTransactionType.Refund ? Guid.NewGuid() : (Guid?)null;
 
-        var transaction = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), type, 50m, correctDirection, paymentId);
+        var transaction = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), type, 50m, correctDirection, paymentId, notes: "reason");
         transaction.Direction.Should().Be(correctDirection);
 
         var wrongDirection = correctDirection == CashTransactionDirection.In ? CashTransactionDirection.Out : CashTransactionDirection.In;
@@ -73,7 +73,7 @@ public sealed class CashTransactionTests
         var value = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture);
 
         var transaction = new CashTransaction(
-            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, value, CashTransactionDirection.In);
+            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, value, CashTransactionDirection.In, notes: "reason");
 
         transaction.Amount.Should().Be(value);
     }
@@ -109,13 +109,68 @@ public sealed class CashTransactionTests
         act.Should().Throw<MissingCountAdjustmentReasonException>();
     }
 
+    [Theory]
+    [InlineData(CashTransactionType.CashIn, CashTransactionDirection.In, null)]
+    [InlineData(CashTransactionType.CashIn, CashTransactionDirection.In, "  \t")]
+    [InlineData(CashTransactionType.CashOut, CashTransactionDirection.Out, null)]
+    [InlineData(CashTransactionType.CashOut, CashTransactionDirection.Out, "")]
+    public void ManualCashMovementsRequireAReason(CashTransactionType type, CashTransactionDirection direction, string? notes)
+    {
+        var act = () => new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), type, 10m, direction, notes: notes);
+
+        act.Should().Throw<InvalidCashMovementReasonException>();
+    }
+
+    [Theory]
+    [InlineData(CashTransactionType.Opening, CashTransactionDirection.In)]
+    [InlineData(CashTransactionType.ClosingDifference, CashTransactionDirection.Out)]
+    public void OnlyManualCashMovementsNeedAReason(CashTransactionType type, CashTransactionDirection direction)
+    {
+        var transaction = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), type, 10m, direction);
+
+        transaction.Notes.Should().BeNull();
+    }
+
+    [Fact]
+    public void SaleAndRefundNeedNoReasonEither()
+    {
+        var sale = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.Sale, 10m, CashTransactionDirection.In, Guid.NewGuid());
+        var refund = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.Refund, 10m, CashTransactionDirection.Out, Guid.NewGuid());
+
+        sale.Notes.Should().BeNull();
+        refund.Notes.Should().BeNull();
+    }
+
+    [Fact]
+    public void AMovementReasonIsStoredTrimmed()
+    {
+        var transaction = new CashTransaction(
+            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashOut, 10m, CashTransactionDirection.Out, notes: "  gider \t");
+
+        transaction.Notes.Should().Be("gider");
+    }
+
+    [Fact]
+    public void AMovementReasonIsKeptUpToTheLimitAndRefusedBeyondIt()
+    {
+        var atLimit = new CashTransaction(
+            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashOut, 10m, CashTransactionDirection.Out,
+            notes: new string('x', CashTransaction.MaxReasonLength));
+        var beyond = () => new CashTransaction(
+            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashOut, 10m, CashTransactionDirection.Out,
+            notes: new string('x', CashTransaction.MaxReasonLength + 1));
+
+        atLimit.Notes.Should().HaveLength(CashTransaction.MaxReasonLength);
+        beyond.Should().Throw<InvalidCashMovementReasonException>();
+    }
+
     [Fact]
     public void SignedAmountReflectsDirection()
     {
-        var inflow = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, 30m, CashTransactionDirection.In);
+        var inflow = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, 30m, CashTransactionDirection.In, notes: "reason");
         inflow.SignedAmount.Should().Be(30m);
 
-        var outflow = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashOut, 30m, CashTransactionDirection.Out);
+        var outflow = new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashOut, 30m, CashTransactionDirection.Out, notes: "reason");
         outflow.SignedAmount.Should().Be(-30m);
     }
 

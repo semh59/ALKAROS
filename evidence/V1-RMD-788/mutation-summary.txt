@@ -1,0 +1,17 @@
+m1-no-drawer-check: exit=1 Başarısız! - Başarısız:     2, Başarılı:    17, Atlanan:     0, Toplam:    19, Süre: 2 m 10 s - ALKAROS.Host.Experience.CashSessio
+m2-shared-lock: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 2 m 4 s - ALKAROS.Host.Experience.CashSession
+m3-threshold-gte: exit=1 Başarısız! - Başarısız:     2, Başarılı:    17, Atlanan:     0, Toplam:    19, Süre: 1 m 58 s - ALKAROS.Host.Experience.CashSessio
+m4-self-approval: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 1 m 52 s - ALKAROS.Host.Experience.CashSessio
+m5-no-reason-rule: exit=1 Başarısız! - Başarısız:     5, Başarılı:    14, Atlanan:     0, Toplam:    19, Süre: 2 m 2 s - ALKAROS.Host.Experience.CashSession
+m6-no-approval-recheck: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 1 m 48 s - ALKAROS.Host.Experience.CashSessio
+m7-replay-ignores-notes: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 2 m 1 s - ALKAROS.Host.Experience.CashSession
+m8-no-close-guard: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 1 m 51 s - ALKAROS.Host.Experience.CashSessio
+m9-no-decision-audit: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 2 m 3 s - ALKAROS.Host.Experience.CashSession
+m10-approve-needs-only-drawer: exit=1 Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 1 m 56 s - ALKAROS.Host.Experience.CashSessio
+m12-no-reason-length: exit=1 Başarısız! - Başarısız:     1, Başarılı:    23, Atlanan:     0, Toplam:    24, Süre: 350 ms - ALKAROS.Cash.TransactionLedger.Tests
+m11-no-settings-audit: exit=1 Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:    15, Süre: 40 s - ALKAROS.Host.Experience.Settings.Tests
+m13-no-cross-session-check: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 11 s - ALKAROS.Host.Experience.CashSession.Te
+m15-always-self-approved: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.CashSession.Tes
+m14-no-lock: exit=1 Başarısız! - Başarısız:     2, Başarılı:     1, Atlanan:     0, Toplam:     3, Süre: 18 s - ALKAROS.Host.Experience.CashSession.Te
+m16-audit-trigger-no-when: exit=1 Başarısız! - Başarısız:     2, Başarılı:     2, Atlanan:     0, Toplam:     4, Süre: 11 s - ALKAROS.Host.Experience.Settings.Tests
+m17-reason-check-validated: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.CashSession.Tes

@@ -1,0 +1,652 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="38bd7db9-0648-41aa-a067-a24e59961d7b" name="semih@SEMH59 2026-11-03 19:15:23" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T19:15:23.4329356+03:00" queuing="2026-11-03T19:15:23.4329358+03:00" start="2026-11-03T19:15:16.2812722+03:00" finish="2026-11-03T19:16:03.1272378+03:00" />
+  <TestSettings name="default" id="9df2efd5-d99b-4ea0-b00e-8a46e368e1c0">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_19_15_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b982e82c-dd74-480f-907c-fc2d60e68f5d" testId="960c6f86-23bd-c41d-dde5-f484aca57ec1" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheListCanBeNarrowedToOneModuleOwner" computerName="SEMH59" duration="00:00:00.1533429" startTime="2026-11-03T19:15:29.1599154+03:00" endTime="2026-11-03T19:15:29.1599155+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b982e82c-dd74-480f-907c-fc2d60e68f5d" />
+    <UnitTestResult executionId="7d63ef0c-2e63-46b7-ad1d-3b62207da89e" testId="f4226939-a84c-0c1d-9e1a-252276b81a7d" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheListShowsEveryKnownSettingFromTheVeryFirstVisit" computerName="SEMH59" duration="00:00:00.0970877" startTime="2026-11-03T19:15:49.3634890+03:00" endTime="2026-11-03T19:15:49.3634892+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7d63ef0c-2e63-46b7-ad1d-3b62207da89e" />
+    <UnitTestResult executionId="ed062687-c964-4a73-b95d-f94852a1b99e" testId="834bae1a-ab2d-9abf-ed93-546aebc4840b" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AValueThatDoesNotMatchTheDeclaredTypeIsRejected" computerName="SEMH59" duration="00:00:00.0409379" startTime="2026-11-03T19:15:26.2292468+03:00" endTime="2026-11-03T19:15:26.2292471+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed062687-c964-4a73-b95d-f94852a1b99e" />
+    <UnitTestResult executionId="8c0a5ba8-21fc-4965-a872-d8ca4d2a343a" testId="e261e240-ba4b-16d3-5eed-229c71402317" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AnAccentColourOutsideThePaletteIsRefused" computerName="SEMH59" duration="00:00:00.0446280" startTime="2026-11-03T19:15:40.2402804+03:00" endTime="2026-11-03T19:15:40.2402807+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c0a5ba8-21fc-4965-a872-d8ca4d2a343a" />
+    <UnitTestResult executionId="45e7688f-ac92-47a2-a442-27b5da4cef52" testId="3da75522-2c0a-777f-70ac-33daea7c47f3" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ADeactivatedSettingCannotBeChangedAnymore" computerName="SEMH59" duration="00:00:00.0511178" startTime="2026-11-03T19:16:03.0427994+03:00" endTime="2026-11-03T19:16:03.0427998+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45e7688f-ac92-47a2-a442-27b5da4cef52" />
+    <UnitTestResult executionId="f9945db2-38cd-4b9f-9e98-3527aa91bac8" testId="d554661b-5497-ae3c-1f16-3550aa65b421" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheHistoryRecordsTheManagerWhoMadeTheChange" computerName="SEMH59" duration="00:00:00.0486130" startTime="2026-11-03T19:15:46.4998323+03:00" endTime="2026-11-03T19:15:46.4998325+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9945db2-38cd-4b9f-9e98-3527aa91bac8" />
+    <UnitTestResult executionId="0b5b226b-ff20-4279-8918-3f8531a1b55d" testId="43790158-33e1-2d6e-5076-09b7320a2a6f" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AnUnknownKeyIsNotFound" computerName="SEMH59" duration="00:00:00.0288887" startTime="2026-11-03T19:15:37.4516745+03:00" endTime="2026-11-03T19:15:37.4516749+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b5b226b-ff20-4279-8918-3f8531a1b55d" />
+    <UnitTestResult executionId="0b931c60-f48f-4fb5-b54d-9ca40a23e9f7" testId="157e2c7b-5b48-7623-ad96-ea03ebd609da" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0480520" startTime="2026-11-03T19:15:57.4851583+03:00" endTime="2026-11-03T19:15:57.4851587+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b931c60-f48f-4fb5-b54d-9ca40a23e9f7" />
+    <UnitTestResult executionId="87fe00fb-243a-453b-8b6c-e53736201f29" testId="602c26f8-5128-5c21-9593-8b1a7c4bd24f" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheHistoryNamesWhoChangedTheSettingAndUsesTheCurrentName" computerName="SEMH59" duration="00:00:00.1219962" startTime="2026-11-03T19:15:43.4541918+03:00" endTime="2026-11-03T19:15:43.4541920+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87fe00fb-243a-453b-8b6c-e53736201f29" />
+    <UnitTestResult executionId="a4b53f55-05fe-41a0-9f38-c58550464781" testId="cb3d77e1-57da-3d2f-0362-7eaa141c2573" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue" computerName="SEMH59" duration="00:00:00.0930568" startTime="2026-11-03T19:15:34.7513226+03:00" endTime="2026-11-03T19:15:34.7513228+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4b53f55-05fe-41a0-9f38-c58550464781">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple ("settings.value_changed", f6cefe17-419a-4b86-bafa-5d8f70eec2a8, "tedarikçi ödemeleri arttı", "500", "800")&#xD;
+Actual:   Tuple ("settings.deactivated", f6cefe17-419a-4b86-bafa-5d8f70eec2a8, "kapat", "800", "800")</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue() in D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\SettingsManagementHttpTests.cs:line 173&#xD;
+   at ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue() in D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\SettingsManagementHttpTests.cs:line 178&#xD;
+   at ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue() in D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\SettingsManagementHttpTests.cs:line 178&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b46ea2c8-3cf8-4424-aa84-1bba408157d5" testId="3fc3a3c7-8067-6165-3302-854250a157be" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.DeactivatingWithAStaleVersionOrAnUnknownKeyIsRefusedAndChangesNothing" computerName="SEMH59" duration="00:00:00.0505643" startTime="2026-11-03T19:16:00.2817944+03:00" endTime="2026-11-03T19:16:00.2817945+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b46ea2c8-3cf8-4424-aa84-1bba408157d5" />
+    <UnitTestResult executionId="89b451a7-6e13-4560-9137-e9bed15e670d" testId="9f9273d0-2d3f-f346-87d0-94f836f1a7fb" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AStaleRowVersionIsRejectedAndTheSettingIsUnchanged" computerName="SEMH59" duration="00:00:01.3143152" startTime="2026-11-03T19:15:23.3896795+03:00" endTime="2026-11-03T19:15:23.3897147+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89b451a7-6e13-4560-9137-e9bed15e670d" />
+    <UnitTestResult executionId="379cf0ab-d680-4522-a865-92891eea7a1c" testId="6def0129-5928-4a30-306b-4831625cd022" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AnOutOfRangeValueIsRefusedInTurkishAndTheSettingIsUnchanged" computerName="SEMH59" duration="00:00:00.0410241" startTime="2026-11-03T19:15:54.8253776+03:00" endTime="2026-11-03T19:15:54.8253777+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="379cf0ab-d680-4522-a865-92891eea7a1c" />
+    <UnitTestResult executionId="a17df866-c7fe-4185-8290-a64132e436b0" testId="6c7b4e71-5987-d503-68a9-6ef7b27f29ee" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.DeactivatingASettingTurnsItInactiveWithoutDeletingIt" computerName="SEMH59" duration="00:00:00.0361801" startTime="2026-11-03T19:15:52.1309049+03:00" endTime="2026-11-03T19:15:52.1309053+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a17df866-c7fe-4185-8290-a64132e436b0" />
+    <UnitTestResult executionId="73b0a126-f8dd-4336-84ef-66bad884f104" testId="bbcbead8-61ab-d8fe-c650-65ec04a36c7c" testName="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AManagerCanReadAndUpdateARealSetting" computerName="SEMH59" duration="00:00:00.1285614" startTime="2026-11-03T19:15:31.9470829+03:00" endTime="2026-11-03T19:15:31.9470830+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73b0a126-f8dd-4336-84ef-66bad884f104" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="cb3d77e1-57da-3d2f-0362-7eaa141c2573">
+      <Execution id="a4b53f55-05fe-41a0-9f38-c58550464781" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.DeactivatingASettingTurnsItInactiveWithoutDeletingIt" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="6c7b4e71-5987-d503-68a9-6ef7b27f29ee">
+      <Execution id="a17df866-c7fe-4185-8290-a64132e436b0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="DeactivatingASettingTurnsItInactiveWithoutDeletingIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheHistoryNamesWhoChangedTheSettingAndUsesTheCurrentName" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="602c26f8-5128-5c21-9593-8b1a7c4bd24f">
+      <Execution id="87fe00fb-243a-453b-8b6c-e53736201f29" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="TheHistoryNamesWhoChangedTheSettingAndUsesTheCurrentName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="157e2c7b-5b48-7623-ad96-ea03ebd609da">
+      <Execution id="0b931c60-f48f-4fb5-b54d-9ca40a23e9f7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AManagerCanReadAndUpdateARealSetting" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="bbcbead8-61ab-d8fe-c650-65ec04a36c7c">
+      <Execution id="73b0a126-f8dd-4336-84ef-66bad884f104" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="AManagerCanReadAndUpdateARealSetting" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheListShowsEveryKnownSettingFromTheVeryFirstVisit" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="f4226939-a84c-0c1d-9e1a-252276b81a7d">
+      <Execution id="7d63ef0c-2e63-46b7-ad1d-3b62207da89e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="TheListShowsEveryKnownSettingFromTheVeryFirstVisit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AnUnknownKeyIsNotFound" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="43790158-33e1-2d6e-5076-09b7320a2a6f">
+      <Execution id="0b5b226b-ff20-4279-8918-3f8531a1b55d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="AnUnknownKeyIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AStaleRowVersionIsRejectedAndTheSettingIsUnchanged" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="9f9273d0-2d3f-f346-87d0-94f836f1a7fb">
+      <Execution id="89b451a7-6e13-4560-9137-e9bed15e670d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="AStaleRowVersionIsRejectedAndTheSettingIsUnchanged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AnOutOfRangeValueIsRefusedInTurkishAndTheSettingIsUnchanged" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="6def0129-5928-4a30-306b-4831625cd022">
+      <Execution id="379cf0ab-d680-4522-a865-92891eea7a1c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="AnOutOfRangeValueIsRefusedInTurkishAndTheSettingIsUnchanged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheHistoryRecordsTheManagerWhoMadeTheChange" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="d554661b-5497-ae3c-1f16-3550aa65b421">
+      <Execution id="f9945db2-38cd-4b9f-9e98-3527aa91bac8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="TheHistoryRecordsTheManagerWhoMadeTheChange" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ADeactivatedSettingCannotBeChangedAnymore" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="3da75522-2c0a-777f-70ac-33daea7c47f3">
+      <Execution id="45e7688f-ac92-47a2-a442-27b5da4cef52" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="ADeactivatedSettingCannotBeChangedAnymore" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AValueThatDoesNotMatchTheDeclaredTypeIsRejected" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="834bae1a-ab2d-9abf-ed93-546aebc4840b">
+      <Execution id="ed062687-c964-4a73-b95d-f94852a1b99e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="AValueThatDoesNotMatchTheDeclaredTypeIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.DeactivatingWithAStaleVersionOrAnUnknownKeyIsRefusedAndChangesNothing" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="3fc3a3c7-8067-6165-3302-854250a157be">
+      <Execution id="b46ea2c8-3cf8-4424-aa84-1bba408157d5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="DeactivatingWithAStaleVersionOrAnUnknownKeyIsRefusedAndChangesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.TheListCanBeNarrowedToOneModuleOwner" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="960c6f86-23bd-c41d-dde5-f484aca57ec1">
+      <Execution id="b982e82c-dd74-480f-907c-fc2d60e68f5d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="TheListCanBeNarrowedToOneModuleOwner" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.AnAccentColourOutsideThePaletteIsRefused" storage="d:\project\alkaros\tests\host\experience\settings\bin\debug\net8.0\alkaros.host.experience.settings.tests.dll" id="e261e240-ba4b-16d3-5eed-229c71402317">
+      <Execution id="8c0a5ba8-21fc-4965-a872-d8ca4d2a343a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0\ALKAROS.Host.Experience.Settings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests" name="AnAccentColourOutsideThePaletteIsRefused" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="960c6f86-23bd-c41d-dde5-f484aca57ec1" executionId="b982e82c-dd74-480f-907c-fc2d60e68f5d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f4226939-a84c-0c1d-9e1a-252276b81a7d" executionId="7d63ef0c-2e63-46b7-ad1d-3b62207da89e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="834bae1a-ab2d-9abf-ed93-546aebc4840b" executionId="ed062687-c964-4a73-b95d-f94852a1b99e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e261e240-ba4b-16d3-5eed-229c71402317" executionId="8c0a5ba8-21fc-4965-a872-d8ca4d2a343a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3da75522-2c0a-777f-70ac-33daea7c47f3" executionId="45e7688f-ac92-47a2-a442-27b5da4cef52" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d554661b-5497-ae3c-1f16-3550aa65b421" executionId="f9945db2-38cd-4b9f-9e98-3527aa91bac8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="43790158-33e1-2d6e-5076-09b7320a2a6f" executionId="0b5b226b-ff20-4279-8918-3f8531a1b55d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="157e2c7b-5b48-7623-ad96-ea03ebd609da" executionId="0b931c60-f48f-4fb5-b54d-9ca40a23e9f7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="602c26f8-5128-5c21-9593-8b1a7c4bd24f" executionId="87fe00fb-243a-453b-8b6c-e53736201f29" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb3d77e1-57da-3d2f-0362-7eaa141c2573" executionId="a4b53f55-05fe-41a0-9f38-c58550464781" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3fc3a3c7-8067-6165-3302-854250a157be" executionId="b46ea2c8-3cf8-4424-aa84-1bba408157d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9f9273d0-2d3f-f346-87d0-94f836f1a7fb" executionId="89b451a7-6e13-4560-9137-e9bed15e670d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6def0129-5928-4a30-306b-4831625cd022" executionId="379cf0ab-d680-4522-a865-92891eea7a1c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c7b4e71-5987-d503-68a9-6ef7b27f29ee" executionId="a17df866-c7fe-4185-8290-a64132e436b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbcbead8-61ab-d8fe-c650-65ec04a36c7c" executionId="73b0a126-f8dd-4336-84ef-66bad884f104" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="15" executed="15" passed="14" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.27]   Discovering: ALKAROS.Host.Experience.Settings.Tests&#xD;
+[xUnit.net 00:00:01.33]   Discovered:  ALKAROS.Host.Experience.Settings.Tests&#xD;
+[xUnit.net 00:00:01.33]   Starting:    ALKAROS.Host.Experience.Settings.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52299&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:52299/api/v1/management/settings/test.feature.stale - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingConcurrencyException: Concurrency conflict on setting 'test.feature.stale': expected row version 99, actual 1.&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 298&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 102&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:52299/api/v1/management/settings/test.feature.stale - 409 - application/json;+charset=utf-8 1190.7186ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58197&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:58197/api/v1/management/settings/test.feature.wrongtype - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingTypeValidationException: Value 'not-a-boolean' is invalid for setting 'test.feature.wrongtype' of type 'Toggle': Value must be a valid boolean ('true' or 'false').&#xD;
+         at ALKAROS.Settings.TypedSettings.SettingValidator.ValidateValue(String settingKey, String value, SettingDataType dataType) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\SettingValidator.cs:line 116&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 305&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 102&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:58197/api/v1/management/settings/test.feature.wrongtype - 400 - application/json;+charset=utf-8 31.6061ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56647&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56647/api/v1/management/settings/?moduleOwner=alpha - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56647/api/v1/management/settings/?moduleOwner=alpha - 200 - application/json;+charset=utf-8 141.8781ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60493&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60493/api/v1/management/settings/test.feature.toggle - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60493/api/v1/management/settings/test.feature.toggle - 200 - application/json;+charset=utf-8 27.1505ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:60493/api/v1/management/settings/test.feature.toggle - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:60493/api/v1/management/settings/test.feature.toggle - 200 - application/json;+charset=utf-8 11.1312ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:60493/api/v1/management/settings/test.feature.toggle/history - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}/history'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingHistoryRecordV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}/history'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:60493/api/v1/management/settings/test.feature.toggle/history - 200 - application/json;+charset=utf-8 75.6627ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63014&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:63014/api/v1/management/settings/cash.cash_out_approval_threshold - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:63014/api/v1/management/settings/cash.cash_out_approval_threshold - 200 - application/json;+charset=utf-8 26.4388ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:63014/api/v1/management/settings/cash.cash_out_approval_threshold?expectedRowVersion=2&amp;reason=kapat - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:63014/api/v1/management/settings/cash.cash_out_approval_threshold?expectedRowVersion=2&amp;reason=kapat - 200 - application/json;+charset=utf-8 40.4671ms&#xD;
+[xUnit.net 00:00:17.45]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:17.45]       Expected: Tuple ("settings.value_changed", f6cefe17-419a-4b86-bafa-5d8f70eec2a8, "tedarikçi ödemeleri arttı", "500", "800")&#xD;
+[xUnit.net 00:00:17.45]       Actual:   Tuple ("settings.deactivated", f6cefe17-419a-4b86-bafa-5d8f70eec2a8, "kapat", "800", "800")&#xD;
+[xUnit.net 00:00:17.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:17.45]         D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\SettingsManagementHttpTests.cs(173,0): at ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue()&#xD;
+[xUnit.net 00:00:17.45]         D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\SettingsManagementHttpTests.cs(178,0): at ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue()&#xD;
+[xUnit.net 00:00:17.45]         D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\SettingsManagementHttpTests.cs(178,0): at ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue()&#xD;
+[xUnit.net 00:00:17.45]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52002&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52002/api/v1/management/settings/no.such.key.90ce59a90a5d48fb889c829f83ca4c87 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingNotFoundException: Setting with key 'no.such.key.90ce59a90a5d48fb889c829f83ca4c87' was not found.&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 84&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52002/api/v1/management/settings/no.such.key.90ce59a90a5d48fb889c829f83ca4c87 - 404 - application/json;+charset=utf-8 25.8148ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59284&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:59284/api/v1/management/settings/business.accent_theme - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingValueRangeException: Value for setting 'business.accent_theme' is outside its allowed range.&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 100&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:59284/api/v1/management/settings/business.accent_theme - 400 - application/json;+charset=utf-8 25.8299ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:59284/api/v1/management/settings/business.accent_theme - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:59284/api/v1/management/settings/business.accent_theme - 200 - application/json;+charset=utf-8 11.2392ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56766&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:56766/api/v1/management/settings/test.feature.named - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:56766/api/v1/management/settings/test.feature.named - 200 - application/json;+charset=utf-8 30.1925ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56766/api/v1/management/settings/test.feature.named/history - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}/history'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingHistoryRecordV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}/history'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56766/api/v1/management/settings/test.feature.named/history - 200 - application/json;+charset=utf-8 9.7765ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:65348&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:65348/api/v1/management/settings/test.feature.actor - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:65348/api/v1/management/settings/test.feature.actor - 200 - application/json;+charset=utf-8 26.0529ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:65348/api/v1/management/settings/test.feature.actor/history - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}/history'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingHistoryRecordV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}/history'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:65348/api/v1/management/settings/test.feature.actor/history - 200 - application/json;+charset=utf-8 12.4084ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54039&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54039/api/v1/management/settings/ - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54039/api/v1/management/settings/ - 200 - application/json;+charset=utf-8 92.0950ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53281&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:53281/api/v1/management/settings/test.feature.deactivate?expectedRowVersion=1&amp;reason=no+longer+needed - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:53281/api/v1/management/settings/test.feature.deactivate?expectedRowVersion=1&amp;reason=no+longer+needed - 200 - application/json;+charset=utf-8 28.9500ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58012&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:58012/api/v1/management/settings/waiter.max_active_tables - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingValueRangeException: Value for setting 'waiter.max_active_tables' is outside its allowed range.&#xD;
+         at ALKAROS.Settings.TypedSettings.SettingValidator.ValidateValue(String settingKey, String value, SettingDataType dataType) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\SettingValidator.cs:line 157&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 305&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 102&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:58012/api/v1/management/settings/waiter.max_active_tables - 400 - application/json;+charset=utf-8 26.5643ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56636&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56636/api/v1/management/settings/test.auth.flag - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Settings.SettingsManagementUnauthorizedException: A valid settings manager session is required.&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 212&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 240&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56636/api/v1/management/settings/test.auth.flag - 401 - application/json;+charset=utf-8 18.2667ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56636/api/v1/management/settings/test.auth.flag - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '55845471-c03a-40e7-9df5-6c5223b15845' denied permission 'settings.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 243&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56636/api/v1/management/settings/test.auth.flag - 403 - application/json;+charset=utf-8 19.8837ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:65228&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:65228/api/v1/management/settings/test.feature.stale-delete?expectedRowVersion=99 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingConcurrencyException: Concurrency conflict on setting 'test.feature.stale-delete': expected row version 99, actual 1.&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 426&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 478&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 478&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_3&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 122&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:65228/api/v1/management/settings/test.feature.stale-delete?expectedRowVersion=99 - 409 - application/json;+charset=utf-8 23.5375ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:65228/api/v1/management/settings/no.such.key.fcbfb3b0a4e14caeb65183dca1bad727?expectedRowVersion=1 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingNotFoundException: Setting with key 'no.such.key.fcbfb3b0a4e14caeb65183dca1bad727' was not found.&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 410&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 421&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 422&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 478&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.DeactivateSettingAsync(DeactivateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 478&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_3&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 122&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:65228/api/v1/management/settings/no.such.key.fcbfb3b0a4e14caeb65183dca1bad727?expectedRowVersion=1 - 404 - application/json;+charset=utf-8 7.9727ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:65228/api/v1/management/settings/test.feature.stale-delete - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:65228/api/v1/management/settings/test.feature.stale-delete - 200 - application/json;+charset=utf-8 10.7130ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:65006&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Settings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 DELETE http://127.0.0.1:65006/api/v1/management/settings/test.feature.inactive?expectedRowVersion=1 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'SettingRecordV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: DELETE /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 DELETE http://127.0.0.1:65006/api/v1/management/settings/test.feature.inactive?expectedRowVersion=1 - 200 - application/json;+charset=utf-8 32.7376ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:65006/api/v1/management/settings/test.feature.inactive - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/management/settings/{key}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Settings.TypedSettings.SettingInactiveException: Setting 'test.feature.inactive' is deactivated.&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 302&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Settings.TypedSettings.PostgresSettingsRepository.UpdateSettingAsync(UpdateSettingRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\PostgresSettingsRepository.cs:line 358&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagementEndpoints.&lt;&gt;c.&lt;&lt;MapSettingsManagement&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 102&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Settings.SettingsManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Settings\SettingsManagementEndpoints.cs:line 248&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:65006/api/v1/management/settings/test.feature.inactive - 409 - application/json;+charset=utf-8 10.3040ms&#xD;
+[xUnit.net 00:00:45.75]   Finished:    ALKAROS.Host.Experience.Settings.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T19:15:34.7482751+03:00">
+        <Text>[xUnit.net 00:00:17.44]     ALKAROS.Host.Experience.Settings.Tests.SettingsManagementHttpTests.ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

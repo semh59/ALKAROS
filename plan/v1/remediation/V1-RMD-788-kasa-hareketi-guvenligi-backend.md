@@ -1,7 +1,7 @@
 # V1-RMD-788 - Kasa hareketi güvenliği (backend): üst sınır, zorunlu gerekçe, eşik üstü yönetici onayı, aynı kişi onayı ayarı
 
 - Task ID: V1-RMD-788
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

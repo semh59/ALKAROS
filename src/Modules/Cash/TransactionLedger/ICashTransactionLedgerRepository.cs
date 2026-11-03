@@ -22,6 +22,11 @@ public interface ICashTransactionLedgerRepository
     Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
         Guid cashSessionId, string idempotencyKey, CancellationToken cancellationToken = default);
 
+    /// <summary>The same lookup inside the caller's transaction (no second pooled connection while a lock is held).</summary>
+    Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
+        Guid cashSessionId, string idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction dbTransaction,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// The session's expected cash reconstructed purely from its own
     /// immutable ledger entries (Acceptance evidence) — sums every entry
@@ -30,4 +35,12 @@ public interface ICashTransactionLedgerRepository
     /// Opening entry yet simply sums to zero.
     /// </summary>
     Task<decimal> ComputeExpectedCashAsync(Guid cashSessionId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// locks the session row exclusively (so cash-outs and approvals on one drawer run one at a time),
+    /// requires it to be Open and returns the expected cash read under that lock - the number a cash-out is
+    /// checked against in the same transaction that then records it.
+    /// </summary>
+    Task<decimal> LockOpenSessionAndReadExpectedCashAsync(
+        Guid cashSessionId, NpgsqlConnection connection, NpgsqlTransaction dbTransaction, CancellationToken cancellationToken = default);
 }

@@ -3,9 +3,11 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Settings.BusinessIdentity;
+using ALKAROS.Settings.CashMovementApproval;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.KitchenDenseModeThreshold;
 using ALKAROS.Settings.KitchenLiveSync;
+using ALKAROS.Settings.ManagerSelfApproval;
 using ALKAROS.Settings.QrOrderExpiry;
 using ALKAROS.Settings.ReservationStation;
 using ALKAROS.Settings.TypedSettings;
@@ -152,6 +154,8 @@ public static class SettingsManagementEndpoints
         await ReservationStationSetting.EnsureRegisteredAsync(settings, cancellationToken);
         await WaiterMaxActiveTablesSetting.EnsureRegisteredAsync(settings, cancellationToken);
         await GarsonFeatureToggles.EnsureAllRegisteredAsync(settings, cancellationToken);
+        await CashOutApprovalThresholdSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await ManagerSelfApprovalSetting.EnsureRegisteredAsync(settings, cancellationToken);
     }
 
     private static async Task<Dictionary<Guid, string>> DisplayNamesAsync(

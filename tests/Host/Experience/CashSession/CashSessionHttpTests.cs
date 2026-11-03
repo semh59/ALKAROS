@@ -361,7 +361,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
 
         var cashIn = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 100m, Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
+            new { Direction = "In", Amount = 100m, Notes = "test note", IdempotencyKey = Guid.NewGuid().ToString() });
         Assert.Equal(HttpStatusCode.Created, cashIn.StatusCode);
 
         var cashOut = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
@@ -375,7 +375,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 260m });
 
         var afterClose = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 10m, Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
+            new { Direction = "In", Amount = 10m, Notes = "test note", IdempotencyKey = Guid.NewGuid().ToString() });
         Assert.Equal(HttpStatusCode.Conflict, afterClose.StatusCode);
     }
 
@@ -392,7 +392,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
 
         var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture), Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
+            new { Direction = "In", Amount = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture), Notes = "test note", IdempotencyKey = Guid.NewGuid().ToString() });
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
@@ -426,10 +426,10 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
         var path = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements";
         var key = Guid.NewGuid().ToString();
-        var first = await PostAsync(client, path, cookie, new { Direction = "In", Amount = 75m, Notes = (string?)null, IdempotencyKey = key });
+        var first = await PostAsync(client, path, cookie, new { Direction = "In", Amount = 75m, Notes = "test note", IdempotencyKey = key });
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
 
-        var reuse = await PostAsync(client, path, cookie, new { Direction = direction, Amount = (decimal)amount, Notes = (string?)null, IdempotencyKey = key });
+        var reuse = await PostAsync(client, path, cookie, new { Direction = direction, Amount = (decimal)amount, Notes = "test note", IdempotencyKey = key });
 
         Assert.Equal(HttpStatusCode.Conflict, reuse.StatusCode);
         Assert.Equal("IDEMPOTENCY_KEY_REUSED", (await reuse.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
@@ -452,12 +452,12 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var key = Guid.NewGuid().ToString();
 
         var first = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 75m, Notes = (string?)null, IdempotencyKey = key });
+            new { Direction = "In", Amount = 75m, Notes = "test note", IdempotencyKey = key });
         Assert.Equal(HttpStatusCode.Created, first.StatusCode);
         var firstId = (await first.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
 
         var retry = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
-            new { Direction = "In", Amount = 75m, Notes = (string?)null, IdempotencyKey = key });
+            new { Direction = "In", Amount = 75m, Notes = "test note", IdempotencyKey = key });
         Assert.Equal(HttpStatusCode.Created, retry.StatusCode);
         Assert.Equal(firstId, (await retry.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid());
 
@@ -810,6 +810,139 @@ internal sealed class CashSessionHttpTestDatabase
         }
 
         return $"alkaros.cashier={rawToken}";
+    }
+
+    public async Task SetSettingAsync(string key, string dataType, string value)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner)
+            VALUES (gen_random_uuid(), @key, @value, @data_type, 'Global', 'cash')
+            ON CONFLICT (setting_key) DO UPDATE SET setting_value = @value;
+            """);
+        command.Parameters.AddWithValue("key", key);
+        command.Parameters.AddWithValue("value", value);
+        command.Parameters.AddWithValue("data_type", dataType);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>The user a cookie returned by the seed methods belongs to.</summary>
+    public async Task<Guid> UserIdForCookieAsync(string cookie)
+    {
+        await using var command = DataSource.CreateCommand("SELECT user_id FROM identity.device_sessions WHERE token_hash = @hash;");
+        command.Parameters.AddWithValue("hash", DeviceSessionToken.Hash(cookie["alkaros.cashier=".Length..]));
+        return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task DeactivateSettingAsync(string key)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE settings.settings SET active = false WHERE setting_key = @key;");
+        command.Parameters.AddWithValue("key", key);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task SetSessionStatusAsync(Guid cashSessionId, string status)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE cash.cash_sessions SET status = @status WHERE cash_session_id = @id;");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", cashSessionId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>The SQLSTATE the database answers the statement with, or null when it is accepted.</summary>
+    public async Task<string?> SqlStateOfAsync(string sql)
+    {
+        try
+        {
+            await ExecuteAsync(sql);
+            return null;
+        }
+        catch (PostgresException exception)
+        {
+            return exception.SqlState;
+        }
+    }
+
+    public async Task<long> CountLedgerRowsAsync(Guid cashSessionId, string type)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM cash.cash_transactions WHERE cash_session_id = @session AND type = @type;");
+        command.Parameters.AddWithValue("session", cashSessionId);
+        command.Parameters.AddWithValue("type", type);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<bool> IsReasonConstraintValidatedAsync()
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT convalidated FROM pg_constraint WHERE conname = 'ck_cash_transactions_movement_reason';");
+        return (bool)(await command.ExecuteScalarAsync())!;
+    }
+
+    public sealed record AuditRow(string Event, Guid? Actor, string? Reason, string? BeforeStatus, string? AfterStatus);
+
+    public async Task<AuditRow[]> AuditEventsAsync(Guid aggregateId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT event_name, actor_id, reason, before_state_json->>'status', after_state_json->>'status'
+            FROM audit.audit_events WHERE aggregate_id = @id ORDER BY occurred_at, event_name;
+            """);
+        command.Parameters.AddWithValue("id", aggregateId);
+        var rows = new List<AuditRow>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            rows.Add(new AuditRow(
+                reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetGuid(1), reader.IsDBNull(2) ? null : reader.GetString(2),
+                reader.IsDBNull(3) ? null : reader.GetString(3), reader.IsDBNull(4) ? null : reader.GetString(4)));
+        }
+
+        return [.. rows];
+    }
+
+    public async Task ExecuteAsync(string sql)
+    {
+        await using var command = DataSource.CreateCommand(sql);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>An open cash-out request as it would stand if it were committed while the count started.</summary>
+    public async Task InsertRequestAsync(Guid cashSessionId, Guid requestedBy)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO cash.cash_movement_requests (request_id, cash_session_id, amount, reason, idempotency_key, status, requested_by, requested_at)
+            VALUES (gen_random_uuid(), @session, 900, 'avans', 'race-key', 'Requested', @user, now());
+            """);
+        command.Parameters.AddWithValue("session", cashSessionId);
+        command.Parameters.AddWithValue("user", requestedBy);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task InsertCashInsAsync(Guid cashSessionId, int count)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, notes, occurred_at)
+            SELECT gen_random_uuid(), @session, 'CashIn', 'In', 1, 'seed ' || n, now() + n * interval '1 second'
+            FROM generate_series(1, @count) AS n;
+            """);
+        command.Parameters.AddWithValue("session", cashSessionId);
+        command.Parameters.AddWithValue("count", count);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<string[]> AuditEventTypesAsync(params Guid[] aggregateIds)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT event_name FROM audit.audit_events WHERE aggregate_id = ANY(@ids) ORDER BY event_name COLLATE \"C\", occurred_at;");
+        command.Parameters.AddWithValue("ids", aggregateIds);
+        var names = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            names.Add(reader.GetString(0));
+        return [.. names];
     }
 
     /// <summary>V1-RMD-409: moves a seeded bill to <paramref name="status"/> (e.g. Cancelled by the recall flow).</summary>

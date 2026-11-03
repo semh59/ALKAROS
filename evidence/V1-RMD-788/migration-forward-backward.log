@@ -1,0 +1,128 @@
+NOTICE:  schema "identity" already exists, skipping
+NOTICE:  schema "identity" already exists, skipping
+NOTICE:  extension "btree_gist" already exists, skipping
+NOTICE:  trigger "trg_audit_events_immutable" for relation "audit.audit_events" does not exist, skipping
+NOTICE:  schema "kitchen" already exists, skipping
+NOTICE:  schema "kitchen" already exists, skipping
+NOTICE:  schema "kitchen" already exists, skipping
+NOTICE:  schema "observability" already exists, skipping
+NOTICE:  schema "reporting" already exists, skipping
+NOTICE:  schema "inventory" already exists, skipping
+NOTICE:  trigger "trg_stock_movements_immutable" for relation "inventory.stock_movements" does not exist, skipping
+NOTICE:  schema "inventory" already exists, skipping
+NOTICE:  schema "inventory" already exists, skipping
+NOTICE:  trigger "trg_waste_records_immutable" for relation "inventory.waste_records" does not exist, skipping
+NOTICE:  schema "inventory" already exists, skipping
+NOTICE:  schema "inventory" already exists, skipping
+NOTICE:  schema "menu" already exists, skipping
+NOTICE:  schema "recipe" already exists, skipping
+NOTICE:  schema "recipe" already exists, skipping
+NOTICE:  schema "production" already exists, skipping
+NOTICE:  schema "menu" already exists, skipping
+NOTICE:  schema "qr_ordering" already exists, skipping
+NOTICE:  schema "qr_ordering" already exists, skipping
+NOTICE:  schema "qr_ordering" already exists, skipping
+NOTICE:  trigger "trg_stock_balances_non_negative" for relation "inventory.stock_balances" does not exist, skipping
+NOTICE:  trigger "trg_theoretical_consumption_immutable" for relation "recipe.theoretical_consumption_records" does not exist, skipping
+NOTICE:  trigger "trg_stock_physical_counts_immutable" for relation "inventory.stock_physical_counts" does not exist, skipping
+NOTICE:  schema "qr_ordering" already exists, skipping
+NOTICE:  schema "payments" already exists, skipping
+NOTICE:  schema "operations" already exists, skipping
+NOTICE:  schema "operations" already exists, skipping
+NOTICE:  schema "online_ordering" already exists, skipping
+NOTICE:  constraint "ck_yemeksepeti_webhook_inbox_processed" of relation "yemeksepeti_webhook_inbox" does not exist, skipping
+NOTICE:  schema "online_ordering" already exists, skipping
+NOTICE:  schema "online_ordering" already exists, skipping
+NOTICE:  schema "reconciliation" already exists, skipping
+NOTICE:  schema "online_ordering" already exists, skipping
+NOTICE:  schema "online_ordering" already exists, skipping
+NOTICE:  schema "online_ordering" already exists, skipping
+NOTICE:  trigger "trg_account_transactions_immutable" for relation "customer_account.account_transactions" does not exist, skipping
+NOTICE:  trigger "trg_account_transactions_apply_balance" for relation "customer_account.account_transactions" does not exist, skipping
+NOTICE:  trigger "trg_account_payment_status_history_immutable" for relation "customer_account.account_payment_status_history" does not exist, skipping
+NOTICE:  trigger "trg_account_receipts_immutable" for relation "customer_account.account_receipts" does not exist, skipping
+NOTICE:  schema "invoicing" already exists, skipping
+NOTICE:  trigger "tr_invoice_lines_immutable" for relation "invoicing.invoice_lines" does not exist, skipping
+NOTICE:  trigger "tr_invoices_immutable" for relation "invoicing.invoices" does not exist, skipping
+NOTICE:  trigger "tr_invoice_line_sources_immutable" for relation "invoicing.invoice_line_sources" does not exist, skipping
+NOTICE:  trigger "tr_invoice_line_sources_complete" for relation "invoicing.invoice_line_sources" does not exist, skipping
+NOTICE:  trigger "tr_retention_policies_immutable" for relation "privacy.retention_policies" does not exist, skipping
+NOTICE:  trigger "tr_retention_rules_immutable" for relation "privacy.retention_rules" does not exist, skipping
+NOTICE:  trigger "tr_retention_runs_immutable" for relation "privacy.retention_runs" does not exist, skipping
+NOTICE:  trigger "tr_retention_run_items_immutable" for relation "privacy.retention_run_items" does not exist, skipping
+NOTICE:  trigger "tr_retention_policies_complete" for relation "privacy.retention_policies" does not exist, skipping
+NOTICE:  trigger "tr_legal_holds_guard" for relation "privacy.legal_holds" does not exist, skipping
+NOTICE:  trigger "tr_retention_work_items_guard" for relation "privacy.retention_work_items" does not exist, skipping
+NOTICE:  trigger "tr_order_invoice_lines_immutable" for relation "invoicing.order_invoice_lines" does not exist, skipping
+NOTICE:  trigger "tr_order_invoices_immutable" for relation "invoicing.order_invoices" does not exist, skipping
+NOTICE:  trigger "tr_anonymization_checkpoints_immutable" for relation "privacy.anonymization_checkpoints" does not exist, skipping
+NOTICE:  trigger "tr_anonymization_events_immutable" for relation "privacy.anonymization_events" does not exist, skipping
+NOTICE:  trigger "tr_anonymization_jobs_no_delete" for relation "privacy.anonymization_jobs" does not exist, skipping
+NOTICE:  constraint "ck_theoretical_consumption_source" of relation "theoretical_consumption_records" does not exist, skipping
+NOTICE:  constraint "ck_goods_receipts_source" of relation "goods_receipts" does not exist, skipping
+NOTICE:  constraint "ck_purchase_invoices_kind" of relation "purchase_invoices" does not exist, skipping
+NOTICE:  trigger "trg_payment_reversals_guard" for relation "payments.payment_reversals" does not exist, skipping
+NOTICE:  constraint "ck_cash_sessions_refund_allowance" of relation "cash_sessions" does not exist, skipping
+NOTICE:  constraint "ck_refund_requests_approval_mode" of relation "refund_requests" does not exist, skipping
+NOTICE:  schema "observability" already exists, skipping
+NOTICE:  schema "observability" already exists, skipping
+NOTICE:  schema "observability" already exists, skipping
+NOTICE:  schema "observability" already exists, skipping
+NOTICE:  schema "observability" already exists, skipping
+NOTICE:  constraint "ck_printers_profile" of relation "printers" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2020" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2021" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2022" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2023" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2024" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2025" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2026" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2027" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2028" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2029" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2030" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2031" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2032" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2033" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2034" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2035" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2036" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2037" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2038" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2039" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2040" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2041" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2042" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2043" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2044" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2045" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2046" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2047" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2048" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2049" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2050" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2051" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2052" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2053" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2054" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2055" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2056" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2057" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2058" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2059" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_y2060" does not exist, skipping
+NOTICE:  trigger "trg_audit_events_no_bulk_clear" for relation "audit.audit_events_default" does not exist, skipping
+NOTICE:  trigger "trg_setting_history_immutable" for relation "settings.setting_history" does not exist, skipping
+NOTICE:  trigger "trg_serving_handoff_notes_supersede" for relation "notifications.serving_handoff_notes" does not exist, skipping
+NOTICE:  trigger "trg_tables_status_changed_at" for relation "table_mgmt.tables" does not exist, skipping
+NOTICE:  trigger "trg_setting_history_audit" for relation "settings.setting_history" does not exist, skipping
+forward all ok
+after up: requests=[cash.cash_movement_requests] reasonCheck=[ck_cash_transactions_movement_reason] settingsAuditTrigger=[trg_setting_history_audit]
+after down: requests=[] reasonCheck=[] settingsAuditTrigger=[]
+NOTICE:  trigger "trg_setting_history_audit" for relation "settings.setting_history" does not exist, skipping
+after re-up: requests=[cash.cash_movement_requests] reasonCheck=[ck_cash_transactions_movement_reason] settingsAuditTrigger=[trg_setting_history_audit]
+NOTICE:  relation "cash_movement_requests" already exists, skipping
+NOTICE:  relation "ux_cash_movement_requests_transaction" already exists, skipping
+NOTICE:  relation "ix_cash_movement_requests_open" already exists, skipping
+after second up (idempotent): requests=[cash.cash_movement_requests] reasonCheck=[ck_cash_transactions_movement_reason] settingsAuditTrigger=[trg_setting_history_audit]

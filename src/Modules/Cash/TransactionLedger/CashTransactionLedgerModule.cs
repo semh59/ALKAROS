@@ -14,5 +14,8 @@ public sealed class CashTransactionLedgerModule : IModule
     public IReadOnlyCollection<string> DependsOn => ["Cash"];
 
     public void Register(ModuleContext context)
-        => context.RegisterTransient<ICashTransactionLedgerRepository, PostgresCashTransactionLedgerRepository>();
+    {
+        context.RegisterTransient<ICashTransactionLedgerRepository, PostgresCashTransactionLedgerRepository>();
+        context.RegisterTransient<ICashMovementRepository, PostgresCashMovementRepository>();
+    }
 }

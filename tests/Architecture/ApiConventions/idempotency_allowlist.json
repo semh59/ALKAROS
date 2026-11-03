@@ -521,6 +521,18 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V13-CSH-004"
     },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movement-requests/{requestId:guid}/approve": {
+      "reason": "İstek durum makinesiyle korunur: karara bağlanmış istek ikinci çağrıda 409 (CASH_MOVEMENT_REQUEST_STATE) döner.",
+      "task": "V1-RMD-788"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movement-requests/{requestId:guid}/cancel": {
+      "reason": "İstek durum makinesiyle korunur: karara bağlanmış istek ikinci çağrıda 409 (CASH_MOVEMENT_REQUEST_STATE) döner.",
+      "task": "V1-RMD-788"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movement-requests/{requestId:guid}/reject": {
+      "reason": "İstek durum makinesiyle korunur: karara bağlanmış istek ikinci çağrıda 409 (CASH_MOVEMENT_REQUEST_STATE) döner.",
+      "task": "V1-RMD-788"
+    },
     "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V13-CSH-004"

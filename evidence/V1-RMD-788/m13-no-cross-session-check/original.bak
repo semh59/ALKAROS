@@ -1,0 +1,211 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
+using ALKAROS.Cash.Contracts;
+using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Settings.CashMovementApproval;
+using ALKAROS.Settings.ManagerSelfApproval;
+using ALKAROS.Settings.TypedSettings;
+using Npgsql;
+
+namespace ALKAROS.Host.DualScreen;
+
+/// <summary>
+/// V1-RMD-788: manual cash-in/cash-out of one drawer session. A cash-out is checked against the cash the drawer
+/// holds under an exclusive session lock, and above the manager-set threshold it becomes a request that a manager
+/// approves instead of a ledger row. Every request step and its audit event commit together.
+/// </summary>
+public sealed class CashMovementStore(
+    NpgsqlDataSource dataSource,
+    ICashTransactionLedgerRepository ledger,
+    ICashMovementRepository movements,
+    IAuditEventStore audit,
+    ISettingsService settings)
+{
+    /// <summary>What a cash movement call produced: a ledger row, or an open request waiting for a manager.</summary>
+    public sealed record MovementOutcome(CashTransaction? Recorded, CashMovementRequest? Requested);
+
+    public async Task<MovementOutcome> RecordAsync(
+        Guid cashSessionId, Guid userId, CashTransactionDirection direction, decimal amount, string? notes, string idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var reason = notes?.Trim();
+        // Built first so amount, direction and reason are validated by the one rule set the ledger itself applies.
+        var movement = new CashTransaction(
+            Guid.NewGuid(), cashSessionId,
+            direction == CashTransactionDirection.In ? CashTransactionType.CashIn : CashTransactionType.CashOut,
+            amount, direction, notes: reason, recordedBy: userId, idempotencyKey: idempotencyKey);
+
+        if (await FindReplayAsync(cashSessionId, movement, connection: null, transaction: null, cancellationToken) is { } replay)
+            return replay;
+
+        var threshold = await CashOutApprovalThresholdSetting.GetThresholdAsync(settings, cancellationToken);
+        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var expectedCash = await ledger.LockOpenSessionAndReadExpectedCashAsync(cashSessionId, connection, transaction, cancellationToken);
+        // A concurrent retry of the same key finished while this call waited for the lock.
+        if (await FindReplayAsync(cashSessionId, movement, connection, transaction, cancellationToken) is { } raced)
+            return raced;
+
+        if (direction == CashTransactionDirection.Out && amount > expectedCash)
+            throw new CashOutExceedsDrawerException(amount, expectedCash);
+
+        if (direction == CashTransactionDirection.Out && amount > threshold)
+        {
+            var request = new CashMovementRequest(
+                Guid.NewGuid(), cashSessionId, amount, movement.Notes!, idempotencyKey, CashMovementRequestStatus.Requested,
+                userId, DateTimeOffset.UtcNow, null, null, null, false, null);
+            await movements.InsertRequestAsync(request, connection, transaction, cancellationToken);
+            await AuditAsync("cash.movement_request.requested", request, userId, request.Reason, "none", connection, transaction, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return new MovementOutcome(null, request);
+        }
+
+        await ledger.RecordAsync(movement, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return new MovementOutcome(movement, null);
+    }
+
+    public async Task<CashMovementRequest> ApproveAsync(
+        Guid cashSessionId, Guid requestId, Guid deciderId, CancellationToken cancellationToken)
+    {
+        var selfApprovalEnabled = await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken);
+        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        // Same lock order as RecordAsync (session row, then request row) so the two never wait on each other.
+        var expectedCash = await ledger.LockOpenSessionAndReadExpectedCashAsync(cashSessionId, connection, transaction, cancellationToken);
+        var request = await LoadOpenRequestAsync(cashSessionId, requestId, connection, transaction, cancellationToken);
+        var selfApproved = request.RequestedBy == deciderId;
+        if (selfApproved && !selfApprovalEnabled)
+            throw new CashMovementSelfApprovalException();
+        if (request.Amount > expectedCash)
+            throw new CashOutExceedsDrawerException(request.Amount, expectedCash);
+
+        var now = DateTimeOffset.UtcNow;
+        var movement = new CashTransaction(
+            Guid.NewGuid(), cashSessionId, CashTransactionType.CashOut, request.Amount, CashTransactionDirection.Out,
+            notes: request.Reason, recordedBy: request.RequestedBy, occurredAt: now, idempotencyKey: "cash-out-request:" + requestId.ToString("D"));
+        await ledger.RecordAsync(movement, connection, transaction, cancellationToken);
+        await movements.MarkDecidedAsync(
+            requestId, CashMovementRequestStatus.Approved, deciderId, now, null, selfApproved, movement.Id, connection, transaction, cancellationToken);
+        var approved = request with
+        {
+            Status = CashMovementRequestStatus.Approved, DecidedBy = deciderId, DecidedAt = now, SelfApproved = selfApproved, CashTransactionId = movement.Id,
+        };
+        await AuditAsync("cash.movement_request.approved", approved, deciderId, null, request.Status, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return approved;
+    }
+
+    public async Task<CashMovementRequest> RejectAsync(
+        Guid cashSessionId, Guid requestId, Guid deciderId, string? note, CancellationToken cancellationToken)
+    {
+        var text = string.IsNullOrWhiteSpace(note) ? null : note.Trim();
+        if (text is { Length: > CashTransaction.MaxReasonLength })
+            throw new ArgumentOutOfRangeException(nameof(note), "A rejection note is at most 500 characters.");
+        return await CloseRequestAsync(cashSessionId, requestId, deciderId, CashMovementRequestStatus.Rejected, "cash.movement_request.rejected", text, requesterOnly: false, cancellationToken);
+    }
+
+    public async Task<CashMovementRequest> CancelAsync(
+        Guid cashSessionId, Guid requestId, Guid userId, CancellationToken cancellationToken)
+        => await CloseRequestAsync(cashSessionId, requestId, userId, CashMovementRequestStatus.Cancelled, "cash.movement_request.cancelled", null, requesterOnly: true, cancellationToken);
+
+    private async Task<CashMovementRequest> CloseRequestAsync(
+        Guid cashSessionId, Guid requestId, Guid userId, string status, string eventName, string? note, bool requesterOnly,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var request = await LoadOpenRequestAsync(cashSessionId, requestId, connection, transaction, cancellationToken);
+        if (requesterOnly && request.RequestedBy != userId)
+            throw new DualScreenForbiddenException("Only the person who asked for a cash-out can cancel it.");
+
+        var now = DateTimeOffset.UtcNow;
+        await movements.MarkDecidedAsync(requestId, status, userId, now, note, false, null, connection, transaction, cancellationToken);
+        var closed = request with { Status = status, DecidedBy = userId, DecidedAt = now, DecisionNote = note };
+        await AuditAsync(eventName, closed, userId, note, request.Status, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return closed;
+    }
+
+    /// <summary>The drawer screen's data: manual movements, open requests and the two settings that shape the flow.</summary>
+    public async Task<DrawerMovementsV1> ListAsync(Guid cashSessionId, CancellationToken cancellationToken)
+    {
+        var rows = await movements.ListMovementsAsync(cashSessionId, cancellationToken);
+        return new(
+            [.. rows.Take(ICashMovementRepository.MaxListedMovements)],
+            rows.Count > ICashMovementRepository.MaxListedMovements,
+            await movements.ListPendingAsync(cashSessionId, cancellationToken),
+            await CashOutApprovalThresholdSetting.GetThresholdAsync(settings, cancellationToken),
+            await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken));
+    }
+
+    public Task<bool> HasPendingAsync(Guid cashSessionId, CancellationToken cancellationToken)
+        => movements.HasPendingAsync(cashSessionId, cancellationToken);
+
+    /// <summary>
+    /// A repeated key returns what the first call produced only when it is the same movement; another direction,
+    /// amount or reason under the same key is a client mistake and is never answered with the first call's result.
+    /// </summary>
+    private async Task<MovementOutcome?> FindReplayAsync(
+        Guid cashSessionId, CashTransaction attempted, NpgsqlConnection? connection, NpgsqlTransaction? transaction,
+        CancellationToken cancellationToken)
+    {
+        var key = attempted.IdempotencyKey!;
+        var inTransaction = connection is not null && transaction is not null;
+        var recordedRow = inTransaction
+            ? await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, key, connection!, transaction!, cancellationToken)
+            : await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, key, cancellationToken);
+        if (recordedRow is { } recorded)
+        {
+            return recorded.Direction == attempted.Direction && recorded.Amount == attempted.Amount && recorded.Notes == attempted.Notes
+                ? new MovementOutcome(recorded, null)
+                : throw new CashMovementKeyReusedException();
+        }
+
+        var requestRow = inTransaction
+            ? await movements.GetRequestBySessionAndKeyAsync(cashSessionId, key, connection!, transaction!, cancellationToken)
+            : await movements.GetRequestBySessionAndKeyAsync(cashSessionId, key, cancellationToken);
+        if (requestRow is { } request)
+        {
+            return attempted.Direction == CashTransactionDirection.Out && request.Amount == attempted.Amount && request.Reason == attempted.Notes
+                ? new MovementOutcome(null, request)
+                : throw new CashMovementKeyReusedException();
+        }
+
+        return null;
+    }
+
+    private async Task<CashMovementRequest> LoadOpenRequestAsync(
+        Guid cashSessionId, Guid requestId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        var request = await movements.GetRequestForUpdateAsync(requestId, connection, transaction, cancellationToken);
+        if (request is null || request.CashSessionId != cashSessionId)
+            throw new CashMovementRequestNotFoundException(requestId);
+        return request.Status == CashMovementRequestStatus.Requested
+            ? request
+            : throw new CashMovementRequestStateException(requestId, request.Status);
+    }
+
+    private Task AuditAsync(
+        string eventName, CashMovementRequest request, Guid actorId, string? reason, string previousStatus,
+        NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+        => audit.AppendAsync(
+            new AuditEvent(
+                Guid.NewGuid(), eventName, "CashMovementRequest", request.Id, "User", request.Id.ToString("N"),
+                actorId, reason,
+                beforeStateJson: JsonSerializer.Serialize(new { status = previousStatus }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    status = request.Status, request.CashSessionId, request.Amount, request.RequestedBy, request.SelfApproved,
+                    request.CashTransactionId,
+                })),
+            connection, transaction, cancellationToken);
+}
+
+/// <summary>The drawer screen's view of one session's manual movements (V1-RMD-788).</summary>
+public sealed record DrawerMovementsV1(
+    IReadOnlyList<CashMovementEntry> Movements,
+    bool MovementsTruncated,
+    IReadOnlyList<PendingCashMovementRequest> Requests,
+    decimal ApprovalThreshold,
+    bool SelfApprovalEnabled);
