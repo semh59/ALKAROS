@@ -1,3 +1,4 @@
+using ALKAROS.Reporting.BusinessDayTotals;
 using ALKAROS.Reporting.V1Operations.Tests.Fixtures;
 using FluentAssertions;
 using Npgsql;
@@ -16,113 +17,114 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
     {
         _db = db;
         _repository = new PostgresOperationalReportRepository(_db.DataSource);
-        _service = new OperationalReportService(_repository, new FixedBusinessDayTotalsReader(4250.00m, 15));
+        _service = new OperationalReportService(_repository, new FixedBusinessDayTotalsReader());
     }
 
-    [Fact]
-    public async Task OpenAndCloseBusinessDayWithReconciledTotalsSuccessfully()
+    private static BusinessDayFigures Figures(OpenItems? open = null, Guid? waiterId = null, Guid? tableId = null) => new(
+        Revenue: 4250.00m, Tips: 120.50m, OrderCount: 15, CancelledItems: 1, PrintFailures: 2,
+        OpenItems: open ?? new OpenItems(0, 0, 0),
+        Waiters: [new WaiterFigure(waiterId ?? Guid.NewGuid(), 15, 4250.00m, 1, 150.00m)],
+        PrintStations: [new PrintStationFigure("KitchenStation01", 45, 2, 2)],
+        Tables: [new TableFigure(tableId ?? Guid.NewGuid(), 6, 1800.00m)],
+        Cash: new CashReconciliationFigure(2, 900m, 895m, -5m, 1, 0));
+
+    private OperationalReportService ServiceWith(BusinessDayFigures figures)
+        => new(_repository, new FixedBusinessDayTotalsReader(figures));
+
+    private async Task OpenFreshDayAsync(DateOnly date)
     {
-        var date = new DateOnly(2026, 8, 18);
-        var openedAt = DateTimeOffset.UtcNow.AddHours(-10);
-
-        // 1. Open Business Day
-        var opened = await _service.OpenBusinessDayAsync(date, openedAt);
-        opened.Should().NotBeNull();
-        opened.Status.Should().Be(BusinessDayStatus.Open);
-        opened.BusinessDate.Should().Be(date);
-
-        // Waiter Summaries
-        var waiter1 = new WaiterPerformanceRecord(
-            SummaryId: Guid.NewGuid(),
-            BusinessDate: date,
-            WaiterUserId: Guid.NewGuid(),
-            OrdersServedCount: 15,
-            TotalSalesAmount: 4250.00m,
-            CancellationsCount: 1,
-            DiscountsAppliedAmount: 150.00m,
-            CapturedAt: DateTimeOffset.UtcNow);
-
-        // Print Summaries
-        var print1 = new PrintErrorSummaryRecord(
-            ErrorSummaryId: Guid.NewGuid(),
-            BusinessDate: date,
-            StationName: "KitchenStation01",
-            TotalPrintJobs: 45,
-            FailedPrintJobs: 2,
-            RecoveredPrintJobs: 2,
-            CapturedAt: DateTimeOffset.UtcNow);
-
-        var closedAt = DateTimeOffset.UtcNow;
-
-        // 2. Close Business Day (Acceptance Evidence #1: Report totals reconcile with source metrics)
-        var result = await _service.CloseBusinessDayAsync(
-            businessDate: date,
-            closedAt: closedAt,
-            cancelledItems: 1,
-            printFailures: 2,
-            waiterSummaries: new[] { waiter1 },
-            printSummaries: new[] { print1 });
-
-        result.Should().NotBeNull();
-        result.BusinessDay.Status.Should().Be(BusinessDayStatus.Closed);
-        result.BusinessDay.TotalRevenue.Should().Be(4250.00m);
-        result.BusinessDay.TotalOrdersCount.Should().Be(15);
-        result.BusinessDay.TotalCancelledItemsCount.Should().Be(1);
-        result.BusinessDay.TotalPrintFailuresCount.Should().Be(2);
-
-        result.WaiterSummaries.Should().HaveCount(1);
-        result.WaiterSummaries[0].TotalSalesAmount.Should().Be(4250.00m);
-
-        result.PrintSummaries.Should().HaveCount(1);
-        result.PrintSummaries[0].StationName.Should().Be("KitchenStation01");
-
-        // 3. Verify GetFullDailyReportAsync
-        var fullReport = await _service.GetFullDailyReportAsync(date);
-        fullReport.Should().NotBeNull();
-        fullReport!.BusinessDay.TotalRevenue.Should().Be(4250.00m);
-    }
-
-    [Fact]
-    public async Task CloseBusinessDayWithSummariesRollsBackWholeCloseWhenSummaryWriteFails()
-    {
-        // Aktif bir iş günü varsa kapat ki tek-açık-gün kuralına takılmayalım.
         var active = await _repository.GetActiveBusinessDayAsync();
         if (active is not null)
             await _repository.CloseBusinessDayAsync(active.BusinessDate, DateTimeOffset.UtcNow, 0m, 0, 0, 0);
-
-        var date = new DateOnly(2037, 3, 14);
         await _service.OpenBusinessDayAsync(date, DateTimeOffset.UtcNow.AddHours(-8));
+    }
 
-        // Sıra ortasında yapay hata: iki garson özeti aynı SummaryId ile gelir,
-        // ikinci INSERT birincil anahtar ihlali fırlatır.
-        var collidingId = Guid.NewGuid();
-        var waiterOne = new WaiterPerformanceRecord(collidingId, date, Guid.NewGuid(), 10, 1000m, 0, 0m, DateTimeOffset.UtcNow);
-        var waiterTwo = new WaiterPerformanceRecord(collidingId, date, Guid.NewGuid(), 5, 500m, 0, 0m, DateTimeOffset.UtcNow);
-        var print = new PrintErrorSummaryRecord(Guid.NewGuid(), date, "KitchenStation09", 20, 1, 1, DateTimeOffset.UtcNow);
+    [Fact]
+    public async Task TheCloseStoresEveryServerCountedFigureTheTipsApartFromRevenueAndTheSummaries()
+    {
+        var date = new DateOnly(2026, 8, 18);
+        var tableId = Guid.NewGuid();
+        var waiterId = Guid.NewGuid();
+        await OpenFreshDayAsync(date);
 
-        var act = () => _service.CloseBusinessDayAsync(
-            businessDate: date,
-            closedAt: DateTimeOffset.UtcNow,
-            cancelledItems: 0,
-            printFailures: 1,
-            waiterSummaries: new[] { waiterOne, waiterTwo },
-            printSummaries: new[] { print });
+        var result = await ServiceWith(Figures(waiterId: waiterId, tableId: tableId))
+            .CloseBusinessDayAsync(date, DateTimeOffset.UtcNow, acknowledgeOpenItems: false);
 
-        await act.Should().ThrowAsync<PostgresException>();
+        var day = (await _repository.GetBusinessDayByDateAsync(date))!;
+        day.Should().BeEquivalentTo(result.BusinessDay, o => o.Excluding(d => d.ClosedAt));
+        day.ClosedAt.Should().BeCloseTo(result.BusinessDay.ClosedAt!.Value, TimeSpan.FromMilliseconds(1));
+        day.Status.Should().Be(BusinessDayStatus.Closed);
+        (day.TotalRevenue, day.TotalTipsAmount, day.TotalOrdersCount).Should().Be((4250.00m, 120.50m, 15));
+        (day.TotalCancelledItemsCount, day.TotalPrintFailuresCount).Should().Be((1, 2));
+        day.OpenItemsAcknowledged.Should().BeFalse();
+        day.OpenItemsAtClose.Should().Be(new OpenItems(0, 0, 0));
+        day.TableBreakdown.Should().ContainSingle().Which.Should().Be(new TableFigure(tableId, 6, 1800.00m));
+        day.CashReconciliation.Should().Be(new CashReconciliationFigure(2, 900m, 895m, -5m, 1, 0));
 
-        // Gün hala açık, hiçbir özet yazılmamış olmalı.
-        var day = await _repository.GetBusinessDayByDateAsync(date);
-        day.Should().NotBeNull();
-        day!.Status.Should().Be(BusinessDayStatus.Open);
+        var report = (await _service.GetFullDailyReportAsync(date))!;
+        report.WaiterSummaries.Should().ContainSingle().Which.Should().BeEquivalentTo(
+            new { WaiterUserId = waiterId, OrdersServedCount = 15, TotalSalesAmount = 4250.00m, CancellationsCount = 1, DiscountsAppliedAmount = 150.00m });
+        report.PrintSummaries.Should().ContainSingle().Which.Should().BeEquivalentTo(
+            new { StationName = "KitchenStation01", TotalPrintJobs = 45, FailedPrintJobs = 2, RecoveredPrintJobs = 2 });
+    }
 
-        var waiters = await _repository.GetWaiterSummariesByDateAsync(date);
-        waiters.Should().BeEmpty();
+    [Fact]
+    public async Task OpenItemsNeedAnAcknowledgementAndTheCloseWithoutOneChangesNothing()
+    {
+        var date = new DateOnly(2026, 8, 20);
+        await OpenFreshDayAsync(date);
+        var service = ServiceWith(Figures(open: new OpenItems(1, 2, 3)));
 
-        var prints = await _repository.GetPrintErrorSummariesByDateAsync(date);
-        prints.Should().BeEmpty();
+        var refused = () => service.CloseBusinessDayAsync(date, DateTimeOffset.UtcNow, acknowledgeOpenItems: false);
 
-        // Temizlik.
+        (await refused.Should().ThrowAsync<BusinessDayOpenItemsNotAcknowledgedException>())
+            .Which.Should().Match<BusinessDayOpenItemsNotAcknowledgedException>(e => e.CashSessions == 1 && e.Bills == 2 && e.UnsettledPayments == 3);
+        (await _repository.GetBusinessDayByDateAsync(date))!.Status.Should().Be(BusinessDayStatus.Open);
+        (await _repository.GetWaiterSummariesByDateAsync(date)).Should().BeEmpty();
+
+        var closed = await service.CloseBusinessDayAsync(date, DateTimeOffset.UtcNow, acknowledgeOpenItems: true);
+
+        closed.BusinessDay.OpenItemsAcknowledged.Should().BeTrue();
+        var day = (await _repository.GetBusinessDayByDateAsync(date))!;
+        day.OpenItemsAtClose.Should().Be(new OpenItems(1, 2, 3));
+        day.OpenItemsAcknowledged.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task AFailureInsideTheCloseTransactionRollsBackTheDayAndEverySummary()
+    {
+        var date = new DateOnly(2037, 3, 14);
+        await OpenFreshDayAsync(date);
+
+        var act = () => _repository.CloseBusinessDayWithFiguresAsync(
+            date, DateTimeOffset.UtcNow, acknowledgeOpenItems: false,
+            (_, _, _) => Task.FromResult(Figures()),
+            (_, _, _, _, _) => throw new InvalidOperationException("audit write failed"));
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+
+        (await _repository.GetBusinessDayByDateAsync(date))!.Status.Should().Be(BusinessDayStatus.Open);
+        (await _repository.GetWaiterSummariesByDateAsync(date)).Should().BeEmpty();
+        (await _repository.GetPrintErrorSummariesByDateAsync(date)).Should().BeEmpty();
         await _repository.CloseBusinessDayAsync(date, DateTimeOffset.UtcNow, 0m, 0, 0, 0);
+    }
+
+    [Fact]
+    public async Task TheFiguresAreReadInsideTheCloseTransactionOnAnOpenConnection()
+    {
+        var date = new DateOnly(2037, 3, 15);
+        await OpenFreshDayAsync(date);
+        var openInside = false;
+
+        await _repository.CloseBusinessDayWithFiguresAsync(
+            date, DateTimeOffset.UtcNow, acknowledgeOpenItems: false,
+            (_, transaction, _) =>
+            {
+                openInside = transaction.Connection?.State == System.Data.ConnectionState.Open;
+                return Task.FromResult(Figures());
+            });
+
+        openInside.Should().BeTrue();
     }
 
     [Fact]
@@ -230,6 +232,34 @@ public sealed class PostgresReportingMigrationTests : IClassFixture<ReportingTes
                 result.Should().Be("reporting.daily_business_days");
             }
         }
+    }
+
+    [Fact]
+    public async Task TheCloseFiguresMigrationDownAndUpAddsAndDropsItsColumns()
+    {
+        var sqlDirectory = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql");
+        var downSql = await File.ReadAllTextAsync(Path.Combine(sqlDirectory, "214-business-day-close-figures.down.sql"));
+        var upSql = await File.ReadAllTextAsync(Path.Combine(sqlDirectory, "214-business-day-close-figures.up.sql"));
+
+        await Execute(downSql);
+        (await ColumnCount()).Should().Be(0);
+        await Execute(upSql);
+        (await ColumnCount()).Should().Be(7);
+        await Execute(upSql);
+        (await ColumnCount()).Should().Be(7);
+    }
+
+    private async Task Execute(string sql)
+    {
+        await using var command = _dataSource.CreateCommand(sql);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task<long> ColumnCount()
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'reporting' AND table_name = 'daily_business_days' AND column_name IN ('total_tips_amount', 'open_cash_sessions_count', 'open_bills_count', 'unsettled_payments_count', 'open_items_acknowledged', 'table_breakdown', 'cash_reconciliation');");
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 }
 

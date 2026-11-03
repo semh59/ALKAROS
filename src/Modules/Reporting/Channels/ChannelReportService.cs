@@ -1,3 +1,4 @@
+using ALKAROS.Reporting.BusinessDayTotals;
 using System.Globalization;
 using Npgsql;
 
@@ -58,7 +59,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT (o.created_at AT TIME ZONE $3)::date AS business_date, o.source, l.provider,
+            SELECT ((o.created_at AT TIME ZONE $3) - interval '{BusinessDayWindow.StartHour} hours')::date AS business_date, o.source, l.provider,
                    count(*)::int,
                    count(*) FILTER (WHERE o.status IN ({AwaitingStatuses}))::int,
                    count(*) FILTER (WHERE o.status IN ({AcceptedStatuses}))::int,
@@ -120,7 +121,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
             $"""
             SELECT business_date, provider, count(*)::int
             FROM (
-                SELECT i.provider, i.external_order_id, (min(i.received_at) AT TIME ZONE $3)::date AS business_date
+                SELECT i.provider, i.external_order_id, ((min(i.received_at) AT TIME ZONE $3) - interval '{BusinessDayWindow.StartHour} hours')::date AS business_date
                 FROM online_ordering.provider_inbox i
                 WHERE i.processing_outcome IN ('Rejected', 'Diverged')
                   AND i.order_id IS NULL
@@ -167,7 +168,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT (c.opened_at AT TIME ZONE $3)::date, COALESCE(c.details->>'kind', 'Unclassified'),
+            SELECT ((c.opened_at AT TIME ZONE $3) - interval '{BusinessDayWindow.StartHour} hours')::date, COALESCE(c.details->>'kind', 'Unclassified'),
                    count(*) FILTER (WHERE c.status IN ('Open', 'Investigating', 'Escalated'))::int,
                    count(*) FILTER (WHERE c.status IN ('Resolved', 'Dismissed'))::int,
                    COALESCE(sum(c.discrepancy_amount) FILTER (WHERE c.status IN ('Open', 'Investigating', 'Escalated')), 0)

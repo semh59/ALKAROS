@@ -1,3 +1,5 @@
+using ALKAROS.Reporting.BusinessDayTotals;
+
 namespace ALKAROS.Reporting.V1Operations;
 
 /// <summary>
@@ -12,7 +14,12 @@ public sealed record BusinessDayRecord(
     decimal TotalRevenue,
     int TotalOrdersCount,
     int TotalCancelledItemsCount,
-    int TotalPrintFailuresCount);
+    int TotalPrintFailuresCount,
+    decimal TotalTipsAmount = 0m,
+    OpenItems? OpenItemsAtClose = null,
+    bool OpenItemsAcknowledged = false,
+    IReadOnlyList<TableFigure>? TableBreakdown = null,
+    CashReconciliationFigure? CashReconciliation = null);
 
 /// <summary>
 /// Aggregated performance metrics for a waiter during a business day (V1-RPT-001, PDF:III.31).

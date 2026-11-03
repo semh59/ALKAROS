@@ -1,0 +1,17 @@
+m1-window: exit=1 Başarısız! - Başarısız:     4, Başarılı:     3, Atlanan:     0, Toplam:     7, Süre: 142 ms - ALKAROS.Reporting.V1Operations.Tests
+m2-sentvoid: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 30 s - ALKAROS.Host.Experience.Reporting.Test
+m3-tipstatus: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 31 s - ALKAROS.Host.Experience.Reporting.Test
+m4-revenue-tips: exit=1 Başarısız! - Başarısız:     2, Başarılı:     9, Atlanan:     0, Toplam:    11, Süre: 33 s - ALKAROS.Host.Experience.Reporting.Test
+m5-printwindow: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 33 s - ALKAROS.Host.Experience.Reporting.Test
+m6-recovered: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 35 s - ALKAROS.Host.Experience.Reporting.Test
+m7-ack: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 33 s - ALKAROS.Host.Experience.Reporting.Test
+m8-auditname: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 34 s - ALKAROS.Host.Experience.Reporting.Test
+m9-ackflag: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 33 s - ALKAROS.Host.Experience.Reporting.Test
+m10-cashwindow: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 34 s - ALKAROS.Host.Experience.Reporting.Test
+m12-unsettled: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 33 s - ALKAROS.Host.Experience.Reporting.Test
+m13-rollback: exit=1 Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 550 ms - ALKAROS.Reporting.V1Operations.Tests
+m11-openbills: exit=1 Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 38 s - ALKAROS.Host.Experience.Reporting.Test
+m14-startinclusive: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Reporting.Tests
+m15-endexclusive: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 450 ms - ALKAROS.Host.Experience.Reporting.Te
+m16-channellabel: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 239 ms - ALKAROS.Reporting.Channels.Tests.dll
+m17-staleopen: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 637 ms - ALKAROS.Host.Experience.Reporting.Te

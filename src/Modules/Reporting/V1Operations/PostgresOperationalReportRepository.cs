@@ -1,5 +1,7 @@
 using System.Data;
 using System.Data.Common;
+using System.Text.Json;
+using ALKAROS.Reporting.BusinessDayTotals;
 
 namespace ALKAROS.Reporting.V1Operations;
 
@@ -23,19 +25,16 @@ public interface IOperationalReportRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Closes the business day and writes the waiter and print-error summaries inside a
-    /// single database transaction; a mid-sequence failure rolls back every write
-    /// (V1-RMD-085).
+    /// Closes the business day inside one transaction: the figures are read (<paramref name="readFigures"/>) and judged
+    /// under the day's lock, an unacknowledged open item rolls everything back, the day, the waiter and print-station
+    /// summaries are written, and <paramref name="inTransaction"/> (the audit event) commits with them.
     /// </summary>
-    Task<BusinessDayReportResult> CloseBusinessDayWithSummariesAsync(
+    Task<BusinessDayReportResult> CloseBusinessDayWithFiguresAsync(
         DateOnly businessDate,
         DateTimeOffset closedAt,
-        decimal totalRevenue,
-        int totalOrders,
-        int cancelledItems,
-        int printFailures,
-        IReadOnlyList<WaiterPerformanceRecord> waiterSummaries,
-        IReadOnlyList<PrintErrorSummaryRecord> printSummaries,
+        bool acknowledgeOpenItems,
+        Func<DbConnection, DbTransaction, CancellationToken, Task<BusinessDayFigures>> readFigures,
+        Func<BusinessDayRecord, BusinessDayFigures, DbConnection, DbTransaction, CancellationToken, Task>? inTransaction = null,
         CancellationToken cancellationToken = default);
 
     Task<BusinessDayRecord?> GetBusinessDayByDateAsync(
@@ -45,16 +44,8 @@ public interface IOperationalReportRepository
     Task<BusinessDayRecord?> GetActiveBusinessDayAsync(
         CancellationToken cancellationToken = default);
 
-    Task RecordWaiterSummaryAsync(
-        WaiterPerformanceRecord summary,
-        CancellationToken cancellationToken = default);
-
     Task<IReadOnlyList<WaiterPerformanceRecord>> GetWaiterSummariesByDateAsync(
         DateOnly businessDate,
-        CancellationToken cancellationToken = default);
-
-    Task RecordPrintErrorSummaryAsync(
-        PrintErrorSummaryRecord summary,
         CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<PrintErrorSummaryRecord>> GetPrintErrorSummariesByDateAsync(
@@ -70,6 +61,13 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
     private const string BusinessDaysTable = "reporting.daily_business_days";
     private const string WaiterSummariesTable = "reporting.waiter_performance_summaries";
     private const string PrintSummariesTable = "reporting.print_error_summaries";
+
+    private const string DayColumns =
+        "business_day_id, business_date, opened_at, closed_at, status, total_revenue, total_orders_count, " +
+        "total_cancelled_items_count, total_print_failures_count, total_tips_amount, open_cash_sessions_count, " +
+        "open_bills_count, unsettled_payments_count, open_items_acknowledged, table_breakdown::text, cash_reconciliation::text";
+
+    private static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true };
 
     // Defensive ceiling for a filtered list read: a real filter returns
     // far fewer rows. Hitting this means the filter is too broad, or the
@@ -200,19 +198,15 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         };
     }
 
-    public async Task<BusinessDayReportResult> CloseBusinessDayWithSummariesAsync(
+    public async Task<BusinessDayReportResult> CloseBusinessDayWithFiguresAsync(
         DateOnly businessDate,
         DateTimeOffset closedAt,
-        decimal totalRevenue,
-        int totalOrders,
-        int cancelledItems,
-        int printFailures,
-        IReadOnlyList<WaiterPerformanceRecord> waiterSummaries,
-        IReadOnlyList<PrintErrorSummaryRecord> printSummaries,
+        bool acknowledgeOpenItems,
+        Func<DbConnection, DbTransaction, CancellationToken, Task<BusinessDayFigures>> readFigures,
+        Func<BusinessDayRecord, BusinessDayFigures, DbConnection, DbTransaction, CancellationToken, Task>? inTransaction = null,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(waiterSummaries);
-        ArgumentNullException.ThrowIfNull(printSummaries);
+        ArgumentNullException.ThrowIfNull(readFigures);
 
         var dateParam = businessDate.ToDateTime(TimeOnly.MinValue);
 
@@ -232,7 +226,7 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         {
             readCommand.Transaction = transaction;
             readCommand.CommandText = $"""
-                SELECT business_day_id, business_date, opened_at, closed_at, status, total_revenue, total_orders_count, total_cancelled_items_count, total_print_failures_count
+                SELECT {DayColumns}
                 FROM {BusinessDaysTable}
                 WHERE business_date = @date
                 FOR UPDATE;
@@ -252,20 +246,40 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
             throw new InvalidBusinessDayOperationException($"Business day '{businessDate:yyyy-MM-dd}' is already closed.");
         }
 
+        // Read and judged inside the closing transaction: what the manager was warned about is what is stored.
+        var figures = await readFigures(connection, transaction, cancellationToken);
+        if (figures.OpenItems.Any && !acknowledgeOpenItems)
+        {
+            throw new BusinessDayOpenItemsNotAcknowledgedException(
+                businessDate, figures.OpenItems.CashSessions, figures.OpenItems.Bills, figures.OpenItems.UnsettledPayments);
+        }
+
+        var acknowledged = figures.OpenItems.Any;
         await using (var closeCommand = connection.CreateCommand())
         {
             closeCommand.Transaction = transaction;
             closeCommand.CommandText = $"""
                 UPDATE {BusinessDaysTable}
-                SET status = 'Closed', closed_at = @closed, total_revenue = @revenue, total_orders_count = @orders, total_cancelled_items_count = @cancelled, total_print_failures_count = @prints
+                SET status = 'Closed', closed_at = @closed, total_revenue = @revenue, total_orders_count = @orders,
+                    total_cancelled_items_count = @cancelled, total_print_failures_count = @prints, total_tips_amount = @tips,
+                    open_cash_sessions_count = @open_sessions, open_bills_count = @open_bills,
+                    unsettled_payments_count = @unsettled, open_items_acknowledged = @acknowledged,
+                    table_breakdown = @tables::jsonb, cash_reconciliation = @cash::jsonb
                 WHERE business_date = @date AND status = 'Open';
                 """;
             AddParameter(closeCommand, "date", dateParam);
             AddParameter(closeCommand, "closed", closedAt);
-            AddParameter(closeCommand, "revenue", totalRevenue);
-            AddParameter(closeCommand, "orders", totalOrders);
-            AddParameter(closeCommand, "cancelled", cancelledItems);
-            AddParameter(closeCommand, "prints", printFailures);
+            AddParameter(closeCommand, "revenue", figures.Revenue);
+            AddParameter(closeCommand, "orders", figures.OrderCount);
+            AddParameter(closeCommand, "cancelled", figures.CancelledItems);
+            AddParameter(closeCommand, "prints", figures.PrintFailures);
+            AddParameter(closeCommand, "tips", figures.Tips);
+            AddParameter(closeCommand, "open_sessions", figures.OpenItems.CashSessions);
+            AddParameter(closeCommand, "open_bills", figures.OpenItems.Bills);
+            AddParameter(closeCommand, "unsettled", figures.OpenItems.UnsettledPayments);
+            AddParameter(closeCommand, "acknowledged", acknowledged);
+            AddParameter(closeCommand, "tables", JsonSerializer.Serialize(figures.Tables, Json));
+            AddParameter(closeCommand, "cash", JsonSerializer.Serialize(figures.Cash, Json));
 
             var affected = await closeCommand.ExecuteNonQueryAsync(cancellationToken);
             if (affected == 0)
@@ -274,7 +288,7 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
             }
         }
 
-        foreach (var waiter in waiterSummaries)
+        foreach (var waiter in figures.Waiters)
         {
             await using var waiterCommand = connection.CreateCommand();
             waiterCommand.Transaction = transaction;
@@ -285,18 +299,18 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
                     @id, @date, @waiter, @orders, @sales, @cancellations, @discounts, @captured
                 );
                 """;
-            AddParameter(waiterCommand, "id", waiter.SummaryId == Guid.Empty ? Guid.NewGuid() : waiter.SummaryId);
-            AddParameter(waiterCommand, "date", waiter.BusinessDate.ToDateTime(TimeOnly.MinValue));
+            AddParameter(waiterCommand, "id", Guid.NewGuid());
+            AddParameter(waiterCommand, "date", dateParam);
             AddParameter(waiterCommand, "waiter", waiter.WaiterUserId);
-            AddParameter(waiterCommand, "orders", waiter.OrdersServedCount);
-            AddParameter(waiterCommand, "sales", waiter.TotalSalesAmount);
-            AddParameter(waiterCommand, "cancellations", waiter.CancellationsCount);
-            AddParameter(waiterCommand, "discounts", waiter.DiscountsAppliedAmount);
-            AddParameter(waiterCommand, "captured", waiter.CapturedAt);
+            AddParameter(waiterCommand, "orders", waiter.Orders);
+            AddParameter(waiterCommand, "sales", waiter.Sales);
+            AddParameter(waiterCommand, "cancellations", waiter.Cancellations);
+            AddParameter(waiterCommand, "discounts", waiter.Discounts);
+            AddParameter(waiterCommand, "captured", closedAt);
             await waiterCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        foreach (var print in printSummaries)
+        foreach (var print in figures.PrintStations)
         {
             await using var printCommand = connection.CreateCommand();
             printCommand.Transaction = transaction;
@@ -307,31 +321,38 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
                     @id, @date, @station, @total, @failed, @recovered, @captured
                 );
                 """;
-            AddParameter(printCommand, "id", print.ErrorSummaryId == Guid.Empty ? Guid.NewGuid() : print.ErrorSummaryId);
-            AddParameter(printCommand, "date", print.BusinessDate.ToDateTime(TimeOnly.MinValue));
-            AddParameter(printCommand, "station", print.StationName);
-            AddParameter(printCommand, "total", print.TotalPrintJobs);
-            AddParameter(printCommand, "failed", print.FailedPrintJobs);
-            AddParameter(printCommand, "recovered", print.RecoveredPrintJobs);
-            AddParameter(printCommand, "captured", print.CapturedAt);
+            AddParameter(printCommand, "id", Guid.NewGuid());
+            AddParameter(printCommand, "date", dateParam);
+            AddParameter(printCommand, "station", print.Station);
+            AddParameter(printCommand, "total", print.Total);
+            AddParameter(printCommand, "failed", print.Failed);
+            AddParameter(printCommand, "recovered", print.Recovered);
+            AddParameter(printCommand, "captured", closedAt);
             await printCommand.ExecuteNonQueryAsync(cancellationToken);
         }
 
         var persistedWaiters = await ReadWaiterSummariesAsync(connection, transaction, dateParam, cancellationToken);
         var persistedPrints = await ReadPrintErrorSummariesAsync(connection, transaction, dateParam, cancellationToken);
 
-        await transaction.CommitAsync(cancellationToken);
-
         var closedDay = existing with
         {
             Status = BusinessDayStatus.Closed,
             ClosedAt = closedAt,
-            TotalRevenue = totalRevenue,
-            TotalOrdersCount = totalOrders,
-            TotalCancelledItemsCount = cancelledItems,
-            TotalPrintFailuresCount = printFailures
+            TotalRevenue = figures.Revenue,
+            TotalOrdersCount = figures.OrderCount,
+            TotalCancelledItemsCount = figures.CancelledItems,
+            TotalPrintFailuresCount = figures.PrintFailures,
+            TotalTipsAmount = figures.Tips,
+            OpenItemsAtClose = figures.OpenItems,
+            OpenItemsAcknowledged = acknowledged,
+            TableBreakdown = figures.Tables,
+            CashReconciliation = figures.Cash,
         };
 
+        if (inTransaction is not null)
+            await inTransaction(closedDay, figures, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
         return new BusinessDayReportResult(closedDay, persistedWaiters, persistedPrints);
     }
 
@@ -407,7 +428,7 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         CancellationToken cancellationToken = default)
     {
         const string sql = $"""
-            SELECT business_day_id, business_date, opened_at, closed_at, status, total_revenue, total_orders_count, total_cancelled_items_count, total_print_failures_count
+            SELECT {DayColumns}
             FROM {BusinessDaysTable}
             WHERE business_date = @date;
             """;
@@ -428,7 +449,7 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
         CancellationToken cancellationToken = default)
     {
         const string sql = $"""
-            SELECT business_day_id, business_date, opened_at, closed_at, status, total_revenue, total_orders_count, total_cancelled_items_count, total_print_failures_count
+            SELECT {DayColumns}
             FROM {BusinessDaysTable}
             WHERE status = 'Open'
             ORDER BY opened_at DESC
@@ -444,35 +465,6 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
             return null;
 
         return ReadBusinessDay(reader);
-    }
-
-    public async Task RecordWaiterSummaryAsync(
-        WaiterPerformanceRecord summary,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(summary);
-
-        const string sql = $"""
-            INSERT INTO {WaiterSummariesTable} (
-                summary_id, business_date, waiter_user_id, orders_served_count, total_sales_amount, cancellations_count, discounts_applied_amount, captured_at
-            ) VALUES (
-                @id, @date, @waiter, @orders, @sales, @cancellations, @discounts, @captured
-            );
-            """;
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        await using var cmd = connection.CreateCommand();
-        cmd.CommandText = sql;
-        AddParameter(cmd, "id", summary.SummaryId == Guid.Empty ? Guid.NewGuid() : summary.SummaryId);
-        AddParameter(cmd, "date", summary.BusinessDate.ToDateTime(TimeOnly.MinValue));
-        AddParameter(cmd, "waiter", summary.WaiterUserId);
-        AddParameter(cmd, "orders", summary.OrdersServedCount);
-        AddParameter(cmd, "sales", summary.TotalSalesAmount);
-        AddParameter(cmd, "cancellations", summary.CancellationsCount);
-        AddParameter(cmd, "discounts", summary.DiscountsAppliedAmount);
-        AddParameter(cmd, "captured", summary.CapturedAt);
-
-        await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<WaiterPerformanceRecord>> GetWaiterSummariesByDateAsync(
@@ -512,34 +504,6 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
                 $"GetWaiterSummariesByDateAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
-    }
-
-    public async Task RecordPrintErrorSummaryAsync(
-        PrintErrorSummaryRecord summary,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(summary);
-
-        const string sql = $"""
-            INSERT INTO {PrintSummariesTable} (
-                error_summary_id, business_date, station_name, total_print_jobs, failed_print_jobs, recovered_print_jobs, captured_at
-            ) VALUES (
-                @id, @date, @station, @total, @failed, @recovered, @captured
-            );
-            """;
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        await using var cmd = connection.CreateCommand();
-        cmd.CommandText = sql;
-        AddParameter(cmd, "id", summary.ErrorSummaryId == Guid.Empty ? Guid.NewGuid() : summary.ErrorSummaryId);
-        AddParameter(cmd, "date", summary.BusinessDate.ToDateTime(TimeOnly.MinValue));
-        AddParameter(cmd, "station", summary.StationName);
-        AddParameter(cmd, "total", summary.TotalPrintJobs);
-        AddParameter(cmd, "failed", summary.FailedPrintJobs);
-        AddParameter(cmd, "recovered", summary.RecoveredPrintJobs);
-        AddParameter(cmd, "captured", summary.CapturedAt);
-
-        await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<PrintErrorSummaryRecord>> GetPrintErrorSummariesByDateAsync(
@@ -591,7 +555,12 @@ public sealed class PostgresOperationalReportRepository : IOperationalReportRepo
             reader.GetDecimal(5),
             reader.GetInt32(6),
             reader.GetInt32(7),
-            reader.GetInt32(8));
+            reader.GetInt32(8),
+            reader.GetDecimal(9),
+            new OpenItems(reader.GetInt32(10), reader.GetInt32(11), reader.GetInt32(12)),
+            reader.GetBoolean(13),
+            JsonSerializer.Deserialize<List<TableFigure>>(reader.GetString(14), Json),
+            reader.IsDBNull(15) ? null : JsonSerializer.Deserialize<CashReconciliationFigure>(reader.GetString(15), Json));
     }
 
     private static void AddParameter(DbCommand cmd, string name, object? value)

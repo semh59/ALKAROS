@@ -7,7 +7,7 @@ namespace ALKAROS.Reporting.Channels.Tests;
 
 /// <summary>
 /// V12-RPT-001 golden dataset against real Postgres. The dataset sits on business-date boundaries
-/// (Europe/Istanbul is UTC+3, so 21:30 UTC is already the next business date), carries every status bucket,
+/// (Europe/Istanbul is UTC+3 and the business day starts at 06:00, so 03:00 UTC is the first instant of a business date), carries every status bucket,
 /// cancellations, a provider order refused by two webhooks, a refusal later reprocessed into an order,
 /// reconciliation cases and retries. Every test uses its own dates so the shared database never mixes them.
 /// </summary>
@@ -35,13 +35,13 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
         await _database.SeedOrderAsync("Qr", "Rejected", 30m, Utc(2031, 3, 10, 9, 10));
         await _database.SeedOrderAsync("Online", "Served", 250.50m, Utc(2031, 3, 10, 10, 0), "ys-a1", discount: 10m);
         await _database.SeedOrderAsync("Online", "Cancelled", 80m, Utc(2031, 3, 10, 11, 0), "ys-a2");
-        await _database.SeedOrderAsync("Online", "Accepted", 70m, Utc(2031, 3, 9, 21, 10), "ys-a3"); // 00:10 local on the 10th
+        await _database.SeedOrderAsync("Online", "Accepted", 70m, Utc(2031, 3, 10, 3, 0), "ys-a3"); // 06:00 local on the 10th: the first instant of the day
         await _database.SeedOrderAsync("Cashier", "Accepted", 999m, Utc(2031, 3, 10, 12, 0)); // not a channel
         // Business date 2031-03-11.
-        await _database.SeedOrderAsync("Online", "Completed", 60m, Utc(2031, 3, 10, 21, 30), "ys-b1"); // 00:30 local on the 11th
+        await _database.SeedOrderAsync("Online", "Completed", 60m, Utc(2031, 3, 11, 3, 0), "ys-b1"); // 06:00 local on the 11th: the first instant of the next day
         await _database.SeedOrderAsync("Online", "Accepted", 45m, Utc(2031, 3, 11, 12, 0), "ys-reprocessed");
         // Business date 2031-03-12: outside the range.
-        await _database.SeedOrderAsync("Online", "Accepted", 500m, Utc(2031, 3, 11, 21, 30), "ys-c1");
+        await _database.SeedOrderAsync("Online", "Accepted", 500m, Utc(2031, 3, 12, 3, 0), "ys-c1");
 
         // A provider order refused twice (two webhooks) is one refusal; one reprocessed into an order is none.
         await _database.SeedInboxAsync("ys-refused-twice", "Rejected", Utc(2031, 3, 10, 13, 0));
@@ -95,6 +95,20 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
 
         var again = await _reports.GetReportAsync(new ChannelReportFilter(Day1, Day2));
         JsonSerializer.Serialize(again).Should().Be(JsonSerializer.Serialize(report));
+    }
+
+    [Fact]
+    public async Task TheChannelReportUsesTheSixOClockBusinessDayNotMidnight()
+    {
+        var day = new DateOnly(2033, 5, 10);
+        await _database.SeedOrderAsync("Qr", "Served", 10m, Utc(2033, 5, 10, 2, 59));    // 05:59 local: still the 9th
+        await _database.SeedOrderAsync("Qr", "Served", 20m, Utc(2033, 5, 10, 3, 0));     // 06:00 local: the 10th starts
+        await _database.SeedOrderAsync("Qr", "Served", 40m, Utc(2033, 5, 10, 22, 0));    // 01:00 local on the 11th: still the 10th
+        await _database.SeedOrderAsync("Qr", "Served", 80m, Utc(2033, 5, 11, 3, 0));     // 06:00 local on the 11th: the 11th starts
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day, ChannelSource.Qr));
+
+        report.Days.Should().ContainSingle().Which.AcceptedValue.Should().Be(60m);
     }
 
     [Fact]

@@ -94,8 +94,8 @@ public sealed class EndOfDayTestDatabase : PgTestDatabase
         var approved = paymentStatus == "Approved";
         await using var command = DataSource.CreateCommand(
             """
-            INSERT INTO billing.bills (bill_id, bill_number, status, payable_amount, opened_at, created_at, updated_at)
-            VALUES (@bill, @number, 'Open', @amount, @at, @at, @at);
+            INSERT INTO billing.bills (bill_id, bill_number, status, payable_amount, opened_at, closed_at, created_at, updated_at)
+            VALUES (@bill, @number, 'Paid', @amount, @at, @at, @at, @at);
             INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount,
                                            initiated_at, tendered_at, approved_at, declined_at, created_at, updated_at)
             VALUES (gen_random_uuid(), @bill, @status, @amount, @amount, @approvedAmount,
@@ -108,24 +108,102 @@ public sealed class EndOfDayTestDatabase : PgTestDatabase
         command.Parameters.AddWithValue("status", paymentStatus);
         command.Parameters.AddWithValue("approvedAmount", approved ? amount : DBNull.Value);
         command.Parameters.AddWithValue("approvedAt", approved ? at : DBNull.Value);
-        command.Parameters.AddWithValue("declinedAt", approved ? DBNull.Value : at);
+        command.Parameters.AddWithValue("declinedAt", paymentStatus == "Declined" ? at : DBNull.Value);
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task SeedOrderAsync(DateTimeOffset submittedAt, string status, string source = "Cashier")
+    public async Task<Guid> SeedOrderAsync(
+        DateTimeOffset submittedAt, string status, string source = "Cashier", Guid? servingUserId = null, Guid? tableId = null,
+        decimal total = 0m, decimal discount = 0m)
     {
         var orderId = Guid.NewGuid();
-        await using var command = DataSource.CreateCommand(
+        await ExecuteWithoutForeignKeysAsync(
             """
-            INSERT INTO orders.orders (order_id, source, status, confirmation_status, order_number, submitted_at, created_at, updated_at)
-            VALUES (@order, @source, @status, 'NotRequired', @number, @at, @at, @at);
-            """);
-        command.Parameters.AddWithValue("order", orderId);
-        command.Parameters.AddWithValue("source", source);
-        command.Parameters.AddWithValue("status", status);
-        command.Parameters.AddWithValue("number", "EOD-" + orderId.ToString("N")[..12]);
-        command.Parameters.AddWithValue("at", submittedAt);
+            INSERT INTO orders.orders (order_id, source, status, confirmation_status, order_number, submitted_at, created_at, updated_at,
+                                       serving_user_id, table_id, total, discount_total)
+            VALUES (@order, @source, @status, 'NotRequired', @number, @at, @at, @at, @serving, @table, @total, @discount);
+            """,
+            ("order", orderId), ("source", source), ("status", status), ("number", "EOD-" + orderId.ToString("N")[..12]),
+            ("at", submittedAt), ("serving", (object?)servingUserId ?? DBNull.Value), ("table", (object?)tableId ?? DBNull.Value),
+            ("total", total), ("discount", discount));
+        return orderId;
+    }
+
+    public async Task<Guid> SeedBillAsync(string status, DateTimeOffset? closedAt = null)
+    {
+        var billId = Guid.NewGuid();
+        await ExecuteWithoutForeignKeysAsync(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, status, payable_amount, opened_at, closed_at, created_at, updated_at)
+            VALUES (@bill, @number, @status, 100, now(), @closed, now(), now());
+            """,
+            ("bill", billId), ("number", "EOD-" + billId.ToString("N")[..12]), ("status", status),
+            ("closed", (object?)closedAt ?? DBNull.Value));
+        return billId;
+    }
+
+    public Task SeedTipAsync(Guid billId, decimal amount)
+        => ExecuteWithoutForeignKeysAsync(
+            """
+            INSERT INTO billing.bill_adjustments (bill_adjustment_id, bill_id, adjustment_type, calculation_type, amount, net_amount,
+                                                  gross_amount, is_deduction, reason, authorized_by, created_at)
+            VALUES (gen_random_uuid(), @bill, 'Tip', 'FixedAmount', @amount, @amount, @amount, FALSE, 'tip', gen_random_uuid(), now());
+            """,
+            ("bill", billId), ("amount", amount));
+
+    public Task SeedAuditAsync(string eventName, Guid aggregateId, DateTimeOffset at)
+        => ExecuteWithoutForeignKeysAsync(
+            """
+            INSERT INTO audit.audit_events (id, event_name, aggregate_type, aggregate_id, actor_type, correlation_id, occurred_at)
+            VALUES (gen_random_uuid(), @name, 'Order', @aggregate, 'User', 'eod-test', @at);
+            """,
+            ("name", eventName), ("aggregate", aggregateId), ("at", at));
+
+    public async Task SeedPrintJobAsync(string station, DateTimeOffset createdAt, DateTimeOffset? failedAt, string status)
+    {
+        var printerId = Guid.NewGuid();
+        await ExecuteWithoutForeignKeysAsync(
+            """
+            INSERT INTO kitchen.printers (id, name, station_id) VALUES (@printer, @name, @station);
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, created_at, failed_at)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @printer, @key, 'x', @status, @created, @failed);
+            """,
+            ("printer", printerId), ("name", "P-" + printerId.ToString("N")), ("station", station), ("key", printerId.ToString("N")),
+            ("status", status), ("created", createdAt), ("failed", (object?)failedAt ?? DBNull.Value));
+    }
+
+    public Task SeedCashSessionAsync(
+        string status, DateTimeOffset? closedAt, decimal expected, decimal actual, bool supervisorOverride = false, bool selfReconciled = false)
+        => ExecuteWithoutForeignKeysAsync(
+            """
+            INSERT INTO cash.cash_sessions (cash_session_id, cashier_user_id, terminal_id, status, opening_balance, expected_cash, actual_cash,
+                difference, opened_at, closed_at, is_supervisor_override, override_reason, reconciled_self_approved, difference_explanation, created_at, updated_at)
+            VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @status, 0, @expected, @actual, @actual - @expected,
+                now(), @closed, @override, CASE WHEN @override THEN 'x' END, @self, CASE WHEN @actual <> @expected THEN 'x' END, now(), now());
+            """,
+            ("status", status), ("expected", expected), ("actual", actual), ("closed", (object?)closedAt ?? DBNull.Value),
+            ("override", supervisorOverride), ("self", selfReconciled));
+
+    public async Task<long> CountAsync(string sql, params (string Name, object Value)[] parameters)
+    {
+        await using var command = DataSource.CreateCommand(sql);
+        foreach (var (name, value) in parameters)
+            command.Parameters.AddWithValue(name, value);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    /// <summary>Seeds rows that reference tables and users the test does not need; the foreign keys are not under test here.</summary>
+    private async Task ExecuteWithoutForeignKeysAsync(string sql, params (string Name, object Value)[] parameters)
+    {
+        await using var connection = await DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using (var relax = new Npgsql.NpgsqlCommand("SET LOCAL session_replication_role = replica;", connection, transaction))
+            await relax.ExecuteNonQueryAsync();
+        await using var command = new Npgsql.NpgsqlCommand(sql, connection, transaction);
+        foreach (var (name, value) in parameters)
+            command.Parameters.AddWithValue(name, value);
         await command.ExecuteNonQueryAsync();
+        await transaction.CommitAsync();
     }
 
     private static string FindRepositoryRoot()

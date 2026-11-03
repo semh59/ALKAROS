@@ -73,3 +73,26 @@ timezone, service-day cutoff or bill-splitting policy.
   business approver on 2026-08-03. Blocker resolved: the record no longer
   selects rates/timezone/cut-off without a source; every selected value now
   carries a source and an approver.
+
+## Operational business day and tips (as built; the approved decision rows above are unchanged)
+
+The approved "service-day cutoff" row describes the tax and invoice `service_date`: a calendar day in `Europe/Istanbul`.
+The operational reports (end-of-day close, payment settlement report, channel report) use a different, operational
+business day, and the code has always done so:
+
+- The operational business day runs from 06:00 on the business date up to, not including, 06:00 the next day
+  (`Europe/Istanbul`). A table still served at 01:00 belongs to the day the restaurant opened for. One definition,
+  `BusinessDayWindow`, is used by all three reports; before it, the channel report alone cut at midnight.
+- The two concepts are kept apart on purpose: `service_date` (tax, invoice) stays the calendar day; the operational day
+  is a reporting window and never changes an invoice date.
+
+Tips (gratuity):
+
+- A tip is voluntary and is not part of the taxable amount; the end-of-day close stores it as its own line
+  (`total_tips_amount`) and revenue excludes it.
+- The tip total is the `Tip` adjustments of the bills closed (`Paid`) inside the window; a bill closed by a refund
+  carries no tip in the total.
+- Not confirmed: how a tip paid by card is treated for legal and accounting purposes has NOT been confirmed by a
+  certified accountant (mali musavir). The code only provides the separate field and makes no accounting claim.
+- The product margin report is a calendar-day report on the bill's opening date (its own tested definition); it is not an
+  operational-day report and does not use the 06:00 window.

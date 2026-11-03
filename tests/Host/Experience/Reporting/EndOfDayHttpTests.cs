@@ -13,8 +13,8 @@ namespace ALKAROS.Host.Experience.Reporting.Tests;
 /// <summary>
 /// V1-RMD-249: found by an independent audit (2026-09-18) —
 /// IOperationalReportService (V1-RPT-001) had zero HTTP surface. Proves a
-/// real HTTP client can open a real business day, close it with waiter/print
-/// summaries in one call, and read back the combined full-day report; also
+/// real HTTP client can open a real business day, close it (the server counts the waiter/print
+/// summaries itself), and read back the combined full-day report; also
 /// proves the two-tier permission split (reports.view lets a supervisor
 /// read, but only reports.close-day/manager can open or close a day).
 /// </summary>
@@ -84,14 +84,14 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
 
         using var supervisorCloseAttempt = await supervisor.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new CloseBusinessDayV1(1, 0));
+            new CloseBusinessDayV1());
         Assert.Equal(HttpStatusCode.Forbidden, supervisorCloseAttempt.StatusCode);
     }
 
     [Fact]
     public async Task CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow()
     {
-        // V1-RMD-421 (V1-RMD-393 F-10): the window is 06:00 Europe/Istanbul (03:00 UTC) to 06:00 the next day, end
+        // The window is 06:00 Europe/Istanbul (03:00 UTC) to 06:00 the next day, end
         // excluded; revenue is approved payments, orders exclude drafts, rejected and cancelled ones.
         var businessDate = new DateOnly(2026, 1, 5);
         var windowStart = new DateTimeOffset(2026, 1, 5, 3, 0, 0, TimeSpan.Zero);
@@ -112,12 +112,14 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
 
         using var closed = await client.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new { TotalRevenue = 987654.32m, TotalOrders = 4242, CancelledItems = 0, PrintFailures = 0 });
+            new { TotalRevenue = 987654.32m, TotalOrders = 4242, CancelledItems = 7, PrintFailures = 7 });
 
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
         var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
         Assert.Equal(1000m, report!.BusinessDay.TotalRevenue);
         Assert.Equal(2, report.BusinessDay.TotalOrdersCount);
+        Assert.Equal(0, report.BusinessDay.TotalCancelledItemsCount);
+        Assert.Equal(0, report.BusinessDay.TotalPrintFailuresCount);
     }
 
     [Fact]
@@ -136,7 +138,7 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
 
         using var closed = await client.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new { TotalRevenue = 0m, TotalOrders = 4, CancelledItems = 0, PrintFailures = 0 });
+            new { TotalRevenue = 0m, TotalOrders = 4 });
 
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
         var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
@@ -155,20 +157,15 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
         var openedDay = await opened.Content.ReadFromJsonAsync<BusinessDayV1>();
         Assert.Equal("Open", openedDay!.Status);
 
-        var waiterId = Guid.NewGuid();
         using var closed = await client.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new CloseBusinessDayV1(
-                CancelledItems: 2,
-                PrintFailures: 1,
-                WaiterSummaries: [new WaiterPerformanceV1(waiterId, 10, 1200m, 1, 50m)],
-                PrintSummaries: [new PrintErrorSummaryV1("Kitchen-1", 20, 1, 1)]));
+            new CloseBusinessDayV1());
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
         var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
         Assert.Equal("Closed", report!.BusinessDay.Status);
         Assert.Equal(0m, report.BusinessDay.TotalRevenue); // nothing was recorded on this day
-        Assert.Single(report.WaiterSummaries);
-        Assert.Single(report.PrintSummaries);
+        Assert.Empty(report.WaiterSummaries);
+        Assert.Empty(report.PrintSummaries);
 
         using var full = await client.GetAsync($"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/full-report");
         Assert.Equal(HttpStatusCode.OK, full.StatusCode);

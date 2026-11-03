@@ -181,6 +181,7 @@ public sealed class ApiErrorCatalogTests
         { "EndOfDay", Uninitialized<BusinessDayNotFoundException>(), 404, "NOT_FOUND", "İstenen iş günü bulunamadı." },
         { "EndOfDay", Uninitialized<BusinessDayAlreadyOpenException>(), 409, "DUPLICATE_RESOURCE", "Bu tarih için iş günü zaten açık." },
         { "EndOfDay", Uninitialized<InvalidBusinessDayOperationException>(), 409, "INVALID_OPERATION", "Bu işlem şu anki gün durumuyla uyumlu değil." },
+        { "EndOfDay", Uninitialized<BusinessDayOpenItemsNotAcknowledgedException>(), 409, "BUSINESS_DAY_OPEN_ITEMS_NOT_ACKNOWLEDGED", "Açık kasa oturumu, ödenmemiş hesap veya sonucu belirsiz ödeme var; bunları bilerek kapatmak için onaylayın." },
         { "EndOfDay", Pg("23505", null), 409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var." },
         { "EndOfDay", Uninitialized<ArgumentException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
         { "EndOfDay", Uninitialized<BadHttpRequestException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },

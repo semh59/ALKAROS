@@ -1,0 +1,27 @@
+namespace ALKAROS.Reporting.BusinessDayTotals;
+
+/// <summary>
+/// The one operational business-day window of every report: 06:00 on the business date up to, not including, 06:00 the
+/// next day, in the business time zone. A table still served at 01:00 belongs to the day the restaurant opened for.
+/// This is the operational day; the tax/invoice <c>service_date</c> is a different, calendar-day concept.
+/// </summary>
+public static class BusinessDayWindow
+{
+    public const string DefaultTimeZoneId = "Europe/Istanbul";
+
+    private static readonly TimeOnly DayStart = new(6, 0);
+
+    /// <summary>The [start, end) window of the business dates <paramref name="from"/> to <paramref name="to"/> (inclusive) in UTC.</summary>
+    public static (DateTimeOffset Start, DateTimeOffset End) Of(DateOnly from, DateOnly to, string timeZoneId = DefaultTimeZoneId)
+    {
+        var zone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        var localStart = from.ToDateTime(DayStart);
+        var localEnd = to.AddDays(1).ToDateTime(DayStart);
+        return (
+            new DateTimeOffset(localStart, zone.GetUtcOffset(localStart)),
+            new DateTimeOffset(localEnd, zone.GetUtcOffset(localEnd)));
+    }
+
+    public static (DateTimeOffset Start, DateTimeOffset End) Of(DateOnly businessDate, string timeZoneId = DefaultTimeZoneId)
+        => Of(businessDate, businessDate, timeZoneId);
+}

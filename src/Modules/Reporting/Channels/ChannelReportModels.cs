@@ -1,9 +1,10 @@
+using ALKAROS.Reporting.BusinessDayTotals;
+
 namespace ALKAROS.Reporting.Channels;
 
 /// <summary>
-/// Filters the V12-RPT-001 channel report to a range of business dates. A business date is the
-/// Europe/Istanbul service day (V0-DOM-008 cross-cutting rule 3, V0-CMP-002), converted to a UTC window
-/// internally, never a bare UTC calendar day. <see cref="Source"/> narrows to one channel.
+/// Filters the channel report to a range of business dates. A business date is the operational business day
+/// (<see cref="BusinessDayWindow"/>, 06:00 to 06:00), converted to a UTC window internally, never a bare UTC calendar day. <see cref="Source"/> narrows to one channel.
 /// </summary>
 public sealed record ChannelReportFilter(
     DateOnly From,
@@ -35,13 +36,7 @@ public sealed record ChannelReportFilter(
 
     /// <summary>The range's [start, end) window in UTC.</summary>
     public (DateTimeOffset Start, DateTimeOffset End) ResolveWindow()
-    {
-        var zone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
-        var localStart = From.ToDateTime(TimeOnly.MinValue);
-        var localEnd = To.AddDays(1).ToDateTime(TimeOnly.MinValue);
-        return (new DateTimeOffset(localStart, zone.GetUtcOffset(localStart)),
-                new DateTimeOffset(localEnd, zone.GetUtcOffset(localEnd)));
-    }
+        => BusinessDayWindow.Of(From, To, TimeZoneId);
 }
 
 public static class ChannelSource

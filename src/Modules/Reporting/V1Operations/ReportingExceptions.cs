@@ -44,3 +44,24 @@ public sealed class InvalidBusinessDayOperationException : ReportingException
 {
     public InvalidBusinessDayOperationException(string message) : base(message) { }
 }
+
+/// <summary>
+/// Thrown when a business day is closed while cash sessions, bills or payments are still open and the manager did not
+/// acknowledge them. The counts are the ones the server saw inside the closing transaction.
+/// </summary>
+public sealed class BusinessDayOpenItemsNotAcknowledgedException : ReportingException
+{
+    public BusinessDayOpenItemsNotAcknowledgedException(DateOnly businessDate, int cashSessions, int bills, int unsettledPayments)
+        : base($"Business day '{businessDate:yyyy-MM-dd}' has {cashSessions} open cash session(s), {bills} open bill(s) and {unsettledPayments} unsettled payment(s); acknowledge them to close.")
+    {
+        BusinessDate = businessDate;
+        CashSessions = cashSessions;
+        Bills = bills;
+        UnsettledPayments = unsettledPayments;
+    }
+
+    public DateOnly BusinessDate { get; }
+    public int CashSessions { get; }
+    public int Bills { get; }
+    public int UnsettledPayments { get; }
+}

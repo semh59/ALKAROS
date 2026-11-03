@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "213"
+    "max": "214"
   },
   "migrations": [
     {
@@ -1834,6 +1834,14 @@
       "phase": "B",
       "tables": [
         "cash_sessions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "214",
+      "phase": "B",
+      "tables": [
+        "daily_business_days"
       ],
       "deferredConstraints": []
     }

@@ -1,3 +1,5 @@
+using ALKAROS.Reporting.BusinessDayTotals;
+
 namespace ALKAROS.Reporting.Payments;
 
 /// <summary>
@@ -33,14 +35,7 @@ public sealed record PaymentSettlementReportFilter(
     /// window runs from 06:00 to the next day's 06:00 local time.
     /// </summary>
     public (DateTimeOffset Start, DateTimeOffset End) ResolveWindow()
-    {
-        var zone = TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
-        var localStart = BusinessDate.ToDateTime(new TimeOnly(6, 0, 0));
-        var start = new DateTimeOffset(localStart, zone.GetUtcOffset(localStart));
-        var localEnd = BusinessDate.AddDays(1).ToDateTime(new TimeOnly(6, 0, 0));
-        var end = new DateTimeOffset(localEnd, zone.GetUtcOffset(localEnd));
-        return (start, end);
-    }
+        => BusinessDayWindow.Of(BusinessDate, TimeZoneId);
 }
 
 /// <summary>

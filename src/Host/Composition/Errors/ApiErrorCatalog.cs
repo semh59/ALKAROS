@@ -456,6 +456,8 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu tarih için iş günü zaten açık."),
             InvalidBusinessDayOperationException =>
                 (StatusCodes.Status409Conflict, "INVALID_OPERATION", "Bu işlem şu anki gün durumuyla uyumlu değil."),
+            BusinessDayOpenItemsNotAcknowledgedException =>
+                (StatusCodes.Status409Conflict, "BUSINESS_DAY_OPEN_ITEMS_NOT_ACKNOWLEDGED", "Açık kasa oturumu, ödenmemiş hesap veya sonucu belirsiz ödeme var; bunları bilerek kapatmak için onaylayın."),
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
