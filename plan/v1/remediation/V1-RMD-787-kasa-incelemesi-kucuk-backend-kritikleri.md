@@ -62,6 +62,9 @@ Kapsam dışı (ayrı karar): HSTS/ters vekil konumu ve Google Fonts dış iste�
   - tests/Host/Experience/CashSession/CashSessionHttpTests.cs (V13-CSH-004) — kasa hareketinde üç ondalıklı ve sınır üstü tutar 400.
   - src/Host/Experience/Billing/PaymentRefunds.cs (V1-RMD-508) — durum denetimi öne alınır.
   - tests/Host/Experience/Billing/PaymentRefundHttpTests.cs (V1-RMD-508) — Requested nakit talep testi.
+  - src/Modules/Payments/CardSettlement/CardSettlementRequest.cs (V13-PAY-004) — kart tutarında ölçek ve üst sınır.
+  - src/Modules/Cash/Contracts/CashSessionCommands.cs (V1-CSH-001) — açılış, sayım ve kapanış tutarında ölçek ve üst sınır.
+  - tests/Modules/Cash/Contracts/CashSessionLifecycleTests.cs (V1-CSH-001) — ölçek ve sınır testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
