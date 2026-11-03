@@ -64,6 +64,10 @@ Kapsam dışı: arayüz (V1-RMD-792; A bittiği an mevcut kapanış ekranı fark
   - tests/Modules/Cash/TransactionLedger/PostgresCashTransactionLedgerRepositoryTests.cs (V13-CSH-002) — ClosingDifference satırının beklenen nakdi bozmaması.
   - tests/Modules/Cash/TenderHandler/CashTenderHandlerTests.cs (V13-CSH-003) — politika imzası değişirse uyum.
   - tests/Modules/Payments/EftTender/EftTenderHandlerTests.cs (V13-PAY-005) — depo sözleşmesi değişirse uyum.
+  - tests/Modules/Payments/TenderComposition/TenderCompositionTests.cs (V13-PAY-003) — politika/depo sözleşmesi değişirse uyum.
+  - tests/Modules/Cash/SessionLifecycle/ALKAROS.Cash.SessionLifecycle.Tests.csproj (V13-CSH-001) — elle seçilen migration listesine yeni migration.
+  - tests/Modules/Cash/TenderHandler/ALKAROS.Cash.TenderHandler.Tests.csproj (V13-CSH-003) — elle seçilen migration listesine yeni migration.
+  - tests/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.Tests.csproj (V13-PAY-003) — elle seçilen migration listesine yeni migration.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
