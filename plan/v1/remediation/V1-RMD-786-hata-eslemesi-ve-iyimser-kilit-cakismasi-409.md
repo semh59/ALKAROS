@@ -1,8 +1,8 @@
 # V1-RMD-786 - Hata eşleme: alan belirten doğrulama mesajı, iyimser kilit çakışması 409, eşleştirme kodu hatası
 
 - Task ID: V1-RMD-786
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
