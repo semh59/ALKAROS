@@ -47,6 +47,7 @@ Ayrıca ApiConventions testleri hata zarfını (code, message, status, traceId) 
   - tests/Modules/Payments/PaymentAggregate/PostgresPaymentTests.cs (V1-RMD-230) — eski istisna tipi beklentisi.
   - tests/Modules/Cash/SessionLifecycle/CashSessionLifecycleServiceTests.cs (V1-RMD-417) — kasa oturumu çakışma istisnası.
   - tests/Architecture/ApiConventions/ApiRouteAuthorizationTests.cs (V1-RMD-429) — hata zarfı denetimi.
+  - tests/Architecture/ApiConventions/api_convention_allowlist.json (V1-RMD-429) — status ve traceId taşımayan 68 yetki hatası cevabının küçülür-yalnız listesi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
