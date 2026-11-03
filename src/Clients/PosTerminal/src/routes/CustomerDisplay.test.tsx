@@ -114,6 +114,48 @@ describe("CustomerDisplay", () => {
     expect(startMock).toHaveBeenCalled();
   });
 
+  it("shows what is left to pay once part of the bill was taken", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) {
+        return jsonResponse({
+          ...snapshot, total: 260, paidTotal: 100, remainingTotal: 140, message: "Ödemenizin bir bölümü alındı; kalan tutar ödenecek.",
+        });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    const card = document.querySelector(".display-total-card")!.textContent!;
+    expect(card).toContain("KALAN TUTAR");
+    expect(card).toContain("140,00");
+    expect(card).toContain("240,00");
+    expect(card).toContain("Ödenen");
+    expect(card).toContain("100,00");
+    expect(card).toContain("Hesap toplamı");
+    expect(card).not.toContain("ÖDENECEK TOPLAM");
+    expect(card).toContain("kalan tutar ödenecek");
+  });
+
+  it("keeps the full total headline while nothing is paid yet", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ ...snapshot, paidTotal: 0, remainingTotal: 560 });
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    const card = document.querySelector(".display-total-card")!.textContent!;
+    expect(card).toContain("ÖDENECEK TOPLAM");
+    expect(card).not.toContain("Ödenen");
+  });
+
   it("conceals a completed order's line detail after the thank-you screen, showing the welcome card instead", async () => {
     vi.useFakeTimers();
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {

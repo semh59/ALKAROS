@@ -269,6 +269,15 @@
     }).catch(function () { state.savedShares = []; });
   }
 
+  // The guest's screen follows the bill being paid; a failure leaves the cashier's work untouched.
+  function showBillOnCustomerDisplay() {
+    api(billBase() + '/show-on-display', { method: 'POST' }).then(function (result) {
+      if (!result.ok) console.error('Müşteri ekranına bağlanamadı:', result.status);
+    }).catch(function (error) {
+      console.error('Müşteri ekranına bağlanamadı:', error);
+    });
+  }
+
   function loadEverything() {
     Promise.all([
       api(tendersBase()),
@@ -319,6 +328,7 @@
       state.tenderIdempotencyKey = null;
       loadRefundRequests();
       loadSavedShares();
+      showBillOnCustomerDisplay();
       render();
     }).catch(function () {
       state.error = 'Hesap bilgisi okunamadı. Bağlantınızı kontrol edin.';

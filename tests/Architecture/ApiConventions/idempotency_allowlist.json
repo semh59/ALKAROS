@@ -485,6 +485,10 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-103"
     },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/show-on-display": {
+      "reason": "Müşteri ekranını hesabın siparişine bağlar; kayıt oluşturmaz, aynı çağrının tekrarı aynı sonucu verir.",
+      "task": "V1-RMD-785"
+    },
     "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/approve": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V13-PUI-001"

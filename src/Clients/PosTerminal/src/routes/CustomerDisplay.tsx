@@ -326,6 +326,7 @@ export function CustomerDisplay() {
   }
 
   const submitted = presentation === "active" && !snapshot.editable;
+  const partlyPaid = snapshot.paidTotal > 0 && typeof snapshot.remainingTotal === "number";
   return (
     <main className="display-shell active-display">
       {freshness.connectionLost && <ConnectionBanner />}
@@ -357,9 +358,15 @@ export function CustomerDisplay() {
           </div>
         </div>
         <aside className="display-total-card">
-          <span className="display-kicker">ÖDENECEK TOPLAM</span>
-          <strong>{formatMoney(snapshot.total, snapshot.currency)}</strong>
+          <span className="display-kicker">{partlyPaid ? "KALAN TUTAR" : "ÖDENECEK TOPLAM"}</span>
+          <strong>{formatMoney(typeof snapshot.remainingTotal === "number" ? snapshot.remainingTotal : snapshot.total, snapshot.currency)}</strong>
           <div className="display-total-breakdown">
+            {partlyPaid && (
+              <>
+                <div><span>Hesap toplamı</span><span>{formatMoney(snapshot.paidTotal + (snapshot.remainingTotal ?? 0), snapshot.currency)}</span></div>
+                <div><span>Ödenen</span><span>{formatMoney(snapshot.paidTotal, snapshot.currency)}</span></div>
+              </>
+            )}
             <div><span>Ara toplam</span><span>{formatMoney(snapshot.subtotal, snapshot.currency)}</span></div>
             {snapshot.discountTotal > 0 && (
               <div><span>İndirim</span><span>−{formatMoney(snapshot.discountTotal, snapshot.currency)}</span></div>

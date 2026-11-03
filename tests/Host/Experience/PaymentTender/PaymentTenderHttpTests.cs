@@ -1025,6 +1025,80 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    [Fact]
+    public async Task TheCustomerDisplayShowsWhatIsLeftOnTheBillTheCashierOpened()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd785-display");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var displayId = Guid.NewGuid();
+
+        var pairing = await (await PostAsync(client, "/api/v1/customer-displays/pairing-requests", null, new { DisplayId = displayId }))
+            .Content.ReadFromJsonAsync<JsonElement>();
+        var approved = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/pairings/approve", cookie,
+            new { Code = pairing.GetProperty("code").GetString() });
+        Assert.Equal(HttpStatusCode.NoContent, approved.StatusCode);
+        var completed = await PostAsync(client,
+            $"/api/v1/customer-displays/pairing-requests/{pairing.GetProperty("requestId").GetGuid():D}/complete", null,
+            new { Secret = pairing.GetProperty("secret").GetString() });
+        Assert.Equal(HttpStatusCode.OK, completed.StatusCode);
+        var displayCookie = completed.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.DisplayCookieName + "=", StringComparison.Ordinal))
+            .Split(';')[0];
+
+        var bound = await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { });
+        Assert.Equal(HttpStatusCode.OK, bound.StatusCode);
+        Assert.True((await bound.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("bound").GetBoolean());
+        var tender = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd785-eft" });
+        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
+
+        var snapshot = await (await GetAsync(client, $"/api/v1/customer-displays/{displayId:D}/snapshot", displayCookie))
+            .Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(60m, snapshot.GetProperty("paidTotal").GetDecimal());
+        Assert.Equal(40m, snapshot.GetProperty("remainingTotal").GetDecimal());
+        Assert.Equal(CustomerDisplayPaymentProgress.PartiallyPaidMessage, snapshot.GetProperty("message").GetString());
+
+        var active = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/orders/active", cookie))
+            .Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(40m, active.GetProperty("remainingTotal").GetDecimal());
+    }
+
+    [Fact]
+    public async Task WithoutPaymentsTakeABillCannotBeShownOnTheCustomerDisplay()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd785-no-take", takesPayments: false);
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { });
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        var active = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/orders/active", cookie))
+            .Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(JsonValueKind.Null, active.GetProperty("orderId").ValueKind);
+    }
+
+    [Fact]
+    public async Task ShowingAnUnknownBillOnTheCustomerDisplayIsNotFound()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd785-unknown");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, ShowOnDisplayPath(terminalId, Guid.NewGuid()), cookie, new { });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    private static string ShowOnDisplayPath(Guid terminalId, Guid billId)
+        => $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/show-on-display";
+
     private static string TendersPath(Guid terminalId, Guid billId)
         => $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tenders/";
 

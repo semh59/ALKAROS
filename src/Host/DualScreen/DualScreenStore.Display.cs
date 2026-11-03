@@ -332,6 +332,42 @@ public sealed partial class DualScreenStore
             : null;
     }
 
+    /// <summary>
+    /// Points the terminal's display at the order of a bill being paid. An order still being edited on the terminal
+    /// (Draft) is never replaced; false also means the bill has no order or is already paid or cancelled.
+    /// </summary>
+    public async Task<bool> BindBillOrderToDisplayAsync(Guid terminalId, Guid billId, CancellationToken cancellationToken)
+    {
+        await EnsureTerminalAsync(terminalId, cancellationToken);
+        await using var billCommand = _dataSource.CreateCommand(
+            "SELECT order_id, status FROM billing.bills WHERE bill_id = @bill_id;");
+        billCommand.Parameters.AddWithValue("bill_id", billId);
+        Guid orderId;
+        await using (var reader = await billCommand.ExecuteReaderAsync(cancellationToken))
+        {
+            if (!await reader.ReadAsync(cancellationToken))
+                throw new DualScreenNotFoundException("Bill was not found.");
+            if (reader.IsDBNull(0) || reader.GetString(1) is "Cancelled" or "Paid")
+                return false;
+            orderId = reader.GetGuid(0);
+        }
+
+        await using var bind = _dataSource.CreateCommand(
+            """
+            UPDATE customer_display.terminals t
+            SET active_order_id = @order_id, row_version = row_version + 1, updated_at = now()
+            WHERE t.terminal_id = @terminal_id
+              AND (t.active_order_id IS NULL
+                   OR t.active_order_id = @order_id
+                   OR EXISTS (SELECT 1 FROM orders.orders o
+                              WHERE o.order_id = t.active_order_id
+                                AND o.status <> 'Draft'));
+            """);
+        bind.Parameters.AddWithValue("order_id", orderId);
+        bind.Parameters.AddWithValue("terminal_id", terminalId);
+        return await bind.ExecuteNonQueryAsync(cancellationToken) == 1;
+    }
+
     public async Task<Guid?> GetActiveDisplayIdAsync(Guid terminalId, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(

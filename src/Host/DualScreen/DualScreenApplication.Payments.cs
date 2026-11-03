@@ -104,18 +104,19 @@ public static partial class DualScreenApplication
                     // answer stays "closed" and the order is completed by the manual close-settled action.
                     OrderNotCompletedLog(logger, billId, exception);
                 }
-                // Best effort: nobody may be watching (no paired display, or it is offline), and a failed
-                // push must never turn a successful payment into an error response - the display simply
-                // shows the stale state until its own next natural refresh.
-                try
-                {
-                    await hub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
-                        CustomerDisplayHub.SnapshotChanged, new { kind = "BillSettled" }, cancellationToken);
-                }
-                catch (Exception exception) when (exception is not OperationCanceledException)
-                {
-                    DisplayPushFailedLog(logger, billId, exception);
-                }
+            }
+            // Every tender moves what is left to pay, not only the one that closes the bill. Best effort: nobody
+            // may be watching (no paired display, or it is offline), and a failed push must never turn a
+            // successful payment into an error response - the display simply shows the stale state until its own
+            // next natural refresh.
+            try
+            {
+                await hub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
+                    CustomerDisplayHub.SnapshotChanged, new { kind = closed ? "BillSettled" : "PaymentChanged" }, cancellationToken);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                DisplayPushFailedLog(logger, billId, exception);
             }
             return closed;
         }
@@ -632,6 +633,36 @@ public static partial class DualScreenApplication
             };
         });
 
+        // The payment page calls this when it opens a bill, so the guest sees what is being paid (the walk-up
+        // cashier builds its basket in the browser, so there is no server order to show earlier).
+        app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/show-on-display", async (
+            Guid terminalId,
+            Guid billId,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+            var bound = await store.BindBillOrderToDisplayAsync(terminalId, billId, cancellationToken);
+            if (bound)
+            {
+                try
+                {
+                    await customerDisplayHub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
+                        CustomerDisplayHub.SnapshotChanged, new { kind = "PaymentChanged" }, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    DisplayPushFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure"), billId, exception);
+                }
+            }
+            return Results.Ok(new ShowBillOnDisplayResultV1(bound));
+        }).WithTags("PaymentTender").RequireRateLimiting("terminal-write");
+
         return group;
     }
 
@@ -667,6 +698,8 @@ public static partial class DualScreenApplication
 
 /// <summary>V13-PUI-001: request/response DTOs for the generic (non-Cash) tender HTTP surface.</summary>
 public sealed record SubmitBillTenderRequestV1(string Method, decimal Amount, string IdempotencyKey, string? Note = null);
+
+public sealed record ShowBillOnDisplayResultV1(bool Bound);
 
 public sealed record ResolveUnsettledPaymentRequestV1(string? Reason);
 

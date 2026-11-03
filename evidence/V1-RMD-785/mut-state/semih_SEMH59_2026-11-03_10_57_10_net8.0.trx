@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="46dcaa30-5a91-48cc-b191-953e05a54263" name="semih@SEMH59 2026-11-03 10:57:10" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T10:57:10.2207493+03:00" queuing="2026-11-03T10:57:10.2207496+03:00" start="2026-11-03T10:57:08.5488369+03:00" finish="2026-11-03T10:57:10.3004112+03:00" />
+  <TestSettings name="default" id="99bb3383-3864-45c6-a2e3-a3337230c5d0">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_10_57_10" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="22e89490-950d-4835-9da7-7e3833b44d15" testId="565144e6-b6d6-3960-aef6-7002bfb4dc71" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder" computerName="SEMH59" duration="00:00:00.0002687" startTime="2026-11-03T10:57:10.1606510+03:00" endTime="2026-11-03T10:57:10.1606511+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22e89490-950d-4835-9da7-7e3833b44d15" />
+    <UnitTestResult executionId="ca3b7d8b-cd90-440b-8ff2-0357b87e421c" testId="edbfd87a-832e-21dc-9da1-2e45239b49dc" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage" computerName="SEMH59" duration="00:00:00.0001871" startTime="2026-11-03T10:57:09.9091126+03:00" endTime="2026-11-03T10:57:09.9091126+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca3b7d8b-cd90-440b-8ff2-0357b87e421c" />
+    <UnitTestResult executionId="5e466cd6-48cb-4ae9-9828-3002e17e5e5b" testId="6a73d17e-5ff8-0334-9f0c-d4f5a7d85c89" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Completed&quot;)" computerName="SEMH59" duration="00:00:00.0040682" startTime="2026-11-03T10:57:10.1178201+03:00" endTime="2026-11-03T10:57:10.1178202+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e466cd6-48cb-4ae9-9828-3002e17e5e5b" />
+    <UnitTestResult executionId="2997076c-5e7f-4a6b-ab04-cbc52806aa38" testId="12445ff6-29db-1309-a030-7cf7c41d8ff9" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.WithoutABillTheSnapshotIsUnchanged" computerName="SEMH59" duration="00:00:00.0002679" startTime="2026-11-03T10:57:10.1181072+03:00" endTime="2026-11-03T10:57:10.1181074+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2997076c-5e7f-4a6b-ab04-cbc52806aa38" />
+    <UnitTestResult executionId="411ad2f0-77e7-454a-85b8-f7935719bd15" testId="7b9e2489-b61e-a992-e111-88803002fabd" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Idle&quot;)" computerName="SEMH59" duration="00:00:00.0003121" startTime="2026-11-03T10:57:10.1179262+03:00" endTime="2026-11-03T10:57:10.1179263+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="411ad2f0-77e7-454a-85b8-f7935719bd15" />
+    <UnitTestResult executionId="11ee7440-fa78-4579-a6d1-c4f3960974c4" testId="0a2c32ce-0304-c1db-f4cc-1f97b26f81e9" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo" computerName="SEMH59" duration="00:00:00.0135283" startTime="2026-11-03T10:57:09.9058153+03:00" endTime="2026-11-03T10:57:09.9058347+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="11ee7440-fa78-4579-a6d1-c4f3960974c4" />
+    <UnitTestResult executionId="2d334cb8-7b94-4655-9919-b6668d54bb7b" testId="51205b0b-fb24-1e8f-f8a3-e4dfdc970c4d" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(state: &quot;Idle&quot;)" computerName="SEMH59" duration="00:00:00.0007382" startTime="2026-11-03T10:57:10.1176537+03:00" endTime="2026-11-03T10:57:10.1176540+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d334cb8-7b94-4655-9919-b6668d54bb7b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at ALKAROS.Host.DualScreen.CustomerDisplayPaymentProgress.AttachAsync(CustomerDisplaySnapshotDto snapshot, IBillRepository bills, IBillPaymentClosureProjector projector, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\CustomerDisplayPaymentProgress.cs:line 26&#xD;
+   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(String state) in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="78133118-1c58-4280-b7cf-2de868ab3f74" testId="7595d947-d76c-eefa-4e9e-64b4b644d72c" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(state: &quot;Completed&quot;)" computerName="SEMH59" duration="00:00:00.1686264" startTime="2026-11-03T10:57:10.1165785+03:00" endTime="2026-11-03T10:57:10.1165787+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="78133118-1c58-4280-b7cf-2de868ab3f74">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NullReferenceException : Object reference not set to an instance of an object.</Message>
+          <StackTrace>   at ALKAROS.Host.DualScreen.CustomerDisplayPaymentProgress.AttachAsync(CustomerDisplaySnapshotDto snapshot, IBillRepository bills, IBillPaymentClosureProjector projector, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\CustomerDisplayPaymentProgress.cs:line 26&#xD;
+   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(String state) in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 80&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0e8069cd-7f95-4070-9c52-3be3d52703a7" testId="db3abd3a-e435-bf64-6e5d-eb9be3d2a6cf" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed" computerName="SEMH59" duration="00:00:00.0005611" startTime="2026-11-03T10:57:09.9087345+03:00" endTime="2026-11-03T10:57:09.9087346+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0e8069cd-7f95-4070-9c52-3be3d52703a7" />
+    <UnitTestResult executionId="6eec492a-c028-4914-bb59-a24a3abbb4f1" testId="2b28d528-0049-503b-70a3-1f096e70419f" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ASnapshotWithoutAnOrderNeverReadsTheBills" computerName="SEMH59" duration="00:00:00.0007877" startTime="2026-11-03T10:57:10.1604138+03:00" endTime="2026-11-03T10:57:10.1604140+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6eec492a-c028-4914-bb59-a24a3abbb4f1" />
+    <UnitTestResult executionId="af2ec3a3-4a47-4ce3-b146-ec33f0999f3a" testId="79f2514e-72e4-3cc5-5656-eb84c66393f8" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining" computerName="SEMH59" duration="00:00:00.0003134" startTime="2026-11-03T10:57:10.1182846+03:00" endTime="2026-11-03T10:57:10.1182847+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af2ec3a3-4a47-4ce3-b146-ec33f0999f3a" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="db3abd3a-e435-bf64-6e5d-eb9be3d2a6cf">
+      <Execution id="0e8069cd-7f95-4070-9c52-3be3d52703a7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="SeveralBillsOfOneOrderAreSummed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ASnapshotWithoutAnOrderNeverReadsTheBills" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="2b28d528-0049-503b-70a3-1f096e70419f">
+      <Execution id="6eec492a-c028-4914-bb59-a24a3abbb4f1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ASnapshotWithoutAnOrderNeverReadsTheBills" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(state: &quot;Idle&quot;)" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="51205b0b-fb24-1e8f-f8a3-e4dfdc970c4d">
+      <Execution id="2d334cb8-7b94-4655-9919-b6668d54bb7b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ACompletedOrIdleScreenNeverReadsTheBills" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="565144e6-b6d6-3960-aef6-7002bfb4dc71">
+      <Execution id="22e89490-950d-4835-9da7-7e3833b44d15" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="AllocationAboveThePayableAmountNeverShowsANegativeRemainder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Completed&quot;)" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="6a73d17e-5ff8-0334-9f0c-d4f5a7d85c89">
+      <Execution id="5e466cd6-48cb-4ae9-9828-3002e17e5e5b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ACompletedOrIdleScreenIsNotTouched" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(state: &quot;Completed&quot;)" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="7595d947-d76c-eefa-4e9e-64b4b644d72c">
+      <Execution id="78133118-1c58-4280-b7cf-2de868ab3f74" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ACompletedOrIdleScreenNeverReadsTheBills" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="0a2c32ce-0304-c1db-f4cc-1f97b26f81e9">
+      <Execution id="11ee7440-fa78-4579-a6d1-c4f3960974c4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="APartialPaymentShowsPaidAndRemainingAndSaysSo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.WithoutABillTheSnapshotIsUnchanged" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="12445ff6-29db-1309-a030-7cf7c41d8ff9">
+      <Execution id="2997076c-5e7f-4a6b-ab04-cbc52806aa38" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="WithoutABillTheSnapshotIsUnchanged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Idle&quot;)" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="7b9e2489-b61e-a992-e111-88803002fabd">
+      <Execution id="411ad2f0-77e7-454a-85b8-f7935719bd15" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ACompletedOrIdleScreenIsNotTouched" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="edbfd87a-832e-21dc-9da1-2e45239b49dc">
+      <Execution id="ca3b7d8b-cd90-440b-8ff2-0357b87e421c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="79f2514e-72e4-3cc5-5656-eb84c66393f8">
+      <Execution id="af2ec3a3-4a47-4ce3-b146-ec33f0999f3a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ABillWithoutPaymentsShowsItsPayableAmountAsRemaining" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="565144e6-b6d6-3960-aef6-7002bfb4dc71" executionId="22e89490-950d-4835-9da7-7e3833b44d15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edbfd87a-832e-21dc-9da1-2e45239b49dc" executionId="ca3b7d8b-cd90-440b-8ff2-0357b87e421c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a73d17e-5ff8-0334-9f0c-d4f5a7d85c89" executionId="5e466cd6-48cb-4ae9-9828-3002e17e5e5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12445ff6-29db-1309-a030-7cf7c41d8ff9" executionId="2997076c-5e7f-4a6b-ab04-cbc52806aa38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b9e2489-b61e-a992-e111-88803002fabd" executionId="411ad2f0-77e7-454a-85b8-f7935719bd15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a2c32ce-0304-c1db-f4cc-1f97b26f81e9" executionId="11ee7440-fa78-4579-a6d1-c4f3960974c4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51205b0b-fb24-1e8f-f8a3-e4dfdc970c4d" executionId="2d334cb8-7b94-4655-9919-b6668d54bb7b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7595d947-d76c-eefa-4e9e-64b4b644d72c" executionId="78133118-1c58-4280-b7cf-2de868ab3f74" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db3abd3a-e435-bf64-6e5d-eb9be3d2a6cf" executionId="0e8069cd-7f95-4070-9c52-3be3d52703a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b28d528-0049-503b-70a3-1f096e70419f" executionId="6eec492a-c028-4914-bb59-a24a3abbb4f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79f2514e-72e4-3cc5-5656-eb84c66393f8" executionId="af2ec3a3-4a47-4ce3-b146-ec33f0999f3a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="11" executed="11" passed="9" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.58]   Discovering: ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.68]   Discovered:  ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.68]   Starting:    ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.95]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.95]         D:\PROJECT\ALKAROS\src\Host\DualScreen\CustomerDisplayPaymentProgress.cs(26,0): at ALKAROS.Host.DualScreen.CustomerDisplayPaymentProgress.AttachAsync(CustomerDisplaySnapshotDto snapshot, IBillRepository bills, IBillPaymentClosureProjector projector, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.95]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(80,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(String state)&#xD;
+[xUnit.net 00:00:00.95]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.95]       System.NullReferenceException : Object reference not set to an instance of an object.&#xD;
+[xUnit.net 00:00:00.95]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.95]         D:\PROJECT\ALKAROS\src\Host\DualScreen\CustomerDisplayPaymentProgress.cs(26,0): at ALKAROS.Host.DualScreen.CustomerDisplayPaymentProgress.AttachAsync(CustomerDisplaySnapshotDto snapshot, IBillRepository bills, IBillPaymentClosureProjector projector, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:00.95]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(80,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(String state)&#xD;
+[xUnit.net 00:00:00.95]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.00]   Finished:    ALKAROS.Host.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T10:57:10.1136906+03:00">
+        <Text>[xUnit.net 00:00:00.95]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(state: "Completed") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T10:57:10.1175015+03:00">
+        <Text>[xUnit.net 00:00:00.95]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenNeverReadsTheBills(state: "Idle") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

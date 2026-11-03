@@ -21,7 +21,7 @@ public sealed class CustomerDisplayContractTests
     private static readonly string[] ExpectedProperties =
     [
         "currency", "discountTotal", "displayId", "editable", "lines", "message", "orderId", "orderNumber",
-        "revision", "serverTimestamp", "state", "subtotal", "taxTotal", "terminalId", "total",
+        "paidTotal", "remainingTotal", "revision", "serverTimestamp", "state", "subtotal", "taxTotal", "terminalId", "total",
     ];
 
     [Fact]

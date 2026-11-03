@@ -1,7 +1,7 @@
 # V1-RMD-785 - Müşteri ekranı: kısmi ödeme kalan tutarı ve ödeme sayfasında açılan hesabın ekrana bağlanması
 
 - Task ID: V1-RMD-785
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing

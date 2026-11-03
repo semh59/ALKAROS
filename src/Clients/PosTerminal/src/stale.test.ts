@@ -26,6 +26,8 @@ const snapshot: DisplaySnapshot = {
   currency: "TRY",
   serverTimestamp: "2026-08-24T00:00:00Z",
   message: "Aktif",
+  paidTotal: 0,
+  remainingTotal: null,
 };
 
 describe("customer display freshness", () => {

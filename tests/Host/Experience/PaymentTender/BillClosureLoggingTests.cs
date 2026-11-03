@@ -1,5 +1,6 @@
 using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Host.DualScreen;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Xunit;
 
@@ -34,15 +35,60 @@ public sealed class BillClosureLoggingTests
     }
 
     [Fact]
-    public async Task ABillThatIsNotSettledYetLogsNothing()
+    public async Task ABillThatIsNotSettledYetStillTellsTheDisplayWhatChanged()
     {
         var logs = new CapturingLoggerFactory();
+        var hub = new RecordingHub();
+        var terminalId = Guid.NewGuid();
 
         var closed = await DualScreenApplication.TryCloseBillAsync(
-            new FixedClosure(BillClosureOutcome.NotSatisfied), null!, Guid.NewGuid(), null!, logs, Guid.NewGuid(), CancellationToken.None);
+            new FixedClosure(BillClosureOutcome.NotSatisfied), null!, Guid.NewGuid(), hub, logs, terminalId, CancellationToken.None);
 
         Assert.False(closed);
         Assert.Empty(logs.Events);
+        var push = Assert.Single(hub.Pushes);
+        Assert.Equal(DualScreenApplication.TerminalGroup(terminalId), push.Group);
+        Assert.Equal(CustomerDisplayHub.SnapshotChanged, push.Method);
+        Assert.Contains("PaymentChanged", push.Argument);
+    }
+
+    private sealed class RecordingHub : IHubContext<CustomerDisplayHub>
+    {
+        public List<(string Group, string Method, string Argument)> Pushes { get; } = [];
+
+        public IHubClients Clients => new RecordingClients(Pushes);
+
+        public IGroupManager Groups => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingClients(List<(string Group, string Method, string Argument)> pushes) : IHubClients
+    {
+        public IClientProxy Group(string groupName) => new RecordingProxy(groupName, pushes);
+
+        public IClientProxy All => throw new NotSupportedException();
+
+        public IClientProxy AllExcept(IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Client(string connectionId) => throw new NotSupportedException();
+
+        public IClientProxy Clients(IReadOnlyList<string> connectionIds) => throw new NotSupportedException();
+
+        public IClientProxy GroupExcept(string groupName, IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Groups(IReadOnlyList<string> groupNames) => throw new NotSupportedException();
+
+        public IClientProxy User(string userId) => throw new NotSupportedException();
+
+        public IClientProxy Users(IReadOnlyList<string> userIds) => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingProxy(string group, List<(string Group, string Method, string Argument)> pushes) : IClientProxy
+    {
+        public Task SendCoreAsync(string method, object?[] args, CancellationToken cancellationToken = default)
+        {
+            pushes.Add((group, method, System.Text.Json.JsonSerializer.Serialize(args[0])));
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class ThrowingClosure : IBillClosureService

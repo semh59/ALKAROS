@@ -412,11 +412,14 @@ public static partial class DualScreenApplication
             Guid terminalId,
             HttpContext context,
             DualScreenStore store,
+            ALKAROS.Billing.BillFoundation.IBillRepository bills,
+            ALKAROS.Billing.PaymentClosure.IBillPaymentClosureProjector projector,
             CancellationToken cancellationToken) =>
         {
             await RequireCashierAsync(context, terminalId, store, cancellationToken);
             var displayId = await store.GetActiveDisplayIdAsync(terminalId, cancellationToken) ?? Guid.Empty;
-            return Results.Ok(await store.GetSnapshotAsync(displayId, terminalId, cancellationToken));
+            var snapshot = await store.GetSnapshotAsync(displayId, terminalId, cancellationToken);
+            return Results.Ok(await CustomerDisplayPaymentProgress.AttachAsync(snapshot, bills, projector, cancellationToken));
         }).RequireRateLimiting("terminal-read");
 
         app.MapPost("/api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items", async (
@@ -546,12 +549,15 @@ public static partial class DualScreenApplication
             Guid displayId,
             HttpContext context,
             DualScreenStore store,
+            ALKAROS.Billing.BillFoundation.IBillRepository bills,
+            ALKAROS.Billing.PaymentClosure.IBillPaymentClosureProjector projector,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireDisplayAsync(context, displayId, store, cancellationToken);
             // The server end of the session slides with use; the browser's copy of the cookie slides with it.
             AppendCookie(context, DisplayCookieName, context.Request.Cookies[DisplayCookieName]!, principal.ExpiresAt);
-            return Results.Ok(await store.GetSnapshotAsync(displayId, principal.TerminalId, cancellationToken));
+            var snapshot = await store.GetSnapshotAsync(displayId, principal.TerminalId, cancellationToken);
+            return Results.Ok(await CustomerDisplayPaymentProgress.AttachAsync(snapshot, bills, projector, cancellationToken));
         }).RequireRateLimiting("display-read");
 
         app.MapGet("/api/v1/terminals/{terminalId:guid}/display-sessions/current", async (

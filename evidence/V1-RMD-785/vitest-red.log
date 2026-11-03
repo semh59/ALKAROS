@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (11 tests | 1 failed) 566ms
+     × shows what is left to pay once part of the bill was taken 34ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > shows what is left to pay once part of the bill was taken
+AssertionError: expected 'ÖDENECEK TOPLAM₺260,00Ara toplam₺560,…' to contain 'KALAN TUTAR'
+
+Expected: "KALAN TUTAR"
+Received: "ÖDENECEK TOPLAM₺260,00Ara toplam₺560,00İçindeki KDV₺50,91✓Ödemenizin bir bölümü alındı; kalan tutar ödenecek.Canlı güncelleme · v3"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:133:18
+    131|
+    132|     const card = document.querySelector(".display-total-card")!.textCo…
+    133|     expect(card).toContain("KALAN TUTAR");
+       |                  ^
+    134|     expect(card).toContain("160,00");
+    135|     expect(card).toContain("Ödenen");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  10:32:59
+   Duration  3.54s (transform 208ms, setup 0ms, import 293ms, tests 566ms, environment 2.13s)
+

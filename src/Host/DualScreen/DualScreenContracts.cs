@@ -151,7 +151,9 @@ public sealed record CustomerDisplaySnapshotDto(
     decimal Total,
     string Currency,
     DateTimeOffset ServerTimestamp,
-    string Message);
+    string Message,
+    decimal PaidTotal = 0m,
+    decimal? RemainingTotal = null);
 
 public sealed record ApiErrorEnvelope([property: JsonPropertyName("error")] ApiError Error);
 

@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="81c66e5c-8e5a-4efa-85a2-f2b2fb0f065b" name="semih@SEMH59 2026-11-03 09:38:14" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T09:38:14.7269520+03:00" queuing="2026-11-03T09:38:14.7269522+03:00" start="2026-11-03T09:38:13.0060107+03:00" finish="2026-11-03T09:39:38.3998238+03:00" />
+  <TestSettings name="default" id="b02b3189-d5b0-43b2-bc6f-b54a35c4dcfd">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_09_38_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d12a135b-169c-4cf2-8e0a-eb078f90575a" testId="ff0a5fd1-954b-e9d9-b9a6-c64eaca8fc0c" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnOrderBeingEditedOnTheTerminalIsNeverReplaced" computerName="SEMH59" duration="00:00:00.0680567" startTime="2026-11-03T09:39:12.7449340+03:00" endTime="2026-11-03T09:39:12.7449342+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d12a135b-169c-4cf2-8e0a-eb078f90575a" />
+    <UnitTestResult executionId="1f1ccb1f-7a0f-4a6a-ae15-f26738c136d1" testId="82fcf868-bcd4-d790-2125-ff8e4b1b3ab4" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining" computerName="SEMH59" duration="00:00:00.0517709" startTime="2026-11-03T09:39:25.6632040+03:00" endTime="2026-11-03T09:39:25.6632044+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1f1ccb1f-7a0f-4a6a-ae15-f26738c136d1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 100&#xD;
+Actual:   0</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs:line 125&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c15c8709-e77d-42bb-890d-d0c4de02f957" testId="79f2514e-72e4-3cc5-5656-eb84c66393f8" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining" computerName="SEMH59" duration="00:00:00.0027060" startTime="2026-11-03T09:38:14.6372780+03:00" endTime="2026-11-03T09:38:14.6372780+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c15c8709-e77d-42bb-890d-d0c4de02f957">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 250&#xD;
+Actual:   null</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 22&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="73864317-9cae-4b6b-8544-c09a11f0bddb" testId="0f442f27-a7e3-38db-7883-6bcd94788a66" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.OpeningABillShowsItsOrderOnATerminalWithoutAnActiveOrder" computerName="SEMH59" duration="00:00:00.0377333" startTime="2026-11-03T09:39:38.3249859+03:00" endTime="2026-11-03T09:39:38.3249861+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73864317-9cae-4b6b-8544-c09a11f0bddb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.OpeningABillShowsItsOrderOnATerminalWithoutAnActiveOrder() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs:line 56&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="43fc24ea-1f2a-4b6f-ad57-ad676b58428a" testId="34a12b76-5572-dcec-a1c7-f2c760d88f29" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnUnknownBillIsNotFound" computerName="SEMH59" duration="00:00:00.0033255" startTime="2026-11-03T09:38:59.6635075+03:00" endTime="2026-11-03T09:38:59.6635077+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="43fc24ea-1f2a-4b6f-ad57-ad676b58428a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(ALKAROS.Host.DualScreen.DualScreenNotFoundException)</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnUnknownBillIsNotFound() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs:line 105&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="099a59b9-1658-45e3-bbb3-42bc04a67562" testId="12445ff6-29db-1309-a030-7cf7c41d8ff9" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.WithoutABillTheSnapshotIsUnchanged" computerName="SEMH59" duration="00:00:00.0001586" startTime="2026-11-03T09:38:14.6366157+03:00" endTime="2026-11-03T09:38:14.6366158+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="099a59b9-1658-45e3-bbb3-42bc04a67562" />
+    <UnitTestResult executionId="ee577736-529f-4b99-9ba0-71ee7375c272" testId="0c462dea-19c0-ef6d-17c9-ef05635dbf29" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayContractTests.CatalogProductCarriesRealCategoryMetadata" computerName="SEMH59" duration="00:00:00.0610576" startTime="2026-11-03T09:38:14.6455182+03:00" endTime="2026-11-03T09:38:14.6455186+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee577736-529f-4b99-9ba0-71ee7375c272" />
+    <UnitTestResult executionId="d43cac02-0bec-4af1-acb2-fc6437cfab78" testId="4cde7a00-5c64-1bca-bab9-bb890d1aaabf" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ASubmittedOrderOnTheTerminalGivesWayToTheBillBeingPaid" computerName="SEMH59" duration="00:00:00.0581834" startTime="2026-11-03T09:38:46.9585067+03:00" endTime="2026-11-03T09:38:46.9585070+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d43cac02-0bec-4af1-acb2-fc6437cfab78">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ASubmittedOrderOnTheTerminalGivesWayToTheBillBeingPaid() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs:line 84&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="683910be-d227-425c-8fe8-1b8a1a4509c3" testId="95e6cbc2-0be8-67ed-5dfc-9bd686c09827" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillAndABillWithoutAnOrderAreNotShown" computerName="SEMH59" duration="00:00:00.1187201" startTime="2026-11-03T09:38:33.8110209+03:00" endTime="2026-11-03T09:38:33.8110212+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="683910be-d227-425c-8fe8-1b8a1a4509c3" />
+    <UnitTestResult executionId="b0c5ad2d-665e-471f-92d1-8ea0a3630726" testId="6a73d17e-5ff8-0334-9f0c-d4f5a7d85c89" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Completed&quot;)" computerName="SEMH59" duration="00:00:00.0034870" startTime="2026-11-03T09:38:14.6363787+03:00" endTime="2026-11-03T09:38:14.6363789+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0c5ad2d-665e-471f-92d1-8ea0a3630726" />
+    <UnitTestResult executionId="c1c85078-dcad-426e-958d-3a92ecf2a9bc" testId="7b9e2489-b61e-a992-e111-88803002fabd" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Idle&quot;)" computerName="SEMH59" duration="00:00:00.0001886" startTime="2026-11-03T09:38:14.6365416+03:00" endTime="2026-11-03T09:38:14.6365417+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1c85078-dcad-426e-958d-3a92ecf2a9bc" />
+    <UnitTestResult executionId="2726c5a7-9b1b-4e5a-ba2a-feb86509b2c3" testId="edbfd87a-832e-21dc-9da1-2e45239b49dc" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage" computerName="SEMH59" duration="00:00:00.0002791" startTime="2026-11-03T09:38:14.6357339+03:00" endTime="2026-11-03T09:38:14.6357340+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2726c5a7-9b1b-4e5a-ba2a-feb86509b2c3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 260&#xD;
+Actual:   0</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 42&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="dc5a126b-b5e3-425d-813e-e2ed40a118af" testId="0a2c32ce-0304-c1db-f4cc-1f97b26f81e9" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo" computerName="SEMH59" duration="00:00:00.0159726" startTime="2026-11-03T09:38:14.6303788+03:00" endTime="2026-11-03T09:38:14.6303994+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc5a126b-b5e3-425d-813e-e2ed40a118af">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 100&#xD;
+Actual:   0</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 31&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c20cc6e7-0a53-496a-bec4-71ab69a1ef18" testId="db3abd3a-e435-bf64-6e5d-eb9be3d2a6cf" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed" computerName="SEMH59" duration="00:00:00.0006789" startTime="2026-11-03T09:38:14.6347880+03:00" endTime="2026-11-03T09:38:14.6347881+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c20cc6e7-0a53-496a-bec4-71ab69a1ef18">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 40&#xD;
+Actual:   0</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 60&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3ebdca9d-7927-436c-8554-693aaa4501b7" testId="5d4a5f34-0893-8edd-ed64-075b56d60708" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayContractTests.SnapshotSerializesOnlyTheCustomerAllowlist" computerName="SEMH59" duration="00:00:00.0314019" startTime="2026-11-03T09:38:14.6870362+03:00" endTime="2026-11-03T09:38:14.6870362+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3ebdca9d-7927-436c-8554-693aaa4501b7" />
+    <UnitTestResult executionId="9576a88f-dd73-48af-a2e2-161f3c254262" testId="565144e6-b6d6-3960-aef6-7002bfb4dc71" testName="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder" computerName="SEMH59" duration="00:00:00.0004475" startTime="2026-11-03T09:38:14.6378086+03:00" endTime="2026-11-03T09:38:14.6378087+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9576a88f-dd73-48af-a2e2-161f3c254262">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   null</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs:line 52&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="82fcf868-bcd4-d790-2125-ff8e4b1b3ab4">
+      <Execution id="1f1ccb1f-7a0f-4a6a-ae15-f26738c136d1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests" name="ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnOrderBeingEditedOnTheTerminalIsNeverReplaced" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="ff0a5fd1-954b-e9d9-b9a6-c64eaca8fc0c">
+      <Execution id="d12a135b-169c-4cf2-8e0a-eb078f90575a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests" name="AnOrderBeingEditedOnTheTerminalIsNeverReplaced" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ASubmittedOrderOnTheTerminalGivesWayToTheBillBeingPaid" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="4cde7a00-5c64-1bca-bab9-bb890d1aaabf">
+      <Execution id="d43cac02-0bec-4af1-acb2-fc6437cfab78" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests" name="ASubmittedOrderOnTheTerminalGivesWayToTheBillBeingPaid" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="565144e6-b6d6-3960-aef6-7002bfb4dc71">
+      <Execution id="9576a88f-dd73-48af-a2e2-161f3c254262" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="AllocationAboveThePayableAmountNeverShowsANegativeRemainder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="79f2514e-72e4-3cc5-5656-eb84c66393f8">
+      <Execution id="c15c8709-e77d-42bb-890d-d0c4de02f957" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ABillWithoutPaymentsShowsItsPayableAmountAsRemaining" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="edbfd87a-832e-21dc-9da1-2e45239b49dc">
+      <Execution id="2726c5a7-9b1b-4e5a-ba2a-feb86509b2c3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="0a2c32ce-0304-c1db-f4cc-1f97b26f81e9">
+      <Execution id="dc5a126b-b5e3-425d-813e-e2ed40a118af" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="APartialPaymentShowsPaidAndRemainingAndSaysSo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayContractTests.CatalogProductCarriesRealCategoryMetadata" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="0c462dea-19c0-ef6d-17c9-ef05635dbf29">
+      <Execution id="ee577736-529f-4b99-9ba0-71ee7375c272" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayContractTests" name="CatalogProductCarriesRealCategoryMetadata" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayContractTests.SnapshotSerializesOnlyTheCustomerAllowlist" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="5d4a5f34-0893-8edd-ed64-075b56d60708">
+      <Execution id="3ebdca9d-7927-436c-8554-693aaa4501b7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayContractTests" name="SnapshotSerializesOnlyTheCustomerAllowlist" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.OpeningABillShowsItsOrderOnATerminalWithoutAnActiveOrder" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="0f442f27-a7e3-38db-7883-6bcd94788a66">
+      <Execution id="73864317-9cae-4b6b-8544-c09a11f0bddb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests" name="OpeningABillShowsItsOrderOnATerminalWithoutAnActiveOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Idle&quot;)" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="7b9e2489-b61e-a992-e111-88803002fabd">
+      <Execution id="c1c85078-dcad-426e-958d-3a92ecf2a9bc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ACompletedOrIdleScreenIsNotTouched" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnUnknownBillIsNotFound" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="34a12b76-5572-dcec-a1c7-f2c760d88f29">
+      <Execution id="43fc24ea-1f2a-4b6f-ad57-ad676b58428a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests" name="AnUnknownBillIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="db3abd3a-e435-bf64-6e5d-eb9be3d2a6cf">
+      <Execution id="c20cc6e7-0a53-496a-bec4-71ab69a1ef18" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="SeveralBillsOfOneOrderAreSummed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillAndABillWithoutAnOrderAreNotShown" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="95e6cbc2-0be8-67ed-5dfc-9bd686c09827">
+      <Execution id="683910be-d227-425c-8fe8-1b8a1a4509c3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests" name="ACancelledBillAndABillWithoutAnOrderAreNotShown" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.WithoutABillTheSnapshotIsUnchanged" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="12445ff6-29db-1309-a030-7cf7c41d8ff9">
+      <Execution id="099a59b9-1658-45e3-bbb3-42bc04a67562" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="WithoutABillTheSnapshotIsUnchanged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ACompletedOrIdleScreenIsNotTouched(state: &quot;Completed&quot;)" storage="d:\project\alkaros\tests\host\migrationcomposition\bin\debug\net8.0\alkaros.host.tests.dll" id="6a73d17e-5ff8-0334-9f0c-d4f5a7d85c89">
+      <Execution id="b0c5ad2d-665e-471f-92d1-8ea0a3630726" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests" name="ACompletedOrIdleScreenIsNotTouched" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ff0a5fd1-954b-e9d9-b9a6-c64eaca8fc0c" executionId="d12a135b-169c-4cf2-8e0a-eb078f90575a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82fcf868-bcd4-d790-2125-ff8e4b1b3ab4" executionId="1f1ccb1f-7a0f-4a6a-ae15-f26738c136d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79f2514e-72e4-3cc5-5656-eb84c66393f8" executionId="c15c8709-e77d-42bb-890d-d0c4de02f957" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f442f27-a7e3-38db-7883-6bcd94788a66" executionId="73864317-9cae-4b6b-8544-c09a11f0bddb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34a12b76-5572-dcec-a1c7-f2c760d88f29" executionId="43fc24ea-1f2a-4b6f-ad57-ad676b58428a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12445ff6-29db-1309-a030-7cf7c41d8ff9" executionId="099a59b9-1658-45e3-bbb3-42bc04a67562" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c462dea-19c0-ef6d-17c9-ef05635dbf29" executionId="ee577736-529f-4b99-9ba0-71ee7375c272" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4cde7a00-5c64-1bca-bab9-bb890d1aaabf" executionId="d43cac02-0bec-4af1-acb2-fc6437cfab78" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="95e6cbc2-0be8-67ed-5dfc-9bd686c09827" executionId="683910be-d227-425c-8fe8-1b8a1a4509c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a73d17e-5ff8-0334-9f0c-d4f5a7d85c89" executionId="b0c5ad2d-665e-471f-92d1-8ea0a3630726" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b9e2489-b61e-a992-e111-88803002fabd" executionId="c1c85078-dcad-426e-958d-3a92ecf2a9bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="edbfd87a-832e-21dc-9da1-2e45239b49dc" executionId="2726c5a7-9b1b-4e5a-ba2a-feb86509b2c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a2c32ce-0304-c1db-f4cc-1f97b26f81e9" executionId="dc5a126b-b5e3-425d-813e-e2ed40a118af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db3abd3a-e435-bf64-6e5d-eb9be3d2a6cf" executionId="c20cc6e7-0a53-496a-bec4-71ab69a1ef18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d4a5f34-0893-8edd-ed64-075b56d60708" executionId="3ebdca9d-7927-436c-8554-693aaa4501b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="565144e6-b6d6-3960-aef6-7002bfb4dc71" executionId="9576a88f-dd73-48af-a2e2-161f3c254262" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="16" executed="16" passed="7" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.67]   Discovering: ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.78]   Discovered:  ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.79]   Starting:    ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.88]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.88]       Expected: 100&#xD;
+[xUnit.net 00:00:00.88]       Actual:   0&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.88]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(31,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo()&#xD;
+[xUnit.net 00:00:00.88]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.88]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.88]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.88]       Expected: 40&#xD;
+[xUnit.net 00:00:00.88]       Actual:   0&#xD;
+[xUnit.net 00:00:00.88]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(60,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed()&#xD;
+[xUnit.net 00:00:00.89]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.89]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.89]       Expected: 260&#xD;
+[xUnit.net 00:00:00.89]       Actual:   0&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(42,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage()&#xD;
+[xUnit.net 00:00:00.89]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.89]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.89]       Expected: 250&#xD;
+[xUnit.net 00:00:00.89]       Actual:   null&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(22,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining()&#xD;
+[xUnit.net 00:00:00.89]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.89]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.89]       Expected: 0&#xD;
+[xUnit.net 00:00:00.89]       Actual:   null&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayPaymentProgressTests.cs(52,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder()&#xD;
+[xUnit.net 00:00:00.89]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.89]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:33.21]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:33.21]       Expected: True&#xD;
+[xUnit.net 00:00:33.21]       Actual:   False&#xD;
+[xUnit.net 00:00:33.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:33.21]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs(84,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ASubmittedOrderOnTheTerminalGivesWayToTheBillBeingPaid()&#xD;
+[xUnit.net 00:00:33.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:45.91]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:45.91]       Expected: typeof(ALKAROS.Host.DualScreen.DualScreenNotFoundException)&#xD;
+[xUnit.net 00:00:45.91]       Stack Trace:&#xD;
+[xUnit.net 00:00:45.91]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs(105,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnUnknownBillIsNotFound()&#xD;
+[xUnit.net 00:00:45.91]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:01:11.91]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:01:11.91]       Expected: 100&#xD;
+[xUnit.net 00:01:11.91]       Actual:   0&#xD;
+[xUnit.net 00:01:11.91]       Stack Trace:&#xD;
+[xUnit.net 00:01:11.91]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs(125,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining()&#xD;
+[xUnit.net 00:01:11.91]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:01:24.57]       Assert.True() Failure&#xD;
+[xUnit.net 00:01:24.58]       Expected: True&#xD;
+[xUnit.net 00:01:24.58]       Actual:   False&#xD;
+[xUnit.net 00:01:24.58]       Stack Trace:&#xD;
+[xUnit.net 00:01:24.58]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\CustomerDisplayBillBindingTests.cs(56,0): at ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.OpeningABillShowsItsOrderOnATerminalWithoutAnActiveOrder()&#xD;
+[xUnit.net 00:01:24.58]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:01:24.58]   Finished:    ALKAROS.Host.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:14.6272770+03:00">
+        <Text>[xUnit.net 00:00:00.88]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.APartialPaymentShowsPaidAndRemainingAndSaysSo [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:14.6345766+03:00">
+        <Text>[xUnit.net 00:00:00.88]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.SeveralBillsOfOneOrderAreSummed [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:14.6355193+03:00">
+        <Text>[xUnit.net 00:00:00.89]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillCoveredInFullLeavesNothingRemainingAndKeepsTheOrderMessage [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:14.6369719+03:00">
+        <Text>[xUnit.net 00:00:00.89]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.ABillWithoutPaymentsShowsItsPayableAmountAsRemaining [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:14.6374942+03:00">
+        <Text>[xUnit.net 00:00:00.89]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayPaymentProgressTests.AllocationAboveThePayableAmountNeverShowsANegativeRemainder [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:46.9584963+03:00">
+        <Text>[xUnit.net 00:00:33.21]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ASubmittedOrderOnTheTerminalGivesWayToTheBillBeingPaid [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:38:59.6635482+03:00">
+        <Text>[xUnit.net 00:00:45.91]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.AnUnknownBillIsNotFound [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:39:25.6628487+03:00">
+        <Text>[xUnit.net 00:01:11.91]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T09:39:38.3246067+03:00">
+        <Text>[xUnit.net 00:01:24.57]     ALKAROS.Host.Tests.DualScreen.CustomerDisplayBillBindingTests.OpeningABillShowsItsOrderOnATerminalWithoutAnActiveOrder [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -127,7 +127,7 @@ describe("split-payment.js failure states", () => {
 
     document.querySelector('[data-refund-action="dismiss"]').click();
     expect(app().textContent).not.toContain("Emin misiniz");
-    expect(fetchMock.mock.calls.some(([, init]) => init?.method === "POST")).toBe(false);
+    expect(fetchMock.mock.calls.some(([url, init]) => init?.method === "POST" && !url.endsWith("/show-on-display"))).toBe(false);
 
     type("#cancel-reason", "  ");
     expect(document.querySelector('[data-refund-action="cancel"]').disabled).toBe(true);

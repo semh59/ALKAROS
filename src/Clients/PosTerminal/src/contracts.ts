@@ -166,6 +166,9 @@ export interface DisplaySnapshot {
   currency: string;
   serverTimestamp: string;
   message: string;
+  paidTotal: number;
+  /** Null while the order has no live bill. */
+  remainingTotal: number | null;
 }
 
 export interface PairingCreated {
