@@ -30,6 +30,7 @@ Kapsam dışı: arayüz (V1-RMD-792); kasa kapanışı (V1-RMD-790); fiskal/Z ra
   - src/Modules/Reporting/BusinessDayTotals/BusinessDayTotalsReader.cs (V1-RMD-421) — tek deyimli sunucu hesapları, işlem içi okuma.
   - src/Modules/Reporting/Payments/ReportingModels.cs (V13-RPT-001) — ortak pencere.
   - src/Modules/Reporting/Channels/ChannelReportModels.cs (V12-RPT-001) — ortak pencere.
+  - src/Modules/Reporting/Channels/ChannelReportService.cs (V12-RPT-001) — satırların iş günü etiketi de 06:00 kaymasıyla (pencere ile aynı gün tanımı).
   - src/Modules/Reporting/V1Operations/OperationalReportService.cs (V1-RPT-001) — sunucu hesaplı kapanış, ön koşul.
   - src/Modules/Reporting/V1Operations/PostgresOperationalReportRepository.cs (V1-RPT-001) — işlem içi kapanış, yeni sütunlar.
   - src/Modules/Reporting/V1Operations/ReportingModels.cs (V1-RPT-001) — bahşiş, masa, mutabakat kayıtları.
