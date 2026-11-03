@@ -1,0 +1,238 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/format.test.ts (3 tests | 3 failed) 12ms
+     × renders an ISO instant as a Turkish local clock time, never the raw ISO text 8ms
+     × uses a decimal comma 1ms
+     × renders bytes as gigabytes with a decimal comma 0ms
+ ❯ src/shell/layout-contract.test.ts (6 tests | 1 failed) 21ms
+     × lets the till header wrap its actions instead of pushing them out of the clipped page 11ms
+ ❯ src/features/system-health/SystemHealthWorkspace.test.tsx (6 tests | 1 failed) 654ms
+     × shows sizes with a decimal comma and the last update as a clock time 46ms
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx (5 tests | 1 failed) 835ms
+     × renders authoritative geometry, seats and operational context 118ms
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx (10 tests | 1 failed) 1096ms
+     × tells the cashier there is no active bill as information, not as a failed load 14ms
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx (27 tests | 1 failed) 1775ms
+     × shows the last update as a Turkish clock time, never raw ISO text 56ms
+ ❯ src/routes/Cashier.sale-refresh.test.tsx (2 tests | 1 failed) 2560ms
+     × shows a submitted order without its internal revision number 80ms
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (60 tests | 2 failed) 2656ms
+     × shows a badge when kitchen.live_sync_enabled is off, and hides it when on 41ms
+     × shows a Turkish clock time, a fixed title and decimal commas instead of raw technical text 21ms
+ ❯ src/routes/workspace.test.tsx (30 tests | 1 failed) 888ms
+     × stops asking for the floor plan of a zone that has none, except on a manual refresh 44ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/format.test.ts > format helpers > renders an ISO instant as a Turkish local clock time, never the raw ISO text
+TypeError: formatClockTime is not a function
+ ❯ src/format.test.ts:6:18
+      4| describe("format helpers", () => {
+      5|   it("renders an ISO instant as a Turkish local clock time, never the …
+      6|     const text = formatClockTime("2026-11-01T08:02:49.436Z");
+       |                  ^
+      7|     expect(text).toMatch(/^\d{2}:\d{2}:\d{2}$/);
+      8|     expect(text).not.toContain("T");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/format.test.ts > format helpers > uses a decimal comma
+TypeError: formatDecimal is not a function
+ ❯ src/format.test.ts:12:12
+     10|
+     11|   it("uses a decimal comma", () => {
+     12|     expect(formatDecimal(12.34)).toBe("12,3");
+       |            ^
+     13|     expect(formatDecimal(4.5, 2)).toBe("4,50");
+     14|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/format.test.ts > format helpers > renders bytes as gigabytes with a decimal comma
+TypeError: formatGigabytes is not a function
+ ❯ src/format.test.ts:17:12
+     15|
+     16|   it("renders bytes as gigabytes with a decimal comma", () => {
+     17|     expect(formatGigabytes(775 * 1024 ** 3)).toBe("775,0 GB");
+       |            ^
+     18|   });
+     19| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/routes/Cashier.sale-refresh.test.tsx > Cashier refreshes only the order after a sale action > shows a submitted order without its internal revision number
+AssertionError: expected 'AALKAROSKasa satışSunucu hazırMüşteri…' not to match /Sürüm|\bv\d/
+
+- Expected:
+/Sürüm|\bv\d/
+
++ Received:
+"AALKAROSKasa satışSunucu hazırMüşteri ekranıMasalarMutfakEkranı eşleştirDeniz KayaKasiyerÇıkışToplam₺0,00Sonraki sipariş⌂Tümü0HIZLI SİPARİŞTüm ürünler⌕Aramanızla eşleşen aktif ürün bulunamadı.AKTİF SİPARİŞ10ürünSoldaki katalogdan ürün seçin.Ara toplam₺0,00İçindeki KDV₺0,00Toplam₺0,00✓Sipariş gönderildiSürüm 4Sonraki siparişi aç"
+
+ ❯ src/routes/Cashier.sale-refresh.test.tsx:101:43
+     99|
+    100|     expect(document.body.textContent).toContain("Sipariş gönderildi");
+    101|     expect(document.body.textContent).not.toMatch(/Sürüm|\bv\d/);
+       |                                           ^
+    102|   });
+    103| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /tables route background refresh > stops asking for the floor plan of a zone that has none, except on a manual refresh
+AssertionError: expected 3 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/routes/workspace.test.tsx:941:23
+    939|     await tick();
+    940|     await tick();
+    941|     expect(planCalls).toBe(1);
+       |                       ^
+    942|
+    943|     await act(async () => [...document.querySelectorAll("button")].fin…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/12]⎯
+
+ FAIL  src/shell/layout-contract.test.ts > responsive and interaction style contract > lets the till header wrap its actions instead of pushing them out of the clipped page
+AssertionError: expected '\n.pos-header {\n  height: 72px;\n  d…' to contain 'flex-wrap: wrap'
+
+- Expected
++ Received
+
+- flex-wrap: wrap
++
++ .pos-header {
++   height: 72px;
++   display: flex;
++   align-items: center;
++   justify-content: space-between;
++   padding: 0 1.1rem;
++   color: #fff;
++   border-bottom: 1px solid #2d3945;
++   background: var(--navy);
++
+
+ ❯ src/shell/layout-contract.test.ts:47:33
+     45|       return stylesCss.slice(start, stylesCss.indexOf("}", start));
+     46|     };
+     47|     expect(rule(".pos-header")).toContain("flex-wrap: wrap");
+       |                                 ^
+     48|     expect(rule(".pos-header")).not.toMatch(/\n\s*height:/);
+     49|     expect(rule(".pos-header-actions")).toContain("flex-wrap: wrap");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/12]⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.test.tsx > bill split workspace > tells the cashier there is no active bill as information, not as a failed load
+AssertionError: expected 'Hesap alınamadıBeklenmeyen bir hata o…' to contain 'Aktif adisyon yok'
+
+Expected: "Aktif adisyon yok"
+Received: "Hesap alınamadıBeklenmeyen bir hata oluştu.Tekrar dene"
+
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx:106:18
+    104|     await render(<BillSplitWorkspace {...props({ state: "empty", desig…
+    105|     const text = document.body.textContent ?? "";
+    106|     expect(text).toContain("Aktif adisyon yok");
+       |                  ^
+    107|     expect(text).toContain("Bir masa veya siparişten hesap açın.");
+    108|     expect(text).not.toContain("Hesap alınamadı");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/12]⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > shows the last update as a Turkish clock time, never raw ISO text
+AssertionError: expected 'YÖNETİM / KATALOGMenü ve katalogSon g…' not to match /\d{4}-\d{2}-\d{2}T/
+
+- Expected:
+/\d{4}-\d{2}-\d{2}T/
+
++ Received:
+"YÖNETİM / KATALOGMenü ve katalogSon güncelleme 2026-11-01T08:02:49.436Z+ Ürün ekleYenileÜrünler1Kategoriler1Vergi profilleri1Modifikatör grupları1Modifikatörler1Fiyatlar1Katalog araYayınlama yok · yalnızca yönetici ekleyip düzenleyebilirEspressoAktifESP-01 · Menü ürünü95.00 TRYSEÇİLİ KAYITEspressoÜrünlerKod / kimlikESP-01 · Menü ürünüDurumAktifDeğer95.00 TRYStok moduTakipsiz (eski kayıt)KDV profiliKDV %10MODİFİKATÖR ATAMALARIBu ürüne modifikatör atanmadı.BAĞLI MODİFİKATÖR GRUPLARIBu ürüne modifikatör grubu bağlı değil.Grup ataGrup seçinSüt seçimiGrubu ataGEÇERLİ FİYAT ZAMAN ÇİZELGESİ95.00 TRY01.01.2026 → açık uçluBu ekran yalnız kayıt yönetir. Yayınlama veya kasiyer görünürlüğü, aktif ve geçerli fiyat kuralları sağlanmadan değişmez."
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:68:22
+     66|     await render(<CatalogWorkspace {...baseProps({ lastUpdated: "2026-…
+     67|     const text = document.body.textContent ?? "";
+     68|     expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+       |                      ^
+     69|     expect(text).toMatch(/Son güncelleme \d{2}:\d{2}:\d{2}/);
+     70|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/12]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > shows a badge when kitchen.live_sync_enabled is off, and hides it when on
+AssertionError: expected 'EXPO / MUTFAKhot-line istasyonuSipari…' to contain 'Garson bildirimi kapalı'
+
+Expected: "Garson bildirimi kapalı"
+Received: "EXPO / MUTFAKhot-line istasyonuSipariş bazlı çapraz istasyon görünümüCanlıCanlı senkron kapalıYenileAçık masa/sipariş1Açık kalem1Doğrulanamayan baskı1Yazdırma sorunu0ExpoTüm GünOtomatikSakin modYoğun modSiparişorder-11607 sa 51 dkhedef 15 dk⚠hot-line · KT-0012×Mercimek çorbasıEkmeği ayrıNot: az tuz✓ BekliyorHazırlanıyorHazırServis edildiSİSTEM SAĞLIĞIVeritabanı ve yedeklemeSağlık ölçümü eskiSon ölçüm 26.08.2026 13:00. Gösterilen değerler güncel olmayabilir.VeritabanıSağlıklıDiskSorunlu · 0.0 GB boşSon yedeklemeSorunluFull yedekleme · 26.08.2026 12:00BaşarısızYedekleme başarısız oldu; ayrıntı sunucu günlüğündedir.YAZICI KURTARMADoğrulanamayan teslimatlar1ticket-1ACK alınamadıReddetGerekçeli onayYAZICIYazdırma sorunları0Bekleyen yazdırma sorunu yok.DONANIMYazıcı rotaları1/1 aktifMutfak yazıcıhot-line · 1 aktif rota · adres girilmemiş"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:175:39
+    173|     await render(<KitchenOperationsWorkspace {...baseProps({ data: { .…
+    174|     expect(document.querySelector(".kitchen-live-sync-badge")).not.toB…
+    175|     expect(document.body.textContent).toContain("Garson bildirimi kapa…
+       |                                       ^
+    176|     expect(document.body.textContent).not.toContain("Canlı senkron kap…
+    177|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/12]⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > shows a Turkish clock time, a fixed title and decimal commas instead of raw technical text
+AssertionError: expected 'EXPO / MUTFAKkitchen-main istasyonuSo…' to contain 'Mutfak ekranı'
+
+Expected: "Mutfak ekranı"
+Received: "EXPO / MUTFAKkitchen-main istasyonuSon güncelleme 2026-11-01T08:02:49.436ZCanlıYenileAçık masa/sipariş1Açık kalem1Doğrulanamayan baskı1Yazdırma sorunu0ExpoTüm GünOtomatikSakin modYoğun modSiparişorder-11607 sa 51 dkhedef 15 dk⚠hot-line · KT-0012×Mercimek çorbasıEkmeği ayrıNot: az tuz✓ BekliyorHazırlanıyorHazırServis edildiSİSTEM SAĞLIĞIVeritabanı ve yedeklemeSağlık ölçümü eskiSon ölçüm 26.08.2026 13:00. Gösterilen değerler güncel olmayabilir.VeritabanıSağlıklıDiskSorunlu · 775.0 GB boşSon yedeklemeSorunluFull yedekleme · 26.08.2026 12:00BaşarısızYedekleme başarısız oldu; ayrıntı sunucu günlüğündedir.YAZICI KURTARMADoğrulanamayan teslimatlar1ticket-1ACK alınamadıReddetGerekçeli onayYAZICIYazdırma sorunları0Bekleyen yazdırma sorunu yok.DONANIMYazıcı rotaları1/1 aktifMutfak yazıcıhot-line · 1 aktif rota · adres girilmemiş"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:186:18
+    184|     await render(<KitchenOperationsWorkspace {...baseProps({ stationId…
+    185|     const text = document.body.textContent ?? "";
+    186|     expect(text).toContain("Mutfak ekranı");
+       |                  ^
+    187|     expect(text).not.toContain("kitchen-main istasyonu");
+    188|     expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/12]⎯
+
+ FAIL  src/features/system-health/SystemHealthWorkspace.test.tsx > system health workspace > shows sizes with a decimal comma and the last update as a clock time
+AssertionError: expected 'YÖNETİM / SİSTEMSistem sağlığıSon gün…' to contain '20,0 GB'
+
+Expected: "20,0 GB"
+Received: "YÖNETİM / SİSTEMSistem sağlığıSon güncelleme 2026-11-01T08:02:49.436ZYenileSağlık ölçümü eskiSon ölçüm 31.08.2026 12:00. Gösterilen değerler güncel olmayabilir.VeritabanıSağlıklıDiskSınırlıSon yedekSorunluBoş disk alanı20.0 GBVeritabanı boyutu1.0 GBSon yedeklemeBaşarısızYedekleme hatası kaydedildi; ayrıntı sistem günlüğünde."
+
+ ❯ src/features/system-health/SystemHealthWorkspace.test.tsx:48:18
+     46|     await render(<SystemHealthWorkspace {...baseProps({ lastUpdated: "…
+     47|     const text = document.body.textContent ?? "";
+     48|     expect(text).toContain("20,0 GB");
+       |                  ^
+     49|     expect(text).not.toContain("20.0 GB");
+     50|     expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/12]⎯
+
+ FAIL  src/features/tables/FloorPlanWorkspace.test.tsx > floor plan workspace > renders authoritative geometry, seats and operational context
+AssertionError: expected 'CANLI SALONAna Salon1000 × 600 · günc…' not to match /\bv\d|tablo v|yerleşim v/
+
+- Expected:
+/\bv\d|tablo v|yerleşim v/
+
++ Received:
+"CANLI SALONAna Salon1000 × 600 · güncellendi 08:00Planı düzenleSALON GİRİŞİ ↑A-01DoluHesap bill-123Birleşim lideri1A-02MüsaitAçık işlem yokA-01Dolu · 1 kişiHesap bill-123A-02Müsait · 0 kişiAçık işlem yokSEÇİLİ MASAA-01Dolu · tablo v7 · yerleşim v2Siparişorder-12Hesapbill-123RezervasyonYokBirleşimLiderSunucunun izin verdiği işlemlerMasa değiştirMasaları birleştirOperasyon modunda geometri kilitlidir. İşlemler yalnız sunucunun bu masa için döndürdüğü komutlardan açılır."
+
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx:121:43
+    119|     expect(document.body.textContent).toContain("Hesap bill-123");
+    120|     expect(document.body.textContent).toContain("Sunucunun izin verdiğ…
+    121|     expect(document.body.textContent).not.toMatch(/\bv\d|tablo v|yerle…
+       |                                           ^
+    122|     await click([...document.querySelectorAll("button")].find((button)…
+    123|     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/12]⎯
+
+
+ Test Files  9 failed (9)
+      Tests  12 failed | 137 passed (149)
+   Start at  12:50:59
+   Duration  7.46s (transform 5.48s, setup 0ms, import 6.87s, tests 10.50s, environment 21.42s)
+

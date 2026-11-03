@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ApiError } from "../../api";
 import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary } from "../../design-system";
+import { formatClockTime } from "../../format";
 import { commonActions, stateText } from "../../strings";
 import { CatalogApiError } from "./catalogApi";
 import {
@@ -214,7 +215,7 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
   if (state === "stale" || state === "conflict") return <div className="catalog-workspace catalog-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Katalog güncel değil" : "Katalog çakışması"}><p>Satışa açık bilgiyi değiştirmeden önce sunucunun son halini alın.</p><Button data-telemetry-id="b.catalog.catalogworkspace.3" onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
 
   return <section className="catalog-workspace" aria-label="Menü ve katalog yönetimi">
-    <header className="catalog-workspace__header"><div><span className="catalog-workspace__kicker">YÖNETİM / KATALOG</span><h2>Menü ve katalog</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Fiyat, ürün ve modifikatör kayıtları"}</p></div><div className="catalog-workspace__header-actions">{canManage && onCreate && <Button data-telemetry-id="b.catalog.catalogworkspace.4" onClick={openEditor}>+ {catalogAddLabels[kind]} ekle</Button>}<Button data-telemetry-id="b.catalog.catalogworkspace.5" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button></div></header>
+    <header className="catalog-workspace__header"><div><span className="catalog-workspace__kicker">YÖNETİM / KATALOG</span><h2>Menü ve katalog</h2><p>{lastUpdated ? `Son güncelleme ${formatClockTime(lastUpdated)}` : "Fiyat, ürün ve modifikatör kayıtları"}</p></div><div className="catalog-workspace__header-actions">{canManage && onCreate && <Button data-telemetry-id="b.catalog.catalogworkspace.4" onClick={openEditor}>+ {catalogAddLabels[kind]} ekle</Button>}<Button data-telemetry-id="b.catalog.catalogworkspace.5" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button></div></header>
     {feedback && <div className={`catalog-workspace__feedback catalog-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button data-telemetry-id="b.catalog.catalogworkspace.6" type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
     <nav className="catalog-workspace__tabs" aria-label="Katalog kaynak türü">{kindOrder.map((item) => <button data-telemetry-id="b.catalog.catalogworkspace.7" key={item} type="button" className={kind === item ? "is-active" : ""} aria-current={kind === item ? "page" : undefined} onClick={() => changeKind(item)}>{catalogEntityLabels[item]}<span>{catalogCount(item, data)}</span></button>)}</nav>
     <div className="catalog-workspace__toolbar"><label>Katalog ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Kod, SKU veya ad" aria-label="Katalog ara" /></label><span className="catalog-workspace__authority">Yayınlama yok · yalnızca yönetici ekleyip düzenleyebilir</span></div>

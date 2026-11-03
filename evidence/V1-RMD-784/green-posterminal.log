@@ -1,0 +1,88 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+stderr | src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+An update to KitchenOperationsWorkspace inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+An update to KitchenOperationsWorkspace inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+An update to KitchenOperationsWorkspace inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (60 tests | 1 failed) 5015ms
+     × loads and shows the performance report's mean, median and hourly volume when Rapor is opened 121ms
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > loads and shows the performance report's mean, median and hourly volume when Rapor is opened
+AssertionError: expected 'EXPO / MUTFAKMutfak ekranıİstasyon ko…' to contain '15.0 dk'
+
+Expected: "15.0 dk"
+Received: "EXPO / MUTFAKMutfak ekranıİstasyon kodu: hot-lineCanlıYenileAçık masa/sipariş1Açık kalem1Doğrulanamayan baskı1Yazdırma sorunu0ExpoTüm GünRaporOtomatikSakin modYoğun modİstasyonBiletOrtalamaMedyanHedef aşımıhot-line315,0 dk10,0 dk%33,311:002SİSTEM SAĞLIĞIVeritabanı ve yedeklemeSağlık ölçümü eskiSon ölçüm 26.08.2026 13:00. Gösterilen değerler güncel olmayabilir.VeritabanıSağlıklıDiskSorunlu · 0,0 GB boşSon yedeklemeSorunluFull yedekleme · 26.08.2026 12:00BaşarısızYedekleme başarısız oldu; ayrıntı sunucu günlüğündedir.YAZICI KURTARMADoğrulanamayan teslimatlar1ticket-1ACK alınamadıReddetGerekçeli onayYAZICIYazdırma sorunları0Bekleyen yazdırma sorunu yok.DONANIMYazıcı rotaları1/1 aktifMutfak yazıcıhot-line · 1 aktif rota · adres girilmemiş"
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:688:39
+    686|     expect(onLoadPerformanceReport).toHaveBeenCalledWith("2026-09-14T0…
+    687|     expect(document.body.textContent).toContain("hot-line");
+    688|     expect(document.body.textContent).toContain("15.0 dk");
+       |                                       ^
+    689|     expect(document.body.textContent).toContain("10.0 dk");
+    690|     expect(document.body.textContent).toContain("%33.3");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 87 passed (88)
+      Tests  1 failed | 833 passed (834)
+   Start at  12:52:57
+   Duration  33.81s (transform 15.35s, setup 0ms, import 31.34s, tests 80.86s, environment 192.64s)
+

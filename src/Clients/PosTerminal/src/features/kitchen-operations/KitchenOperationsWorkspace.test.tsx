@@ -172,10 +172,23 @@ describe("kitchen operations workspace", () => {
   it("shows a badge when kitchen.live_sync_enabled is off, and hides it when on", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, liveSyncEnabled: false } })} />);
     expect(document.querySelector(".kitchen-live-sync-badge")).not.toBeNull();
-    expect(document.body.textContent).toContain("Canlı senkron kapalı");
+    expect(document.body.textContent).toContain("Garson bildirimi kapalı");
+    expect(document.body.textContent).not.toContain("Canlı senkron kapalı");
 
     await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, liveSyncEnabled: true } })} />);
     expect(document.querySelector(".kitchen-live-sync-badge")).toBeNull();
+  });
+
+  it("shows a Turkish clock time, a fixed title and decimal commas instead of raw technical text", async () => {
+    const health = { ...data.health!, freeDiskBytes: 775 * 1024 ** 3 };
+    await render(<KitchenOperationsWorkspace {...baseProps({ stationId: "kitchen-main", lastUpdated: "2026-11-01T08:02:49.436Z", data: { ...data, health } })} />);
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Mutfak ekranı");
+    expect(text).not.toContain("kitchen-main istasyonu");
+    expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+    expect(text).toMatch(/Son güncelleme \d{2}:\d{2}:\d{2}/);
+    expect(text).toContain("775,0 GB");
+    expect(text).not.toContain("775.0 GB");
   });
 
   it("only a session with orders.send (canOperate) can open the cancel/sorun-bildir prompt", async () => {
@@ -672,9 +685,9 @@ describe("kitchen operations workspace", () => {
 
     expect(onLoadPerformanceReport).toHaveBeenCalledWith("2026-09-14T00:00:00.000Z", expect.any(String));
     expect(document.body.textContent).toContain("hot-line");
-    expect(document.body.textContent).toContain("15.0 dk");
-    expect(document.body.textContent).toContain("10.0 dk");
-    expect(document.body.textContent).toContain("%33.3");
+    expect(document.body.textContent).toContain("15,0 dk");
+    expect(document.body.textContent).toContain("10,0 dk");
+    expect(document.body.textContent).toContain("%33,3");
   });
 
   it("shows a bounded error when the performance report fails to load", async () => {

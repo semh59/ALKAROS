@@ -62,6 +62,13 @@ describe("catalog workspace", () => {
     expect(document.querySelectorAll(".catalog-row")).toHaveLength(1);
   });
 
+  it("shows the last update as a Turkish clock time, never raw ISO text", async () => {
+    await render(<CatalogWorkspace {...baseProps({ lastUpdated: "2026-11-01T08:02:49.436Z" })} />);
+    const text = document.body.textContent ?? "";
+    expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+    expect(text).toMatch(/Son güncelleme \d{2}:\d{2}:\d{2}/);
+  });
+
   it("validates manager product price and keeps the form on a conflict", async () => {
     // V1-RMD-114: a real conflict always reaches this component as an
     // ApiError; a plain Error is now correctly treated as an untrusted

@@ -33,12 +33,24 @@ body {
 }
 
 .sp-shell {
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: 24px;
 }
+
+.sp-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  margin: 8px 0 0 24px;
+  padding: 0 8px;
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+.sp-back:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 
 .sp-loading { color: var(--color-text-muted); font-size: 14px; margin-top: 40px; }
 

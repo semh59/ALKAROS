@@ -37,6 +37,19 @@ describe("responsive and interaction style contract", () => {
     expect(shellCss).toContain(".production-shell__header-actions { width: 100%; margin-left: 0; justify-content: space-between; }");
   });
 
+  it("lets the till header wrap its actions instead of pushing them out of the clipped page", () => {
+    const stylesCss = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+    const rule = (selector: string) => {
+      const start = stylesCss.indexOf(`\n${selector} {`);
+      expect(start, `${selector} not found`).toBeGreaterThanOrEqual(0);
+      return stylesCss.slice(start, stylesCss.indexOf("}", start));
+    };
+    expect(rule(".pos-header")).toContain("flex-wrap: wrap");
+    expect(rule(".pos-header")).not.toMatch(/\n\s*height:/);
+    expect(rule(".pos-header-actions")).toContain("flex-wrap: wrap");
+    expect(rule(".pos-workspace")).not.toContain("100vh - 72px");
+  });
+
   it("returns fixed shell regions to document flow in shallow zoom viewports", () => {
     expect(shellCss).toContain("@media (max-width: 767px) and (max-height: 360px)");
     expect(shellCss).toContain(".production-shell__header,\n  .production-shell__nav,\n  .production-shell__status { position: static; }");

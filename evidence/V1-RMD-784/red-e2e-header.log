@@ -1,0 +1,99 @@
+[global-setup] applied 209 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 768 px genişlikte pencere içinde ve tıklanabilir (1.9s)
+  x  2 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 929 px genişlikte pencere içinde ve tıklanabilir (1.1s)
+  x  3 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1024 px genişlikte pencere içinde ve tıklanabilir (1.2s)
+  ok 4 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1440 px genişlikte pencere içinde ve tıklanabilir (1.2s)
+[global-teardown] Host stopped, database dropped
+
+
+  1) [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 929 px genişlikte pencere içinde ve tıklanabilir 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 6
+
+    - Array []
+    + Array [
+    +   "Yönetim",
+    +   "Ekranı eşleştir",
+    +   "E2E KasiyerKasiyer",
+    +   "Çıkış",
+    + ]
+
+      16 |         width,
+      17 |       );
+    > 18 |       expect(outside).toEqual([]);
+         |                       ^
+      19 |
+      20 |       await page.getByRole('button', { name: 'Oturumu kapat' }).scrollIntoViewIfNeeded();
+      21 |       await expect(page.getByRole('button', { name: 'Oturumu kapat' })).toBeInViewport();
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\31-till-header-and-payment-back-links.spec.js:18:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\31-till-header-and-payment-c79b0-cere-içinde-ve-tıklanabilir-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\31-till-header-and-payment-c79b0-cere-içinde-ve-tıklanabilir-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\31-till-header-and-payment-c79b0-cere-içinde-ve-tıklanabilir-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\31-till-header-and-payment-c79b0-cere-içinde-ve-tıklanabilir-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\31-till-header-and-payment-c79b0-cere-içinde-ve-tıklanabilir-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1024 px genişlikte pencere içinde ve tıklanabilir 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 5
+
+    - Array []
+    + Array [
+    +   "Ekranı eşleştir",
+    +   "E2E KasiyerKasiyer",
+    +   "Çıkış",
+    + ]
+
+      16 |         width,
+      17 |       );
+    > 18 |       expect(outside).toEqual([]);
+         |                       ^
+      19 |
+      20 |       await page.getByRole('button', { name: 'Oturumu kapat' }).scrollIntoViewIfNeeded();
+      21 |       await expect(page.getByRole('button', { name: 'Oturumu kapat' })).toBeInViewport();
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\31-till-header-and-payment-back-links.spec.js:18:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\31-till-header-and-payment-c024e-cere-içinde-ve-tıklanabilir-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\31-till-header-and-payment-c024e-cere-içinde-ve-tıklanabilir-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\31-till-header-and-payment-c024e-cere-içinde-ve-tıklanabilir-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\31-till-header-and-payment-c024e-cere-içinde-ve-tıklanabilir-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\31-till-header-and-payment-c024e-cere-içinde-ve-tıklanabilir-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 929 px genişlikte pencere içinde ve tıklanabilir 
+    [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1024 px genişlikte pencere içinde ve tıklanabilir 
+  2 passed (27.1s)

@@ -188,17 +188,22 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
-  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>, keepOnFailure = false) => {
+  // A zone nobody has laid out has no plan and the server answers 404 for it. Background refreshes do not
+  // ask again; picking the zone or pressing "Yenile" does.
+  const zonesWithoutPlan = useRef(new Set<string>());
+  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>, silent = false) => {
     const targetZoneId = (zoneId === "all" && currentZones.length > 0) ? currentZones[0].zoneId : zoneId;
-    if (targetZoneId && targetZoneId !== "all") {
-      try {
-        const plan = await client.getFloorPlan(targetZoneId);
-        setFloorPlan(plan);
-      } catch {
-        if (!keepOnFailure) setFloorPlan(undefined);
-      }
-    } else {
+    if (!targetZoneId || targetZoneId === "all") {
       setFloorPlan(undefined);
+      return;
+    }
+    if (silent && zonesWithoutPlan.current.has(targetZoneId)) return;
+    try {
+      setFloorPlan(await client.getFloorPlan(targetZoneId));
+      zonesWithoutPlan.current.delete(targetZoneId);
+    } catch (reason) {
+      if ((reason as { status?: number }).status === 404) zonesWithoutPlan.current.add(targetZoneId);
+      if (!silent) setFloorPlan(undefined);
     }
   }, [client]);
 
@@ -267,6 +272,7 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
     setFloorPlanError(undefined);
     try {
       const result = await client.saveFloorPlan(zoneId, input);
+      zonesWithoutPlan.current.delete(zoneId);
       setFloorPlan(result.floorPlan);
       return result;
     } catch (reason) {
@@ -362,8 +368,7 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
     setState("loading");
     setErrorMessage(undefined);
     if (!orderParam && !billIdRef.current) {
-      setState("error");
-      setErrorMessage("Aktif adisyon yok. Bir masa veya siparişten hesap açın.");
+      setState("empty");
       return;
     }
     try {

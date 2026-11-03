@@ -323,6 +323,20 @@ describe("workspace /billing route surfaces the real backend error message", () 
     vi.restoreAllMocks();
   });
 
+  it("shows the no-active-bill information state, not a load failure, when no bill is open", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => { throw new Error(`unexpected fetch: ${String(input)}`); }));
+    localStorage.clear();
+    window.history.replaceState({}, "", "/billing");
+    await render(
+      <RouterProvider>
+        <ExperiencePage terminalId="66666666-6666-6666-6666-666666666666" displayName="Test Kullanıcı" capabilities={["bills.split"]}
+          path="/billing" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>,
+    );
+    expect(document.body.textContent).toContain("Aktif adisyon yok");
+    expect(document.body.textContent).not.toContain("Hesap alınamadı");
+  });
+
   it("shows the split-design endpoint's own error message, not the generic fallback", async () => {
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
@@ -919,6 +933,29 @@ describe("workspace /tables route background refresh", () => {
     await tick();
 
     expect(document.querySelector(".table-workspace__floor-plan")).not.toBeNull();
+  });
+
+  it("stops asking for the floor plan of a zone that has none, except on a manual refresh", async () => {
+    let planCalls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/floor-plans/")) {
+        planCalls += 1;
+        return jsonResponse({ error: { code: "FLOOR_PLAN_NOT_FOUND", message: "Kat planı bulunamadı." } }, 404);
+      }
+      if (path.includes("/zones")) return jsonResponse([{ zoneId: "zone-1", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }]);
+      return jsonResponse([{ ...tableJson, zoneId: "zone-1" }]);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    expect(planCalls).toBe(1);
+
+    await tick();
+    await tick();
+    expect(planCalls).toBe(1);
+
+    await act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Yenile")!.click());
+    expect(planCalls).toBe(2);
   });
 
   it("recovers by itself after the first load failed", async () => {

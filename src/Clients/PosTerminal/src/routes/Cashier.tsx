@@ -789,7 +789,7 @@ export function Cashier() {
               ) : (
                 <div className="submitted-state">
                   <span>✓</span>
-                  <div><strong>Sipariş gönderildi</strong><small>Sürüm {activeOrder.revision}</small></div>
+                  <div><strong>Sipariş gönderildi</strong></div>
                 </div>
               )}
               {canStartNextOrder && (

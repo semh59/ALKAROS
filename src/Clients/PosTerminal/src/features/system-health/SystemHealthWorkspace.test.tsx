@@ -42,6 +42,15 @@ describe("system health workspace", () => {
     expect(document.body.textContent).toContain("Başarısız");
   });
 
+  it("shows sizes with a decimal comma and the last update as a clock time", async () => {
+    await render(<SystemHealthWorkspace {...baseProps({ lastUpdated: "2026-11-01T08:02:49.436Z" })} />);
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("20,0 GB");
+    expect(text).not.toContain("20.0 GB");
+    expect(text).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+    expect(text).toMatch(/Son güncelleme \d{2}:\d{2}:\d{2}/);
+  });
+
   it("blocks the workspace when the viewer is not a manager", async () => {
     await render(<SystemHealthWorkspace {...baseProps({ state: "unauthorized" })} />);
     expect(document.body.textContent).toContain("Yönetici oturumu gerekli");

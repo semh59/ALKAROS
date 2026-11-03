@@ -1,0 +1,22 @@
+mutant [if (silent \&\& zonesWithoutPlan.current.has(targetZoneId)) return;]: exit 1
+restored
+mutant [Garson bildirimi kapalı]: exit 1
+restored
+mutant [minimumFractionDigits: digits]: exit 1
+restored
+NOCHANGE src/styles.css
+mutant header flex-wrap: exit 1
+restored
+mutant [setState("empty");]: exit 1
+restored
+mutant [formatClockTime(lastUpdated)]: exit 1
+restored
+mutant [formatClockTime(lastUpdated)]: exit 1
+restored
+NOCHANGE <small>Sürüm {activeOrder.revision}</small>
+mutant [s|<div><strong>Sipariş gönderildi</strong></div>|<div><strong>Sipariş gönderildi</strong><small>Sürüm {activeOrder.revision}</small></div>|]: exit 1
+restored
+mutant [/sp-back/d]: exit 1
+restored
+mutant [s|height: var(--touch-target);\r\?$|height: 36px;|;]: exit 1
+restored

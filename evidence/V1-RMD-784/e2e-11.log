@@ -1,0 +1,93 @@
+[global-setup] applied 209 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 2 tests using 1 worker
+
+  x  1 [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:36:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › çözülmemiş kart tahsilatı olan masa PosTerminal'den devredilemez; hiçbir şey değişmez (3.5s)
+  x  2 [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:89:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › kısmen ödenmiş (tüm ödemeleri çözülmüş) masa devredilir; tahsis aynı hesapta kalır (2.7s)
+[global-teardown] Host stopped, database dropped
+
+
+  1) [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:36:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › çözülmemiş kart tahsilatı olan masa PosTerminal'den devredilemez; hiçbir şey değişmez 
+
+    Error: target TRF-2 not offered
+
+    expect(received).toBeTruthy()
+
+    Received: undefined
+
+      29 |     targetNumber,
+      30 |   );
+    > 31 |   expect(value, `target ${targetNumber} not offered`).toBeTruthy();
+         |                                                       ^
+      32 |   await select.selectOption(value);
+      33 | }
+      34 |
+        at pickTarget (D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\11-cross-client-payment-aware-transfer.spec.js:31:55)
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\11-cross-client-payment-aware-transfer.spec.js:60:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\test-failed-2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\11-cross-client-payment-aw-2e48d-dilemez-hiçbir-şey-değişmez-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:89:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › kısmen ödenmiş (tüm ödemeleri çözülmüş) masa devredilir; tahsis aynı hesapta kalır 
+
+    Error: target TRF-4 not offered
+
+    expect(received).toBeTruthy()
+
+    Received: undefined
+
+      29 |     targetNumber,
+      30 |   );
+    > 31 |   expect(value, `target ${targetNumber} not offered`).toBeTruthy();
+         |                                                       ^
+      32 |   await select.selectOption(value);
+      33 | }
+      34 |
+        at pickTarget (D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\11-cross-client-payment-aware-transfer.spec.js:31:55)
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\11-cross-client-payment-aware-transfer.spec.js:104:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-5b6fb-r-tahsis-aynı-hesapta-kalır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-5b6fb-r-tahsis-aynı-hesapta-kalır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\11-cross-client-payment-aw-5b6fb-r-tahsis-aynı-hesapta-kalır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\11-cross-client-payment-aw-5b6fb-r-tahsis-aynı-hesapta-kalır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\11-cross-client-payment-aw-5b6fb-r-tahsis-aynı-hesapta-kalır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:36:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › çözülmemiş kart tahsilatı olan masa PosTerminal'den devredilemez; hiçbir şey değişmez 
+    [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:89:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › kısmen ödenmiş (tüm ödemeleri çözülmüş) masa devredilir; tahsis aynı hesapta kalır 

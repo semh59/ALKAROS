@@ -100,6 +100,14 @@ describe("bill split workspace", () => {
     expect(document.querySelector('[role="alert"]')?.textContent).not.toContain("Taslağınız korundu");
   });
 
+  it("tells the cashier there is no active bill as information, not as a failed load", async () => {
+    await render(<BillSplitWorkspace {...props({ state: "empty", design: null })} />);
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Aktif adisyon yok");
+    expect(text).toContain("Bir masa veya siparişten hesap açın.");
+    expect(text).not.toContain("Hesap alınamadı");
+  });
+
   it("shows no English text, version number or raw owner kind", async () => {
     await render(<BillSplitWorkspace {...props({ state: "loading", design: null })} />);
     expect(document.body.textContent).toContain("Güncel hesap ve dağıtımlar alınıyor");

@@ -1,4 +1,5 @@
 import { Button, StateMessage } from "../../design-system";
+import { formatClockTime, formatGigabytes } from "../../format";
 import { commonActions, stateText } from "../../strings";
 import {
   backupStatusLabels,
@@ -22,10 +23,6 @@ export interface SystemHealthWorkspaceProps {
   lastUpdated?: string;
 }
 
-function bytesToGigabytes(value: number): string {
-  return `${(value / 1_073_741_824).toFixed(1)} GB`;
-}
-
 export function SystemHealthWorkspace({ state, health, backups, onRefresh, errorMessage, lastUpdated }: SystemHealthWorkspaceProps) {
   if (state === "loading") {
     return <div className="system-health system-health--state" aria-busy="true"><StateMessage tone="info" title="Sistem sağlığı yükleniyor"><p>Son snapshot ve yedek durumu alınıyor…</p></StateMessage></div>;
@@ -43,7 +40,7 @@ export function SystemHealthWorkspace({ state, health, backups, onRefresh, error
   const latestBackup = backups[0];
   return <section className="system-health" aria-label="Sistem sağlığı ve yedek durumu">
     <header className="system-health__header">
-      <div><span className="system-health__kicker">YÖNETİM / SİSTEM</span><h2>Sistem sağlığı</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Veritabanı, disk ve yedekleme durumu"}</p></div>
+      <div><span className="system-health__kicker">YÖNETİM / SİSTEM</span><h2>Sistem sağlığı</h2><p>{lastUpdated ? `Son güncelleme ${formatClockTime(lastUpdated)}` : "Veritabanı, disk ve yedekleme durumu"}</p></div>
       <Button data-telemetry-id="b.system-health.systemhealthworkspace.3" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
     </header>
 
@@ -53,8 +50,8 @@ export function SystemHealthWorkspace({ state, health, backups, onRefresh, error
       <div><dt>Veritabanı</dt><dd className={`system-health__badge system-health__badge--${health.databaseStatus.toLowerCase()}`}>{healthStatusLabel(health.databaseStatus)}</dd></div>
       <div><dt>Disk</dt><dd className={`system-health__badge system-health__badge--${health.diskStatus.toLowerCase()}`}>{healthStatusLabel(health.diskStatus)}</dd></div>
       <div><dt>Son yedek</dt><dd className={`system-health__badge system-health__badge--${health.lastBackupStatus.toLowerCase()}`}>{healthStatusLabel(health.lastBackupStatus)}</dd></div>
-      <div><dt>Boş disk alanı</dt><dd>{bytesToGigabytes(health.freeDiskBytes)}</dd></div>
-      <div><dt>Veritabanı boyutu</dt><dd>{bytesToGigabytes(health.databaseSizeBytes)}</dd></div>
+      <div><dt>Boş disk alanı</dt><dd>{formatGigabytes(health.freeDiskBytes)}</dd></div>
+      <div><dt>Veritabanı boyutu</dt><dd>{formatGigabytes(health.databaseSizeBytes)}</dd></div>
     </dl> : <StateMessage tone="stale" title="Sağlık verisi yok"><p>Son snapshot alınamadı.</p></StateMessage>}
 
     {latestBackup && <div className={`system-health__backup system-health__backup--${latestBackup.status.toLowerCase()}`}>

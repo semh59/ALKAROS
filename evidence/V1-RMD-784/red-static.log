@@ -1,0 +1,93 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-ui-navigation.test.js (6 tests | 6 failed) 19ms
+     × payments/split-payment/index.html has a persistent back link of at least 48 px 7ms
+     × payments/cash-session/index.html has a persistent back link of at least 48 px 1ms
+     × returns from payments to the main till and from the cash session to the quick till 5ms
+     × cashier-app.css .item-note-input is at least 48 px high 2ms
+     × cashier-app.css .dispatch-waiter-select is at least 48 px high 1ms
+     × payments/cash-session/cash-session.css .cs-btn-ghost is at least 48 px high 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-ui-navigation.test.js > payment pages lead back to the till > payments/split-payment/index.html has a persistent back link of at least 48 px
+ FAIL  cashier-ui-navigation.test.js > payment pages lead back to the till > payments/cash-session/index.html has a persistent back link of at least 48 px
+AssertionError: back link: expected null not to be null
+ ❯ cashier-ui-navigation.test.js:22:35
+     20|     const html = read(page);
+     21|     const link = html.match(/<a class="([^"]+)" href="([^"]+)">([^<]+)…
+     22|     expect(link, "back link").not.toBeNull();
+       |                                   ^
+     23|     expect(link[1]).toBe(selector.slice(1));
+     24|     expect(link[3]).toBe("← Kasaya dön");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cashier-ui-navigation.test.js > payment pages lead back to the till > returns from payments to the main till and from the cash session to the quick till
+AssertionError: expected '<!DOCTYPE html>\n<html lang="tr">\n<h…' to contain 'href="/"'
+
+- Expected
++ Received
+
+- href="/"
++ <!DOCTYPE html>
++ <html lang="tr">
++ <head>
++   <meta charset="UTF-8">
++   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
++   <meta name="theme-color" content="#0B2135">
++   <title>ALKAROS Hesap Ödeme</title>
++   <link rel="stylesheet" href="./split-payment.css">
++ </head>
++ <body>
++   <main id="app" class="sp-shell" aria-live="polite" aria-busy="true">
++     <div class="sp-loading">Hesap yükleniyor…</div>
++   </main>
++   <script src="../../telemetry/telemetry.js"></script>
++   <script src="./split-payment.js"></script>
++ </body>
++ </html>
++
+
+ ❯ cashier-ui-navigation.test.js:30:55
+     28|
+     29|   it("returns from payments to the main till and from the cash session…
+     30|     expect(read("payments/split-payment/index.html")).toContain('href=…
+       |                                                       ^
+     31|     expect(read("payments/cash-session/index.html")).toContain('href="…
+     32|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cashier-ui-navigation.test.js > quick till touch targets > cashier-app.css .item-note-input is at least 48 px high
+ FAIL  cashier-ui-navigation.test.js > quick till touch targets > payments/cash-session/cash-session.css .cs-btn-ghost is at least 48 px high
+AssertionError: expected 0 to be greater than 0
+ ❯ cashier-ui-navigation.test.js:44:26
+     42|     const sizes = [...ruleBody(css, selector).matchAll(/(?:min-)?heigh…
+     43|       .map((match) => (match[1].startsWith("var") ? 48 : Number(match[…
+     44|     expect(sizes.length).toBeGreaterThan(0);
+       |                          ^
+     45|     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(48);
+     46|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  cashier-ui-navigation.test.js > quick till touch targets > cashier-app.css .dispatch-waiter-select is at least 48 px high
+AssertionError: expected 36 to be greater than or equal to 48
+ ❯ cashier-ui-navigation.test.js:45:44
+     43|       .map((match) => (match[1].startsWith("var") ? 48 : Number(match[…
+     44|     expect(sizes.length).toBeGreaterThan(0);
+     45|     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(48);
+       |                                            ^
+     46|   });
+     47| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  12:51:12
+   Duration  1.51s (transform 50ms, setup 43ms, import 31ms, tests 19ms, environment 1.08s)
+

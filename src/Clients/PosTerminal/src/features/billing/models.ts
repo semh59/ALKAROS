@@ -1,4 +1,4 @@
-export type BillSplitWorkspaceState = "loading" | "ready" | "error" | "offline" | "stale" | "unauthorized";
+export type BillSplitWorkspaceState = "loading" | "ready" | "empty" | "error" | "offline" | "stale" | "unauthorized";
 export type SplitOwnerKind = "Seat" | "Person";
 export type SplitMode = "EqualByPerson" | "ByItem" | "ByAmount";
 

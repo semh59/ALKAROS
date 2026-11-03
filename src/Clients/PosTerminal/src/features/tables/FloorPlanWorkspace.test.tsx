@@ -118,6 +118,7 @@ describe("floor plan workspace", () => {
     expect(document.body.textContent).toContain("Birleşim lideri");
     expect(document.body.textContent).toContain("Hesap bill-123");
     expect(document.body.textContent).toContain("Sunucunun izin verdiği işlemler");
+    expect(document.body.textContent).not.toMatch(/\bv\d|tablo v|yerleşim v/);
     await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir")!);
     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
   });

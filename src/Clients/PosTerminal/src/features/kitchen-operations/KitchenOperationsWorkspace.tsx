@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { playNewItemChime } from "../../audioAlerts";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
+import { formatClockTime, formatDecimal, formatGigabytes } from "../../format";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
   healthSnapshotStaleMessage,
@@ -425,7 +426,7 @@ export function KitchenOperationsWorkspace({
   };
 
   if (state === "loading" || state === "busy") {
-    return <div className="kitchen-workspace kitchen-workspace--state" aria-busy="true"><StateMessage tone="info" title={state === "busy" ? "Mutfak güncelleniyor" : "Mutfak yükleniyor"}><p>{stationId} istasyonu için ticket, yazıcı ve operasyon durumu alınıyor…</p></StateMessage></div>;
+    return <div className="kitchen-workspace kitchen-workspace--state" aria-busy="true"><StateMessage tone="info" title={state === "busy" ? "Mutfak güncelleniyor" : "Mutfak yükleniyor"}><p>Mutfak istasyonu için ticket, yazıcı ve operasyon durumu alınıyor…</p></StateMessage></div>;
   }
   if (state === "unauthorized") {
     return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="unauthorized" title="Kasiyer oturumu gerekli"><p>Mutfak çalışma alanını görmek için terminal oturumunu yenileyin.</p></StateMessage></div>;
@@ -442,10 +443,10 @@ export function KitchenOperationsWorkspace({
 
   return <section className={`kitchen-workspace ${isDense ? "is-dense" : ""}`} aria-label="Mutfak ve operasyon yönetimi">
     <header className="kitchen-workspace__header">
-      <div><span className="kitchen-workspace__kicker">EXPO / MUTFAK</span><h2>{stationId} istasyonu</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Sipariş bazlı çapraz istasyon görünümü"}</p></div>
+      <div><span className="kitchen-workspace__kicker">EXPO / MUTFAK</span><h2>Mutfak ekranı</h2><p>İstasyon kodu: {stationId}{lastUpdated ? ` · Son güncelleme ${formatClockTime(lastUpdated)}` : ""}</p></div>
       <div className="kitchen-workspace__header-actions">
         <span className="kitchen-live-dot" aria-hidden="true" /><span className="kitchen-workspace__source">Canlı</span>
-        {!data.liveSyncEnabled && <span className="kitchen-live-sync-badge" title="Kalem hazır olduğunda garsona bildirim gitmiyor">Canlı senkron kapalı</span>}
+        {!data.liveSyncEnabled && <span className="kitchen-live-sync-badge" title="Kalem hazır olduğunda garsona bildirim gitmiyor">Garson bildirimi kapalı</span>}
         {!canOperate && canAdvance && <span className="kitchen-role-badge" title="Yalnız ilerletme yapabilirsiniz">Mutfak Personeli</span>}
         <span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} />
         {onSuspendProductAvailability && <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.4"
@@ -568,7 +569,7 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
 }
 
 function formatMinutes(value: number): string {
-  return `${value.toFixed(1)} dk`;
+  return `${formatDecimal(value)} dk`;
 }
 
 function formatHour(iso: string): string {
@@ -597,7 +598,7 @@ function PerformanceReportPanel({ report, state }: { report: KitchenPerformanceR
             <td>{station.completedTicketCount}</td>
             <td>{formatMinutes(station.averageMinutes)}</td>
             <td>{formatMinutes(station.medianMinutes)}</td>
-            <td className={station.targetOverrunPercentage > 0 ? "kitchen-report__overrun" : undefined}>%{station.targetOverrunPercentage.toFixed(1)}</td>
+            <td className={station.targetOverrunPercentage > 0 ? "kitchen-report__overrun" : undefined}>%{formatDecimal(station.targetOverrunPercentage)}</td>
           </tr>)}
         </tbody>
       </table>}
@@ -758,10 +759,6 @@ function ItemRow({
       })}
     </div>}
   </div>;
-}
-
-function formatGigabytes(bytes: number): string {
-  return `${(bytes / (1024 ** 3)).toFixed(1)} GB`;
 }
 
 function formatBackupDate(iso: string): string {

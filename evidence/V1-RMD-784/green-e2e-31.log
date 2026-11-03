@@ -1,0 +1,14 @@
+[global-setup] applied 209 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 768 px genişlikte pencere içinde ve tıklanabilir (1.3s)
+  ok 2 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 929 px genişlikte pencere içinde ve tıklanabilir (1.1s)
+  ok 3 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1024 px genişlikte pencere içinde ve tıklanabilir (1.0s)
+  ok 4 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1440 px genişlikte pencere içinde ve tıklanabilir (1.2s)
+  ok 5 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:25:3 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › ödeme sayfasından "Kasaya dön" ana kasaya götürür (1.2s)
+  ok 6 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:36:3 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › kasa oturumu sayfasından "Kasaya dön" hızlı kasaya götürür (690ms)
+[global-teardown] Host stopped, database dropped
+
+  6 passed (20.7s)

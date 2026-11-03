@@ -76,4 +76,28 @@ describe("Cashier refreshes only the order after a sale action", () => {
     expect(seen.filter((call) => call.endsWith("/orders/active"))).toHaveLength(1);
     expect(seen.filter((call) => call.includes("/auth/session") || call.endsWith("/catalog") || call.includes("runtime-config"))).toEqual([]);
   });
+
+  it("shows a submitted order without its internal revision number", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
+      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/orders/active")) return jsonResponse({ orderId: "order-1", orderNumber: "1", revision: 4, editable: false, lines: [], subtotal: 0, discountTotal: 0, taxTotal: 0, total: 0 });
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      return jsonResponse({});
+    }));
+
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider } = await import("../router");
+
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => {
+      root!.render(createElement(RouterProvider, null, createElement(Cashier)));
+    });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+
+    expect(document.body.textContent).toContain("Sipariş gönderildi");
+    expect(document.body.textContent).not.toMatch(/Sürüm|\bv\d/);
+  });
 });

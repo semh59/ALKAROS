@@ -34,12 +34,24 @@ body {
 }
 
 .cs-shell {
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
+
+.cs-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  margin: 8px 0 0 24px;
+  padding: 0 8px;
+  color: var(--color-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+.cs-back:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 
 .cs-loading {
   color: var(--color-text-muted);
@@ -148,7 +160,7 @@ body {
   color: var(--color-brand);
   padding: 8px;
   font-size: 13px;
-  min-height: auto;
+  min-height: var(--touch-target);
 }
 
 .cs-row { display: flex; gap: 10px; }

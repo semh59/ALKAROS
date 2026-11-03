@@ -408,7 +408,7 @@ export function FloorPlanWorkspace({
         <aside className="floor-plan-inspector" aria-label="Salon planı denetçisi">
           {selected ? <>
             <div className="floor-plan-inspector__title">
-              <span>SEÇİLİ MASA</span><strong>{selected.tableNumber}</strong><small>{tableStatusLabels[selected.status]} · tablo v{selected.tableRowVersion} · yerleşim v{selected.layoutRowVersion || "yeni"}</small>
+              <span>SEÇİLİ MASA</span><strong>{selected.tableNumber}</strong><small>{tableStatusLabels[selected.status]}</small>
             </div>
             <dl className="floor-plan-inspector__signals">
               <div><dt>Sipariş</dt><dd>{selected.currentOrderId?.slice(0, 8) ?? "Yok"}</dd></div>
