@@ -31,6 +31,9 @@ Ayrıca ApiConventions testleri hata zarfını (code, message, status, traceId) 
   - src/Modules/Billing/Adjustments/DiscountExceedsPayableException.cs (V1-BIL-003) — yeni dosya: indirim toplamı hesap tutarını aşıyor.
   - src/Modules/Billing/Adjustments/AdjustmentCalculator.cs (V1-BIL-003) — aşımda özel istisna.
   - tests/Modules/Billing/Adjustments/AdjustmentsDomainTests.cs (V1-RMD-467) — aşım istisnasının tipi.
+  - src/Modules/Payments/ManualResolution/IManualCardConfirmationRepository.cs (V1-RMD-283) — sözleşme açıklaması yeni istisnayı söyler.
+  - tests/Modules/Payments/Allocations/RefundIntents/PostgresRefundIntentRepositoryTests.cs (V1-RMD-298) — iade niyeti bayat sürüm testi.
+  - tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs (V1-RMD-258) — elle kart onayı bayat sürüm testi.
   - src/Host/Composition/Errors/ApiErrorCatalog.cs (V1-RMD-431) — alan sözlüğü, doğrulama cevabı, çakışma cevabı.
   - src/Host/Experience/Billing/BillingSplitApplication.cs (V1-RMD-103) — Billing eşlemesi: çakışma 409, doğrulama cevabı.
   - src/Modules/Billing/BillFoundation/PostgresBillRepository.cs (V1-RMD-414) — çakışma istisnası.
