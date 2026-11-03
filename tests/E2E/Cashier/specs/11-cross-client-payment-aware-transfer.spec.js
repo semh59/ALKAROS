@@ -25,7 +25,7 @@ async function tableRow(page, terminalId, tableNumber) {
 async function pickTarget(page, targetNumber) {
   const select = page.getByLabel('Hedef masa');
   const value = await select.locator('option').evaluateAll(
-    (options, number) => (options.find((option) => option.textContent.startsWith(`${number} `)) || {}).value,
+    (options, number) => (options.find((option) => option.textContent.trim() === number) || {}).value,
     targetNumber,
   );
   expect(value, `target ${targetNumber} not offered`).toBeTruthy();
@@ -58,7 +58,6 @@ test.describe('Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258)
     await page.getByRole('button', { name: new RegExp(`^${source.tableNumber} masasını seç`) }).click();
     await page.getByRole('button', { name: 'Masa değiştir', exact: true }).click();
     await pickTarget(page, target.tableNumber);
-    await page.getByLabel('Açıklama').fill('E2E masa değişikliği');
     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
 
     // Başarı bildirimi ASLA görünmez; bir hata/çakışma uyarısı görünür.
@@ -102,7 +101,6 @@ test.describe('Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258)
     await page.getByRole('button', { name: new RegExp(`^${source.tableNumber} masasını seç`) }).click();
     await page.getByRole('button', { name: 'Masa değiştir', exact: true }).click();
     await pickTarget(page, target.tableNumber);
-    await page.getByLabel('Açıklama').fill('E2E masa değişikliği');
     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
     await expect(page.getByText(/tamamlandı/)).toBeVisible({ timeout: 10_000 });
 

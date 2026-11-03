@@ -17,3 +17,6 @@
 .closing table { width: 100%; border-collapse: collapse; }
 .closing th, .closing td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
 .closing th { color: var(--ds-color-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.closing__warning { display: grid; gap: var(--ds-space-2); border: 1px solid #b7791f; border-radius: var(--ds-radius-sm); padding: .7rem 1rem; background: #fff4d6; color: #5c3b00; }
+.closing__warning p { margin: 0; }
+.closing__check { display: flex; align-items: center; gap: .5rem; font-weight: 700; }

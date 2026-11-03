@@ -758,7 +758,7 @@ describe("cash-session.js movement flow details", () => {
   });
 
   it("starts the next shift clean: no old list, requests, counts or drafts", async () => {
-    const world = { list: { ...emptyList, movements: [{ id: "old", type: "CashIn", direction: "In", amount: 5, notes: "eski vardiya", recordedBy: ME, recordedByName: "Ayşe", occurredAt: "2026-11-03T09:30:00Z", approvedBy: null, approvedByName: null, selfApproved: false }] } };
+    const world = { expected: 300, list: { ...emptyList, movements: [{ id: "old", type: "CashIn", direction: "In", amount: 5, notes: "eski vardiya", recordedBy: ME, recordedByName: "Ayşe", occurredAt: "2026-11-03T09:30:00Z", approvedBy: null, approvedByName: null, selfApproved: false }] } };
     await open(world);
     expect($("#movement-list").textContent).toContain("eski vardiya");
     $("#start-count").click();
@@ -850,7 +850,7 @@ describe("cash-session.js counting and closing details", () => {
   });
 
   it("keeps the may-have-closed notice on screen when the state re-read fails as well", async () => {
-    await openCounting({ closeNetworkDown: true, activeFailsAfterClose: true });
+    await openCounting({ closeNetworkDown: true, activeFailsAfterClose: true, expected: 200 });
     await type("#denom-100", "2");
     $("#submit-count").click();
     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());

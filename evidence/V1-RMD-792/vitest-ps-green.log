@@ -1,0 +1,29 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (25 tests | 1 failed) 384ms
+     × switches manager self-approval on with the Evet choice 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > switches manager self-approval on with the Evet choice
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/features/management/testKit.tsx:38:32
+     36| export async function submit(label: string) {
+     37|   const form = document.querySelector(`form[aria-label="${label}"]`)!;
+     38|   await act(async () => { form.dispatchEvent(new Event("submit", { bub…
+       |                                ^
+     39| }
+     40|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ submit src/features/management/testKit.tsx:38:9
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:232:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 43 passed (44)
+   Start at  00:22:10
+   Duration  2.88s (transform 964ms, setup 0ms, import 1.45s, tests 1.25s, environment 2.15s)
+

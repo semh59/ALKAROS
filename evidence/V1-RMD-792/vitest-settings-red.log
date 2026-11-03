@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (25 tests | 2 failed) 348ms
+     × names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira 13ms
+     × names the cash-close tolerance, shows it in lira and accepts only 0 to 500 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' to contain 'Yönetici kendi talebini ve kendi kasa…'
+
+Expected: "Yönetici kendi talebini ve kendi kasa mutabakatını onaylayabilir"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemNakit çıkış onay eşiği500 ₺30.09.2026 11:00—DüzenleGeçmişi gösterYönetici kendi talebini onaylayabilirHayır30.09.2026 11:00—DüzenleGeçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:174:39
+    172|     expect(document.body.textContent).toContain("Nakit çıkış onay eşiğ…
+    173|     expect(document.body.textContent).toContain("500 ₺");
+    174|     expect(document.body.textContent).toContain("Yönetici kendi talebi…
+       |                                       ^
+    175|     await press("Düzenle");
+    176|     const form = "Ayarı değiştir: Nakit çıkış onay eşiği";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > names the cash-close tolerance, shows it in lira and accepts only 0 to 500
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' to contain 'Kasa kapanış fark toleransı'
+
+Expected: "Kasa kapanış fark toleransı"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemTanımsız ayar5030.09.2026 11:00—Geçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:198:39
+    196|     await render(<SettingsHistorySection client={client} />);
+    197|
+    198|     expect(document.body.textContent).toContain("Kasa kapanış fark tol…
+       |                                       ^
+    199|     expect(document.body.textContent).toContain("50 ₺");
+    200|     await press("Düzenle");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 23 passed (25)
+   Start at  00:22:04
+   Duration  2.79s (transform 819ms, setup 0ms, import 1.12s, tests 348ms, environment 1.07s)
+

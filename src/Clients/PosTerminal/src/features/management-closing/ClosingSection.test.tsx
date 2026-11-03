@@ -5,7 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createClosingClient, type ClosingClient } from "./closingApi";
 import { ClosingSection } from "./index";
-import type { BusinessDay } from "./models";
+import type { BusinessDay, ClosePreflight } from "./models";
 import { ManagementApiError } from "../management/http";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -13,13 +13,22 @@ import { ManagementApiError } from "../management/http";
 const openDay: BusinessDay = {
   businessDayId: "d1", businessDate: "2026-09-29", openedAt: "2026-09-29T06:00:00Z", closedAt: null, status: "Open",
   totalRevenue: 1250, totalOrdersCount: 14, totalCancelledItemsCount: 0, totalPrintFailuresCount: 0,
+  totalTipsAmount: 0, openCashSessionsCount: 0, openBillsCount: 0, unsettledPaymentsCount: 0, openItemsAcknowledged: false,
+  tableBreakdown: [], cashReconciliation: null,
 };
+
+const cleanPreflight: ClosePreflight = {
+  businessDate: "2026-09-29", revenue: 1250, tips: 80, orders: 14, cancelledItems: 2, printFailures: 1,
+  openCashSessions: 0, openBills: 0, unsettledPayments: 0, requiresAcknowledgement: false,
+};
+const openItemsPreflight: ClosePreflight = { ...cleanPreflight, openCashSessions: 1, openBills: 2, unsettledPayments: 3, requiresAcknowledgement: true };
 
 function fakeClient(overrides: Partial<ClosingClient> = {}): ClosingClient {
   return {
     getDay: vi.fn().mockResolvedValue(openDay),
-    getFullReport: vi.fn().mockResolvedValue({ businessDay: openDay, waiterSummaries: [] }),
+    getFullReport: vi.fn().mockResolvedValue({ businessDay: openDay, waiterSummaries: [], printSummaries: [] }),
     openDay: vi.fn().mockResolvedValue(undefined),
+    getClosePreflight: vi.fn().mockResolvedValue(cleanPreflight),
     closeDay: vi.fn().mockResolvedValue(undefined),
     getSettlement: vi.fn().mockResolvedValue({
       paymentMix: [{ method: "BankCard", approvedCount: 3, approvedAmount: 900 }],
@@ -165,6 +174,132 @@ describe("closing and reconciliation section", () => {
     await renderCases(client);
     await press("Geçmiş");
     expect(document.querySelector('[role="alert"]')?.textContent).toBe("Vaka bulunamadı.");
+  });
+
+  const closeButton = () => [...document.querySelectorAll("button")].find((candidate) => candidate.textContent === "İş gününü kapat")!;
+  const closeCaps = new Set(["reports.view", "reports.close-day"]);
+
+  it("has no hand-typed count fields and shows the server's own preflight figures with tips on their own line", async () => {
+    await render(<ClosingSection client={fakeClient()} capabilities={closeCaps} />);
+    expect(document.querySelectorAll('input[type="number"]')).toHaveLength(0);
+    const summary = document.querySelector('[aria-label="Kapanış özeti"]')!.textContent!;
+    expect(summary).toContain("Ciro (bahşiş hariç)₺1.250,00");
+    expect(summary).toContain("Bahşiş₺80,00");
+    expect(summary).toContain("İptal edilen kalem2");
+  });
+
+  it("closes a clean day without a warning and sends the acknowledgement off", async () => {
+    const client = fakeClient();
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+    expect(document.querySelector('input[type="checkbox"]')).toBeNull();
+    await act(async () => closeButton().click());
+    expect(client.closeDay).toHaveBeenCalledWith(expect.any(String), false);
+  });
+
+  it("keeps the close off until open items are knowingly accepted, then sends the acknowledgement", async () => {
+    const client = fakeClient({ getClosePreflight: vi.fn().mockResolvedValue(openItemsPreflight) });
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+    const warning = document.querySelector('[role="alert"]')!.textContent!;
+    expect(warning).toContain("İşletmede açık işlem var");
+    expect(document.body.textContent).toContain("Açık hesap2");
+    expect(document.body.textContent).toContain("Sonucu belirsiz ödeme3");
+    expect(closeButton().disabled).toBe(true);
+    await act(async () => closeButton().closest("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    expect(client.closeDay).not.toHaveBeenCalled();
+
+    await act(async () => (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click());
+    expect(closeButton().disabled).toBe(false);
+    await act(async () => closeButton().click());
+    expect(client.closeDay).toHaveBeenCalledWith(expect.any(String), true);
+  });
+
+  it("asks for the acknowledgement again after a close: the tick belongs to one preflight only", async () => {
+    const client = fakeClient({ getClosePreflight: vi.fn().mockResolvedValue(openItemsPreflight) });
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+    const box = () => document.querySelector('input[type="checkbox"]') as HTMLInputElement;
+    await act(async () => box().click());
+    expect(box().checked).toBe(true);
+
+    await act(async () => closeButton().click());
+
+    expect(client.closeDay).toHaveBeenCalledTimes(1);
+    expect(box().checked).toBe(false);
+    expect(closeButton().disabled).toBe(true);
+  });
+
+  it("cannot close while the preflight is missing: a failed read keeps the button off and offers a retry", async () => {
+    const getClosePreflight = vi.fn().mockRejectedValueOnce(new ManagementApiError(500, "X", "Özet şu an hazırlanamıyor.")).mockResolvedValue(cleanPreflight);
+    const client = fakeClient({ getClosePreflight });
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+    expect(document.body.textContent).toContain("Özet şu an hazırlanamıyor.");
+    expect(closeButton().disabled).toBe(true);
+    await press("Tekrar dene");
+    expect(closeButton().disabled).toBe(false);
+  });
+
+  it("reads the preflight again when the server refuses the close, so new open items show the warning", async () => {
+    const getClosePreflight = vi.fn().mockResolvedValueOnce(cleanPreflight).mockResolvedValue(openItemsPreflight);
+    const client = fakeClient({ getClosePreflight, closeDay: vi.fn().mockRejectedValue(new ManagementApiError(409, "BUSINESS_DAY_OPEN_ITEMS_NOT_ACKNOWLEDGED", "Açık işlem var.")) });
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+
+    await act(async () => closeButton().click());
+
+    expect(getClosePreflight).toHaveBeenCalledTimes(2);
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Açık işlem var.");
+    expect(document.querySelector('input[type="checkbox"]')).not.toBeNull();
+  });
+
+  it("shows a failed report once, on the waiter panel, not on every closed-day panel", async () => {
+    const closed: BusinessDay = { ...openDay, status: "Closed", closedAt: "2026-09-30T05:00:00Z" };
+    const client = fakeClient({ getDay: vi.fn().mockResolvedValue(closed), getFullReport: vi.fn().mockRejectedValue(new ManagementApiError(500, "X", "Döküm hazırlanamadı.")) });
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+
+    expect(document.body.textContent!.split("Döküm hazırlanamadı.").length - 1).toBe(1);
+  });
+
+  it("does not read the preflight for a view-only session", async () => {
+    const client = fakeClient();
+    await render(<ClosingSection client={client} capabilities={new Set(["reports.view"])} />);
+    expect(client.getClosePreflight).not.toHaveBeenCalled();
+  });
+
+  it("a closed day shows its stored tips, open-item counts, table breakdown, cash reconciliation and print summary", async () => {
+    const closed: BusinessDay = {
+      ...openDay, status: "Closed", closedAt: "2026-09-30T05:00:00Z", totalTipsAmount: 80, openBillsCount: 2, openItemsAcknowledged: true,
+      tableBreakdown: [{ tableId: "aaaaaaaa-1111", tableNumber: "A1", orders: 3, sales: 450 }, { tableId: "bbbbbbbb-2222", tableNumber: null, orders: 1, sales: 70 }],
+      cashReconciliation: { sessionsClosed: 2, expected: 1000, counted: 990, difference: -10, managerApprovedCloses: 1, selfReconciled: 0 },
+    };
+    const client = fakeClient({
+      getDay: vi.fn().mockResolvedValue(closed),
+      getFullReport: vi.fn().mockResolvedValue({
+        businessDay: closed, waiterSummaries: [],
+        printSummaries: [{ stationName: "Mutfak", totalPrintJobs: 10, failedPrintJobs: 2, recoveredPrintJobs: 1 }],
+      }),
+    });
+    await render(<ClosingSection client={client} capabilities={closeCaps} />);
+    const text = document.body.textContent!;
+    expect(text).toContain("Bahşiş₺80,00");
+    expect(text).toContain("Açık hesap2");
+    expect(text).toContain("Açık işlemler bilerek kapatıldıEvet");
+    expect(text).toContain("A1");
+    expect(text).toContain("Numara kayıtlı değil");
+    expect(text).not.toContain("aaaaaaaa");
+    expect(text).toContain("Kapanan oturum2");
+    expect(text).toContain("Yönetici onaylı kapanış1");
+    expect(text).toContain("Mutfak");
+    expect(buttons()).not.toContain("İş gününü kapat");
+    expect(client.getClosePreflight).not.toHaveBeenCalled();
+  });
+
+  it("the client reads the preflight and posts only the acknowledgement", async () => {
+    const fetcher = vi.fn((_url: string, _init?: RequestInit) => Promise.resolve(new Response("{}", { status: 200 })));
+    const api = createClosingClient(fetcher as unknown as typeof fetch);
+    await api.getClosePreflight("2026-09-29");
+    expect(fetcher.mock.calls.at(-1)![0]).toBe("/api/v1/management/reporting/business-day/2026-09-29/close-preflight");
+    await api.closeDay("2026-09-29", true);
+    const [url, init] = fetcher.mock.calls.at(-1)!;
+    expect(url).toBe("/api/v1/management/reporting/business-day/2026-09-29/close");
+    expect(JSON.parse(init!.body as string)).toEqual({ acknowledgeOpenItems: true });
   });
 
   it("the client reads actions and posts notes on the case routes", async () => {

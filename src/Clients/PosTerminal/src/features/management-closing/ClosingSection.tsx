@@ -5,7 +5,7 @@ import { commonActions, managementText } from "../../strings";
 import { createClosingClient, type ClosingClient } from "./closingApi";
 import {
   caseStatusLabel, caseStatuses, caseTypeLabel, confirmationStatusLabel, dayStatusLabel, nextStatuses, severityLabel,
-  tenderLabel, transitionActionLabel, caseActionLabel, caseActionText, type CaseAction, type BusinessDay, type BusinessDayReport, type CaseStatus, type ManualConfirmation,
+  tenderLabel, transitionActionLabel, caseActionLabel, caseActionText, type CaseAction, type BusinessDay, type BusinessDayReport, type CaseStatus, type ClosePreflight, type ManualConfirmation,
   type ReconciliationCase, type SettlementReport,
 } from "./models";
 import { errorText } from "../management/panel";
@@ -54,13 +54,16 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
   const [caseStatus, setCaseStatus] = useState<CaseStatus>("Open");
   const [cases, reloadCases] = usePanel(useCallback(() => api.listCases(caseStatus), [api, caseStatus]));
 
-  const [cancelledItems, setCancelledItems] = useState("0");
-  const [printFailures, setPrintFailures] = useState("0");
+  const dayOpen = day.state === "ready" && day.data?.status === "Open";
+  const [preflight, reloadPreflight] = usePanel<ClosePreflight | null>(useCallback(
+    () => (canClose && dayOpen ? api.getClosePreflight(date) : Promise.resolve(null)), [api, date, canClose, dayOpen]));
+  const [acknowledged, setAcknowledged] = useState(false);
+  useEffect(() => setAcknowledged(false), [date, preflight]);
   const [caseNote, setCaseNote] = useState("");
   const [history, setHistory] = useState<{ caseId: string; rows: readonly CaseAction[] }>();
   const [busy, setBusy] = useState(false);
 
-  async function act(work: () => Promise<void>, success: string, refresh: () => void) {
+  async function act(work: () => Promise<void>, success: string, refresh: () => void, afterFailure?: () => void) {
     setBusy(true);
     try {
       await work();
@@ -68,6 +71,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
       refresh();
     } catch (reason) {
       setNotice({ tone: "error", text: errorText(reason, t.actionFailed) });
+      afterFailure?.();
     } finally {
       setBusy(false);
     }
@@ -87,8 +91,10 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
       if (history?.caseId === caseId) void openHistory(caseId);
     });
   }
-  const refreshDay = () => { reloadDay(); reloadReport(); reloadSettlement(); };
-  const count = (value: string) => Math.max(0, Math.trunc(Number(value) || 0));
+  const refreshDay = () => { reloadDay(); reloadReport(); reloadSettlement(); reloadPreflight(); };
+  const dropReportError = report.state === "error" ? { state: "ready", data: null } as const : report;
+  const needsAck = preflight.state === "ready" && preflight.data?.requiresAcknowledgement === true;
+  const closeBlocked = busy || preflight.state !== "ready" || preflight.data === null || (needsAck && !acknowledged);
 
   return <div className="closing">
     <form className="closing__date" onSubmit={(event) => { event.preventDefault(); setNotice(undefined); refreshDay(); }}>
@@ -106,18 +112,43 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
             <div><dt>{t.openedAt}</dt><dd>{stamp(current.openedAt)}</dd></div>
             <div><dt>{t.closedAt}</dt><dd>{stamp(current.closedAt)}</dd></div>
             <div><dt>{t.revenue}</dt><dd>{formatMoney(current.totalRevenue)}</dd></div>
+            {current.status === "Closed" && <div><dt>{t.tips}</dt><dd>{formatMoney(current.totalTipsAmount)}</dd></div>}
             <div><dt>{t.orders}</dt><dd>{current.totalOrdersCount}</dd></div>
             <div><dt>{t.cancelled}</dt><dd>{current.totalCancelledItemsCount}</dd></div>
             <div><dt>{t.printFailed}</dt><dd>{current.totalPrintFailuresCount}</dd></div>
+            {current.status === "Closed" && <>
+              <div><dt>{t.openCashSessions}</dt><dd>{current.openCashSessionsCount}</dd></div>
+              <div><dt>{t.openBills}</dt><dd>{current.openBillsCount}</dd></div>
+              <div><dt>{t.unsettledPayments}</dt><dd>{current.unsettledPaymentsCount}</dd></div>
+              <div><dt>{t.acknowledgedAtClose}</dt><dd>{current.openItemsAcknowledged ? t.yes : t.no}</dd></div>
+            </>}
           </dl>
           {canClose && current.status === "Open" && <form className="closing__close" onSubmit={(event) => {
             event.preventDefault();
-            void act(() => api.closeDay(date, count(cancelledItems), count(printFailures)), t.dayClosed, refreshDay);
+            if (closeBlocked) return;
+            void act(() => api.closeDay(date, acknowledged), t.dayClosed, refreshDay, reloadPreflight);
           }}>
             <p>{t.closeHint}</p>
-            <TextField id="closing-cancelled" label={t.cancelledItems} type="number" min={0} value={cancelledItems} onChange={(event) => setCancelledItems(event.target.value)} />
-            <TextField id="closing-print" label={t.printFailures} type="number" min={0} value={printFailures} onChange={(event) => setPrintFailures(event.target.value)} />
-            <Button data-telemetry-id="b.management-closing.closingsection.4" type="submit" disabled={busy}>{t.closeDay}</Button>
+            {preflight.state === "loading" && <p aria-busy="true">{t.preflightLoading}</p>}
+            {preflight.state === "error" && <StateMessage tone="error" title={t.preflightFailed} actions={<Button data-telemetry-id="b.management-closing.closingsection.10" variant="secondary" onClick={reloadPreflight}>{commonActions.retry}</Button>}><p>{preflight.message}</p></StateMessage>}
+            {preflight.state === "ready" && preflight.data && <>
+              <dl className="closing__facts" aria-label={t.preflightHeading}>
+                <div><dt>{t.revenue}</dt><dd>{formatMoney(preflight.data.revenue)}</dd></div>
+                <div><dt>{t.tips}</dt><dd>{formatMoney(preflight.data.tips)}</dd></div>
+                <div><dt>{t.orders}</dt><dd>{preflight.data.orders}</dd></div>
+                <div><dt>{t.cancelled}</dt><dd>{preflight.data.cancelledItems}</dd></div>
+                <div><dt>{t.printFailed}</dt><dd>{preflight.data.printFailures}</dd></div>
+                <div><dt>{t.openCashSessions}</dt><dd>{preflight.data.openCashSessions}</dd></div>
+                <div><dt>{t.openBills}</dt><dd>{preflight.data.openBills}</dd></div>
+                <div><dt>{t.unsettledPayments}</dt><dd>{preflight.data.unsettledPayments}</dd></div>
+              </dl>
+              {needsAck && <div className="closing__warning" role="alert">
+                <strong>{t.openItemsTitle}</strong>
+                <p>{t.openItemsBody}</p>
+                <label className="closing__check"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} />{t.openItemsAck}</label>
+              </div>}
+            </>}
+            <Button data-telemetry-id="b.management-closing.closingsection.4" type="submit" disabled={closeBlocked}>{t.closeDay}</Button>
           </form>}
         </div>}
     </PanelView>
@@ -128,6 +159,31 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
         <tbody>{data.waiterSummaries.map((row) => <tr key={row.waiterUserId}>
           <td>{row.waiterUserId.slice(0, 8)}</td><td>{row.ordersServedCount}</td><td>{formatMoney(row.totalSalesAmount)}</td>
           <td>{row.cancellationsCount}</td><td>{formatMoney(row.discountsAppliedAmount)}</td></tr>)}</tbody>
+      </table>}
+    </PanelView>}
+
+    {closedDay && <PanelView title={t.tableHeading} panel={dropReportError} onRetry={reloadReport}>
+      {(data) => !data || data.businessDay.tableBreakdown.length === 0 ? <Empty /> : <table>
+        <thead><tr><th>{t.table}</th><th>{t.tableOrders}</th><th>{t.sales}</th></tr></thead>
+        <tbody>{data.businessDay.tableBreakdown.map((row) => <tr key={row.tableId}><td>{row.tableNumber ?? t.tableRemoved}</td><td>{row.orders}</td><td>{formatMoney(row.sales)}</td></tr>)}</tbody>
+      </table>}
+    </PanelView>}
+
+    {closedDay && <PanelView title={t.cashReconciliationHeading} panel={dropReportError} onRetry={reloadReport}>
+      {(data) => !data || !data.businessDay.cashReconciliation ? <Empty /> : <dl className="closing__facts">
+        <div><dt>{t.sessionsClosed}</dt><dd>{data.businessDay.cashReconciliation.sessionsClosed}</dd></div>
+        <div><dt>{t.expected}</dt><dd>{formatMoney(data.businessDay.cashReconciliation.expected)}</dd></div>
+        <div><dt>{t.actual}</dt><dd>{formatMoney(data.businessDay.cashReconciliation.counted)}</dd></div>
+        <div><dt>{t.difference}</dt><dd>{formatMoney(data.businessDay.cashReconciliation.difference)}</dd></div>
+        <div><dt>{t.managerApprovedCloses}</dt><dd>{data.businessDay.cashReconciliation.managerApprovedCloses}</dd></div>
+        <div><dt>{t.selfReconciled}</dt><dd>{data.businessDay.cashReconciliation.selfReconciled}</dd></div>
+      </dl>}
+    </PanelView>}
+
+    {closedDay && <PanelView title={t.printHeading} panel={dropReportError} onRetry={reloadReport}>
+      {(data) => !data || data.printSummaries.length === 0 ? <Empty /> : <table>
+        <thead><tr><th>{t.station}</th><th>{t.printTotal}</th><th>{t.printFailedJobs}</th><th>{t.printRecovered}</th></tr></thead>
+        <tbody>{data.printSummaries.map((row) => <tr key={row.stationName}><td>{row.stationName}</td><td>{row.totalPrintJobs}</td><td>{row.failedPrintJobs}</td><td>{row.recoveredPrintJobs}</td></tr>)}</tbody>
       </table>}
     </PanelView>}
 

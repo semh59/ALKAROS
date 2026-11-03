@@ -8,7 +8,41 @@ export interface BusinessDay {
   totalOrdersCount: number;
   totalCancelledItemsCount: number;
   totalPrintFailuresCount: number;
+  totalTipsAmount: number;
+  openCashSessionsCount: number;
+  openBillsCount: number;
+  unsettledPaymentsCount: number;
+  openItemsAcknowledged: boolean;
+  tableBreakdown: readonly TableFigure[];
+  cashReconciliation: CashReconciliation | null;
 }
+
+export interface TableFigure { tableId: string; tableNumber: string | null; orders: number; sales: number }
+
+export interface CashReconciliation {
+  sessionsClosed: number;
+  expected: number;
+  counted: number;
+  difference: number;
+  managerApprovedCloses: number;
+  selfReconciled: number;
+}
+
+/** What closing the day would store and warn about, counted by the server right now. */
+export interface ClosePreflight {
+  businessDate: string;
+  revenue: number;
+  tips: number;
+  orders: number;
+  cancelledItems: number;
+  printFailures: number;
+  openCashSessions: number;
+  openBills: number;
+  unsettledPayments: number;
+  requiresAcknowledgement: boolean;
+}
+
+export interface PrintSummary { stationName: string; totalPrintJobs: number; failedPrintJobs: number; recoveredPrintJobs: number }
 
 export interface WaiterSummary {
   waiterUserId: string;
@@ -21,6 +55,7 @@ export interface WaiterSummary {
 export interface BusinessDayReport {
   businessDay: BusinessDay;
   waiterSummaries: readonly WaiterSummary[];
+  printSummaries: readonly PrintSummary[];
 }
 
 export interface SettlementReport {

@@ -1,11 +1,12 @@
-import type { BusinessDay, CaseAction, BusinessDayReport, CaseStatus, ManualConfirmation, ReconciliationCase, SettlementReport } from "./models";
+import type { BusinessDay, CaseAction, BusinessDayReport, CaseStatus, ClosePreflight, ManualConfirmation, ReconciliationCase, SettlementReport } from "./models";
 import { ManagementApiError, createRequester } from "../management/http";
 
 export interface ClosingClient {
   getDay: (date: string) => Promise<BusinessDay | null>;
   getFullReport: (date: string) => Promise<BusinessDayReport>;
   openDay: (date: string) => Promise<void>;
-  closeDay: (date: string, cancelledItems: number, printFailures: number) => Promise<void>;
+  getClosePreflight: (date: string) => Promise<ClosePreflight>;
+  closeDay: (date: string, acknowledgeOpenItems: boolean) => Promise<void>;
   getSettlement: (date: string) => Promise<SettlementReport>;
   listManualConfirmations: () => Promise<readonly ManualConfirmation[]>;
   scanPayments: () => Promise<void>;
@@ -32,7 +33,8 @@ export function createClosingClient(fetcher: typeof fetch = fetch): ClosingClien
     },
     getFullReport: (date) => json(`/reporting/business-day/${date}/full-report`),
     openDay: (date) => post("/reporting/business-day/open", { businessDate: date }),
-    closeDay: (date, cancelledItems, printFailures) => post(`/reporting/business-day/${date}/close`, { cancelledItems, printFailures }),
+    getClosePreflight: (date) => json(`/reporting/business-day/${date}/close-preflight`),
+    closeDay: (date, acknowledgeOpenItems) => post(`/reporting/business-day/${date}/close`, { acknowledgeOpenItems }),
     getSettlement: (date) => json(`/payments/settlement-report?businessDate=${date}`),
     listManualConfirmations: () => json("/payments/manual-confirmations"),
     scanPayments: () => post("/payments/reconciliation-scan", {}),

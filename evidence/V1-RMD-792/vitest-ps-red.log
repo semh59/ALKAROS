@@ -1,0 +1,110 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (19 tests | 5 failed) 566ms
+     × has no hand-typed count fields and shows the server's own preflight figures with tips on their own line 25ms
+     × closes a clean day without a warning and sends the acknowledgement off 30ms
+     × keeps the close off until open items are knowingly accepted, then sends the acknowledgement 17ms
+     × cannot close while the preflight is missing: a failed read keeps the button off and offers a retry 25ms
+     × a closed day shows its stored tips, open-item counts, table breakdown, cash reconciliation and print summary 39ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > has no hand-typed count fields and shows the server's own preflight figures with tips on their own line
+AssertionError: expected <input …(5)></input>
+…(1) to have a length of +0 but got 2
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:184:63
+    182|   it("has no hand-typed count fields and shows the server's own prefli…
+    183|     await render(<ClosingSection client={fakeClient()} capabilities={c…
+    184|     expect(document.querySelectorAll('input[type="number"]')).toHaveLe…
+       |                                                               ^
+    185|     const summary = document.querySelector('[aria-label="Kapanış özeti…
+    186|     expect(summary).toContain("Ciro (bahşiş hariç)₺1.250,00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > closes a clean day without a warning and sends the acknowledgement off
+AssertionError: expected "vi.fn()" to be called with arguments: [ '2026-09-29', false ]
+
+Received:
+
+  1st vi.fn() call:
+
+  [
+-   "2026-09-29",
+-   false,
++   "2026-11-04",
++   0,
++   0,
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:196:29
+    194|     expect(document.querySelector('input[type="checkbox"]')).toBeNull(…
+    195|     await act(async () => closeButton().click());
+    196|     expect(client.closeDay).toHaveBeenCalledWith("2026-09-29", false);
+       |                             ^
+    197|   });
+    198|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > keeps the close off until open items are knowingly accepted, then sends the acknowledgement
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ src/features/management-closing/ClosingSection.test.tsx:202:61
+    200|     const client = fakeClient({ getClosePreflight: vi.fn().mockResolve…
+    201|     await render(<ClosingSection client={client} capabilities={closeCa…
+    202|     const warning = document.querySelector('[role="alert"]')!.textCont…
+       |                                                             ^
+    203|     expect(warning).toContain("İşletmede açık işlem var");
+    204|     expect(document.body.textContent).toContain("Açık hesap2");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > cannot close while the preflight is missing: a failed read keeps the button off and offers a retry
+AssertionError: expected 'TarihGetirİş günüDurumAçıkAçılış29.09…' to contain 'Özet şu an hazırlanamıyor.'
+
+Expected: "Özet şu an hazırlanamıyor."
+Received: "TarihGetirİş günüDurumAçıkAçılış29.09.2026 09:00Kapanış—Ciro (bahşiş hariç)₺1.250,00Sipariş sayısı14İptal edilen kalem0Yazdırma hatası0Rakamların hepsi sunucu tarafından kayıtlardan sayılır; elle sayı girilmez. Kapatmadan önce aşağıdaki özeti kontrol edin.İş gününü kapatÖdeme mutabakat raporuÖdeme yöntemleriYöntemAdetTutarBanka kartı3₺900,00Sonuçlanmamış ödemelerSonucu bilinmeyen1 · ₺50,00Mutabakat gereken0 · ₺0,00Kasa oturumlarıKayıt yok.Vaka özetiVaka türüAçıkÇözülenAçık farkKasa farkı12₺10,00Bu bölümler henüz kullanılamıyor: iade net tutarı, mali durum, yemek kartı kapanışı.Elle onaylanan kart ödemeleriSlip noTutarDurumTalepKararSLP-9₺120,00Bekliyor29.09.2026 13:00—Mutabakat vakalarıVaka durumuAçıkİnceleniyorÜst makama iletildiÇözüldüReddedildiVaka türüÖnemDurumTutarAçılışİşlemÖdeme uyuşmazlığıYüksekAçık₺40,0029.09.2026 12:00GeçmişOnline sipariş uyuşmazlığıDüşükİnceleniyor₺5,0029.09.2026 12:30Geçmiş"
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:220:39
+    218|     const client = fakeClient({ getClosePreflight });
+    219|     await render(<ClosingSection client={client} capabilities={closeCa…
+    220|     expect(document.body.textContent).toContain("Özet şu an hazırlanam…
+       |                                       ^
+    221|     expect(closeButton().disabled).toBe(true);
+    222|     await press("Yeniden dene");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > a closed day shows its stored tips, open-item counts, table breakdown, cash reconciliation and print summary
+AssertionError: expected 'TarihGetirİş günüDurumKapalıAçılış29.…' to contain 'Bahşiş₺80,00'
+
+Expected: "Bahşiş₺80,00"
+Received: "TarihGetirİş günüDurumKapalıAçılış29.09.2026 09:00Kapanış30.09.2026 08:00Ciro (bahşiş hariç)₺1.250,00Sipariş sayısı14İptal edilen kalem0Yazdırma hatası0Garson performansıKayıt yok.Ödeme mutabakat raporuÖdeme yöntemleriYöntemAdetTutarBanka kartı3₺900,00Sonuçlanmamış ödemelerSonucu bilinmeyen1 · ₺50,00Mutabakat gereken0 · ₺0,00Kasa oturumlarıKayıt yok.Vaka özetiVaka türüAçıkÇözülenAçık farkKasa farkı12₺10,00Bu bölümler henüz kullanılamıyor: iade net tutarı, mali durum, yemek kartı kapanışı.Elle onaylanan kart ödemeleriSlip noTutarDurumTalepKararSLP-9₺120,00Bekliyor29.09.2026 13:00—Mutabakat vakalarıVaka durumuAçıkİnceleniyorÜst makama iletildiÇözüldüReddedildiVaka türüÖnemDurumTutarAçılışİşlemÖdeme uyuşmazlığıYüksekAçık₺40,0029.09.2026 12:00GeçmişOnline sipariş uyuşmazlığıDüşükİnceleniyor₺5,0029.09.2026 12:30Geçmiş"
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:247:18
+    245|     await render(<ClosingSection client={client} capabilities={closeCa…
+    246|     const text = document.body.textContent!;
+    247|     expect(text).toContain("Bahşiş₺80,00");
+       |                  ^
+    248|     expect(text).toContain("Açık hesap2");
+    249|     expect(text).toContain("Açık işlemler bilerek kapatıldıEvet");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 14 passed (19)
+   Start at  00:20:45
+   Duration  2.56s (transform 233ms, setup 0ms, import 377ms, tests 566ms, environment 1.32s)
+

@@ -1,0 +1,593 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close.test.js (17 tests | 15 failed) 9305ms
+     × warns about open bills and unsettled payments and keeps closing off until they are knowingly accepted 298ms
+     × shows no warning and no checkbox when nothing is open, and closes with the acknowledgement off 240ms
+     × asks for an explanation of any difference before sending and sends it as the difference explanation 215ms
+     × shows the manager block once, without an error box saying the same, and sends one text as both reasons 222ms
+     × writes the tolerance the server reports and copies no number of its own 225ms
+     × keeps the typed explanation and the acknowledgement through the re-render of ticking the box 222ms
+     × shows CASH_SESSION_OWNER_REQUIRED as its Turkish text and never the raw server message 1229ms
+     × shows CASH_COUNT_REQUIRED as its Turkish text and never the raw server message 1242ms
+     × shows CASH_COUNT_MISMATCH as its Turkish text and never the raw server message 1244ms
+     × shows CASH_DIFFERENCE_EXPLANATION_REQUIRED as its Turkish text and never the raw server message 1237ms
+     × shows CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED as its Turkish text and never the raw server message 1234ms
+     × shows CASH_RECONCILE_SELF_NOT_ALLOWED as its Turkish text and never the raw server message 1226ms
+     × starts the next shift without the acknowledgement or explanation of the last one 241ms
+     × does not announce the whole page on every change: only alert and notice are live regions 3ms
+     × defines the styles of the new warning and checkbox 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > warns about open bills and unsettled payments and keeps closing off until they are knowingly accepted
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-close.test.js:78:35
+     76|     const calls = await toClosing({ expected: { openBillCount: 2, unse…
+     77|
+     78|     expect($("#unsettled-warning").textContent).toContain("2 açık hesa…
+       |                                   ^
+     79|     expect($("#submit-close").disabled).toBe(true);
+     80|     $("#submit-close").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows no warning and no checkbox when nothing is open, and closes with the acknowledgement off
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ cash-session-close.test.js:97:56
+     95|     $("#submit-close").click();
+     96|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+     97|     expect(closes(calls)[0].body.AcknowledgeUnsettled).toBe(false);
+       |                                                        ^
+     98|     expect(closes(calls)[0].body.DifferenceExplanation).toBeNull();
+     99|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > asks for an explanation of any difference before sending and sends it as the difference explanation
+AssertionError: expected null not to be null
+ ❯ cash-session-close.test.js:104:46
+    102|     const calls = await toClosing({}, 9);
+    103|
+    104|     expect($("#difference-explanation")).not.toBeNull();
+       |                                              ^
+    105|     $("#submit-close").click();
+    106|     await vi.waitFor(() => expect(text()).toContain("fark açıklaması y…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows the manager block once, without an error box saying the same, and sends one text as both reasons
+TypeError: Cannot set properties of null (setting 'value')
+ ❯ type cash-session-close.test.js:46:17
+     44| async function type(selector, value) {
+     45|   const element = $(selector);
+     46|   element.value = value;
+       |                 ^
+     47|   element.dispatchEvent(new Event("input", { bubbles: true }));
+     48| }
+ ❯ cash-session-close.test.js:127:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > writes the tolerance the server reports and copies no number of its own
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-close.test.js:145:33
+    143|     await toClosing({ expected: { varianceTolerance: 120 } });
+    144|
+    145|     expect($("#close-tolerance").textContent).toMatch(/120/);
+       |                                 ^
+    146|     expect($("#close-tolerance").textContent).not.toMatch(/\b50\b/);
+    147|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > keeps the typed explanation and the acknowledgement through the re-render of ticking the box
+TypeError: Cannot set properties of null (setting 'value')
+ ❯ type cash-session-close.test.js:46:17
+     44| async function type(selector, value) {
+     45|   const element = $(selector);
+     46|   element.value = value;
+       |                 ^
+     47|   element.dispatchEvent(new Event("input", { bubbles: true }));
+     48| }
+ ❯ cash-session-close.test.js:151:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows CASH_SESSION_OWNER_REQUIRED as its Turkish text and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'yalnız oturumu açan kasiyer veya bir …'
+
+- Expected
++ Received
+
+- yalnız oturumu açan kasiyer veya bir yönetici
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!HataBu işlem için yetkiniz yok.Beklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-close.test.js:172:43
+    170|     $("#submit-close").click();
+    171|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+    172|     await vi.waitFor(() => expect(text()).toContain(expectedText));
+       |                                           ^
+    173|
+    174|     expect(text()).not.toContain("RAW SERVER TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows CASH_COUNT_REQUIRED as its Turkish text and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'Kasa sayımı kaydedilmeden'
+
+- Expected
++ Received
+
+- Kasa sayımı kaydedilmeden
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!Hataİşlem, kasanın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Beklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-close.test.js:172:43
+    170|     $("#submit-close").click();
+    171|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+    172|     await vi.waitFor(() => expect(text()).toContain(expectedText));
+       |                                           ^
+    173|
+    174|     expect(text()).not.toContain("RAW SERVER TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows CASH_COUNT_MISMATCH as its Turkish text and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'son sayımla aynı olmalı'
+
+- Expected
++ Received
+
+- son sayımla aynı olmalı
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!Hataİşlem, kasanın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Beklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-close.test.js:172:43
+    170|     $("#submit-close").click();
+    171|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+    172|     await vi.waitFor(() => expect(text()).toContain(expectedText));
+       |                                           ^
+    173|
+    174|     expect(text()).not.toContain("RAW SERVER TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows CASH_DIFFERENCE_EXPLANATION_REQUIRED as its Turkish text and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain '1 ile 500 karakter'
+
+- Expected
++ Received
+
+- 1 ile 500 karakter
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!Hataİstek tamamlanamadı.Beklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-close.test.js:172:43
+    170|     $("#submit-close").click();
+    171|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+    172|     await vi.waitFor(() => expect(text()).toContain(expectedText));
+       |                                           ^
+    173|
+    174|     expect(text()).not.toContain("RAW SERVER TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED as its Turkish text and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'onay kutusunu işaretleyin'
+
+- Expected
++ Received
+
+- onay kutusunu işaretleyin
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!Hataİşlem, kasanın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Beklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-close.test.js:172:43
+    170|     $("#submit-close").click();
+    171|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+    172|     await vi.waitFor(() => expect(text()).toContain(expectedText));
+       |                                           ^
+    173|
+    174|     expect(text()).not.toContain("RAW SERVER TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > shows CASH_RECONCILE_SELF_NOT_ALLOWED as its Turkish text and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'başka bir yönetici onaylamalı'
+
+- Expected
++ Received
+
+- başka bir yönetici onaylamalı
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!HataBu işlem için yetkiniz yok.Beklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-close.test.js:172:43
+    170|     $("#submit-close").click();
+    171|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(1));
+    172|     await vi.waitFor(() => expect(text()).toContain(expectedText));
+       |                                           ^
+    173|
+    174|     expect(text()).not.toContain("RAW SERVER TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session.js closing screen > starts the next shift without the acknowledgement or explanation of the last one
+TypeError: Cannot set properties of null (setting 'value')
+ ❯ type cash-session-close.test.js:46:17
+     44| async function type(selector, value) {
+     45|   const element = $(selector);
+     46|   element.value = value;
+       |                 ^
+     47|   element.dispatchEvent(new Event("input", { bubbles: true }));
+     48| }
+ ❯ cash-session-close.test.js:179:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session page markup > does not announce the whole page on every change: only alert and notice are live regions
+AssertionError: expected '<!DOCTYPE html>\n<html lang="tr">\n<h…' not to contain 'aria-live'
+
+- Expected
++ Received
+
+- aria-live
++ <!DOCTYPE html>
++ <html lang="tr">
++ <head>
++   <meta charset="UTF-8">
++   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
++   <meta name="theme-color" content="#0B2135">
++   <title>ALKAROS Kasa Oturumu</title>
++   <link rel="stylesheet" href="./cash-session.css">
++ </head>
++ <body>
++   <a class="cs-back" href="../../index.html">← Kasaya dön</a>
++   <main id="app" class="cs-shell" aria-live="polite" aria-busy="true">
++     <div class="cs-loading">Oturum kontrol ediliyor…</div>
++   </main>
++   <script src="../../telemetry/telemetry.js"></script>
++   <script src="./cash-session.js"></script>
++ </body>
++ </html>
++
+
+ ❯ cash-session-close.test.js:205:22
+    203|     const script = readFileSync(scriptPath, "utf-8");
+    204|
+    205|     expect(html).not.toContain("aria-live");
+       |                      ^
+    206|     expect(script).toContain('role="alert"');
+    207|     expect(script).toContain('role="status"');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/15]⎯
+
+ FAIL  cash-session-close.test.js > cash-session page markup > defines the styles of the new warning and checkbox
+AssertionError: expected '/* V13-PUI-002: Kasa Oturumu (open/co…' to contain '.cs-alert-warning'
+
+- Expected
++ Received
+
+- .cs-alert-warning
++ /* V13-PUI-002: Kasa Oturumu (open/count/close/reconcile) standalone page.
++    Token block below is a deliberate manual copy of
++    src/Clients/Cashier/wwwroot/cashier-app.css's own Faz 0 :root tokens
++    (V1-CUI-008) - the same "kept in sync by hand" pattern that file's own
++    icon sprite comment already documents for this codebase (no shared CSS
++    file exists between the two standalone Cashier surfaces). */
++ :root {
++   --color-ink: #0B2135;
++   --color-brand: #1B4D7B;
++   --color-accent: #00CFFF;
++   --color-text: #222222;
++   --color-text-muted: #4d5c68;
++   --color-text-dim: #8a97a1;
++   --color-canvas: #F4F6F8;
++   --color-surface: #FFFFFF;
++   --color-border: #C8D0D7;
++   --color-success: #176548;
++   --color-warning: #735400;
++   --color-danger: #9a2530;
++   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
++   --touch-target: 48px;
++   --radius-sm: 6px;
++   --radius-md: 10px;
++   --radius-lg: 14px;
++ }
++
++ * { box-sizing: border-box; }
++
++ body {
++   margin: 0;
++   font-family: var(--font-sans);
++   background: var(--color-canvas);
++   color: var(--color-text);
++ }
++
++ .cs-shell {
++   min-height: calc(100vh - 56px);
++   display: flex;
++   align-items: center;
++   justify-content: center;
++   padding: 24px;
++ }
++
++ .cs-back {
++   display: inline-flex;
++   align-items: center;
++   min-height: var(--touch-target);
++   margin: 8px 0 0 24px;
++   padding: 0 8px;
++   color: var(--color-brand);
++   font-weight: 600;
++   text-decoration: none;
++ }
++ .cs-back:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
++
++ .cs-loading {
++   color: var(--color-text-muted);
++   font-size: 14px;
++ }
++
++ .cs-card {
++   width: min(440px, 100%);
++   background: var(--color-surface);
++   border-radius: var(--radius-lg);
++   box-shadow: 0 1px 2px rgba(11, 33, 53, 0.06), 0 12px 32px rgba(11, 33, 53, 0.10);
++   padding: 32px;
++   display: flex;
++   flex-direction: column;
++   gap: 20px;
++ }
++
++ .cs-eyebrow {
++   font-size: 12px;
++   font-weight: 700;
++   letter-spacing: 0.08em;
++   text-transform: uppercase;
++   color: var(--color-brand);
++ }
++
++ .cs-title {
++   margin: 0;
++   font-size: 22px;
++   font-weight: 800;
++   color: var(--color-ink);
++   letter-spacing: -0.01em;
++ }
++
++ .cs-subtitle {
++   margin: 0;
++   font-size: 14px;
++   line-height: 1.5;
++   color: var(--color-text-muted);
++ }
++
++ .cs-field { display: flex; flex-direction: column; gap: 8px; }
++ .cs-field-label { font-size: 13px; font-weight: 600; color: var(--color-ink); }
++ .cs-field-hint { font-size: 12px; color: var(--color-text-dim); }
++
++ .cs-input,
++ .cs-textarea {
++   border: 1px solid var(--color-border);
++   border-radius: var(--radius-md);
++   padding: 13px 14px;
++   font-size: 15px;
++   font-family: inherit;
++   color: var(--color-ink);
++   background: var(--color-surface);
++   min-height: var(--touch-target);
++ }
++ .cs-input:focus, .cs-textarea:focus {
++   outline: 2px solid var(--color-brand);
++   outline-offset: 1px;
++ }
++ .cs-textarea { resize: none; min-height: 64px; }
++
++ .cs-amount-field {
++   display: flex;
++   align-items: center;
++   border: 1.5px solid var(--color-brand);
++   border-radius: var(--radius-md);
++   padding: 12px 16px;
++   background: var(--color-canvas);
++ }
++ .cs-amount-field input {
++   flex-grow: 1;
++   border: none;
++   background: transparent;
++   font-size: 26px;
++   font-weight: 700;
++   color: var(--color-ink);
++   font-family: inherit;
++   padding: 0;
++   min-width: 0;
++ }
++ .cs-amount-field:focus-within { outline: 3px solid var(--color-brand); outline-offset: 2px; }
++ .cs-amount-suffix { font-size: 18px; font-weight: 700; color: var(--color-text-muted); }
++
++ .cs-btn {
++   border: none;
++   border-radius: var(--radius-md);
++   font-size: 15px;
++   font-weight: 700;
++   padding: 15px;
++   min-height: var(--touch-target);
++   cursor: pointer;
++   font-family: inherit;
++ }
++ .cs-btn:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
++ .cs-btn:disabled { opacity: 0.55; cursor: not-allowed; }
++ .cs-btn-primary { background: var(--color-ink); color: #FFFFFF; }
++ .cs-btn-danger { background: var(--color-danger); color: #FFFFFF; }
++ .cs-btn-success { background: var(--color-success); color: #FFFFFF; }
++ .cs-btn-secondary {
++   background: var(--color-surface);
++   color: var(--color-ink);
++   border: 1.5px solid var(--color-border);
++ }
++ .cs-btn-ghost {
++   background: transparent;
++   color: var(--color-brand);
++   padding: 8px;
++   font-size: 13px;
++   min-height: var(--touch-target);
++ }
++
++ .cs-row { display: flex; gap: 10px; }
++ .cs-row > * { flex: 1; }
++
++ .cs-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
++ .cs-stat {
++   background: var(--color-canvas);
++   border: 1px solid var(--color-border);
++   border-radius: var(--radius-md);
++   padding: 14px 16px;
++ }
++ .cs-stat-label { font-size: 12px; color: var(--color-text-dim); font-weight: 600; }
++ .cs-stat-value { font-size: 20px; font-weight: 800; color: var(--color-ink); margin-top: 4px; }
++
++ .cs-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
++
++ .cs-status-pill {
++   display: flex;
++   align-items: center;
++   gap: 6px;
++   border-radius: 999px;
++   padding: 6px 12px;
++   font-size: 13px;
++   font-weight: 700;
++   white-space: nowrap;
++ }
++ .cs-status-pill.is-open { background: rgba(23, 101, 72, 0.12); color: var(--color-success); }
++ .cs-status-dot { width: 8px; height: 8px; border-radius: 999px; background: currentColor; }
++
++ .cs-divider { height: 1px; background: var(--color-border); }
++
++ .cs-alert {
++   display: flex;
++   align-items: flex-start;
++   gap: 10px;
++   border-radius: var(--radius-md);
++   padding: 14px 16px;
++   font-size: 13px;
++   line-height: 1.5;
++ }
++ .cs-alert-icon {
++   width: 22px; height: 22px; border-radius: 999px;
++   display: flex; align-items: center; justify-content: center;
++   font-size: 13px; font-weight: 800; color: #FFFFFF; flex: 0 0 auto;
++ }
++ .cs-alert-success { background: rgba(23, 101, 72, 0.10); }
++ .cs-alert-success .cs-alert-icon { background: var(--color-success); }
++ .cs-alert-success .cs-alert-title { color: var(--color-success); font-weight: 700; }
++ .cs-alert-danger { background: rgba(154, 37, 48, 0.08); }
++ .cs-alert-danger .cs-alert-icon { background: var(--color-danger); }
++ .cs-alert-danger .cs-alert-title { color: var(--color-danger); font-weight: 700; }
++ .cs-alert-title { font-size: 14px; }
++ .cs-alert-body { color: var(--color-text-muted); }
++
++ .cs-icon-circle {
++   width: 52px; height: 52px; border-radius: 999px;
++   display: flex; align-items: center; justify-content: center;
++   font-size: 24px; font-weight: 800; align-self: center;
++ }
++ .cs-icon-circle.success { background: rgba(23, 101, 72, 0.12); color: var(--color-success); }
++ .cs-icon-circle.danger { background: rgba(154, 37, 48, 0.10); color: var(--color-danger); }
++
++ .cs-center-text { text-align: center; }
++
++ .cs-request, .cs-movement { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-bottom: 1px solid var(--color-border, #E5E7EB); }
++ .cs-request .cs-row { flex-wrap: wrap; }
++ .cs-note { font-size: 14px; color: var(--color-ink); overflow-wrap: anywhere; }
++ .cs-movement .cs-field-hint, .cs-request .cs-field-hint { color: var(--color-text-muted); font-size: 13px; }
++ .cs-movement.is-in .value { color: var(--color-success); }
++ .cs-movement.is-out .value { color: var(--color-danger); }
++ .cs-summary-row .value { overflow-wrap: anywhere; text-align: right; min-width: 0; }
++ #movement-list { max-height: 280px; overflow-y: auto; }
++ #movement-form { display: contents; }
++ .cs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
++ .cs-chip {
++   min-height: 44px; padding: 0 16px; border: 1px solid var(--color-border, #D5DBE0); border-radius: 22px;
++   background: var(--color-canvas); color: var(--color-ink); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
++ }
++
++ .cs-summary-row {
++   display: flex; align-items: center; justify-content: space-between;
++   padding: 4px 2px; font-size: 13px;
++ }
++ .cs-summary-row .value { font-weight: 700; color: var(--color-ink); }
++
++ .cs-error-text { color: var(--color-danger); font-size: 13px; }
++
++ /* V1-RMD-377 (module-by-module UI audit round 2, P1 - rakip karşılaştırması): kupür bazlı sayım. */
++ .cs-denom-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
++ .cs-denom-row {
++   display: grid; grid-template-columns: 64px 84px 1fr; align-items: center; gap: 10px;
++   padding: 6px 2px; border-bottom: 1px solid var(--color-border);
++ }
++ .cs-denom-label { font-size: 14px; font-weight: 700; color: var(--color-ink); }
++ .cs-denom-count {
++   min-height: 44px; padding: 0 10px; border: 1.5px solid var(--color-border);
++   border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; text-align: center;
++ }
++ .cs-denom-count:focus { outline: 2px solid var(--color-brand); outline-offset: 1px; }
++ .cs-denom-subtotal { text-align: right; font-weight: 600; color: var(--color-text-muted); }
++ .cs-denom-total { border-top: 2px solid var(--color-ink); margin-top: 6px; padding-top: 10px; font-size: 15px; }
++ .cs-denom-total .value { font-size: 18px; }
++
++ @media (max-width: 480px) {
++   .cs-card { padding: 24px; }
++   .cs-grid-2 { grid-template-columns: 1fr; }
++ }
++
+
+ ❯ cash-session-close.test.js:223:17
+    221|     const css = readFileSync(resolve(pageDir, "cash-session.css"), "ut…
+    222|
+    223|     expect(css).toContain(".cs-alert-warning");
+       |                 ^
+    224|     expect(css).toContain(".cs-check");
+    225|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/15]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  15 failed | 2 passed (17)
+   Start at  00:17:49
+   Duration  10.97s (transform 399ms, setup 24ms, import 49ms, tests 9.30s, environment 1.28s)
+

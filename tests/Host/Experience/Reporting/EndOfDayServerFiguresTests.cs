@@ -160,6 +160,7 @@ public sealed class EndOfDayServerFiguresTests : IAsyncLifetime
         var waiterB = Guid.NewGuid();
         var table1 = Guid.NewGuid();
         var table2 = Guid.NewGuid();
+        await _database.SeedTableAsync(table1, "A1");
         var a1 = await _database.SeedOrderAsync(Start.AddHours(1), "Completed", servingUserId: waiterA, tableId: table1, total: 100m, discount: 10m);
         await _database.SeedOrderAsync(Start.AddHours(2), "Completed", servingUserId: waiterA, tableId: table1, total: 50m, discount: 5m);
         await _database.SeedOrderAsync(Start.AddHours(3), "Completed", servingUserId: waiterB, tableId: table2, total: 70m);
@@ -184,8 +185,8 @@ public sealed class EndOfDayServerFiguresTests : IAsyncLifetime
         Assert.Equal((0, 0m, 1), (c.OrdersServedCount, c.TotalSalesAmount, c.CancellationsCount));
         Assert.Equal(3, report.WaiterSummaries.Count);
         Assert.Equal(2, report.BusinessDay.TableBreakdown.Count);
-        Assert.Contains(report.BusinessDay.TableBreakdown, t => t.TableId == table1 && t.Orders == 3 && t.Sales == 175m);
-        Assert.Contains(report.BusinessDay.TableBreakdown, t => t.TableId == table2 && t.Orders == 1 && t.Sales == 70m);
+        Assert.Contains(report.BusinessDay.TableBreakdown, t => t.TableId == table1 && t.TableNumber == "A1" && t.Orders == 3 && t.Sales == 175m);
+        Assert.Contains(report.BusinessDay.TableBreakdown, t => t.TableId == table2 && t.TableNumber == null && t.Orders == 1 && t.Sales == 70m);
     }
 
     [Fact]

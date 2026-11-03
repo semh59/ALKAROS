@@ -51,7 +51,8 @@ public sealed record WaiterFigure(Guid WaiterUserId, int Orders, decimal Sales, 
 /// <param name="Recovered">Of the failed ones, those that were printed afterwards.</param>
 public sealed record PrintStationFigure(string Station, int Total, int Failed, int Recovered);
 
-public sealed record TableFigure(Guid TableId, int Orders, decimal Sales);
+/// <param name="TableNumber">The number the table carried when the day was closed; null when it was not known (a day closed before numbers were stored, or a table that no longer exists).</param>
+public sealed record TableFigure(Guid TableId, string? TableNumber, int Orders, decimal Sales);
 
 /// <summary>Sessions closed inside the window.</summary>
 public sealed record CashReconciliationFigure(
@@ -123,8 +124,10 @@ public sealed class PostgresBusinessDayTotalsReader : IBusinessDayTotalsReader
                 WHERE (j.created_at >= $1 AND j.created_at < $2) OR (j.failed_at >= $1 AND j.failed_at < $2)
                 GROUP BY pr.station_id) p),
             (SELECT COALESCE(jsonb_agg(t ORDER BY t."tableId"), '[]'::jsonb)::text FROM (
-                SELECT table_id AS "tableId", COUNT(*) AS orders, COALESCE(SUM(total), 0) AS sales
-                FROM valid_orders WHERE table_id IS NOT NULL GROUP BY table_id) t),
+                SELECT vo.table_id AS "tableId",
+                       (SELECT tt.table_number FROM table_mgmt.tables tt WHERE tt.table_id = vo.table_id) AS "tableNumber",
+                       COUNT(*) AS orders, COALESCE(SUM(vo.total), 0) AS sales
+                FROM valid_orders vo WHERE vo.table_id IS NOT NULL GROUP BY vo.table_id) t),
             (SELECT jsonb_build_object(
                 'sessionsClosed', COUNT(*), 'expected', COALESCE(SUM(expected_cash), 0), 'counted', COALESCE(SUM(actual_cash), 0),
                 'difference', COALESCE(SUM(difference), 0),

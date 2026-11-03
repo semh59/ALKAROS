@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { readSeed } from '../lib/testHelpers.js';
+import { readSeed, loginCashier } from '../lib/testHelpers.js';
+import { createBill } from '../lib/paymentHelpers.js';
 
 // V13-PUI-002: the standalone Kasa Oturumu page (src/Clients/Cashier/
 // wwwroot/payments/cash-session/**) exercised end to end against the real
@@ -25,6 +26,37 @@ async function loginOnCashSessionPage(page, seed) {
 }
 
 test.describe('Kasa Oturumu (V13-PUI-002)', () => {
+  test('açık hesap varken kapanış uyarı verir; onay kutusu işaretlenmeden kapanmaz', async ({ page }) => {
+    const seed = readSeed();
+    await loginCashier(page, seed);
+    const terminalId = (await (await page.request.get('/api/v1/auth/session/current')).json()).terminalId;
+    const billId = await createBill(page, terminalId, seed);
+
+    // The cashier session from the till screen is already valid here, so the page opens without its own login.
+    await page.goto('/cashier/payments/cash-session/index.html');
+    await expect(page.getByRole('heading', { name: 'Vardiyayı Başlat' })).toBeVisible({ timeout: 15_000 });
+    await page.locator('#opening-balance').fill('0');
+    await page.getByRole('button', { name: 'Kasayı Aç' }).click();
+    await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Sayıma Başla' }).click();
+    await useManualCount(page);
+    await page.locator('#counted-amount').fill('0');
+    await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
+    await page.getByRole('button', { name: 'Evet, çekmece boş' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toBeVisible();
+    await expect(page.locator('#unsettled-warning')).toContainText('açık hesap');
+    await expect(page.getByRole('button', { name: 'Kasayı Kapat' })).toBeDisabled();
+
+    // The bill is cancelled so later scenarios start clean; the warning on screen was read before that,
+    // and the server accepts the acknowledgement either way.
+    const cancelled = await page.request.post(`/api/v1/terminals/${terminalId}/billing/bills/${billId}/cancel`, { data: { Reason: 'E2E temizlik' } });
+    expect(cancelled.ok()).toBe(true);
+    await page.getByLabel('Bunları bilerek kapatıyorum').check();
+    await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
+    await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
+  });
+
   test('açılış, nakit giriş, sayım ve sıfır farkla kapatma tam akışı', async ({ page }) => {
     const seed = readSeed();
     await loginOnCashSessionPage(page, seed);
@@ -101,7 +133,7 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     expect(await page.evaluate(() => localStorage.getItem('alkaros_cashier_parked'))).toBeNull();
   });
 
-  test('kapalı süpervizör toleransını aşan fark için açıklama zorunlu tutulur', async ({ page }) => {
+  test('fark için açıklama zorunludur; tolerans aşılırsa yönetici açıklaması istenir ve aynı metin iki yere gider', async ({ page }) => {
     const seed = readSeed();
     await loginOnCashSessionPage(page, seed);
 
@@ -112,21 +144,24 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
 
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
     await useManualCount(page);
-    // Beklenenden çok farklı bir sayım - süpervizör onay akışını tetikler.
     await page.locator('#counted-amount').fill('40');
     await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
 
     await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toBeVisible();
-    // İlk deneme: sunucu farkın tolerans sınırını (varsayılan 50 TL) aştığını
-    // 409 CASH_VARIANCE_THRESHOLD_EXCEEDED ile bildirir - bu, ekranın kendi
-    // sabit bir eşik değerini kopyalamadığının kanıtı (backend akıllı,
-    // frontend aptal).
+    await expect(page.locator('#unsettled-warning')).toHaveCount(0);
+    await expect(page.locator('#close-tolerance')).toContainText('₺50,00');
+    // Fark var: açıklama olmadan istek hiç gönderilmez.
     await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
-    await expect(page.getByText('Fark tolerans sınırını aşıyor').first()).toBeVisible();
-    await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
-    await expect(page.getByText('bir açıklama girin')).toBeVisible();
+    await expect(page.getByText('fark açıklaması yazın')).toBeVisible();
 
-    await page.locator('#override-reason').fill('E2E test - sayım hatası, tutar teyit edildi');
+    // Açıklamayla gönderilir; sunucu farkın tolerans sınırını aştığını 409 ile bildirir
+    // (ekran kendi sabit eşiğini kopyalamaz) ve yönetici bloğu tek uyarı olarak açılır.
+    await page.locator('#difference-explanation').fill('E2E test - sayım hatası, tutar teyit edildi');
+    await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
+    await expect(page.locator('#override-reason')).toBeVisible();
+    await expect(page.getByText('Fark tolerans sınırını aşıyor')).toHaveCount(1);
+    await expect(page.locator('#override-reason')).toHaveValue('E2E test - sayım hatası, tutar teyit edildi');
+
     await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
     await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
   });

@@ -171,7 +171,7 @@ describe("settings history section", () => {
 
     expect(document.body.textContent).toContain("Nakit çıkış onay eşiği");
     expect(document.body.textContent).toContain("500 ₺");
-    expect(document.body.textContent).toContain("Yönetici kendi talebini onaylayabilir");
+    expect(document.body.textContent).toContain("Yönetici kendi talebini ve kendi kasa mutabakatını onaylayabilir");
     await press("Düzenle");
     const form = "Ayarı değiştir: Nakit çıkış onay eşiği";
     await typeInto(idOfField("Değişiklik gerekçesi"), "Hesap değişti");
@@ -188,6 +188,30 @@ describe("settings history section", () => {
     await typeInto(idOfField("Yeni değer"), "750");
     await submit(form);
     expect(client.update).toHaveBeenCalledWith("cash.cash_out_approval_threshold", "750", 1, "Hesap değişti");
+  });
+
+  it("names the cash-close tolerance, shows it in lira and accepts only 0 to 500", async () => {
+    const tolerance = { ...waiterLimit, settingId: "c3", key: "cash.close_variance_tolerance", value: "50" };
+    const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([tolerance]) });
+    await render(<SettingsHistorySection client={client} />);
+
+    expect(document.body.textContent).toContain("Kasa kapanış fark toleransı");
+    expect(document.body.textContent).toContain("50 ₺");
+    await press("Düzenle");
+    const form = "Ayarı değiştir: Kasa kapanış fark toleransı";
+    await typeInto(idOfField("Değişiklik gerekçesi"), "Sıkılaştır");
+    for (const refused of ["501", "-1", "10.5"]) {
+      await typeInto(idOfField("Yeni değer"), refused);
+      await submit(form);
+      expect(alertText()).not.toBe("");
+    }
+    expect(client.update).not.toHaveBeenCalled();
+    await typeInto(idOfField("Yeni değer"), "501");
+    await submit(form);
+    expect(alertText()).toBe("0 ile 500 ₺ arası; kasa kapanışında bu tutarı aşan fark yönetici onayı ister");
+    await typeInto(idOfField("Yeni değer"), "20");
+    await submit(form);
+    expect(client.update).toHaveBeenCalledWith("cash.close_variance_tolerance", "20", 1, "Sıkılaştır");
   });
 
   it("accepts a cash-out threshold of 0, which sends every cash-out for approval", async () => {
@@ -210,7 +234,7 @@ describe("settings history section", () => {
     await press("Düzenle");
     await typeInto(idOfField("Yeni değer"), "true");
     await typeInto(idOfField("Değişiklik gerekçesi"), "Müdür yokken");
-    await submit("Ayarı değiştir: Yönetici kendi talebini onaylayabilir");
+    await submit("Ayarı değiştir: Yönetici kendi talebini ve kendi kasa mutabakatını onaylayabilir");
     expect(client.update).toHaveBeenCalledWith("approvals.manager_self_approval_enabled", "true", 5, "Müdür yokken");
   });
 

@@ -129,6 +129,10 @@ public sealed class EndOfDayTestDatabase : PgTestDatabase
         return orderId;
     }
 
+    public Task SeedTableAsync(Guid tableId, string tableNumber) => ExecuteWithoutForeignKeysAsync(
+        "INSERT INTO table_mgmt.tables (table_id, table_number, current_status) VALUES (@id, @number, 'Available');",
+        ("id", tableId), ("number", tableNumber));
+
     public async Task<Guid> SeedBillAsync(string status, DateTimeOffset? closedAt = null)
     {
         var billId = Guid.NewGuid();

@@ -213,6 +213,11 @@ body {
 .cs-alert-danger { background: rgba(154, 37, 48, 0.08); }
 .cs-alert-danger .cs-alert-icon { background: var(--color-danger); }
 .cs-alert-danger .cs-alert-title { color: var(--color-danger); font-weight: 700; }
+.cs-alert-warning { background: rgba(115, 84, 0, 0.10); }
+.cs-alert-warning .cs-alert-icon { background: var(--color-warning); }
+.cs-alert-warning .cs-alert-title { color: var(--color-warning); font-weight: 700; }
+.cs-check { display: flex; align-items: center; gap: 12px; min-height: var(--touch-target); font-weight: 600; color: var(--color-text); }
+.cs-check input { width: 24px; height: 24px; flex: 0 0 auto; }
 .cs-alert-title { font-size: 14px; }
 .cs-alert-body { color: var(--color-text-muted); }
 

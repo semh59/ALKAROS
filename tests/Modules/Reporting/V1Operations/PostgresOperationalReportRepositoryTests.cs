@@ -25,7 +25,7 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
         OpenItems: open ?? new OpenItems(0, 0, 0),
         Waiters: [new WaiterFigure(waiterId ?? Guid.NewGuid(), 15, 4250.00m, 1, 150.00m)],
         PrintStations: [new PrintStationFigure("KitchenStation01", 45, 2, 2)],
-        Tables: [new TableFigure(tableId ?? Guid.NewGuid(), 6, 1800.00m)],
+        Tables: [new TableFigure(tableId ?? Guid.NewGuid(), "A1", 6, 1800.00m)],
         Cash: new CashReconciliationFigure(2, 900m, 895m, -5m, 1, 0));
 
     private OperationalReportService ServiceWith(BusinessDayFigures figures)
@@ -58,7 +58,7 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
         (day.TotalCancelledItemsCount, day.TotalPrintFailuresCount).Should().Be((1, 2));
         day.OpenItemsAcknowledged.Should().BeFalse();
         day.OpenItemsAtClose.Should().Be(new OpenItems(0, 0, 0));
-        day.TableBreakdown.Should().ContainSingle().Which.Should().Be(new TableFigure(tableId, 6, 1800.00m));
+        day.TableBreakdown.Should().ContainSingle().Which.Should().Be(new TableFigure(tableId, "A1", 6, 1800.00m));
         day.CashReconciliation.Should().Be(new CashReconciliationFigure(2, 900m, 895m, -5m, 1, 0));
 
         var report = (await _service.GetFullDailyReportAsync(date))!;

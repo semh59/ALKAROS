@@ -17,6 +17,10 @@
     suggestedOpeningBalance: null,
     lastCountedAmount: null,
     expectedCash: null,
+    // What the server reports next to the expected cash: the tolerance and how much business is still open.
+    tolerance: null,
+    openBills: 0,
+    unsettledPayments: 0,
     varianceExceeded: false,
     closeResult: null,
     movementDirection: 'in',
@@ -24,7 +28,7 @@
     summaryExpected: null,
     // Typed-but-unsent values live in state, not only in the DOM: every re-render (busy, error,
     // notice) rebuilds the screen, and the fields must come back exactly as the cashier left them.
-    drafts: { amount: '', notes: '', counted: '', countNotes: '', overrideReason: '' },
+    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false },
     zeroCountPrompt: false,
     pendingDecision: null,
     userId: null,
@@ -107,7 +111,13 @@
     ACTIVE_CASH_SESSION_EXISTS: 'Bu terminalde zaten açık bir kasa oturumu var.',
     INVALID_CASH_SESSION_STATE: 'Kasa oturumu bu işlem için uygun durumda değil.',
     CASH_SESSION_NOT_FOUND: 'Kasa oturumu bulunamadı.',
-    CASH_VARIANCE_THRESHOLD_EXCEEDED: 'Fark tolerans sınırını aşıyor; süpervizör onayı gerekiyor.',
+    CASH_VARIANCE_THRESHOLD_EXCEEDED: 'Fark tolerans sınırını aşıyor; yönetici onayı gerekiyor.',
+    CASH_SESSION_OWNER_REQUIRED: 'Bu kasa oturumunu yalnız oturumu açan kasiyer veya bir yönetici sayabilir ve kapatabilir.',
+    CASH_COUNT_REQUIRED: 'Kasa sayımı kaydedilmeden kasa kapatılamaz; önce parayı sayıp kaydedin.',
+    CASH_COUNT_MISMATCH: 'Kapanışta girilen tutar kayıtlı son sayımla aynı olmalı; gerekirse yeniden sayın.',
+    CASH_DIFFERENCE_EXPLANATION_REQUIRED: 'Kasada fark var; 1 ile 500 karakter arasında bir açıklama yazın.',
+    CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED: 'İşletmede ödenmemiş hesap veya sonucu belirsiz ödeme var; bunları bilerek kapatmak için onay kutusunu işaretleyin.',
+    CASH_RECONCILE_SELF_NOT_ALLOWED: 'Oturumu açan veya kapatan kişi kendi oturumunu mutabık edemez; başka bir yönetici onaylamalı.',
     INVALID_CREDENTIALS: 'Kullanıcı adı veya şifre hatalı.',
     FORBIDDEN: 'Bu işlem için yetkiniz yok.',
     VALIDATION_FAILED: 'Girilen bilgiler geçersiz. Alanları kontrol edin.',
@@ -160,9 +170,7 @@
     render();
   }
 
-  // V1-RMD-361 (module-by-module UI audit, 2026-09-27, saha gerçekliği): #app's own
-  // aria-live="polite" (index.html) already tells a screen reader content changed on every full
-  // re-render, but nothing ever moved KEYBOARD focus to the new screen's own primary field -
+  // Nothing used to move KEYBOARD focus to the new screen's own primary field -
   // opening the cash-drawer count, say, left focus wherever the PREVIOUS screen's now-gone button
   // used to be. On a touchscreen kiosk with no physical keyboard, this also means the numeric pad
   // never pops up on its own; the cashier must tap the amount field manually first, every time.
@@ -261,7 +269,7 @@
     state.movements = null;
     state.movementsError = false;
     state.notice = null;
-    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', overrideReason: '' };
+    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false };
     state.denominationCounts = {};
     state.zeroCountPrompt = false;
     state.pendingDecision = null;
@@ -453,7 +461,7 @@
         .catch(function () { return { ok: false }; })
         .then(function (expected) {
           state.busy = false;
-          state.expectedCash = expected.ok ? expected.body.expectedCash : null;
+          applyExpected(expected);
           state.phase = 'closing';
           render();
         });
@@ -463,14 +471,25 @@
     });
   }
 
-  function submitClose(isSupervisorOverride, overrideReason) {
+  function applyExpected(expected) {
+    var body = expected.ok ? expected.body : null;
+    state.expectedCash = body ? body.expectedCash : null;
+    state.tolerance = body && body.varianceTolerance != null ? body.varianceTolerance : null;
+    state.openBills = body && body.openBillCount ? body.openBillCount : 0;
+    state.unsettledPayments = body && body.unsettledPaymentCount ? body.unsettledPaymentCount : 0;
+  }
+
+  function submitClose(isSupervisorOverride, explanation) {
     setBusy(true);
     api(cashSessionsBase() + '/' + state.session.cashSessionId + '/close', {
       method: 'POST',
       body: {
         ActualCash: state.lastCountedAmount,
         IsSupervisorOverride: !!isSupervisorOverride,
-        OverrideReason: overrideReason || null,
+        // One typed text serves both: the manager's reason and the explanation of the difference.
+        OverrideReason: isSupervisorOverride ? explanation || null : null,
+        DifferenceExplanation: explanation || null,
+        AcknowledgeUnsettled: !!state.drafts.acknowledged,
       },
     }).then(function (result) {
       state.busy = false;
@@ -482,13 +501,21 @@
       // onay UI'ı ancak o zaman gösterilir.
       if (result.status === 409 && result.body && result.body.error
           && result.body.error.code === 'CASH_VARIANCE_THRESHOLD_EXCEEDED') {
+        // The manager block below is the one warning; an error box with the same text would say it twice.
         state.varianceExceeded = true;
-        state.error = describeHttpFailure(result.status, result.body);
+        state.error = null;
         render();
         return;
       }
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
+        if (result.body && result.body.error && result.body.error.code === 'CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED') {
+          // Something opened after the counts were read: read them again so the warning and the box appear.
+          api(movementsBase() + '/expected-cash').then(function (expected) {
+            applyExpected(expected);
+            render();
+          });
+        }
         render();
         return;
       }
@@ -527,7 +554,7 @@
     setBusy(true);
     api(movementsBase() + '/expected-cash').then(function (expected) {
       state.busy = false;
-      state.expectedCash = expected.ok ? expected.body.expectedCash : null;
+      applyExpected(expected);
       state.error = expected.ok ? null : 'Beklenen tutar okunamadı. Bağlantınızı kontrol edip tekrar deneyin.';
       render();
     }).catch(function () {
@@ -543,11 +570,8 @@
 
   // ---- rendering ---------------------------------------------------------
 
-  // V1-RMD-361 (module-by-module UI audit, 2026-09-27): this box had no role="alert" - the same
-  // gap V1-RMD-345 already closed for CustomerWeb's error regions, missed here. #app is already
-  // aria-live="polite" (index.html), so a screen reader DOES hear the text either way, but
-  // role="alert" is what tells it this specific piece is an error worth a distinct, more urgent
-  // announcement rather than just "some content changed".
+  // Only the alert and the notice are live regions (role="alert" / role="status"); the whole page is not, so a
+  // screen reader announces the message and not every re-render of the screen.
   function errorAlert() {
     if (!state.error) return '';
     return (
@@ -1023,6 +1047,10 @@
     var hasExpected = expected != null;
     var difference = hasExpected ? counted - expected : null;
     var exceeded = state.varianceExceeded;
+    var hasDifference = hasExpected && difference !== 0;
+    var unsettled = state.openBills > 0 || state.unsettledPayments > 0;
+    var acknowledged = !!state.drafts.acknowledged;
+    var closeDisabled = state.busy || !hasExpected || (unsettled && !acknowledged);
     app.innerHTML =
       '<div class="cs-card">' +
       '<div><span class="cs-eyebrow">Kapatma</span>' +
@@ -1036,30 +1064,58 @@
         ? '<div class="cs-summary-row"><span>Fark</span><span class="value" style="color:' +
           (exceeded ? 'var(--color-danger)' : 'var(--color-success)') + '">' + formatMoney(difference) + '</span></div>'
         : '') +
-      (exceeded
-        ? '<div class="cs-alert cs-alert-danger"><span class="cs-alert-icon">!</span>' +
-          '<div><div class="cs-alert-title">Fark tolerans sınırını aşıyor</div>' +
-          '<div class="cs-alert-body">Devam etmek için süpervizör onayı ve açıklama gerekir.</div></div></div>' +
-          '<label class="cs-field-label" for="override-reason">Süpervizör Açıklaması</label>' +
-          '<textarea class="cs-textarea" id="override-reason">' + escapeHtml(state.drafts.overrideReason) + '</textarea>'
+      (state.tolerance != null
+        ? '<p class="cs-field-hint" id="close-tolerance">Kapanışta kabul edilen fark: en çok ' + formatMoney(state.tolerance) +
+          ' (yönetici ayarı); fazlası yönetici onayı ister.</p>'
         : '') +
+      (unsettled
+        ? '<div class="cs-alert cs-alert-warning" id="unsettled-warning" role="alert"><span class="cs-alert-icon">!</span>' +
+          '<div><div class="cs-alert-title">İşletmede açık işlem var</div>' +
+          '<div class="cs-alert-body">' + state.openBills + ' açık hesap, ' + state.unsettledPayments +
+          ' sonucu belirsiz ödeme var. Kasayı kapatmak bunları çözmez.</div></div></div>' +
+          '<label class="cs-check" for="ack-unsettled"><input type="checkbox" id="ack-unsettled" ' + (acknowledged ? 'checked' : '') +
+          '><span>Bunları bilerek kapatıyorum</span></label>'
+        : '') +
+      (exceeded
+        ? '<div class="cs-alert cs-alert-danger" role="alert"><span class="cs-alert-icon">!</span>' +
+          '<div><div class="cs-alert-title">Fark tolerans sınırını aşıyor</div>' +
+          '<div class="cs-alert-body">Devam etmek için yönetici onayı ve açıklama gerekir.</div></div></div>' +
+          '<label class="cs-field-label" for="override-reason">Yönetici Açıklaması</label>' +
+          '<textarea class="cs-textarea" id="override-reason" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>'
+        : hasDifference
+          ? '<label class="cs-field-label" for="difference-explanation">Fark Açıklaması (zorunlu)</label>' +
+            '<textarea class="cs-textarea" id="difference-explanation" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>'
+          : '') +
       (hasExpected
         ? ''
         : '<p class="cs-field-hint" id="expected-missing">Beklenen tutar okunamadı; kasayı kapatmak için yeniden okuyun.</p>' +
           '<button class="cs-btn cs-btn-secondary" id="reread-expected" type="button" ' + (state.busy ? 'disabled' : '') + '>Beklenen tutarı yeniden oku</button>') +
-      '<button class="cs-btn cs-btn-primary" id="submit-close" ' + (state.busy || !hasExpected ? 'disabled' : '') + '>' +
+      '<button class="cs-btn cs-btn-primary" id="submit-close" ' + (closeDisabled ? 'disabled' : '') + '>' +
       (state.busy ? 'Kapatılıyor…' : 'Kasayı Kapat') + '</button>' +
       '</div>';
     var reread = document.getElementById('reread-expected');
     if (reread) reread.addEventListener('click', rereadExpectedCash);
+    var ack = document.getElementById('ack-unsettled');
+    if (ack) {
+      ack.addEventListener('change', function () {
+        state.drafts.acknowledged = ack.checked;
+        render();
+        document.getElementById('ack-unsettled').focus();
+      });
+    }
     document.getElementById('submit-close').addEventListener('click', function () {
-      var overrideReasonEl = document.getElementById('override-reason');
-      var overrideReason = overrideReasonEl ? overrideReasonEl.value.trim() : '';
-      if (exceeded && !overrideReason) {
+      var field = document.getElementById('override-reason') || document.getElementById('difference-explanation');
+      var explanation = field ? field.value.trim() : '';
+      if (exceeded && !explanation) {
         setError('Fark tolerans sınırını aşıyor; bir açıklama girin.');
         return;
       }
-      submitClose(exceeded, overrideReason);
+      if (hasDifference && !explanation) {
+        setError('Kasada fark var; kapatmak için fark açıklaması yazın.');
+        return;
+      }
+      state.drafts.explanation = explanation;
+      submitClose(exceeded, explanation);
     });
   }
 
@@ -1092,7 +1148,6 @@
       state.expectedCash = null;
       state.varianceExceeded = false;
       state.error = null;
-      state.drafts.overrideReason = '';
       loadActiveSession();
     });
   }
@@ -1123,7 +1178,8 @@
     // The screen still in the DOM is the previous one when the phase just changed; its fields are not drafts.
     if (renderedKey !== screenKey()) return;
     [['movement-amount', 'amount'], ['movement-notes', 'notes'], ['counted-amount', 'counted'],
-      ['count-notes', 'countNotes'], ['override-reason', 'overrideReason']].forEach(function (pair) {
+      ['count-notes', 'countNotes'], ['override-reason', 'explanation'],
+      ['difference-explanation', 'explanation']].forEach(function (pair) {
       var element = document.getElementById(pair[0]);
       if (element && app.contains(element)) state.drafts[pair[1]] = element.value;
     });
