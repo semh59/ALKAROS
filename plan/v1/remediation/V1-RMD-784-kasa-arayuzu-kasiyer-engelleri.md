@@ -22,11 +22,11 @@ Doğrulanmayan veya iş kuralı belirsiz bulgular bu görevde yapılmaz, raporla
 
 ## Owned surface
 
+- `src/Clients/PosTerminal/src/format.test.ts`
 - `evidence/V1-RMD-784/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/styles.css (V1-RMD-042) — üst çubuk sarma.
   - src/Clients/PosTerminal/src/format.ts (V1-RMD-469) — saat ve ondalık biçim yardımcıları.
-  - src/Clients/PosTerminal/src/format.test.ts (V1-RMD-469) — yardımcı testleri.
   - src/Clients/PosTerminal/src/shell/layout-contract.test.ts (V1-RMD-025) — üst çubuk sarma sözleşmesi.
   - src/Clients/PosTerminal/src/routes/Cashier.tsx (V1-RMD-114) — "Sürüm" etiketi kalkar.
   - src/Clients/PosTerminal/src/routes/workspace.tsx (V1-KDS-001) — kat planı bellek, saat biçimi, boş hesap durumu.
