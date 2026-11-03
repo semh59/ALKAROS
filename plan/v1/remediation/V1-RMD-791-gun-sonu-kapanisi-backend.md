@@ -1,8 +1,8 @@
 # V1-RMD-791 - Gün sonu kapanışı (backend): sunucu hesaplı sayılar, ön koşul uyarıları, bahşiş ayrı satır, tek iş günü penceresi, tutarlı okuma
 
 - Task ID: V1-RMD-791
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
