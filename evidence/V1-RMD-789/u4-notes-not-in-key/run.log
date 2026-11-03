@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11038ms
+     × reuses the retry key for the same body after a network failure and mints a new one when the reason changes 302ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > reuses the retry key for the same body after a network failure and mints a new one when the reason changes
+AssertionError: expected '44be49fb-ea50-4188-8fe9-0da61dc517c3' not to be '44be49fb-ea50-4188-8fe9-0da61dc517c3' // Object.is equality
+ ❯ cash-session-movement.test.js:264:25
+    262|     const keys = posted(calls, "/cash-movements").map((c) => c.body.Id…
+    263|     expect(keys[1]).toBe(keys[0]);
+    264|     expect(keys[2]).not.toBe(keys[0]);
+       |                         ^
+    265|   });
+    266| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:47:32
+   Duration  12.35s (transform 1.48s, setup 29ms, import 77ms, tests 11.04s, environment 954ms)
+

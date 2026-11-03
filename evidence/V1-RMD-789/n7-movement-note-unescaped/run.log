@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 12021ms
+     × escapes what the cashier typed in the summary, the list and the request panel 110ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > escapes what the cashier typed in the summary, the list and the request panel
+AssertionError: expected <img src="x" onerror="alert(1)"></img> to be null
+
+- Expected:
+null
+
++ Received:
+<img
+  onerror="alert(1)"
+  src="x"
+/>
+
+ ❯ cash-session-movement.test.js:657:120
+    655|     };
+    656|     await open({ capabilities: ["cash.session.override"], list });
+    657|     expect(document.querySelector("#movement-list img, #pending-reques…
+       |                                                                                                                        ^
+    658|
+    659|     await toSummary("out", "40", hostile);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:52:03
+   Duration  14.41s (transform 2.07s, setup 41ms, import 104ms, tests 12.02s, environment 1.78s)
+

@@ -20,6 +20,18 @@
     varianceExceeded: false,
     closeResult: null,
     movementDirection: 'in',
+    movementStep: 'form',
+    summaryExpected: null,
+    // Typed-but-unsent values live in state, not only in the DOM: every re-render (busy, error,
+    // notice) rebuilds the screen, and the fields must come back exactly as the cashier left them.
+    drafts: { amount: '', notes: '', counted: '', countNotes: '', overrideReason: '' },
+    zeroCountPrompt: false,
+    pendingDecision: null,
+    userId: null,
+    capabilities: [],
+    movements: null,
+    movementsError: false,
+    notice: null,
     busy: false,
     error: null,
     // V1-RMD-314 (independent 2026-09-26 audit, finding K3): the cash-movement idempotency key for the
@@ -54,6 +66,16 @@
     return money.format(Number(amount || 0));
   }
 
+  function newUuid() {
+    return (window.crypto && window.crypto.randomUUID)
+      ? window.crypto.randomUUID()
+      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          var r = (Math.random() * 16) | 0;
+          var v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
+  }
+
   function savedTerminalId() {
     var existing = null;
     try {
@@ -62,13 +84,7 @@
       existing = null;
     }
     if (existing) return existing;
-    var generated = (window.crypto && window.crypto.randomUUID)
-      ? window.crypto.randomUUID()
-      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-          var r = (Math.random() * 16) | 0;
-          var v = c === 'x' ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        });
+    var generated = newUuid();
     try {
       window.localStorage.setItem(TERMINAL_ID_KEY, generated);
     } catch (err) {
@@ -78,8 +94,28 @@
     return generated;
   }
 
+  // The server's own message is never shown: every code the drawer screen can meet has its Turkish text here.
+  var ERROR_TEXT = {
+    CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
+    CASH_MOVEMENT_REASON_INVALID: 'Açıklama zorunludur ve en çok 500 karakter olabilir.',
+    CASH_MOVEMENT_REQUESTS_PENDING: 'Onay bekleyen nakit çıkış talebi var; önce karara bağlayın veya geri çekin.',
+    CASH_MOVEMENT_SELF_APPROVAL: 'Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.',
+    CASH_MOVEMENT_REQUEST_STATE: 'Bu çıkış talebi artık beklemiyor; liste yenilendi.',
+    CASH_MOVEMENT_REQUEST_NOT_FOUND: 'Çıkış talebi bulunamadı.',
+    IDEMPOTENCY_KEY_REUSED: 'Bu işlem farklı bir nakit hareketi için zaten kaydedilmiş. Sayfayı yenileyip tekrar deneyin.',
+    CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+    ACTIVE_CASH_SESSION_EXISTS: 'Bu terminalde zaten açık bir kasa oturumu var.',
+    INVALID_CASH_SESSION_STATE: 'Kasa oturumu bu işlem için uygun durumda değil.',
+    CASH_SESSION_NOT_FOUND: 'Kasa oturumu bulunamadı.',
+    CASH_VARIANCE_THRESHOLD_EXCEEDED: 'Fark tolerans sınırını aşıyor; süpervizör onayı gerekiyor.',
+    INVALID_CREDENTIALS: 'Kullanıcı adı veya şifre hatalı.',
+    FORBIDDEN: 'Bu işlem için yetkiniz yok.',
+    VALIDATION_FAILED: 'Girilen bilgiler geçersiz. Alanları kontrol edin.',
+  };
+
   function describeHttpFailure(status, body) {
-    if (body && body.error && body.error.message) return body.error.message;
+    var code = body && body.error && body.error.code;
+    if (code && ERROR_TEXT[code]) return ERROR_TEXT[code];
     if (status === 401) return 'Oturumunuz sona ermiş. Lütfen tekrar giriş yapın.';
     if (status === 403) return 'Bu işlem için yetkiniz yok.';
     if (status === 404) return 'Kayıt bulunamadı.';
@@ -135,7 +171,8 @@
   // typing into, just because the button they have not clicked yet got disabled, would be worse
   // than doing nothing.
   function focusPrimaryField() {
-    var target = app.querySelector('input, textarea');
+    var target = app.querySelector('input:not(:disabled), textarea:not(:disabled)');
+    if (!target) target = document.getElementById('cash-in');
     if (!target) target = app.querySelector('button:not(:disabled)');
     if (target) target.focus({ preventScroll: true });
   }
@@ -166,6 +203,8 @@
       // kullanmak zorunludur, yoksa RequireCashierAsync eşleşmez.
       state.terminalId = result.body.terminalId;
       state.displayName = result.body.displayName;
+      state.userId = result.body.userId;
+      state.capabilities = result.body.capabilities || [];
       loadActiveSession();
     }).catch(function () {
       state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
@@ -193,10 +232,45 @@
       }
       state.session = result.body;
       state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
+      if (state.phase === 'open') return loadMovements();
       render();
     }).catch(function () {
       setError('Kasa durumu okunamadı. Bağlantınızı kontrol edin.');
     });
+  }
+
+  function movementsBase() {
+    return cashSessionsBase() + '/' + state.session.cashSessionId;
+  }
+
+  // The list never blocks the screen: a failed read leaves the open-session actions usable and says so.
+  function loadMovements() {
+    return api(movementsBase() + '/cash-movements').then(function (result) {
+      state.movements = result.ok ? result.body : null;
+      state.movementsError = !result.ok;
+      render();
+    }).catch(function () {
+      state.movements = null;
+      state.movementsError = true;
+      render();
+    });
+  }
+
+  // A new shift must not inherit the previous one's list, requests, drafts or count.
+  function resetForNewSession() {
+    state.movements = null;
+    state.movementsError = false;
+    state.notice = null;
+    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', overrideReason: '' };
+    state.denominationCounts = {};
+    state.zeroCountPrompt = false;
+    state.pendingDecision = null;
+    state.movementStep = 'form';
+    state.summaryExpected = null;
+  }
+
+  function canApprove() {
+    return state.capabilities.indexOf('cash.session.override') >= 0;
   }
 
   // ---- actions ---------------------------------------------------------
@@ -213,10 +287,8 @@
         render();
         return;
       }
-      state.terminalId = result.body.terminalId;
-      state.displayName = result.body.displayName;
       state.error = null;
-      loadActiveSession();
+      bootstrap();
     }).catch(function () {
       state.busy = false;
       setError('Sunucuya ulaşılamadı.');
@@ -248,50 +320,88 @@
         state.session = result.body;
         state.error = null;
         state.phase = 'open';
-        render();
+        return loadMovements();
       }).catch(function () {
         state.busy = false;
         setError('Sunucuya ulaşılamadı.');
       });
   }
 
+  var DECIDED_NOTICE = {
+    Approved: 'Çıkış onaylandı ve kasadan düşüldü.',
+    Rejected: 'Bu çıkış talebi daha önce reddedilmişti.',
+    Cancelled: 'Bu çıkış talebi daha önce geri çekilmişti.',
+  };
+
   function submitCashMovement(direction, amount, notes) {
     setBusy(true);
-    // V1-RMD-314: reuse the in-flight key across a retry of the same body - see cashMovementIdempotencyKey's
-    // own doc comment. Without this, V1-RMD-241's own server-side protection (below) never actually engages.
-    var movementBody = { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null };
-    // The server tells replays apart by direction and amount only; a note-only edit keeps the key.
-    var movementSignature = JSON.stringify({ Direction: movementBody.Direction, Amount: movementBody.Amount });
+    // The server compares direction, amount and the trimmed reason on a replay, so the key is bound to all three:
+    // a retry of the same body keeps it, an edited body gets a new one.
+    var movementBody = { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes };
+    var movementSignature = JSON.stringify({ Direction: movementBody.Direction, Amount: movementBody.Amount, Notes: notes });
     if (!state.cashMovementIdempotencyKey || state.cashMovementRequestSignature !== movementSignature) {
-      state.cashMovementIdempotencyKey = crypto.randomUUID();
+      state.cashMovementIdempotencyKey = newUuid();
       state.cashMovementRequestSignature = movementSignature;
     }
     movementBody.IdempotencyKey = state.cashMovementIdempotencyKey;
-    api(cashSessionsBase() + '/' + state.session.cashSessionId + '/cash-movements', {
-      method: 'POST',
-      // V1-RMD-241: the endpoint now requires a key and rejects a second
-      // insert under the same one — this makes a would-be duplicate (a
-      // race just under the button's own busy-guard, a browser/proxy
-      // resend of the same request) return the original row instead of
-      // posting the movement twice.
-      body: movementBody,
-    }).then(function (result) {
+    api(movementsBase() + '/cash-movements', { method: 'POST', body: movementBody }).then(function (result) {
       state.busy = false;
       // Any real server response (success or a definitive rejection) means this key has already been
       // consumed/decided - only a network failure (the catch below) keeps it for a retry.
       if (result.status < 500) state.cashMovementIdempotencyKey = null;
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
+        state.movementStep = 'form';
         render();
         return;
       }
       state.error = null;
+      var decided = result.body && result.body.status;
+      var saved = (direction === 'in' ? 'Giriş kaydedildi' : 'Çıkış kaydedildi') + ' (' + formatMoney(amount) + ').';
+      state.notice = result.status === 202
+        ? 'Çıkış yönetici onayı bekliyor. Onaylanana kadar kasadan düşmez.'
+        : (DECIDED_NOTICE[decided] || saved);
+      state.drafts.amount = '';
+      state.drafts.notes = '';
+      state.movementStep = 'form';
       state.phase = 'open';
+      return loadMovements();
+    }).catch(function () {
+      state.busy = false;
+      setError('Sunucuya ulaşılamadı. Kayıt gitmiş olabilir; nakit hareketlerini kontrol edin, yoksa aynı işlemi tekrar deneyin.');
+    });
+  }
+
+  function openMovementSummary() {
+    setBusy(true);
+    Promise.all([
+      api(movementsBase() + '/expected-cash'),
+      api(movementsBase() + '/cash-movements'),
+    ]).then(function (results) {
+      state.busy = false;
+      state.summaryExpected = results[0].ok ? results[0].body.expectedCash : null;
+      if (results[1].ok) state.movements = results[1].body;
+      state.movementStep = 'summary';
+      state.error = null;
       render();
     }).catch(function () {
       state.busy = false;
       setError('Sunucuya ulaşılamadı.');
     });
+  }
+
+  function decideRequest(requestId, action, doneText) {
+    setBusy(true);
+    api(movementsBase() + '/cash-movement-requests/' + requestId + '/' + action, { method: 'POST', body: {} })
+      .then(function (result) {
+        state.busy = false;
+        state.error = result.ok ? null : describeHttpFailure(result.status, result.body);
+        state.notice = result.ok ? doneText : null;
+        return loadMovements();
+      }).catch(function () {
+        state.busy = false;
+        setError('Sunucuya ulaşılamadı. Karar gitmiş olabilir; nakit hareketlerini kontrol edin.');
+      });
   }
 
   function startCounting() {
@@ -306,6 +416,7 @@
         }
         state.session = result.body;
         state.error = null;
+        state.notice = null;
         state.phase = 'counting';
         render();
       }).catch(function () {
@@ -328,6 +439,10 @@
       }
       state.lastCountedAmount = countedAmount;
       state.varianceExceeded = false;
+      state.zeroCountPrompt = false;
+      state.notice = null;
+      state.drafts.counted = '';
+      state.drafts.countNotes = '';
       state.error = null;
       // CashSessionSnapshot.ExpectedCash yalnız /close'un kendi yazma
       // yolunda tazelenir - kapatmadan önce hâlâ açılıştaki eski değeri
@@ -335,6 +450,7 @@
       // uç noktasından okunur (bkz. GET .../expected-cash'in kendi
       // doc-comment'i).
       return api(cashSessionsBase() + '/' + state.session.cashSessionId + '/expected-cash')
+        .catch(function () { return { ok: false }; })
         .then(function (expected) {
           state.busy = false;
           state.expectedCash = expected.ok ? expected.body.expectedCash : null;
@@ -367,7 +483,7 @@
       if (result.status === 409 && result.body && result.body.error
           && result.body.error.code === 'CASH_VARIANCE_THRESHOLD_EXCEEDED') {
         state.varianceExceeded = true;
-        state.error = result.body.error.message;
+        state.error = describeHttpFailure(result.status, result.body);
         render();
         return;
       }
@@ -399,6 +515,22 @@
       }
       render();
     }).catch(function () {
+      // The close may have landed before the connection dropped: say so and read the real state again.
+      state.busy = false;
+      state.error = null;
+      state.notice = 'Bağlantı koptu; kasa kapanmış olabilir. Güncel durum yeniden okundu.';
+      loadActiveSession();
+    });
+  }
+
+  function rereadExpectedCash() {
+    setBusy(true);
+    api(movementsBase() + '/expected-cash').then(function (expected) {
+      state.busy = false;
+      state.expectedCash = expected.ok ? expected.body.expectedCash : null;
+      state.error = expected.ok ? null : 'Beklenen tutar okunamadı. Bağlantınızı kontrol edip tekrar deneyin.';
+      render();
+    }).catch(function () {
       state.busy = false;
       setError('Sunucuya ulaşılamadı.');
     });
@@ -419,12 +551,18 @@
   function errorAlert() {
     if (!state.error) return '';
     return (
-      '<div class="cs-alert cs-alert-danger" role="alert">' +
+      '<div class="cs-alert cs-alert-danger" role="alert" tabindex="-1">' +
       '<span class="cs-alert-icon">!</span>' +
       '<div><div class="cs-alert-title">Hata</div>' +
       '<div class="cs-alert-body">' + escapeHtml(state.error) + '</div></div>' +
       '</div>'
     );
+  }
+
+  function noticeAlert() {
+    if (!state.notice) return '';
+    return '<div class="cs-alert cs-alert-success" role="status"><span class="cs-alert-icon">✓</span>' +
+      '<div class="cs-alert-body" id="cs-notice">' + escapeHtml(state.notice) + '</div></div>';
   }
 
   function renderLogin() {
@@ -460,6 +598,7 @@
       '<h1 class="cs-title">Vardiyayı Başlat</h1>' +
       '<p class="cs-subtitle">Çekmecede bulunan başlangıç tutarını girin.</p></div>' +
       errorAlert() +
+      noticeAlert() +
       '<label class="cs-field-label" for="opening-balance">Açılış Tutarı</label>' +
       '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
       'value="' + (suggested != null ? Number(suggested).toFixed(2) : '0.00') + '">' +
@@ -497,6 +636,7 @@
 
   function renderOpen() {
     var s = state.session;
+    var hasPending = !!(state.movements && state.movements.requests.length);
     app.innerHTML =
       '<div class="cs-card">' +
       '<div class="cs-header">' +
@@ -505,6 +645,7 @@
       '<span class="cs-status-pill is-open"><span class="cs-status-dot"></span>Açık</span>' +
       '</div>' +
       errorAlert() +
+      noticeAlert() +
       '<div class="cs-grid-2">' +
       '<div class="cs-stat"><div class="cs-stat-label">Açılış Tutarı</div>' +
       '<div class="cs-stat-value">' + formatMoney(s.openingBalance) + '</div></div>' +
@@ -512,70 +653,240 @@
       '<div class="cs-stat-value">' + new Date(s.openedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + '</div></div>' +
       '</div>' +
       '<div class="cs-divider"></div>' +
+      renderPendingRequests() +
       '<div class="cs-row">' +
       '<button class="cs-btn cs-btn-secondary" id="cash-in">Nakit Giriş</button>' +
       '<button class="cs-btn cs-btn-secondary" id="cash-out">Nakit Çıkış</button>' +
       '</div>' +
-      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy ? 'disabled' : '') + '>' +
+      renderMovementList() +
+      '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
+      (hasPending ? '<p class="cs-field-hint" id="pending-hint">Onay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.</p>' : '') +
+      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending ? 'disabled' : '') + '>' +
       (state.busy ? 'Bekleyin…' : 'Sayıma Başla') + '</button>' +
       '</div>';
-    document.getElementById('cash-in').addEventListener('click', function () {
-      state.movementDirection = 'in';
-      state.phase = 'movement';
-      state.error = null;
-      render();
-    });
-    document.getElementById('cash-out').addEventListener('click', function () {
-      state.movementDirection = 'out';
-      state.phase = 'movement';
-      state.error = null;
-      render();
+    ['in', 'out'].forEach(function (direction) {
+      document.getElementById('cash-' + direction).addEventListener('click', function () {
+        if (state.movementDirection !== direction) {
+          state.drafts.amount = '';
+          state.drafts.notes = '';
+        }
+        state.movementDirection = direction;
+        state.movementStep = 'form';
+        state.phase = 'movement';
+        state.error = null;
+        state.notice = null;
+        render();
+      });
     });
     document.getElementById('start-count').addEventListener('click', startCounting);
+    document.getElementById('refresh-movements').addEventListener('click', function () {
+      state.error = null;
+      state.pendingDecision = null;
+      setBusy(true);
+      loadMovements().then(function () { setBusy(false); });
+    });
+    // Approving moves money and rejecting cannot be undone, so both ask once more; withdrawing one's own request does not.
+    Array.prototype.forEach.call(app.querySelectorAll('[data-request-action]'), function (button) {
+      button.addEventListener('click', function () {
+        var action = button.dataset.requestAction;
+        var id = button.dataset.requestId;
+        if (action === 'cancel') {
+          decideRequest(id, action, DECISION_NOTICE[action]);
+          return;
+        }
+        state.pendingDecision = { id: id, action: action };
+        render();
+      });
+    });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-request-confirm]'), function (button) {
+      button.addEventListener('click', function () {
+        var decision = state.pendingDecision;
+        state.pendingDecision = null;
+        decideRequest(decision.id, decision.action, DECISION_NOTICE[decision.action]);
+      });
+    });
+    var back = document.getElementById('request-back');
+    if (back) {
+      back.addEventListener('click', function () {
+        state.pendingDecision = null;
+        render();
+      });
+    }
   }
+
+  var DECISION_NOTICE = {
+    approve: 'Çıkış onaylandı ve kasadan düşüldü.',
+    reject: 'Çıkış talebi reddedildi.',
+    cancel: 'Çıkış talebi geri çekildi.',
+  };
+
+  function requestButton(action, label, cssClass, request) {
+    var who = request.requestedByName ? ', ' + request.requestedByName : '';
+    return '<button class="cs-btn ' + cssClass + '" type="button" data-request-action="' + action +
+      '" data-request-id="' + request.id + '" aria-label="' + label + ': ' + escapeHtml(formatMoney(request.amount) + who) + '"' +
+      (state.busy ? ' disabled' : '') + '>' + label + '</button>';
+  }
+
+  function renderPendingRequests() {
+    var requests = state.movements ? state.movements.requests : [];
+    if (!requests.length) return '';
+    var rows = requests.map(function (r) {
+      var own = r.requestedBy === state.userId;
+      var buttons = '';
+      var asking = state.pendingDecision && state.pendingDecision.id === r.id ? state.pendingDecision.action : null;
+      if (asking) {
+        buttons = '<span class="cs-field-hint" id="request-confirm-text">' +
+          (asking === 'approve'
+            ? formatMoney(r.amount) + ' kasadan düşülecek. Onaylıyor musunuz?'
+            : 'Talep reddedilecek ve geri alınamaz. Reddediyor musunuz?') + '</span>' +
+          '<button class="cs-btn ' + (asking === 'approve' ? 'cs-btn-success' : 'cs-btn-danger') + '" type="button" data-request-confirm="1"' +
+          (state.busy ? ' disabled' : '') + '>' + (asking === 'approve' ? 'Evet, onayla' : 'Evet, reddet') + '</button>' +
+          '<button class="cs-btn cs-btn-secondary" type="button" id="request-back">Hayır</button>';
+      } else {
+        if (canApprove()) {
+          buttons += (own && !state.movements.selfApprovalEnabled)
+            ? '<span class="cs-field-hint">Kendi talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.</span>'
+            : requestButton('approve', 'Onayla', 'cs-btn-success', r);
+          buttons += requestButton('reject', 'Reddet', 'cs-btn-danger', r);
+        }
+        if (own) buttons += requestButton('cancel', 'Talebi geri çek', 'cs-btn-secondary', r);
+      }
+      return '<div class="cs-request" role="listitem">' +
+        '<div class="cs-summary-row"><span>' + escapeHtml(r.requestedByName || '') + ' · ' +
+        new Date(r.requestedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + '</span>' +
+        '<span class="value">' + formatMoney(r.amount) + '</span></div>' +
+        '<div class="cs-note">' + escapeHtml(r.reason) + '</div>' +
+        '<div class="cs-row">' + buttons + '</div></div>';
+    }).join('');
+    return '<div id="pending-requests" role="list" aria-label="Onay bekleyen çıkışlar"><div class="cs-eyebrow">Onay bekleyen çıkışlar</div>' + rows + '</div>';
+  }
+
+  function renderMovementList() {
+    if (state.movementsError) {
+      return '<p class="cs-field-hint" id="movement-list-error">Nakit hareketleri okunamadı.</p>';
+    }
+    if (!state.movements) return '';
+    var entries = state.movements.movements;
+    if (!entries.length) return '<p class="cs-field-hint" id="movement-list">Bu oturumda nakit giriş veya çıkış yok.</p>';
+    var rows = entries.map(function (m) {
+      var isIn = m.direction === 'In';
+      var who = escapeHtml(m.recordedByName || '');
+      if (m.approvedByName) {
+        who += ' · ' + (m.selfApproved ? 'kendi onayı' : 'onaylayan: ' + escapeHtml(m.approvedByName));
+      }
+      return '<div class="cs-movement ' + (isIn ? 'is-in' : 'is-out') + '" role="listitem">' +
+        '<div class="cs-summary-row"><span>' + new Date(m.occurredAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + ' · ' +
+        (isIn ? 'Giriş' : 'Çıkış') + '</span><span class="value">' + (isIn ? '+' : '-') + formatMoney(m.amount) + '</span></div>' +
+        (m.notes ? '<div class="cs-note">' + escapeHtml(m.notes) + '</div>' : '') +
+        '<div class="cs-field-hint">' + who + '</div></div>';
+    }).join('');
+    return '<div id="movement-list" role="list" aria-label="Nakit hareketleri"><div class="cs-eyebrow">Nakit hareketleri</div>' + rows +
+      (state.movements.movementsTruncated ? '<p class="cs-field-hint">Yalnız son 200 hareket gösteriliyor.</p>' : '') + '</div>';
+  }
+
+  var OUT_REASONS = ['Banka', 'Gider', 'Tedarikçi', 'Bozuk para'];
+  var IN_REASONS = ['Bozuk para', 'Banka', 'Takviye'];
 
   function renderMovement() {
     var isIn = state.movementDirection === 'in';
+    if (state.movementStep === 'summary') {
+      renderMovementSummary(isIn);
+      return;
+    }
     app.innerHTML =
       '<div class="cs-card">' +
       '<div><span class="cs-eyebrow">Kasa Hareketi</span>' +
       '<h1 class="cs-title">' + (isIn ? 'Nakit Giriş' : 'Nakit Çıkış') + '</h1></div>' +
-      '<div class="cs-tabs" role="tablist">' +
-      '<button class="cs-tab' + (isIn ? ' is-active' : '') + '" role="tab" aria-selected="' + isIn + '" id="tab-in" type="button">Giriş</button>' +
-      '<button class="cs-tab' + (!isIn ? ' is-active' : '') + '" role="tab" aria-selected="' + !isIn + '" id="tab-out" type="button">Çıkış</button>' +
-      '</div>' +
       errorAlert() +
+      '<form id="movement-form" novalidate>' +
       '<label class="cs-field-label" for="movement-amount">Tutar</label>' +
-      '<div class="cs-amount-field"><input type="number" step="0.01" min="0.01" id="movement-amount" value="0.00">' +
+      '<div class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0.01" id="movement-amount" placeholder="0,00" value="' +
+      escapeHtml(state.drafts.amount) + '">' +
       '<span class="cs-amount-suffix">₺</span></div>' +
-      '<label class="cs-field-label" for="movement-notes">Açıklama <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
-      '<textarea class="cs-textarea" id="movement-notes" placeholder="Örn. banka için para çekildi"></textarea>' +
+      '<label class="cs-field-label" for="movement-notes">Açıklama</label>' +
+      '<div class="cs-chips">' + (isIn ? IN_REASONS : OUT_REASONS).map(function (reason) {
+        return '<button class="cs-chip" type="button" data-reason="' + escapeHtml(reason) + '">' + escapeHtml(reason) + '</button>';
+      }).join('') + '</div>' +
+      '<textarea class="cs-textarea" id="movement-notes" maxlength="500" required placeholder="Örn. banka için para çekildi">' +
+      escapeHtml(state.drafts.notes) + '</textarea>' +
       '<div class="cs-row">' +
-      '<button class="cs-btn cs-btn-secondary" id="movement-cancel">Vazgeç</button>' +
-      '<button class="cs-btn ' + (isIn ? 'cs-btn-success' : 'cs-btn-danger') + '" id="movement-submit" ' +
-      (state.busy ? 'disabled' : '') + '>' + (state.busy ? 'Kaydediliyor…' : (isIn ? 'Girişi Kaydet' : 'Çıkışı Kaydet')) + '</button>' +
-      '</div></div>';
-    document.getElementById('tab-in').addEventListener('click', function () {
-      state.movementDirection = 'in';
-      render();
-    });
-    document.getElementById('tab-out').addEventListener('click', function () {
-      state.movementDirection = 'out';
-      render();
+      '<button class="cs-btn cs-btn-secondary" id="movement-cancel" type="button">Vazgeç</button>' +
+      '<button class="cs-btn ' + (isIn ? 'cs-btn-success' : 'cs-btn-danger') + '" id="movement-submit" type="submit" ' +
+      (state.busy ? 'disabled' : '') + '>' + (state.busy ? 'Hazırlanıyor…' : 'Devam') + '</button>' +
+      '</div></form></div>';
+    Array.prototype.forEach.call(app.querySelectorAll('[data-reason]'), function (chip) {
+      chip.addEventListener('click', function () {
+        var notes = document.getElementById('movement-notes');
+        notes.value = chip.dataset.reason;
+        state.drafts.notes = notes.value;
+        notes.focus();
+      });
     });
     document.getElementById('movement-cancel').addEventListener('click', function () {
+      state.drafts.amount = '';
+      state.drafts.notes = '';
       state.error = null;
       state.phase = 'open';
       render();
     });
-    document.getElementById('movement-submit').addEventListener('click', function () {
-      var amount = Number(document.getElementById('movement-amount').value);
-      var notes = document.getElementById('movement-notes').value.trim();
+    document.getElementById('movement-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      captureDrafts();
+      var amount = Number(state.drafts.amount);
+      var notes = state.drafts.notes.trim();
       if (!(amount > 0)) {
         setError('Tutar sıfırdan büyük olmalı.');
         return;
       }
-      submitCashMovement(state.movementDirection, amount, notes);
+      if (!notes) {
+        setError('Açıklama zorunludur.');
+        return;
+      }
+      if (notes.length > 500) {
+        setError('Açıklama en çok 500 karakter olabilir.');
+        return;
+      }
+      openMovementSummary();
+    });
+  }
+
+  function renderMovementSummary(isIn) {
+    var amount = Number(state.drafts.amount);
+    var expected = state.summaryExpected;
+    var threshold = state.movements ? state.movements.approvalThreshold : null;
+    var needsApproval = !isIn && threshold != null && amount > threshold;
+    var exceedsDrawer = !isIn && expected != null && amount > expected;
+    app.innerHTML =
+      '<div class="cs-card">' +
+      '<div><span class="cs-eyebrow">Kasa Hareketi</span>' +
+      '<h1 class="cs-title">Kaydetmeden Önce Kontrol Edin</h1></div>' +
+      errorAlert() +
+      '<div class="cs-summary-row"><span>Yön</span><span class="value">' + (isIn ? 'Nakit Giriş' : 'Nakit Çıkış') + '</span></div>' +
+      '<div class="cs-summary-row"><span>Tutar</span><span class="value">' + formatMoney(amount) + '</span></div>' +
+      '<div class="cs-summary-row"><span>Açıklama</span><span class="value">' + escapeHtml(state.drafts.notes.trim()) + '</span></div>' +
+      '<div class="cs-summary-row"><span>Kasadaki beklenen nakit</span><span class="value">' +
+      (expected != null ? formatMoney(expected) : '—') + '</span></div>' +
+      (needsApproval
+        ? '<div class="cs-alert cs-alert-danger" role="status" id="approval-warning"><span class="cs-alert-icon">!</span>' +
+          '<div class="cs-alert-body">Yönetici onayı gerekecek. Onaylanana kadar bu tutar kasadan düşmez.</div></div>'
+        : '') +
+      (exceedsDrawer
+        ? '<div class="cs-alert cs-alert-danger" role="alert" id="drawer-warning"><span class="cs-alert-icon">!</span>' +
+          '<div class="cs-alert-body">Çıkış tutarı kasadaki beklenen nakdi aşıyor; kaydedilemez.</div></div>'
+        : '') +
+      '<div class="cs-row">' +
+      '<button class="cs-btn cs-btn-secondary" id="movement-edit">Düzelt</button>' +
+      '<button class="cs-btn ' + (isIn ? 'cs-btn-success' : 'cs-btn-danger') + '" id="movement-confirm" ' +
+      (state.busy || exceedsDrawer ? 'disabled' : '') + '>' +
+      (state.busy ? 'Kaydediliyor…' : (needsApproval ? 'Onaya gönder' : 'Onayla ve kaydet')) + '</button>' +
+      '</div></div>';
+    document.getElementById('movement-edit').addEventListener('click', function () {
+      state.movementStep = 'form';
+      state.error = null;
+      render();
+    });
+    document.getElementById('movement-confirm').addEventListener('click', function () {
+      submitCashMovement(state.movementDirection, amount, state.drafts.notes.trim());
     });
   }
 
@@ -603,7 +914,7 @@
       return (
         '<div class="cs-denom-row">' +
         '<label class="cs-denom-label" for="denom-' + d + '">' + denominationLabel(d) + '</label>' +
-        '<input class="cs-denom-count" type="number" min="0" step="1" inputmode="numeric" ' +
+        '<input class="cs-denom-count" type="number" min="0" step="1" inputmode="numeric"' + (state.zeroCountPrompt ? ' disabled' : '') + ' ' +
         'id="denom-' + d + '" data-denom="' + d + '" value="' + count + '">' +
         '<span class="cs-denom-subtotal">' + formatMoney(d * count) + '</span>' +
         '</div>'
@@ -628,18 +939,27 @@
         : 'Elinizdeki gerçek nakit tutarını girin.') +
       '</p></div>' +
       errorAlert() +
+      noticeAlert() +
       (isDenom
         ? renderDenominationRows()
         : ('<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
-           '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="counted-amount" value="0.00">' +
+           '<div class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0" id="counted-amount"' +
+           (state.zeroCountPrompt ? ' disabled' : '') + ' value="' + escapeHtml(state.drafts.counted || '0.00') + '">' +
            '<span class="cs-amount-suffix">₺</span></div>')) +
-      '<label class="cs-field-label" for="count-notes">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
-      '<textarea class="cs-textarea" id="count-notes"></textarea>' +
-      '<button class="cs-btn cs-btn-ghost" id="toggle-count-mode" type="button">' +
+      '<label class="cs-field-label" for="count-notes">Not <span style="font-weight:400;color:var(--color-text-dim)">(isteğe bağlı)</span></label>' +
+      '<textarea class="cs-textarea" id="count-notes"' + (state.zeroCountPrompt ? ' disabled' : '') + '>' + escapeHtml(state.drafts.countNotes) + '</textarea>' +
+      '<button class="cs-btn cs-btn-ghost" id="toggle-count-mode" type="button"' + (state.zeroCountPrompt ? ' disabled' : '') + '>' +
       (isDenom ? 'Kupürüm yok, tek tutar gireceğim' : 'Kupür bazlı saymaya dön') +
       '</button>' +
-      '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy ? 'disabled' : '') + '>' +
-      (state.busy ? 'Kaydediliyor…' : 'Sayımı Kaydet') + '</button>' +
+      (state.zeroCountPrompt
+        ? '<div class="cs-alert cs-alert-danger" role="alert" id="zero-count-prompt"><span class="cs-alert-icon">!</span>' +
+          '<div class="cs-alert-body">Sayım 0 ₺ - çekmece boş mu?</div></div>' +
+          '<div class="cs-row">' +
+          '<button class="cs-btn cs-btn-secondary" id="zero-cancel" type="button">Hayır, düzelt</button>' +
+          '<button class="cs-btn cs-btn-primary" id="zero-confirm" type="button" ' + (state.busy ? 'disabled' : '') + '>Evet, çekmece boş</button>' +
+          '</div>'
+        : '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy ? 'disabled' : '') + '>' +
+          (state.busy ? 'Kaydediliyor…' : 'Sayımı Kaydet') + '</button>') +
       '</div>';
 
     if (isDenom) {
@@ -661,18 +981,39 @@
       }
     }
     document.getElementById('toggle-count-mode').addEventListener('click', function () {
+      captureDrafts();
       state.countMode = isDenom ? 'manual' : 'denomination';
       state.error = null;
       render();
     });
-    document.getElementById('submit-count').addEventListener('click', function () {
-      var amount = isDenom ? denominationTotal() : Number(document.getElementById('counted-amount').value);
-      var notes = document.getElementById('count-notes').value.trim();
+    function currentCount() {
+      captureDrafts();
+      return isDenom ? denominationTotal() : Number(state.drafts.counted);
+    }
+    function sendCount() {
+      var amount = currentCount();
       if (!(amount >= 0)) {
         setError('Geçerli bir tutar girin.');
         return;
       }
-      submitCount(amount, notes);
+      submitCount(amount, state.drafts.countNotes.trim());
+    }
+    if (state.zeroCountPrompt) {
+      document.getElementById('zero-cancel').addEventListener('click', function () {
+        state.zeroCountPrompt = false;
+        render();
+      });
+      document.getElementById('zero-confirm').addEventListener('click', sendCount);
+      return;
+    }
+    document.getElementById('submit-count').addEventListener('click', function () {
+      var amount = currentCount();
+      if (amount === 0) {
+        state.zeroCountPrompt = true;
+        render();
+        return;
+      }
+      sendCount();
     });
   }
 
@@ -687,6 +1028,7 @@
       '<div><span class="cs-eyebrow">Kapatma</span>' +
       '<h1 class="cs-title">Fark Teyidi</h1></div>' +
       errorAlert() +
+      noticeAlert() +
       '<div class="cs-summary-row"><span>Beklenen</span><span class="value">' +
       (hasExpected ? formatMoney(expected) : '—') + '</span></div>' +
       '<div class="cs-summary-row"><span>Sayılan</span><span class="value">' + formatMoney(counted) + '</span></div>' +
@@ -699,11 +1041,17 @@
           '<div><div class="cs-alert-title">Fark tolerans sınırını aşıyor</div>' +
           '<div class="cs-alert-body">Devam etmek için süpervizör onayı ve açıklama gerekir.</div></div></div>' +
           '<label class="cs-field-label" for="override-reason">Süpervizör Açıklaması</label>' +
-          '<textarea class="cs-textarea" id="override-reason"></textarea>'
+          '<textarea class="cs-textarea" id="override-reason">' + escapeHtml(state.drafts.overrideReason) + '</textarea>'
         : '') +
-      '<button class="cs-btn cs-btn-primary" id="submit-close" ' + (state.busy ? 'disabled' : '') + '>' +
+      (hasExpected
+        ? ''
+        : '<p class="cs-field-hint" id="expected-missing">Beklenen tutar okunamadı; kasayı kapatmak için yeniden okuyun.</p>' +
+          '<button class="cs-btn cs-btn-secondary" id="reread-expected" type="button" ' + (state.busy ? 'disabled' : '') + '>Beklenen tutarı yeniden oku</button>') +
+      '<button class="cs-btn cs-btn-primary" id="submit-close" ' + (state.busy || !hasExpected ? 'disabled' : '') + '>' +
       (state.busy ? 'Kapatılıyor…' : 'Kasayı Kapat') + '</button>' +
       '</div>';
+    var reread = document.getElementById('reread-expected');
+    if (reread) reread.addEventListener('click', rereadExpectedCash);
     document.getElementById('submit-close').addEventListener('click', function () {
       var overrideReasonEl = document.getElementById('override-reason');
       var overrideReason = overrideReasonEl ? overrideReasonEl.value.trim() : '';
@@ -738,11 +1086,13 @@
       '</div>';
     document.getElementById('reopen').addEventListener('click', function () {
       state.session = null;
+      resetForNewSession();
       state.closeResult = null;
       state.lastCountedAmount = null;
       state.expectedCash = null;
       state.varianceExceeded = false;
       state.error = null;
+      state.drafts.overrideReason = '';
       loadActiveSession();
     });
   }
@@ -752,20 +1102,38 @@
   // this call is a genuine screen change (focus the new screen) or just a busy-state re-render of
   // the SAME screen (leave focus exactly where the cashier put it).
   var lastFocusedPhase = null;
+  var renderedKey = null;
+  var lastFocusedError = null;
 
   function renderLoadError() {
     app.innerHTML =
-      '<div class="sp-card sp-center-text">' +
-      '<h1 class="sp-title">Kasa Bilgisi Okunamadı</h1>' +
-      '<div class="sp-alert sp-alert-danger" role="alert"><div class="sp-alert-body">' + escapeHtml(state.error) + '</div></div>' +
-      '<button class="sp-btn sp-btn-primary" type="button" id="cs-reload">Tekrar dene</button>' +
+      '<div class="cs-card cs-center-text">' +
+      '<h1 class="cs-title">Kasa Bilgisi Okunamadı</h1>' +
+      '<div class="cs-alert cs-alert-danger" role="alert"><span class="cs-alert-icon">!</span><div class="cs-alert-body">' + escapeHtml(state.error) + '</div></div>' +
+      '<button class="cs-btn cs-btn-primary" type="button" id="cs-reload">Tekrar dene</button>' +
       '</div>';
     document.getElementById('cs-reload').addEventListener('click', function () { window.location.reload(); });
   }
 
+  function screenKey() {
+    return [state.phase, state.movementStep, state.zeroCountPrompt, state.countMode].join(':');
+  }
+
+  function captureDrafts() {
+    // The screen still in the DOM is the previous one when the phase just changed; its fields are not drafts.
+    if (renderedKey !== screenKey()) return;
+    [['movement-amount', 'amount'], ['movement-notes', 'notes'], ['counted-amount', 'counted'],
+      ['count-notes', 'countNotes'], ['override-reason', 'overrideReason']].forEach(function (pair) {
+      var element = document.getElementById(pair[0]);
+      if (element && app.contains(element)) state.drafts[pair[1]] = element.value;
+    });
+  }
+
   function render() {
+    captureDrafts();
     if (state.phase === 'checking') {
       app.innerHTML = '<div class="cs-loading">Oturum kontrol ediliyor…</div>';
+      renderedKey = null;
       return;
     }
     app.setAttribute('aria-busy', state.busy ? 'true' : 'false');
@@ -781,10 +1149,16 @@
       case 'closed': renderClosed(); break;
       default: renderOpen(); break;
     }
-    if (lastFocusedPhase !== state.phase) {
-      lastFocusedPhase = state.phase;
+    renderedKey = screenKey();
+    if (lastFocusedPhase !== renderedKey) {
+      lastFocusedPhase = renderedKey;
       focusPrimaryField();
     }
+    if (state.error && state.error !== lastFocusedError) {
+      var alertBox = app.querySelector('.cs-alert-danger');
+      if (alertBox) alertBox.focus({ preventScroll: true });
+    }
+    lastFocusedError = state.error;
   }
 
   bootstrap();

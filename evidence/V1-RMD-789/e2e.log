@@ -1,0 +1,22 @@
+[global-setup] applied 211 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 15 tests using 1 worker
+
+[1/15] [chromium] › specs\05-cash-session-lifecycle.spec.js:28:3 › Kasa Oturumu (V13-PUI-002) › açılış, nakit giriş, sayım ve sıfır farkla kapatma tam akışı
+[2/15] [chromium] › specs\05-cash-session-lifecycle.spec.js:71:3 › Kasa Oturumu (V13-PUI-002) › kasa kapatıldığında bekletilen sepetler temizlenir
+[3/15] [chromium] › specs\05-cash-session-lifecycle.spec.js:104:3 › Kasa Oturumu (V13-PUI-002) › kapalı süpervizör toleransını aşan fark için açıklama zorunlu tutulur
+[4/15] [chromium] › specs\05-cash-session-lifecycle.spec.js:136:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı hareket aynı anahtarı, değişen tutar veya açıklama yeni anahtarı kullanır
+[5/15] [chromium] › specs\05-cash-session-lifecycle.spec.js:194:3 › Kasa Oturumu (V13-PUI-002) › nakit çıkışta açıklama zorunludur; eşiğin üstü yönetici onayı bekler ve kasadan düşmez
+[6/15] [chromium] › specs\06-cash-session-conflict.spec.js:12:3 › Kasa Oturumu - çakışma (V13-PUI-002) › aynı terminalde eşzamanlı ikinci açılış çakışma ekranını gösterir
+[7/15] [chromium] › specs\21-accessibility-keyboard-and-labels.spec.js:14:3 › Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356) › ürün kartı Enter/Space ile sepete eklenir; miktar düğmeleri ve arama kutusu adlandırılmıştır
+[8/15] [chromium] › specs\21-accessibility-keyboard-and-labels.spec.js:43:3 › Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356) › Kasa Oturumu giriş ve açılış alanları <label for> ile programatik olarak bağlanmıştır
+[9/15] [chromium] › specs\21-accessibility-keyboard-and-labels.spec.js:57:3 › Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356) › Tahsilat ekranındaki indirim ve bahşiş alanları erişilebilir adlar taşır
+[10/15] [chromium] › specs\24-cash-session-accessibility.spec.js:6:3 › Kasa Oturumu - erişilebilirlik ve odak yönetimi (V1-RMD-361) › hata kutusu role="alert" taşır; hareket formunda sekme yoktur, açıklama zorunlu etiketlidir
+[11/15] [chromium] › specs\24-cash-session-accessibility.spec.js:31:3 › Kasa Oturumu - erişilebilirlik ve odak yönetimi (V1-RMD-361) › her yeni ekranda birincil alana otomatik odaklanır
+[12/15] [chromium] › specs\28-cash-session-denomination-count.spec.js:23:3 › Kasa Oturumu - kupür bazlı sayım (V1-RMD-377) › kupür sayıları girildikçe toplam otomatik hesaplanır ve o tutar kaydedilir
+[13/15] [chromium] › specs\28-cash-session-denomination-count.spec.js:42:3 › Kasa Oturumu - kupür bazlı sayım (V1-RMD-377) › "Kupürüm yok, tek tutar gireceğim" eski manuel alana geçer; geri dönülebilir
+[14/15] [chromium] › specs\28-cash-session-denomination-count.spec.js:55:3 › Kasa Oturumu - kupür bazlı sayım (V1-RMD-377) › boş bırakılan kupürler sıfır sayılır, negatif adet girilemez
+[15/15] [chromium] › specs\28-cash-session-denomination-count.spec.js:67:3 › Kasa Oturumu - kupür bazlı sayım (V1-RMD-377) › sıfır sayım sorgusuz kabul edilmez: "çekmece boş mu?" onayı istenir
+[global-teardown] Host stopped, database dropped
+  15 passed (33.6s)

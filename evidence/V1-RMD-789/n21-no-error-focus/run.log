@@ -1,0 +1,175 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10938ms
+     × moves focus to the new step and to an error 115ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > moves focus to the new step and to an error
+AssertionError: expected <body><a …(2)></a>
+…(1)</body> to be <div …(3)>…(2)</div> // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,5 +1,37 @@
++ <body>
++   
++   
++   <a
++     class="cs-back"
++     href="../../index.html"
++   >
++     ← Kasaya dön
++   </a>
++   
++   
++   <main
++     aria-busy="false"
++     aria-live="polite"
++     class="cs-shell"
++     id="app"
++   >
++     <div
++       class="cs-card"
++     >
++       <div>
++         <span
++           class="cs-eyebrow"
++         >
++           Kasa Hareketi
++         </span>
++         <h1
++           class="cs-title"
++         >
++           Nakit Çıkış
++         </h1>
++       </div>
+        <div
+          class="cs-alert cs-alert-danger"
+          role="alert"
+          tabindex="-1"
+        >
+@@ -19,5 +51,104 @@
+            >
+              Açıklama zorunludur.
+            </div>
+          </div>
+        </div>
++       <form
++         id="movement-form"
++         novalidate=""
++       >
++         <label
++           class="cs-field-label"
++           for="movement-amount"
++         >
++           Tutar
++         </label>
++         <div
++           class="cs-amount-field"
++         >
++           <input
++             id="movement-amount"
++             inputmode="decimal"
++             min="0.01"
++             placeholder="0,00"
++             step="0.01"
++             type="number"
++             value="40"
++           />
++           <span
++             class="cs-amount-suffix"
++           >
++             ₺
++           </span>
++         </div>
++         <label
++           class="cs-field-label"
++           for="movement-notes"
++         >
++           Açıklama
++         </label>
++         <div
++           class="cs-chips"
++         >
++           <button
++             class="cs-chip"
++             data-reason="Banka"
++             type="button"
++           >
++             Banka
++           </button>
++           <button
++             class="cs-chip"
++             data-reason="Gider"
++             type="button"
++           >
++             Gider
++           </button>
++           <button
++             class="cs-chip"
++             data-reason="Tedarikçi"
++             type="button"
++           >
++             Tedarikçi
++           </button>
++           <button
++             class="cs-chip"
++             data-reason="Bozuk para"
++             type="button"
++           >
++             Bozuk para
++           </button>
++         </div>
++         <textarea
++           class="cs-textarea"
++           id="movement-notes"
++           maxlength="500"
++           placeholder="Örn. banka için para çekildi"
++           required=""
++         />
++         <div
++           class="cs-row"
++         >
++           <button
++             class="cs-btn cs-btn-secondary"
++             id="movement-cancel"
++             type="button"
++           >
++             Vazgeç
++           </button>
++           <button
++             class="cs-btn cs-btn-danger"
++             id="movement-submit"
++             type="submit"
++           >
++             Devam
++           </button>
++         </div>
++       </form>
++     </div>
++   </main>
++   
++   
++   
++
++ </body>
+
+ ❯ cash-session-movement.test.js:742:36
+    740|     $("#movement-submit").click();
+    741|     await vi.waitFor(() => expect($(".cs-alert-danger")).not.toBeNull(…
+    742|     expect(document.activeElement).toBe($(".cs-alert-danger"));
+       |                                    ^
+    743|
+    744|     await type("#movement-notes", "market");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:55:51
+   Duration  12.28s (transform 1.44s, setup 24ms, import 73ms, tests 10.94s, environment 984ms)
+

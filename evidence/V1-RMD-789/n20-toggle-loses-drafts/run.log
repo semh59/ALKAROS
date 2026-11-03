@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11166ms
+     × keeps the typed count through a switch between kupür and single amount 178ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing details > keeps the typed count through a switch between kupür and single amount
+AssertionError: expected '' to be 'not' // Object.is equality
+
+- Expected
++ Received
+
+- not
+
+ ❯ cash-session-movement.test.js:815:37
+    813|     await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull()…
+    814|
+    815|     expect($("#count-notes").value).toBe("not");
+       |                                     ^
+    816|   });
+    817|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:55:36
+   Duration  12.47s (transform 1.51s, setup 24ms, import 76ms, tests 11.17s, environment 932ms)
+

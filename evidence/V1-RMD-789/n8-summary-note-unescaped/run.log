@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11713ms
+     × escapes what the cashier typed in the summary, the list and the request panel 160ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > escapes what the cashier typed in the summary, the list and the request panel
+AssertionError: expected <img src="x" onerror="alert(1)"></img> to be null
+
+- Expected:
+null
+
++ Received:
+<img
+  onerror="alert(1)"
+  src="x"
+/>
+
+ ❯ cash-session-movement.test.js:660:46
+    658|
+    659|     await toSummary("out", "40", hostile);
+    660|     expect(document.querySelector("img, b")).toBeNull();
+       |                                              ^
+    661|     expect(text()).toContain("<img src=x");
+    662|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:52:24
+   Duration  14.08s (transform 1.95s, setup 37ms, import 95ms, tests 11.71s, environment 1.84s)
+

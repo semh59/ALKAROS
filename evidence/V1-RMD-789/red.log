@@ -1,0 +1,406 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (30 tests | 28 failed) 19495ms
+     × has no in/out tabs: the direction is chosen once, by the button on the open session 159ms
+     × refuses an empty reason before anything reaches the server 1100ms
+     × refuses a zero amount and a reason over 500 characters 1108ms
+     × shows a summary of direction, amount, reason and expected cash before saving 1093ms
+     × warns that a manager must approve a cash-out above the threshold, and not a cash-in 1093ms
+     × does not warn at exactly the threshold 1091ms
+     × blocks saving a cash-out that is more than the drawer holds 1091ms
+     × sends the trimmed reason on confirmation and announces a saved movement, then lists it 1110ms
+     × says the cash-out waits for a manager when the server answers 202 1084ms
+     × lists who approved a movement and marks a self-approval 90ms
+     × keeps the typed amount and reason when the server refuses, with the Turkish text and never the raw message 1099ms
+     × keeps what was typed through a validation re-render 1102ms
+     × reuses the retry key for the same body after a network failure and mints a new one when the reason changes 1098ms
+     × lets an approver approve and reject another person's request, and not cancel it 81ms
+     × withholds Onayla from a manager's own request while self-approval is off, and says why 77ms
+     × offers Onayla on a manager's own request once self-approval is on 80ms
+     × gives the requester without approval permission only Vazgeç 80ms
+     × posts approve to the request and reloads the list 79ms
+     × posts reject to the request and reloads the list 79ms
+     × posts cancel to the request and reloads the list 79ms
+     × is told in Turkish when the request was already decided 1036ms
+     × asks whether the drawer is empty before accepting a zero count, and does not send until confirmed 1158ms
+     × lets the cashier go back from the zero-count question to correct the count 1165ms
+     × also asks for a single typed amount of 0 1157ms
+     × keeps the typed count and note through an error re-render 160ms
+     × disables closing and offers a re-read when the expected cash could not be read 214ms
+     × tells the cashier the session may have closed after a dropped connection and reads the state again 1218ms
+     × keeps the supervisor explanation through a re-render and shows the Turkish variance text 272ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 28 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > has no in/out tabs: the direction is chosen once, by the button on the open session
+AssertionError: expected <div class="cs-tabs" …(1)>…(2)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="cs-tabs"
+  role="tablist"
+>
+  <button
+    aria-selected="false"
+    class="cs-tab"
+    id="tab-in"
+    role="tab"
+    type="button"
+  >
+    Giriş
+  </button>
+  <button
+    aria-selected="true"
+    class="cs-tab is-active"
+    id="tab-out"
+    role="tab"
+    type="button"
+  >
+    Çıkış
+  </button>
+</div>
+
+ ❯ cash-session-movement.test.js:101:27
+     99|     await startMovement("out");
+    100|
+    101|     expect($(".cs-tabs")).toBeNull();
+       |                           ^
+    102|     expect($("#tab-in")).toBeNull();
+    103|     expect($("h1").textContent).toBe("Nakit Çıkış");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > refuses an empty reason before anything reaches the server
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Açıklama zorunludur.'
+
+- Expected
++ Received
+
+- Açıklama zorunludur.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:111:43
+    109|
+    110|     $("#movement-submit").click();
+    111|     await vi.waitFor(() => expect(text()).toContain("Açıklama zorunlud…
+       |                                           ^
+    112|
+    113|     expect(posted(calls, "/cash-movements")).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > refuses a zero amount and a reason over 500 characters
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Açıklama en çok 500 karakter olabilir.'
+
+- Expected
++ Received
+
+- Açıklama en çok 500 karakter olabilir.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:127:43
+    125|     await type("#movement-notes", "x".repeat(501));
+    126|     $("#movement-submit").click();
+    127|     await vi.waitFor(() => expect(text()).toContain("Açıklama en çok 5…
+       |                                           ^
+    128|     expect(posted(calls, "/cash-movements")).toHaveLength(0);
+    129|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > shows a summary of direction, amount, reason and expected cash before saving
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > warns that a manager must approve a cash-out above the threshold, and not a cash-in
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > does not warn at exactly the threshold
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > blocks saving a cash-out that is more than the drawer holds
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > sends the trimmed reason on confirmation and announces a saved movement, then lists it
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > says the cash-out waits for a manager when the server answers 202
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > keeps the typed amount and reason when the server refuses, with the Turkish text and never the raw message
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > reuses the retry key for the same body after a network failure and mints a new one when the reason changes
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:82:61
+     80|   await startMovement(direction, amount, notes);
+     81|   $("#movement-submit").click();
+     82|   await vi.waitFor(() => expect($("#movement-confirm")).not.toBeNull()…
+       |                                                             ^
+     83| }
+     84|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > lists who approved a movement and marks a self-approval
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-movement.test.js:199:37
+    197|     await open({ list: { ...emptyList, movements: [entry("Mehmet", fal…
+    198|
+    199|     const list = $("#movement-list").textContent;
+       |                                     ^
+    200|     expect(list).toContain("onaylayan: Mehmet");
+    201|     expect(list).toContain("kendi onayı");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > keeps what was typed through a validation re-render
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Açıklama zorunludur.'
+
+- Expected
++ Received
+
+- Açıklama zorunludur.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:222:43
+    220|     await startMovement("in", "25", "");
+    221|     $("#movement-submit").click();
+    222|     await vi.waitFor(() => expect(text()).toContain("Açıklama zorunlud…
+       |                                           ^
+    223|
+    224|     expect($("#movement-amount").value).toBe("25");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > lets an approver approve and reject another person's request, and not cancel it
+AssertionError: expected [] to deeply equal [ 'approve', 'reject' ]
+
+- Expected
++ Received
+
+- [
+-   "approve",
+-   "reject",
+- ]
++ []
+
+ ❯ cash-session-movement.test.js:270:23
+    268|   it("lets an approver approve and reject another person's request, an…
+    269|     await open({ capabilities: ["cash.session.override"], list: reques…
+    270|     expect(buttons()).toEqual(["approve", "reject"]);
+       |                       ^
+    271|     expect($("#pending-requests").textContent).toContain("avans");
+    272|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > withholds Onayla from a manager's own request while self-approval is off, and says why
+AssertionError: expected [] to deeply equal [ 'reject', 'cancel' ]
+
+- Expected
++ Received
+
+- [
+-   "reject",
+-   "cancel",
+- ]
++ []
+
+ ❯ cash-session-movement.test.js:276:23
+    274|   it("withholds Onayla from a manager's own request while self-approva…
+    275|     await open({ capabilities: ["cash.session.override"], list: reques…
+    276|     expect(buttons()).toEqual(["reject", "cancel"]);
+       |                       ^
+    277|     expect($("#pending-requests").textContent).toContain("Kendi talebi…
+    278|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > offers Onayla on a manager's own request once self-approval is on
+AssertionError: expected [] to deeply equal [ 'approve', 'reject', 'cancel' ]
+
+- Expected
++ Received
+
+- [
+-   "approve",
+-   "reject",
+-   "cancel",
+- ]
++ []
+
+ ❯ cash-session-movement.test.js:282:23
+    280|   it("offers Onayla on a manager's own request once self-approval is o…
+    281|     await open({ capabilities: ["cash.session.override"], list: reques…
+    282|     expect(buttons()).toEqual(["approve", "reject", "cancel"]);
+       |                       ^
+    283|   });
+    284|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > gives the requester without approval permission only Vazgeç
+AssertionError: expected [] to deeply equal [ 'cancel' ]
+
+- Expected
++ Received
+
+- [
+-   "cancel",
+- ]
++ []
+
+ ❯ cash-session-movement.test.js:287:23
+    285|   it("gives the requester without approval permission only Vazgeç", as…
+    286|     await open({ capabilities: [], list: request(ME) });
+    287|     expect(buttons()).toEqual(["cancel"]);
+       |                       ^
+    288|   });
+    289|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts approve to the request and reloads the list
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts reject to the request and reloads the list
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts cancel to the request and reloads the list
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ cash-session-movement.test.js:302:62
+    300|     const { calls } = await open({ capabilities: ["cash.session.overri…
+    301|
+    302|     document.querySelector(`[data-request-action=${action}]`).click();
+       |                                                              ^
+    303|     await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
+    304|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > is told in Turkish when the request was already decided
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:316:75
+    314|       : original(url, init))));
+    315|     await loadApp(htmlPath, scriptPath);
+    316|     await vi.waitFor(() => expect($("[data-request-action=approve]")).…
+       |                                                                           ^
+    317|
+    318|     $("[data-request-action=approve]").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > asks whether the drawer is empty before accepting a zero count, and does not send until confirmed
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:347:64
+    345|
+    346|     $("#submit-count").click();
+    347|     await vi.waitFor(() => expect($("#zero-count-prompt")).not.toBeNul…
+       |                                                                ^
+    348|
+    349|     expect($("#zero-count-prompt").textContent).toContain("Sayım 0 ₺ -…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > lets the cashier go back from the zero-count question to correct the count
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:360:58
+    358|     const { calls } = await openCounting();
+    359|     $("#submit-count").click();
+    360|     await vi.waitFor(() => expect($("#zero-cancel")).not.toBeNull());
+       |                                                          ^
+    361|
+    362|     $("#zero-cancel").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > also asks for a single typed amount of 0
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:384:64
+    382|
+    383|     $("#submit-count").click();
+    384|     await vi.waitFor(() => expect($("#zero-count-prompt")).not.toBeNul…
+       |                                                                ^
+    385|     expect(posted(calls, "/counts")).toHaveLength(0);
+    386|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > keeps the typed count and note through an error re-render
+AssertionError: expected '0.00' to be '-5' // Object.is equality
+
+Expected: "-5"
+Received: "0.00"
+
+ ❯ cash-session-movement.test.js:398:40
+    396|     await vi.waitFor(() => expect(text()).toContain("Geçerli bir tutar…
+    397|
+    398|     expect($("#counted-amount").value).toBe("-5");
+       |                                        ^
+    399|     expect($("#count-notes").value).toBe("not");
+    400|     expect(posted(calls, "/counts")).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > disables closing and offers a re-read when the expected cash could not be read
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-movement.test.js:415:41
+    413|     const { calls } = await toClosing(world);
+    414|
+    415|     expect($("#submit-close").disabled).toBe(true);
+       |                                         ^
+    416|     expect($("#expected-missing")).not.toBeNull();
+    417|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > tells the cashier the session may have closed after a dropped connection and reads the state again
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:433:56
+    431|
+    432|     $("#submit-close").click();
+    433|     await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
+       |                                                        ^
+    434|
+    435|     expect($("#cs-notice").textContent).toContain("kasa kapanmış olabi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/28]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > keeps the supervisor explanation through a re-render and shows the Turkish variance text
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' not to contain 'RAW'
+
+- Expected
++ Received
+
+- RAW
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!HataRAWBeklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00!Fark tolerans sınırını aşıyorDevam etmek için süpervizör onayı ve açıklama gerekir.Süpervizör AçıklamasıKasayı Kapat
++   
++   
++
+
+ ❯ cash-session-movement.test.js:446:24
+    444|     await vi.waitFor(() => expect($("#override-reason")).not.toBeNull(…
+    445|     expect(text()).toContain("Fark tolerans sınırını aşıyor");
+    446|     expect(text()).not.toContain("RAW");
+       |                        ^
+    447|     await type("#override-reason", "sebep");
+    448|     $("#submit-close").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/28]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  28 failed | 2 passed (30)
+   Start at  20:31:38
+   Duration  21.14s (transform 557ms, setup 24ms, import 55ms, tests 19.49s, environment 1.31s)
+

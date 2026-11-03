@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11919ms
+     × goes on to the close screen with a re-read button when the expected cash fails on the network after the count 1173ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing details > goes on to the close screen with a re-read button when the expected cash fails on the network after the count
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:822:62
+    820|     await type("#denom-100", "2");
+    821|     $("#submit-count").click();
+    822|     await vi.waitFor(() => expect($("#reread-expected")).not.toBeNull(…
+       |                                                              ^
+    823|
+    824|     expect($("#submit-close").disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:54:35
+   Duration  13.29s (transform 1.48s, setup 25ms, import 70ms, tests 11.92s, environment 1.02s)
+

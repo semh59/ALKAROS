@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10827ms
+     × explains a replay that was decided earlier instead of claiming a new save 223ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > explains a replay that was decided earlier instead of claiming a new save
+AssertionError: expected 'Çıkış kaydedildi (₺800,00).' to contain 'daha önce reddedilmişti'
+
+Expected: "daha önce reddedilmişti"
+Received: "Çıkış kaydedildi (₺800,00)."
+
+ ❯ cash-session-movement.test.js:640:41
+    638|     $("#movement-confirm").click();
+    639|     await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
+    640|     expect($("#cs-notice").textContent).toContain("daha önce reddedilm…
+       |                                         ^
+    641|   });
+    642|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:53:12
+   Duration  12.18s (transform 1.43s, setup 25ms, import 74ms, tests 10.83s, environment 993ms)
+

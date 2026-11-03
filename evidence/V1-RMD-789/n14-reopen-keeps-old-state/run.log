@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11054ms
+     × starts the next shift clean: no old list, requests, counts or drafts 416ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > starts the next shift clean: no old list, requests, counts or drafts
+AssertionError: expected '3' to be '0' // Object.is equality
+
+Expected: "0"
+Received: "3"
+
+ ❯ cash-session-movement.test.js:770:35
+    768|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+    769|
+    770|     expect($("#denom-100").value).toBe("0");
+       |                                   ^
+    771|     expect($("#count-notes").value).toBe("");
+    772|     expect($("#denom-total-value").textContent).toBe("₺0,00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:54:04
+   Duration  12.37s (transform 1.50s, setup 25ms, import 74ms, tests 11.05s, environment 971ms)
+

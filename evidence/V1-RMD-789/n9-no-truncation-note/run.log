@@ -1,0 +1,25 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10919ms
+     × shows when the list was cut and when it could not be read, without blocking the screen 89ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows when the list was cut and when it could not be read, without blocking the screen
+AssertionError: expected 'Nakit hareketleri12:30 · Giriş+₺5,00a…' to contain 'Yalnız son 200 hareket gösteriliyor.'
+
+Expected: "Yalnız son 200 hareket gösteriliyor."
+Received: "Nakit hareketleri12:30 · Giriş+₺5,00aAyşe"
+
+ ❯ cash-session-movement.test.js:666:45
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:52:41
+   Duration  12.43s (transform 1.49s, setup 26ms, import 72ms, tests 10.92s, environment 1.14s)
+

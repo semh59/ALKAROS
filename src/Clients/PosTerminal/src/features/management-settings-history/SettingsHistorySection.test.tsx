@@ -84,6 +84,7 @@ describe("settings history section", () => {
       "qr_ordering.pending_confirmation_timeout", "reservations.dedicated_station_enabled", "garson.course_management_enabled",
       "garson.guest_live_bill_enabled", "garson.help_request_enabled", "garson.party_size_enabled", "garson.personal_comp_budget_enabled",
       "garson.seat_assignment_enabled", "garson.shift_handoff_notes_enabled", "garson.shift_summary_enabled", "garson.voluntary_tip_enabled",
+      "cash.cash_out_approval_threshold", "approvals.manager_self_approval_enabled",
     ];
     const client = fakeClient({ listSettings: vi.fn().mockResolvedValue(keys.map((key, index) => ({ ...toggle, key, settingId: `k${index}` }))) });
     await render(<SettingsHistorySection client={client} />);
@@ -160,6 +161,57 @@ describe("settings history section", () => {
     await typeInto(idOfField("Değişiklik gerekçesi"), "Kapatıldı");
     await submit("Ayarı değiştir: Mutfak canlı eşitleme");
     expect(client.update).toHaveBeenCalledWith("kitchen.live_sync_enabled", "false", 3, "Kapatıldı");
+  });
+
+  it("names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira", async () => {
+    const threshold = { ...waiterLimit, settingId: "c1", key: "cash.cash_out_approval_threshold", value: "500" };
+    const selfApproval = { ...toggle, settingId: "c2", key: "approvals.manager_self_approval_enabled", value: "false", requiresRestart: false };
+    const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([threshold, selfApproval]) });
+    await render(<SettingsHistorySection client={client} />);
+
+    expect(document.body.textContent).toContain("Nakit çıkış onay eşiği");
+    expect(document.body.textContent).toContain("500 ₺");
+    expect(document.body.textContent).toContain("Yönetici kendi talebini onaylayabilir");
+    await press("Düzenle");
+    const form = "Ayarı değiştir: Nakit çıkış onay eşiği";
+    await typeInto(idOfField("Değişiklik gerekçesi"), "Hesap değişti");
+    await typeInto(idOfField("Yeni değer"), "1000001");
+    await submit(form);
+    expect(alertText()).toBe("0 ile 1.000.000 ₺ arası; bu tutarın üstündeki nakit çıkışlar yönetici onayı ister");
+    await typeInto(idOfField("Yeni değer"), "-1");
+    await submit(form);
+    expect(alertText()).toBe("0 ile 1.000.000 ₺ arası; bu tutarın üstündeki nakit çıkışlar yönetici onayı ister");
+    await typeInto(idOfField("Yeni değer"), "10.5");
+    await submit(form);
+    expect(alertText()).not.toBe("");
+    expect(client.update).not.toHaveBeenCalled();
+    await typeInto(idOfField("Yeni değer"), "750");
+    await submit(form);
+    expect(client.update).toHaveBeenCalledWith("cash.cash_out_approval_threshold", "750", 1, "Hesap değişti");
+  });
+
+  it("accepts a cash-out threshold of 0, which sends every cash-out for approval", async () => {
+    const threshold = { ...waiterLimit, settingId: "c1", key: "cash.cash_out_approval_threshold", value: "500" };
+    const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([threshold]) });
+    await render(<SettingsHistorySection client={client} />);
+    await press("Düzenle");
+    await typeInto(idOfField("Yeni değer"), "0");
+    await typeInto(idOfField("Değişiklik gerekçesi"), "Hepsi onaya");
+    await submit("Ayarı değiştir: Nakit çıkış onay eşiği");
+    expect(client.update).toHaveBeenCalledWith("cash.cash_out_approval_threshold", "0", 1, "Hepsi onaya");
+  });
+
+  it("switches manager self-approval on with the Evet choice", async () => {
+    const selfApproval = { ...toggle, settingId: "c2", key: "approvals.manager_self_approval_enabled", value: "false", requiresRestart: false, rowVersion: 5 };
+    const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([selfApproval]) });
+    await render(<SettingsHistorySection client={client} />);
+
+    expect(document.body.textContent).toContain("Hayır");
+    await press("Düzenle");
+    await typeInto(idOfField("Yeni değer"), "true");
+    await typeInto(idOfField("Değişiklik gerekçesi"), "Müdür yokken");
+    await submit("Ayarı değiştir: Yönetici kendi talebini onaylayabilir");
+    expect(client.update).toHaveBeenCalledWith("approvals.manager_self_approval_enabled", "true", 5, "Müdür yokken");
   });
 
   it("refuses an empty reason, an unchanged value and an out-of-range number without calling the server", async () => {

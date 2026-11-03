@@ -1,0 +1,63 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (24 tests | 3 failed) 352ms
+     × every setting the server ships by default has a Turkish name 23ms
+     × names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira 6ms
+     × accepts a cash-out threshold of 0, which sends every cash-out for approval 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > every setting the server ships by default has a Turkish name
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' not to contain 'Tanımsız ayar'
+
+Expected: "Tanımsız ayar"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemQR siparişi onay bekleme süresiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterAyrı rezervasyon istasyonuEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterServis sırası (kurs) yönetimiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterMisafirin canlı hesap görünümüEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterGarson yardım çağrısıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKişi sayısı sorulmasıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKişisel ikram bütçesiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKoltuk atamasıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterVardiya devir notlarıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterVardiya özetiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterİsteğe bağlı bahşişEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterTanımsız ayarEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterYönetici kendi talebini onaylayabilirEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:91:43
+     89|     const client = fakeClient({ listSettings: vi.fn().mockResolvedValu…
+     90|     await render(<SettingsHistorySection client={client} />);
+     91|     expect(document.body.textContent).not.toContain("Tanımsız ayar");
+       |                                           ^
+     92|   });
+     93|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' to contain 'Nakit çıkış onay eşiği'
+
+Expected: "Nakit çıkış onay eşiği"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemTanımsız ayar500 ₺30.09.2026 11:00—DüzenleGeçmişi gösterYönetici kendi talebini onaylayabilirHayır30.09.2026 11:00—DüzenleGeçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:172:39
+    170|     await render(<SettingsHistorySection client={client} />);
+    171|
+    172|     expect(document.body.textContent).toContain("Nakit çıkış onay eşiğ…
+       |                                       ^
+    173|     expect(document.body.textContent).toContain("500 ₺");
+    174|     expect(document.body.textContent).toContain("Yönetici kendi talebi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > accepts a cash-out threshold of 0, which sends every cash-out for approval
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/features/management/testKit.tsx:38:32
+     36| export async function submit(label: string) {
+     37|   const form = document.querySelector(`form[aria-label="${label}"]`)!;
+     38|   await act(async () => { form.dispatchEvent(new Event("submit", { bub…
+       |                                ^
+     39| }
+     40|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ submit src/features/management/testKit.tsx:38:9
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:200:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 21 passed (24)
+   Start at  21:00:51
+   Duration  2.68s (transform 819ms, setup 0ms, import 1.13s, tests 352ms, environment 950ms)
+

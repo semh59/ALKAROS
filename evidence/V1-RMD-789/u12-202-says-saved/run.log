@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10977ms
+     × says the cash-out waits for a manager when the server answers 202 243ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > says the cash-out waits for a manager when the server answers 202
+AssertionError: expected 'Çıkış kaydedildi (₺800,00).' to contain 'yönetici onayı bekliyor'
+
+Expected: "yönetici onayı bekliyor"
+Received: "Çıkış kaydedildi (₺800,00)."
+
+ ❯ cash-session-movement.test.js:209:41
+    207|     await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
+    208|
+    209|     expect($("#cs-notice").textContent).toContain("yönetici onayı bekl…
+       |                                         ^
+    210|   });
+    211|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:49:42
+   Duration  12.33s (transform 1.47s, setup 24ms, import 72ms, tests 10.98s, environment 1.01s)
+

@@ -42,8 +42,12 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await page.getByRole('button', { name: 'Nakit Giriş' }).click();
     await page.locator('#movement-amount').fill('50');
     await page.locator('#movement-notes').fill('E2E test - manuel giriş');
-    await page.getByRole('button', { name: 'Girişi Kaydet' }).click();
+    await page.getByRole('button', { name: 'Devam' }).click();
+    await expect(page.getByRole('heading', { name: 'Kaydetmeden Önce Kontrol Edin' })).toBeVisible();
+    await page.getByRole('button', { name: 'Onayla ve kaydet' }).click();
     await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+    await expect(page.locator('#cs-notice')).toHaveText('Giriş kaydedildi (₺50,00).');
+    await expect(page.locator('#movement-list')).toContainText('E2E test - manuel giriş');
 
     // Sayım: 500 açılış + 50 nakit giriş = 550 beklenen; tam o kadar sayılır.
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
@@ -88,6 +92,7 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await useManualCount(page);
     await page.locator('#counted-amount').fill('0');
     await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
+    await page.getByRole('button', { name: 'Evet, çekmece boş' }).click();
 
     await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toBeVisible();
     await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
@@ -126,9 +131,9 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
   });
 
-  // V1-RMD-756 (F0068): the same movement retried after a network failure replays its key; an edited
-  // amount gets a new one, so the server records the edited amount instead of replaying the first.
-  test('ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır', async ({ page }) => {
+  // The same movement retried after a network failure replays its key; an edited amount or reason gets a new
+  // one, because the server compares direction, amount and the trimmed reason on a replay.
+  test('ağ hatasından sonra kasa hareketi: aynı hareket aynı anahtarı, değişen tutar veya açıklama yeni anahtarı kullanır', async ({ page }) => {
     const seed = readSeed();
     await loginOnCashSessionPage(page, seed);
     await expect(page.getByRole('heading', { name: 'Vardiyayı Başlat' })).toBeVisible({ timeout: 15_000 });
@@ -139,31 +144,41 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
 
     const keys = [];
     await page.route('**/cash-movements', async (route) => {
+      if (route.request().method() !== 'POST') return route.continue();
       keys.push(JSON.parse(route.request().postData()).IdempotencyKey);
-      await route.abort('failed');
+      return route.abort('failed');
     });
-    const submit = async (amount, count, notes = 'E2E test - tekrar') => {
-      await page.locator('#movement-amount').fill(amount);
-      await page.locator('#movement-notes').fill(notes);
-      await page.getByRole('button', { name: 'Girişi Kaydet' }).click();
+    const confirmFailing = async (count) => {
+      await page.getByRole('button', { name: 'Onayla ve kaydet' }).click();
       await expect.poll(() => keys.length, { timeout: 10_000 }).toBe(count);
       await expect(page.getByText('Sunucuya ulaşılamadı.')).toBeVisible();
     };
+    const edit = async (amount, notes) => {
+      await page.getByRole('button', { name: 'Düzelt' }).click();
+      await page.locator('#movement-amount').fill(amount);
+      await page.locator('#movement-notes').fill(notes);
+      await page.getByRole('button', { name: 'Devam' }).click();
+      await expect(page.getByRole('button', { name: 'Onayla ve kaydet' })).toBeVisible();
+    };
 
-    await submit('50', 1);
-    await submit('50', 2);
-    await submit('70', 3);
-    // The server tells replays apart by amount and direction only, so a note-only edit must not mint a new key.
-    await submit('70', 4, 'E2E test - açıklama düzeltildi');
+    await page.locator('#movement-amount').fill('50');
+    await page.locator('#movement-notes').fill('E2E test - tekrar');
+    await page.getByRole('button', { name: 'Devam' }).click();
+    await expect(page.getByRole('button', { name: 'Onayla ve kaydet' })).toBeVisible();
+    await confirmFailing(1);
+    await confirmFailing(2);
+    await edit('70', 'E2E test - tekrar');
+    await confirmFailing(3);
+    await edit('70', 'E2E test - açıklama düzeltildi');
+    await confirmFailing(4);
     expect(keys[1]).toBe(keys[0]);
     expect(keys[2]).not.toBe(keys[1]);
-    expect(keys[3]).toBe(keys[2]);
+    expect(keys[3]).not.toBe(keys[2]);
 
     await page.unroute('**/cash-movements');
-    await page.locator('#movement-amount').fill('70');
-    await page.locator('#movement-notes').fill('E2E test - tekrar');
-    await page.getByRole('button', { name: 'Girişi Kaydet' }).click();
+    await page.getByRole('button', { name: 'Onayla ve kaydet' }).click();
     await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+    await expect(page.locator('#movement-list')).toContainText('E2E test - açıklama düzeltildi');
 
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
     await useManualCount(page);
@@ -174,5 +189,44 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
     await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
     await expect(page.getByText('₺0,00').last()).toBeVisible();
+  });
+
+  test('nakit çıkışta açıklama zorunludur; eşiğin üstü yönetici onayı bekler ve kasadan düşmez', async ({ page }) => {
+    const seed = readSeed();
+    await loginOnCashSessionPage(page, seed);
+    await expect(page.getByRole('heading', { name: 'Vardiyayı Başlat' })).toBeVisible({ timeout: 15_000 });
+    await page.locator('#opening-balance').fill('2000');
+    await page.getByRole('button', { name: 'Kasayı Aç' }).click();
+    await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Nakit Çıkış' }).click();
+    await page.locator('#movement-amount').fill('800');
+    await page.getByRole('button', { name: 'Devam' }).click();
+    await expect(page.getByText('Açıklama zorunludur.')).toBeVisible();
+
+    await page.locator('#movement-notes').fill('E2E test - tedarikçi avansı');
+    await page.getByRole('button', { name: 'Devam' }).click();
+    await expect(page.locator('#approval-warning')).toContainText('Yönetici onayı gerekecek');
+    await page.getByRole('button', { name: 'Onaya gönder' }).click();
+
+    await expect(page.locator('#cs-notice')).toContainText('yönetici onayı bekliyor');
+    await expect(page.locator('#pending-requests')).toContainText('E2E test - tedarikçi avansı');
+    await expect(page.getByRole('button', { name: 'Sayıma Başla' })).toBeDisabled();
+    // The seeded cashier holds every permission, so the own request can be rejected but not approved (self-approval is off).
+    await expect(page.locator('[data-request-action="approve"]')).toHaveCount(0);
+    await page.locator('[data-request-action="reject"]').click();
+    await expect(page.locator('#request-confirm-text')).toContainText('geri alınamaz');
+    await page.getByRole('button', { name: 'Evet, reddet' }).click();
+    await expect(page.locator('#cs-notice')).toHaveText('Çıkış talebi reddedildi.');
+    await expect(page.getByRole('button', { name: 'Sayıma Başla' })).toBeEnabled();
+
+    await page.getByRole('button', { name: 'Nakit Çıkış' }).click();
+    await page.locator('#movement-amount').fill('900');
+    await page.locator('#movement-notes').fill('E2E test - ikinci avans');
+    await page.getByRole('button', { name: 'Devam' }).click();
+    await page.getByRole('button', { name: 'Onaya gönder' }).click();
+    await expect(page.locator('#pending-requests')).toContainText('E2E test - ikinci avans');
+    await page.getByRole('button', { name: 'Talebi geri çek' }).click();
+    await expect(page.locator('#cs-notice')).toHaveText('Çıkış talebi geri çekildi.');
   });
 });

@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 12375ms
+     × fills the reason from a quick choice and sends it 131ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > fills the reason from a quick choice and sends it
+AssertionError: expected '' to be 'Banka' // Object.is equality
+
+- Expected
++ Received
+
+- Banka
+
+ ❯ cash-session-movement.test.js:731:40
+    729|     await startMovement("out", "40");
+    730|     document.querySelector('[data-reason="Banka"]').click();
+    731|     expect($("#movement-notes").value).toBe("Banka");
+       |                                        ^
+    732|     $("#movement-form").requestSubmit();
+    733|     await confirm(calls, 1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:57:11
+   Duration  13.77s (transform 2.26s, setup 30ms, import 95ms, tests 12.37s, environment 1.01s)
+

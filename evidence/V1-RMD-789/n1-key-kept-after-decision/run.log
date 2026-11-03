@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10961ms
+     × mints a new retry key after the server decided (409), keeps it after a 500 430ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > mints a new retry key after the server decided (409), keeps it after a 500
+AssertionError: expected '605283b2-cc98-4f7e-8c83-80bb7d6325d6' not to be '605283b2-cc98-4f7e-8c83-80bb7d6325d6' // Object.is equality
+ ❯ cash-session-movement.test.js:577:25
+    575|
+    576|     const keys = keysOf(calls);
+    577|     expect(keys[1]).not.toBe(keys[0]);
+       |                         ^
+    578|     expect(keys[2]).toBe(keys[1]);
+    579|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:50:28
+   Duration  12.38s (transform 1.46s, setup 23ms, import 76ms, tests 10.96s, environment 1.06s)
+

@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11128ms
+     × does not warn at exactly the threshold 174ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > does not warn at exactly the threshold
+AssertionError: expected <div …(3)>…(2)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="cs-alert cs-alert-danger"
+  id="approval-warning"
+  role="status"
+>
+  <span
+    class="cs-alert-icon"
+  >
+    !
+  </span>
+  <div
+    class="cs-alert-body"
+  >
+    Yönetici onayı gerekecek. Onaylanana kadar bu tutar kasadan düşmez.
+  </div>
+</div>
+
+ ❯ cash-session-movement.test.js:173:36
+    171|     await open({ expected: 5000 });
+    172|     await toSummary("out", "500", "avans");
+    173|     expect($("#approval-warning")).toBeNull();
+       |                                    ^
+    174|   });
+    175|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:47:00
+   Duration  13.54s (transform 1.61s, setup 34ms, import 103ms, tests 11.13s, environment 1.90s)
+

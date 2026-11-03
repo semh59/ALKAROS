@@ -1,0 +1,265 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 11 failed) 14779ms
+     × keeps the typed amount and reason when the server refuses, with the Turkish text and never the raw message 222ms
+     × is told in Turkish when the request was already decided 1094ms
+     × keeps the supervisor explanation through a re-render and shows the Turkish variance text 271ms
+     × shows the Turkish text of CASH_MOVEMENT_REASON_INVALID and never the raw server message 227ms
+     × shows the Turkish text of CASH_MOVEMENT_REQUESTS_PENDING and never the raw server message 222ms
+     × shows the Turkish text of CASH_MOVEMENT_SELF_APPROVAL and never the raw server message 217ms
+     × shows the Turkish text of IDEMPOTENCY_KEY_REUSED and never the raw server message 206ms
+     × shows the Turkish text of CLOSED_CASH_SESSION and never the raw server message 210ms
+     × shows the Turkish pending-request text when the count cannot start 1099ms
+     × shows the Turkish already-decided text when reject finds the request closed 1092ms
+     × shows the Turkish already-decided text when cancel finds the request closed 1112ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > keeps the typed amount and reason when the server refuses, with the Turkish text and never the raw message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Çıkış tutarı kasadaki nakdi aşıyor.'
+
+- Expected
++ Received
+
+- Çıkış tutarı kasadaki nakdi aşıyor.
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!HataRAW ENGLISH MESSAGETutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:229:20
+    227|     await vi.waitFor(() => expect($("#movement-amount")).not.toBeNull(…
+    228|
+    229|     expect(text()).toContain("Çıkış tutarı kasadaki nakdi aşıyor.");
+       |                    ^
+    230|     expect(text()).not.toContain("RAW ENGLISH MESSAGE");
+    231|     expect($("#movement-amount").value).toBe("40");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > is told in Turkish when the request was already decided
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'artık beklemiyor'
+
+- Expected
++ Received
+
+- artık beklemiyor
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık!HataRAWAçılış Tutarı₺1.000,00Açılış Saati11:00Onay bekleyen çıkışlarTalep Eden · 12:00₺800,00avansOnaylaReddetNakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileOnay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:382:43
+    380|     await vi.waitFor(() => expect($("[data-request-confirm]")).not.toB…
+    381|     $("[data-request-confirm]").click();
+    382|     await vi.waitFor(() => expect(text()).toContain("artık beklemiyor"…
+       |                                           ^
+    383|
+    384|     expect(text()).toContain("liste yenilendi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > keeps the supervisor explanation through a re-render and shows the Turkish variance text
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' not to contain 'RAW'
+
+- Expected
++ Received
+
+- RAW
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!HataRAWBeklenen₺1.000,00Sayılan₺1.000,00Fark₺0,00!Fark tolerans sınırını aşıyorDevam etmek için süpervizör onayı ve açıklama gerekir.Süpervizör AçıklamasıKasayı Kapat
++   
++   
++
+
+ ❯ cash-session-movement.test.js:511:24
+    509|     await vi.waitFor(() => expect($("#override-reason")).not.toBeNull(…
+    510|     expect(text()).toContain("Fark tolerans sınırını aşıyor");
+    511|     expect(text()).not.toContain("RAW");
+       |                        ^
+    512|     await type("#override-reason", "sebep");
+    513|     $("#submit-close").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish text of CASH_MOVEMENT_REASON_INVALID and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Açıklama zorunludur ve en çok 500'
+
+- Expected
++ Received
+
+- Açıklama zorunludur ve en çok 500
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!HataRAW ENGLISHTutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:616:20
+    614|     await vi.waitFor(() => expect($("#movement-submit")).not.toBeNull(…
+    615|
+    616|     expect(text()).toContain(expected);
+       |                    ^
+    617|     expect(text()).not.toContain("RAW ENGLISH");
+    618|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish text of CASH_MOVEMENT_REQUESTS_PENDING and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Onay bekleyen nakit çıkış talebi var'
+
+- Expected
++ Received
+
+- Onay bekleyen nakit çıkış talebi var
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!HataRAW ENGLISHTutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:616:20
+    614|     await vi.waitFor(() => expect($("#movement-submit")).not.toBeNull(…
+    615|
+    616|     expect(text()).toContain(expected);
+       |                    ^
+    617|     expect(text()).not.toContain("RAW ENGLISH");
+    618|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish text of CASH_MOVEMENT_SELF_APPROVAL and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Kendi çıkış talebinizi onaylayamazsın…'
+
+- Expected
++ Received
+
+- Kendi çıkış talebinizi onaylayamazsınız
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!HataRAW ENGLISHTutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:616:20
+    614|     await vi.waitFor(() => expect($("#movement-submit")).not.toBeNull(…
+    615|
+    616|     expect(text()).toContain(expected);
+       |                    ^
+    617|     expect(text()).not.toContain("RAW ENGLISH");
+    618|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish text of IDEMPOTENCY_KEY_REUSED and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'zaten kaydedilmiş'
+
+- Expected
++ Received
+
+- zaten kaydedilmiş
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!HataRAW ENGLISHTutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:616:20
+    614|     await vi.waitFor(() => expect($("#movement-submit")).not.toBeNull(…
+    615|
+    616|     expect(text()).toContain(expected);
+       |                    ^
+    617|     expect(text()).not.toContain("RAW ENGLISH");
+    618|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish text of CLOSED_CASH_SESSION and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Kasa oturumu açık değil'
+
+- Expected
++ Received
+
+- Kasa oturumu açık değil
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!HataRAW ENGLISHTutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:616:20
+    614|     await vi.waitFor(() => expect($("#movement-submit")).not.toBeNull(…
+    615|
+    616|     expect(text()).toContain(expected);
+       |                    ^
+    617|     expect(text()).not.toContain("RAW ENGLISH");
+    618|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish pending-request text when the count cannot start
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Onay bekleyen nakit çıkış talebi var'
+
+- Expected
++ Received
+
+- Onay bekleyen nakit çıkış talebi var
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık!HataRAWAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:623:43
+    621|     await open({ startCountReply: reply(409, { error: { code: "CASH_MO…
+    622|     $("#start-count").click();
+    623|     await vi.waitFor(() => expect(text()).toContain("Onay bekleyen nak…
+       |                                           ^
+    624|     expect(text()).not.toContain("RAW");
+    625|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish already-decided text when reject finds the request closed
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish already-decided text when cancel finds the request closed
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'artık beklemiyor'
+
+- Expected
++ Received
+
+- artık beklemiyor
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık!HataRAWAçılış Tutarı₺1.000,00Açılış Saati11:00Onay bekleyen çıkışlarA · 12:00₺800,00avansKendi talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.ReddetTalebi geri çekNakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileOnay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:705:43
+    703|       $("[data-request-confirm]").click();
+    704|     }
+    705|     await vi.waitFor(() => expect(text()).toContain("artık beklemiyor"…
+       |                                           ^
+    706|     expect(text()).not.toContain("RAW");
+    707|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed | 52 passed (63)
+   Start at  20:48:52
+   Duration  16.10s (transform 1.48s, setup 27ms, import 76ms, tests 14.78s, environment 950ms)
+

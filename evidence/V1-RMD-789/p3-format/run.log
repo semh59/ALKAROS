@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (24 tests | 1 failed) 345ms
+     × names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' to contain '500 ₺'
+
+Expected: "500 ₺"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemNakit çıkış onay eşiği50030.09.2026 11:00—DüzenleGeçmişi gösterYönetici kendi talebini onaylayabilirHayır30.09.2026 11:00—DüzenleGeçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:173:39
+    171|
+    172|     expect(document.body.textContent).toContain("Nakit çıkış onay eşiğ…
+    173|     expect(document.body.textContent).toContain("500 ₺");
+       |                                       ^
+    174|     expect(document.body.textContent).toContain("Yönetici kendi talebi…
+    175|     await press("Düzenle");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  21:01:02
+   Duration  2.63s (transform 790ms, setup 0ms, import 1.09s, tests 345ms, environment 943ms)
+

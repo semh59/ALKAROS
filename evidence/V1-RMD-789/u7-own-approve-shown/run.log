@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10931ms
+     × withholds Onayla from a manager's own request while self-approval is off, and says why 94ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > withholds Onayla from a manager's own request while self-approval is off, and says why
+AssertionError: expected [ 'approve', 'reject', 'cancel' ] to deeply equal [ 'reject', 'cancel' ]
+
+- Expected
++ Received
+
+  [
++   "approve",
+    "reject",
+    "cancel",
+  ]
+
+ ❯ cash-session-movement.test.js:293:23
+    291|   it("withholds Onayla from a manager's own request while self-approva…
+    292|     await open({ capabilities: ["cash.session.override"], list: reques…
+    293|     expect(buttons()).toEqual(["reject", "cancel"]);
+       |                       ^
+    294|     expect($("#pending-requests").textContent).toContain("Kendi talebi…
+    295|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:48:21
+   Duration  12.27s (transform 1.44s, setup 23ms, import 71ms, tests 10.93s, environment 994ms)
+

@@ -1,0 +1,58 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 2 failed) 11031ms
+     × gives the requester without approval permission only Vazgeç 108ms
+     × shows nothing to a user who neither asked nor may approve 91ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > gives the requester without approval permission only Vazgeç
+AssertionError: expected [ 'reject', 'cancel' ] to deeply equal [ 'cancel' ]
+
+- Expected
++ Received
+
+  [
++   "reject",
+    "cancel",
+  ]
+
+ ❯ cash-session-movement.test.js:344:23
+    342|   it("gives the requester without approval permission only Vazgeç", as…
+    343|     await open({ capabilities: [], list: request(ME) });
+    344|     expect(buttons()).toEqual(["cancel"]);
+       |                       ^
+    345|   });
+    346|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > shows nothing to a user who neither asked nor may approve
+AssertionError: expected [ 'approve', 'reject' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "approve",
++   "reject",
++ ]
+
+ ❯ cash-session-movement.test.js:349:23
+    347|   it("shows nothing to a user who neither asked nor may approve", asyn…
+    348|     await open({ capabilities: [], list: request(OTHER) });
+    349|     expect(buttons()).toEqual([]);
+       |                       ^
+    350|   });
+    351|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 61 passed (63)
+   Start at  20:48:36
+   Duration  12.60s (transform 1.48s, setup 24ms, import 74ms, tests 11.03s, environment 1.22s)
+

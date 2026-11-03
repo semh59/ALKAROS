@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11200ms
+     × labels the button Onaya gönder when a manager has to approve 173ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > labels the button Onaya gönder when a manager has to approve
+AssertionError: expected 'Onayla ve kaydet' to be 'Onaya gönder' // Object.is equality
+
+Expected: "Onaya gönder"
+Received: "Onayla ve kaydet"
+
+ ❯ cash-session-movement.test.js:560:48
+    558|     await open({ expected: 5000 });
+    559|     await toSummary("out", "800", "avans");
+    560|     expect($("#movement-confirm").textContent).toBe("Onaya gönder");
+       |                                                ^
+    561|   });
+    562|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:56:23
+   Duration  12.87s (transform 1.55s, setup 26ms, import 83ms, tests 11.20s, environment 1.25s)
+

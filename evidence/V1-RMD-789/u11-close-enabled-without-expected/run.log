@@ -1,0 +1,73 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 3 failed) 10873ms
+     × disables closing and offers a re-read when the expected cash could not be read 215ms
+     × goes on to the close screen with a re-read button when the expected cash fails on the network after the count 209ms
+     × says so again when the re-read fails too, and keeps closing disabled 273ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > disables closing and offers a re-read when the expected cash could not be read
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-movement.test.js:480:41
+    478|     const { calls } = await toClosing(world);
+    479|
+    480|     expect($("#submit-close").disabled).toBe(true);
+       |                                         ^
+    481|     expect($("#expected-missing")).not.toBeNull();
+    482|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing details > goes on to the close screen with a re-read button when the expected cash fails on the network after the count
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-movement.test.js:824:41
+    822|     await vi.waitFor(() => expect($("#reread-expected")).not.toBeNull(…
+    823|
+    824|     expect($("#submit-close").disabled).toBe(true);
+       |                                         ^
+    825|     expect(posted(calls, "/counts")).toHaveLength(1);
+    826|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing details > says so again when the re-read fails too, and keeps closing disabled
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-movement.test.js:838:41
+    836|     await vi.waitFor(() => expect(text()).toContain("Beklenen tutar ok…
+    837|
+    838|     expect($("#submit-close").disabled).toBe(true);
+       |                                         ^
+    839|     expect($("#reread-expected").textContent).toBe("Beklenen tutarı ye…
+    840|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 60 passed (63)
+   Start at  20:49:27
+   Duration  12.63s (transform 1.47s, setup 26ms, import 75ms, tests 10.87s, environment 1.39s)
+

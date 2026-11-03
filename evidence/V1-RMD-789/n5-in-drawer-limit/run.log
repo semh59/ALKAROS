@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10931ms
+     × treats a cash-in of any size as plain: no approval warning, no drawer limit, Direction In, own label 171ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > treats a cash-in of any size as plain: no approval warning, no drawer limit, Direction In, own label
+AssertionError: expected <div …(3)>…(2)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="cs-alert cs-alert-danger"
+  id="drawer-warning"
+  role="alert"
+>
+  <span
+    class="cs-alert-icon"
+  >
+    !
+  </span>
+  <div
+    class="cs-alert-body"
+  >
+    Çıkış tutarı kasadaki beklenen nakdi aşıyor; kaydedilemez.
+  </div>
+</div>
+
+ ❯ cash-session-movement.test.js:549:34
+    547|
+    548|     expect($("#approval-warning")).toBeNull();
+    549|     expect($("#drawer-warning")).toBeNull();
+       |                                  ^
+    550|     expect($("#movement-confirm").textContent).toBe("Onayla ve kaydet"…
+    551|     await confirm(calls, 1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:51:30
+   Duration  12.28s (transform 1.45s, setup 27ms, import 71ms, tests 10.93s, environment 997ms)
+

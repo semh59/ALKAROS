@@ -1,0 +1,76 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 3 failed) 18159ms
+     × refuses an empty reason before anything reaches the server 1254ms
+     × keeps what was typed through a validation re-render 1218ms
+     × moves focus to the new step and to an error 1131ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > refuses an empty reason before anything reaches the server
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiKayd…' to contain 'Açıklama zorunludur.'
+
+- Expected
++ Received
+
+- Açıklama zorunludur.
++
++   ← Kasaya dön
++   Kasa HareketiKaydetmeden Önce Kontrol EdinYönNakit ÇıkışTutar₺40,00AçıklamaKasadaki beklenen nakit₺1.000,00DüzeltOnayla ve kaydet
++   
++   
++
+
+ ❯ cash-session-movement.test.js:126:43
+    124|
+    125|     $("#movement-submit").click();
+    126|     await vi.waitFor(() => expect(text()).toContain("Açıklama zorunlud…
+       |                                           ^
+    127|
+    128|     expect(posted(calls, "/cash-movements")).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > keeps what was typed through a validation re-render
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiKayd…' to contain 'Açıklama zorunludur.'
+
+- Expected
++ Received
+
+- Açıklama zorunludur.
++
++   ← Kasaya dön
++   Kasa HareketiKaydetmeden Önce Kontrol EdinYönNakit GirişTutar₺25,00AçıklamaKasadaki beklenen nakit₺1.000,00DüzeltOnayla ve kaydet
++   
++   
++
+
+ ❯ cash-session-movement.test.js:239:43
+    237|     await startMovement("in", "25", "");
+    238|     $("#movement-submit").click();
+    239|     await vi.waitFor(() => expect(text()).toContain("Açıklama zorunlud…
+       |                                           ^
+    240|
+    241|     expect($("#movement-amount").value).toBe("25");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > moves focus to the new step and to an error
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:741:62
+    739|     await startMovement("out", "40", "");
+    740|     $("#movement-submit").click();
+    741|     await vi.waitFor(() => expect($(".cs-alert-danger")).not.toBeNull(…
+       |                                                              ^
+    742|     expect(document.activeElement).toBe($(".cs-alert-danger"));
+    743|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 60 passed (63)
+   Start at  20:46:34
+   Duration  20.40s (transform 4.52s, setup 44ms, import 127ms, tests 18.16s, environment 1.73s)
+

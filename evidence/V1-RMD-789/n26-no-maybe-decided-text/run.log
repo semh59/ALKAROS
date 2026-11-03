@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11944ms
+     × tells the cashier when a decision may not have arrived 1105ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > tells the cashier when a decision may not have arrived
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Karar gitmiş olabilir'
+
+- Expected
++ Received
+
+- Karar gitmiş olabilir
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık!HataSunucuya ulaşılamadı. xAçılış Tutarı₺1.000,00Açılış Saati11:00Onay bekleyen çıkışlarA · 12:00₺800,00avansKendi talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.ReddetTalebi geri çekNakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileOnay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:690:43
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:56:55
+   Duration  13.33s (transform 1.47s, setup 24ms, import 75ms, tests 11.94s, environment 1.04s)
+

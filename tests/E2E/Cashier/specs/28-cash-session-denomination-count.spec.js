@@ -63,4 +63,16 @@ test.describe('Kasa Oturumu - kupür bazlı sayım (V1-RMD-377)', () => {
     // and the handler's own Math.max(0, ...) both guard it.
     await expect(page.locator('#denom-100')).toHaveAttribute('min', '0');
   });
+
+  test('sıfır sayım sorgusuz kabul edilmez: "çekmece boş mu?" onayı istenir', async ({ page }) => {
+    const seed = readSeed();
+    await openToCountingScreen(page, seed, 0);
+
+    await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
+    await expect(page.locator('#zero-count-prompt')).toContainText('Sayım 0 ₺ - çekmece boş mu?');
+    await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Evet, çekmece boş' }).click();
+    await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toBeVisible();
+  });
 });

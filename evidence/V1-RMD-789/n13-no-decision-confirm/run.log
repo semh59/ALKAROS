@@ -1,0 +1,67 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 5 failed) 15721ms
+     × asks once more before approving or rejecting, says what will happen, and sends nothing on Hayır 1118ms
+     × posts approve to the request and reloads the list 1095ms
+     × posts reject to the request and reloads the list 1105ms
+     × is told in Turkish when the request was already decided 1109ms
+     × shows the Turkish already-decided text when reject finds the request closed 1102ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > asks once more before approving or rejecting, says what will happen, and sends nothing on Hayır
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:306:67
+    304|
+    305|     document.querySelector("[data-request-action=approve]").click();
+    306|     await vi.waitFor(() => expect($("#request-confirm-text")).not.toBe…
+       |                                                                   ^
+    307|     expect($("#request-confirm-text").textContent).toContain("₺800,00 …
+    308|     $("#request-back").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts approve to the request and reloads the list
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts reject to the request and reloads the list
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:361:70
+    359|     document.querySelector(`[data-request-action=${action}]`).click();
+    360|     if (action !== "cancel") {
+    361|       await vi.waitFor(() => expect($("[data-request-confirm]")).not.t…
+       |                                                                      ^
+    362|       $("[data-request-confirm]").click();
+    363|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > is told in Turkish when the request was already decided
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:380:68
+    378|
+    379|     $("[data-request-action=approve]").click();
+    380|     await vi.waitFor(() => expect($("[data-request-confirm]")).not.toB…
+       |                                                                    ^
+    381|     $("[data-request-confirm]").click();
+    382|     await vi.waitFor(() => expect(text()).toContain("artık beklemiyor"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish already-decided text when reject finds the request closed
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:702:70
+    700|     document.querySelector(`[data-request-action=${action}]`).click();
+    701|     if (action !== "cancel") {
+    702|       await vi.waitFor(() => expect($("[data-request-confirm]")).not.t…
+       |                                                                      ^
+    703|       $("[data-request-confirm]").click();
+    704|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 58 passed (63)
+   Start at  20:53:44
+   Duration  17.22s (transform 1.45s, setup 25ms, import 70ms, tests 15.72s, environment 1.13s)
+

@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11934ms
+     × says the movement may have been saved after a dropped connection 1182ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > says the movement may have been saved after a dropped connection
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiKayd…' to contain 'Kayıt gitmiş olabilir'
+
+- Expected
++ Received
+
+- Kayıt gitmiş olabilir
++
++   ← Kasaya dön
++   Kasa HareketiKaydetmeden Önce Kontrol Edin!HataSunucuya ulaşılamadı. xYönNakit ÇıkışTutar₺40,00AçıklamamarketKasadaki beklenen nakit₺1.000,00DüzeltOnayla ve kaydet
++   
++   
++
+
+ ❯ cash-session-movement.test.js:631:43
+    629|     await toSummary("out", "40", "market");
+    630|     $("#movement-confirm").click();
+    631|     await vi.waitFor(() => expect(text()).toContain("Kayıt gitmiş olab…
+       |                                           ^
+    632|     expect($("#movement-confirm")).not.toBeNull();
+    633|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:56:39
+   Duration  13.39s (transform 1.46s, setup 26ms, import 82ms, tests 11.93s, environment 999ms)
+

@@ -3,7 +3,7 @@ import { readSeed } from '../lib/testHelpers.js';
 
 // V1-RMD-361 (module-by-module UI audit, 2026-09-27): the Kasa Oturumu (cash-session) module.
 test.describe('Kasa Oturumu - erişilebilirlik ve odak yönetimi (V1-RMD-361)', () => {
-  test('hata kutusu role="alert" taşır; sekmeler role="tab"/aria-selected taşır', async ({ page }) => {
+  test('hata kutusu role="alert" taşır; hareket formunda sekme yoktur, açıklama zorunlu etiketlidir', async ({ page }) => {
     const seed = readSeed();
     await page.goto('/cashier/payments/cash-session/index.html');
     await page.locator('#username').fill(seed.cashierUsername);
@@ -21,15 +21,11 @@ test.describe('Kasa Oturumu - erişilebilirlik ve odak yönetimi (V1-RMD-361)', 
     await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
 
     await page.getByRole('button', { name: 'Nakit Giriş' }).click();
-    await expect(page.locator('.cs-tabs')).toHaveAttribute('role', 'tablist');
-    const tabIn = page.locator('#tab-in');
-    const tabOut = page.locator('#tab-out');
-    await expect(tabIn).toHaveAttribute('role', 'tab');
-    await expect(tabIn).toHaveAttribute('aria-selected', 'true');
-    await expect(tabOut).toHaveAttribute('aria-selected', 'false');
-    await tabOut.click();
-    await expect(tabOut).toHaveAttribute('aria-selected', 'true');
-    await expect(tabIn).toHaveAttribute('aria-selected', 'false');
+    await expect(page.locator('.cs-tabs')).toHaveCount(0);
+    await expect(page.getByLabel('Açıklama', { exact: true })).toHaveAttribute('required', '');
+    await page.locator('#movement-amount').fill('10');
+    await page.getByRole('button', { name: 'Devam' }).click();
+    await expect(page.locator('.cs-alert-danger')).toHaveAttribute('role', 'alert');
   });
 
   test('her yeni ekranda birincil alana otomatik odaklanır', async ({ page }) => {

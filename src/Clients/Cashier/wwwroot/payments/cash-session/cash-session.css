@@ -226,13 +226,20 @@ body {
 
 .cs-center-text { text-align: center; }
 
-.cs-tabs { display: flex; gap: 4px; background: var(--color-canvas); border-radius: var(--radius-md); padding: 4px; }
-.cs-tab {
-  flex: 1; border: none; border-radius: 8px; background: transparent;
-  color: var(--color-text-muted); font-size: 13px; font-weight: 700;
-  padding: 10px 0; cursor: pointer; font-family: inherit;
+.cs-request, .cs-movement { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-bottom: 1px solid var(--color-border, #E5E7EB); }
+.cs-request .cs-row { flex-wrap: wrap; }
+.cs-note { font-size: 14px; color: var(--color-ink); overflow-wrap: anywhere; }
+.cs-movement .cs-field-hint, .cs-request .cs-field-hint { color: var(--color-text-muted); font-size: 13px; }
+.cs-movement.is-in .value { color: var(--color-success); }
+.cs-movement.is-out .value { color: var(--color-danger); }
+.cs-summary-row .value { overflow-wrap: anywhere; text-align: right; min-width: 0; }
+#movement-list { max-height: 280px; overflow-y: auto; }
+#movement-form { display: contents; }
+.cs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.cs-chip {
+  min-height: 44px; padding: 0 16px; border: 1px solid var(--color-border, #D5DBE0); border-radius: 22px;
+  background: var(--color-canvas); color: var(--color-ink); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
 }
-.cs-tab.is-active { background: var(--color-ink); color: #FFFFFF; }
 
 .cs-summary-row {
   display: flex; align-items: center; justify-content: space-between;

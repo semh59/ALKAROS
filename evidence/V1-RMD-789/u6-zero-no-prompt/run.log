@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 4 failed) 14993ms
+     × asks whether the drawer is empty before accepting a zero count, and does not send until confirmed 1174ms
+     × lets the cashier go back from the zero-count question to correct the count 1170ms
+     × also asks for a single typed amount of 0 1184ms
+     × locks the count fields while the zero-count question is open, and keeps the typed note when the cashier goes back 1155ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > asks whether the drawer is empty before accepting a zero count, and does not send until confirmed
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:412:64
+    410|
+    411|     $("#submit-count").click();
+    412|     await vi.waitFor(() => expect($("#zero-count-prompt")).not.toBeNul…
+       |                                                                ^
+    413|
+    414|     expect($("#zero-count-prompt").textContent).toContain("Sayım 0 ₺ -…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > lets the cashier go back from the zero-count question to correct the count
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:425:58
+    423|     const { calls } = await openCounting();
+    424|     $("#submit-count").click();
+    425|     await vi.waitFor(() => expect($("#zero-cancel")).not.toBeNull());
+       |                                                          ^
+    426|
+    427|     $("#zero-cancel").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > also asks for a single typed amount of 0
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:449:64
+    447|
+    448|     $("#submit-count").click();
+    449|     await vi.waitFor(() => expect($("#zero-count-prompt")).not.toBeNul…
+       |                                                                ^
+    450|     expect(posted(calls, "/counts")).toHaveLength(0);
+    451|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing details > locks the count fields while the zero-count question is open, and keeps the typed note when the cashier goes back
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:797:64
+    795|     await type("#count-notes", "sayım notu");
+    796|     $("#submit-count").click();
+    797|     await vi.waitFor(() => expect($("#zero-count-prompt")).not.toBeNul…
+       |                                                                ^
+    798|
+    799|     expect($("#denom-100").disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 59 passed (63)
+   Start at  20:48:02
+   Duration  16.36s (transform 1.45s, setup 25ms, import 72ms, tests 14.99s, environment 979ms)
+

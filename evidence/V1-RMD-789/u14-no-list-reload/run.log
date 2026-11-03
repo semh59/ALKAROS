@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10972ms
+     × sends the trimmed reason on confirmation and announces a saved movement, then lists it 223ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > sends the trimmed reason on confirmation and announces a saved movement, then lists it
+AssertionError: expected 'Bu oturumda nakit giriş veya çıkış yo…' to contain 'market'
+
+Expected: "market"
+Received: "Bu oturumda nakit giriş veya çıkış yok."
+
+ ❯ cash-session-movement.test.js:198:45
+    196|     expect(posted(calls, "/cash-movements")[0].body).toMatchObject({ D…
+    197|     expect($("#cs-notice").textContent).toBe("Çıkış kaydedildi (₺40,00…
+    198|     expect($("#movement-list").textContent).toContain("market");
+       |                                             ^
+    199|     expect($("#movement-list").textContent).toContain("Ayşe");
+    200|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:50:13
+   Duration  12.30s (transform 1.47s, setup 25ms, import 77ms, tests 10.97s, environment 972ms)
+

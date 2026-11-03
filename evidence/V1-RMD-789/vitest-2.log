@@ -1,0 +1,70 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (30 tests | 4 failed) 7900ms
+     × sends the trimmed reason on confirmation and announces a saved movement, then lists it 242ms
+     × posts approve to the request and reloads the list 1102ms
+     × posts reject to the request and reloads the list 1109ms
+     × is told in Turkish when the request was already decided 1110ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > sends the trimmed reason on confirmation and announces a saved movement, then lists it
+AssertionError: expected 'Çıkış kaydedildi (₺40,00).' to be 'Çıkış kaydedildi.' // Object.is equality
+
+Expected: "Çıkış kaydedildi."
+Received: "Çıkış kaydedildi (₺40,00)."
+
+ ❯ cash-session-movement.test.js:183:41
+    181|
+    182|     expect(posted(calls, "/cash-movements")[0].body).toMatchObject({ D…
+    183|     expect($("#cs-notice").textContent).toBe("Çıkış kaydedildi.");
+       |                                         ^
+    184|     expect($("#movement-list").textContent).toContain("market");
+    185|     expect($("#movement-list").textContent).toContain("Ayşe");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts approve to the request and reloads the list
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > posts reject to the request and reloads the list
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:306:56
+    304|
+    305|     document.querySelector(`[data-request-action=${action}]`).click();
+    306|     await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
+       |                                                        ^
+    307|
+    308|     expect(posted(calls, `/cash-movement-requests/${REQUEST}/${action}…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > is told in Turkish when the request was already decided
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'artık beklemiyor'
+
+- Expected
++ Received
+
+- artık beklemiyor
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Onay bekleyen çıkışlarTalep Eden · 12:00₺800,00avans₺800,00 kasadan düşülecek. Onaylıyor musunuz?Evet, onaylaHayırNakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileOnay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-movement.test.js:322:43
+    320|
+    321|     $("[data-request-action=approve]").click();
+    322|     await vi.waitFor(() => expect(text()).toContain("artık beklemiyor"…
+       |                                           ^
+    323|
+    324|     expect(text()).not.toContain("RAW");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 26 passed (30)
+   Start at  20:44:26
+   Duration  9.58s (transform 775ms, setup 39ms, import 59ms, tests 7.90s, environment 1.27s)
+

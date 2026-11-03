@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10967ms
+     × lists who approved a movement and marks a self-approval 92ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > lists who approved a movement and marks a self-approval
+AssertionError: expected 'Nakit hareketleri12:30 · Çıkış-₺800,0…' to contain 'kendi onayı'
+
+Expected: "kendi onayı"
+Received: "Nakit hareketleri12:30 · Çıkış-₺800,00avansAyşe · onaylayan: Mehmet12:30 · Çıkış-₺800,00avansAyşe · onaylayan: Ayşe"
+
+ ❯ cash-session-movement.test.js:218:18
+    216|     const list = $("#movement-list").textContent;
+    217|     expect(list).toContain("onaylayan: Mehmet");
+    218|     expect(list).toContain("kendi onayı");
+       |                  ^
+    219|   });
+    220|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:49:58
+   Duration  12.48s (transform 1.50s, setup 24ms, import 79ms, tests 10.97s, environment 1.08s)
+

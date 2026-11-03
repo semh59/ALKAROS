@@ -1,0 +1,29 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (24 tests | 1 failed) 357ms
+     × accepts a cash-out threshold of 0, which sends every cash-out for approval 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > accepts a cash-out threshold of 0, which sends every cash-out for approval
+AssertionError: expected "vi.fn()" to be called with arguments: [ …(4) ]
+
+Number of calls: 0
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:201:27
+    199|     await typeInto(idOfField("Değişiklik gerekçesi"), "Hepsi onaya");
+    200|     await submit("Ayarı değiştir: Nakit çıkış onay eşiği");
+    201|     expect(client.update).toHaveBeenCalledWith("cash.cash_out_approval…
+       |                           ^
+    202|   });
+    203|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  20:59:27
+   Duration  2.90s (transform 864ms, setup 0ms, import 1.18s, tests 357ms, environment 1.11s)
+

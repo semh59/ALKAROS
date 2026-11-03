@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (24 tests | 1 failed) 450ms
+     × names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > names the cash-out threshold and the self-approval switch in Turkish and edits the threshold as lira
+AssertionError: expected undefined to be '0 ile 1.000.000 ₺ arası; bu tutarın ü…' // Object.is equality
+
+- Expected:
+"0 ile 1.000.000 ₺ arası; bu tutarın üstündeki nakit çıkışlar yönetici onayı ister"
+
++ Received:
+undefined
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:180:25
+    178|     await typeInto(idOfField("Yeni değer"), "1000001");
+    179|     await submit(form);
+    180|     expect(alertText()).toBe("0 ile 1.000.000 ₺ arası; bu tutarın üstü…
+       |                         ^
+    181|     await typeInto(idOfField("Yeni değer"), "-1");
+    182|     await submit(form);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  21:00:56
+   Duration  2.93s (transform 927ms, setup 0ms, import 1.28s, tests 450ms, environment 940ms)
+

@@ -1,0 +1,45 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 2 failed) 10879ms
+     × reuses the retry key for the same body after a network failure and mints a new one when the reason changes 298ms
+     × keeps the supervisor explanation through a re-render and shows the Turkish variance text 345ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > reuses the retry key for the same body after a network failure and mints a new one when the reason changes
+AssertionError: expected '03bfd916-5fbb-443e-88e0-686b7f6f5f73' not to be '03bfd916-5fbb-443e-88e0-686b7f6f5f73' // Object.is equality
+ ❯ cash-session-movement.test.js:264:25
+    262|     const keys = posted(calls, "/cash-movements").map((c) => c.body.Id…
+    263|     expect(keys[1]).toBe(keys[0]);
+    264|     expect(keys[2]).not.toBe(keys[0]);
+       |                         ^
+    265|   });
+    266| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > keeps the supervisor explanation through a re-render and shows the Turkish variance text
+AssertionError: expected '' to be 'sebep' // Object.is equality
+
+- Expected
++ Received
+
+- sebep
+
+ ❯ cash-session-movement.test.js:517:41
+    515|     await vi.waitFor(() => expect($("#submit-close").disabled).toBe(fa…
+    516|
+    517|     expect($("#override-reason").value).toBe("sebep");
+       |                                         ^
+    518|     expect(posted(calls, "/close")[1].body.OverrideReason).toBe("sebep…
+    519|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 61 passed (63)
+   Start at  20:47:47
+   Duration  12.57s (transform 1.48s, setup 42ms, import 90ms, tests 10.88s, environment 1.29s)
+

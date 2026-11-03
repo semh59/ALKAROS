@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11157ms
+     × blocks Sayıma Başla while a request waits and says why 89ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > blocks Sayıma Başla while a request waits and says why
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-movement.test.js:324:40
+    322|   it("blocks Sayıma Başla while a request waits and says why", async (…
+    323|     await open({ capabilities: [], list: request(ME) });
+    324|     expect($("#start-count").disabled).toBe(true);
+       |                                        ^
+    325|     expect($("#pending-hint").textContent).toContain("sayıma geçilemez…
+    326|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:53:28
+   Duration  12.82s (transform 1.58s, setup 29ms, import 78ms, tests 11.16s, environment 1.17s)
+

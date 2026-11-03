@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11053ms
+     × shows when the list was cut and when it could not be read, without blocking the screen 173ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows when the list was cut and when it could not be read, without blocking the screen
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-movement.test.js:672:37
+    670|
+    671|     await open({ listFails: true });
+    672|     expect($("#movement-list-error").textContent).toBe("Nakit hareketl…
+       |                                     ^
+    673|     expect($("#cash-in")).not.toBeNull();
+    674|     expect($("#start-count").disabled).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:52:57
+   Duration  12.68s (transform 1.48s, setup 25ms, import 71ms, tests 11.05s, environment 1.28s)
+

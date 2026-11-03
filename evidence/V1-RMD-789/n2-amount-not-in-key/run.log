@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 11147ms
+     × mints a new key when the amount changes or the direction changes 301ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > mints a new key when the amount changes or the direction changes
+AssertionError: expected 2 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ cash-session-movement.test.js:600:32
+    598|
+    599|     const keys = keysOf(calls);
+    600|     expect(new Set(keys).size).toBe(3);
+       |                                ^
+    601|   });
+    602|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:50:43
+   Duration  12.47s (transform 1.54s, setup 26ms, import 74ms, tests 11.15s, environment 963ms)
+

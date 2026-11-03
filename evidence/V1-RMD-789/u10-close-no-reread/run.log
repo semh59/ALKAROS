@@ -1,0 +1,58 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 2 failed) 11902ms
+     × tells the cashier the session may have closed after a dropped connection and reads the state again 291ms
+     × keeps the may-have-closed notice on screen when the state re-read fails as well 1235ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing > tells the cashier the session may have closed after a dropped connection and reads the state again
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ cash-session-movement.test.js:501:27
+    499|
+    500|     expect($("#cs-notice").textContent).toContain("kasa kapanmış olabi…
+    501|     expect(activeReads()).toBe(before + 1);
+       |                           ^
+    502|   });
+    503|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js counting and closing details > keeps the may-have-closed notice on screen when the state re-read fails as well
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'Kasa durumu okunamadı'
+
+- Expected
++ Received
+
+- Kasa durumu okunamadı
++
++   ← Kasaya dön
++   KapatmaFark Teyidi✓Bağlantı koptu; kasa kapanmış olabilir. Güncel durum yeniden okundu.Beklenen₺1.000,00Sayılan₺200,00Fark-₺800,00Kasayı Kapat
++   
++   
++
+
+ ❯ cash-session-movement.test.js:849:43
+    847|
+    848|     $("#submit-close").click();
+    849|     await vi.waitFor(() => expect(text()).toContain("Kasa durumu okuna…
+       |                                           ^
+    850|
+    851|     expect($("#cs-notice").textContent).toContain("kasa kapanmış olabi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 61 passed (63)
+   Start at  20:49:11
+   Duration  13.25s (transform 1.50s, setup 29ms, import 88ms, tests 11.90s, environment 956ms)
+

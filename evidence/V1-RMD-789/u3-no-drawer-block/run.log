@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (63 tests | 1 failed) 10957ms
+     × blocks saving a cash-out that is more than the drawer holds 177ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > blocks saving a cash-out that is more than the drawer holds
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-movement.test.js:180:45
+    178|     await toSummary("out", "150", "fazla");
+    179|     expect($("#drawer-warning")).not.toBeNull();
+    180|     expect($("#movement-confirm").disabled).toBe(true);
+       |                                             ^
+    181|   });
+    182|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  20:47:16
+   Duration  12.48s (transform 1.50s, setup 36ms, import 105ms, tests 10.96s, environment 1.12s)
+
