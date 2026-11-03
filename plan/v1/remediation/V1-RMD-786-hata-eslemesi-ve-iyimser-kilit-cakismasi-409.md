@@ -11,8 +11,9 @@
 Kasa incelemesinin 15. bulgusu (koddan doğrulandı) üç kusuru birleştirir:
 
 1. `ApiErrorCatalog` her `ArgumentException` için, hangi alanın bozuk olduğunu söylemeden tek cümle ("İstek doğrulanamadı.") döner (katalogda 14 yerde); Billing grubu ayrıca indirim gibi alakasız hatalara bile "Hesap bölme isteği doğrulanamadı." der. Düzeltme: özel durumun `ParamName` değeri bilinen bir alan sözlüğündeyse mesaj alanı ve nedeni (eksik/geçersiz ya da aralık dışı) söyler; ham istisna metni hiçbir zaman istemciye sızmaz; sözlükte olmayan alan eski genel cümleyi alır.
-2. İyimser kilit (row_version) çakışması bugün `InvalidOperationException` olarak atılır: Billing grubunda 400, kasa oturumu ve sipariş yolunda 500. Düzeltme: her kasa modülü (Billing, Cash, Orders, Payments) kendi çakışma istisnasını tanımlar (modül sınırı farklı derlemeler arası tip paylaşımını yasaklar), depolar onu atar, katalog ve Billing eşlemesi 409 `CONCURRENCY_CONFLICT` döner. Yeni istisnalar `InvalidOperationException`dan türer; `InvalidOperationException` toplu olarak 409'a çevrilmez (`BillingSplitApplication` programlama hataları için de atar).
-3. Müşteri ekranı eşleştirme kodunda 0/O/1/I gibi alfabe dışı karakter ya da yanlış uzunluk `ArgumentException` (400) üretir; `PAIRING_CODE_INVALID` (404) dönmelidir.
+2. İndirim toplamı hesap tutarını aşınca `AdjustmentCalculator` düz `InvalidOperationException` atar ve Billing grubu bunu "Hesap bölme isteği doğrulanamadı." der; özel `DiscountExceedsPayableException` (400, `DISCOUNT_EXCEEDS_PAYABLE`, "İndirim toplamı hesap tutarını aşıyor.") olur.
+3. İyimser kilit (row_version) çakışması bugün `InvalidOperationException` olarak atılır: Billing grubunda 400, kasa oturumu ve sipariş yolunda 500. Düzeltme: her kasa modülü (Billing, Cash, Orders, Payments) kendi çakışma istisnasını tanımlar (modül sınırı farklı derlemeler arası tip paylaşımını yasaklar), depolar onu atar, katalog ve Billing eşlemesi 409 `CONCURRENCY_CONFLICT` döner. Yeni istisnalar `InvalidOperationException`dan türer; `InvalidOperationException` toplu olarak 409'a çevrilmez (`BillingSplitApplication` programlama hataları için de atar).
+4. Müşteri ekranı eşleştirme kodunda 0/O/1/I gibi alfabe dışı karakter ya da yanlış uzunluk `ArgumentException` (400) üretir; `PAIRING_CODE_INVALID` (404) dönmelidir.
 
 Ayrıca ApiConventions testleri hata zarfını (code, message, status, traceId) ve 400/404/409 eşlemelerini denetler (rapor 5-B13: bugün denetlenmiyor).
 
@@ -27,6 +28,9 @@ Ayrıca ApiConventions testleri hata zarfını (code, message, status, traceId) 
   - src/Modules/Cash/Contracts/CashSessionConcurrencyException.cs (V1-CSH-001) — yeni dosya: kasa oturumu çakışma istisnası.
   - src/Modules/Orders/OrderAggregate/OrderConcurrencyException.cs (V1-RMD-064) — yeni dosya: sipariş çakışma istisnası.
   - src/Modules/Payments/PaymentAggregate/PaymentConcurrencyException.cs (V13-PAY-001) — yeni dosya: ödeme çakışma istisnası.
+  - src/Modules/Billing/Adjustments/DiscountExceedsPayableException.cs (V1-BIL-003) — yeni dosya: indirim toplamı hesap tutarını aşıyor.
+  - src/Modules/Billing/Adjustments/AdjustmentCalculator.cs (V1-BIL-003) — aşımda özel istisna.
+  - tests/Modules/Billing/Adjustments/AdjustmentsDomainTests.cs (V1-RMD-467) — aşım istisnasının tipi.
   - src/Host/Composition/Errors/ApiErrorCatalog.cs (V1-RMD-431) — alan sözlüğü, doğrulama cevabı, çakışma cevabı.
   - src/Host/Experience/Billing/BillingSplitApplication.cs (V1-RMD-103) — Billing eşlemesi: çakışma 409, doğrulama cevabı.
   - src/Modules/Billing/BillFoundation/PostgresBillRepository.cs (V1-RMD-414) — çakışma istisnası.
