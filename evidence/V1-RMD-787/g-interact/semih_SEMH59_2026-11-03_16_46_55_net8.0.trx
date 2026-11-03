@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="62c2441f-7629-4053-8086-52271e551053" name="semih@SEMH59 2026-11-03 16:46:55" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:46:55.2583664+03:00" queuing="2026-11-03T16:46:55.2583668+03:00" start="2026-11-03T16:46:53.0542214+03:00" finish="2026-11-03T16:46:56.8279931+03:00" />
+  <TestSettings name="default" id="bb8e7451-fa57-4c5a-864b-44ba31b67105">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_46_55" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b24b6806-cd16-4604-b7ed-04d324b8748e" testId="ca50b1ba-b5dd-6673-c429-d9c2d5a40049" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.TheEndpointCarriesTheBodyLimitThatAlsoCoversAChunkedBody" computerName="SEMH59" duration="00:00:00.2560495" startTime="2026-11-03T16:46:56.3105444+03:00" endTime="2026-11-03T16:46:56.3105448+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b24b6806-cd16-4604-b7ed-04d324b8748e" />
+    <UnitTestResult executionId="800f9132-923d-4aeb-85a1-0b1a03778add" testId="b49de52c-07da-9a56-f0a1-91a8974a07ef" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.EachTerminalHasItsOwnWriteAllowancePerMinute" computerName="SEMH59" duration="00:00:00.0155089" startTime="2026-11-03T16:46:56.6626705+03:00" endTime="2026-11-03T16:46:56.6626707+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="800f9132-923d-4aeb-85a1-0b1a03778add" />
+    <UnitTestResult executionId="a4704d69-61d3-4b4e-b533-fa01b7309ee5" testId="a644cf50-0cbb-0968-a3b4-f2ecbc7c9f83" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;save-order&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0000083" startTime="2026-11-03T16:46:54.7441862+03:00" endTime="2026-11-03T16:46:54.7441863+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4704d69-61d3-4b4e-b533-fa01b7309ee5" />
+    <UnitTestResult executionId="3bbb82fa-98bb-4d63-add5-24b3246da1b9" testId="6b552adf-3b49-0d8b-5896-09b9cd347336" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.ClickKeepsAValidTraceIdAndAnyOtherValueIsStoredAsNoIdWithoutRejectingTheClick" computerName="SEMH59" duration="00:00:00.0204539" startTime="2026-11-03T16:46:56.0182266+03:00" endTime="2026-11-03T16:46:56.0182270+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3bbb82fa-98bb-4d63-add5-24b3246da1b9" />
+    <UnitTestResult executionId="b60ffedb-aa35-4d44-b281-1ec360479e69" testId="15f4308a-3aa9-5bdd-8491-53f6efd5ee53" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;&quot;, expected: False)" computerName="SEMH59" duration="00:00:00.0000049" startTime="2026-11-03T16:46:54.7443397+03:00" endTime="2026-11-03T16:46:54.7443398+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b60ffedb-aa35-4d44-b281-1ec360479e69" />
+    <UnitTestResult executionId="0ea1695c-6f38-48dd-91aa-7f75a9ba9163" testId="2bb85d10-2f5e-2e87-9fdc-e7cf8be720f4" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;ali@example.com&quot;, expected: False)" computerName="SEMH59" duration="00:00:00.0000079" startTime="2026-11-03T16:46:54.7444786+03:00" endTime="2026-11-03T16:46:54.7444786+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ea1695c-6f38-48dd-91aa-7f75a9ba9163" />
+    <UnitTestResult executionId="3e971821-49c3-4298-b61e-abe262ed59dc" testId="1f6a8ffe-dd40-2d20-caa9-612980f58577" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.ValidItemsAreStoredWithTheServerClockAndInvalidOnesAreDropped" computerName="SEMH59" duration="00:00:00.0076558" startTime="2026-11-03T16:46:56.6081241+03:00" endTime="2026-11-03T16:46:56.6081245+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e971821-49c3-4298-b61e-abe262ed59dc" />
+    <UnitTestResult executionId="714521f2-9255-4c26-b69f-27d34d543e04" testId="307ec664-6d93-b85a-1a83-492b239a555c" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.InteractionsAlsoFeedTheUiInteractionPerformanceMetric" computerName="SEMH59" duration="00:00:00.1971406" startTime="2026-11-03T16:46:55.9972108+03:00" endTime="2026-11-03T16:46:55.9972111+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="714521f2-9255-4c26-b69f-27d34d543e04" />
+    <UnitTestResult executionId="f5d2bc10-b986-4af4-a794-c62422557d9e" testId="e7da8c30-ea7c-d5b8-1bfe-1ee4d02615a6" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.CallWithoutACashierSessionIsRejectedAndOversizedBodiesAreTooLarge" computerName="SEMH59" duration="00:00:00.2804169" startTime="2026-11-03T16:46:56.5998966+03:00" endTime="2026-11-03T16:46:56.5998969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5d2bc10-b986-4af4-a794-c62422557d9e" />
+    <UnitTestResult executionId="ad6fb00e-1bf2-48f3-a1e3-f7d0cf3a0fbc" testId="dd95992a-f543-bbad-916e-d1da683c39fe" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.TheBackupScriptKeepsRawRowsOutOfTheDumpButKeepsLoggedTables" computerName="SEMH59" duration="00:00:01.0539184" startTime="2026-11-03T16:46:55.7982925+03:00" endTime="2026-11-03T16:46:55.7982929+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad6fb00e-1bf2-48f3-a1e3-f7d0cf3a0fbc" />
+    <UnitTestResult executionId="2299866e-7579-4bc1-b3cf-056a4f19396a" testId="a5906a6c-7465-aac8-45d9-773bd6d6f563" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;Kaydet&quot;, expected: False)" computerName="SEMH59" duration="00:00:00.0000043" startTime="2026-11-03T16:46:54.7444105+03:00" endTime="2026-11-03T16:46:54.7444106+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2299866e-7579-4bc1-b3cf-056a4f19396a" />
+    <UnitTestResult executionId="fb5d9254-fdca-470d-b251-0861debfdfd6" testId="2f743bcb-cef8-4f8f-765b-085b5d11b8ea" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyTheFirstFiftyItemsOfABatchAreConsidered" computerName="SEMH59" duration="00:00:00.0078488" startTime="2026-11-03T16:46:56.3189074+03:00" endTime="2026-11-03T16:46:56.3189076+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb5d9254-fdca-470d-b251-0861debfdfd6" />
+    <UnitTestResult executionId="94463c73-aca5-41da-9765-fbf3b606433f" testId="e041bf2b-2d9e-8eb9-be92-526831db94d9" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;t:managementtext.system.acknowledge&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0178141" startTime="2026-11-03T16:46:54.7407310+03:00" endTime="2026-11-03T16:46:54.7407672+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94463c73-aca5-41da-9765-fbf3b606433f" />
+    <UnitTestResult executionId="ee64edb5-5ca3-48ae-9a40-95b6d3914b26" testId="e5583bae-31d0-c0ec-e06c-ed0833628df8" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.KeysBeyondTheDistinctCapAreFiledUnderOther" computerName="SEMH59" duration="00:00:00.0355387" startTime="2026-11-03T16:46:56.0543005+03:00" endTime="2026-11-03T16:46:56.0543008+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee64edb5-5ca3-48ae-9a40-95b6d3914b26" />
+    <UnitTestResult executionId="bfa6167d-57c0-46f8-bb6a-27e5c1d1f0d2" testId="7fa9d901-5208-bd0a-6b98-6cdc62497edb" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;two words&quot;, expected: False)" computerName="SEMH59" duration="00:00:00.0003522" startTime="2026-11-03T16:46:54.7438177+03:00" endTime="2026-11-03T16:46:54.7438178+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bfa6167d-57c0-46f8-bb6a-27e5c1d1f0d2" />
+    <UnitTestResult executionId="42cfee2c-3a16-430c-a790-c5c3f4a24190" testId="2be180d2-90f2-5228-971f-6f3a597bd2f4" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;auto:button@/cashier/orders/:id&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0000060" startTime="2026-11-03T16:46:54.7445315+03:00" endTime="2026-11-03T16:46:54.7445315+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42cfee2c-3a16-430c-a790-c5c3f4a24190" />
+    <UnitTestResult executionId="ea10d945-20c5-4f20-87e5-a8aa2b43578e" testId="2349d6d3-d0dd-bf74-63f9-587677fd5a52" testName="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.TheRawTableIsUnloggedPrefixedAndInTheThirtyDayRetentionCatalog" computerName="SEMH59" duration="00:00:00.0379286" startTime="2026-11-03T16:46:56.6466153+03:00" endTime="2026-11-03T16:46:56.6466155+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea10d945-20c5-4f20-87e5-a8aa2b43578e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;two words&quot;, expected: False)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="7fa9d901-5208-bd0a-6b98-6cdc62497edb">
+      <Execution id="bfa6167d-57c0-46f8-bb6a-27e5c1d1f0d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.CallWithoutACashierSessionIsRejectedAndOversizedBodiesAreTooLarge" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="e7da8c30-ea7c-d5b8-1bfe-1ee4d02615a6">
+      <Execution id="f5d2bc10-b986-4af4-a794-c62422557d9e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="CallWithoutACashierSessionIsRejectedAndOversizedBodiesAreTooLarge" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;&quot;, expected: False)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="15f4308a-3aa9-5bdd-8491-53f6efd5ee53">
+      <Execution id="b60ffedb-aa35-4d44-b281-1ec360479e69" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;t:managementtext.system.acknowledge&quot;, expected: True)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="e041bf2b-2d9e-8eb9-be92-526831db94d9">
+      <Execution id="94463c73-aca5-41da-9765-fbf3b606433f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.EachTerminalHasItsOwnWriteAllowancePerMinute" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="b49de52c-07da-9a56-f0a1-91a8974a07ef">
+      <Execution id="800f9132-923d-4aeb-85a1-0b1a03778add" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="EachTerminalHasItsOwnWriteAllowancePerMinute" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.TheBackupScriptKeepsRawRowsOutOfTheDumpButKeepsLoggedTables" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="dd95992a-f543-bbad-916e-d1da683c39fe">
+      <Execution id="ad6fb00e-1bf2-48f3-a1e3-f7d0cf3a0fbc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="TheBackupScriptKeepsRawRowsOutOfTheDumpButKeepsLoggedTables" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;Kaydet&quot;, expected: False)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="a5906a6c-7465-aac8-45d9-773bd6d6f563">
+      <Execution id="2299866e-7579-4bc1-b3cf-056a4f19396a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;save-order&quot;, expected: True)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="a644cf50-0cbb-0968-a3b4-f2ecbc7c9f83">
+      <Execution id="a4704d69-61d3-4b4e-b533-fa01b7309ee5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.TheEndpointCarriesTheBodyLimitThatAlsoCoversAChunkedBody" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="ca50b1ba-b5dd-6673-c429-d9c2d5a40049">
+      <Execution id="b24b6806-cd16-4604-b7ed-04d324b8748e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="TheEndpointCarriesTheBodyLimitThatAlsoCoversAChunkedBody" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.ClickKeepsAValidTraceIdAndAnyOtherValueIsStoredAsNoIdWithoutRejectingTheClick" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="6b552adf-3b49-0d8b-5896-09b9cd347336">
+      <Execution id="3bbb82fa-98bb-4d63-add5-24b3246da1b9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="ClickKeepsAValidTraceIdAndAnyOtherValueIsStoredAsNoIdWithoutRejectingTheClick" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.KeysBeyondTheDistinctCapAreFiledUnderOther" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="e5583bae-31d0-c0ec-e06c-ed0833628df8">
+      <Execution id="ee64edb5-5ca3-48ae-9a40-95b6d3914b26" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="KeysBeyondTheDistinctCapAreFiledUnderOther" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.TheRawTableIsUnloggedPrefixedAndInTheThirtyDayRetentionCatalog" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="2349d6d3-d0dd-bf74-63f9-587677fd5a52">
+      <Execution id="ea10d945-20c5-4f20-87e5-a8aa2b43578e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="TheRawTableIsUnloggedPrefixedAndInTheThirtyDayRetentionCatalog" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;ali@example.com&quot;, expected: False)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="2bb85d10-2f5e-2e87-9fdc-e7cf8be720f4">
+      <Execution id="0ea1695c-6f38-48dd-91aa-7f75a9ba9163" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.InteractionsAlsoFeedTheUiInteractionPerformanceMetric" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="307ec664-6d93-b85a-1a83-492b239a555c">
+      <Execution id="714521f2-9255-4c26-b69f-27d34d543e04" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="InteractionsAlsoFeedTheUiInteractionPerformanceMetric" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyCatalogShapedKeysAreAccepted(key: &quot;auto:button@/cashier/orders/:id&quot;, expected: True)" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="2be180d2-90f2-5228-971f-6f3a597bd2f4">
+      <Execution id="42cfee2c-3a16-430c-a790-c5c3f4a24190" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyCatalogShapedKeysAreAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.OnlyTheFirstFiftyItemsOfABatchAreConsidered" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="2f743bcb-cef8-4f8f-765b-085b5d11b8ea">
+      <Execution id="fb5d9254-fdca-470d-b251-0861debfdfd6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="OnlyTheFirstFiftyItemsOfABatchAreConsidered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests.ValidItemsAreStoredWithTheServerClockAndInvalidOnesAreDropped" storage="d:\project\alkaros\tests\host\observability\interactiontelemetry\bin\debug\net8.0\alkaros.host.observability.interactiontelemetry.tests.dll" id="1f6a8ffe-dd40-2d20-caa9-612980f58577">
+      <Execution id="3e971821-49c3-4298-b61e-abe262ed59dc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0\ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.InteractionTelemetry.Tests.InteractionTelemetryTests" name="ValidItemsAreStoredWithTheServerClockAndInvalidOnesAreDropped" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ca50b1ba-b5dd-6673-c429-d9c2d5a40049" executionId="b24b6806-cd16-4604-b7ed-04d324b8748e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b49de52c-07da-9a56-f0a1-91a8974a07ef" executionId="800f9132-923d-4aeb-85a1-0b1a03778add" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a644cf50-0cbb-0968-a3b4-f2ecbc7c9f83" executionId="a4704d69-61d3-4b4e-b533-fa01b7309ee5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b552adf-3b49-0d8b-5896-09b9cd347336" executionId="3bbb82fa-98bb-4d63-add5-24b3246da1b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="15f4308a-3aa9-5bdd-8491-53f6efd5ee53" executionId="b60ffedb-aa35-4d44-b281-1ec360479e69" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bb85d10-2f5e-2e87-9fdc-e7cf8be720f4" executionId="0ea1695c-6f38-48dd-91aa-7f75a9ba9163" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f6a8ffe-dd40-2d20-caa9-612980f58577" executionId="3e971821-49c3-4298-b61e-abe262ed59dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="307ec664-6d93-b85a-1a83-492b239a555c" executionId="714521f2-9255-4c26-b69f-27d34d543e04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7da8c30-ea7c-d5b8-1bfe-1ee4d02615a6" executionId="f5d2bc10-b986-4af4-a794-c62422557d9e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dd95992a-f543-bbad-916e-d1da683c39fe" executionId="ad6fb00e-1bf2-48f3-a1e3-f7d0cf3a0fbc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5906a6c-7465-aac8-45d9-773bd6d6f563" executionId="2299866e-7579-4bc1-b3cf-056a4f19396a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f743bcb-cef8-4f8f-765b-085b5d11b8ea" executionId="fb5d9254-fdca-470d-b251-0861debfdfd6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e041bf2b-2d9e-8eb9-be92-526831db94d9" executionId="94463c73-aca5-41da-9765-fbf3b606433f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5583bae-31d0-c0ec-e06c-ed0833628df8" executionId="ee64edb5-5ca3-48ae-9a40-95b6d3914b26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fa9d901-5208-bd0a-6b98-6cdc62497edb" executionId="bfa6167d-57c0-46f8-bb6a-27e5c1d1f0d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2be180d2-90f2-5228-971f-6f3a597bd2f4" executionId="42cfee2c-3a16-430c-a790-c5c3f4a24190" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2349d6d3-d0dd-bf74-63f9-587677fd5a52" executionId="ea10d945-20c5-4f20-87e5-a8aa2b43578e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="17" executed="17" passed="17" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.01] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.39]   Discovering: ALKAROS.Host.Observability.InteractionTelemetry.Tests&#xD;
+[xUnit.net 00:00:00.47]   Discovered:  ALKAROS.Host.Observability.InteractionTelemetry.Tests&#xD;
+[xUnit.net 00:00:00.47]   Starting:    ALKAROS.Host.Observability.InteractionTelemetry.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:64835&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:64836&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\InteractionTelemetry\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64836/api/v1/telemetry/interactions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/telemetry/interactions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.StatusCodeResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/telemetry/interactions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64836/api/v1/telemetry/interactions - 401 0 - 135.5035ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:64836/api/v1/telemetry/interactions - application/json;+charset=utf-8 32790&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/telemetry/interactions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.StatusCodeResult[1]&#xD;
+      Setting HTTP status code 413.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/telemetry/interactions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:64836/api/v1/telemetry/interactions - 413 0 - 0.5615ms&#xD;
+[xUnit.net 00:00:03.00]   Finished:    ALKAROS.Host.Observability.InteractionTelemetry.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

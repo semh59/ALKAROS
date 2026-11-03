@@ -4,6 +4,7 @@ using ALKAROS.Observability.PerformanceMetrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Npgsql;
 using NpgsqlTypes;
@@ -162,7 +163,7 @@ public static class InteractionTelemetryEndpoints
             return result.RateLimited && result.Accepted == 0
                 ? Results.StatusCode(StatusCodes.Status429TooManyRequests)
                 : Results.StatusCode(StatusCodes.Status204NoContent);
-        });
+        }).WithMetadata(new RequestSizeLimitAttribute(MaxBodyBytes));
         return app;
     }
 }

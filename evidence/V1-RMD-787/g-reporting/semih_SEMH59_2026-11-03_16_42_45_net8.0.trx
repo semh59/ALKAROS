@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b0a45ed7-a90b-4b02-9852-0767ffb2c84d" name="semih@SEMH59 2026-11-03 16:42:45" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:42:45.9492052+03:00" queuing="2026-11-03T16:42:45.9492054+03:00" start="2026-11-03T16:42:39.7606635+03:00" finish="2026-11-03T16:42:45.9575806+03:00" />
+  <TestSettings name="default" id="0543319b-152b-4bfc-817e-2bb96cb88da8">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_42_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="eb18e7dd-8c71-4962-9e7b-57e8c9380bdf" testId="f6f32831-7725-9586-7db9-7a0d0d4363d6" testName="ALKAROS.Reporting.V1Operations.Tests.PostgresReportingMigrationTests.MigrationDownAndUpExecutesCleanly" computerName="SEMH59" duration="00:00:00.0788908" startTime="2026-11-03T16:42:44.7284466+03:00" endTime="2026-11-03T16:42:44.7284688+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb18e7dd-8c71-4962-9e7b-57e8c9380bdf" />
+    <UnitTestResult executionId="e46be9ac-07f3-40f5-ad92-174769b3b0d8" testId="72228408-fc13-9e3a-8477-82ca3df2059d" testName="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.OpenAndCloseBusinessDayWithReconciledTotalsSuccessfully" computerName="SEMH59" duration="00:00:00.0823052" startTime="2026-11-03T16:42:45.3035019+03:00" endTime="2026-11-03T16:42:45.3035020+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e46be9ac-07f3-40f5-ad92-174769b3b0d8" />
+    <UnitTestResult executionId="097e568c-6b80-4430-bb2f-cad1d5e35f15" testId="90d3ce05-eaf2-d200-11ae-91c1d0cb840c" testName="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.ConcurrentOpenAttemptsAllowOnlyOneActiveBusinessDay" computerName="SEMH59" duration="00:00:00.0363692" startTime="2026-11-03T16:42:45.3680844+03:00" endTime="2026-11-03T16:42:45.3680848+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="097e568c-6b80-4430-bb2f-cad1d5e35f15" />
+    <UnitTestResult executionId="4b0ae956-2cc9-4627-b1ca-09a8cf4b614f" testId="55678e9a-5d1a-cfdc-dbe3-a6cd4cd1823c" testName="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.CloseBusinessDayWithSummariesRollsBackWholeCloseWhenSummaryWriteFails" computerName="SEMH59" duration="00:00:00.0359683" startTime="2026-11-03T16:42:45.4045767+03:00" endTime="2026-11-03T16:42:45.4045769+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b0ae956-2cc9-4627-b1ca-09a8cf4b614f" />
+    <UnitTestResult executionId="1ab29d53-9a06-4406-9411-5048dbc5854e" testId="473aec5c-1c55-4504-3826-744ab48ebb1b" testName="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.OpeningSameDateTwiceThrowsException" computerName="SEMH59" duration="00:00:00.0268852" startTime="2026-11-03T16:42:45.3309157+03:00" endTime="2026-11-03T16:42:45.3309160+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1ab29d53-9a06-4406-9411-5048dbc5854e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.ConcurrentOpenAttemptsAllowOnlyOneActiveBusinessDay" storage="d:\project\alkaros\tests\modules\reporting\v1operations\bin\debug\net8.0\alkaros.reporting.v1operations.tests.dll" id="90d3ce05-eaf2-d200-11ae-91c1d0cb840c">
+      <Execution id="097e568c-6b80-4430-bb2f-cad1d5e35f15" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\V1Operations\bin\Debug\net8.0\ALKAROS.Reporting.V1Operations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests" name="ConcurrentOpenAttemptsAllowOnlyOneActiveBusinessDay" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.OpenAndCloseBusinessDayWithReconciledTotalsSuccessfully" storage="d:\project\alkaros\tests\modules\reporting\v1operations\bin\debug\net8.0\alkaros.reporting.v1operations.tests.dll" id="72228408-fc13-9e3a-8477-82ca3df2059d">
+      <Execution id="e46be9ac-07f3-40f5-ad92-174769b3b0d8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\V1Operations\bin\Debug\net8.0\ALKAROS.Reporting.V1Operations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests" name="OpenAndCloseBusinessDayWithReconciledTotalsSuccessfully" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.V1Operations.Tests.PostgresReportingMigrationTests.MigrationDownAndUpExecutesCleanly" storage="d:\project\alkaros\tests\modules\reporting\v1operations\bin\debug\net8.0\alkaros.reporting.v1operations.tests.dll" id="f6f32831-7725-9586-7db9-7a0d0d4363d6">
+      <Execution id="eb18e7dd-8c71-4962-9e7b-57e8c9380bdf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\V1Operations\bin\Debug\net8.0\ALKAROS.Reporting.V1Operations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.V1Operations.Tests.PostgresReportingMigrationTests" name="MigrationDownAndUpExecutesCleanly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.OpeningSameDateTwiceThrowsException" storage="d:\project\alkaros\tests\modules\reporting\v1operations\bin\debug\net8.0\alkaros.reporting.v1operations.tests.dll" id="473aec5c-1c55-4504-3826-744ab48ebb1b">
+      <Execution id="1ab29d53-9a06-4406-9411-5048dbc5854e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\V1Operations\bin\Debug\net8.0\ALKAROS.Reporting.V1Operations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests" name="OpeningSameDateTwiceThrowsException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.CloseBusinessDayWithSummariesRollsBackWholeCloseWhenSummaryWriteFails" storage="d:\project\alkaros\tests\modules\reporting\v1operations\bin\debug\net8.0\alkaros.reporting.v1operations.tests.dll" id="55678e9a-5d1a-cfdc-dbe3-a6cd4cd1823c">
+      <Execution id="4b0ae956-2cc9-4627-b1ca-09a8cf4b614f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\V1Operations\bin\Debug\net8.0\ALKAROS.Reporting.V1Operations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests" name="CloseBusinessDayWithSummariesRollsBackWholeCloseWhenSummaryWriteFails" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f6f32831-7725-9586-7db9-7a0d0d4363d6" executionId="eb18e7dd-8c71-4962-9e7b-57e8c9380bdf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="72228408-fc13-9e3a-8477-82ca3df2059d" executionId="e46be9ac-07f3-40f5-ad92-174769b3b0d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90d3ce05-eaf2-d200-11ae-91c1d0cb840c" executionId="097e568c-6b80-4430-bb2f-cad1d5e35f15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="55678e9a-5d1a-cfdc-dbe3-a6cd4cd1823c" executionId="4b0ae956-2cc9-4627-b1ca-09a8cf4b614f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="473aec5c-1c55-4504-3826-744ab48ebb1b" executionId="1ab29d53-9a06-4406-9411-5048dbc5854e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.13]   Discovering: ALKAROS.Reporting.V1Operations.Tests&#xD;
+[xUnit.net 00:00:01.19]   Discovered:  ALKAROS.Reporting.V1Operations.Tests&#xD;
+[xUnit.net 00:00:01.19]   Starting:    ALKAROS.Reporting.V1Operations.Tests&#xD;
+[xUnit.net 00:00:02.90]   Finished:    ALKAROS.Reporting.V1Operations.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

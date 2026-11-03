@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f5909f2d-dd34-478c-95be-eb688cf1d489" name="semih@SEMH59 2026-11-03 17:09:41" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T17:09:41.2050474+03:00" queuing="2026-11-03T17:09:41.2050477+03:00" start="2026-11-03T17:09:37.5568703+03:00" finish="2026-11-03T17:09:43.0683164+03:00" />
+  <TestSettings name="default" id="760dfb65-a8e1-4e3e-8d43-4c3b747ef49e">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_17_09_41" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a4b2d6a8-4913-480a-a9ed-708827a06e19" testId="aa1349e5-0a25-ed68-0c40-dc967d955f3c" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(amount: &quot;12.30&quot;)" computerName="SEMH59" duration="00:00:00.0000239" startTime="2026-11-03T17:09:41.6419430+03:00" endTime="2026-11-03T17:09:41.6419431+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4b2d6a8-4913-480a-a9ed-708827a06e19" />
+    <UnitTestResult executionId="3dea9e26-71fb-4124-ad5b-c74b18985817" testId="4ba703df-bc8d-c16a-02bf-68b31240a7b2" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.CountAdjustmentAndClosingDifferenceAcceptEitherDirection(direction: Out)" computerName="SEMH59" duration="00:00:00.0003176" startTime="2026-11-03T17:09:41.6450887+03:00" endTime="2026-11-03T17:09:41.6450890+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3dea9e26-71fb-4124-ad5b-c74b18985817" />
+    <UnitTestResult executionId="c8f36f15-e5c4-4ef4-8e95-18b624eead2e" testId="5b0911e8-aba8-199a-899d-952eadec719c" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsASaleEntryWithNoRelatedPayment" computerName="SEMH59" duration="00:00:00.0092656" startTime="2026-11-03T17:09:42.6040245+03:00" endTime="2026-11-03T17:09:42.6040248+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8f36f15-e5c4-4ef4-8e95-18b624eead2e" />
+    <UnitTestResult executionId="c5244306-4a97-4c54-8daa-c1d1a864b43a" testId="bce2e05d-6fc9-2b93-e39a-1948c0162df6" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: Refund, correctDirection: Out)" computerName="SEMH59" duration="00:00:00.0003553" startTime="2026-11-03T17:09:41.1126732+03:00" endTime="2026-11-03T17:09:41.1126733+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5244306-4a97-4c54-8daa-c1d1a864b43a" />
+    <UnitTestResult executionId="5820b47f-0acf-4090-a018-1ccf0f64bc30" testId="f11630c1-8372-8401-6819-0ddc9196ebd4" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.CountAdjustmentAndClosingDifferenceAcceptEitherDirection(direction: In)" computerName="SEMH59" duration="00:00:00.0004481" startTime="2026-11-03T17:09:41.6421447+03:00" endTime="2026-11-03T17:09:41.6421463+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5820b47f-0acf-4090-a018-1ccf0f64bc30" />
+    <UnitTestResult executionId="7792a754-a01e-424d-937a-4b00c876ce28" testId="d5ce2b7d-089e-109b-6f81-3998954760f5" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncReconstructsTheRunningTotalFromImmutableEntriesAlone" computerName="SEMH59" duration="00:00:00.0734254" startTime="2026-11-03T17:09:42.7793181+03:00" endTime="2026-11-03T17:09:42.7793183+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7792a754-a01e-424d-937a-4b00c876ce28" />
+    <UnitTestResult executionId="f81563b1-b4a3-4978-8fae-537b11bff7e6" testId="09829614-360c-9252-5340-7f625c42c916" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsAnEntryAgainstANonExistentSession" computerName="SEMH59" duration="00:00:00.0054931" startTime="2026-11-03T17:09:42.8630650+03:00" endTime="2026-11-03T17:09:42.8630655+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f81563b1-b4a3-4978-8fae-537b11bff7e6" />
+    <UnitTestResult executionId="48ba85af-701d-45f4-8fb1-0390db6d255a" testId="64e7bcad-9127-6434-5806-40217065b896" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: Sale, correctDirection: In)" computerName="SEMH59" duration="00:00:00.0002516" startTime="2026-11-03T17:09:41.1127415+03:00" endTime="2026-11-03T17:09:41.1127415+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48ba85af-701d-45f4-8fb1-0390db6d255a" />
+    <UnitTestResult executionId="f9ab1c68-3672-40db-88cf-5f704c7b5c30" testId="70fba510-3bb7-9113-a3b4-97a23714d4d0" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.OnlyCountAdjustmentAndClosingDifferenceAreExcludedFromExpectedCash" computerName="SEMH59" duration="00:00:00.0014593" startTime="2026-11-03T17:09:41.6416559+03:00" endTime="2026-11-03T17:09:41.6416560+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9ab1c68-3672-40db-88cf-5f704c7b5c30" />
+    <UnitTestResult executionId="b6a2eb54-620c-48f5-9fb1-46c0145945d0" testId="396f5f26-3dde-8316-88fa-4ec47de55d23" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.RecordAsyncPersistsAndRoundTrips" computerName="SEMH59" duration="00:00:00.0298013" startTime="2026-11-03T17:09:42.8097131+03:00" endTime="2026-11-03T17:09:42.8097135+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6a2eb54-620c-48f5-9fb1-46c0145945d0" />
+    <UnitTestResult executionId="ed271151-4a16-4652-8381-8109af99d1a9" testId="eb52ea89-8957-1a48-df7c-02e51338631e" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ASaleIsRefusedOnceTheSessionIsNoLongerOpen" computerName="SEMH59" duration="00:00:00.1007001" startTime="2026-11-03T17:09:42.7052406+03:00" endTime="2026-11-03T17:09:42.7052409+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed271151-4a16-4652-8381-8109af99d1a9" />
+    <UnitTestResult executionId="53efa68d-5e1f-40fc-a767-a527523da01a" testId="185b8995-0e68-b572-1cc8-43c316a9d5bb" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementIsRefusedOnceTheSessionIsNoLongerOpen(type: CashOut, direction: Out)" computerName="SEMH59" duration="00:00:00.0200537" startTime="2026-11-03T17:09:42.8395646+03:00" endTime="2026-11-03T17:09:42.8395650+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53efa68d-5e1f-40fc-a767-a527523da01a" />
+    <UnitTestResult executionId="4867966d-3f3a-486d-a5c0-a69c5b491877" testId="465a1530-0f70-b665-a854-96e11f29a4ab" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: &quot;10000000000000000&quot;)" computerName="SEMH59" duration="00:00:00.5119891" startTime="2026-11-03T17:09:41.6374799+03:00" endTime="2026-11-03T17:09:41.6374803+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4867966d-3f3a-486d-a5c0-a69c5b491877">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;ALKAROS.Cash.TransactionLedger.InvalidCashTransactionAmountException&gt; to be thrown, but no exception was thrown.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(String amount) in D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\CashTransactionTests.cs:line 64&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cdb97e05-3979-4ff5-bcec-f4eaeb0dea55" testId="178bf284-5aa6-fe84-7f58-95e1ebe23acb" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAZeroOrNegativeAmount" computerName="SEMH59" duration="00:00:00.0057432" startTime="2026-11-03T17:09:41.6525746+03:00" endTime="2026-11-03T17:09:41.6525750+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cdb97e05-3979-4ff5-bcec-f4eaeb0dea55" />
+    <UnitTestResult executionId="7eeafa60-c010-456e-90f1-477d8f79a4a0" testId="0d59df4f-232c-d8d5-d9ea-61358deac841" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.SignedAmountReflectsDirection" computerName="SEMH59" duration="00:00:00.0017116" startTime="2026-11-03T17:09:41.1128561+03:00" endTime="2026-11-03T17:09:41.1128561+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7eeafa60-c010-456e-90f1-477d8f79a4a0" />
+    <UnitTestResult executionId="f3003c35-4b63-4814-b435-34c760f3bbdb" testId="dcc18c67-e0a1-0569-bdda-c9202cbab23c" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsACountAdjustmentWithNoNotes" computerName="SEMH59" duration="00:00:00.0085818" startTime="2026-11-03T17:09:42.8189677+03:00" endTime="2026-11-03T17:09:42.8189681+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3003c35-4b63-4814-b435-34c760f3bbdb" />
+    <UnitTestResult executionId="311d1b6c-838b-4d62-9d15-b25f67f5e637" testId="22746b2c-a338-5636-a744-ed951f534895" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsAZeroOrNegativeAmount" computerName="SEMH59" duration="00:00:00.3337983" startTime="2026-11-03T17:09:41.9875583+03:00" endTime="2026-11-03T17:09:41.9875588+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="311d1b6c-838b-4d62-9d15-b25f67f5e637" />
+    <UnitTestResult executionId="e4742a76-6541-45c4-a6dc-5ca8eee3ed68" testId="1cb23db1-091d-3c3b-7429-c8855ba0f784" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: CashOut, correctDirection: Out)" computerName="SEMH59" duration="00:00:00.1249658" startTime="2026-11-03T17:09:41.1091869+03:00" endTime="2026-11-03T17:09:41.1092056+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4742a76-6541-45c4-a6dc-5ca8eee3ed68" />
+    <UnitTestResult executionId="affabba7-e9e0-4fe0-bfea-b109a9b58ab8" testId="0dd673bc-57f4-3cbb-7bec-fabe3d0ad946" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(amount: &quot;0.01&quot;)" computerName="SEMH59" duration="00:00:00.0003628" startTime="2026-11-03T17:09:41.6418350+03:00" endTime="2026-11-03T17:09:41.6418350+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="affabba7-e9e0-4fe0-bfea-b109a9b58ab8" />
+    <UnitTestResult executionId="0b985de8-d156-42cd-a8aa-7c3f1d6c79b8" testId="6972c1f9-6b58-89e3-22de-9133e47a1dc4" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: Opening, correctDirection: In)" computerName="SEMH59" duration="00:00:00.0002630" startTime="2026-11-03T17:09:41.1125615+03:00" endTime="2026-11-03T17:09:41.1125616+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b985de8-d156-42cd-a8aa-7c3f1d6c79b8" />
+    <UnitTestResult executionId="e1eba3b8-b692-4104-ab74-ccd506fd1577" testId="cb88944a-79c3-848a-8c64-4a119593a332" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(amount: &quot;9999999999999999.99&quot;)" computerName="SEMH59" duration="00:00:00.0002938" startTime="2026-11-03T17:09:41.6417509+03:00" endTime="2026-11-03T17:09:41.6417510+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1eba3b8-b692-4104-ab74-ccd506fd1577" />
+    <UnitTestResult executionId="4e791cd1-896c-40a9-8df9-176028c0ec85" testId="418474a5-e64c-9e2e-034a-5fc77decfad6" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncReturnsZeroForASessionWithNoEntriesYet" computerName="SEMH59" duration="00:00:00.0092318" startTime="2026-11-03T17:09:42.8854892+03:00" endTime="2026-11-03T17:09:42.8854893+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e791cd1-896c-40a9-8df9-176028c0ec85" />
+    <UnitTestResult executionId="95644d45-4455-4260-88f8-00512c32f4d9" testId="594adf37-c4c0-679c-d369-e85435a194ec" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.StartingTheCountWaitsForAMovementAlreadyInFlightSoTheCountSeesIt" computerName="SEMH59" duration="00:00:00.5404447" startTime="2026-11-03T17:09:42.5664540+03:00" endTime="2026-11-03T17:09:42.5664547+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="95644d45-4455-4260-88f8-00512c32f4d9" />
+    <UnitTestResult executionId="a6e4a590-daf9-4e41-9d36-5b4ba77e02d9" testId="6abbf169-a411-9516-7c28-2c39afb01d30" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementForAnUnknownSessionIsNotFound" computerName="SEMH59" duration="00:00:00.0349305" startTime="2026-11-03T17:09:42.0253518+03:00" endTime="2026-11-03T17:09:42.0253521+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6e4a590-daf9-4e41-9d36-5b4ba77e02d9" />
+    <UnitTestResult executionId="9543f643-046e-4392-94af-9d6f3a25e7ab" testId="0be810f3-745f-2ccf-0b0a-ef7cfbc9b8ba" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.SaleAndRefundRequireARelatedPaymentId" computerName="SEMH59" duration="00:00:00.0025484" startTime="2026-11-03T17:09:41.6466038+03:00" endTime="2026-11-03T17:09:41.6466043+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9543f643-046e-4392-94af-9d6f3a25e7ab" />
+    <UnitTestResult executionId="2baacdd3-7da3-48ec-b60e-6d3450467ce0" testId="e5610d38-caaf-cd89-7df9-dd1bd5f2da5a" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncExcludesCountAdjustmentAndClosingDifferenceEntries" computerName="SEMH59" duration="00:00:00.0271644" startTime="2026-11-03T17:09:42.5941811+03:00" endTime="2026-11-03T17:09:42.5941816+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2baacdd3-7da3-48ec-b60e-6d3450467ce0" />
+    <UnitTestResult executionId="8896708d-80ef-4214-aaf3-8cd0a8fbe47c" testId="acfc11e2-1c27-431d-4e5e-d4ec855d07f4" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: &quot;0.001&quot;)" computerName="SEMH59" duration="00:00:00.0041437" startTime="2026-11-03T17:09:41.6399130+03:00" endTime="2026-11-03T17:09:41.6399134+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8896708d-80ef-4214-aaf3-8cd0a8fbe47c">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;ALKAROS.Cash.TransactionLedger.InvalidCashTransactionAmountException&gt; to be thrown, but no exception was thrown.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(String amount) in D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\CashTransactionTests.cs:line 64&#xD;
+   at InvokeStub_CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="897b9a21-f145-4c72-aa8e-4020b08ed20a" testId="548c7761-5ee8-cb01-2b97-6c26736240fc" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: CashIn, correctDirection: In)" computerName="SEMH59" duration="00:00:00.0007288" startTime="2026-11-03T17:09:41.1122196+03:00" endTime="2026-11-03T17:09:41.1122197+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="897b9a21-f145-4c72-aa8e-4020b08ed20a" />
+    <UnitTestResult executionId="46ca48ee-5ace-4183-a500-42c92c24378d" testId="fcde22b7-41b0-3bb4-aba7-4748b6fdf2b6" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsADirectionThatDoesNotMatchAFixedDirectionType" computerName="SEMH59" duration="00:00:00.0118561" startTime="2026-11-03T17:09:42.8757337+03:00" endTime="2026-11-03T17:09:42.8757341+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="46ca48ee-5ace-4183-a500-42c92c24378d" />
+    <UnitTestResult executionId="983c2d6f-c109-4178-9325-9c5e0756131d" testId="b18904c4-21af-4885-cef6-d8fd986f9485" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.CountAdjustmentRequiresAnExplicitReason" computerName="SEMH59" duration="00:00:00.0017437" startTime="2026-11-03T17:09:41.6420470+03:00" endTime="2026-11-03T17:09:41.6420471+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="983c2d6f-c109-4178-9325-9c5e0756131d" />
+    <UnitTestResult executionId="a4e78805-5f60-4b0b-aef0-54d89267c6c7" testId="1cec5aa8-1f66-9ab2-6f17-eced47c270e8" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: &quot;10.555&quot;)" computerName="SEMH59" duration="00:00:00.0028753" startTime="2026-11-03T17:09:41.6414926+03:00" endTime="2026-11-03T17:09:41.6414928+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a4e78805-5f60-4b0b-aef0-54d89267c6c7">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;ALKAROS.Cash.TransactionLedger.InvalidCashTransactionAmountException&gt; to be thrown, but no exception was thrown.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(String amount) in D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\CashTransactionTests.cs:line 64&#xD;
+   at InvokeStub_CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="26ca33dd-6979-4839-9b97-d69e0d02f563" testId="f7e85139-f7e0-b882-5a19-4036b9ec0a02" testName="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementIsRefusedOnceTheSessionIsNoLongerOpen(type: CashIn, direction: In)" computerName="SEMH59" duration="00:00:00.0166520" startTime="2026-11-03T17:09:42.8567263+03:00" endTime="2026-11-03T17:09:42.8567265+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26ca33dd-6979-4839-9b97-d69e0d02f563" />
+    <UnitTestResult executionId="e44030a1-886e-40a6-8e26-996636f4fb2b" testId="590f3050-1d9b-5d7f-effb-f3a64295dbf3" testName="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.NonPaymentTypesRejectARelatedPaymentId" computerName="SEMH59" duration="00:00:00.0014954" startTime="2026-11-03T17:09:41.6452351+03:00" endTime="2026-11-03T17:09:41.6452352+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e44030a1-886e-40a6-8e26-996636f4fb2b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsADirectionThatDoesNotMatchAFixedDirectionType" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="fcde22b7-41b0-3bb4-aba7-4748b6fdf2b6">
+      <Execution id="46ca48ee-5ace-4183-a500-42c92c24378d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="DatabaseRejectsADirectionThatDoesNotMatchAFixedDirectionType" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.RecordAsyncPersistsAndRoundTrips" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="396f5f26-3dde-8316-88fa-4ec47de55d23">
+      <Execution id="b6a2eb54-620c-48f5-9fb1-46c0145945d0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="RecordAsyncPersistsAndRoundTrips" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: &quot;10.555&quot;)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="1cec5aa8-1f66-9ab2-6f17-eced47c270e8">
+      <Execution id="a4e78805-5f60-4b0b-aef0-54d89267c6c7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementIsRefusedOnceTheSessionIsNoLongerOpen(type: CashIn, direction: In)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="f7e85139-f7e0-b882-5a19-4036b9ec0a02">
+      <Execution id="26ca33dd-6979-4839-9b97-d69e0d02f563" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="AMovementIsRefusedOnceTheSessionIsNoLongerOpen" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncReturnsZeroForASessionWithNoEntriesYet" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="418474a5-e64c-9e2e-034a-5fc77decfad6">
+      <Execution id="4e791cd1-896c-40a9-8df9-176028c0ec85" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="ComputeExpectedCashAsyncReturnsZeroForASessionWithNoEntriesYet" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.CountAdjustmentRequiresAnExplicitReason" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="b18904c4-21af-4885-cef6-d8fd986f9485">
+      <Execution id="983c2d6f-c109-4178-9325-9c5e0756131d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="CountAdjustmentRequiresAnExplicitReason" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsAZeroOrNegativeAmount" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="22746b2c-a338-5636-a744-ed951f534895">
+      <Execution id="311d1b6c-838b-4d62-9d15-b25f67f5e637" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="DatabaseRejectsAZeroOrNegativeAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncReconstructsTheRunningTotalFromImmutableEntriesAlone" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="d5ce2b7d-089e-109b-6f81-3998954760f5">
+      <Execution id="7792a754-a01e-424d-937a-4b00c876ce28" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="ComputeExpectedCashAsyncReconstructsTheRunningTotalFromImmutableEntriesAlone" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(amount: &quot;12.30&quot;)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="aa1349e5-0a25-ed68-0c40-dc967d955f3c">
+      <Execution id="a4b2d6a8-4913-480a-a9ed-708827a06e19" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.SignedAmountReflectsDirection" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="0d59df4f-232c-d8d5-d9ea-61358deac841">
+      <Execution id="7eeafa60-c010-456e-90f1-477d8f79a4a0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="SignedAmountReflectsDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsAnEntryAgainstANonExistentSession" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="09829614-360c-9252-5340-7f625c42c916">
+      <Execution id="f81563b1-b4a3-4978-8fae-537b11bff7e6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="DatabaseRejectsAnEntryAgainstANonExistentSession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: Opening, correctDirection: In)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="6972c1f9-6b58-89e3-22de-9133e47a1dc4">
+      <Execution id="0b985de8-d156-42cd-a8aa-7c3f1d6c79b8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="FixedDirectionTypesAcceptOnlyTheirOwnDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsACountAdjustmentWithNoNotes" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="dcc18c67-e0a1-0569-bdda-c9202cbab23c">
+      <Execution id="f3003c35-4b63-4814-b435-34c760f3bbdb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="DatabaseRejectsACountAdjustmentWithNoNotes" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: &quot;0.001&quot;)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="acfc11e2-1c27-431d-4e5e-d4ec855d07f4">
+      <Execution id="8896708d-80ef-4214-aaf3-8cd0a8fbe47c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.SaleAndRefundRequireARelatedPaymentId" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="0be810f3-745f-2ccf-0b0a-ef7cfbc9b8ba">
+      <Execution id="9543f643-046e-4392-94af-9d6f3a25e7ab" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="SaleAndRefundRequireARelatedPaymentId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.CountAdjustmentAndClosingDifferenceAcceptEitherDirection(direction: In)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="f11630c1-8372-8401-6819-0ddc9196ebd4">
+      <Execution id="5820b47f-0acf-4090-a018-1ccf0f64bc30" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="CountAdjustmentAndClosingDifferenceAcceptEitherDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAZeroOrNegativeAmount" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="178bf284-5aa6-fe84-7f58-95e1ebe23acb">
+      <Execution id="cdb97e05-3979-4ff5-bcec-f4eaeb0dea55" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorRejectsAZeroOrNegativeAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ASaleIsRefusedOnceTheSessionIsNoLongerOpen" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="eb52ea89-8957-1a48-df7c-02e51338631e">
+      <Execution id="ed271151-4a16-4652-8381-8109af99d1a9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="ASaleIsRefusedOnceTheSessionIsNoLongerOpen" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.ComputeExpectedCashAsyncExcludesCountAdjustmentAndClosingDifferenceEntries" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="e5610d38-caaf-cd89-7df9-dd1bd5f2da5a">
+      <Execution id="2baacdd3-7da3-48ec-b60e-6d3450467ce0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="ComputeExpectedCashAsyncExcludesCountAdjustmentAndClosingDifferenceEntries" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: Sale, correctDirection: In)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="64e7bcad-9127-6434-5806-40217065b896">
+      <Execution id="48ba85af-701d-45f4-8fb1-0390db6d255a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="FixedDirectionTypesAcceptOnlyTheirOwnDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(amount: &quot;9999999999999999.99&quot;)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="cb88944a-79c3-848a-8c64-4a119593a332">
+      <Execution id="e1eba3b8-b692-4104-ab74-ccd506fd1577" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(amount: &quot;0.01&quot;)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="0dd673bc-57f4-3cbb-7bec-fabe3d0ad946">
+      <Execution id="affabba7-e9e0-4fe0-bfea-b109a9b58ab8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: CashIn, correctDirection: In)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="548c7761-5ee8-cb01-2b97-6c26736240fc">
+      <Execution id="897b9a21-f145-4c72-aa8e-4020b08ed20a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="FixedDirectionTypesAcceptOnlyTheirOwnDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.StartingTheCountWaitsForAMovementAlreadyInFlightSoTheCountSeesIt" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="594adf37-c4c0-679c-d369-e85435a194ec">
+      <Execution id="95644d45-4455-4260-88f8-00512c32f4d9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="StartingTheCountWaitsForAMovementAlreadyInFlightSoTheCountSeesIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementIsRefusedOnceTheSessionIsNoLongerOpen(type: CashOut, direction: Out)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="185b8995-0e68-b572-1cc8-43c316a9d5bb">
+      <Execution id="53efa68d-5e1f-40fc-a767-a527523da01a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="AMovementIsRefusedOnceTheSessionIsNoLongerOpen" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.NonPaymentTypesRejectARelatedPaymentId" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="590f3050-1d9b-5d7f-effb-f3a64295dbf3">
+      <Execution id="e44030a1-886e-40a6-8e26-996636f4fb2b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="NonPaymentTypesRejectARelatedPaymentId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.OnlyCountAdjustmentAndClosingDifferenceAreExcludedFromExpectedCash" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="70fba510-3bb7-9113-a3b4-97a23714d4d0">
+      <Execution id="f9ab1c68-3672-40db-88cf-5f704c7b5c30" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="OnlyCountAdjustmentAndClosingDifferenceAreExcludedFromExpectedCash" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: CashOut, correctDirection: Out)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="1cb23db1-091d-3c3b-7429-c8855ba0f784">
+      <Execution id="e4742a76-6541-45c4-a6dc-5ca8eee3ed68" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="FixedDirectionTypesAcceptOnlyTheirOwnDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.AMovementForAnUnknownSessionIsNotFound" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="6abbf169-a411-9516-7c28-2c39afb01d30">
+      <Execution id="a6e4a590-daf9-4e41-9d36-5b4ba77e02d9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="AMovementForAnUnknownSessionIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.FixedDirectionTypesAcceptOnlyTheirOwnDirection(type: Refund, correctDirection: Out)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="bce2e05d-6fc9-2b93-e39a-1948c0162df6">
+      <Execution id="c5244306-4a97-4c54-8daa-c1d1a864b43a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="FixedDirectionTypesAcceptOnlyTheirOwnDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.CountAdjustmentAndClosingDifferenceAcceptEitherDirection(direction: Out)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="4ba703df-bc8d-c16a-02bf-68b31240a7b2">
+      <Execution id="3dea9e26-71fb-4124-ad5b-c74b18985817" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="CountAdjustmentAndClosingDifferenceAcceptEitherDirection" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: &quot;10000000000000000&quot;)" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="465a1530-0f70-b665-a854-96e11f29a4ab">
+      <Execution id="4867966d-3f3a-486d-a5c0-a69c5b491877" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests" name="ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests.DatabaseRejectsASaleEntryWithNoRelatedPayment" storage="d:\project\alkaros\tests\modules\cash\transactionledger\bin\debug\net8.0\alkaros.cash.transactionledger.tests.dll" id="5b0911e8-aba8-199a-899d-952eadec719c">
+      <Execution id="c8f36f15-e5c4-4ef4-8e95-18b624eead2e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\bin\Debug\net8.0\ALKAROS.Cash.TransactionLedger.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.TransactionLedger.Tests.PostgresCashTransactionLedgerRepositoryTests" name="DatabaseRejectsASaleEntryWithNoRelatedPayment" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="aa1349e5-0a25-ed68-0c40-dc967d955f3c" executionId="a4b2d6a8-4913-480a-a9ed-708827a06e19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4ba703df-bc8d-c16a-02bf-68b31240a7b2" executionId="3dea9e26-71fb-4124-ad5b-c74b18985817" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5b0911e8-aba8-199a-899d-952eadec719c" executionId="c8f36f15-e5c4-4ef4-8e95-18b624eead2e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bce2e05d-6fc9-2b93-e39a-1948c0162df6" executionId="c5244306-4a97-4c54-8daa-c1d1a864b43a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f11630c1-8372-8401-6819-0ddc9196ebd4" executionId="5820b47f-0acf-4090-a018-1ccf0f64bc30" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5ce2b7d-089e-109b-6f81-3998954760f5" executionId="7792a754-a01e-424d-937a-4b00c876ce28" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09829614-360c-9252-5340-7f625c42c916" executionId="f81563b1-b4a3-4978-8fae-537b11bff7e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64e7bcad-9127-6434-5806-40217065b896" executionId="48ba85af-701d-45f4-8fb1-0390db6d255a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="70fba510-3bb7-9113-a3b4-97a23714d4d0" executionId="f9ab1c68-3672-40db-88cf-5f704c7b5c30" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="396f5f26-3dde-8316-88fa-4ec47de55d23" executionId="b6a2eb54-620c-48f5-9fb1-46c0145945d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb52ea89-8957-1a48-df7c-02e51338631e" executionId="ed271151-4a16-4652-8381-8109af99d1a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="185b8995-0e68-b572-1cc8-43c316a9d5bb" executionId="53efa68d-5e1f-40fc-a767-a527523da01a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="465a1530-0f70-b665-a854-96e11f29a4ab" executionId="4867966d-3f3a-486d-a5c0-a69c5b491877" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="178bf284-5aa6-fe84-7f58-95e1ebe23acb" executionId="cdb97e05-3979-4ff5-bcec-f4eaeb0dea55" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d59df4f-232c-d8d5-d9ea-61358deac841" executionId="7eeafa60-c010-456e-90f1-477d8f79a4a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dcc18c67-e0a1-0569-bdda-c9202cbab23c" executionId="f3003c35-4b63-4814-b435-34c760f3bbdb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="22746b2c-a338-5636-a744-ed951f534895" executionId="311d1b6c-838b-4d62-9d15-b25f67f5e637" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cb23db1-091d-3c3b-7429-c8855ba0f784" executionId="e4742a76-6541-45c4-a6dc-5ca8eee3ed68" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0dd673bc-57f4-3cbb-7bec-fabe3d0ad946" executionId="affabba7-e9e0-4fe0-bfea-b109a9b58ab8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6972c1f9-6b58-89e3-22de-9133e47a1dc4" executionId="0b985de8-d156-42cd-a8aa-7c3f1d6c79b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb88944a-79c3-848a-8c64-4a119593a332" executionId="e1eba3b8-b692-4104-ab74-ccd506fd1577" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="418474a5-e64c-9e2e-034a-5fc77decfad6" executionId="4e791cd1-896c-40a9-8df9-176028c0ec85" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="594adf37-c4c0-679c-d369-e85435a194ec" executionId="95644d45-4455-4260-88f8-00512c32f4d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6abbf169-a411-9516-7c28-2c39afb01d30" executionId="a6e4a590-daf9-4e41-9d36-5b4ba77e02d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0be810f3-745f-2ccf-0b0a-ef7cfbc9b8ba" executionId="9543f643-046e-4392-94af-9d6f3a25e7ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5610d38-caaf-cd89-7df9-dd1bd5f2da5a" executionId="2baacdd3-7da3-48ec-b60e-6d3450467ce0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="acfc11e2-1c27-431d-4e5e-d4ec855d07f4" executionId="8896708d-80ef-4214-aaf3-8cd0a8fbe47c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="548c7761-5ee8-cb01-2b97-6c26736240fc" executionId="897b9a21-f145-4c72-aa8e-4020b08ed20a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fcde22b7-41b0-3bb4-aba7-4748b6fdf2b6" executionId="46ca48ee-5ace-4183-a500-42c92c24378d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b18904c4-21af-4885-cef6-d8fd986f9485" executionId="983c2d6f-c109-4178-9325-9c5e0756131d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1cec5aa8-1f66-9ab2-6f17-eced47c270e8" executionId="a4e78805-5f60-4b0b-aef0-54d89267c6c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7e85139-f7e0-b882-5a19-4036b9ec0a02" executionId="26ca33dd-6979-4839-9b97-d69e0d02f563" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="590f3050-1d9b-5d7f-effb-f3a64295dbf3" executionId="e44030a1-886e-40a6-8e26-996636f4fb2b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="33" executed="33" passed="30" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.20]   Discovering: ALKAROS.Cash.TransactionLedger.Tests&#xD;
+[xUnit.net 00:00:01.26]   Discovered:  ALKAROS.Cash.TransactionLedger.Tests&#xD;
+[xUnit.net 00:00:01.26]   Starting:    ALKAROS.Cash.TransactionLedger.Tests&#xD;
+[xUnit.net 00:00:01.96]       Expected a &lt;ALKAROS.Cash.TransactionLedger.InvalidCashTransactionAmountException&gt; to be thrown, but no exception was thrown.&#xD;
+[xUnit.net 00:00:01.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.96]         D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\CashTransactionTests.cs(64,0): at ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(String amount)&#xD;
+[xUnit.net 00:00:01.96]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.96]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.96]       Expected a &lt;ALKAROS.Cash.TransactionLedger.InvalidCashTransactionAmountException&gt; to be thrown, but no exception was thrown.&#xD;
+[xUnit.net 00:00:01.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.96]         D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\CashTransactionTests.cs(64,0): at ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(String amount)&#xD;
+[xUnit.net 00:00:01.96]            at InvokeStub_CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.96]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.96]       Expected a &lt;ALKAROS.Cash.TransactionLedger.InvalidCashTransactionAmountException&gt; to be thrown, but no exception was thrown.&#xD;
+[xUnit.net 00:00:01.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.96]            at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.96]         D:\PROJECT\ALKAROS\tests\Modules\Cash\TransactionLedger\CashTransactionTests.cs(64,0): at ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(String amount)&#xD;
+[xUnit.net 00:00:01.96]            at InvokeStub_CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.96]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:03.31]   Finished:    ALKAROS.Cash.TransactionLedger.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:09:41.6335960+03:00">
+        <Text>[xUnit.net 00:00:01.95]     ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: "10000000000000000") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:09:41.6386476+03:00">
+        <Text>[xUnit.net 00:00:01.96]     ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: "0.001") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:09:41.6403926+03:00">
+        <Text>[xUnit.net 00:00:01.96]     ALKAROS.Cash.TransactionLedger.Tests.CashTransactionTests.ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(amount: "10.555") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

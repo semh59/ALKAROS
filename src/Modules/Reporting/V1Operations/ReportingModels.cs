@@ -40,15 +40,6 @@ public sealed record PrintErrorSummaryRecord(
     DateTimeOffset CapturedAt);
 
 /// <summary>
-/// Time zone service day window filter (V1-RPT-001, Acceptance Evidence).
-/// </summary>
-public sealed record ServiceWindowFilter(
-    DateOnly BusinessDate,
-    DateTimeOffset WindowStart,
-    DateTimeOffset WindowEnd,
-    string TimeZoneId = "Europe/Istanbul");
-
-/// <summary>
 /// Consolidated end-of-day operational report result (V1-RPT-001).
 /// </summary>
 public sealed record BusinessDayReportResult(

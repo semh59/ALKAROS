@@ -101,6 +101,24 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
             && e.RelatedPaymentId == result.PaymentId);
     }
 
+    [Theory]
+    [InlineData("AmountDue", "80.005", "100")]
+    [InlineData("AmountDue", "10000000000000000", "100")]
+    [InlineData("TenderedAmount", "80", "100.001")]
+    [InlineData("TenderedAmount", "80", "10000000000000000")]
+    public void ValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(string field, string due, string tendered)
+    {
+        var request = new CashTenderRequest(
+            Guid.NewGuid(), Guid.NewGuid(),
+            decimal.Parse(due, System.Globalization.CultureInfo.InvariantCulture),
+            decimal.Parse(tendered, System.Globalization.CultureInfo.InvariantCulture),
+            "key");
+
+        var act = request.Validate;
+
+        act.Should().Throw<ArgumentException>().Which.ParamName.Should().Be(field);
+    }
+
     [Fact]
     public async Task HandleAsyncRejectsATenderOnAClosedSessionAndCreatesNothing()
     {

@@ -22,6 +22,9 @@ public sealed record OpenCashSessionCommand(
 
         if (OpeningBalance < 0)
             throw new NegativeCashAmountException(nameof(OpeningBalance), OpeningBalance);
+
+        if (!CashAmountRules.IsStorableBalance(OpeningBalance))
+            throw new ArgumentException("Amount must have at most two decimals and fit the ledger.", nameof(OpeningBalance));
     }
 }
 
@@ -61,6 +64,9 @@ public sealed record RecordCashCountCommand(
 
         if (CountedAmount < 0)
             throw new NegativeCashAmountException(nameof(CountedAmount), CountedAmount);
+
+        if (!CashAmountRules.IsStorableBalance(CountedAmount))
+            throw new ArgumentException("Amount must have at most two decimals and fit the ledger.", nameof(CountedAmount));
     }
 }
 
@@ -85,6 +91,9 @@ public sealed record CloseCashSessionCommand(
         if (ActualCash < 0)
             throw new NegativeCashAmountException(nameof(ActualCash), ActualCash);
 
+        if (!CashAmountRules.IsStorableBalance(ActualCash))
+            throw new ArgumentException("Amount must have at most two decimals and fit the ledger.", nameof(ActualCash));
+
         if (IsSupervisorOverride && string.IsNullOrWhiteSpace(OverrideReason))
             throw new ArgumentException("Override reason is required when performing supervisor override.", nameof(OverrideReason));
     }
@@ -106,4 +115,11 @@ public sealed record ReconcileCashSessionCommand(
         if (ReconciledBy == Guid.Empty)
             throw new ArgumentException("ReconciledBy user ID cannot be empty.", nameof(ReconciledBy));
     }
+}
+
+/// <summary>A drawer balance may be zero; anything else must be storable in the ledger column exactly.</summary>
+internal static class CashAmountRules
+{
+    public static bool IsStorableBalance(decimal amount)
+        => amount == 0 || TransactionLedger.CashTransaction.IsStorableAmount(amount);
 }

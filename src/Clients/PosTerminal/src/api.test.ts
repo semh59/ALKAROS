@@ -118,3 +118,60 @@ describe("api.catalog paging", () => {
     expect(seen).toEqual(["/api/v1/terminals/t-1/catalog", "/api/v1/terminals/t-1/catalog?cursor=c%201"]);
   });
 });
+
+describe("api.submitOrder operation key", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  const stubFetch = (outcomes: Array<"fail" | "refused" | "offline" | "ok">) => {
+    const keys: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (_path: string, init: RequestInit) => {
+      keys.push((JSON.parse(String(init.body)) as { operationId: string }).operationId);
+      const outcome = outcomes.shift();
+      if (outcome === "offline") throw new TypeError("Failed to fetch");
+      if (outcome === "fail") return plainErrorResponse(502);
+      return outcome === "refused" ? plainErrorResponse(409) : jsonResponse({ rowVersion: 2 });
+    }));
+    return keys;
+  };
+
+  it("sends the same key when the same order revision is submitted again after a failure", async () => {
+    const keys = stubFetch(["fail", "ok"]);
+
+    await expect(api.submitOrder("t1", "o1", 3)).rejects.toBeInstanceOf(ApiError);
+    await api.submitOrder("t1", "o1", 3);
+
+    expect(keys).toHaveLength(2);
+    expect(keys[1]).toBe(keys[0]);
+  });
+
+  it("uses a new key for another revision and once the order was accepted", async () => {
+    const keys = stubFetch(["fail", "ok", "ok"]);
+
+    await expect(api.submitOrder("t1", "o2", 3)).rejects.toBeInstanceOf(ApiError);
+    await api.submitOrder("t1", "o2", 4);
+    await api.submitOrder("t1", "o2", 4);
+
+    expect(new Set(keys).size).toBe(3);
+  });
+
+  it("keeps the key when the call never got an answer", async () => {
+    const keys = stubFetch(["offline", "ok"]);
+
+    await expect(api.submitOrder("t1", "o4", 3)).rejects.toBeInstanceOf(Error);
+    await api.submitOrder("t1", "o4", 3);
+
+    expect(keys[1]).toBe(keys[0]);
+  });
+
+  it("uses a new key after the server refused the revision for good", async () => {
+    const keys = stubFetch(["refused", "ok"]);
+
+    await expect(api.submitOrder("t1", "o3", 3)).rejects.toBeInstanceOf(ApiError);
+    await api.submitOrder("t1", "o3", 3);
+
+    expect(keys[1]).not.toBe(keys[0]);
+  });
+});

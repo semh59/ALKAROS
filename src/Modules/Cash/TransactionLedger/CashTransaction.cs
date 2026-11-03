@@ -24,6 +24,13 @@ public enum CashTransactionDirection
 /// </summary>
 public sealed class CashTransaction
 {
+    /// <summary>The largest value the NUMERIC(18,2) ledger column holds.</summary>
+    public const decimal MaxAmount = 9_999_999_999_999_999.99m;
+
+    /// <summary>True for a positive amount with at most two decimals that fits the ledger column exactly.</summary>
+    public static bool IsStorableAmount(decimal amount)
+        => amount > 0 && amount <= MaxAmount && decimal.Round(amount, 2) == amount;
+
     public CashTransaction(
         Guid id,
         Guid cashSessionId,
@@ -40,7 +47,7 @@ public sealed class CashTransaction
             throw new ArgumentException("Cash transaction id cannot be empty.", nameof(id));
         if (cashSessionId == Guid.Empty)
             throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
-        if (amount <= 0)
+        if (!IsStorableAmount(amount))
             throw new InvalidCashTransactionAmountException(amount);
 
         var fixedDirection = FixedDirectionFor(type);

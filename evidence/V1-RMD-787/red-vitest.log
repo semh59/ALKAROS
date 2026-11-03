@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (7 tests | 1 failed) 56ms
+     × sends the same key when the same order revision is submitted again after a failure 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > api.submitOrder operation key > sends the same key when the same order revision is submitted again after a failure
+AssertionError: expected 'cc8f344d-4dfe-4bda-88f6-c8018cabc839' to be 'cea71cc9-acb6-4484-affe-da384ed9f482' // Object.is equality
+
+Expected: "cea71cc9-acb6-4484-affe-da384ed9f482"
+Received: "cc8f344d-4dfe-4bda-88f6-c8018cabc839"
+
+ ❯ src/api.test.ts:144:21
+    142|
+    143|     expect(keys).toHaveLength(2);
+    144|     expect(keys[1]).toBe(keys[0]);
+       |                     ^
+    145|   });
+    146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  16:48:00
+   Duration  1.00s (transform 67ms, setup 0ms, import 107ms, tests 56ms, environment 0ms)
+

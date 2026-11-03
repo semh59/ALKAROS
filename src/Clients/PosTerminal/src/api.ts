@@ -90,6 +90,8 @@ async function withIdempotentRetry<T>(attempt: () => Promise<T>): Promise<T> {
   }
 }
 
+const pendingSubmissions = new Map<string, string>();
+
 // `keepSessionOn401`: the manager-only help-request calls answer 401 to a cashier-only session, which
 // must not be read as that cashier's own session having ended.
 async function request<T>(
@@ -234,14 +236,24 @@ export const api = {
       `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}?expectedRevision=${expectedRevision}`,
       { method: "DELETE" },
     ),
-  submitOrder: (terminalId: string, orderId: string, expectedRevision: number) =>
-    request<{ rowVersion: number }>(
-      `/api/v1/terminals/${terminalId}/orders/${orderId}/submit`,
-      {
-        method: "POST",
-        body: JSON.stringify({ operationId: crypto.randomUUID(), expectedRevision }),
-      },
-    ),
+  submitOrder: async (terminalId: string, orderId: string, expectedRevision: number) => {
+    // A retry after a timeout must carry the key of the attempt that may have reached the server.
+    const attempt = `${orderId}:${expectedRevision}`;
+    const operationId = pendingSubmissions.get(attempt) ?? crypto.randomUUID();
+    pendingSubmissions.set(attempt, operationId);
+    try {
+      const result = await request<{ rowVersion: number }>(
+        `/api/v1/terminals/${terminalId}/orders/${orderId}/submit`,
+        { method: "POST", body: JSON.stringify({ operationId, expectedRevision }) },
+      );
+      pendingSubmissions.delete(attempt);
+      return result;
+    } catch (error) {
+      // A refusal (4xx) never reached the order; only a failure that may have been processed keeps its key.
+      if (error instanceof ApiError && error.status >= 400 && error.status < 500) pendingSubmissions.delete(attempt);
+      throw error;
+    }
+  },
   createPairing: (displayId: string) =>
     request<PairingCreated>("/api/v1/customer-displays/pairing-requests", {
       method: "POST",

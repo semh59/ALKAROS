@@ -22,7 +22,6 @@ public interface IOperationalReportService
         CancellationToken cancellationToken = default);
     Task<BusinessDayRecord?> GetBusinessDayByDateAsync(DateOnly businessDate, CancellationToken cancellationToken = default);
     Task<BusinessDayReportResult?> GetFullDailyReportAsync(DateOnly businessDate, CancellationToken cancellationToken = default);
-    ServiceWindowFilter CalculateServiceWindow(DateOnly businessDate, TimeZoneInfo? timeZone = null);
 }
 
 /// <summary>
@@ -83,17 +82,5 @@ public sealed class OperationalReportService : IOperationalReportService
         var prints = await _repository.GetPrintErrorSummariesByDateAsync(businessDate, cancellationToken);
 
         return new BusinessDayReportResult(day, waiters, prints);
-    }
-
-    public ServiceWindowFilter CalculateServiceWindow(DateOnly businessDate, TimeZoneInfo? timeZone = null)
-    {
-        var tz = timeZone ?? TimeZoneInfo.Utc;
-        var startDateTime = businessDate.ToDateTime(new TimeOnly(6, 0, 0)); // Service day starts at 06:00
-        var endDateTime = businessDate.AddDays(1).ToDateTime(new TimeOnly(5, 59, 59, 999)); // Ends next day 05:59:59
-
-        var startOffset = new DateTimeOffset(startDateTime, tz.GetUtcOffset(startDateTime));
-        var endOffset = new DateTimeOffset(endDateTime, tz.GetUtcOffset(endDateTime));
-
-        return new ServiceWindowFilter(businessDate, startOffset, endOffset, tz.Id);
     }
 }

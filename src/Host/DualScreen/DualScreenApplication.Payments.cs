@@ -545,6 +545,12 @@ public static partial class DualScreenApplication
                     },
                     statusCode: StatusCodes.Status409Conflict);
             }
+            catch (EftAmountMismatchException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir tutarla zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
             catch (EftBillMismatchException)
             {
                 return Results.Json(

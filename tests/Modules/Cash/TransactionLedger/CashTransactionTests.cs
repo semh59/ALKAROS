@@ -51,6 +51,33 @@ public sealed class CashTransactionTests
         actNegative.Should().Throw<InvalidCashTransactionAmountException>();
     }
 
+    [Theory]
+    [InlineData("0.001")]
+    [InlineData("10.555")]
+    [InlineData("10000000000000000")]
+    public void ConstructorRejectsAnAmountTheLedgerColumnCannotStoreExactly(string amount)
+    {
+        var act = () => new CashTransaction(
+            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture),
+            CashTransactionDirection.In);
+
+        act.Should().Throw<InvalidCashTransactionAmountException>();
+    }
+
+    [Theory]
+    [InlineData("0.01")]
+    [InlineData("12.30")]
+    [InlineData("9999999999999999.99")]
+    public void ConstructorAcceptsTwoDecimalAmountsUpToTheColumnLimit(string amount)
+    {
+        var value = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture);
+
+        var transaction = new CashTransaction(
+            Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, value, CashTransactionDirection.In);
+
+        transaction.Amount.Should().Be(value);
+    }
+
     [Fact]
     public void SaleAndRefundRequireARelatedPaymentId()
     {

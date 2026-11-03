@@ -105,6 +105,40 @@ public sealed class OfflineQueueReportTests : IClassFixture<QueueDatabase>
         (await CountAsync("true")).Should().Be(0);
     }
 
+    /// <summary>A body of unknown length: HttpClient sends it with Transfer-Encoding: chunked, so there is no Content-Length to check.</summary>
+    private sealed class ChunkedContent(byte[] payload) : HttpContent
+    {
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+            => stream.WriteAsync(payload, 0, payload.Length);
+
+        protected override bool TryComputeLength(out long length)
+        {
+            length = 0;
+            return false;
+        }
+    }
+
+    [Fact]
+    public async Task AChunkedBodyOverTheLimitIsRefusedWith413BeforeTheSessionIsChecked()
+    {
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
+        builder.WebHost.UseUrls("http://127.0.0.1:0");
+        await using var writer = NewWriter();
+        builder.Services.AddSingleton(new DualScreenStore(_database.DataSource));
+        builder.Services.AddSingleton(new OfflineQueueIngest(writer, _database.DataSource));
+        await using var app = builder.Build();
+        app.MapOfflineQueueReport();
+        await app.StartAsync();
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
+        var payload = System.Text.Encoding.UTF8.GetBytes("{\"length\":50,\"pad\":\"" + new string('x', 40 * 1024) + "\"}");
+        using var content = new ChunkedContent(payload);
+        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+        using var response = await client.PostAsync("/api/v1/telemetry/offline-queue", content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.RequestEntityTooLarge);
+    }
+
     [Fact]
     public async Task ReportWithoutASessionIsRejectedWith401()
     {

@@ -3,6 +3,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Cash.TenderHandler;
+using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Catalog;
@@ -635,6 +636,12 @@ public static class ApiErrorCatalog
         ["amount"] = "Tutar",
         ["allocatedAmount"] = "Dağıtılan tutar",
         ["paidAmount"] = "Ödenen tutar",
+        ["openingBalance"] = "Açılış bakiyesi",
+        ["countedAmount"] = "Sayılan tutar",
+        ["actualCash"] = "Kasadaki nakit",
+        ["attemptedAmount"] = "Denenen tutar",
+        ["amountDue"] = "Ödenecek tutar",
+        ["tenderedAmount"] = "Verilen tutar",
         ["discountAmount"] = "İndirim tutarı",
         ["rate"] = "Oran",
         ["taxRate"] = "KDV oranı",
@@ -679,6 +686,7 @@ public static class ApiErrorCatalog
             InvalidCashSessionStateException => (409, "INVALID_CASH_SESSION_STATE", "Kasa oturumu bu işlem için uygun durumda değil."),
             CashVarianceThresholdExceededException => (409, "CASH_VARIANCE_THRESHOLD_EXCEEDED", "Fark tolerans sınırını aşıyor; süpervizör onayı gerekiyor."),
             NegativeCashAmountException => (400, "VALIDATION_FAILED", "Tutar negatif olamaz."),
+            InvalidCashTransactionAmountException => (400, "VALIDATION_FAILED", "Tutar sıfırdan büyük olmalı, en fazla iki ondalık basamak içermeli ve sınırı aşmamalı."),
             CashSessionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             CashTenderBillNotFoundException => (404, "BILL_NOT_FOUND", "Hesap bulunamadı."),
             ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
@@ -696,6 +704,8 @@ public static class ApiErrorCatalog
             // actually has left.
             OverAllocationException => (409, "OVER_ALLOCATION", "İstenen tutar hesabın kalan bakiyesini aşıyor."),
             BillConcurrencyException or CashSessionConcurrencyException or OrderConcurrencyException or PaymentConcurrencyException => RowVersionConflict,
+            BadHttpRequestException { StatusCode: StatusCodes.Status413PayloadTooLarge } =>
+                (StatusCodes.Status413PayloadTooLarge, "PAYLOAD_TOO_LARGE", "İstek gövdesi çok büyük."),
             ArgumentException or BadHttpRequestException => ValidationAnswer(exception),
             _ when IsDatabaseUnavailable(exception) => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

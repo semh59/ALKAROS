@@ -36,7 +36,8 @@ public sealed class CardSettlementOrchestratorTests : IClassFixture<CardSettleme
         _payments = new PostgresPaymentRepository(_dataSource);
         _allocations = new PostgresPaymentAllocationRepository(_dataSource, new PostgresBillAdjustmentRepository(_dataSource));
         _attempts = new PostgresCardSettlementAttemptRepository();
-        _orchestrator = new CardSettlementOrchestrator(_bills, _payments, _allocations, _attempts, _dataSource);
+        _orchestrator = new CardSettlementOrchestrator(
+            _bills, _payments, _allocations, new PostgresBillAdjustmentRepository(_dataSource), _attempts, _dataSource);
     }
 
     [Fact]
@@ -107,6 +108,83 @@ public sealed class CardSettlementOrchestratorTests : IClassFixture<CardSettleme
 
         (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
         (await CountOutboxMessagesForPaymentAsync(result.PaymentId, "card-settlement.approved")).Should().Be(0);
+    }
+
+    [Theory]
+    [InlineData("10.005", "AttemptedAmount")]
+    [InlineData("10000000000000000", "AttemptedAmount")]
+    public void ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(string amount, string field)
+    {
+        var request = new CardSettlementRequest(
+            Guid.NewGuid(), decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture), "key", "TXN",
+            new TenderDeclined("x"));
+
+        request.Invoking(r => r.Validate()).Should().Throw<ArgumentException>().Which.ParamName.Should().Be(field);
+    }
+
+    [Fact]
+    public void ValidateAcceptsTheLargestStorableAmount()
+    {
+        new CardSettlementRequest(
+            Guid.NewGuid(), 9999999999999999.99m, "key", "TXN", new TenderApproved(9999999999999999.99m)).Validate();
+    }
+
+    [Theory]
+    [InlineData("10.005")]
+    [InlineData("0")]
+    [InlineData("-1")]
+    public void ValidateRejectsAnApprovedAmountThatIsNotAPositiveTwoDecimalAmount(string approved)
+    {
+        var request = new CardSettlementRequest(
+            Guid.NewGuid(), 10m, "key", "TXN",
+            new TenderApproved(decimal.Parse(approved, System.Globalization.CultureInfo.InvariantCulture)));
+
+        request.Invoking(r => r.Validate()).Should().Throw<ArgumentException>().Which.ParamName.Should().Be("Result");
+    }
+
+    [Fact]
+    public async Task AnUnknownOutcomeAboveTheRemainingPayableIsRejectedBeforeAnythingIsRecorded()
+    {
+        var billId = await SeedBillAsync(payable: 100m);
+        await _orchestrator.HandleAsync(new CardSettlementRequest(
+            billId, AttemptedAmount: 70m, Guid.NewGuid().ToString(), "TXN-PART", new TenderApproved(70m)));
+        var request = new CardSettlementRequest(
+            billId, AttemptedAmount: 30.01m, Guid.NewGuid().ToString(), "TXN-OVER",
+            new TenderRequiresReconciliation("provider_timeout"));
+
+        var act = () => _orchestrator.HandleAsync(request);
+
+        var thrown = (await act.Should().ThrowAsync<OverAllocationException>()).Which;
+        thrown.RemainingPayable.Should().Be(30m);
+        (await _payments.GetByBillIdAsync(billId)).Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task AnUnknownOutcomeMayUseTheCeilingRaisedByATip()
+    {
+        var billId = await SeedBillAsync(payable: 100m);
+        await new PostgresBillAdjustmentRepository(_dataSource).AddAsync(BillAdjustment.CreateTip(
+            Guid.NewGuid(), billId, amount: 20m, reason: "Test tip", authorizedBy: Guid.NewGuid()));
+
+        var result = await _orchestrator.HandleAsync(new CardSettlementRequest(
+            billId, AttemptedAmount: 120m, Guid.NewGuid().ToString(), "TXN-TIP",
+            new TenderRequiresReconciliation("provider_timeout")));
+
+        result.Outcome.Should().Be(CardSettlementOutcome.RequiresReconciliation);
+    }
+
+    [Fact]
+    public async Task AnUnknownOutcomeWithinTheRemainingPayableIsStillRecorded()
+    {
+        var billId = await SeedBillAsync(payable: 100m);
+        await _orchestrator.HandleAsync(new CardSettlementRequest(
+            billId, AttemptedAmount: 70m, Guid.NewGuid().ToString(), "TXN-PART2", new TenderApproved(70m)));
+
+        var result = await _orchestrator.HandleAsync(new CardSettlementRequest(
+            billId, AttemptedAmount: 30m, Guid.NewGuid().ToString(), "TXN-FIT",
+            new TenderRequiresReconciliation("provider_timeout")));
+
+        result.Outcome.Should().Be(CardSettlementOutcome.RequiresReconciliation);
     }
 
     [Fact]

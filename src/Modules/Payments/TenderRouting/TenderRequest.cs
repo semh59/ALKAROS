@@ -40,11 +40,14 @@ public sealed record TenderRequest(
     Guid? RecordedBy = null,
     string? Note = null)
 {
+    private const decimal MaxAmount = 9_999_999_999_999_999.99m;
+
     public void Validate()
     {
         if (PaymentId == Guid.Empty)
             throw new ArgumentException("Payment id cannot be empty.", nameof(PaymentId));
-        if (Amount <= 0)
-            throw new ArgumentException("Tender amount must be greater than zero.", nameof(Amount));
+        if (Amount <= 0 || Amount > MaxAmount || decimal.Round(Amount, 2) != Amount)
+            throw new ArgumentException(
+                "Tender amount must be positive, have at most two decimals and fit NUMERIC(18,2).", nameof(Amount));
     }
 }

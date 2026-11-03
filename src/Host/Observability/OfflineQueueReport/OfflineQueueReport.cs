@@ -1,7 +1,9 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Observability.InteractionTelemetry;
 using ALKAROS.Observability.ErrorEvents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -74,7 +76,7 @@ public static class OfflineQueueEndpoints
             return await ingest.AcceptAsync(report, principal.TerminalId, cancellationToken) == OfflineQueueVerdict.Accepted
                 ? Results.StatusCode(StatusCodes.Status204NoContent)
                 : Results.StatusCode(StatusCodes.Status400BadRequest);
-        });
+        }).WithMetadata(new RequestSizeLimitAttribute(InteractionTelemetryEndpoints.MaxBodyBytes));
         return app;
     }
 }

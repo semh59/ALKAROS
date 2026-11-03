@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e7f719f9-fe4c-4a8e-95a9-b41d6564fd75" name="semih@SEMH59 2026-11-03 16:50:54" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:50:54.9104948+03:00" queuing="2026-11-03T16:50:54.9104950+03:00" start="2026-11-03T16:50:52.4261952+03:00" finish="2026-11-03T16:50:54.9187064+03:00" />
+  <TestSettings name="default" id="f6ba5096-48f3-4b5c-9c9a-15d2bc3b4371">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_50_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="dcfe2ce0-3037-4f21-a8cc-e3a09ee26de3" testId="5efe5a68-43fd-8b98-6b6d-b8e5c28f9e4b" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode" computerName="SEMH59" duration="00:00:00.3012611" startTime="2026-11-03T16:50:54.7322981+03:00" endTime="2026-11-03T16:50:54.7323445+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dcfe2ce0-3037-4f21-a8cc-e3a09ee26de3">
+      <Output>
+        <ErrorInfo>
+          <Message>Did not expect reason to match regex "[A-Z]+\d*-[A-Z]+-\d+", but "Token/Beko terminal entegrasyonu (V13-HUG-001) henüz tamamlanmadı; bu kart ödemesi elle mutabakat gerektirir." matches.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.StringAssertions`1.NotMatchRegex(Regex regularExpression, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Primitives.StringAssertions`1.NotMatchRegex(String regularExpression, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode() in D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\TenderCompositionTests.cs:line 69&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="5efe5a68-43fd-8b98-6b6d-b8e5c28f9e4b">
+      <Execution id="dcfe2ce0-3037-4f21-a8cc-e3a09ee26de3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="ThePendingCardReasonIsPlainTurkishWithoutATaskCode" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5efe5a68-43fd-8b98-6b6d-b8e5c28f9e4b" executionId="dcfe2ce0-3037-4f21-a8cc-e3a09ee26de3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.56]   Discovering: ALKAROS.Payments.TenderComposition.Tests&#xD;
+[xUnit.net 00:00:00.59]   Discovered:  ALKAROS.Payments.TenderComposition.Tests&#xD;
+[xUnit.net 00:00:00.60]   Starting:    ALKAROS.Payments.TenderComposition.Tests&#xD;
+[xUnit.net 00:00:01.56]       Did not expect reason to match regex "[A-Z]+\d*-[A-Z]+-\d+", but "Token/Beko terminal entegrasyonu (V13-HUG-001) henüz tamamlanmadı; bu kart ödemesi elle mutabakat gerektirir." matches.&#xD;
+[xUnit.net 00:00:01.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Primitives.StringAssertions`1.NotMatchRegex(Regex regularExpression, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.57]            at FluentAssertions.Primitives.StringAssertions`1.NotMatchRegex(String regularExpression, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.57]         D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\TenderCompositionTests.cs(69,0): at ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode()&#xD;
+[xUnit.net 00:00:01.57]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.57]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.65]   Finished:    ALKAROS.Payments.TenderComposition.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T16:50:54.7287541+03:00">
+        <Text>[xUnit.net 00:00:01.56]     ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

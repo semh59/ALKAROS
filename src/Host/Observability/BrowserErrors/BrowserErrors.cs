@@ -1,8 +1,10 @@
 using System.Text.RegularExpressions;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Observability.InteractionTelemetry;
 using ALKAROS.Observability.ErrorEvents;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace ALKAROS.Host.Observability.BrowserErrors;
@@ -108,7 +110,7 @@ public static class BrowserErrorEndpoints
                 BrowserErrorVerdict.Invalid => Results.StatusCode(StatusCodes.Status400BadRequest),
                 _ => Results.StatusCode(StatusCodes.Status204NoContent),
             };
-        });
+        }).WithMetadata(new RequestSizeLimitAttribute(InteractionTelemetryEndpoints.MaxBodyBytes));
         return app;
     }
 }

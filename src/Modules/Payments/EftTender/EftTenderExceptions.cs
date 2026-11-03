@@ -61,6 +61,23 @@ public sealed class EftUnsettledPaymentExistsException : EftTenderException
     public string ExistingStatus { get; }
 }
 
+/// <summary>Thrown when a replayed idempotency key carries a different amount than the recorded allocation.</summary>
+public sealed class EftAmountMismatchException : EftTenderException
+{
+    public EftAmountMismatchException(string idempotencyKey, decimal recordedAmount, decimal requestedAmount)
+        : base($"EFT tender '{idempotencyKey}' was recorded with amount '{recordedAmount}', " +
+               $"not the requested amount '{requestedAmount}'.")
+    {
+        IdempotencyKey = idempotencyKey;
+        RecordedAmount = recordedAmount;
+        RequestedAmount = requestedAmount;
+    }
+
+    public string IdempotencyKey { get; }
+    public decimal RecordedAmount { get; }
+    public decimal RequestedAmount { get; }
+}
+
 /// <summary>
 /// V1-RMD-258: thrown when a replayed idempotency key's recorded allocation
 /// belongs to a DIFFERENT Bill than the one the current request names — a

@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ae7f9462-80e5-4362-8cde-29ed80de56f0" name="semih@SEMH59 2026-11-03 16:46:12" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:46:12.1733788+03:00" queuing="2026-11-03T16:46:12.1733793+03:00" start="2026-11-03T16:46:09.9594166+03:00" finish="2026-11-03T16:46:16.1710437+03:00" />
+  <TestSettings name="default" id="b3afda2f-e9f3-4230-8e4c-cc2adf1b2ffc">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_46_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="41a4a126-e605-4fb6-b9e8-d799bd3a7d39" testId="ed97b397-f3bb-0a96-3909-bd65d3d5b48e" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;SELECT 1; DROP TABLE t&quot;)" computerName="SEMH59" duration="00:00:00.0001942" startTime="2026-11-03T16:46:14.4386252+03:00" endTime="2026-11-03T16:46:14.4386253+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41a4a126-e605-4fb6-b9e8-d799bd3a7d39" />
+    <UnitTestResult executionId="84f16ea8-5c8e-4b1b-81d5-28f15ceb46b5" testId="2fffecc5-11d8-46e5-6f0f-44ce872f1951" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;SELECT id FROM t WHERE id = @id&quot;, expected: &quot;SELECT id FROM t WHERE id = $1&quot;)" computerName="SEMH59" duration="00:00:00.0002928" startTime="2026-11-03T16:46:12.1192789+03:00" endTime="2026-11-03T16:46:12.1192790+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84f16ea8-5c8e-4b1b-81d5-28f15ceb46b5" />
+    <UnitTestResult executionId="325eb985-aa76-468f-9dfa-279f1e9a3835" testId="196009bd-2f0b-ff7b-c1df-3113100ad698" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.FailedAndSlowOutgoingCallsBecomeEventsWithSanitizedAddressesAndFastOnesDoNot" computerName="SEMH59" duration="00:00:00.3803641" startTime="2026-11-03T16:46:14.9284619+03:00" endTime="2026-11-03T16:46:14.9284623+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="325eb985-aa76-468f-9dfa-279f1e9a3835" />
+    <UnitTestResult executionId="5434fa36-144e-453f-9ca4-e193312851b8" testId="2ad6ddbd-4177-52db-2951-4df9b098a72c" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ImplausibleLengthIsRejectedWithoutAnEvent(length: -1)" computerName="SEMH59" duration="00:00:00.0093328" startTime="2026-11-03T16:46:12.1194638+03:00" endTime="2026-11-03T16:46:12.1194638+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5434fa36-144e-453f-9ca4-e193312851b8" />
+    <UnitTestResult executionId="5ac54203-cbe7-4494-83d2-1264a7399e04" testId="0cec6bbb-86b8-5ee2-c7cf-a341a05b52df" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AChunkedBodyOverTheLimitIsRefusedWith413BeforeTheSessionIsChecked" computerName="SEMH59" duration="00:00:00.1079737" startTime="2026-11-03T16:46:14.5474449+03:00" endTime="2026-11-03T16:46:14.5474453+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ac54203-cbe7-4494-83d2-1264a7399e04" />
+    <UnitTestResult executionId="d2f6bca2-cc3b-4cb2-ad21-e6e5495e45d2" testId="49133e04-430a-272d-f4c0-91e7fc4f6a85" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ImplausibleLengthIsRejectedWithoutAnEvent(length: null)" computerName="SEMH59" duration="00:00:00.0048423" startTime="2026-11-03T16:46:12.1195755+03:00" endTime="2026-11-03T16:46:12.1195755+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2f6bca2-cc3b-4cb2-ad21-e6e5495e45d2" />
+    <UnitTestResult executionId="a292e2f5-4305-473c-a3f1-44406e49aef8" testId="355542bb-e322-1daa-a20e-b3b2770846fb" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ReportWithoutASessionIsRejectedWith401" computerName="SEMH59" duration="00:00:00.0909981" startTime="2026-11-03T16:46:15.8533723+03:00" endTime="2026-11-03T16:46:15.8533729+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a292e2f5-4305-473c-a3f1-44406e49aef8" />
+    <UnitTestResult executionId="d867d361-0ea7-427f-9c91-5fe91bcce926" testId="32adfb56-a2e5-fc9c-d27b-eddcf4f5891f" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: null, expected: &quot;unknown&quot;)" computerName="SEMH59" duration="00:00:00.0000052" startTime="2026-11-03T16:46:11.8743355+03:00" endTime="2026-11-03T16:46:11.8743355+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d867d361-0ea7-427f-9c91-5fe91bcce926" />
+    <UnitTestResult executionId="7b0d8277-e2ed-4ce9-9d72-8040afc2decf" testId="b4809b97-1841-fe8d-8382-14a2b6ef4535" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;ftp://host.example/file&quot;, expected: &quot;unknown&quot;)" computerName="SEMH59" duration="00:00:00.0000106" startTime="2026-11-03T16:46:11.8742933+03:00" endTime="2026-11-03T16:46:11.8742934+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b0d8277-e2ed-4ce9-9d72-8040afc2decf" />
+    <UnitTestResult executionId="612bc454-7f32-4d47-9570-bee770a2a9b6" testId="c415c2d5-0334-5d82-b7f5-5aeedbd8ea46" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;select a from t where x = @from and y = @to and z &quot;···, expected: &quot;select a from t where x = $1 and y = $2 and z = $1&quot;)" computerName="SEMH59" duration="00:00:00.0000777" startTime="2026-11-03T16:46:12.1193377+03:00" endTime="2026-11-03T16:46:12.1193378+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="612bc454-7f32-4d47-9570-bee770a2a9b6" />
+    <UnitTestResult executionId="005f00d6-797f-49f8-81bd-44b33bae40df" testId="9986b5cf-dc8e-aab4-bf3f-a4fc57349f71" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SameShapeIsPlannedOncePerCooldownAndNonSelectIsNeverPlanned" computerName="SEMH59" duration="00:00:00.3615849" startTime="2026-11-03T16:46:15.3522746+03:00" endTime="2026-11-03T16:46:15.3522750+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="005f00d6-797f-49f8-81bd-44b33bae40df" />
+    <UnitTestResult executionId="bf964c3a-3cdb-4833-9047-9dcd2bfbf5c9" testId="63016e64-bc50-8676-4bda-8a9797891a57" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://api.telegram.org/bot123456:SECRET-token/se&quot;···, expected: &quot;api.telegram.org/:id/sendMessage&quot;)" computerName="SEMH59" duration="00:00:00.0000192" startTime="2026-11-03T16:46:11.8742371+03:00" endTime="2026-11-03T16:46:11.8742372+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf964c3a-3cdb-4833-9047-9dcd2bfbf5c9" />
+    <UnitTestResult executionId="19f21d07-e71d-415a-908a-9143d83544d0" testId="df657148-937c-3470-6b99-79c053f90b90" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;EXPLAIN SELECT 1&quot;)" computerName="SEMH59" duration="00:00:00.0000052" startTime="2026-11-03T16:46:14.4387981+03:00" endTime="2026-11-03T16:46:14.4387982+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19f21d07-e71d-415a-908a-9143d83544d0" />
+    <UnitTestResult executionId="e313028f-3c42-4a88-b602-f5962ea198ea" testId="1ac01d5e-2401-4abb-919d-5580d2ea006b" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.StatementThatCannotBePlannedIsCountedAndNeverBreaksTheCaller" computerName="SEMH59" duration="00:00:00.0609529" startTime="2026-11-03T16:46:14.9900897+03:00" endTime="2026-11-03T16:46:14.9900906+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e313028f-3c42-4a88-b602-f5962ea198ea" />
+    <UnitTestResult executionId="92bba01a-6206-4e51-a7c0-aebdf8d9f9a6" testId="2bfd55c4-3dfa-6f59-d281-7b692be386bd" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.QueueOverTheLimitRaisesOneEventResolvesBelowItAndReopensWhenItGrowsAgain" computerName="SEMH59" duration="00:00:00.0458177" startTime="2026-11-03T16:46:12.0770575+03:00" endTime="2026-11-03T16:46:12.0770577+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="92bba01a-6206-4e51-a7c0-aebdf8d9f9a6" />
+    <UnitTestResult executionId="411ecb7a-24cf-44e1-a7ca-e3dcfd90f2fe" testId="51ee9048-93c0-aabf-4b98-940eb80dea0e" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SlowSelectWithNamedParameterGetsAPlanEventWithoutCostsOrFilterText" computerName="SEMH59" duration="00:00:00.4079702" startTime="2026-11-03T16:46:15.7612685+03:00" endTime="2026-11-03T16:46:15.7612692+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="411ecb7a-24cf-44e1-a7ca-e3dcfd90f2fe" />
+    <UnitTestResult executionId="f66e2fa4-9852-4348-a237-b20323ba9408" testId="993afc0c-944b-b918-4719-59a1de06280e" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.CallThatGetsNoAnswerIsAnErrorEventAndAClientMistakeIsOnlyAWarning" computerName="SEMH59" duration="00:00:02.3331409" startTime="2026-11-03T16:46:14.4376444+03:00" endTime="2026-11-03T16:46:14.4376448+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f66e2fa4-9852-4348-a237-b20323ba9408" />
+    <UnitTestResult executionId="e4952244-6f01-4327-afc6-a4c575ae8de3" testId="188f65d2-7ef4-81d3-bb74-e61f45b47e48" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;WITH x AS (DELETE FROM t RETURNING *) SELECT * FRO&quot;···)" computerName="SEMH59" duration="00:00:00.0000063" startTime="2026-11-03T16:46:14.4388919+03:00" endTime="2026-11-03T16:46:14.4388919+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e4952244-6f01-4327-afc6-a4c575ae8de3" />
+    <UnitTestResult executionId="46421a5e-fc87-4ed8-9c70-239b22cccd4c" testId="03300bbb-5e7c-05ee-58ad-8d7e4b6ae438" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;SELECT '@name' AS literal, id FROM t WHERE id = @i&quot;···, expected: &quot;SELECT '@name' AS literal, id FROM t WHERE id = $1&quot;)" computerName="SEMH59" duration="00:00:00.0045644" startTime="2026-11-03T16:46:12.1190214+03:00" endTime="2026-11-03T16:46:12.1190215+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="46421a5e-fc87-4ed8-9c70-239b22cccd4c" />
+    <UnitTestResult executionId="aa3b0521-3b2b-47d1-8e1e-8309db400205" testId="64c2b1da-e0b2-1517-6e8e-2338272f9ce6" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;  SELECT payload @&gt; '{}' FROM t&quot;, expected: &quot;SELECT payload @&gt; '{}' FROM t&quot;)" computerName="SEMH59" duration="00:00:00.0001102" startTime="2026-11-03T16:46:12.1193933+03:00" endTime="2026-11-03T16:46:12.1193933+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa3b0521-3b2b-47d1-8e1e-8309db400205" />
+    <UnitTestResult executionId="9f27fc9e-7205-4c32-aaaf-6fdb4ec3803e" testId="aa448f40-a28b-93e9-0933-7f48f23ce489" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;INSERT INTO t VALUES (@a)&quot;)" computerName="SEMH59" duration="00:00:00.0000075" startTime="2026-11-03T16:46:14.4387050+03:00" endTime="2026-11-03T16:46:14.4387051+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f27fc9e-7205-4c32-aaaf-6fdb4ec3803e" />
+    <UnitTestResult executionId="3027650c-d523-4fa8-9644-c8454f686ac3" testId="62e1e900-45ee-c338-bf3d-77eccf5b0fec" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://host.example&quot;, expected: &quot;host.example&quot;)" computerName="SEMH59" duration="00:00:00.0001023" startTime="2026-11-03T16:46:11.8741303+03:00" endTime="2026-11-03T16:46:11.8741304+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3027650c-d523-4fa8-9644-c8454f686ac3" />
+    <UnitTestResult executionId="f11e1c6e-80c8-4d40-8a12-5dae15e90a7b" testId="b2cc7a0f-bdd5-6fab-3ce6-474292151a52" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://user:pw@host.example:8443/v1/orders/9f8b2c&quot;···, expected: &quot;host.example/v1/orders/:id&quot;)" computerName="SEMH59" duration="00:00:00.0237097" startTime="2026-11-03T16:46:11.8701464+03:00" endTime="2026-11-03T16:46:11.8701727+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f11e1c6e-80c8-4d40-8a12-5dae15e90a7b" />
+    <UnitTestResult executionId="9c181476-96d2-4100-ad6d-f30a22418cbb" testId="cef1c331-be88-f63c-e87c-0b08ab15a931" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://Host.Example/orders/12345/lines&quot;, expected: &quot;host.example/orders/:id/lines&quot;)" computerName="SEMH59" duration="00:00:00.0005611" startTime="2026-11-03T16:46:11.8737114+03:00" endTime="2026-11-03T16:46:11.8737115+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c181476-96d2-4100-ad6d-f30a22418cbb" />
+    <UnitTestResult executionId="22a18d1a-7e8e-47aa-8464-91e280da9203" testId="94a5c7fe-4e05-4c2f-4945-ab6f0dd43ac4" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;UPDATE t SET a = @a&quot;)" computerName="SEMH59" duration="00:00:00.0006447" startTime="2026-11-03T16:46:14.4383965+03:00" endTime="2026-11-03T16:46:14.4383967+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22a18d1a-7e8e-47aa-8464-91e280da9203" />
+    <UnitTestResult executionId="81580205-9c0c-487b-bcff-943d0a0709da" testId="cf8ec616-ab74-f71d-564d-e85fc0b8cb68" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ImplausibleLengthIsRejectedWithoutAnEvent(length: 100001)" computerName="SEMH59" duration="00:00:00.0045832" startTime="2026-11-03T16:46:12.1195224+03:00" endTime="2026-11-03T16:46:12.1195225+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="81580205-9c0c-487b-bcff-943d0a0709da" />
+    <UnitTestResult executionId="d5e4911b-f189-42c2-9286-0b13b8d966ec" testId="7fd60d8b-81d8-bfab-a4d0-6f9e78522969" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.EachTerminalHasItsOwnEventAndTheEventCarriesNoCount" computerName="SEMH59" duration="00:00:00.1540916" startTime="2026-11-03T16:46:12.0284321+03:00" endTime="2026-11-03T16:46:12.0284328+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5e4911b-f189-42c2-9286-0b13b8d966ec" />
+    <UnitTestResult executionId="dd3b2105-4017-4ac5-9e38-8a1ace3a1de5" testId="5991a57c-91f2-6d9b-d613-5058eae75228" testName="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;/relative/path&quot;, expected: &quot;unknown&quot;)" computerName="SEMH59" duration="00:00:00.0000108" startTime="2026-11-03T16:46:11.8741879+03:00" endTime="2026-11-03T16:46:11.8741879+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd3b2105-4017-4ac5-9e38-8a1ace3a1de5" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;/relative/path&quot;, expected: &quot;unknown&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="5991a57c-91f2-6d9b-d613-5058eae75228">
+      <Execution id="dd3b2105-4017-4ac5-9e38-8a1ace3a1de5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: null, expected: &quot;unknown&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="32adfb56-a2e5-fc9c-d27b-eddcf4f5891f">
+      <Execution id="d867d361-0ea7-427f-9c91-5fe91bcce926" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;SELECT id FROM t WHERE id = @id&quot;, expected: &quot;SELECT id FROM t WHERE id = $1&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="2fffecc5-11d8-46e5-6f0f-44ce872f1951">
+      <Execution id="84f16ea8-5c8e-4b1b-81d5-28f15ceb46b5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="SelectStatementsGetPositionalPlaceholders" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://Host.Example/orders/12345/lines&quot;, expected: &quot;host.example/orders/:id/lines&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="cef1c331-be88-f63c-e87c-0b08ab15a931">
+      <Execution id="9c181476-96d2-4100-ad6d-f30a22418cbb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.FailedAndSlowOutgoingCallsBecomeEventsWithSanitizedAddressesAndFastOnesDoNot" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="196009bd-2f0b-ff7b-c1df-3113100ad698">
+      <Execution id="325eb985-aa76-468f-9dfa-279f1e9a3835" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="FailedAndSlowOutgoingCallsBecomeEventsWithSanitizedAddressesAndFastOnesDoNot" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://user:pw@host.example:8443/v1/orders/9f8b2c&quot;···, expected: &quot;host.example/v1/orders/:id&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="b2cc7a0f-bdd5-6fab-3ce6-474292151a52">
+      <Execution id="f11e1c6e-80c8-4d40-8a12-5dae15e90a7b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://api.telegram.org/bot123456:SECRET-token/se&quot;···, expected: &quot;api.telegram.org/:id/sendMessage&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="63016e64-bc50-8676-4bda-8a9797891a57">
+      <Execution id="bf964c3a-3cdb-4833-9047-9dcd2bfbf5c9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AChunkedBodyOverTheLimitIsRefusedWith413BeforeTheSessionIsChecked" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="0cec6bbb-86b8-5ee2-c7cf-a341a05b52df">
+      <Execution id="5ac54203-cbe7-4494-83d2-1264a7399e04" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AChunkedBodyOverTheLimitIsRefusedWith413BeforeTheSessionIsChecked" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;  SELECT payload @&gt; '{}' FROM t&quot;, expected: &quot;SELECT payload @&gt; '{}' FROM t&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="64c2b1da-e0b2-1517-6e8e-2338272f9ce6">
+      <Execution id="aa3b0521-3b2b-47d1-8e1e-8309db400205" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="SelectStatementsGetPositionalPlaceholders" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.QueueOverTheLimitRaisesOneEventResolvesBelowItAndReopensWhenItGrowsAgain" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="2bfd55c4-3dfa-6f59-d281-7b692be386bd">
+      <Execution id="92bba01a-6206-4e51-a7c0-aebdf8d9f9a6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="QueueOverTheLimitRaisesOneEventResolvesBelowItAndReopensWhenItGrowsAgain" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;SELECT 1; DROP TABLE t&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="ed97b397-f3bb-0a96-3909-bd65d3d5b48e">
+      <Execution id="41a4a126-e605-4fb6-b9e8-d799bd3a7d39" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="OnlyASingleSelectIsPlanned" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SameShapeIsPlannedOncePerCooldownAndNonSelectIsNeverPlanned" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="9986b5cf-dc8e-aab4-bf3f-a4fc57349f71">
+      <Execution id="005f00d6-797f-49f8-81bd-44b33bae40df" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="SameShapeIsPlannedOncePerCooldownAndNonSelectIsNeverPlanned" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;SELECT '@name' AS literal, id FROM t WHERE id = @i&quot;···, expected: &quot;SELECT '@name' AS literal, id FROM t WHERE id = $1&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="03300bbb-5e7c-05ee-58ad-8d7e4b6ae438">
+      <Execution id="46421a5e-fc87-4ed8-9c70-239b22cccd4c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="SelectStatementsGetPositionalPlaceholders" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;UPDATE t SET a = @a&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="94a5c7fe-4e05-4c2f-4945-ab6f0dd43ac4">
+      <Execution id="22a18d1a-7e8e-47aa-8464-91e280da9203" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="OnlyASingleSelectIsPlanned" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.CallThatGetsNoAnswerIsAnErrorEventAndAClientMistakeIsOnlyAWarning" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="993afc0c-944b-b918-4719-59a1de06280e">
+      <Execution id="f66e2fa4-9852-4348-a237-b20323ba9408" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="CallThatGetsNoAnswerIsAnErrorEventAndAClientMistakeIsOnlyAWarning" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SelectStatementsGetPositionalPlaceholders(statement: &quot;select a from t where x = @from and y = @to and z &quot;···, expected: &quot;select a from t where x = $1 and y = $2 and z = $1&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="c415c2d5-0334-5d82-b7f5-5aeedbd8ea46">
+      <Execution id="612bc454-7f32-4d47-9570-bee770a2a9b6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="SelectStatementsGetPositionalPlaceholders" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;EXPLAIN SELECT 1&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="df657148-937c-3470-6b99-79c053f90b90">
+      <Execution id="19f21d07-e71d-415a-908a-9143d83544d0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="OnlyASingleSelectIsPlanned" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ImplausibleLengthIsRejectedWithoutAnEvent(length: 100001)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="cf8ec616-ab74-f71d-564d-e85fc0b8cb68">
+      <Execution id="81580205-9c0c-487b-bcff-943d0a0709da" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="ImplausibleLengthIsRejectedWithoutAnEvent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.EachTerminalHasItsOwnEventAndTheEventCarriesNoCount" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="7fd60d8b-81d8-bfab-a4d0-6f9e78522969">
+      <Execution id="d5e4911b-f189-42c2-9286-0b13b8d966ec" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="EachTerminalHasItsOwnEventAndTheEventCarriesNoCount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;INSERT INTO t VALUES (@a)&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="aa448f40-a28b-93e9-0933-7f48f23ce489">
+      <Execution id="9f27fc9e-7205-4c32-aaaf-6fdb4ec3803e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="OnlyASingleSelectIsPlanned" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ReportWithoutASessionIsRejectedWith401" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="355542bb-e322-1daa-a20e-b3b2770846fb">
+      <Execution id="a292e2f5-4305-473c-a3f1-44406e49aef8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="ReportWithoutASessionIsRejectedWith401" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.OnlyASingleSelectIsPlanned(statement: &quot;WITH x AS (DELETE FROM t RETURNING *) SELECT * FRO&quot;···)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="188f65d2-7ef4-81d3-bb74-e61f45b47e48">
+      <Execution id="e4952244-6f01-4327-afc6-a4c575ae8de3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="OnlyASingleSelectIsPlanned" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.SlowSelectWithNamedParameterGetsAPlanEventWithoutCostsOrFilterText" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="51ee9048-93c0-aabf-4b98-940eb80dea0e">
+      <Execution id="411ecb7a-24cf-44e1-a7ca-e3dcfd90f2fe" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="SlowSelectWithNamedParameterGetsAPlanEventWithoutCostsOrFilterText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ImplausibleLengthIsRejectedWithoutAnEvent(length: -1)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="2ad6ddbd-4177-52db-2951-4df9b098a72c">
+      <Execution id="5434fa36-144e-453f-9ca4-e193312851b8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="ImplausibleLengthIsRejectedWithoutAnEvent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;ftp://host.example/file&quot;, expected: &quot;unknown&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="b4809b97-1841-fe8d-8382-14a2b6ef4535">
+      <Execution id="7b0d8277-e2ed-4ce9-9d72-8040afc2decf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.ImplausibleLengthIsRejectedWithoutAnEvent(length: null)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="49133e04-430a-272d-f4c0-91e7fc4f6a85">
+      <Execution id="d2f6bca2-cc3b-4cb2-ad21-e6e5495e45d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="ImplausibleLengthIsRejectedWithoutAnEvent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.AddressKeepsOnlyHostAndPlainWordSegments(address: &quot;https://host.example&quot;, expected: &quot;host.example&quot;)" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="62e1e900-45ee-c338-bf3d-77eccf5b0fec">
+      <Execution id="3027650c-d523-4fa8-9644-c8454f686ac3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="AddressKeepsOnlyHostAndPlainWordSegments" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests.StatementThatCannotBePlannedIsCountedAndNeverBreaksTheCaller" storage="d:\project\alkaros\tests\host\observability\offlinequeuereport\bin\debug\net8.0\alkaros.host.observability.offlinequeuereport.tests.dll" id="1ac01d5e-2401-4abb-919d-5580d2ea006b">
+      <Execution id="e313028f-3c42-4a88-b602-f5962ea198ea" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0\ALKAROS.Host.Observability.OfflineQueueReport.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Observability.OfflineQueueReport.Tests.OfflineQueueReportTests" name="StatementThatCannotBePlannedIsCountedAndNeverBreaksTheCaller" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ed97b397-f3bb-0a96-3909-bd65d3d5b48e" executionId="41a4a126-e605-4fb6-b9e8-d799bd3a7d39" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fffecc5-11d8-46e5-6f0f-44ce872f1951" executionId="84f16ea8-5c8e-4b1b-81d5-28f15ceb46b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="196009bd-2f0b-ff7b-c1df-3113100ad698" executionId="325eb985-aa76-468f-9dfa-279f1e9a3835" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ad6ddbd-4177-52db-2951-4df9b098a72c" executionId="5434fa36-144e-453f-9ca4-e193312851b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0cec6bbb-86b8-5ee2-c7cf-a341a05b52df" executionId="5ac54203-cbe7-4494-83d2-1264a7399e04" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49133e04-430a-272d-f4c0-91e7fc4f6a85" executionId="d2f6bca2-cc3b-4cb2-ad21-e6e5495e45d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="355542bb-e322-1daa-a20e-b3b2770846fb" executionId="a292e2f5-4305-473c-a3f1-44406e49aef8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="32adfb56-a2e5-fc9c-d27b-eddcf4f5891f" executionId="d867d361-0ea7-427f-9c91-5fe91bcce926" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4809b97-1841-fe8d-8382-14a2b6ef4535" executionId="7b0d8277-e2ed-4ce9-9d72-8040afc2decf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c415c2d5-0334-5d82-b7f5-5aeedbd8ea46" executionId="612bc454-7f32-4d47-9570-bee770a2a9b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9986b5cf-dc8e-aab4-bf3f-a4fc57349f71" executionId="005f00d6-797f-49f8-81bd-44b33bae40df" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="63016e64-bc50-8676-4bda-8a9797891a57" executionId="bf964c3a-3cdb-4833-9047-9dcd2bfbf5c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df657148-937c-3470-6b99-79c053f90b90" executionId="19f21d07-e71d-415a-908a-9143d83544d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1ac01d5e-2401-4abb-919d-5580d2ea006b" executionId="e313028f-3c42-4a88-b602-f5962ea198ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2bfd55c4-3dfa-6f59-d281-7b692be386bd" executionId="92bba01a-6206-4e51-a7c0-aebdf8d9f9a6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51ee9048-93c0-aabf-4b98-940eb80dea0e" executionId="411ecb7a-24cf-44e1-a7ca-e3dcfd90f2fe" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="993afc0c-944b-b918-4719-59a1de06280e" executionId="f66e2fa4-9852-4348-a237-b20323ba9408" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="188f65d2-7ef4-81d3-bb74-e61f45b47e48" executionId="e4952244-6f01-4327-afc6-a4c575ae8de3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03300bbb-5e7c-05ee-58ad-8d7e4b6ae438" executionId="46421a5e-fc87-4ed8-9c70-239b22cccd4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="64c2b1da-e0b2-1517-6e8e-2338272f9ce6" executionId="aa3b0521-3b2b-47d1-8e1e-8309db400205" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa448f40-a28b-93e9-0933-7f48f23ce489" executionId="9f27fc9e-7205-4c32-aaaf-6fdb4ec3803e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62e1e900-45ee-c338-bf3d-77eccf5b0fec" executionId="3027650c-d523-4fa8-9644-c8454f686ac3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2cc7a0f-bdd5-6fab-3ce6-474292151a52" executionId="f11e1c6e-80c8-4d40-8a12-5dae15e90a7b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cef1c331-be88-f63c-e87c-0b08ab15a931" executionId="9c181476-96d2-4100-ad6d-f30a22418cbb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94a5c7fe-4e05-4c2f-4945-ab6f0dd43ac4" executionId="22a18d1a-7e8e-47aa-8464-91e280da9203" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf8ec616-ab74-f71d-564d-e85fc0b8cb68" executionId="81580205-9c0c-487b-bcff-943d0a0709da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fd60d8b-81d8-bfab-a4d0-6f9e78522969" executionId="d5e4911b-f189-42c2-9286-0b13b8d966ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5991a57c-91f2-6d9b-d613-5058eae75228" executionId="dd3b2105-4017-4ac5-9e38-8a1ace3a1de5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="28" executed="28" passed="28" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.44]   Discovering: ALKAROS.Host.Observability.OfflineQueueReport.Tests&#xD;
+[xUnit.net 00:00:00.56]   Discovered:  ALKAROS.Host.Observability.OfflineQueueReport.Tests&#xD;
+[xUnit.net 00:00:00.58]   Starting:    ALKAROS.Host.Observability.OfflineQueueReport.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58668&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58668/v1/login - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58668/v1/login - 401 0 - 17.0491ms&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56655&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56655/api/v1/telemetry/offline-queue - application/json -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/telemetry/offline-queue'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/telemetry/offline-queue'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56655/api/v1/telemetry/offline-queue - 413 0 - 66.1207ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56657&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56658&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56659&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56657/bot123456:SECRET-token/send?key=abc123 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56657/bot123456:SECRET-token/send?key=abc123 - 503 0 - 0.7118ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56658/v1/invoices/9f8b2c1e-1111-2222-3333-444455556666?token=t0k3n - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56658/v1/invoices/9f8b2c1e-1111-2222-3333-444455556666?token=t0k3n - 200 0 - 314.7508ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:56659/v1/ping - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint '/{**path}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:56659/v1/ping - 200 0 - 0.6558ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60762&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Observability\OfflineQueueReport\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60762/api/v1/telemetry/offline-queue - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/telemetry/offline-queue'&#xD;
+info: Microsoft.AspNetCore.Http.Result.StatusCodeResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/telemetry/offline-queue'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60762/api/v1/telemetry/offline-queue - 401 0 - 41.4647ms&#xD;
+[xUnit.net 00:00:05.25]   Finished:    ALKAROS.Host.Observability.OfflineQueueReport.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

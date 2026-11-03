@@ -1069,6 +1069,14 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         }
     }
 
+    // Connecting or ending the customer display is a payments.take action (the same permission that binds a bill to it).
+    private async Task SeedCashierWhoTakesPaymentsAsync()
+    {
+        var userId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await SeedUserRoleWithPermissionsAsync(userId, "Kasiyer", "payments.take");
+    }
+
     private static async Task<string> LoginCashierAsync(HttpClient client, Guid terminalId, string forwardedFor)
     {
         using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
@@ -1134,6 +1142,28 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         return (pairing.DisplayId, cookie);
     }
 
+    [Fact]
+    public async Task AWaiterWithoutPaymentsTakeCannotConnectOrEndTheCustomerDisplay()
+    {
+        var terminalId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await SeedUserRoleWithPermissionsAsync(userId, "Garson", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiter = await LoginCashierAsync(client, terminalId, "198.51.100.43");
+        var pairing = await CreatePairingAsync(client, "198.51.100.43");
+
+        using var approve = await ApproveAsync(client, terminalId, waiter, pairing.Code, "198.51.100.43");
+        using var revoke = CreateForwardedRequest(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/display-sessions/revoke", "198.51.100.43", waiter);
+
+        Assert.Equal(HttpStatusCode.Forbidden, approve.StatusCode);
+        using var revoked = await client.SendAsync(revoke);
+        Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
+        using var early = await CompleteAsync(client, pairing.RequestId, pairing.Secret, "198.51.100.43");
+        Assert.Equal("PAIRING_NOT_APPROVED", await ErrorCodeAsync(early));
+    }
+
     [Theory]
     [InlineData("0O1I0O1I")]
     [InlineData("ABC")]
@@ -1142,7 +1172,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task ACodeWithUnsupportedCharactersOrLengthIsRefusedAsAWrongCode(string code)
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.41");
@@ -1157,7 +1187,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task PairingTellsApartAWrongCodeAnUnapprovedRequestAndAUsedOne()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.40");
@@ -1210,7 +1240,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task APairedDisplayShowsItsSessionToTheTillAndRevokingEndsIt()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.42");
@@ -1247,7 +1277,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task PairingANewDisplayEndsTheOneThatWasPairedToTheSameTerminal()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.44");
@@ -1267,7 +1297,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task ASessionInUseSlidesItsEndAndASessionPolledAgainAtOnceIsNotWrittenAgain()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.47");
@@ -1296,7 +1326,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task ADisplayRequestWaitingOnAConcurrentSessionRefreshIsStillAuthenticated()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.60");
@@ -1329,7 +1359,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task TheActiveOrderRouteNeedsTheCashierSessionBoundToThatTerminal()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.49");
@@ -1365,7 +1395,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     public async Task TheCustomerDisplayHubAcceptsOnlyALivePairedDisplayIntoItsTerminalGroup()
     {
         var terminalId = Guid.NewGuid();
-        await SeedUserAsync(Guid.NewGuid());
+        await SeedCashierWhoTakesPaymentsAsync();
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.50");

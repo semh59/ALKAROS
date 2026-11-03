@@ -264,6 +264,31 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SessionAndTenderAmountsTheLedgerCannotStoreExactlyAreRefusedNamingTheField()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "amount-fields");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = $"/api/v1/terminals/{terminalId:D}/cash-sessions";
+
+        var badOpen = await PostAsync(client, path, cookie, new { OpeningBalance = 100.005m });
+        Assert.Equal(HttpStatusCode.BadRequest, badOpen.StatusCode);
+        Assert.Equal("Açılış bakiyesi geçersiz veya eksik.", await ErrorMessage(badOpen));
+
+        var opened = await PostAsync(client, path, cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var badTender = await PostAsync(client, $"{path}/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80.005m, IdempotencyKey = "amount-fields-key" });
+        Assert.Equal(HttpStatusCode.BadRequest, badTender.StatusCode);
+        Assert.Equal("Verilen tutar geçersiz veya eksik.", await ErrorMessage(badTender));
+    }
+
+    private static async Task<string?> ErrorMessage(HttpResponseMessage response)
+        => (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("message").GetString();
+
+    [Fact]
     public async Task CashTenderClaimingMoreThanTheBillsRemainingPayableIsRejectedAndPersistsNothing()
     {
         // Found by an independent review (2026-09-18): AmountDue is
@@ -352,6 +377,27 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var afterClose = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
             new { Direction = "In", Amount = 10m, Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
         Assert.Equal(HttpStatusCode.Conflict, afterClose.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("100.555")]
+    [InlineData("10000000000000000")]
+    public async Task ACashMovementTheLedgerCannotStoreExactlyIsRefusedAsAValidationError(string amount)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "movement-scale");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 200m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
+            new { Direction = "In", Amount = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture), Notes = (string?)null, IdempotencyKey = Guid.NewGuid().ToString() });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("VALIDATION_FAILED", error.GetProperty("code").GetString());
+        Assert.Equal("Tutar sıfırdan büyük olmalı, en fazla iki ondalık basamak içermeli ve sınırı aşmamalı.", error.GetProperty("message").GetString());
     }
 
     [Fact]

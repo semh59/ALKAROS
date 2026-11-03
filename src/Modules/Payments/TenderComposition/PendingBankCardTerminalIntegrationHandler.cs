@@ -25,7 +25,7 @@ namespace ALKAROS.Payments.TenderRouting;
 public sealed class PendingBankCardTerminalIntegrationHandler : ITenderHandler
 {
     public const string PendingIntegrationReason =
-        "Token/Beko terminal entegrasyonu (V13-HUG-001) henüz tamamlanmadı; " +
+        "Token/Beko terminal entegrasyonu henüz tamamlanmadı; " +
         "bu kart ödemesi elle mutabakat gerektirir.";
 
     public TenderMethod Method => TenderMethod.BankCard;

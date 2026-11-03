@@ -62,6 +62,15 @@ public sealed class TenderCompositionTests : IClassFixture<TenderCompositionTest
         => new(_bills, _payments, _allocations, _adjustments, _dataSource);
 
     [Fact]
+    public void ThePendingCardReasonIsPlainTurkishWithoutATaskCode()
+    {
+        var reason = ALKAROS.Payments.TenderRouting.PendingBankCardTerminalIntegrationHandler.PendingIntegrationReason;
+
+        reason.Should().NotMatchRegex(@"[A-Z]+\d*-[A-Z]+-\d+");
+        reason.Should().Contain("elle mutabakat");
+    }
+
+    [Fact]
     public void FactoryBuildsARegistryWithCashAndBankCardResolved()
     {
         var registry = ALKAROS.Payments.TenderRouting.TenderHandlerRegistryFactory.Build(

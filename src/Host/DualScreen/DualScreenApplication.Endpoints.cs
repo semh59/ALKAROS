@@ -511,9 +511,11 @@ public static partial class DualScreenApplication
             PairingApprovalRequest request,
             HttpContext context,
             DualScreenStore store,
+            IAuthorizationService authorization,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
             try
             {
                 await store.ApprovePairingAsync(terminalId, request.Code, cancellationToken);
@@ -575,9 +577,11 @@ public static partial class DualScreenApplication
             Guid terminalId,
             HttpContext context,
             DualScreenStore store,
+            IAuthorizationService authorization,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
             var count = await store.RevokeDisplaySessionsAsync(terminalId, cancellationToken);
             return Results.Ok(new { revoked = count });
         }).RequireRateLimiting("terminal-write");

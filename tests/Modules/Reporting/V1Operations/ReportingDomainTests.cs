@@ -13,21 +13,6 @@ public sealed class ReportingDomainTests
         _service = new OperationalReportService(new FakeReportingRepository(), new FixedBusinessDayTotalsReader());
     }
 
-    [Fact]
-    public void CalculateServiceWindowComputesCorrectBoundsAcrossMidnight()
-    {
-        var businessDate = new DateOnly(2026, 8, 18);
-        var tz = TimeZoneInfo.FindSystemTimeZoneById("Turkey Standard Time");
-
-        var filter = _service.CalculateServiceWindow(businessDate, tz);
-
-        filter.BusinessDate.Should().Be(businessDate);
-        filter.WindowStart.Hour.Should().Be(6);
-        filter.WindowStart.Day.Should().Be(18);
-        filter.WindowEnd.Hour.Should().Be(5);
-        filter.WindowEnd.Day.Should().Be(19);
-    }
-
     private sealed class FakeReportingRepository : IOperationalReportRepository
     {
         private readonly Dictionary<DateOnly, BusinessDayRecord> _businessDays = [];

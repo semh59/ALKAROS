@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Messaging;
 using ALKAROS.Payments.Allocations.Persistence;
@@ -24,6 +25,7 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
     private readonly IBillRepository _billRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly IPaymentAllocationRepository _allocationRepository;
+    private readonly IBillAdjustmentRepository _adjustmentRepository;
     private readonly ICardSettlementAttemptRepository _attemptRepository;
     private readonly NpgsqlDataSource _dataSource;
 
@@ -31,12 +33,14 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
         IBillRepository billRepository,
         IPaymentRepository paymentRepository,
         IPaymentAllocationRepository allocationRepository,
+        IBillAdjustmentRepository adjustmentRepository,
         ICardSettlementAttemptRepository attemptRepository,
         NpgsqlDataSource dataSource)
     {
         _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
         _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
         _allocationRepository = allocationRepository ?? throw new ArgumentNullException(nameof(allocationRepository));
+        _adjustmentRepository = adjustmentRepository ?? throw new ArgumentNullException(nameof(adjustmentRepository));
         _attemptRepository = attemptRepository ?? throw new ArgumentNullException(nameof(attemptRepository));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
@@ -132,6 +136,14 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
                 // from here) — V13-REC-001's future job is to open the
                 // ReconciliationCase; this row is the typed evidence it will
                 // consume (V13-PAY-004 Acceptance evidence).
+                // An unresolved payment above what is still payable would block the bill with money that
+                // can never be reconciled against it, so it is refused before anything is recorded.
+                var allocated = (await _allocationRepository.GetByBillIdAsync(bill.Id, cancellationToken)).Sum(a => a.Amount);
+                var adjustments = await _adjustmentRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+                var remainingPayable = AdjustmentCalculator.Calculate(currentBill, adjustments).AdjustedPayableAmount - allocated;
+                if (request.AttemptedAmount > remainingPayable)
+                    throw new OverAllocationException(bill.Id, request.AttemptedAmount, remainingPayable);
+
                 payment = payment.Tender(request.AttemptedAmount).MarkUnknown(requiresReconciliation.Reason);
                 await _paymentRepository.AddAsync(payment, connection, transaction, cancellationToken);
 

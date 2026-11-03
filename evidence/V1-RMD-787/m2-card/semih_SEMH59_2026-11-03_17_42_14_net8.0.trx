@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="fcd9ed7e-8d69-4e3a-bf78-800d761fe890" name="semih@SEMH59 2026-11-03 17:42:14" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T17:42:14.7031731+03:00" queuing="2026-11-03T17:42:14.7031733+03:00" start="2026-11-03T17:42:12.5586127+03:00" finish="2026-11-03T17:42:16.0863692+03:00" />
+  <TestSettings name="default" id="4ef2675d-34c1-49ce-ae70-97a27528313e">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_17_42_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="3cbafd6c-d360-4468-8251-c630ebe7bc95" testId="977148cb-b2f1-09ef-31dd-5cba643f2291" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ResumeAfterACrashReplaysTheSameAllocationInsteadOfCreatingASecondOne" computerName="SEMH59" duration="00:00:00.0637556" startTime="2026-11-03T17:42:15.7518387+03:00" endTime="2026-11-03T17:42:15.7518395+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3cbafd6c-d360-4468-8251-c630ebe7bc95" />
+    <UnitTestResult executionId="813120ab-4830-47cc-bc4d-c08333609686" testId="a902d591-16be-c8da-fe7f-7b4898623bca" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.AnUnknownOutcomeAboveTheRemainingPayableIsRejectedBeforeAnythingIsRecorded" computerName="SEMH59" duration="00:00:00.0888688" startTime="2026-11-03T17:42:14.9653829+03:00" endTime="2026-11-03T17:42:14.9653833+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="813120ab-4830-47cc-bc4d-c08333609686" />
+    <UnitTestResult executionId="d9a95241-5ffa-4a39-a4ea-942523fb19ea" testId="73ad3d01-8ab0-46a6-3a34-0d855d4e5a59" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnApprovedAmountWithMoreThanTwoDecimals" computerName="SEMH59" duration="00:00:00.0028541" startTime="2026-11-03T17:42:15.5695600+03:00" endTime="2026-11-03T17:42:15.5695610+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9a95241-5ffa-4a39-a4ea-942523fb19ea" />
+    <UnitTestResult executionId="6f91a174-52b1-4e78-a517-9a61446642d0" testId="940bee28-4732-b82c-a3b1-91c8722f53b8" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(amount: &quot;10000000000000000&quot;, field: &quot;AttemptedAmount&quot;)" computerName="SEMH59" duration="00:00:00.0079912" startTime="2026-11-03T17:42:15.3826707+03:00" endTime="2026-11-03T17:42:15.3826709+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6f91a174-52b1-4e78-a517-9a61446642d0">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;System.ArgumentException&gt; to be thrown, but no exception was thrown.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(String amount, String field) in D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\CardSettlementOrchestratorTests.cs:line 122&#xD;
+   at InvokeStub_CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3f2a6021-4516-403d-b72b-2e8f0e87f505" testId="2ea5feff-3664-6048-a4f0-668dfed47ae5" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ApprovedSettlementCreatesPaymentAllocationAndQueuesFiscalHandoff" computerName="SEMH59" duration="00:00:00.0874010" startTime="2026-11-03T17:42:15.5665621+03:00" endTime="2026-11-03T17:42:15.5665625+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f2a6021-4516-403d-b72b-2e8f0e87f505" />
+    <UnitTestResult executionId="4bf25f72-3ecd-47d1-855a-4b3c9cf9e37e" testId="2fadeb1e-b31d-c70f-13d0-e2f52eac6cbe" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ADifferentOutcomeUnderTheSameIdempotencyKeyIsRejectedAsAMismatch" computerName="SEMH59" duration="00:00:00.0659803" startTime="2026-11-03T17:42:15.8694823+03:00" endTime="2026-11-03T17:42:15.8694828+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4bf25f72-3ecd-47d1-855a-4b3c9cf9e37e" />
+    <UnitTestResult executionId="84e942d5-97e9-40ae-8517-6678a5ec33e6" testId="e6b0dc01-ddab-aa51-7103-51246b5270ed" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ConcurrentSubmitsOfTheSameAttemptProduceExactlyOneAllocation" computerName="SEMH59" duration="00:00:00.0997308" startTime="2026-11-03T17:42:15.4786241+03:00" endTime="2026-11-03T17:42:15.4786243+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84e942d5-97e9-40ae-8517-6678a5ec33e6" />
+    <UnitTestResult executionId="64af8de7-1a8c-40ac-b943-3465764ba05d" testId="db7491d8-e80f-b65b-9d26-66961b8999d3" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ADifferentProviderCorrelationUnderTheSameIdempotencyKeyIsRejectedAsAMismatch" computerName="SEMH59" duration="00:00:00.0622670" startTime="2026-11-03T17:42:15.6875848+03:00" endTime="2026-11-03T17:42:15.6875852+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64af8de7-1a8c-40ac-b943-3465764ba05d" />
+    <UnitTestResult executionId="3da41b35-8fd6-442b-af9d-e4fa6df59c2c" testId="5ddb39c1-74d1-fcbd-f2d7-fb33e05198f1" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.DeclinedSettlementNeverAllocatesOrQueuesFiscalHandoff" computerName="SEMH59" duration="00:00:00.0546520" startTime="2026-11-03T17:42:15.6248054+03:00" endTime="2026-11-03T17:42:15.6248057+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3da41b35-8fd6-442b-af9d-e4fa6df59c2c" />
+    <UnitTestResult executionId="73d06753-c529-4aaf-91e8-3ed3cceff7bb" testId="e729af94-b925-d354-b68b-c9ba3b2b0e1a" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.UnknownBillIsRejectedAndCreatesNothing" computerName="SEMH59" duration="00:00:00.0785887" startTime="2026-11-03T17:42:14.5425181+03:00" endTime="2026-11-03T17:42:14.5425412+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73d06753-c529-4aaf-91e8-3ed3cceff7bb" />
+    <UnitTestResult executionId="d4f8a4bd-78fb-456c-a84a-5461a61d2a2f" testId="92e5c629-0e05-17b4-3e9f-d2cf9115336a" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.RequiresReconciliationSettlementLeavesPaymentUnknownAsTypedEvidenceForV13Rec001" computerName="SEMH59" duration="00:00:00.0497849" startTime="2026-11-03T17:42:15.8024977+03:00" endTime="2026-11-03T17:42:15.8024981+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d4f8a4bd-78fb-456c-a84a-5461a61d2a2f" />
+    <UnitTestResult executionId="84a24679-dd92-4331-a598-fb19bc68859a" testId="25743cfe-8238-eefa-f10a-a1e601a9d337" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(amount: &quot;10.005&quot;, field: &quot;AttemptedAmount&quot;)" computerName="SEMH59" duration="00:00:00.4013987" startTime="2026-11-03T17:42:15.3813038+03:00" endTime="2026-11-03T17:42:15.3813042+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84a24679-dd92-4331-a598-fb19bc68859a">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;System.ArgumentException&gt; to be thrown, but no exception was thrown.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(String amount, String field) in D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\CardSettlementOrchestratorTests.cs:line 122&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2d463c2-3871-4464-8144-02a8144c00f6" testId="06037e5d-35ef-2941-9bf2-e2351d841f83" testName="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.AnUnknownOutcomeWithinTheRemainingPayableIsStillRecorded" computerName="SEMH59" duration="00:00:00.3321951" startTime="2026-11-03T17:42:14.8760205+03:00" endTime="2026-11-03T17:42:14.8760209+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2d463c2-3871-4464-8144-02a8144c00f6" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.UnknownBillIsRejectedAndCreatesNothing" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="e729af94-b925-d354-b68b-c9ba3b2b0e1a">
+      <Execution id="73d06753-c529-4aaf-91e8-3ed3cceff7bb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="UnknownBillIsRejectedAndCreatesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ADifferentProviderCorrelationUnderTheSameIdempotencyKeyIsRejectedAsAMismatch" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="db7491d8-e80f-b65b-9d26-66961b8999d3">
+      <Execution id="64af8de7-1a8c-40ac-b943-3465764ba05d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ADifferentProviderCorrelationUnderTheSameIdempotencyKeyIsRejectedAsAMismatch" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.AnUnknownOutcomeWithinTheRemainingPayableIsStillRecorded" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="06037e5d-35ef-2941-9bf2-e2351d841f83">
+      <Execution id="c2d463c2-3871-4464-8144-02a8144c00f6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="AnUnknownOutcomeWithinTheRemainingPayableIsStillRecorded" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.AnUnknownOutcomeAboveTheRemainingPayableIsRejectedBeforeAnythingIsRecorded" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="a902d591-16be-c8da-fe7f-7b4898623bca">
+      <Execution id="813120ab-4830-47cc-bc4d-c08333609686" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="AnUnknownOutcomeAboveTheRemainingPayableIsRejectedBeforeAnythingIsRecorded" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(amount: &quot;10.005&quot;, field: &quot;AttemptedAmount&quot;)" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="25743cfe-8238-eefa-f10a-a1e601a9d337">
+      <Execution id="84a24679-dd92-4331-a598-fb19bc68859a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ResumeAfterACrashReplaysTheSameAllocationInsteadOfCreatingASecondOne" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="977148cb-b2f1-09ef-31dd-5cba643f2291">
+      <Execution id="3cbafd6c-d360-4468-8251-c630ebe7bc95" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ResumeAfterACrashReplaysTheSameAllocationInsteadOfCreatingASecondOne" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ADifferentOutcomeUnderTheSameIdempotencyKeyIsRejectedAsAMismatch" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="2fadeb1e-b31d-c70f-13d0-e2f52eac6cbe">
+      <Execution id="4bf25f72-3ecd-47d1-855a-4b3c9cf9e37e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ADifferentOutcomeUnderTheSameIdempotencyKeyIsRejectedAsAMismatch" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnApprovedAmountWithMoreThanTwoDecimals" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="73ad3d01-8ab0-46a6-3a34-0d855d4e5a59">
+      <Execution id="d9a95241-5ffa-4a39-a4ea-942523fb19ea" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ValidateRejectsAnApprovedAmountWithMoreThanTwoDecimals" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.DeclinedSettlementNeverAllocatesOrQueuesFiscalHandoff" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="5ddb39c1-74d1-fcbd-f2d7-fb33e05198f1">
+      <Execution id="3da41b35-8fd6-442b-af9d-e4fa6df59c2c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="DeclinedSettlementNeverAllocatesOrQueuesFiscalHandoff" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(amount: &quot;10000000000000000&quot;, field: &quot;AttemptedAmount&quot;)" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="940bee28-4732-b82c-a3b1-91c8722f53b8">
+      <Execution id="6f91a174-52b1-4e78-a517-9a61446642d0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.RequiresReconciliationSettlementLeavesPaymentUnknownAsTypedEvidenceForV13Rec001" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="92e5c629-0e05-17b4-3e9f-d2cf9115336a">
+      <Execution id="d4f8a4bd-78fb-456c-a84a-5461a61d2a2f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="RequiresReconciliationSettlementLeavesPaymentUnknownAsTypedEvidenceForV13Rec001" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ConcurrentSubmitsOfTheSameAttemptProduceExactlyOneAllocation" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="e6b0dc01-ddab-aa51-7103-51246b5270ed">
+      <Execution id="84e942d5-97e9-40ae-8517-6678a5ec33e6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ConcurrentSubmitsOfTheSameAttemptProduceExactlyOneAllocation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ApprovedSettlementCreatesPaymentAllocationAndQueuesFiscalHandoff" storage="d:\project\alkaros\tests\modules\payments\cardsettlement\bin\debug\net8.0\alkaros.payments.cardsettlement.tests.dll" id="2ea5feff-3664-6048-a4f0-668dfed47ae5">
+      <Execution id="3f2a6021-4516-403d-b72b-2e8f0e87f505" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\bin\Debug\net8.0\ALKAROS.Payments.CardSettlement.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests" name="ApprovedSettlementCreatesPaymentAllocationAndQueuesFiscalHandoff" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="977148cb-b2f1-09ef-31dd-5cba643f2291" executionId="3cbafd6c-d360-4468-8251-c630ebe7bc95" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a902d591-16be-c8da-fe7f-7b4898623bca" executionId="813120ab-4830-47cc-bc4d-c08333609686" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="73ad3d01-8ab0-46a6-3a34-0d855d4e5a59" executionId="d9a95241-5ffa-4a39-a4ea-942523fb19ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="940bee28-4732-b82c-a3b1-91c8722f53b8" executionId="6f91a174-52b1-4e78-a517-9a61446642d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ea5feff-3664-6048-a4f0-668dfed47ae5" executionId="3f2a6021-4516-403d-b72b-2e8f0e87f505" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fadeb1e-b31d-c70f-13d0-e2f52eac6cbe" executionId="4bf25f72-3ecd-47d1-855a-4b3c9cf9e37e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e6b0dc01-ddab-aa51-7103-51246b5270ed" executionId="84e942d5-97e9-40ae-8517-6678a5ec33e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db7491d8-e80f-b65b-9d26-66961b8999d3" executionId="64af8de7-1a8c-40ac-b943-3465764ba05d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ddb39c1-74d1-fcbd-f2d7-fb33e05198f1" executionId="3da41b35-8fd6-442b-af9d-e4fa6df59c2c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e729af94-b925-d354-b68b-c9ba3b2b0e1a" executionId="73d06753-c529-4aaf-91e8-3ed3cceff7bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="92e5c629-0e05-17b4-3e9f-d2cf9115336a" executionId="d4f8a4bd-78fb-456c-a84a-5461a61d2a2f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25743cfe-8238-eefa-f10a-a1e601a9d337" executionId="84a24679-dd92-4331-a598-fb19bc68859a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="06037e5d-35ef-2941-9bf2-e2351d841f83" executionId="c2d463c2-3871-4464-8144-02a8144c00f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="11" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: ALKAROS.Payments.CardSettlement.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  ALKAROS.Payments.CardSettlement.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    ALKAROS.Payments.CardSettlement.Tests&#xD;
+[xUnit.net 00:00:02.18]       Expected a &lt;System.ArgumentException&gt; to be thrown, but no exception was thrown.&#xD;
+[xUnit.net 00:00:02.19]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.19]         D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\CardSettlementOrchestratorTests.cs(122,0): at ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(String amount, String field)&#xD;
+[xUnit.net 00:00:02.19]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:02.19]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:02.19]       Expected a &lt;System.ArgumentException&gt; to be thrown, but no exception was thrown.&#xD;
+[xUnit.net 00:00:02.19]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.19]            at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.19]         D:\PROJECT\ALKAROS\tests\Modules\Payments\CardSettlement\CardSettlementOrchestratorTests.cs(122,0): at ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(String amount, String field)&#xD;
+[xUnit.net 00:00:02.19]            at InvokeStub_CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(Object, Span`1)&#xD;
+[xUnit.net 00:00:02.19]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:02.82]   Finished:    ALKAROS.Payments.CardSettlement.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:42:15.3785979+03:00">
+        <Text>[xUnit.net 00:00:02.18]     ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(amount: "10.005", field: "AttemptedAmount") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:42:15.3821654+03:00">
+        <Text>[xUnit.net 00:00:02.19]     ALKAROS.Payments.CardSettlement.Tests.CardSettlementOrchestratorTests.ValidateRejectsAnAttemptedAmountTheColumnCannotStoreExactly(amount: "10000000000000000", field: "AttemptedAmount") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

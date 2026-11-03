@@ -24,10 +24,10 @@ public sealed record CashTenderRequest(
             throw new ArgumentException("Cash session id cannot be empty.", nameof(CashSessionId));
         if (BillId == Guid.Empty)
             throw new ArgumentException("Bill id cannot be empty.", nameof(BillId));
-        if (AmountDue <= 0)
-            throw new ArgumentException("Amount due must be greater than zero.", nameof(AmountDue));
-        if (TenderedAmount <= 0)
-            throw new ArgumentException("Tendered amount must be greater than zero.", nameof(TenderedAmount));
+        if (!TransactionLedger.CashTransaction.IsStorableAmount(AmountDue))
+            throw new ArgumentException("Amount due must be positive, have at most two decimals and fit the ledger.", nameof(AmountDue));
+        if (!TransactionLedger.CashTransaction.IsStorableAmount(TenderedAmount))
+            throw new ArgumentException("Tendered amount must be positive, have at most two decimals and fit the ledger.", nameof(TenderedAmount));
         if (string.IsNullOrWhiteSpace(IdempotencyKey))
             throw new ArgumentException("Idempotency key cannot be empty.", nameof(IdempotencyKey));
     }

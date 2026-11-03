@@ -268,6 +268,20 @@ public sealed class InteractionTelemetryTests : IClassFixture<InteractionDatabas
         return app;
     }
 
+    // The body is read after the session check, and the fixture has no identity schema to sign a session in, so the
+    // limit that also covers chunked bodies is asserted as the endpoint's own request-size metadata.
+    [Fact]
+    public async Task TheEndpointCarriesTheBodyLimitThatAlsoCoversAChunkedBody()
+    {
+        await using var app = await StartAppAsync();
+
+        var endpoint = app.Services.GetRequiredService<Microsoft.AspNetCore.Routing.EndpointDataSource>().Endpoints
+            .Single(candidate => candidate.DisplayName!.Contains("/api/v1/telemetry/interactions", StringComparison.Ordinal));
+
+        endpoint.Metadata.GetMetadata<Microsoft.AspNetCore.Http.Metadata.IRequestSizeLimitMetadata>()!.MaxRequestBodySize
+            .Should().Be(InteractionTelemetryEndpoints.MaxBodyBytes);
+    }
+
     [Fact]
     public async Task CallWithoutACashierSessionIsRejectedAndOversizedBodiesAreTooLarge()
     {

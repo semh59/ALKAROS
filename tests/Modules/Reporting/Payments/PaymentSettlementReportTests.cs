@@ -57,12 +57,9 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
     }
 
     /// <summary>
-    /// V1-RMD-325 (independent 2026-09-26 audit, finding K15): a hospitality business day runs 06:00 -&gt;
-    /// next day's 06:00, the same convention <see cref="ALKAROS.Reporting.V1Operations.OperationalReportService.CalculateServiceWindow"/>
-    /// already defines for the EOD report - a bill paid at 01:00 local time belongs to the PREVIOUS
-    /// business day (the day the restaurant was still open and serving it), not the calendar day that
-    /// just started. Before this fix this report used a plain midnight boundary, so the exact same payment
-    /// would land in two different business dates across these two reports.
+    /// A hospitality business day runs 06:00 -&gt; next day's 06:00: a bill paid at 01:00 local time belongs to the
+    /// PREVIOUS business day (the day the restaurant was still open and serving it), not the calendar day that
+    /// just started.
     /// </summary>
     [Fact]
     public async Task APaymentAtOneAmLocalTimeBelongsToThePreviousBusinessDateNotTheNewCalendarDay()

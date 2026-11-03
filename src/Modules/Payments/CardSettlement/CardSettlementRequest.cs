@@ -40,16 +40,23 @@ public sealed record CardSettlementRequest(
     {
         if (BillId == Guid.Empty)
             throw new ArgumentException("Bill id cannot be empty.", nameof(BillId));
-        if (AttemptedAmount <= 0)
-            throw new ArgumentException("Attempted amount must be greater than zero.", nameof(AttemptedAmount));
+        if (!IsStorableAmount(AttemptedAmount))
+            throw new ArgumentException(
+                "Attempted amount must be positive, have at most two decimals and fit NUMERIC(18,2).", nameof(AttemptedAmount));
         if (string.IsNullOrWhiteSpace(IdempotencyKey))
             throw new ArgumentException("Idempotency key cannot be empty.", nameof(IdempotencyKey));
         if (string.IsNullOrWhiteSpace(ProviderCorrelationId))
             throw new ArgumentException("Provider correlation id cannot be empty.", nameof(ProviderCorrelationId));
         if (Result is null)
             throw new ArgumentException("Result cannot be null.", nameof(Result));
-        if (Result is TenderApproved approved && approved.ApprovedAmount > AttemptedAmount)
+        if (Result is TenderApproved approved && !IsStorableAmount(approved.ApprovedAmount))
+            throw new ArgumentException(
+                "Approved amount must be positive, have at most two decimals and fit NUMERIC(18,2).", nameof(Result));
+        if (Result is TenderApproved over && over.ApprovedAmount > AttemptedAmount)
             throw new ArgumentException(
                 "Approved amount cannot exceed the attempted amount.", nameof(Result));
     }
+
+    private static bool IsStorableAmount(decimal amount)
+        => amount > 0 && amount <= 9_999_999_999_999_999.99m && decimal.Round(amount, 2) == amount;
 }

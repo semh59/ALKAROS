@@ -48,6 +48,23 @@ public sealed class TenderRoutingTests
         Assert.Throws<ArgumentException>(request.Validate);
     }
 
+    [Theory]
+    [InlineData("10.001")]
+    [InlineData("10000000000000000")]
+    public void TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(string amount)
+    {
+        var request = new TenderRequest(
+            Guid.NewGuid(), TenderMethod.Eft, decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture));
+
+        Assert.Equal("Amount", Assert.Throws<ArgumentException>(request.Validate).ParamName);
+    }
+
+    [Fact]
+    public void TenderRequestValidateAcceptsTheLargestStorableAmount()
+    {
+        new TenderRequest(Guid.NewGuid(), TenderMethod.Eft, 9999999999999999.99m).Validate();
+    }
+
     [Fact]
     public void TenderRequestValidateRejectsZeroAndNegativeAmount()
     {

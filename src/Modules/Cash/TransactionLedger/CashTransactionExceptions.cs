@@ -8,11 +8,11 @@ public abstract class CashTransactionException : Exception
     protected CashTransactionException(string message) : base(message) { }
 }
 
-/// <summary>Thrown when a transaction amount is zero or negative.</summary>
+/// <summary>Thrown when a transaction amount is not positive, has more than two decimals, or exceeds the ledger limit.</summary>
 public sealed class InvalidCashTransactionAmountException : CashTransactionException
 {
     public InvalidCashTransactionAmountException(decimal amount)
-        : base($"Cash transaction amount '{amount}' must be greater than zero.")
+        : base($"Cash transaction amount '{amount}' must be greater than zero, have at most two decimals and not exceed the ledger limit.")
     {
         Amount = amount;
     }

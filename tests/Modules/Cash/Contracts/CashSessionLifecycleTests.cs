@@ -44,6 +44,29 @@ public sealed class CashSessionLifecycleTests
         reconciledSession.IsActive.Should().BeFalse();
     }
 
+    [Theory]
+    [InlineData("100.005")]
+    [InlineData("10000000000000000")]
+    public void SessionCommandsRejectAnAmountTheLedgerCannotStoreExactly(string amount)
+    {
+        var value = decimal.Parse(amount, System.Globalization.CultureInfo.InvariantCulture);
+        var open = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), value);
+        var count = new RecordCashCountCommand(Guid.NewGuid(), value, Guid.NewGuid());
+        var close = new CloseCashSessionCommand(Guid.NewGuid(), value, Guid.NewGuid());
+
+        open.Invoking(c => c.Validate()).Should().Throw<ArgumentException>().WithParameterName("OpeningBalance");
+        count.Invoking(c => c.Validate()).Should().Throw<ArgumentException>().WithParameterName("CountedAmount");
+        close.Invoking(c => c.Validate()).Should().Throw<ArgumentException>().WithParameterName("ActualCash");
+    }
+
+    [Fact]
+    public void SessionCommandsAcceptAZeroBalance()
+    {
+        new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 0m).Validate();
+        new RecordCashCountCommand(Guid.NewGuid(), 0m, Guid.NewGuid()).Validate();
+        new CloseCashSessionCommand(Guid.NewGuid(), 0m, Guid.NewGuid()).Validate();
+    }
+
     [Fact]
     public void OpenCashSessionCommandValidation()
     {

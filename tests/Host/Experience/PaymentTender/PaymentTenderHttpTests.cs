@@ -178,6 +178,28 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EftReuseOfAnIdempotencyKeyWithAnotherAmountIsRefusedAndRecordsNothingMore()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "eft-key-reuse");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 30m, IdempotencyKey = "eft-reuse-1" });
+
+        var reuse = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 50m, IdempotencyKey = "eft-reuse-1" });
+
+        Assert.Equal(HttpStatusCode.Conflict, reuse.StatusCode);
+        var error = (await reuse.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("TENDER_IDEMPOTENCY_KEY_REUSED", error.GetProperty("code").GetString());
+        Assert.Equal("İşlem kimliği başka bir tutarla zaten kullanılmış.", error.GetProperty("message").GetString());
+        var summary = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+        Assert.Equal(30m, (await summary.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("allocatedTotal").GetDecimal());
+    }
+
+    [Fact]
     public async Task BankCardTenderAlwaysComesBackAsRequiresReconciliationNeverAFakeApprovalOrDecline()
     {
         var terminalId = Guid.NewGuid();

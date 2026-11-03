@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="efb1ded0-7288-4685-bd3c-27d71d755db8" name="semih@SEMH59 2026-11-03 16:52:38" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:52:38.2608920+03:00" queuing="2026-11-03T16:52:38.2608923+03:00" start="2026-11-03T16:52:35.1233084+03:00" finish="2026-11-03T16:52:38.2706686+03:00" />
+  <TestSettings name="default" id="403fd51d-79b8-440b-bfe2-d9970c7f8200">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_52_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="dfc56793-c6b8-43d7-9a7c-7d449aaed11c" testId="9ee6e947-ad65-3d72-cc19-0ae5add06621" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RouterReturnsTenderVersionNotEnabledForCustomerAccountUnchanged" computerName="SEMH59" duration="00:00:00.0008693" startTime="2026-11-03T16:52:37.9402361+03:00" endTime="2026-11-03T16:52:37.9402362+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfc56793-c6b8-43d7-9a7c-7d449aaed11c" />
+    <UnitTestResult executionId="2a0a1281-aafd-44a0-8b39-37ebbf304faf" testId="745415de-f162-eb08-62a6-2b4f6bb3a4d1" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.FactoryBuildsARegistryWithCashAndBankCardResolved" computerName="SEMH59" duration="00:00:00.0019324" startTime="2026-11-03T16:52:37.5136450+03:00" endTime="2026-11-03T16:52:37.5136455+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a0a1281-aafd-44a0-8b39-37ebbf304faf" />
+    <UnitTestResult executionId="ca65415c-3c7a-4f14-aa86-ade8ecebeac8" testId="5d2c53f1-3a89-e52c-297b-0f7dc6243e52" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RouterAlwaysReturnsRequiresReconciliationForBankCardNeverAFabricatedOutcome" computerName="SEMH59" duration="00:00:00.0737496" startTime="2026-11-03T16:52:37.5077524+03:00" endTime="2026-11-03T16:52:37.5077948+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca65415c-3c7a-4f14-aa86-ade8ecebeac8" />
+    <UnitTestResult executionId="d75b7dd5-566b-41fc-a46c-c2eb2fc1d4ac" testId="54c9ad28-f523-8ae1-4bf3-1b4ac83f6d2b" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.CashBridgeRejectsAMissingRequiredFieldWithoutTouchingTheDatabase" computerName="SEMH59" duration="00:00:00.0143603" startTime="2026-11-03T16:52:37.9547614+03:00" endTime="2026-11-03T16:52:37.9547619+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d75b7dd5-566b-41fc-a46c-c2eb2fc1d4ac" />
+    <UnitTestResult executionId="eeec4d18-d5c1-437f-80bc-edc6264bbae6" testId="232d5d84-6eb0-2e74-312b-5aca7ec24c71" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.FactoryFailsClosedOnADuplicateCashRegistration" computerName="SEMH59" duration="00:00:00.0046794" startTime="2026-11-03T16:52:37.9596059+03:00" endTime="2026-11-03T16:52:37.9596064+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eeec4d18-d5c1-437f-80bc-edc6264bbae6" />
+    <UnitTestResult executionId="f7c55c7c-9142-4e13-9514-ae7b40605ed0" testId="09a9fe10-d9e6-06e7-4aa2-23263c7f482c" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RouterReturnsTenderMethodNotRegisteredForMealCard" computerName="SEMH59" duration="00:00:00.0014550" startTime="2026-11-03T16:52:37.5152209+03:00" endTime="2026-11-03T16:52:37.5152214+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7c55c7c-9142-4e13-9514-ae7b40605ed0" />
+    <UnitTestResult executionId="56659331-f8ee-463e-a6f9-63f51d7ad511" testId="5efe5a68-43fd-8b98-6b6d-b8e5c28f9e4b" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode" computerName="SEMH59" duration="00:00:00.0044535" startTime="2026-11-03T16:52:37.5120514+03:00" endTime="2026-11-03T16:52:37.5120515+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56659331-f8ee-463e-a6f9-63f51d7ad511" />
+    <UnitTestResult executionId="189a9d52-c778-4c3f-be63-faba84c9ae13" testId="5bf75bb4-4da6-17ef-1188-fd42e4dd7cab" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RegistryLeavesMealCardGenuinelyUnregistered" computerName="SEMH59" duration="00:00:00.0003787" startTime="2026-11-03T16:52:37.9393129+03:00" endTime="2026-11-03T16:52:37.9393133+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="189a9d52-c778-4c3f-be63-faba84c9ae13" />
+    <UnitTestResult executionId="a25f1c53-497d-47c8-bca6-17769010168e" testId="8994e117-0801-7545-f8e1-917aa9653dce" testName="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.CashBridgeThroughTheGenericRouterProducesTheSameRealEffectAsTheDirectHandler" computerName="SEMH59" duration="00:00:00.4193352" startTime="2026-11-03T16:52:37.9375890+03:00" endTime="2026-11-03T16:52:37.9375893+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a25f1c53-497d-47c8-bca6-17769010168e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.FactoryFailsClosedOnADuplicateCashRegistration" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="232d5d84-6eb0-2e74-312b-5aca7ec24c71">
+      <Execution id="eeec4d18-d5c1-437f-80bc-edc6264bbae6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="FactoryFailsClosedOnADuplicateCashRegistration" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.ThePendingCardReasonIsPlainTurkishWithoutATaskCode" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="5efe5a68-43fd-8b98-6b6d-b8e5c28f9e4b">
+      <Execution id="56659331-f8ee-463e-a6f9-63f51d7ad511" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="ThePendingCardReasonIsPlainTurkishWithoutATaskCode" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.CashBridgeRejectsAMissingRequiredFieldWithoutTouchingTheDatabase" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="54c9ad28-f523-8ae1-4bf3-1b4ac83f6d2b">
+      <Execution id="d75b7dd5-566b-41fc-a46c-c2eb2fc1d4ac" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="CashBridgeRejectsAMissingRequiredFieldWithoutTouchingTheDatabase" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RouterAlwaysReturnsRequiresReconciliationForBankCardNeverAFabricatedOutcome" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="5d2c53f1-3a89-e52c-297b-0f7dc6243e52">
+      <Execution id="ca65415c-3c7a-4f14-aa86-ade8ecebeac8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="RouterAlwaysReturnsRequiresReconciliationForBankCardNeverAFabricatedOutcome" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RouterReturnsTenderVersionNotEnabledForCustomerAccountUnchanged" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="9ee6e947-ad65-3d72-cc19-0ae5add06621">
+      <Execution id="dfc56793-c6b8-43d7-9a7c-7d449aaed11c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="RouterReturnsTenderVersionNotEnabledForCustomerAccountUnchanged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RouterReturnsTenderMethodNotRegisteredForMealCard" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="09a9fe10-d9e6-06e7-4aa2-23263c7f482c">
+      <Execution id="f7c55c7c-9142-4e13-9514-ae7b40605ed0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="RouterReturnsTenderMethodNotRegisteredForMealCard" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.RegistryLeavesMealCardGenuinelyUnregistered" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="5bf75bb4-4da6-17ef-1188-fd42e4dd7cab">
+      <Execution id="189a9d52-c778-4c3f-be63-faba84c9ae13" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="RegistryLeavesMealCardGenuinelyUnregistered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.CashBridgeThroughTheGenericRouterProducesTheSameRealEffectAsTheDirectHandler" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="8994e117-0801-7545-f8e1-917aa9653dce">
+      <Execution id="a25f1c53-497d-47c8-bca6-17769010168e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="CashBridgeThroughTheGenericRouterProducesTheSameRealEffectAsTheDirectHandler" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests.FactoryBuildsARegistryWithCashAndBankCardResolved" storage="d:\project\alkaros\tests\modules\payments\tendercomposition\bin\debug\net8.0\alkaros.payments.tendercomposition.tests.dll" id="745415de-f162-eb08-62a6-2b4f6bb3a4d1">
+      <Execution id="2a0a1281-aafd-44a0-8b39-37ebbf304faf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderComposition.Tests.TenderCompositionTests" name="FactoryBuildsARegistryWithCashAndBankCardResolved" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9ee6e947-ad65-3d72-cc19-0ae5add06621" executionId="dfc56793-c6b8-43d7-9a7c-7d449aaed11c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="745415de-f162-eb08-62a6-2b4f6bb3a4d1" executionId="2a0a1281-aafd-44a0-8b39-37ebbf304faf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d2c53f1-3a89-e52c-297b-0f7dc6243e52" executionId="ca65415c-3c7a-4f14-aa86-ade8ecebeac8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54c9ad28-f523-8ae1-4bf3-1b4ac83f6d2b" executionId="d75b7dd5-566b-41fc-a46c-c2eb2fc1d4ac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="232d5d84-6eb0-2e74-312b-5aca7ec24c71" executionId="eeec4d18-d5c1-437f-80bc-edc6264bbae6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09a9fe10-d9e6-06e7-4aa2-23263c7f482c" executionId="f7c55c7c-9142-4e13-9514-ae7b40605ed0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5efe5a68-43fd-8b98-6b6d-b8e5c28f9e4b" executionId="56659331-f8ee-463e-a6f9-63f51d7ad511" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bf75bb4-4da6-17ef-1188-fd42e4dd7cab" executionId="189a9d52-c778-4c3f-be63-faba84c9ae13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8994e117-0801-7545-f8e1-917aa9653dce" executionId="a25f1c53-497d-47c8-bca6-17769010168e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="9" executed="9" passed="9" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.12]   Discovering: ALKAROS.Payments.TenderComposition.Tests&#xD;
+[xUnit.net 00:00:00.17]   Discovered:  ALKAROS.Payments.TenderComposition.Tests&#xD;
+[xUnit.net 00:00:00.18]   Starting:    ALKAROS.Payments.TenderComposition.Tests&#xD;
+[xUnit.net 00:00:02.37]   Finished:    ALKAROS.Payments.TenderComposition.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

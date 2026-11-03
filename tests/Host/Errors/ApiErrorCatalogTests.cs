@@ -2,6 +2,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TenderHandler;
+using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Authorization;
@@ -224,6 +225,7 @@ public sealed class ApiErrorCatalogTests
         { null, Uninitialized<CashVarianceThresholdExceededException>(), 409, "CASH_VARIANCE_THRESHOLD_EXCEEDED", "Fark tolerans sınırını aşıyor; süpervizör onayı gerekiyor." },
         { null, Uninitialized<NegativeCashAmountException>(), 400, "VALIDATION_FAILED", "Tutar negatif olamaz." },
         { null, Uninitialized<CashTenderBillNotFoundException>(), 404, "BILL_NOT_FOUND", "Hesap bulunamadı." },
+        { null, Uninitialized<InvalidCashTransactionAmountException>(), 400, "VALIDATION_FAILED", "Tutar sıfırdan büyük olmalı, en fazla iki ondalık basamak içermeli ve sınırı aşmamalı." },
         { null, Uninitialized<ClosedCashSessionException>(), 409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil." },
         { null, Uninitialized<InsufficientCashTenderException>(), 400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor." },
         { null, Uninitialized<CashTenderIdempotencyKeyReusedException>(), 409, "TENDER_IDEMPOTENCY_KEY_REUSED", "İşlem kimliği başka bir tahsilat için zaten kullanılmış." },
@@ -368,6 +370,12 @@ public sealed class ApiErrorCatalogTests
         => Assert.Equal(
             (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin."),
             ApiExceptionHandler.Resolve([], exception));
+
+    [Fact]
+    public void ABodyOverTheServerLimitIsA413NotAValidationError()
+        => Assert.Equal(
+            (413, "PAYLOAD_TOO_LARGE", "İstek gövdesi çok büyük."),
+            ApiExceptionHandler.Resolve([], new BadHttpRequestException("Request body too large.", StatusCodes.Status413PayloadTooLarge)));
 
     [Fact]
     public void AnOrdinaryInvalidOperationIsNotTurnedIntoAConflict()

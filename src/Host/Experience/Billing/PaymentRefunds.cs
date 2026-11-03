@@ -383,7 +383,6 @@ public sealed class PaymentRefundStore
     public async Task<RefundRequestV1> RejectAsync(
         Guid requestId, Guid deciderId, string? note, CancellationToken cancellationToken)
     {
-        var text = RequireText(note, MaxTextLength, "Rejection note", "Ret notu");
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var request = await LoadAsync(connection, transaction, requestId, cancellationToken);
@@ -391,6 +390,7 @@ public sealed class PaymentRefundStore
             throw new RefundStateException(requestId, request.Status);
         if (request.RequestedBy == deciderId)
             throw new RefundSelfDecisionException();
+        var text = RequireText(note, MaxTextLength, "Rejection note", "Ret notu");
 
         var now = DateTimeOffset.UtcNow;
         await PostgresRefundRequestRepository.MarkRejectedAsync(requestId, deciderId, text, now, connection, transaction, cancellationToken);
@@ -409,14 +409,14 @@ public sealed class PaymentRefundStore
     public async Task<RefundRequestV1> CompleteManualAsync(
         Guid requestId, string? slipNumber, string? note, Guid userId, CancellationToken cancellationToken)
     {
-        var slip = RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası");
-        var noteText = string.IsNullOrWhiteSpace(note) ? null : RequireText(note, MaxTextLength, "Note", "Not");
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var request = await LoadAsync(connection, transaction, requestId, cancellationToken);
         await LockBillAsync(connection, transaction, request.BillId, cancellationToken);
         if (request.Status != "AwaitingManualRefund")
             throw new RefundStateException(requestId, request.Status);
+        var slip = RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası");
+        var noteText = string.IsNullOrWhiteSpace(note) ? null : RequireText(note, MaxTextLength, "Note", "Not");
 
         var now = DateTimeOffset.UtcNow;
         await _reversals.AppendAsync(

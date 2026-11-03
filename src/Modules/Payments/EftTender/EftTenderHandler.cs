@@ -100,6 +100,8 @@ public sealed class EftTenderHandler : IEftTenderHandler
         {
             if (existingAllocation.BillId != billId)
                 throw new EftBillMismatchException(request.IdempotencyKey, existingAllocation.BillId, billId);
+            if (existingAllocation.Amount != request.Amount)
+                throw new EftAmountMismatchException(request.IdempotencyKey, existingAllocation.Amount, request.Amount);
             await dbTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return new TenderApproved(existingAllocation.Amount);
         }

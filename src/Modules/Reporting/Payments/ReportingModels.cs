@@ -28,16 +28,9 @@ public sealed record PaymentSettlementReportFilter(
     }
 
     /// <summary>
-    /// The business date's [start, end) window in UTC, per <see cref="TimeZoneId"/>.
-    ///
-    /// V1-RMD-325 (independent 2026-09-26 audit, finding K15): a hospitality business day does not end at
-    /// midnight - a table still being served at 01:00 belongs to the day the restaurant opened for, not
-    /// the calendar day that just started. This used to be a plain midnight-to-midnight window, while
-    /// <see cref="ALKAROS.Reporting.V1Operations.OperationalReportService.CalculateServiceWindow"/> already
-    /// defined the SAME "business date" concept as 06:00 -&gt; next day's 05:59:59.999 - a bill paid at
-    /// 01:00 could land in two different days across the EOD report and this settlement report. Aligned to
-    /// the exact same 06:00 boundary that method already uses (that method's own callers are unreachable
-    /// today - it is the intended, product-decided boundary either way, per its own doc comment).
+    /// The business date's [start, end) window in UTC, per <see cref="TimeZoneId"/>. A hospitality business day does
+    /// not end at midnight: a table still being served at 01:00 belongs to the day the restaurant opened for, so the
+    /// window runs from 06:00 to the next day's 06:00 local time.
     /// </summary>
     public (DateTimeOffset Start, DateTimeOffset End) ResolveWindow()
     {

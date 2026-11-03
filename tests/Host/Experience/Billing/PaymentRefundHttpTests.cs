@@ -134,6 +134,41 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RejectingARefundThatIsNoLongerRequestedAnswersTheStateConflictEvenWithoutANote()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 100m, _cashierId);
+        var paymentId = await PaymentIdAsync(seeded.BillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
+        await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+
+        using var response = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/reject", _managerCookie, new RefundDecisionInputV1(" ")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("REFUND_STATE", await ErrorCode(response));
+    }
+
+    [Fact]
+    public async Task CompletingARefundThatIsNotAwaitingTheManualStepAnswersTheStateConflictEvenWithoutASlipNumber()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 100m, _cashierId);
+        var paymentId = await PaymentIdAsync(seeded.BillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
+
+        using var response = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1(" ", null)));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("REFUND_STATE", await ErrorCode(response));
+    }
+
+    [Fact]
     public async Task ManualRefundWaitsForTheSlipNumberThenRefundsAndCancelsTheBill()
     {
         var seeded = await _database.SeedBillAsync();

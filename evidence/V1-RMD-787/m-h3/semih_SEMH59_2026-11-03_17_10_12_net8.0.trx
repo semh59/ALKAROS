@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="17b09d21-1148-44a9-8d25-3fc86c589650" name="semih@SEMH59 2026-11-03 17:10:12" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T17:10:12.5022101+03:00" queuing="2026-11-03T17:10:12.5022103+03:00" start="2026-11-03T17:10:09.2980810+03:00" finish="2026-11-03T17:10:12.5466337+03:00" />
+  <TestSettings name="default" id="4ced814c-722b-4e06-9130-86095bdd70af">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_17_10_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e5ad6b78-6a4c-4fb5-94b1-2b20ac8f3791" testId="884ca7bd-92fe-5d31-f95e-b728ca3e7c01" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteFailsClosedWhenNoHandlerIsRegistered(method: BankCard)" computerName="SEMH59" duration="00:00:00.0000095" startTime="2026-11-03T17:10:12.4656760+03:00" endTime="2026-11-03T17:10:12.4656760+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e5ad6b78-6a4c-4fb5-94b1-2b20ac8f3791" />
+    <UnitTestResult executionId="8a1488ec-1ff9-4c12-86ff-65d2a0db3e53" testId="cee1d37d-6317-d983-1b5f-113229bf9056" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(amount: &quot;10000000000000000&quot;)" computerName="SEMH59" duration="00:00:00.0049119" startTime="2026-11-03T17:10:12.4724297+03:00" endTime="2026-11-03T17:10:12.4724300+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a1488ec-1ff9-4c12-86ff-65d2a0db3e53">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(String amount) in D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\TenderRoutingTests.cs:line 59&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9caae27a-c14f-4d96-8611-551b5af52cdb" testId="1f8a5817-6b25-bc49-5ff5-edc06d3e4bc4" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;Foo&quot;)" computerName="SEMH59" duration="00:00:00.0000038" startTime="2026-11-03T17:10:12.4653541+03:00" endTime="2026-11-03T17:10:12.4653541+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9caae27a-c14f-4d96-8611-551b5af52cdb" />
+    <UnitTestResult executionId="2e0923fa-5676-4611-843b-34f86bfdb2ce" testId="8aba0e9d-8bf5-1cea-16b8-54692fdad6a7" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;1.0&quot;)" computerName="SEMH59" duration="00:00:00.0005379" startTime="2026-11-03T17:10:12.4652160+03:00" endTime="2026-11-03T17:10:12.4652161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e0923fa-5676-4611-843b-34f86bfdb2ce" />
+    <UnitTestResult executionId="74cd5fd3-16ea-4d84-8bc7-cf3e95950ac0" testId="1f0f876b-382d-6c2d-bae0-a00a8aed6c4c" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteValidatesTheRequestBeforeConsultingTheRegistry" computerName="SEMH59" duration="00:00:00.0017144" startTime="2026-11-03T17:10:12.4742392+03:00" endTime="2026-11-03T17:10:12.4742392+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="74cd5fd3-16ea-4d84-8bc7-cf3e95950ac0" />
+    <UnitTestResult executionId="0f838c4b-755a-426f-8da7-4f5dca1fbeed" testId="ceb68057-3364-e763-5abf-674bf6f53c07" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;MealCard&quot;, expected: MealCard)" computerName="SEMH59" duration="00:00:00.0000040" startTime="2026-11-03T17:10:12.4677856+03:00" endTime="2026-11-03T17:10:12.4677856+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f838c4b-755a-426f-8da7-4f5dca1fbeed" />
+    <UnitTestResult executionId="d8fc38da-de93-44ed-9bf2-866bbf307bd2" testId="1563d136-5d02-fe30-a640-b88d6c2bb56b" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateAcceptsTheLargestStorableAmount" computerName="SEMH59" duration="00:00:00.0001340" startTime="2026-11-03T17:10:12.4735334+03:00" endTime="2026-11-03T17:10:12.4735335+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d8fc38da-de93-44ed-9bf2-866bbf307bd2" />
+    <UnitTestResult executionId="09a90253-0ea1-4b71-b758-3a6a80acc6f5" testId="5a1ff273-2b7c-85b0-57b4-e06c3c93c523" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot; &quot;)" computerName="SEMH59" duration="00:00:00.0000058" startTime="2026-11-03T17:10:12.4652872+03:00" endTime="2026-11-03T17:10:12.4652872+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09a90253-0ea1-4b71-b758-3a6a80acc6f5" />
+    <UnitTestResult executionId="69313e47-fac4-4e1a-9915-df1092b9e74a" testId="8522b00c-95e2-b955-7030-7860d3b3be53" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteFailsClosedWhenNoHandlerIsRegistered(method: Cash)" computerName="SEMH59" duration="00:00:00.0071987" startTime="2026-11-03T17:10:12.4655414+03:00" endTime="2026-11-03T17:10:12.4655415+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="69313e47-fac4-4e1a-9915-df1092b9e74a" />
+    <UnitTestResult executionId="bbeb3226-1ff1-4f48-a245-a1cd044fb152" testId="59e66bfc-f68f-fe85-70dd-3bf1655b1390" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteFailsClosedWhenNoHandlerIsRegistered(method: MealCard)" computerName="SEMH59" duration="00:00:00.0002001" startTime="2026-11-03T17:10:12.4656088+03:00" endTime="2026-11-03T17:10:12.4656088+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bbeb3226-1ff1-4f48-a245-a1cd044fb152" />
+    <UnitTestResult executionId="23055b85-6fb3-4c6b-9ce4-fe9a3e392f5b" testId="67597943-c968-6710-6a52-4b1a9cda0800" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsEmptyPaymentId" computerName="SEMH59" duration="00:00:00.0003349" startTime="2026-11-03T17:10:12.4734380+03:00" endTime="2026-11-03T17:10:12.4734381+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="23055b85-6fb3-4c6b-9ce4-fe9a3e392f5b" />
+    <UnitTestResult executionId="4a19a322-c336-4152-9c47-ff441bc66d92" testId="947e3a19-3761-35a5-348a-68019ce2fbd9" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;Cash&quot;, expected: Cash)" computerName="SEMH59" duration="00:00:00.0002039" startTime="2026-11-03T17:10:12.4657730+03:00" endTime="2026-11-03T17:10:12.4657731+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a19a322-c336-4152-9c47-ff441bc66d92" />
+    <UnitTestResult executionId="37dc4730-2bbe-415e-b0e1-bb94aeaaa396" testId="30c9ca24-5e2a-976c-48ba-de08deebc6ac" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot; 1 &quot;)" computerName="SEMH59" duration="00:00:00.1409994" startTime="2026-11-03T17:10:12.4320784+03:00" endTime="2026-11-03T17:10:12.4320999+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37dc4730-2bbe-415e-b0e1-bb94aeaaa396" />
+    <UnitTestResult executionId="df7b8742-b800-4311-be91-d8fe710ae3d3" testId="a2b2a19d-4356-7670-3bec-ef402b73d1cf" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteRejectsCustomerAccountUnconditionallyEvenIfSomehowRegistered" computerName="SEMH59" duration="00:00:00.0008088" startTime="2026-11-03T17:10:12.4745554+03:00" endTime="2026-11-03T17:10:12.4745554+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df7b8742-b800-4311-be91-d8fe710ae3d3" />
+    <UnitTestResult executionId="0ee57c2a-a773-41f3-b722-5e138e13e7b4" testId="bec658a2-b657-9814-de5e-481b9596b244" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(amount: &quot;10.001&quot;)" computerName="SEMH59" duration="00:00:00.0002589" startTime="2026-11-03T17:10:12.4732241+03:00" endTime="2026-11-03T17:10:12.4732243+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0ee57c2a-a773-41f3-b722-5e138e13e7b4">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(System.ArgumentException)</Message>
+          <StackTrace>   at ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(String amount) in D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\TenderRoutingTests.cs:line 59&#xD;
+   at InvokeStub_TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d55f8bd6-0cc4-4633-90aa-905696d1303f" testId="b0a62ba9-38c8-7cd2-a941-1bf55bb3e845" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RegistryRejectsRegisteringTheSameMethodTwice" computerName="SEMH59" duration="00:00:00.0021031" startTime="2026-11-03T17:10:12.4744395+03:00" endTime="2026-11-03T17:10:12.4744395+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d55f8bd6-0cc4-4633-90aa-905696d1303f" />
+    <UnitTestResult executionId="a1bc1ae7-0e85-4d36-9e7a-4c5609ab1c24" testId="bbf048e9-19c5-e233-1131-41682ac43959" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot; 1&quot;)" computerName="SEMH59" duration="00:00:00.0000037" startTime="2026-11-03T17:10:12.4650132+03:00" endTime="2026-11-03T17:10:12.4650132+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1bc1ae7-0e85-4d36-9e7a-4c5609ab1c24" />
+    <UnitTestResult executionId="1688f3db-41cf-480b-b36f-94789de24a09" testId="55cbd063-d6a3-841e-4d90-f16e53446e4a" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;1 &quot;)" computerName="SEMH59" duration="00:00:00.0000031" startTime="2026-11-03T17:10:12.4357094+03:00" endTime="2026-11-03T17:10:12.4357094+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1688f3db-41cf-480b-b36f-94789de24a09" />
+    <UnitTestResult executionId="97103d64-386b-441d-b382-b058300bc98d" testId="2e460749-d768-d566-b03b-4b8aa899b5da" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: null)" computerName="SEMH59" duration="00:00:00.0000025" startTime="2026-11-03T17:10:12.4355715+03:00" endTime="2026-11-03T17:10:12.4355716+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97103d64-386b-441d-b382-b058300bc98d" />
+    <UnitTestResult executionId="30373813-04e9-454e-a058-9a8857ce654d" testId="2ba7cd9d-a20b-a253-c928-6536be49a4c7" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;cash&quot;)" computerName="SEMH59" duration="00:00:00.0000044" startTime="2026-11-03T17:10:12.4357713+03:00" endTime="2026-11-03T17:10:12.4357714+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30373813-04e9-454e-a058-9a8857ce654d" />
+    <UnitTestResult executionId="537e15ba-0fc9-4ffb-89df-5eafab75f29e" testId="93477860-26ac-72c9-6c2e-b38b2ad5d1ac" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsZeroAndNegativeAmount" computerName="SEMH59" duration="00:00:00.0002248" startTime="2026-11-03T17:10:12.4736296+03:00" endTime="2026-11-03T17:10:12.4736297+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="537e15ba-0fc9-4ffb-89df-5eafab75f29e" />
+    <UnitTestResult executionId="bd937e0a-1dbc-495d-ad4f-1c3cb63bbe3b" testId="5aa1846b-88d1-71de-ad0c-77f908c08263" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;99&quot;)" computerName="SEMH59" duration="00:00:00.0000056" startTime="2026-11-03T17:10:12.4654204+03:00" endTime="2026-11-03T17:10:12.4654205+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd937e0a-1dbc-495d-ad4f-1c3cb63bbe3b" />
+    <UnitTestResult executionId="58b33902-c38b-4f71-94b3-c7ae19f74e7f" testId="8b86e0ac-ab0a-130f-ba9c-7ee1d23d6751" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;+1&quot;)" computerName="SEMH59" duration="00:00:00.0000049" startTime="2026-11-03T17:10:12.4358326+03:00" endTime="2026-11-03T17:10:12.4358326+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="58b33902-c38b-4f71-94b3-c7ae19f74e7f" />
+    <UnitTestResult executionId="8030e212-4ea6-450f-8376-613cb80bbfcb" testId="f18b04a7-2906-4bf1-b2c7-58f3f3d3f45d" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;&quot;)" computerName="SEMH59" duration="00:00:00.0001353" startTime="2026-11-03T17:10:12.4350858+03:00" endTime="2026-11-03T17:10:12.4350858+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8030e212-4ea6-450f-8376-613cb80bbfcb" />
+    <UnitTestResult executionId="b4f7ddad-37e1-487a-ae07-41b0775e5bdd" testId="da72e01b-7604-9163-c577-69ef419fb2d4" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;SplitPayment&quot;)" computerName="SEMH59" duration="00:00:00.0000033" startTime="2026-11-03T17:10:12.4356478+03:00" endTime="2026-11-03T17:10:12.4356479+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4f7ddad-37e1-487a-ae07-41b0775e5bdd" />
+    <UnitTestResult executionId="fa743b38-3c2c-4eab-9cab-f2dd479c2008" testId="923785f9-052d-78ab-279e-c22c6eb9eb95" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;split_payment&quot;)" computerName="SEMH59" duration="00:00:00.0000097" startTime="2026-11-03T17:10:12.4354065+03:00" endTime="2026-11-03T17:10:12.4354065+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fa743b38-3c2c-4eab-9cab-f2dd479c2008" />
+    <UnitTestResult executionId="aa363079-ddc8-4d18-b4cb-25d3cf4ce69b" testId="b36968c8-fbd3-883d-0732-62c27024e99b" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;BankCard&quot;, expected: BankCard)" computerName="SEMH59" duration="00:00:00.0001597" startTime="2026-11-03T17:10:12.4676279+03:00" endTime="2026-11-03T17:10:12.4676279+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa363079-ddc8-4d18-b4cb-25d3cf4ce69b" />
+    <UnitTestResult executionId="99ceb25d-2009-415b-af05-636c0efd0d91" testId="db07e1f9-d7eb-2202-7b07-22f207c19e98" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteInvokesTheRegisteredHandlerAndWrapsItsResult" computerName="SEMH59" duration="00:00:00.0040638" startTime="2026-11-03T17:10:12.4743409+03:00" endTime="2026-11-03T17:10:12.4743409+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99ceb25d-2009-415b-af05-636c0efd0d91" />
+    <UnitTestResult executionId="42f9f487-50e0-4090-ac8c-377ed7448a56" testId="eeeb7c89-c07f-df2f-0bf2-c1d5d4d48696" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;0&quot;)" computerName="SEMH59" duration="00:00:00.0000049" startTime="2026-11-03T17:10:12.4354820+03:00" endTime="2026-11-03T17:10:12.4354821+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42f9f487-50e0-4090-ac8c-377ed7448a56" />
+    <UnitTestResult executionId="3de248e5-466a-49b5-9c28-178c78d8b372" testId="e5a70660-7f28-243e-0bf0-387e291130a4" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;CustomerAccount&quot;, expected: CustomerAccount)" computerName="SEMH59" duration="00:00:00.0000069" startTime="2026-11-03T17:10:12.4677141+03:00" endTime="2026-11-03T17:10:12.4677141+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3de248e5-466a-49b5-9c28-178c78d8b372" />
+    <UnitTestResult executionId="ef0c3066-e72f-44bc-bfc8-4a08ff264f6b" testId="3b55e570-a71d-5a60-a2c5-839d0901b82e" testName="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RegistryTryGetReturnsFalseForAnUnregisteredMethod" computerName="SEMH59" duration="00:00:00.0000900" startTime="2026-11-03T17:10:12.4733446+03:00" endTime="2026-11-03T17:10:12.4733446+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ef0c3066-e72f-44bc-bfc8-4a08ff264f6b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: null)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="2e460749-d768-d566-b03b-4b8aa899b5da">
+      <Execution id="97103d64-386b-441d-b382-b058300bc98d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RegistryTryGetReturnsFalseForAnUnregisteredMethod" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="3b55e570-a71d-5a60-a2c5-839d0901b82e">
+      <Execution id="ef0c3066-e72f-44bc-bfc8-4a08ff264f6b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RegistryTryGetReturnsFalseForAnUnregisteredMethod" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;1 &quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="55cbd063-d6a3-841e-4d90-f16e53446e4a">
+      <Execution id="1688f3db-41cf-480b-b36f-94789de24a09" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;Foo&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="1f8a5817-6b25-bc49-5ff5-edc06d3e4bc4">
+      <Execution id="9caae27a-c14f-4d96-8611-551b5af52cdb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;Cash&quot;, expected: Cash)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="947e3a19-3761-35a5-348a-68019ce2fbd9">
+      <Execution id="4a19a322-c336-4152-9c47-ff441bc66d92" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseAcceptsEveryCanonicalMethodName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;99&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="5aa1846b-88d1-71de-ad0c-77f908c08263">
+      <Execution id="bd937e0a-1dbc-495d-ad4f-1c3cb63bbe3b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;cash&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="2ba7cd9d-a20b-a253-c928-6536be49a4c7">
+      <Execution id="30373813-04e9-454e-a058-9a8857ce654d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(amount: &quot;10.001&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="bec658a2-b657-9814-de5e-481b9596b244">
+      <Execution id="0ee57c2a-a773-41f3-b722-5e138e13e7b4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteValidatesTheRequestBeforeConsultingTheRegistry" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="1f0f876b-382d-6c2d-bae0-a00a8aed6c4c">
+      <Execution id="74cd5fd3-16ea-4d84-8bc7-cf3e95950ac0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RouteValidatesTheRequestBeforeConsultingTheRegistry" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="f18b04a7-2906-4bf1-b2c7-58f3f3d3f45d">
+      <Execution id="8030e212-4ea6-450f-8376-613cb80bbfcb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsEmptyPaymentId" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="67597943-c968-6710-6a52-4b1a9cda0800">
+      <Execution id="23055b85-6fb3-4c6b-9ce4-fe9a3e392f5b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TenderRequestValidateRejectsEmptyPaymentId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;BankCard&quot;, expected: BankCard)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="b36968c8-fbd3-883d-0732-62c27024e99b">
+      <Execution id="aa363079-ddc8-4d18-b4cb-25d3cf4ce69b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseAcceptsEveryCanonicalMethodName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot; 1 &quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="30c9ca24-5e2a-976c-48ba-de08deebc6ac">
+      <Execution id="37dc4730-2bbe-415e-b0e1-bb94aeaaa396" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteFailsClosedWhenNoHandlerIsRegistered(method: BankCard)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="884ca7bd-92fe-5d31-f95e-b728ca3e7c01">
+      <Execution id="e5ad6b78-6a4c-4fb5-94b1-2b20ac8f3791" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RouteFailsClosedWhenNoHandlerIsRegistered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;MealCard&quot;, expected: MealCard)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="ceb68057-3364-e763-5abf-674bf6f53c07">
+      <Execution id="0f838c4b-755a-426f-8da7-4f5dca1fbeed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseAcceptsEveryCanonicalMethodName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;0&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="eeeb7c89-c07f-df2f-0bf2-c1d5d4d48696">
+      <Execution id="42f9f487-50e0-4090-ac8c-377ed7448a56" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteFailsClosedWhenNoHandlerIsRegistered(method: Cash)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="8522b00c-95e2-b955-7030-7860d3b3be53">
+      <Execution id="69313e47-fac4-4e1a-9915-df1092b9e74a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RouteFailsClosedWhenNoHandlerIsRegistered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteFailsClosedWhenNoHandlerIsRegistered(method: MealCard)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="59e66bfc-f68f-fe85-70dd-3bf1655b1390">
+      <Execution id="bbeb3226-1ff1-4f48-a245-a1cd044fb152" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RouteFailsClosedWhenNoHandlerIsRegistered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateAcceptsTheLargestStorableAmount" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="1563d136-5d02-fe30-a640-b88d6c2bb56b">
+      <Execution id="d8fc38da-de93-44ed-9bf2-866bbf307bd2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TenderRequestValidateAcceptsTheLargestStorableAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteInvokesTheRegisteredHandlerAndWrapsItsResult" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="db07e1f9-d7eb-2202-7b07-22f207c19e98">
+      <Execution id="99ceb25d-2009-415b-af05-636c0efd0d91" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RouteInvokesTheRegisteredHandlerAndWrapsItsResult" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RouteRejectsCustomerAccountUnconditionallyEvenIfSomehowRegistered" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="a2b2a19d-4356-7670-3bec-ef402b73d1cf">
+      <Execution id="df7b8742-b800-4311-be91-d8fe710ae3d3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RouteRejectsCustomerAccountUnconditionallyEvenIfSomehowRegistered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseAcceptsEveryCanonicalMethodName(raw: &quot;CustomerAccount&quot;, expected: CustomerAccount)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="e5a70660-7f28-243e-0bf0-387e291130a4">
+      <Execution id="3de248e5-466a-49b5-9c28-178c78d8b372" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseAcceptsEveryCanonicalMethodName" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot; &quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="5a1ff273-2b7c-85b0-57b4-e06c3c93c523">
+      <Execution id="09a90253-0ea1-4b71-b758-3a6a80acc6f5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;1.0&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="8aba0e9d-8bf5-1cea-16b8-54692fdad6a7">
+      <Execution id="2e0923fa-5676-4611-843b-34f86bfdb2ce" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;SplitPayment&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="da72e01b-7604-9163-c577-69ef419fb2d4">
+      <Execution id="b4f7ddad-37e1-487a-ae07-41b0775e5bdd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(amount: &quot;10000000000000000&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="cee1d37d-6317-d983-1b5f-113229bf9056">
+      <Execution id="8a1488ec-1ff9-4c12-86ff-65d2a0db3e53" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot; 1&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="bbf048e9-19c5-e233-1131-41682ac43959">
+      <Execution id="a1bc1ae7-0e85-4d36-9e7a-4c5609ab1c24" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsZeroAndNegativeAmount" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="93477860-26ac-72c9-6c2e-b38b2ad5d1ac">
+      <Execution id="537e15ba-0fc9-4ffb-89df-5eafab75f29e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TenderRequestValidateRejectsZeroAndNegativeAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;split_payment&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="923785f9-052d-78ab-279e-c22c6eb9eb95">
+      <Execution id="fa743b38-3c2c-4eab-9cab-f2dd479c2008" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.RegistryRejectsRegisteringTheSameMethodTwice" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="b0a62ba9-38c8-7cd2-a941-1bf55bb3e845">
+      <Execution id="d55f8bd6-0cc4-4633-90aa-905696d1303f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="RegistryRejectsRegisteringTheSameMethodTwice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TryParseRejectsSplitPaymentAndUnknownText(raw: &quot;+1&quot;)" storage="d:\project\alkaros\tests\modules\payments\tenderrouting\bin\debug\net8.0\alkaros.payments.tenderrouting.tests.dll" id="8b86e0ac-ab0a-130f-ba9c-7ee1d23d6751">
+      <Execution id="58b33902-c38b-4f71-94b3-c7ae19f74e7f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\bin\Debug\net8.0\ALKAROS.Payments.TenderRouting.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests" name="TryParseRejectsSplitPaymentAndUnknownText" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="884ca7bd-92fe-5d31-f95e-b728ca3e7c01" executionId="e5ad6b78-6a4c-4fb5-94b1-2b20ac8f3791" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cee1d37d-6317-d983-1b5f-113229bf9056" executionId="8a1488ec-1ff9-4c12-86ff-65d2a0db3e53" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f8a5817-6b25-bc49-5ff5-edc06d3e4bc4" executionId="9caae27a-c14f-4d96-8611-551b5af52cdb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8aba0e9d-8bf5-1cea-16b8-54692fdad6a7" executionId="2e0923fa-5676-4611-843b-34f86bfdb2ce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f0f876b-382d-6c2d-bae0-a00a8aed6c4c" executionId="74cd5fd3-16ea-4d84-8bc7-cf3e95950ac0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ceb68057-3364-e763-5abf-674bf6f53c07" executionId="0f838c4b-755a-426f-8da7-4f5dca1fbeed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1563d136-5d02-fe30-a640-b88d6c2bb56b" executionId="d8fc38da-de93-44ed-9bf2-866bbf307bd2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5a1ff273-2b7c-85b0-57b4-e06c3c93c523" executionId="09a90253-0ea1-4b71-b758-3a6a80acc6f5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8522b00c-95e2-b955-7030-7860d3b3be53" executionId="69313e47-fac4-4e1a-9915-df1092b9e74a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59e66bfc-f68f-fe85-70dd-3bf1655b1390" executionId="bbeb3226-1ff1-4f48-a245-a1cd044fb152" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="67597943-c968-6710-6a52-4b1a9cda0800" executionId="23055b85-6fb3-4c6b-9ce4-fe9a3e392f5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="947e3a19-3761-35a5-348a-68019ce2fbd9" executionId="4a19a322-c336-4152-9c47-ff441bc66d92" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="30c9ca24-5e2a-976c-48ba-de08deebc6ac" executionId="37dc4730-2bbe-415e-b0e1-bb94aeaaa396" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a2b2a19d-4356-7670-3bec-ef402b73d1cf" executionId="df7b8742-b800-4311-be91-d8fe710ae3d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bec658a2-b657-9814-de5e-481b9596b244" executionId="0ee57c2a-a773-41f3-b722-5e138e13e7b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0a62ba9-38c8-7cd2-a941-1bf55bb3e845" executionId="d55f8bd6-0cc4-4633-90aa-905696d1303f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbf048e9-19c5-e233-1131-41682ac43959" executionId="a1bc1ae7-0e85-4d36-9e7a-4c5609ab1c24" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="55cbd063-d6a3-841e-4d90-f16e53446e4a" executionId="1688f3db-41cf-480b-b36f-94789de24a09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e460749-d768-d566-b03b-4b8aa899b5da" executionId="97103d64-386b-441d-b382-b058300bc98d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2ba7cd9d-a20b-a253-c928-6536be49a4c7" executionId="30373813-04e9-454e-a058-9a8857ce654d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="93477860-26ac-72c9-6c2e-b38b2ad5d1ac" executionId="537e15ba-0fc9-4ffb-89df-5eafab75f29e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5aa1846b-88d1-71de-ad0c-77f908c08263" executionId="bd937e0a-1dbc-495d-ad4f-1c3cb63bbe3b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b86e0ac-ab0a-130f-ba9c-7ee1d23d6751" executionId="58b33902-c38b-4f71-94b3-c7ae19f74e7f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f18b04a7-2906-4bf1-b2c7-58f3f3d3f45d" executionId="8030e212-4ea6-450f-8376-613cb80bbfcb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da72e01b-7604-9163-c577-69ef419fb2d4" executionId="b4f7ddad-37e1-487a-ae07-41b0775e5bdd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="923785f9-052d-78ab-279e-c22c6eb9eb95" executionId="fa743b38-3c2c-4eab-9cab-f2dd479c2008" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b36968c8-fbd3-883d-0732-62c27024e99b" executionId="aa363079-ddc8-4d18-b4cb-25d3cf4ce69b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db07e1f9-d7eb-2202-7b07-22f207c19e98" executionId="99ceb25d-2009-415b-af05-636c0efd0d91" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eeeb7c89-c07f-df2f-0bf2-c1d5d4d48696" executionId="42f9f487-50e0-4090-ac8c-377ed7448a56" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e5a70660-7f28-243e-0bf0-387e291130a4" executionId="3de248e5-466a-49b5-9c28-178c78d8b372" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3b55e570-a71d-5a60-a2c5-839d0901b82e" executionId="ef0c3066-e72f-44bc-bfc8-4a08ff264f6b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="31" executed="31" passed="29" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.73]   Discovering: ALKAROS.Payments.TenderRouting.Tests&#xD;
+[xUnit.net 00:00:00.79]   Discovered:  ALKAROS.Payments.TenderRouting.Tests&#xD;
+[xUnit.net 00:00:00.79]   Starting:    ALKAROS.Payments.TenderRouting.Tests&#xD;
+[xUnit.net 00:00:01.02]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:01.02]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\TenderRoutingTests.cs(59,0): at ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(String amount)&#xD;
+[xUnit.net 00:00:01.02]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.02]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.02]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:01.02]       Expected: typeof(System.ArgumentException)&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         D:\PROJECT\ALKAROS\tests\Modules\Payments\TenderRouting\TenderRoutingTests.cs(59,0): at ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(String amount)&#xD;
+[xUnit.net 00:00:01.02]            at InvokeStub_TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.02]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.02]   Finished:    ALKAROS.Payments.TenderRouting.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:10:12.5106815+03:00">
+        <Text>[xUnit.net 00:00:01.02]     ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(amount: "10000000000000000") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T17:10:12.5110099+03:00">
+        <Text>[xUnit.net 00:00:01.02]     ALKAROS.Payments.TenderRouting.Tests.TenderRoutingTests.TenderRequestValidateRejectsAnAmountWithMoreThanTwoDecimalsOrAboveTheColumnLimit(amount: "10.001") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
