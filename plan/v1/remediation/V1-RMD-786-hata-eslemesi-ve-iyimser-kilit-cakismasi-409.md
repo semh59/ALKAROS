@@ -40,7 +40,7 @@ Ayrıca ApiConventions testleri hata zarfını (code, message, status, traceId) 
   - src/Host/DualScreen/DualScreenExceptions.cs (V1-RMD-097) — geçersiz kod hatası üretici.
   - src/Host/DualScreen/DualScreenApplication.CashSession.cs (V13-CSH-004) — işlem anahtarı hatasının alan adı.
   - tests/Host/Errors/ApiErrorCatalogTests.cs (V1-RMD-431) — alan mesajı ve çakışma eşlemesi.
-  - tests/Host/Experience/Billing/BillingSplitHttpTests.cs (V1-RMD-103) — Billing grubunda çakışma 409.
+  - tests/Host/Experience/Billing/BillingSplitErrorMappingTests.cs (V1-RMD-106) — Billing grubunda çakışma 409 ve alan mesajı (HTTP ile üretilemez: her Billing yazımı önce satır kilidi alır).
   - tests/Host/MigrationComposition/DualScreen/DualScreenHostTests.cs (V1-GOV-008) — alfabe dışı kod PAIRING_CODE_INVALID.
   - tests/Modules/Billing/BillFoundation/PostgresBillTests.cs (V1-RMD-002) — eski istisna tipi beklentisi.
   - tests/Modules/Orders/OrderAggregate/PostgresOrderTests.cs (V1-RMD-108) — eski istisna tipi beklentisi.
