@@ -113,8 +113,28 @@ public sealed class PostgresOrderTests : IClassFixture<OrdersTestDatabase>
 
         var act = () => _orders.SaveAsync(order.TransitionTo(OrderState.Submitted), expectedRowVersion: 5);
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(act);
+        var exception = await Assert.ThrowsAsync<OrderConcurrencyException>(act);
         Assert.Contains("concurrent modification", exception.Message);
+    }
+
+    [Fact]
+    public async Task StaleItemRowVersionSaveRejected()
+    {
+        var product = await SeedProduct();
+        var order = NewOrder(product);
+        await _orders.AddAsync(order);
+        var loaded = (await _orders.GetByIdAsync(order.Id))!;
+        await using (var command = _dataSource.CreateCommand(
+            "UPDATE orders.order_items SET row_version = row_version + 1 WHERE order_id = @order_id;"))
+        {
+            command.Parameters.AddWithValue("order_id", order.Id);
+            Assert.Equal(1, await command.ExecuteNonQueryAsync());
+        }
+
+        var act = () => _orders.SaveAsync(loaded.ChangeItemQuantity(loaded.Items[0].Id, 5), loaded.RowVersion);
+
+        var exception = await Assert.ThrowsAsync<OrderConcurrencyException>(act);
+        Assert.Contains("Order item", exception.Message);
     }
 
     [Fact]

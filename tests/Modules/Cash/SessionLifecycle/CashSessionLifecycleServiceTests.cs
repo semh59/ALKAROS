@@ -303,7 +303,7 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
 
         var act = () => _repository.SaveAsync(record, expectedRowVersion: opened.RowVersion);
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowExactlyAsync<CashSessionConcurrencyException>();
     }
 
     [Fact]

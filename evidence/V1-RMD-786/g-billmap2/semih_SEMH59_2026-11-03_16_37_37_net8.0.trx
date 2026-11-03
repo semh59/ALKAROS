@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e98bd27c-0fb8-4f25-bf5e-89c079866380" name="semih@SEMH59 2026-11-03 16:37:37" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:37:37.4867074+03:00" queuing="2026-11-03T16:37:37.4867075+03:00" start="2026-11-03T16:37:31.2233107+03:00" finish="2026-11-03T16:37:37.5860154+03:00" />
+  <TestSettings name="default" id="92b832d0-38fd-4c20-93a8-d56ca0a22378">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_37_37" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="accf3a4b-0126-4aff-b918-e38a1b016b10" testId="5c49b640-884e-3c3b-40dc-87d7ba5159e6" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault(sqlState: &quot;55P03&quot;)" computerName="SEMH59" duration="00:00:00.0121518" startTime="2026-11-03T16:37:37.4928760+03:00" endTime="2026-11-03T16:37:37.4928763+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="accf3a4b-0126-4aff-b918-e38a1b016b10" />
+    <UnitTestResult executionId="cfecdcb4-fbc5-40ff-9eab-d45f45657671" testId="66b05d92-7b7b-7469-e54a-51ea30cb1fe2" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault(sqlState: &quot;40P01&quot;)" computerName="SEMH59" duration="00:00:00.0003470" startTime="2026-11-03T16:37:37.4932706+03:00" endTime="2026-11-03T16:37:37.4932707+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cfecdcb4-fbc5-40ff-9eab-d45f45657671" />
+    <UnitTestResult executionId="fd2646d1-a506-4a02-a95e-825b2d164a3d" testId="3bf5dcc1-5ec0-23a6-a713-d519fa1a4af4" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ARowVersionConflictIs409(exceptionType: typeof(ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0004103" startTime="2026-11-03T16:37:37.4804969+03:00" endTime="2026-11-03T16:37:37.4804970+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd2646d1-a506-4a02-a95e-825b2d164a3d" />
+    <UnitTestResult executionId="b44c3fec-818d-4570-ac14-b565de1a7e0b" testId="a6665ba9-75a3-8389-37ab-494bf6d1a72d" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ACancelledRequestIsNotAServerFault" computerName="SEMH59" duration="00:00:00.0001747" startTime="2026-11-03T16:37:37.4947967+03:00" endTime="2026-11-03T16:37:37.4947969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b44c3fec-818d-4570-ac14-b565de1a7e0b" />
+    <UnitTestResult executionId="6a7b0073-7c30-4a42-8c93-696b67f6a9dd" testId="4e6c058c-3438-5049-95a1-b7d34fe367ff" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ARowVersionConflictIs409(exceptionType: typeof(ALKAROS.Orders.OrderAggregate.OrderConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0000941" startTime="2026-11-03T16:37:37.4806260+03:00" endTime="2026-11-03T16:37:37.4806261+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a7b0073-7c30-4a42-8c93-696b67f6a9dd" />
+    <UnitTestResult executionId="436c1ef8-800b-4494-b056-8973442df727" testId="ea7dd4fc-b0c3-bd16-1e1f-b05587fc74b3" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ARowVersionConflictIs409(exceptionType: typeof(ALKAROS.Billing.BillFoundation.BillConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:01.1748177" startTime="2026-11-03T16:37:37.4799774+03:00" endTime="2026-11-03T16:37:37.4799777+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="436c1ef8-800b-4494-b056-8973442df727" />
+    <UnitTestResult executionId="68814410-a5ac-4faa-a349-df155c8b46ff" testId="2e927335-ac0c-1064-36da-ac04ee2dd852" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADiscountThatExceedsTheBillIsReportedAsThatNotAsASplitProblem" computerName="SEMH59" duration="00:00:00.3724527" startTime="2026-11-03T16:37:36.3053882+03:00" endTime="2026-11-03T16:37:36.3054094+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68814410-a5ac-4faa-a349-df155c8b46ff" />
+    <UnitTestResult executionId="b5d134a7-836e-4386-b6a7-91cc93bf6ca6" testId="cf90b087-ed83-9cc0-80a8-6cd57f2c1d8b" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AnyOtherStateErrorStaysA400ThatSaysTheBillIsNotInAStateForIt" computerName="SEMH59" duration="00:00:00.0001850" startTime="2026-11-03T16:37:37.4935299+03:00" endTime="2026-11-03T16:37:37.4935311+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5d134a7-836e-4386-b6a7-91cc93bf6ca6" />
+    <UnitTestResult executionId="521204e6-cb6d-4f97-80e4-10e5b4de403f" testId="a1f9103f-89f9-1191-be9a-2405586d6760" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AnyOtherDatabaseFaultStaysADatabaseUnavailableAnswer" computerName="SEMH59" duration="00:00:00.0001222" startTime="2026-11-03T16:37:37.4937035+03:00" endTime="2026-11-03T16:37:37.4937036+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="521204e6-cb6d-4f97-80e4-10e5b4de403f" />
+    <UnitTestResult executionId="90fe61c8-539a-4001-a2c9-80c0f1556f9d" testId="34426f96-57de-1776-6d1f-56dc0be34a2a" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AValidationErrorNamesItsFieldInsteadOfTheSplitRequest" computerName="SEMH59" duration="00:00:00.0007402" startTime="2026-11-03T16:37:37.4945427+03:00" endTime="2026-11-03T16:37:37.4945430+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90fe61c8-539a-4001-a2c9-80c0f1556f9d" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ACancelledRequestIsNotAServerFault" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="a6665ba9-75a3-8389-37ab-494bf6d1a72d">
+      <Execution id="b44c3fec-818d-4570-ac14-b565de1a7e0b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ACancelledRequestIsNotAServerFault" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ARowVersionConflictIs409(exceptionType: typeof(ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="3bf5dcc1-5ec0-23a6-a713-d519fa1a4af4">
+      <Execution id="fd2646d1-a506-4a02-a95e-825b2d164a3d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ARowVersionConflictIs409" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADiscountThatExceedsTheBillIsReportedAsThatNotAsASplitProblem" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="2e927335-ac0c-1064-36da-ac04ee2dd852">
+      <Execution id="68814410-a5ac-4faa-a349-df155c8b46ff" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ADiscountThatExceedsTheBillIsReportedAsThatNotAsASplitProblem" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AValidationErrorNamesItsFieldInsteadOfTheSplitRequest" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="34426f96-57de-1776-6d1f-56dc0be34a2a">
+      <Execution id="90fe61c8-539a-4001-a2c9-80c0f1556f9d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="AValidationErrorNamesItsFieldInsteadOfTheSplitRequest" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AnyOtherStateErrorStaysA400ThatSaysTheBillIsNotInAStateForIt" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="cf90b087-ed83-9cc0-80a8-6cd57f2c1d8b">
+      <Execution id="b5d134a7-836e-4386-b6a7-91cc93bf6ca6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="AnyOtherStateErrorStaysA400ThatSaysTheBillIsNotInAStateForIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ARowVersionConflictIs409(exceptionType: typeof(ALKAROS.Orders.OrderAggregate.OrderConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="4e6c058c-3438-5049-95a1-b7d34fe367ff">
+      <Execution id="6a7b0073-7c30-4a42-8c93-696b67f6a9dd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ARowVersionConflictIs409" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault(sqlState: &quot;55P03&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="5c49b640-884e-3c3b-40dc-87d7ba5159e6">
+      <Execution id="accf3a4b-0126-4aff-b918-e38a1b016b10" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault(sqlState: &quot;40P01&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="66b05d92-7b7b-7469-e54a-51ea30cb1fe2">
+      <Execution id="cfecdcb4-fbc5-40ff-9eab-d45f45657671" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ARowVersionConflictIs409(exceptionType: typeof(ALKAROS.Billing.BillFoundation.BillConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="ea7dd4fc-b0c3-bd16-1e1f-b05587fc74b3">
+      <Execution id="436c1ef8-800b-4494-b056-8973442df727" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="ARowVersionConflictIs409" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AnyOtherDatabaseFaultStaysADatabaseUnavailableAnswer" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="a1f9103f-89f9-1191-be9a-2405586d6760">
+      <Execution id="521204e6-cb6d-4f97-80e4-10e5b4de403f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests" name="AnyOtherDatabaseFaultStaysADatabaseUnavailableAnswer" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5c49b640-884e-3c3b-40dc-87d7ba5159e6" executionId="accf3a4b-0126-4aff-b918-e38a1b016b10" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="66b05d92-7b7b-7469-e54a-51ea30cb1fe2" executionId="cfecdcb4-fbc5-40ff-9eab-d45f45657671" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3bf5dcc1-5ec0-23a6-a713-d519fa1a4af4" executionId="fd2646d1-a506-4a02-a95e-825b2d164a3d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a6665ba9-75a3-8389-37ab-494bf6d1a72d" executionId="b44c3fec-818d-4570-ac14-b565de1a7e0b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e6c058c-3438-5049-95a1-b7d34fe367ff" executionId="6a7b0073-7c30-4a42-8c93-696b67f6a9dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea7dd4fc-b0c3-bd16-1e1f-b05587fc74b3" executionId="436c1ef8-800b-4494-b056-8973442df727" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e927335-ac0c-1064-36da-ac04ee2dd852" executionId="68814410-a5ac-4faa-a349-df155c8b46ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf90b087-ed83-9cc0-80a8-6cd57f2c1d8b" executionId="b5d134a7-836e-4386-b6a7-91cc93bf6ca6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a1f9103f-89f9-1191-be9a-2405586d6760" executionId="521204e6-cb6d-4f97-80e4-10e5b4de403f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34426f96-57de-1776-6d1f-56dc0be34a2a" executionId="90fe61c8-539a-4001-a2c9-80c0f1556f9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.73]   Discovering: ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:01.96]   Discovered:  ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:01.96]   Starting:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:03.58]   Finished:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

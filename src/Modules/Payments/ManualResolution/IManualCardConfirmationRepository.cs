@@ -13,7 +13,7 @@ public interface IManualCardConfirmationRepository
 
     Task<ManualCardConfirmation?> GetPendingByPaymentIdAsync(Guid paymentId, CancellationToken cancellationToken = default);
 
-    /// <summary>Records the decision; throws <see cref="InvalidOperationException"/> when the row changed meanwhile.</summary>
+    /// <summary>Records the decision; throws <see cref="ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException"/> when the row changed meanwhile.</summary>
     Task DecideAsync(
         Guid id, ManualCardConfirmationStatus status, Guid decidedBy, DateTimeOffset decidedAt, string? note,
         long expectedRowVersion, NpgsqlConnection connection, NpgsqlTransaction transaction,

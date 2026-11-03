@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="84ae11b2-e49d-4914-bdb3-dfa39d09b13d" name="semih@SEMH59 2026-11-03 16:29:08" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:29:08.0679299+03:00" queuing="2026-11-03T16:29:08.0679302+03:00" start="2026-11-03T16:29:05.6476082+03:00" finish="2026-11-03T16:29:12.7229108+03:00" />
+  <TestSettings name="default" id="63cb7509-6705-47ef-b290-d11e2e1a5c59">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_29_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="2fd9f259-9d4c-4333-9009-774487f29f0d" testId="079597ce-d956-869f-c011-6b5ecd25e0d7" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.CreateAsyncReplaysADuplicateSubmitInsteadOfCreatingASecondIntent" computerName="SEMH59" duration="00:00:00.5177971" startTime="2026-11-03T16:29:08.2861442+03:00" endTime="2026-11-03T16:29:08.2861447+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2fd9f259-9d4c-4333-9009-774487f29f0d" />
+    <UnitTestResult executionId="f64832e9-30b9-4e36-a0fa-9252bc388c7f" testId="cefe08c2-c1b2-0817-a544-3cfc793ef05b" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict" computerName="SEMH59" duration="00:00:00.7288994" startTime="2026-11-03T16:29:09.3568385+03:00" endTime="2026-11-03T16:29:09.3568388+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f64832e9-30b9-4e36-a0fa-9252bc388c7f">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected type to be ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException, but found System.InvalidOperationException.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+   at FluentAssertions.Types.TypeAssertions.Be(Type expected, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Primitives.ReferenceTypeAssertions`2.BeOfType(Type expectedType, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.AsyncFunctionAssertions`2.ThrowExactlyAsync[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict() in D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\PostgresRefundIntentRepositoryTests.cs:line 181&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e3910a50-902c-4072-9ef8-d88a102878ed" testId="501786d3-9669-0111-987f-97caea2b3010" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateAllowsARequestExactlyMatchingTheRemainingEligibility" computerName="SEMH59" duration="00:00:00.0034307" startTime="2026-11-03T16:29:07.0449799+03:00" endTime="2026-11-03T16:29:07.0449809+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e3910a50-902c-4072-9ef8-d88a102878ed" />
+    <UnitTestResult executionId="a11ce77d-65b9-48fb-93b2-eabd80194191" testId="60f88372-5df2-fc93-6d9f-36737b72935b" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.CreateAsyncFor20Of100ProducesExactlyOnePendingIntent" computerName="SEMH59" duration="00:00:00.0926582" startTime="2026-11-03T16:29:08.3820091+03:00" endTime="2026-11-03T16:29:08.3820095+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a11ce77d-65b9-48fb-93b2-eabd80194191" />
+    <UnitTestResult executionId="2f6cafe5-d4af-4683-86b9-ac40334c3fe8" testId="54bed452-9afa-d522-2162-6a68de4d634a" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.CreateAsyncRejectsARequestThatWouldPushTheCumulativeTotalOverTheAllocationAndPersistsNothing" computerName="SEMH59" duration="00:00:00.1178836" startTime="2026-11-03T16:29:08.5994271+03:00" endTime="2026-11-03T16:29:08.5994276+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f6cafe5-d4af-4683-86b9-ac40334c3fe8" />
+    <UnitTestResult executionId="a671124d-7ef2-4551-b952-292279c5b362" testId="682c1ac3-b95d-74ca-6d10-78b39e7cb69a" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.TwoSubmitsWaitingOnTheSameAllocationLockStillProduceOneIntent" computerName="SEMH59" duration="00:00:00.6111134" startTime="2026-11-03T16:29:09.9602151+03:00" endTime="2026-11-03T16:29:09.9602155+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a671124d-7ef2-4551-b952-292279c5b362" />
+    <UnitTestResult executionId="7ee5ea4b-e308-458d-8121-eab0ed58d115" testId="02be1957-5cf1-3761-1f58-ab4e6188282e" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.RejectRefusesAnAlreadyRejectedIntent" computerName="SEMH59" duration="00:00:00.0474222" startTime="2026-11-03T16:29:07.0154872+03:00" endTime="2026-11-03T16:29:07.0155305+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ee5ea4b-e308-458d-8121-eab0ed58d115" />
+    <UnitTestResult executionId="c1b531d9-ab49-458e-8b94-8db89e714832" testId="303e16cd-8680-5dd0-e464-9a7d55c07a34" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncPersistsTheRejectTransition" computerName="SEMH59" duration="00:00:00.1366269" startTime="2026-11-03T16:29:10.0979355+03:00" endTime="2026-11-03T16:29:10.0979359+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c1b531d9-ab49-458e-8b94-8db89e714832" />
+    <UnitTestResult executionId="80775c32-ea98-437a-aead-06fc81ce1a71" testId="69e2c9e2-72b4-d660-6144-58615c386500" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.TheSameKeyForAnotherAllocationReturnsTheIntentThatWonTheKey" computerName="SEMH59" duration="00:00:00.6812846" startTime="2026-11-03T16:29:10.7799191+03:00" endTime="2026-11-03T16:29:10.7799194+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80775c32-ea98-437a-aead-06fc81ce1a71" />
+    <UnitTestResult executionId="db4a58a5-46f3-4665-a4ec-123d1fe5ef73" testId="25629563-6b3e-1f0b-a38a-ab785c6a6e45" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateRejectsAZeroOrNegativeAmount" computerName="SEMH59" duration="00:00:00.0016816" startTime="2026-11-03T16:29:07.0414269+03:00" endTime="2026-11-03T16:29:07.0414273+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db4a58a5-46f3-4665-a4ec-123d1fe5ef73" />
+    <UnitTestResult executionId="09a2cfe9-4ffe-46de-944f-024066583b53" testId="9783cab9-0344-0911-09a0-a8b7ec36f2f2" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.RejectTransitionsAPendingIntentAndRecordsWhyAndWhen" computerName="SEMH59" duration="00:00:00.0051196" startTime="2026-11-03T16:29:07.0201780+03:00" endTime="2026-11-03T16:29:07.0201781+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="09a2cfe9-4ffe-46de-944f-024066583b53" />
+    <UnitTestResult executionId="7084adb7-01db-48f7-9c7f-4dce2d9b92c0" testId="4c89c5fd-7745-eec4-805f-a3053de84f7a" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.ConcurrentDuplicateSubmitsProduceExactlyOneRealIntent" computerName="SEMH59" duration="00:00:00.0973805" startTime="2026-11-03T16:29:08.4804958+03:00" endTime="2026-11-03T16:29:08.4804962+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7084adb7-01db-48f7-9c7f-4dce2d9b92c0" />
+    <UnitTestResult executionId="f3a194b9-8074-4b7e-afa4-435c5b3bfdc0" testId="c6889d7d-d329-50ae-8f52-eca601f8725d" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateRejectsAnIntentTargetingAnAllocationBelongingToADifferentPayment" computerName="SEMH59" duration="00:00:00.0076419" startTime="2026-11-03T16:29:07.0275493+03:00" endTime="2026-11-03T16:29:07.0275498+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3a194b9-8074-4b7e-afa4-435c5b3bfdc0" />
+    <UnitTestResult executionId="2b8bd7c4-464a-40af-a5a6-1907a652b40b" testId="7c4ca502-13e2-64d0-c676-6dd8e2b5a374" testName="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateRejectsARequestThatWouldExceedTheRemainingEligibility" computerName="SEMH59" duration="00:00:00.0119439" startTime="2026-11-03T16:29:07.0396684+03:00" endTime="2026-11-03T16:29:07.0396688+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b8bd7c4-464a-40af-a5a6-1907a652b40b" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncPersistsTheRejectTransition" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="303e16cd-8680-5dd0-e464-9a7d55c07a34">
+      <Execution id="c1b531d9-ab49-458e-8b94-8db89e714832" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="SaveAsyncPersistsTheRejectTransition" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.TheSameKeyForAnotherAllocationReturnsTheIntentThatWonTheKey" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="69e2c9e2-72b4-d660-6144-58615c386500">
+      <Execution id="80775c32-ea98-437a-aead-06fc81ce1a71" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="TheSameKeyForAnotherAllocationReturnsTheIntentThatWonTheKey" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.ConcurrentDuplicateSubmitsProduceExactlyOneRealIntent" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="4c89c5fd-7745-eec4-805f-a3053de84f7a">
+      <Execution id="7084adb7-01db-48f7-9c7f-4dce2d9b92c0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="ConcurrentDuplicateSubmitsProduceExactlyOneRealIntent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateRejectsAZeroOrNegativeAmount" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="25629563-6b3e-1f0b-a38a-ab785c6a6e45">
+      <Execution id="db4a58a5-46f3-4665-a4ec-123d1fe5ef73" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests" name="CreateRejectsAZeroOrNegativeAmount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.RejectTransitionsAPendingIntentAndRecordsWhyAndWhen" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="9783cab9-0344-0911-09a0-a8b7ec36f2f2">
+      <Execution id="09a2cfe9-4ffe-46de-944f-024066583b53" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests" name="RejectTransitionsAPendingIntentAndRecordsWhyAndWhen" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateRejectsARequestThatWouldExceedTheRemainingEligibility" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="7c4ca502-13e2-64d0-c676-6dd8e2b5a374">
+      <Execution id="2b8bd7c4-464a-40af-a5a6-1907a652b40b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests" name="CreateRejectsARequestThatWouldExceedTheRemainingEligibility" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateRejectsAnIntentTargetingAnAllocationBelongingToADifferentPayment" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="c6889d7d-d329-50ae-8f52-eca601f8725d">
+      <Execution id="f3a194b9-8074-4b7e-afa4-435c5b3bfdc0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests" name="CreateRejectsAnIntentTargetingAnAllocationBelongingToADifferentPayment" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.CreateAsyncReplaysADuplicateSubmitInsteadOfCreatingASecondIntent" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="079597ce-d956-869f-c011-6b5ecd25e0d7">
+      <Execution id="2fd9f259-9d4c-4333-9009-774487f29f0d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="CreateAsyncReplaysADuplicateSubmitInsteadOfCreatingASecondIntent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.TwoSubmitsWaitingOnTheSameAllocationLockStillProduceOneIntent" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="682c1ac3-b95d-74ca-6d10-78b39e7cb69a">
+      <Execution id="a671124d-7ef2-4551-b952-292279c5b362" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="TwoSubmitsWaitingOnTheSameAllocationLockStillProduceOneIntent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="cefe08c2-c1b2-0817-a544-3cfc793ef05b">
+      <Execution id="f64832e9-30b9-4e36-a0fa-9252bc388c7f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.CreateAsyncFor20Of100ProducesExactlyOnePendingIntent" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="60f88372-5df2-fc93-6d9f-36737b72935b">
+      <Execution id="a11ce77d-65b9-48fb-93b2-eabd80194191" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="CreateAsyncFor20Of100ProducesExactlyOnePendingIntent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.CreateAsyncRejectsARequestThatWouldPushTheCumulativeTotalOverTheAllocationAndPersistsNothing" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="54bed452-9afa-d522-2162-6a68de4d634a">
+      <Execution id="2f6cafe5-d4af-4683-86b9-ac40334c3fe8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests" name="CreateAsyncRejectsARequestThatWouldPushTheCumulativeTotalOverTheAllocationAndPersistsNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.RejectRefusesAnAlreadyRejectedIntent" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="02be1957-5cf1-3761-1f58-ab4e6188282e">
+      <Execution id="7ee5ea4b-e308-458d-8121-eab0ed58d115" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests" name="RejectRefusesAnAlreadyRejectedIntent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests.CreateAllowsARequestExactlyMatchingTheRemainingEligibility" storage="d:\project\alkaros\tests\modules\payments\allocations\refundintents\bin\debug\net8.0\alkaros.payments.allocations.refundintents.tests.dll" id="501786d3-9669-0111-987f-97caea2b3010">
+      <Execution id="e3910a50-902c-4072-9ef8-d88a102878ed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\bin\Debug\net8.0\ALKAROS.Payments.Allocations.RefundIntents.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Payments.Allocations.RefundIntents.Tests.RefundIntentFactoryTests" name="CreateAllowsARequestExactlyMatchingTheRemainingEligibility" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="079597ce-d956-869f-c011-6b5ecd25e0d7" executionId="2fd9f259-9d4c-4333-9009-774487f29f0d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cefe08c2-c1b2-0817-a544-3cfc793ef05b" executionId="f64832e9-30b9-4e36-a0fa-9252bc388c7f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="501786d3-9669-0111-987f-97caea2b3010" executionId="e3910a50-902c-4072-9ef8-d88a102878ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60f88372-5df2-fc93-6d9f-36737b72935b" executionId="a11ce77d-65b9-48fb-93b2-eabd80194191" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54bed452-9afa-d522-2162-6a68de4d634a" executionId="2f6cafe5-d4af-4683-86b9-ac40334c3fe8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="682c1ac3-b95d-74ca-6d10-78b39e7cb69a" executionId="a671124d-7ef2-4551-b952-292279c5b362" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="02be1957-5cf1-3761-1f58-ab4e6188282e" executionId="7ee5ea4b-e308-458d-8121-eab0ed58d115" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="303e16cd-8680-5dd0-e464-9a7d55c07a34" executionId="c1b531d9-ab49-458e-8b94-8db89e714832" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69e2c9e2-72b4-d660-6144-58615c386500" executionId="80775c32-ea98-437a-aead-06fc81ce1a71" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25629563-6b3e-1f0b-a38a-ab785c6a6e45" executionId="db4a58a5-46f3-4665-a4ec-123d1fe5ef73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9783cab9-0344-0911-09a0-a8b7ec36f2f2" executionId="09a2cfe9-4ffe-46de-944f-024066583b53" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4c89c5fd-7745-eec4-805f-a3053de84f7a" executionId="7084adb7-01db-48f7-9c7f-4dce2d9b92c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c6889d7d-d329-50ae-8f52-eca601f8725d" executionId="f3a194b9-8074-4b7e-afa4-435c5b3bfdc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c4ca502-13e2-64d0-c676-6dd8e2b5a374" executionId="2b8bd7c4-464a-40af-a5a6-1907a652b40b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="13" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.27]   Discovering: ALKAROS.Payments.Allocations.RefundIntents.Tests&#xD;
+[xUnit.net 00:00:00.33]   Discovered:  ALKAROS.Payments.Allocations.RefundIntents.Tests&#xD;
+[xUnit.net 00:00:00.34]   Starting:    ALKAROS.Payments.Allocations.RefundIntents.Tests&#xD;
+[xUnit.net 00:00:02.81]       Expected type to be ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException, but found System.InvalidOperationException.&#xD;
+[xUnit.net 00:00:02.81]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Execution.AssertionScope.FailWith(String message)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Types.TypeAssertions.Be(Type expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Primitives.ReferenceTypeAssertions`2.BeOfType(Type expectedType, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.81]            at FluentAssertions.Specialized.AsyncFunctionAssertions`2.ThrowExactlyAsync[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.81]         D:\PROJECT\ALKAROS\tests\Modules\Payments\Allocations\RefundIntents\PostgresRefundIntentRepositoryTests.cs(181,0): at ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict()&#xD;
+[xUnit.net 00:00:02.81]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:06.04]   Finished:    ALKAROS.Payments.Allocations.RefundIntents.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T16:29:09.3528910+03:00">
+        <Text>[xUnit.net 00:00:02.81]     ALKAROS.Payments.Allocations.RefundIntents.Tests.PostgresRefundIntentRepositoryTests.SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -165,7 +165,7 @@ public sealed class PostgresPaymentRepository : IPaymentRepository
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new PaymentConcurrencyException(
                 $"Payment {payment.Id} not found or concurrent modification " +
                 $"(expected row version {expectedRowVersion}).");
 

@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="51b207b2-5432-421d-b942-dd852465b5ac" name="semih@SEMH59 2026-11-03 16:12:39" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T16:12:39.3997326+03:00" queuing="2026-11-03T16:12:39.3997328+03:00" start="2026-11-03T16:12:35.6353402+03:00" finish="2026-11-03T16:12:39.4564069+03:00" />
+  <TestSettings name="default" id="3e505f14-92a4-49d5-ae98-1c791dca3ed7">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_16_12_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="18c0cfd1-cead-468e-992b-9f6bba3d6579" testId="840c2632-00a1-401f-035b-b9bc516b177c" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Counting)" computerName="SEMH59" duration="00:00:00.0007588" startTime="2026-11-03T16:12:39.3062171+03:00" endTime="2026-11-03T16:12:39.3062172+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18c0cfd1-cead-468e-992b-9f6bba3d6579" />
+    <UnitTestResult executionId="cda34379-d9b8-4991-959f-21f28def7932" testId="b6ae959e-5b6e-0985-aebd-abd05d4db3cc" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Closing)" computerName="SEMH59" duration="00:00:00.0030607" startTime="2026-11-03T16:12:39.3053765+03:00" endTime="2026-11-03T16:12:39.3053771+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cda34379-d9b8-4991-959f-21f28def7932" />
+    <UnitTestResult executionId="7724c3d1-16d9-474e-b376-9b3a315b2094" testId="44a41562-304f-b762-b221-27831fea5c5b" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts" computerName="SEMH59" duration="00:00:00.0023815" startTime="2026-11-03T16:12:39.3576027+03:00" endTime="2026-11-03T16:12:39.3576028+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7724c3d1-16d9-474e-b376-9b3a315b2094" />
+    <UnitTestResult executionId="18c55752-0ebf-4580-9eed-8dc6fd34f848" testId="2f9707d6-650b-f6dd-31c1-43e4152bae04" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionPassesWhenNoActiveSessionExistsOnTerminal" computerName="SEMH59" duration="00:00:00.0012166" startTime="2026-11-03T16:12:39.3569440+03:00" endTime="2026-11-03T16:12:39.3569441+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18c55752-0ebf-4580-9eed-8dc6fd34f848" />
+    <UnitTestResult executionId="38bf9321-6440-4dcb-ad01-5caa9ea25e91" testId="14bc67f3-572f-0b59-5ea3-8dd2a8af5714" testName="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.DomainExceptionsCaptureParametersProperly" computerName="SEMH59" duration="00:00:00.0027299" startTime="2026-11-03T16:12:39.3572700+03:00" endTime="2026-11-03T16:12:39.3572701+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="38bf9321-6440-4dcb-ad01-5caa9ea25e91" />
+    <UnitTestResult executionId="5b014257-62e0-4c55-817f-ec3d5f4be207" testId="014f7ef1-8ee4-3049-9195-7c8b3d88771d" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.StartCountPassesWhenSessionIsOpenAndFailsOtherwise" computerName="SEMH59" duration="00:00:00.0093305" startTime="2026-11-03T16:12:39.3013020+03:00" endTime="2026-11-03T16:12:39.3013021+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b014257-62e0-4c55-817f-ec3d5f4be207" />
+    <UnitTestResult executionId="31de0699-d5fa-4ccf-827b-6fedcb3eb366" testId="85ae78d9-1471-6bc1-b988-1dd4761ecab9" testName="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.CloseCashSessionCommandValidation" computerName="SEMH59" duration="00:00:00.2533354" startTime="2026-11-03T16:12:39.2890439+03:00" endTime="2026-11-03T16:12:39.2891097+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="31de0699-d5fa-4ccf-827b-6fedcb3eb366" />
+    <UnitTestResult executionId="062b8bc7-f4a7-46f7-b7b0-760ef38040e8" testId="1a44ad95-0b57-7e3c-0e9f-1ef5361c5d56" testName="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.OpenCashSessionCommandValidation" computerName="SEMH59" duration="00:00:00.0071826" startTime="2026-11-03T16:12:39.3571869+03:00" endTime="2026-11-03T16:12:39.3571870+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="062b8bc7-f4a7-46f7-b7b0-760ef38040e8" />
+    <UnitTestResult executionId="e6efec53-d610-4607-b2ab-00af4b01cdac" testId="54a88146-b01f-4e14-bc97-d2fb1319680b" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.ReconcilePassesOnlyOnClosedSession" computerName="SEMH59" duration="00:00:00.2534999" startTime="2026-11-03T16:12:39.2996980+03:00" endTime="2026-11-03T16:12:39.2996982+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6efec53-d610-4607-b2ab-00af4b01cdac" />
+    <UnitTestResult executionId="c2f48623-dfef-4532-ae8e-4edb8030bbd4" testId="504ad4c7-91f7-dff1-2e5c-3490a139138d" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.RecordCountValidatesAmountAndStatus" computerName="SEMH59" duration="00:00:00.0042219" startTime="2026-11-03T16:12:39.3020872+03:00" endTime="2026-11-03T16:12:39.3020873+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2f48623-dfef-4532-ae8e-4edb8030bbd4" />
+    <UnitTestResult executionId="531e71a8-a818-4c78-aa99-1990798ff326" testId="58833eb3-ab02-7941-80bb-d44811d302a7" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.CloseSessionWithinTolerancePassesWithoutSupervisorOverride" computerName="SEMH59" duration="00:00:00.0004331" startTime="2026-11-03T16:12:39.3574274+03:00" endTime="2026-11-03T16:12:39.3574275+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="531e71a8-a818-4c78-aa99-1990798ff326" />
+    <UnitTestResult executionId="d7278066-c49e-4180-ae54-9f3a9bce15eb" testId="21b1b0ef-94ef-c842-b9ae-1b58101379de" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Open)" computerName="SEMH59" duration="00:00:00.0004155" startTime="2026-11-03T16:12:39.3066895+03:00" endTime="2026-11-03T16:12:39.3066897+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7278066-c49e-4180-ae54-9f3a9bce15eb" />
+    <UnitTestResult executionId="615d0c5e-b6b1-48ae-97af-fd9fb4a70780" testId="7be854e7-531c-fefe-6a34-8e28cde9030b" testName="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.CloseSessionExceedingToleranceRequiresSupervisorOverride" computerName="SEMH59" duration="00:00:00.0033125" startTime="2026-11-03T16:12:39.3573193+03:00" endTime="2026-11-03T16:12:39.3573195+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="615d0c5e-b6b1-48ae-97af-fd9fb4a70780" />
+    <UnitTestResult executionId="41051e3f-84fb-431b-9265-3f3f97fa1278" testId="fe265fd2-ecf8-4a5e-beb4-56025f5bb393" testName="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.CashSessionSnapshotConstructsAndEvaluatesIsActiveCorrectly" computerName="SEMH59" duration="00:00:00.0129307" startTime="2026-11-03T16:12:39.3018024+03:00" endTime="2026-11-03T16:12:39.3018025+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41051e3f-84fb-431b-9265-3f3f97fa1278" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.StartCountPassesWhenSessionIsOpenAndFailsOtherwise" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="014f7ef1-8ee4-3049-9195-7c8b3d88771d">
+      <Execution id="5b014257-62e0-4c55-817f-ec3d5f4be207" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="StartCountPassesWhenSessionIsOpenAndFailsOtherwise" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.CashSessionSnapshotConstructsAndEvaluatesIsActiveCorrectly" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="fe265fd2-ecf8-4a5e-beb4-56025f5bb393">
+      <Execution id="41051e3f-84fb-431b-9265-3f3f97fa1278" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests" name="CashSessionSnapshotConstructsAndEvaluatesIsActiveCorrectly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.DomainExceptionsCaptureParametersProperly" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="14bc67f3-572f-0b59-5ea3-8dd2a8af5714">
+      <Execution id="38bf9321-6440-4dcb-ad01-5caa9ea25e91" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests" name="DomainExceptionsCaptureParametersProperly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.CloseSessionExceedingToleranceRequiresSupervisorOverride" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="7be854e7-531c-fefe-6a34-8e28cde9030b">
+      <Execution id="615d0c5e-b6b1-48ae-97af-fd9fb4a70780" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="CloseSessionExceedingToleranceRequiresSupervisorOverride" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Open)" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="21b1b0ef-94ef-c842-b9ae-1b58101379de">
+      <Execution id="d7278066-c49e-4180-ae54-9f3a9bce15eb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="OpenSessionThrowsWhenTerminalHasExistingActiveSession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Counting)" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="840c2632-00a1-401f-035b-b9bc516b177c">
+      <Execution id="18c0cfd1-cead-468e-992b-9f6bba3d6579" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="OpenSessionThrowsWhenTerminalHasExistingActiveSession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Closing)" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="b6ae959e-5b6e-0985-aebd-abd05d4db3cc">
+      <Execution id="cda34379-d9b8-4991-959f-21f28def7932" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="OpenSessionThrowsWhenTerminalHasExistingActiveSession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.CloseCashSessionCommandValidation" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="85ae78d9-1471-6bc1-b988-1dd4761ecab9">
+      <Execution id="31de0699-d5fa-4ccf-827b-6fedcb3eb366" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests" name="CloseCashSessionCommandValidation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionPassesWhenNoActiveSessionExistsOnTerminal" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="2f9707d6-650b-f6dd-31c1-43e4152bae04">
+      <Execution id="18c55752-0ebf-4580-9eed-8dc6fd34f848" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="OpenSessionPassesWhenNoActiveSessionExistsOnTerminal" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="44a41562-304f-b762-b221-27831fea5c5b">
+      <Execution id="7724c3d1-16d9-474e-b376-9b3a315b2094" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.ReconcilePassesOnlyOnClosedSession" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="54a88146-b01f-4e14-bc97-d2fb1319680b">
+      <Execution id="e6efec53-d610-4607-b2ab-00af4b01cdac" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="ReconcilePassesOnlyOnClosedSession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.CloseSessionWithinTolerancePassesWithoutSupervisorOverride" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="58833eb3-ab02-7941-80bb-d44811d302a7">
+      <Execution id="531e71a8-a818-4c78-aa99-1990798ff326" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="CloseSessionWithinTolerancePassesWithoutSupervisorOverride" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.OpenCashSessionCommandValidation" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="1a44ad95-0b57-7e3c-0e9f-1ef5361c5d56">
+      <Execution id="062b8bc7-f4a7-46f7-b7b0-760ef38040e8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests" name="OpenCashSessionCommandValidation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.RecordCountValidatesAmountAndStatus" storage="d:\project\alkaros\tests\modules\cash\contracts\bin\debug\net8.0\alkaros.cash.contracts.tests.dll" id="504ad4c7-91f7-dff1-2e5c-3490a139138d">
+      <Execution id="c2f48623-dfef-4532-ae8e-4edb8030bbd4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Cash\Contracts\bin\Debug\net8.0\ALKAROS.Cash.Contracts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests" name="RecordCountValidatesAmountAndStatus" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="840c2632-00a1-401f-035b-b9bc516b177c" executionId="18c0cfd1-cead-468e-992b-9f6bba3d6579" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b6ae959e-5b6e-0985-aebd-abd05d4db3cc" executionId="cda34379-d9b8-4991-959f-21f28def7932" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44a41562-304f-b762-b221-27831fea5c5b" executionId="7724c3d1-16d9-474e-b376-9b3a315b2094" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f9707d6-650b-f6dd-31c1-43e4152bae04" executionId="18c55752-0ebf-4580-9eed-8dc6fd34f848" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14bc67f3-572f-0b59-5ea3-8dd2a8af5714" executionId="38bf9321-6440-4dcb-ad01-5caa9ea25e91" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="014f7ef1-8ee4-3049-9195-7c8b3d88771d" executionId="5b014257-62e0-4c55-817f-ec3d5f4be207" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="85ae78d9-1471-6bc1-b988-1dd4761ecab9" executionId="31de0699-d5fa-4ccf-827b-6fedcb3eb366" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a44ad95-0b57-7e3c-0e9f-1ef5361c5d56" executionId="062b8bc7-f4a7-46f7-b7b0-760ef38040e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54a88146-b01f-4e14-bc97-d2fb1319680b" executionId="e6efec53-d610-4607-b2ab-00af4b01cdac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="504ad4c7-91f7-dff1-2e5c-3490a139138d" executionId="c2f48623-dfef-4532-ae8e-4edb8030bbd4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58833eb3-ab02-7941-80bb-d44811d302a7" executionId="531e71a8-a818-4c78-aa99-1990798ff326" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21b1b0ef-94ef-c842-b9ae-1b58101379de" executionId="d7278066-c49e-4180-ae54-9f3a9bce15eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7be854e7-531c-fefe-6a34-8e28cde9030b" executionId="615d0c5e-b6b1-48ae-97af-fd9fb4a70780" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe265fd2-ecf8-4a5e-beb4-56025f5bb393" executionId="41051e3f-84fb-431b-9265-3f3f97fa1278" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="14" executed="14" passed="14" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.70]   Discovering: ALKAROS.Cash.Contracts.Tests&#xD;
+[xUnit.net 00:00:00.85]   Discovered:  ALKAROS.Cash.Contracts.Tests&#xD;
+[xUnit.net 00:00:00.85]   Starting:    ALKAROS.Cash.Contracts.Tests&#xD;
+[xUnit.net 00:00:01.26]   Finished:    ALKAROS.Cash.Contracts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TenderHandler;
@@ -24,8 +25,10 @@ using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Menu.StaticMenu;
 using ALKAROS.Observability.AlertFoundation;
 using ALKAROS.Observability.Foundation;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using ALKAROS.Payments.Allocations.Persistence;
+using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Production.BatchLifecycle;
 using ALKAROS.Production.StockEffects;
 using ALKAROS.Purchasing.OrdersAndReceipts;
@@ -319,6 +322,56 @@ public sealed class ApiErrorCatalogTests
         using var other = await client.GetAsync("/other/empty");
         Assert.Equal(string.Empty, await other.Content.ReadAsStringAsync());
     }
+
+    public static TheoryData<string, bool, string> ArgumentFields => new()
+    {
+        { "discountAmount", false, "İndirim tutarı geçersiz veya eksik." },
+        { "request.IdempotencyKey", false, "İşlem anahtarı geçersiz veya eksik." },
+        { "quantity", true, "Adet izin verilen aralığın dışında." },
+        { "someUnlistedField", false, "İstek doğrulanamadı." },
+    };
+
+    [Theory]
+    [MemberData(nameof(ArgumentFields))]
+    public void AnArgumentErrorNamesTheFieldInTurkishInEveryAreaAndNeverLeaksTheRawText(
+        string parameterName, bool outOfRange, string message)
+    {
+        Exception exception = outOfRange
+            ? new ArgumentOutOfRangeException(parameterName, "raw English detail")
+            : new ArgumentException("raw English detail", parameterName);
+        var areas = typeof(ApiErrorCatalog).GetFields()
+            // CustomerCreditTerms keeps its own credit-limit sentence for every validation error.
+            .Where(field => field.FieldType == typeof(ApiErrorArea) && field.Name != nameof(ApiErrorCatalog.CustomerCreditTerms))
+            .Select(field => Area(field.Name))
+            .Select(area => new[] { area })
+            .Append([]);
+
+        foreach (var entered in areas)
+        {
+            var mapped = ApiExceptionHandler.Resolve(entered, exception);
+
+            Assert.Equal((400, "VALIDATION_FAILED", message), mapped);
+        }
+    }
+
+    public static TheoryData<Exception> RowVersionConflicts => new()
+    {
+        new BillConcurrencyException("sample"),
+        new CashSessionConcurrencyException("sample"),
+        new OrderConcurrencyException("sample"),
+        new PaymentConcurrencyException("sample"),
+    };
+
+    [Theory]
+    [MemberData(nameof(RowVersionConflicts))]
+    public void ARowVersionConflictIsA409InTheHostDefault(Exception exception)
+        => Assert.Equal(
+            (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin."),
+            ApiExceptionHandler.Resolve([], exception));
+
+    [Fact]
+    public void AnOrdinaryInvalidOperationIsNotTurnedIntoAConflict()
+        => Assert.Equal((500, "INTERNAL_ERROR", "İşlem tamamlanamadı."), ApiExceptionHandler.Resolve([], new InvalidOperationException("sample")));
 
     private static ApiErrorArea Area(string name)
         => (ApiErrorArea)typeof(ApiErrorCatalog).GetField(name)!.GetValue(null)!;

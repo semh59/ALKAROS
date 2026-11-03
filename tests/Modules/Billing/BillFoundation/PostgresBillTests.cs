@@ -203,8 +203,8 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
         var newVersion = await _bills.SaveAsync(cancelled, expectedRowVersion: 1);
         Assert.Equal(2, newVersion);
 
-        // Second save with stale expectedRowVersion 1 throws InvalidOperationException
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        // Second save with stale expectedRowVersion 1 throws BillConcurrencyException
+        await Assert.ThrowsAsync<BillConcurrencyException>(() =>
             _bills.SaveAsync(cancelled, expectedRowVersion: 1));
     }
 
@@ -245,7 +245,7 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
         // as an update (existingItemIds already contains its id) rather
         // than an insert or delete, exercising UpdateBillItemAsync with the
         // now-stale in-memory row_version.
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var exception = await Assert.ThrowsAsync<BillConcurrencyException>(() =>
             _bills.SaveAsync(loaded, expectedRowVersion: loaded.RowVersion));
         Assert.Contains(loadedItem.Id.ToString(), exception.Message);
     }

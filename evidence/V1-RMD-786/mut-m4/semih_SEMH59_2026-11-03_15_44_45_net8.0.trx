@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d6193163-ba73-40be-9865-082aeb0a4e63" name="semih@SEMH59 2026-11-03 15:44:45" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T15:44:45.0452139+03:00" queuing="2026-11-03T15:44:45.0452142+03:00" start="2026-11-03T15:44:39.9933464+03:00" finish="2026-11-03T15:44:55.6487782+03:00" />
+  <TestSettings name="default" id="616bf175-153b-4557-9364-ec2179d6bca6">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_15_44_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="19c103c1-c9cb-4ad7-bf3d-16b797c3a482" testId="fc647eeb-7114-d0ac-ad39-6b988776c074" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Billing.BillFoundation.BillConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0185923" startTime="2026-11-03T15:44:45.0028036+03:00" endTime="2026-11-03T15:44:45.0028535+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="19c103c1-c9cb-4ad7-bf3d-16b797c3a482">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (409, "CONCURRENCY_CONFLICT")&#xD;
+Actual:   Tuple (400, "VALIDATION_FAILED")</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Type exceptionType, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1565&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="042adfeb-0822-45f8-b989-fca5f7083d7f" testId="c7a8badf-43ed-ac22-e9a4-6608c876c725" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(System.InvalidOperationException), status: 400, code: &quot;VALIDATION_FAILED&quot;)" computerName="SEMH59" duration="00:00:00.0011828" startTime="2026-11-03T15:44:55.5620717+03:00" endTime="2026-11-03T15:44:55.5620720+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="042adfeb-0822-45f8-b989-fca5f7083d7f" />
+    <UnitTestResult executionId="126c315a-08fa-4ab4-96c1-ee9bf5baf96c" testId="efd766a5-9e90-23b3-8f79-3f445566e739" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Orders.OrderAggregate.OrderConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0011568" startTime="2026-11-03T15:44:48.3271896+03:00" endTime="2026-11-03T15:44:48.3271899+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="126c315a-08fa-4ab4-96c1-ee9bf5baf96c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (409, "CONCURRENCY_CONFLICT")&#xD;
+Actual:   Tuple (400, "VALIDATION_FAILED")</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Type exceptionType, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1565&#xD;
+   at InvokeStub_BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2fd6090d-4324-4618-aacd-858a54e59e77" testId="268450fd-0d45-9caf-d63d-9c9351332c8b" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0011261" startTime="2026-11-03T15:44:51.8026598+03:00" endTime="2026-11-03T15:44:51.8026599+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2fd6090d-4324-4618-aacd-858a54e59e77">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Tuple (409, "CONCURRENCY_CONFLICT")&#xD;
+Actual:   Tuple (400, "VALIDATION_FAILED")</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Type exceptionType, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1565&#xD;
+   at InvokeStub_BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Orders.OrderAggregate.OrderConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="efd766a5-9e90-23b3-8f79-3f445566e739">
+      <Execution id="126c315a-08fa-4ab4-96c1-ee9bf5baf96c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests" name="TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(System.InvalidOperationException), status: 400, code: &quot;VALIDATION_FAILED&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="c7a8badf-43ed-ac22-e9a4-6608c876c725">
+      <Execution id="042adfeb-0822-45f8-b989-fca5f7083d7f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests" name="TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="268450fd-0d45-9caf-d63d-9c9351332c8b">
+      <Execution id="2fd6090d-4324-4618-aacd-858a54e59e77" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests" name="TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Billing.BillFoundation.BillConcurrencyException), status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="fc647eeb-7114-d0ac-ad39-6b988776c074">
+      <Execution id="19c103c1-c9cb-4ad7-bf3d-16b797c3a482" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests" name="TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="fc647eeb-7114-d0ac-ad39-6b988776c074" executionId="19c103c1-c9cb-4ad7-bf3d-16b797c3a482" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7a8badf-43ed-ac22-e9a4-6608c876c725" executionId="042adfeb-0822-45f8-b989-fca5f7083d7f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="efd766a5-9e90-23b3-8f79-3f445566e739" executionId="126c315a-08fa-4ab4-96c1-ee9bf5baf96c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="268450fd-0d45-9caf-d63d-9c9351332c8b" executionId="2fd6090d-4324-4618-aacd-858a54e59e77" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="4" executed="4" passed="1" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.42]   Discovering: ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:00.49]   Discovered:  ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:00.50]   Starting:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:04.38]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:04.38]       Expected: Tuple (409, "CONCURRENCY_CONFLICT")&#xD;
+[xUnit.net 00:00:04.38]       Actual:   Tuple (400, "VALIDATION_FAILED")&#xD;
+[xUnit.net 00:00:04.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.38]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs(1565,0): at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Type exceptionType, Int32 status, String code)&#xD;
+[xUnit.net 00:00:04.38]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:04.38]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:07.71]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:07.71]       Expected: Tuple (409, "CONCURRENCY_CONFLICT")&#xD;
+[xUnit.net 00:00:07.71]       Actual:   Tuple (400, "VALIDATION_FAILED")&#xD;
+[xUnit.net 00:00:07.71]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.71]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs(1565,0): at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Type exceptionType, Int32 status, String code)&#xD;
+[xUnit.net 00:00:07.71]            at InvokeStub_BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Object, Span`1)&#xD;
+[xUnit.net 00:00:07.71]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:11.18]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:11.18]       Expected: Tuple (409, "CONCURRENCY_CONFLICT")&#xD;
+[xUnit.net 00:00:11.18]       Actual:   Tuple (400, "VALIDATION_FAILED")&#xD;
+[xUnit.net 00:00:11.18]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.18]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs(1565,0): at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Type exceptionType, Int32 status, String code)&#xD;
+[xUnit.net 00:00:11.18]            at InvokeStub_BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(Object, Span`1)&#xD;
+[xUnit.net 00:00:11.18]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:14.95]   Finished:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:44:44.9989076+03:00">
+        <Text>[xUnit.net 00:00:04.38]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Billing.BillFoundation.BillConcurrencyException), status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:44:48.3270101+03:00">
+        <Text>[xUnit.net 00:00:07.70]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Orders.OrderAggregate.OrderConcurrencyException), status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:44:51.8029159+03:00">
+        <Text>[xUnit.net 00:00:11.18]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillingGroupAnswersARowVersionConflictWith409AndOtherStateErrorsWith400(exceptionType: typeof(ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException), status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

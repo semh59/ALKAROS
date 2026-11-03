@@ -1134,6 +1134,25 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         return (pairing.DisplayId, cookie);
     }
 
+    [Theory]
+    [InlineData("0O1I0O1I")]
+    [InlineData("ABC")]
+    [InlineData("ABCD2345X")]
+    [InlineData("  ")]
+    public async Task ACodeWithUnsupportedCharactersOrLengthIsRefusedAsAWrongCode(string code)
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.41");
+
+        using var refused = await ApproveAsync(client, terminalId, cashier, code, "198.51.100.41");
+
+        Assert.Equal(HttpStatusCode.NotFound, refused.StatusCode);
+        Assert.Equal("PAIRING_CODE_INVALID", await ErrorCodeAsync(refused));
+    }
+
     [Fact]
     public async Task PairingTellsApartAWrongCodeAnUnapprovedRequestAndAUsedOne()
     {

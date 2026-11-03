@@ -341,7 +341,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new OrderConcurrencyException(
                 $"Order {order.Id} not found or concurrent modification " +
                 $"(expected row version {expectedRowVersion}).");
 
@@ -429,7 +429,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
         BindItem(command, item);
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new OrderConcurrencyException(
                 $"Order item {item.Id} not found or concurrent modification " +
                 $"(expected row version {item.RowVersion}).");
 

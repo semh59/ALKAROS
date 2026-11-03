@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2eacaad8-0450-4d1d-b8f3-37a5b1fbb658" name="semih@SEMH59 2026-11-03 15:47:25" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T15:47:25.7672810+03:00" queuing="2026-11-03T15:47:25.7672812+03:00" start="2026-11-03T15:47:23.2927809+03:00" finish="2026-11-03T15:47:25.8463517+03:00" />
+  <TestSettings name="default" id="85b0524b-163c-46aa-b6c4-8419fba5ae7b">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-03_15_47_25" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="05ea7175-4361-4cff-987a-bd26a44939d3" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Cash.Contracts.CashSessionConcurrencyException: detail, status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0002504" startTime="2026-11-03T15:47:25.7460048+03:00" endTime="2026-11-03T15:47:25.7460050+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05ea7175-4361-4cff-987a-bd26a44939d3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 409&#xD;
+Actual:   500</Message>
+          <StackTrace>   at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs:line 38&#xD;
+   at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9a18bde0-3873-4d4c-92fb-280db0162d88" testId="ca3beb13-ef53-58b9-9f76-55e2efbb0fa5" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.AnOrdinaryInvalidOperationIsNeverReportedAsAConflict" computerName="SEMH59" duration="00:00:00.0348181" startTime="2026-11-03T15:47:25.6638043+03:00" endTime="2026-11-03T15:47:25.6638729+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a18bde0-3873-4d4c-92fb-280db0162d88" />
+    <UnitTestResult executionId="2f3e841d-3fb8-421f-be7b-a86f41823d16" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: System.ArgumentOutOfRangeException: detail (Parameter 'quantity'), status: 400, code: &quot;VALIDATION_FAILED&quot;)" computerName="SEMH59" duration="00:00:00.0003867" startTime="2026-11-03T15:47:25.7144038+03:00" endTime="2026-11-03T15:47:25.7144039+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f3e841d-3fb8-421f-be7b-a86f41823d16" />
+    <UnitTestResult executionId="cd9f19d3-368d-4944-ba04-c31504609f5b" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Orders.OrderAggregate.OrderConcurrencyException: detail, status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0001618" startTime="2026-11-03T15:47:25.7466608+03:00" endTime="2026-11-03T15:47:25.7466609+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd9f19d3-368d-4944-ba04-c31504609f5b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 409&#xD;
+Actual:   500</Message>
+          <StackTrace>   at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs:line 38&#xD;
+   at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="bad7da8b-aa95-4de6-9ab5-b2ebeac4f844" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Cash.Contracts.CashSessionNotFoundException: Exception of type 'ALKAROS.Cash.Contracts.CashSessionNotFoundException' was thrown., status: 404, code: &quot;CASH_SESSION_NOT_FOUND&quot;)" computerName="SEMH59" duration="00:00:00.0000116" startTime="2026-11-03T15:47:25.7145121+03:00" endTime="2026-11-03T15:47:25.7145123+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bad7da8b-aa95-4de6-9ab5-b2ebeac4f844" />
+    <UnitTestResult executionId="f4d693cd-90e4-4c0c-9924-eb092e25822e" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Billing.BillFoundation.BillConcurrencyException: detail, status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0048903" startTime="2026-11-03T15:47:25.7447861+03:00" endTime="2026-11-03T15:47:25.7447864+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f4d693cd-90e4-4c0c-9924-eb092e25822e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 409&#xD;
+Actual:   500</Message>
+          <StackTrace>   at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs:line 38&#xD;
+   at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2e260e48-0522-4f6e-bb40-e440ce9c449d" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: System.ArgumentException: detail (Parameter 'billId'), status: 400, code: &quot;VALIDATION_FAILED&quot;)" computerName="SEMH59" duration="00:00:00.0419744" startTime="2026-11-03T15:47:25.7138159+03:00" endTime="2026-11-03T15:47:25.7138161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2e260e48-0522-4f6e-bb40-e440ce9c449d" />
+    <UnitTestResult executionId="2de07127-ec44-49f1-a779-ac672d34e7db" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Host.DualScreen.DualScreenNotFoundException: detail, status: 404, code: &quot;NOT_FOUND&quot;)" computerName="SEMH59" duration="00:00:00.0000173" startTime="2026-11-03T15:47:25.7144593+03:00" endTime="2026-11-03T15:47:25.7144594+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2de07127-ec44-49f1-a779-ac672d34e7db" />
+    <UnitTestResult executionId="8aa29657-f266-4a09-aae3-46ea2de3edf9" testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" testName="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException: detail, status: 409, code: &quot;CONCURRENCY_CONFLICT&quot;)" computerName="SEMH59" duration="00:00:00.0001281" startTime="2026-11-03T15:47:25.7473671+03:00" endTime="2026-11-03T15:47:25.7473680+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8aa29657-f266-4a09-aae3-46ea2de3edf9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 409&#xD;
+Actual:   500</Message>
+          <StackTrace>   at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code) in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs:line 38&#xD;
+   at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.AnOrdinaryInvalidOperationIsNeverReportedAsAConflict" storage="d:\project\alkaros\tests\architecture\apiconventions\bin\debug\net8.0\alkaros.architecture.apiconventions.tests.dll" id="ca3beb13-ef53-58b9-9f76-55e2efbb0fa5">
+      <Execution id="9a18bde0-3873-4d4c-92fb-280db0162d88" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\bin\Debug\net8.0\ALKAROS.Architecture.ApiConventions.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests" name="AnOrdinaryInvalidOperationIsNeverReportedAsAConflict" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText" storage="d:\project\alkaros\tests\architecture\apiconventions\bin\debug\net8.0\alkaros.architecture.apiconventions.tests.dll" id="b34a2bc4-2dc5-1800-7974-7a7a72339115">
+      <Execution id="2e260e48-0522-4f6e-bb40-e440ce9c449d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\bin\Debug\net8.0\ALKAROS.Architecture.ApiConventions.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests" name="ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="05ea7175-4361-4cff-987a-bd26a44939d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca3beb13-ef53-58b9-9f76-55e2efbb0fa5" executionId="9a18bde0-3873-4d4c-92fb-280db0162d88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="2f3e841d-3fb8-421f-be7b-a86f41823d16" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="cd9f19d3-368d-4944-ba04-c31504609f5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="bad7da8b-aa95-4de6-9ab5-b2ebeac4f844" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="f4d693cd-90e4-4c0c-9924-eb092e25822e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="2e260e48-0522-4f6e-bb40-e440ce9c449d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="2de07127-ec44-49f1-a779-ac672d34e7db" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b34a2bc4-2dc5-1800-7974-7a7a72339115" executionId="8aa29657-f266-4a09-aae3-46ea2de3edf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="5" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: ALKAROS.Architecture.ApiConventions.Tests&#xD;
+[xUnit.net 00:00:01.24]   Discovered:  ALKAROS.Architecture.ApiConventions.Tests&#xD;
+[xUnit.net 00:00:01.25]   Starting:    ALKAROS.Architecture.ApiConventions.Tests&#xD;
+[xUnit.net 00:00:01.43]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.43]       Expected: 409&#xD;
+[xUnit.net 00:00:01.43]       Actual:   500&#xD;
+[xUnit.net 00:00:01.43]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.44]         D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs(38,0): at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code)&#xD;
+[xUnit.net 00:00:01.44]            at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.44]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.44]       Expected: 409&#xD;
+[xUnit.net 00:00:01.44]       Actual:   500&#xD;
+[xUnit.net 00:00:01.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.44]         D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs(38,0): at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code)&#xD;
+[xUnit.net 00:00:01.44]            at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.44]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.44]       Expected: 409&#xD;
+[xUnit.net 00:00:01.44]       Actual:   500&#xD;
+[xUnit.net 00:00:01.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.44]         D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs(38,0): at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code)&#xD;
+[xUnit.net 00:00:01.44]            at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.44]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.44]       Expected: 409&#xD;
+[xUnit.net 00:00:01.44]       Actual:   500&#xD;
+[xUnit.net 00:00:01.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.44]         D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ApiErrorMappingTests.cs(38,0): at ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Exception exception, Int32 status, String code)&#xD;
+[xUnit.net 00:00:01.44]            at InvokeStub_ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.44]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.44]   Finished:    ALKAROS.Architecture.ApiConventions.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:47:25.7790709+03:00">
+        <Text>[xUnit.net 00:00:01.43]     ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Billing.BillFoundation.BillConcurrencyException: detail, status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:47:25.7795516+03:00">
+        <Text>[xUnit.net 00:00:01.44]     ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Cash.Contracts.CashSessionConcurrencyException: detail, status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:47:25.7796340+03:00">
+        <Text>[xUnit.net 00:00:01.44]     ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Orders.OrderAggregate.OrderConcurrencyException: detail, status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-03T15:47:25.7797100+03:00">
+        <Text>[xUnit.net 00:00:01.44]     ALKAROS.Architecture.ApiConventions.Tests.ApiErrorMappingTests.ACashierPathFailureMapsToItsStatusAndAStableCodeWithoutTheRawText(exception: ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException: detail, status: 409, code: "CONCURRENCY_CONFLICT") [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

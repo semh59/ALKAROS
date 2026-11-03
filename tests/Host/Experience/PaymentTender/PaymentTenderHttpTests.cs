@@ -862,6 +862,28 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         => $"{TendersPath(terminalId, billId)}confirmations/{confirmationId:D}/{decision}";
 
     [Fact]
+    public async Task ADecisionOnAManualCardConfirmationThatChangedMeanwhileIsAConcurrencyConflict()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd786-cashier");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd786-1");
+        await _database.SeedManagerSessionAsync(terminalId, "rmd786-manager-a");
+        await _database.SeedManagerSessionAsync(terminalId, "rmd786-manager-b");
+        var (userA, userB) = await _database.TwoUsersAsync();
+        var confirmations = app.Services.GetRequiredService<IManualCardConfirmationService>();
+        var confirmationId = (await confirmations.RequestAsync(paymentId, userA, "FIS-786", null, (_, _, _, _) => Task.CompletedTask)).Id;
+        var repository = app.Services.GetRequiredService<IManualCardConfirmationRepository>();
+        await using var connection = await app.Services.GetRequiredService<NpgsqlDataSource>().OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        await Assert.ThrowsAsync<ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException>(() => repository.DecideAsync(
+            confirmationId, ManualCardConfirmationStatus.Approved, userB, DateTimeOffset.UtcNow, null, 999, connection, transaction));
+    }
+
+    [Fact]
     public async Task AManualResolutionWhoseAuditRecordCannotBeWrittenIsNotKept()
     {
         var terminalId = Guid.NewGuid();

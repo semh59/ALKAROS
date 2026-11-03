@@ -110,7 +110,7 @@ public sealed class PostgresPaymentTests : IClassFixture<PaymentsTestDatabase>
         // 2); replaying against the stale version 1 must fail closed rather
         // than silently overwrite the concurrent change.
         var staleRetry = payment.Tender(50m);
-        await Assert.ThrowsAsync<InvalidOperationException>(
+        await Assert.ThrowsAsync<PaymentConcurrencyException>(
             () => _payments.SaveAsync(staleRetry, expectedRowVersion: 1));
     }
 

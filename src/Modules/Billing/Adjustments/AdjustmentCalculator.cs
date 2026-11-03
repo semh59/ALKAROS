@@ -57,7 +57,7 @@ public static class AdjustmentCalculator
         var totalBasePayable = bill.PayableAmount;
         if (discountGross > (totalBasePayable + feeGross))
         {
-            throw new InvalidOperationException(
+            throw new DiscountExceedsPayableException(
                 $"Total discount ({discountGross}) cannot exceed bill base payable plus fees ({totalBasePayable + feeGross}).");
         }
 

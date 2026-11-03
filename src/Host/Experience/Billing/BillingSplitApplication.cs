@@ -3,6 +3,7 @@ using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Billing.SplitDesign;
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
@@ -647,7 +648,10 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         OperationCanceledException => (499, "REQUEST_CANCELLED", "İstek iptal edildi."),
         GarsonFeatureDisabledException => (403, "FEATURE_DISABLED", "Bu özellik bu işletme için kapatılmış."),
-        ArgumentException or InvalidOperationException or BadHttpRequestException => (400, "VALIDATION_FAILED", "Hesap bölme isteği doğrulanamadı."),
+        DiscountExceedsPayableException => (400, "DISCOUNT_EXCEEDS_PAYABLE", "İndirim toplamı hesap tutarını aşıyor."),
+        BillConcurrencyException or OrderConcurrencyException or PaymentConcurrencyException => ApiErrorCatalog.RowVersionConflict,
+        ArgumentException or BadHttpRequestException => ApiErrorCatalog.ValidationAnswer(exception),
+        InvalidOperationException => (400, "VALIDATION_FAILED", "İstek hesabın şu anki durumuyla uyumlu değil."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.SerializationFailure =>
             (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),
         PostgresException postgres when postgres.SqlState is PostgresErrorCodes.DeadlockDetected or PostgresErrorCodes.LockNotAvailable =>

@@ -519,11 +519,9 @@ public sealed partial class DualScreenStore
 
     private static string NormalizeCode(string code)
     {
-        if (string.IsNullOrWhiteSpace(code))
-            throw new ArgumentException("Pairing code cannot be empty.", nameof(code));
-        var normalized = code.Trim().Replace("-", "", StringComparison.Ordinal).ToUpperInvariant();
+        var normalized = (code ?? string.Empty).Trim().Replace("-", "", StringComparison.Ordinal).ToUpperInvariant();
         if (normalized.Length != 8 || normalized.Any(character => !CodeAlphabet.Contains(character)))
-            throw new ArgumentException("Pairing code must contain eight supported characters.", nameof(code));
+            throw DualScreenPairingException.InvalidCode();
         return normalized;
     }
 

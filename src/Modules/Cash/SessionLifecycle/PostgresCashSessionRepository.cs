@@ -166,7 +166,7 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new CashSessionConcurrencyException(
                 $"Cash session {session.Snapshot.CashSessionId} not found or concurrent modification " +
                 $"(expected row version {expectedRowVersion}).");
 

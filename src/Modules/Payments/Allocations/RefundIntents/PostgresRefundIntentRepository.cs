@@ -1,4 +1,5 @@
 using ALKAROS.Payments.Allocations.Persistence;
+using ALKAROS.Payments.PaymentAggregate;
 using Npgsql;
 
 namespace ALKAROS.Payments.Allocations.RefundIntents;
@@ -131,7 +132,7 @@ public sealed class PostgresRefundIntentRepository : IRefundIntentRepository
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new PaymentConcurrencyException(
                 $"Refund intent {refundIntent.Id} not found or concurrent modification " +
                 $"(expected row version {expectedRowVersion}).");
 

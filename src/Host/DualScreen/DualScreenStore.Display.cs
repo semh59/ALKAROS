@@ -93,9 +93,7 @@ public sealed partial class DualScreenStore
         command.Parameters.AddWithValue("terminal_id", terminalId);
         command.Parameters.AddWithValue("code_hash", DualScreenToken.Hash(normalized));
         if (await command.ExecuteScalarAsync(cancellationToken) is null)
-            throw new DualScreenPairingException(
-                DualScreenPairingException.CodeInvalid, StatusCodes.Status404NotFound,
-                "Eşleştirme kodu yanlış, süresi dolmuş ya da daha önce kullanılmış.");
+            throw DualScreenPairingException.InvalidCode();
     }
 
     public async Task<(PairingCompleted Result, string RawToken)> CompletePairingAsync(

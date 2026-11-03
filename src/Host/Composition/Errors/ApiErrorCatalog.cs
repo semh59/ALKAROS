@@ -1,4 +1,5 @@
 // V1-RMD-431: generated from the thirteen per-area MapError switches it replaces; each arm is unchanged.
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Cash.TenderHandler;
@@ -25,8 +26,10 @@ using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Menu.StaticMenu;
 using ALKAROS.Observability.AlertFoundation;
 using ALKAROS.Observability.Foundation;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
 using ALKAROS.Payments.Allocations.Persistence;
+using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Production.BatchLifecycle;
 using ALKAROS.Production.StockEffects;
 using ALKAROS.Purchasing.OrdersAndReceipts;
@@ -91,7 +94,7 @@ public static class ApiErrorCatalog
             BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Karar kaydedilemedi."),
             _ => null,
@@ -126,7 +129,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             CatalogRecordNotFoundException =>
                 (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen katalog kaydı bulunamadı."),
             CatalogConcurrencyException =>
@@ -202,7 +205,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -240,7 +243,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -289,7 +292,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -354,7 +357,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -391,7 +394,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
                 (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
             ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -423,7 +426,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -455,7 +458,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -497,7 +500,7 @@ public static class ApiErrorCatalog
             BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -526,7 +529,7 @@ public static class ApiErrorCatalog
             SecretRotationConcurrencyException =>
                 (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Sürüm kaydı başka bir işlem tarafından değiştirildi."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -570,7 +573,7 @@ public static class ApiErrorCatalog
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
@@ -605,11 +608,56 @@ public static class ApiErrorCatalog
             TableTokenNotFoundException =>
                 (StatusCodes.Status404NotFound, "QR_NOT_FOUND", "Bu masa için etkin bir QR kodu yok."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+                ValidationAnswer(exception),
             Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
+
+    /// <summary>The answer for an optimistic-lock (row version) conflict, whichever module detected it.</summary>
+    public static readonly (int Status, string Code, string Message) RowVersionConflict =
+        (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin.");
+
+    // Keyed by the ArgumentException.ParamName the cashier-path code throws with (a "request.Field" expression from
+    // ThrowIfNullOrWhiteSpace counts as "Field"); any other name keeps the generic answer.
+    private static readonly Dictionary<string, string> FieldLabels = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["billId"] = "Hesap",
+        ["billItemId"] = "Hesap kalemi",
+        ["billNumber"] = "Hesap numarası",
+        ["orderId"] = "Sipariş",
+        ["orderItemId"] = "Sipariş kalemi",
+        ["tableId"] = "Masa",
+        ["terminalId"] = "Terminal",
+        ["cashSessionId"] = "Kasa oturumu",
+        ["paymentId"] = "Ödeme",
+        ["paymentAllocationId"] = "Ödeme dağıtımı",
+        ["amount"] = "Tutar",
+        ["allocatedAmount"] = "Dağıtılan tutar",
+        ["paidAmount"] = "Ödenen tutar",
+        ["discountAmount"] = "İndirim tutarı",
+        ["rate"] = "Oran",
+        ["taxRate"] = "KDV oranı",
+        ["unitPrice"] = "Birim fiyat",
+        ["quantity"] = "Adet",
+        ["personCount"] = "Kişi sayısı",
+        ["currencyCode"] = "Para birimi",
+        ["reason"] = "Gerekçe",
+        ["notes"] = "Not",
+        ["idempotencyKey"] = "İşlem anahtarı",
+        ["targets"] = "Bölme hedefleri",
+        ["owners"] = "Hesap sahipleri",
+    };
+
+    /// <summary>
+    /// 400 for a request that failed validation. A field the exception names that has a Turkish label is reported
+    /// (a quantity error names the quantity and the allowed range); the exception's own English text is never sent to the client.
+    /// </summary>
+    public static (int Status, string Code, string Message) ValidationAnswer(Exception exception)
+        => (StatusCodes.Status400BadRequest, "VALIDATION_FAILED",
+            exception is ArgumentException { ParamName: { } field } && FieldLabels.TryGetValue(field[(field.LastIndexOf('.') + 1)..], out var label)
+                ? label + (exception is ArgumentOutOfRangeException ? " izin verilen aralığın dışında." : " geçersiz veya eksik.")
+                : "İstek doğrulanamadı.");
 
     /// <summary>The Host default for exceptions no area answers (formerly DualScreenApplication.WriteErrorAsync).</summary>
     public static (int Status, string Code, string Message) Default(Exception exception)
@@ -647,7 +695,8 @@ public static class ApiErrorCatalog
             // can throw it when the requested amount exceeds what the bill
             // actually has left.
             OverAllocationException => (409, "OVER_ALLOCATION", "İstenen tutar hesabın kalan bakiyesini aşıyor."),
-            ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+            BillConcurrencyException or CashSessionConcurrencyException or OrderConcurrencyException or PaymentConcurrencyException => RowVersionConflict,
+            ArgumentException or BadHttpRequestException => ValidationAnswer(exception),
             _ when IsDatabaseUnavailable(exception) => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
         };

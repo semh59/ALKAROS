@@ -1,3 +1,4 @@
+using ALKAROS.Payments.PaymentAggregate;
 using Npgsql;
 
 namespace ALKAROS.Payments.ManualResolution;
@@ -75,7 +76,7 @@ public sealed class PostgresManualCardConfirmationRepository : IManualCardConfir
         command.Parameters.AddWithValue("id", id);
         command.Parameters.AddWithValue("expected", expectedRowVersion);
         if (await command.ExecuteNonQueryAsync(cancellationToken) == 0)
-            throw new InvalidOperationException($"Manual card confirmation {id} was decided or changed concurrently.");
+            throw new PaymentConcurrencyException($"Manual card confirmation {id} was decided or changed concurrently.");
     }
 
     public async Task<IReadOnlyList<ManualCardConfirmation>> ListAsync(

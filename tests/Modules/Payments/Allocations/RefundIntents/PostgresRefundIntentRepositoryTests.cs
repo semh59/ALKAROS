@@ -170,6 +170,17 @@ public sealed class PostgresRefundIntentRepositoryTests : IClassFixture<RefundIn
         afterReject.RequestedAmount.Should().Be(100m);
     }
 
+    [Fact]
+    public async Task SaveAsyncOnAStaleRowVersionIsAConcurrencyConflict()
+    {
+        var (payment, allocation) = await SeedApprovedPaymentAndAllocationAsync(100m);
+        var intent = await _refundIntents.CreateAsync(payment.Id, allocation, 20m, "key-" + Guid.NewGuid());
+
+        var act = () => _refundIntents.SaveAsync(intent.Reject("Customer withdrew the request"), intent.RowVersion + 1);
+
+        await act.Should().ThrowExactlyAsync<PaymentConcurrencyException>();
+    }
+
     private async Task<(Payment Payment, PaymentAllocation Allocation)> SeedApprovedPaymentAndAllocationAsync(decimal payable)
     {
         var billId = await SeedBillAsync(payable);

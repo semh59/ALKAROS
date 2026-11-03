@@ -175,5 +175,279 @@
       "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
       "task": "V1-RMD-098"
     }
+  },
+  "refusalWithoutStatusAndTrace": {
+    "DELETE /api/v1/management/recipes/products/{productId:guid}/mapping": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "DELETE /api/v1/management/recipes/versions/{versionId:guid}/ingredients/{ingredientItemId:guid}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "DELETE /api/v1/terminals/{terminalId:guid}/online-menu/{provider}/mappings/{productId:guid}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/management/inventory/reports/actual-vs-theoretical": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/management/inventory/reports/critical-stock": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/management/recipes/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/management/recipes/products/{productId:guid}/mapping": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/management/recipes/unit-conversions": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/management/recipes/{recipeId:guid}/versions": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/qr/bill": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/qr/menu": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/qr/orders/{submissionId:guid}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/help-requests/open": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/invoice-settings/seller-profile": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-channels": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-menu/{provider}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-operations/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-operations/orders/{orderId:guid}/customer-note": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-platform-credentials/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-problems/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/online-store-status/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/awaiting-payment": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/my-shift-summary": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/pending": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/staff": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/suggested-waiter": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/table/{tableId:guid}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/waiter-load": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/qnb-credential/status": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/relay-credential/status": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "GET /api/v1/terminals/{terminalId:guid}/token-credential/status": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/products/{productId:guid}/mapping": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/unit-conversions": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/versions/{versionId:guid}/ingredients": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/versions/{versionId:guid}/lock": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/{recipeId:guid}/versions": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/{recipeId:guid}/versions/next": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/management/recipes/{recipeId:guid}/versions/{versionNumber:int}/activate": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/help-requests/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/help-requests/{helpRequestId:guid}/acknowledge": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-operations/orders/{orderId:guid}/cancel": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-operations/orders/{orderId:guid}/hand-over": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-ordering/catalog-publications/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/handoff-note/pop": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/table-draft": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/transfer-server": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/fire-course": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/recall-from-cashier": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/send-to-cashier": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/qnb-credential/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/qnb-credential/test-connection": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/relay-credential/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/token-credential/": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/invoice-settings/seller-profile": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/online-menu/{provider}/mappings/{productId:guid}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/online-platform-credentials/{provider}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/online-store-status/{provider}": {
+      "reason": "Yetki hatasi cevabi yalniz code ve message tasiyor; status ve traceId yok (api-contract-standard.md bilinen sapma).",
+      "task": "V1-RMD-431"
+    }
   }
 }

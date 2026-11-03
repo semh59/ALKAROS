@@ -219,7 +219,7 @@ public sealed class AdjustmentsDomainTests
         var discount = BillAdjustment.CreateDiscountAmount(
             Guid.NewGuid(), billId, 150.00m, 10m, "Excessive Discount", managerId);
 
-        var ex = Assert.Throws<InvalidOperationException>(() =>
+        var ex = Assert.Throws<DiscountExceedsPayableException>(() =>
             AdjustmentCalculator.Calculate(bill, new[] { discount }));
         Assert.Contains("cannot exceed bill base payable", ex.Message);
     }

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace ALKAROS.Host.DualScreen;
 
 public sealed class DualScreenConflictException : Exception
@@ -32,6 +34,11 @@ public sealed class DualScreenPairingException : Exception
     public string Code { get; }
 
     public int StatusCode { get; }
+
+    /// <summary>A code that is malformed, unknown, expired or already used: the caller cannot tell which, by design.</summary>
+    public static DualScreenPairingException InvalidCode() => new(
+        CodeInvalid, StatusCodes.Status404NotFound,
+        "Eşleştirme kodu yanlış, süresi dolmuş ya da daha önce kullanılmış.");
 
     public const string CodeInvalid = "PAIRING_CODE_INVALID";
     public const string NotApproved = "PAIRING_NOT_APPROVED";

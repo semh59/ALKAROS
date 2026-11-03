@@ -95,7 +95,7 @@ public sealed class ApiRouteAuthorizationTests : IAsyncLifetime
         var answeredWithoutDecision = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var endpoint in PublishedEndpoints())
         {
-            var status = await CallWithoutSessionAsync(client, endpoint);
+            var (status, _) = await CallWithoutSessionAsync(client, endpoint);
             if (status is not (HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden))
                 answeredWithoutDecision[endpoint.Key] = (int)status;
         }
@@ -116,10 +116,76 @@ public sealed class ApiRouteAuthorizationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EveryRefusalCarriesTheErrorEnvelope()
+    {
+        var allowlist = ApiConventionAllowlist.Load();
+        using var client = CreateClient();
+        var withoutCodeOrMessage = new List<string>();
+        var withoutStatusOrTrace = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var endpoint in PublishedEndpoints())
+        {
+            var (status, body) = await CallWithoutSessionAsync(client, endpoint);
+            if (status is not (HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden))
+                continue;
+            if (!HasEnvelope(body, (int)status, requireStatusAndTrace: false))
+                withoutCodeOrMessage.Add($"{endpoint.Key} -> {(int)status}");
+            else if (!HasEnvelope(body, (int)status, requireStatusAndTrace: true))
+                withoutStatusOrTrace.Add(endpoint.Key);
+        }
+
+        var unlisted = withoutStatusOrTrace.Where(key => !allowlist.RefusalWithoutStatusAndTrace.ContainsKey(key)).Order().ToList();
+        var stale = allowlist.RefusalWithoutStatusAndTrace.Keys.Where(key => !withoutStatusOrTrace.Contains(key)).Order().ToList();
+
+        Assert.True(withoutCodeOrMessage.Count == 0,
+            "Refusals without { error: { code, message } } (api-contract-standard.md):\n" + string.Join("\n", withoutCodeOrMessage.Order()));
+        Assert.True(unlisted.Count == 0,
+            "Refusals whose envelope lacks status or traceId (answer through the shared handler, or record with a reason):\n"
+            + string.Join("\n", unlisted));
+        Assert.True(stale.Count == 0,
+            "Allowlist entries whose refusal now carries the full envelope (remove them):\n" + string.Join("\n", stale));
+    }
+
+    [Theory]
+    [InlineData("GET", "/api/v1/no-such-route", 404, "NOT_FOUND")]
+    [InlineData("DELETE", "/api/v1/auth/login", 405, "METHOD_NOT_ALLOWED")]
+    public async Task AnUnroutableCallAnswersWithTheEnvelope(string method, string path, int status, string code)
+    {
+        using var client = CreateClient();
+        using var request = new HttpRequestMessage(new HttpMethod(method), path);
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.11");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+
+        using var response = await client.SendAsync(request);
+        var body = await response.Content.ReadAsStringAsync();
+
+        Assert.Equal(status, (int)response.StatusCode);
+        Assert.True(HasEnvelope(body, status, requireStatusAndTrace: true), body);
+        Assert.Equal(code, JsonDocument.Parse(body).RootElement.GetProperty("error").GetProperty("code").GetString());
+    }
+
+    private static bool HasEnvelope(string body, int status, bool requireStatusAndTrace)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(body);
+            return document.RootElement.TryGetProperty("error", out var error)
+                && error.TryGetProperty("code", out var code) && !string.IsNullOrWhiteSpace(code.GetString())
+                && error.TryGetProperty("message", out var message) && !string.IsNullOrWhiteSpace(message.GetString())
+                && (!requireStatusAndTrace
+                    || (error.TryGetProperty("status", out var envelopeStatus) && envelopeStatus.GetInt32() == status
+                        && error.TryGetProperty("traceId", out var traceId) && !string.IsNullOrWhiteSpace(traceId.GetString())));
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
+    }
+
+    [Fact]
     public void EveryAllowlistEntryNamesItsReasonAndResponsibleTask()
     {
         var allowlist = ApiConventionAllowlist.Load();
-        var incomplete = allowlist.OutsidePrefix.Concat(allowlist.WithoutSession)
+        var incomplete = allowlist.OutsidePrefix.Concat(allowlist.WithoutSession).Concat(allowlist.RefusalWithoutStatusAndTrace)
             .Where(pair => string.IsNullOrWhiteSpace(pair.Value.Reason)
                 || !System.Text.RegularExpressions.Regex.IsMatch(pair.Value.Task ?? string.Empty, @"^V\d+-[A-Z]+-\d+$"))
             .Select(pair => pair.Key)
@@ -154,7 +220,7 @@ public sealed class ApiRouteAuthorizationTests : IAsyncLifetime
             || raw.StartsWith(ApiPrefix + "/", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static async Task<HttpStatusCode> CallWithoutSessionAsync(HttpClient client, PublishedEndpoint endpoint)
+    private static async Task<(HttpStatusCode Status, string Body)> CallWithoutSessionAsync(HttpClient client, PublishedEndpoint endpoint)
     {
         using var request = new HttpRequestMessage(new HttpMethod(endpoint.Method), endpoint.SamplePath() + endpoint.SampleQuery());
         request.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.10");
@@ -176,8 +242,8 @@ public sealed class ApiRouteAuthorizationTests : IAsyncLifetime
         }
 
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-        using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, timeout.Token);
-        return response.StatusCode;
+        using var response = await client.SendAsync(request, timeout.Token);
+        return (response.StatusCode, await response.Content.ReadAsStringAsync(timeout.Token));
     }
 
     private HttpClient CreateClient()
@@ -291,6 +357,8 @@ internal sealed class ApiConventionAllowlist
 
     public required IReadOnlyDictionary<string, AllowlistEntry> WithoutSession { get; init; }
 
+    public required IReadOnlyDictionary<string, AllowlistEntry> RefusalWithoutStatusAndTrace { get; init; }
+
     public static ApiConventionAllowlist Load()
     {
         var path = Path.Combine(ApiConventionTestDatabase.FindRepositoryRoot(),
@@ -300,6 +368,7 @@ internal sealed class ApiConventionAllowlist
         {
             OutsidePrefix = Read(document.RootElement.GetProperty("outsideApiPrefix")),
             WithoutSession = Read(document.RootElement.GetProperty("answersWithoutSession")),
+            RefusalWithoutStatusAndTrace = Read(document.RootElement.GetProperty("refusalWithoutStatusAndTrace")),
         };
     }
 

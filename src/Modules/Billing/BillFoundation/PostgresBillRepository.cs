@@ -484,7 +484,7 @@ public sealed class PostgresBillRepository : IBillRepository
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
         if (affected == 0)
         {
-            throw new InvalidOperationException(
+            throw new BillConcurrencyException(
                 $"Optimistic concurrency violation on Bill {bill.Id}. Expected row_version {expectedRowVersion}.");
         }
 
@@ -551,7 +551,7 @@ public sealed class PostgresBillRepository : IBillRepository
         BindBillItemParameters(command, item);
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new BillConcurrencyException(
                 $"Bill item '{item.Id}' not found or concurrent modification " +
                 $"(expected row version {item.RowVersion}).");
     }

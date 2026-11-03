@@ -201,8 +201,7 @@ public static partial class DualScreenApplication
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
-            if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
-                throw new ArgumentException("IdempotencyKey is required.", nameof(request));
+            ArgumentException.ThrowIfNullOrWhiteSpace(request.IdempotencyKey);
 
             // V1-RMD-241: a network retry (or a race just under the client's
             // own double-click guard) used to always insert a brand-new row
