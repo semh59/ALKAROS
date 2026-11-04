@@ -26,6 +26,7 @@ Kapsam dışı: kalem "Kaldır" geri alma, mikro metin/kontrast, başlık tutarl
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/Cashier.tsx (V1-RMD-097) — ilk dokunuşta sipariş, saat dilimi.
   - src/Clients/PosTerminal/src/routes/workspace.tsx (V1-CUI-006) — son güncelleme saati saat dilimi.
+  - src/Clients/PosTerminal/src/routes/workspace.test.tsx (V1-CUI-006) — son güncelleme saati saat dilimi testi.
   - src/Clients/PosTerminal/src/strings.ts (V1-RMD-097) — yeni cümleler.
   - src/Clients/PosTerminal/src/styles.css (V1-RMD-042) — açma düğmesi stillerinin kalkması, boş durum kartı.
   - src/Clients/PosTerminal/src/format.ts (V1-RMD-097) — saat dilimli saat biçimleyicisi.
