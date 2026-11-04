@@ -1,8 +1,8 @@
 # V1-RMD-823 - PosTerminal harici yazı tipi isteği, yönetim/mutfak ekranlarında saat dilimi, eşit bölüştürmede kişi sayısı sınırı
 
 - Task ID: V1-RMD-823
-- Status: Planned
-- Assignee: unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
