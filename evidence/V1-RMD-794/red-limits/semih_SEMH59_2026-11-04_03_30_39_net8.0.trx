@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="cc2bb2f0-6487-40fc-86b5-43e13e2b2a28" name="semih@SEMH59 2026-11-04 03:30:39" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T03:30:39.9611300+03:00" queuing="2026-11-04T03:30:39.9611303+03:00" start="2026-11-04T03:30:36.1316688+03:00" finish="2026-11-04T03:30:39.9688292+03:00" />
+  <TestSettings name="default" id="680ed694-cbdd-43e8-848b-0ace2284366e">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_03_30_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="754662b9-0000-479d-8121-161f2d25e880" testId="9d26c192-6d32-7b62-fd48-1de452460c26" testName="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheCashScreenNoteLimitIsTheServerNoteLimit" computerName="SEMH59" duration="00:00:00.0745117" startTime="2026-11-04T03:30:39.8272531+03:00" endTime="2026-11-04T03:30:39.8272537+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="754662b9-0000-479d-8121-161f2d25e880" />
+    <UnitTestResult executionId="aeec7797-25e8-499d-9cf3-1b3e31446c5e" testId="4b860851-ff6c-ad09-7371-38d0275616d8" testName="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;cash.cash_out_approval_threshold&quot;, kind: &quot;number&quot;, min: 0, max: 1000000)" computerName="SEMH59" duration="00:00:00.0001206" startTime="2026-11-04T03:30:39.7581105+03:00" endTime="2026-11-04T03:30:39.7581106+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aeec7797-25e8-499d-9cf3-1b3e31446c5e" />
+    <UnitTestResult executionId="c7aa94b5-6902-484a-9574-d8f9fa59f19c" testId="b9d40021-9948-69d1-a538-b39744cd12da" testName="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;kitchen.dense_mode_threshold&quot;, kind: &quot;number&quot;, min: 1, max: 99)" computerName="SEMH59" duration="00:00:00.0004955" startTime="2026-11-04T03:30:39.7290377+03:00" endTime="2026-11-04T03:30:39.7290377+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7aa94b5-6902-484a-9574-d8f9fa59f19c" />
+    <UnitTestResult executionId="b5ed7858-5c47-499f-aecb-1ac07d688225" testId="2f0532a4-8230-9c66-1d7e-2e8225b500f1" testName="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;waiter.max_active_tables&quot;, kind: &quot;number&quot;, min: 0, max: 50)" computerName="SEMH59" duration="00:00:00.0055984" startTime="2026-11-04T03:30:39.7253540+03:00" endTime="2026-11-04T03:30:39.7253964+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5ed7858-5c47-499f-aecb-1ac07d688225" />
+    <UnitTestResult executionId="6e701fa3-3c5f-4b74-bb15-e468e1f12a43" testId="a8093043-419f-8375-4877-1bfd362211a5" testName="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;qr_ordering.pending_confirmation_timeout&quot;, kind: &quot;minutes&quot;, min: 1, max: 1440)" computerName="SEMH59" duration="00:00:00.0073510" startTime="2026-11-04T03:30:39.7577713+03:00" endTime="2026-11-04T03:30:39.7577716+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e701fa3-3c5f-4b74-bb15-e468e1f12a43">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(ALKAROS.Settings.TypedSettings.SettingValueRangeException)&#xD;
+Actual:   typeof(ALKAROS.Settings.TypedSettings.SettingTypeValidationException)&#xD;
+---- ALKAROS.Settings.TypedSettings.SettingTypeValidationException : Value '00:00:00' is invalid for setting 'qr_ordering.pending_confirmation_timeout' of type 'Duration': Value must be a valid duration (e.g. '00:15:00' or ISO-8601 'PT15M').</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(String key, String kind, Int64 min, Int64 max) in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\ClientLimitLockTests.cs:line 44&#xD;
+   at InvokeStub_ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+----- Inner Stack Trace -----&#xD;
+   at ALKAROS.Settings.TypedSettings.SettingValidator.ValidateValue(String settingKey, String value, SettingDataType dataType) in D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\SettingValidator.cs:line 146&#xD;
+   at ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.&lt;&gt;c__DisplayClass2_0.&lt;TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts&gt;b__1() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\ClientLimitLockTests.cs:line 44</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6394f183-f7ad-4073-8a87-0f42c70ea562" testId="fb3985f2-03b2-7d23-261a-40d749d44127" testName="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;cash.close_variance_tolerance&quot;, kind: &quot;number&quot;, min: 0, max: 500)" computerName="SEMH59" duration="00:00:00.0001780" startTime="2026-11-04T03:30:39.7580489+03:00" endTime="2026-11-04T03:30:39.7580490+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6394f183-f7ad-4073-8a87-0f42c70ea562" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;qr_ordering.pending_confirmation_timeout&quot;, kind: &quot;minutes&quot;, min: 1, max: 1440)" storage="d:\project\alkaros\tests\host\experience\cashsession\bin\debug\net8.0\alkaros.host.experience.cashsession.tests.dll" id="a8093043-419f-8375-4877-1bfd362211a5">
+      <Execution id="6e701fa3-3c5f-4b74-bb15-e468e1f12a43" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests" name="TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;kitchen.dense_mode_threshold&quot;, kind: &quot;number&quot;, min: 1, max: 99)" storage="d:\project\alkaros\tests\host\experience\cashsession\bin\debug\net8.0\alkaros.host.experience.cashsession.tests.dll" id="b9d40021-9948-69d1-a538-b39744cd12da">
+      <Execution id="c7aa94b5-6902-484a-9574-d8f9fa59f19c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests" name="TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;waiter.max_active_tables&quot;, kind: &quot;number&quot;, min: 0, max: 50)" storage="d:\project\alkaros\tests\host\experience\cashsession\bin\debug\net8.0\alkaros.host.experience.cashsession.tests.dll" id="2f0532a4-8230-9c66-1d7e-2e8225b500f1">
+      <Execution id="b5ed7858-5c47-499f-aecb-1ac07d688225" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests" name="TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;cash.cash_out_approval_threshold&quot;, kind: &quot;number&quot;, min: 0, max: 1000000)" storage="d:\project\alkaros\tests\host\experience\cashsession\bin\debug\net8.0\alkaros.host.experience.cashsession.tests.dll" id="4b860851-ff6c-ad09-7371-38d0275616d8">
+      <Execution id="aeec7797-25e8-499d-9cf3-1b3e31446c5e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests" name="TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheCashScreenNoteLimitIsTheServerNoteLimit" storage="d:\project\alkaros\tests\host\experience\cashsession\bin\debug\net8.0\alkaros.host.experience.cashsession.tests.dll" id="9d26c192-6d32-7b62-fd48-1de452460c26">
+      <Execution id="754662b9-0000-479d-8121-161f2d25e880" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests" name="TheCashScreenNoteLimitIsTheServerNoteLimit" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: &quot;cash.close_variance_tolerance&quot;, kind: &quot;number&quot;, min: 0, max: 500)" storage="d:\project\alkaros\tests\host\experience\cashsession\bin\debug\net8.0\alkaros.host.experience.cashsession.tests.dll" id="fb3985f2-03b2-7d23-261a-40d749d44127">
+      <Execution id="6394f183-f7ad-4073-8a87-0f42c70ea562" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests" name="TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9d26c192-6d32-7b62-fd48-1de452460c26" executionId="754662b9-0000-479d-8121-161f2d25e880" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b860851-ff6c-ad09-7371-38d0275616d8" executionId="aeec7797-25e8-499d-9cf3-1b3e31446c5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9d40021-9948-69d1-a538-b39744cd12da" executionId="c7aa94b5-6902-484a-9574-d8f9fa59f19c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f0532a4-8230-9c66-1d7e-2e8225b500f1" executionId="b5ed7858-5c47-499f-aecb-1ac07d688225" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a8093043-419f-8375-4877-1bfd362211a5" executionId="6e701fa3-3c5f-4b74-bb15-e468e1f12a43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fb3985f2-03b2-7d23-261a-40d749d44127" executionId="6394f183-f7ad-4073-8a87-0f42c70ea562" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="5" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.97]   Discovering: ALKAROS.Host.Experience.CashSession.Tests&#xD;
+[xUnit.net 00:00:01.17]   Discovered:  ALKAROS.Host.Experience.CashSession.Tests&#xD;
+[xUnit.net 00:00:01.18]   Starting:    ALKAROS.Host.Experience.CashSession.Tests&#xD;
+[xUnit.net 00:00:01.25]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:01.26]       Expected: typeof(ALKAROS.Settings.TypedSettings.SettingValueRangeException)&#xD;
+[xUnit.net 00:00:01.26]       Actual:   typeof(ALKAROS.Settings.TypedSettings.SettingTypeValidationException)&#xD;
+[xUnit.net 00:00:01.26]       ---- ALKAROS.Settings.TypedSettings.SettingTypeValidationException : Value '00:00:00' is invalid for setting 'qr_ordering.pending_confirmation_timeout' of type 'Duration': Value must be a valid duration (e.g. '00:15:00' or ISO-8601 'PT15M').&#xD;
+[xUnit.net 00:00:01.26]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.26]         D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\ClientLimitLockTests.cs(44,0): at ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(String key, String kind, Int64 min, Int64 max)&#xD;
+[xUnit.net 00:00:01.26]            at InvokeStub_ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.26]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.26]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:01.26]         D:\PROJECT\ALKAROS\src\Modules\Settings\TypedSettings\SettingValidator.cs(146,0): at ALKAROS.Settings.TypedSettings.SettingValidator.ValidateValue(String settingKey, String value, SettingDataType dataType)&#xD;
+[xUnit.net 00:00:01.26]         D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\ClientLimitLockTests.cs(44,0): at ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.&lt;&gt;c__DisplayClass2_0.&lt;TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts&gt;b__1()&#xD;
+[xUnit.net 00:00:01.33]   Finished:    ALKAROS.Host.Experience.CashSession.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T03:30:39.7553917+03:00">
+        <Text>[xUnit.net 00:00:01.25]     ALKAROS.Host.Experience.CashSession.Tests.ClientLimitLockTests.TheManagementScreenRangeOfASettingIsExactlyTheRangeTheServerAccepts(key: "qr_ordering.pending_confirmation_timeout", kind: "minutes", min: 1, max: 1440) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

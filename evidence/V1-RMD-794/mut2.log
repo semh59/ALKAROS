@@ -1,0 +1,3 @@
+m9-cash-wrong-method: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.CashSession.Tes
+m10-account-wrong-method: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.Host.Experience.CustomerAccount
+m11-claim-not-named: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.PaymentTender.T

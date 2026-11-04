@@ -1,0 +1,8 @@
+m1-replay-ignores-tendered: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 450 ms - ALKAROS.Cash.TenderHandler.Tests.dll
+m2-eft-wrong-method: exit=1 Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 17 s - ALKAROS.Host.Experience.PaymentTender.
+m3-card-wrong-amount: exit=1 Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 18 s - ALKAROS.Host.Experience.PaymentTender.
+m4-audit-failure-leaks: exit=1 Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 16 s - ALKAROS.Host.Experience.PaymentTender.
+m5-wrong-event-name: exit=1 Başarısız! - Başarısız:     2, Başarılı:     1, Atlanan:     0, Toplam:     3, Süre: 16 s - ALKAROS.Host.Experience.PaymentTender.
+m6-client-tolerance-max: exit=1 Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 50 ms - ALKAROS.Host.Experience.CashSession.T
+m7-server-note-limit: exit=1 Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 37 ms - ALKAROS.Host.Experience.CashSession.T
+m8-english-message: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 58 ms - ALKAROS.Host.Experience.PaymentTender

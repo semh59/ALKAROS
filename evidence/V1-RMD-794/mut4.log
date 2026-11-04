@@ -1,0 +1,6 @@
+m21-terminal-lost: exit=1 Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 10 s - ALKAROS.Host.Experience.PaymentTender.
+m22-no-own-deadline: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 37 ms - ALKAROS.Host.Experience.PaymentTender
+m23-cash-actor-lost: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.CashSession.Tes
+m24-account-amount-lost: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.CustomerAccount
+m25-eft-actor-lost: exit=1 Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 10 s - ALKAROS.Host.Experience.PaymentTender.
+m26-refund-screen-limit: exit=1 Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 41 ms - ALKAROS.Host.Experience.CashSession.T

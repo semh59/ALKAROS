@@ -74,6 +74,34 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AChargeAboveWhatIsLeftOnTheBillIsRefusedAndLeavesAnAuditEvent()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd794-charge-over");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var customer = await CreateCustomerAsync(client, terminalId, cookie, "Fazla Borç", "0532 444 55 66");
+        await _database.SetCreditTermsAsync(customer.CustomerId, 500m, null);
+        var billId = await _database.SeedBillAsync(50m);
+
+        var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/account-charge", cookie,
+            new AccountChargeRequestV1(customer.CustomerId, 80m, Guid.NewGuid().ToString()));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal(0L, await _database.CountPaymentsAsync(billId));
+        Assert.Equal("1", await _database.ScalarTextAsync(
+            """
+            SELECT count(*)::text FROM audit.audit_events
+            WHERE event_name = 'payment.tender-rejected' AND aggregate_id = @id
+              AND (after_state_json::jsonb ->> 'method') = 'Account'
+              AND actor_id IN (SELECT user_id FROM identity.users) AND reason = 'OverRemaining'
+              AND (after_state_json::jsonb ->> 'terminalId')::uuid = '{terminalId}'::uuid
+              AND (after_state_json::jsonb ->> 'amount')::numeric = 80
+              AND (after_state_json::jsonb ->> 'remainingPayable')::numeric = 50;
+            """.Replace("{terminalId}", terminalId.ToString("D")), billId));
+    }
+
+    [Fact]
     public async Task ACustomerWithoutACreditLimitIsRefusedWithTheTurkishReason()
     {
         var terminalId = Guid.NewGuid();

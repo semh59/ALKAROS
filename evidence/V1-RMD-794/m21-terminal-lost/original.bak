@@ -1,0 +1,791 @@
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.Adjustments;
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Billing.PaymentClosure;
+using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Payments.ManualResolution;
+using ALKAROS.Payments.Allocations.Persistence;
+using ALKAROS.Payments.CardSettlement;
+using ALKAROS.Payments.EftTender;
+using ALKAROS.Payments.PaymentAggregate;
+using ALKAROS.Payments.TenderRouting;
+using ALKAROS.Settings.ManagerSelfApproval;
+using ALKAROS.Settings.TypedSettings;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
+using Npgsql;
+
+namespace ALKAROS.Host.DualScreen;
+
+public static partial class DualScreenApplication
+{
+    /// <summary>
+    /// V13-PUI-001/V1-RMD-258: the generic tender-routing HTTP surface for
+    /// the split payment UI — BankCard and Eft only. Cash keeps its own
+    /// dedicated <c>POST .../cash-sessions/{cashSessionId}/cash-tender</c>
+    /// endpoint (V13-CSH-004, unmodified): it needs a <c>CashSessionId</c>
+    /// and mints its own real Payment id, neither of which the generic
+    /// <see cref="TenderRouter"/> envelope carries faithfully (see
+    /// <c>TenderRequest</c>'s own doc comment) — routing Cash through here
+    /// too would only add an indirection with no real benefit. MealCard is
+    /// never accepted here either: it stays genuinely unregistered
+    /// (V13-PAY-003), so the router's own <see cref="TenderMethodNotRegistered"/>
+    /// already gives it the correct typed-unavailable response with zero
+    /// special-casing.
+    ///
+    /// V1-RMD-258: a BankCard routing result is no longer relayed to the
+    /// caller unpersisted — it is handed to
+    /// <see cref="ICardSettlementOrchestrator"/>, which durably records the
+    /// attempt (Approved/Declined/RequiresReconciliation) exactly as
+    /// V13-PAY-004 built it. This closes two findings from the Faz 2
+    /// independent audit at their shared root: (1) <c>CardSettlementOrchestrator</c>
+    /// had zero real callers despite being fully built and tested; (2) an
+    /// Unknown/RequiresReconciliation BankCard attempt left no trace in the
+    /// database, so the "don't let the cashier retry into a duplicate
+    /// charge" lock lived only in the browser's own JS memory and was lost
+    /// on a page reload. The GET endpoint below now surfaces a real
+    /// unresolved Payment (if any) read from the database, so the client can
+    /// correctly re-derive its lock state after a reload instead of relying
+    /// on in-memory state alone.
+    /// </summary>
+    private static readonly Action<ILogger, Guid, Exception?> OrderNotCompletedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error, new EventId(6940, "BillClosedOrderNotCompleted"),
+            "Bill {BillId} closed but its order could not be completed.");
+
+    private static readonly Action<ILogger, Guid, Exception?> DisplayPushFailedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning, new EventId(6941, "BillClosedDisplayPushFailed"),
+            "Customer display push after closing bill {BillId} failed.");
+
+    private static readonly Action<ILogger, Guid, Exception?> RejectedTenderAuditFailedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error, new EventId(6943, "RejectedTenderAuditFailed"),
+            "The audit event for a tender refused on bill {BillId} could not be written; the refusal itself stands.");
+
+    /// <summary>
+    /// A tender refused for exceeding what is left to pay moves no money, so only this event tells a manager that a
+    /// cashier tried it. Best effort by design: a failing audit store must not change what the cashier is told.
+    /// </summary>
+    public static async Task RecordRejectedTenderAsync(
+        IAuditEventStore auditEvents, ILoggerFactory loggerFactory, HttpContext context, Guid actorId, Guid terminalId,
+        Guid billId, string method, decimal amount, decimal remainingPayable, string? idempotencyKey, Guid? confirmationId = null)
+    {
+        // The caller may already have hung up; the record of a refused tender is still worth a short try of its own.
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        try
+        {
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "payment.tender-rejected",
+                    aggregateType: "Bill",
+                    aggregateId: billId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: actorId,
+                    reason: "OverRemaining",
+                    afterStateJson: JsonSerializer.Serialize(new
+                    {
+                        reason = "OverRemaining", method, amount, remainingPayable, terminalId, confirmationId,
+                        idempotencyKey = idempotencyKey is { Length: > 100 } ? idempotencyKey[..100] : idempotencyKey,
+                    })),
+                deadline.Token);
+        }
+        catch (Exception exception)
+        {
+            RejectedTenderAuditFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.TenderRejection"), billId, exception);
+        }
+    }
+
+    private static readonly Action<ILogger, Guid, Exception?> CloseFailedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error, new EventId(6942, "BillCloseFailed"),
+            "Closing bill {BillId} after a payment failed; the bill stays open.");
+
+    /// <summary>
+    /// V1-RMD-276: closes the bill after a successful tender. Best effort by design: the money
+    /// has already been recorded, so a failure to flip the bill state must never turn a
+    /// successful payment into an error response; the bill just stays open and the next
+    /// tender or close attempt completes it.
+    /// </summary>
+    /// <summary>
+    /// V1-RMD-294: reproduced locally first, as the task required. CustomerDisplaySnapshotDto is built
+    /// entirely from orders.orders/order_items (DualScreenStore.Display.cs), so a bill DISCOUNT - which only
+    /// ever touches billing.bill_adjustments, never orders.orders - changes nothing the display's own
+    /// snapshot query reads; there is no stale amount to refresh there under today's data model. A COMPLETED
+    /// order (this order's own Total/Message fields DO change - see GetSnapshotAsync's Completed branch and
+    /// its own Turkish thank-you message) was the one real gap: nothing told the display, so it kept showing
+    /// the last active order forever after the bill that completed it was paid.
+    /// </summary>
+    public static async Task<bool> TryCloseBillAsync(
+        IBillClosureService billClosure, OrderSettlementService orderSettlement, Guid billId,
+        IHubContext<CustomerDisplayHub> hub, ILoggerFactory loggerFactory, Guid terminalId, CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure");
+        try
+        {
+            var result = await billClosure.TryCloseAsync(billId, cancellationToken);
+            var closed = result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
+            // V1-RMD-282: a settled check closes its order (and frees a table it was still attached to).
+            if (closed)
+            {
+                try
+                {
+                    await orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    // The bill is closed and the money is recorded; only the order/table hand-over failed. The
+                    // answer stays "closed" and the order is completed by the manual close-settled action.
+                    OrderNotCompletedLog(logger, billId, exception);
+                }
+            }
+            // Every tender moves what is left to pay, not only the one that closes the bill. Best effort: nobody
+            // may be watching (no paired display, or it is offline), and a failed push must never turn a
+            // successful payment into an error response - the display simply shows the stale state until its own
+            // next natural refresh.
+            try
+            {
+                await hub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
+                    CustomerDisplayHub.SnapshotChanged, new { kind = closed ? "BillSettled" : "PaymentChanged" }, cancellationToken);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                DisplayPushFailedLog(logger, billId, exception);
+            }
+            return closed;
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            CloseFailedLog(logger, billId, exception);
+            return false;
+        }
+    }
+
+    private static IResult MapManualResolutionError(ManualPaymentResolutionException exception)
+    {
+        var (status, code, message) = exception switch
+        {
+            ManualResolutionSlipInvalidException => (StatusCodes.Status400BadRequest, "SLIP_INVALID", "Fiş numarası 4-32 karakter olmalı (harf, rakam, - ve /)."),
+            ManualResolutionSlipReusedException => (StatusCodes.Status409Conflict, "SLIP_REUSED", "Bu fiş numarası başka bir ödemeye zaten bağlı."),
+            ManualResolutionAlreadyPendingException => (StatusCodes.Status409Conflict, "CONFIRMATION_PENDING", "Bu ödeme için onay bekleyen bir bildirim var."),
+            ManualResolutionNotResolvableException => (StatusCodes.Status409Conflict, "PAYMENT_NOT_RESOLVABLE", "Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin."),
+            ManualResolutionConfirmationDecidedException => (StatusCodes.Status409Conflict, "CONFIRMATION_DECIDED", "Bu bildirim zaten karara bağlanmış."),
+            ManualResolutionSameActorException => (StatusCodes.Status403Forbidden, "SAME_ACTOR", "Bildirimi yapan kişi onaylayamaz; başka bir yetkili onaylamalı. Tek yöneticili işletmelerde Ayarlar'dan \"Yönetici kendi talebini onaylayabilir\" açılabilir."),
+            ManualResolutionReasonInvalidException => (StatusCodes.Status400BadRequest, "NOTE_INVALID", "Not en fazla 500 karakter olabilir."),
+            ManualResolutionConfirmationNotFoundException or ManualResolutionPaymentNotFoundException =>
+                (StatusCodes.Status404NotFound, "NOT_FOUND", "Kayıt bulunamadı."),
+            _ => (StatusCodes.Status500InternalServerError, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
+        };
+        return Results.Json(new { error = new { code, message } }, statusCode: status);
+    }
+
+    public static RouteGroupBuilder MapPaymentTenderApi(this WebApplication app)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+
+        var group = app.MapGroup("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders")
+            .WithTags("PaymentTender")
+            .RequireRateLimiting("terminal-write");
+
+        group.MapGet("/", async (
+            Guid terminalId,
+            Guid billId,
+            IBillRepository billRepository,
+            IPaymentAllocationRepository allocationRepository,
+            IPaymentRepository paymentRepository,
+            IManualCardConfirmationRepository confirmations,
+            IBillAdjustmentRepository adjustmentRepository,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+
+            var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
+            if (bill is null)
+                return Results.NotFound();
+
+            var allocations = await allocationRepository.GetByBillIdAsync(billId, cancellationToken);
+            var allocatedTotal = allocations.Sum(a => a.Amount);
+            // V1-RMD-298 (independent 2026-09-26 audit, finding K1): the real (discount/tip-adjusted)
+            // ceiling, not bill.PayableAmount - billing.bill_adjustments never updates that field. This is
+            // the value the cashier UI's remainingAmount() reads directly.
+            var billAdjustments = await adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
+            var adjustedPayableAmount = AdjustmentCalculator.Calculate(bill, billAdjustments).AdjustedPayableAmount;
+            var remaining = adjustedPayableAmount - allocatedTotal;
+
+            var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
+            var paymentsById = payments.ToDictionary(p => p.Id);
+
+            var lines = new List<PaymentAllocationLineV1>(allocations.Count);
+            foreach (var allocation in allocations)
+            {
+                paymentsById.TryGetValue(allocation.PaymentId, out var payment);
+                lines.Add(new PaymentAllocationLineV1(
+                    allocation.Id,
+                    allocation.PaymentId,
+                    allocation.Amount,
+                    payment?.Status.ToString() ?? "Unknown"));
+            }
+
+            // V1-RMD-258: a genuinely persisted Pending/Unknown/
+            // ReconciliationRequired Payment (CardSettlementOrchestrator now
+            // writes one for a RequiresReconciliation BankCard outcome) is
+            // read here for real — the client uses this to re-derive its
+            // lock state on every load, so a page reload can no longer
+            // silently drop the "don't retry into a duplicate charge" lock.
+            var unsettled = payments.FirstOrDefault(p =>
+                p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+            var pending = unsettled is null ? null : await confirmations.GetPendingByPaymentIdAsync(unsettled.Id, cancellationToken);
+            var unsettledDto = unsettled is null
+                ? null
+                : new UnsettledPaymentV1(
+                    unsettled.Id,
+                    unsettled.Status.ToString(),
+                    unsettled.History.Count > 0 ? unsettled.History[^1].Reason : null,
+                    pending is null
+                        ? null
+                        : new PendingCardConfirmationV1(pending.Id, pending.SlipNumber, pending.Amount, pending.RequestedBy, pending.RequestedAt));
+
+            return Results.Ok(new BillTenderSummaryV1(
+                billId, adjustedPayableAmount, allocatedTotal, remaining, lines, unsettledDto));
+        });
+
+        // V1-RMD-264: an unconfirmed card payment locks its bill (no real
+        // terminal exists to settle it). A manager - never a plain cashier -
+        // can declare "the card was NOT charged", which closes the payment as
+        // Declined and unlocks the bill. Creates no money record.
+        group.MapPost("/unsettled/{paymentId:guid}/not-charged", async (
+            Guid terminalId,
+            Guid billId,
+            Guid paymentId,
+            ResolveUnsettledPaymentRequestV1 request,
+            IManualPaymentResolutionService resolution,
+            IPaymentRepository paymentRepository,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+
+            var payment = await paymentRepository.GetByIdAsync(paymentId, cancellationToken);
+            if (payment is null || payment.BillId != billId)
+                return Results.NotFound();
+
+            try
+            {
+                var result = await resolution.MarkNotChargedAsync(
+                    paymentId, principal.UserId, request.Reason ?? string.Empty,
+                    (resolved, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.not-charged",
+                            aggregateType: "Payment",
+                            aggregateId: paymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request.Reason?.Trim(),
+                            beforeStateJson: JsonSerializer.Serialize(new { status = resolved.PreviousStatus, billId }),
+                            afterStateJson: JsonSerializer.Serialize(new { status = resolved.NewStatus, billId })),
+                        connection, transaction, token),
+                    cancellationToken);
+                // V1-RMD-412 (V1-RMD-393 F-06): the unresolved attempt was what kept an otherwise settled check
+                // open; like card approval and every tender, try to close it now (a check still short stays open).
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+                return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus, closed));
+            }
+            catch (ManualResolutionReasonInvalidException)
+            {
+                return Results.Json(
+                    new { error = new { code = "RESOLUTION_REASON_INVALID", message = "Gerekçe yazmalısınız (en fazla 500 karakter)." } },
+                    statusCode: StatusCodes.Status400BadRequest);
+            }
+            catch (ManualResolutionNotResolvableException)
+            {
+                return Results.Json(
+                    new { error = new { code = "PAYMENT_NOT_RESOLVABLE", message = "Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (ManualResolutionPaymentNotFoundException)
+            {
+                return Results.NotFound();
+            }
+        });
+
+        // V1-RMD-283: "the card WAS charged". Two people: one claims it with the slip number, a DIFFERENT
+        // authorized person approves; only the approval creates a money record. Both need reconciliation.manage.
+        group.MapPost("/unsettled/{paymentId:guid}/card-charged", async (
+            Guid terminalId,
+            Guid billId,
+            Guid paymentId,
+            ClaimCardChargedRequestV1 request,
+            IManualCardConfirmationService confirmationService,
+            IPaymentRepository paymentRepository,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+            var payment = await paymentRepository.GetByIdAsync(paymentId, cancellationToken);
+            if (payment is null || payment.BillId != billId)
+                return Results.NotFound();
+
+            try
+            {
+                var claim = await confirmationService.RequestAsync(
+                    paymentId, principal.UserId, request.SlipNumber ?? string.Empty, request.Note,
+                    (claimed, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.card-charged-requested",
+                            aggregateType: "Payment",
+                            aggregateId: paymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request.Note?.Trim(),
+                            afterStateJson: JsonSerializer.Serialize(new { confirmationId = claimed.Id, slipNumber = claimed.SlipNumber, amount = claimed.Amount, billId })),
+                        connection, transaction, token),
+                    cancellationToken);
+                return Results.Ok(new CardConfirmationResultV1(claim.Id, claim.Status.ToString()));
+            }
+            catch (ManualPaymentResolutionException exception)
+            {
+                return MapManualResolutionError(exception);
+            }
+        });
+
+        group.MapPost("/confirmations/{confirmationId:guid}/approve", async (
+            Guid terminalId,
+            Guid billId,
+            Guid confirmationId,
+            DecideCardConfirmationRequestV1 request,
+            IManualCardConfirmationService confirmationService,
+            ISettingsService settings,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+            try
+            {
+                var decided = await confirmationService.ApproveAsync(
+                    confirmationId, billId, principal.UserId, request?.Note,
+                    await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken),
+                    (approved, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.card-charged-approved",
+                            aggregateType: "Payment",
+                            aggregateId: approved.PaymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request?.Note?.Trim(),
+                            afterStateJson: JsonSerializer.Serialize(new
+                            {
+                                confirmationId = approved.Id, slipNumber = approved.SlipNumber, amount = approved.Amount,
+                                requestedBy = approved.RequestedBy, approvedBy = principal.UserId, billId,
+                                selfApproved = approved.SelfApproved,
+                            })),
+                        connection, transaction, token),
+                    cancellationToken);
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+                return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString(), closed));
+            }
+            catch (OverAllocationException exception)
+            {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, nameof(TenderMethod.BankCard),
+                    exception.RequestedAmount, exception.RemainingPayable, null, confirmationId);
+                return Results.Json(
+                    new { error = new { code = "TENDER_OVER_ALLOCATION", message = $"Tutar kalan {FormatLira(exception.RemainingPayable)}'yi aşıyor." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (ManualPaymentResolutionException exception)
+            {
+                return MapManualResolutionError(exception);
+            }
+        });
+
+        group.MapPost("/confirmations/{confirmationId:guid}/reject", async (
+            Guid terminalId,
+            Guid billId,
+            Guid confirmationId,
+            DecideCardConfirmationRequestV1 request,
+            IManualCardConfirmationService confirmationService,
+            IAuditEventStore auditEvents,
+            IAuthorizationService authorization,
+            DualScreenStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
+            try
+            {
+                var decided = await confirmationService.RejectAsync(
+                    confirmationId, billId, principal.UserId, request?.Note,
+                    (rejected, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.card-charged-rejected",
+                            aggregateType: "Payment",
+                            aggregateId: rejected.PaymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request?.Note?.Trim(),
+                            afterStateJson: JsonSerializer.Serialize(new { confirmationId = rejected.Id, slipNumber = rejected.SlipNumber, billId })),
+                        connection, transaction, token),
+                    cancellationToken);
+                return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString()));
+            }
+            catch (ManualPaymentResolutionException exception)
+            {
+                return MapManualResolutionError(exception);
+            }
+        });
+
+        group.MapPost("/", async (
+            Guid terminalId,
+            Guid billId,
+            SubmitBillTenderRequestV1 request,
+            TenderRouter router,
+            ICardSettlementOrchestrator cardSettlementOrchestrator,
+            IAuditEventStore auditEvents,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            // V1-RMD-401 (V1-RMD-399 Q-01): taking a payment is its own permission, cashier tier by default and
+            // grantable to waiters through role management once they carry a card terminal (PO 2026-09-28).
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+
+            if (!TenderMethodCatalog.TryParse(request.Method, out var method))
+                return Results.Json(
+                    new { error = new { code = "TENDER_METHOD_UNKNOWN", message = "Tanınmayan ödeme yöntemi." } },
+                    statusCode: StatusCodes.Status400BadRequest);
+
+            if (method == TenderMethod.Cash)
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "USE_CASH_TENDER_ENDPOINT",
+                            message = "Nakit ödeme için kasa oturumunun kendi tahsilat adresi kullanılmalı.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status400BadRequest);
+
+            var tenderRequest = new TenderRequest(
+                PaymentId: Guid.NewGuid(),
+                Method: method,
+                Amount: request.Amount,
+                BillId: billId,
+                IdempotencyKey: request.IdempotencyKey,
+                RecordedBy: principal.UserId,
+                Note: string.IsNullOrWhiteSpace(request.Note) ? null : request.Note);
+
+            TenderRoutingResult routing;
+            try
+            {
+                routing = await router.RouteAsync(tenderRequest, cancellationToken);
+
+                // V1-RMD-258: BankCard's routing result is never returned to
+                // the caller unpersisted — it is durably recorded through
+                // CardSettlementOrchestrator (V13-PAY-004), the same
+                // orchestrator built for exactly this purpose but never
+                // wired to any real caller until now. The provider
+                // correlation id is honestly the request's own idempotency
+                // key, not a real terminal reference — no real terminal call
+                // was ever made (the BankCard handler is still
+                // PendingBankCardTerminalIntegrationHandler's honest
+                // placeholder); this will be replaced by the terminal's own
+                // reference the day V13-HUG-001 ships a real handler.
+                if (method == TenderMethod.BankCard && routing is TenderRoutingHandled { Result: var cardResult })
+                {
+                    var settlement = await cardSettlementOrchestrator.HandleAsync(
+                        new CardSettlementRequest(
+                            billId, request.Amount, request.IdempotencyKey, request.IdempotencyKey, cardResult),
+                        cancellationToken);
+
+                    var cardClosed = settlement.Outcome == CardSettlementOutcome.Approved
+                        && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+                    return settlement.Outcome switch
+                    {
+                        CardSettlementOutcome.Approved =>
+                            Results.Ok(new SubmitBillTenderResultV1("Approved", settlement.ApprovedAmount, null, cardClosed)),
+                        CardSettlementOutcome.Declined =>
+                            Results.Ok(new SubmitBillTenderResultV1("Declined", null,
+                                ((TenderDeclined)cardResult).Reason)),
+                        CardSettlementOutcome.RequiresReconciliation =>
+                            Results.Ok(new SubmitBillTenderResultV1("RequiresReconciliation", null,
+                                ((TenderRequiresReconciliation)cardResult).Reason)),
+                        _ => Results.Json(
+                            new { error = new { code = "INTERNAL_ERROR", message = "İşlem tamamlanamadı." } },
+                            statusCode: StatusCodes.Status500InternalServerError),
+                    };
+                }
+            }
+            catch (EftOverTenderException ex)
+            {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, method.ToString(), ex.Amount,
+                    ex.RemainingPayable, request.IdempotencyKey);
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_OVER_ALLOCATION",
+                            message = $"Tutar kalan {FormatLira(ex.RemainingPayable)}'yi aşıyor.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (EftTenderBillNotFoundException)
+            {
+                return Results.NotFound();
+            }
+            catch (EftUnsettledPaymentExistsException ex)
+            {
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_UNSETTLED_PAYMENT_EXISTS",
+                            message = $"Bu hesapta '{PaymentStatusText(ex.ExistingStatus)}' durumunda çözülmemiş bir ödeme var; " +
+                                "yeni bir tahsilat eklemeden önce mutabakat tamamlanmalı.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (EftAmountMismatchException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir tutarla zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (EftBillMismatchException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir hesap için zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CardSettlementUnsettledPaymentExistsException ex)
+            {
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_UNSETTLED_PAYMENT_EXISTS",
+                            message = $"Bu hesapta '{PaymentStatusText(ex.ExistingStatus)}' durumunda çözülmemiş bir ödeme var; " +
+                                "yeni bir tahsilat eklemeden önce mutabakat tamamlanmalı.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CardSettlementBillMismatchException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir hesap için zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CardSettlementBillNotFoundException)
+            {
+                return Results.NotFound();
+            }
+            catch (OverAllocationException ex)
+            {
+                // V1-RMD-258: a concurrency-triggered over-allocation (the
+                // client-side pre-check passed, but a concurrent tender won
+                // the real per-bill advisory lock first) must look identical
+                // to the cashier as the client-side-detected case — never a
+                // raw, unhandled 500 with no Turkish message.
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, method.ToString(), ex.RequestedAmount,
+                    ex.RemainingPayable, request.IdempotencyKey);
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "TENDER_OVER_ALLOCATION",
+                            message = $"Tutar kalan {FormatLira(ex.RemainingPayable)}'yi aşıyor.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (BillNotPayableException)
+            {
+                // V1-RMD-409 (V1-RMD-393 F-07): e.g. a till screen still showing a check that was recalled and
+                // cancelled; the money must go to the re-issued check instead.
+                return Results.Json(
+                    new { error = new { code = "TENDER_BILL_NOT_PAYABLE", message = "Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CrossBillPaymentAllocationException)
+            {
+                return Results.Json(
+                    new { error = new { code = "TENDER_IDEMPOTENCY_KEY_REUSED", message = "İşlem kimliği başka bir hesap için zaten kullanılmış." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+
+            // V1-RMD-276: an approved tender may have completed the bill; close it now
+            // (idempotent, and a bill that is still short of its total simply stays open).
+            var closed = routing is TenderRoutingHandled { Result: TenderApproved }
+                && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+
+            return routing switch
+            {
+                TenderRoutingHandled { Result: TenderApproved approved } =>
+                    Results.Ok(new SubmitBillTenderResultV1("Approved", approved.ApprovedAmount, null, closed)),
+                TenderRoutingHandled { Result: TenderDeclined declined } =>
+                    Results.Ok(new SubmitBillTenderResultV1("Declined", null, declined.Reason)),
+                TenderRoutingHandled { Result: TenderRequiresReconciliation pending } =>
+                    Results.Ok(new SubmitBillTenderResultV1("RequiresReconciliation", null, pending.Reason)),
+                TenderMethodNotRegistered notRegistered => Results.Json(
+                    new { error = new { code = TenderMethodNotRegistered.Code, message = $"'{TenderMethodText(notRegistered.Method)}' ödeme yöntemi için kayıtlı bir işleyici yok." } },
+                    statusCode: StatusCodes.Status409Conflict),
+                TenderVersionNotEnabled notEnabled => Results.Json(
+                    new { error = new { code = TenderVersionNotEnabled.Code, message = $"'{TenderMethodText(notEnabled.Method)}' ödeme yöntemi bu sürümde etkin değil." } },
+                    statusCode: StatusCodes.Status400BadRequest),
+                _ => Results.Json(
+                    new { error = new { code = "INTERNAL_ERROR", message = "İşlem tamamlanamadı." } },
+                    statusCode: StatusCodes.Status500InternalServerError),
+            };
+        });
+
+        // The payment page calls this when it opens a bill, so the guest sees what is being paid (the walk-up
+        // cashier builds its basket in the browser, so there is no server order to show earlier).
+        app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/show-on-display", async (
+            Guid terminalId,
+            Guid billId,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+            var bound = await store.BindBillOrderToDisplayAsync(terminalId, billId, cancellationToken);
+            if (bound)
+            {
+                try
+                {
+                    await customerDisplayHub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
+                        CustomerDisplayHub.SnapshotChanged, new { kind = "PaymentChanged" }, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    DisplayPushFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure"), billId, exception);
+                }
+            }
+            return Results.Ok(new ShowBillOnDisplayResultV1(bound));
+        }).WithTags("PaymentTender").RequireRateLimiting("terminal-write");
+
+        return group;
+    }
+
+    private static string FormatLira(decimal amount)
+        => amount.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("tr-TR")) + " ₺";
+
+    public static string PaymentStatusText(string status)
+        => status switch
+        {
+            nameof(PaymentStatus.Initiated) => "Başlatıldı",
+            nameof(PaymentStatus.Pending) => "Beklemede",
+            nameof(PaymentStatus.Approved) => "Onaylandı",
+            nameof(PaymentStatus.Declined) => "Reddedildi",
+            nameof(PaymentStatus.Cancelled) => "İptal edildi",
+            nameof(PaymentStatus.Unknown) => "Sonucu bilinmiyor",
+            nameof(PaymentStatus.ReconciliationRequired) => "Mutabakat bekliyor",
+            nameof(PaymentStatus.Refunded) => "İade edildi",
+            nameof(PaymentStatus.PartiallyRefunded) => "Kısmen iade edildi",
+            _ => "Çözülmemiş",
+        };
+
+    private static string TenderMethodText(TenderMethod method)
+        => method switch
+        {
+            TenderMethod.Cash => "Nakit",
+            TenderMethod.BankCard => "Banka/kredi kartı",
+            TenderMethod.MealCard => "Yemek kartı",
+            TenderMethod.Eft => "EFT/Havale",
+            TenderMethod.CustomerAccount => "Cari hesap",
+            _ => "Ödeme",
+        };
+}
+
+/// <summary>V13-PUI-001: request/response DTOs for the generic (non-Cash) tender HTTP surface.</summary>
+public sealed record SubmitBillTenderRequestV1(string Method, decimal Amount, string IdempotencyKey, string? Note = null);
+
+public sealed record ShowBillOnDisplayResultV1(bool Bound);
+
+public sealed record ResolveUnsettledPaymentRequestV1(string? Reason);
+
+public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status, bool BillClosed = false);
+
+public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason, bool BillClosed = false);
+
+public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, decimal Amount, string PaymentStatus);
+
+/// <summary>V1-RMD-258: a real, persisted unresolved Payment for a bill, if any — the server-side source of truth the client re-derives its lock state from.</summary>
+public sealed record UnsettledPaymentV1(Guid PaymentId, string Status, string? Reason, PendingCardConfirmationV1? PendingConfirmation = null);
+
+/// <summary>V1-RMD-283: a claim "the card WAS charged" waiting for a second authorized person.</summary>
+public sealed record PendingCardConfirmationV1(Guid ConfirmationId, string SlipNumber, decimal Amount, Guid RequestedBy, DateTimeOffset RequestedAt);
+
+public sealed record ClaimCardChargedRequestV1(string? SlipNumber, string? Note);
+
+public sealed record DecideCardConfirmationRequestV1(string? Note);
+
+public sealed record CardConfirmationResultV1(Guid ConfirmationId, string Status, bool BillClosed = false);
+
+public sealed record BillTenderSummaryV1(
+    Guid BillId,
+    decimal PayableAmount,
+    decimal AllocatedTotal,
+    decimal RemainingAmount,
+    IReadOnlyList<PaymentAllocationLineV1> Allocations,
+    UnsettledPaymentV1? UnsettledPayment);

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9f525177-3f47-4aeb-a975-33c3865e12d6" name="semih@SEMH59 2026-11-04 08:54:06" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T08:54:06.4529292+03:00" queuing="2026-11-04T08:54:06.4529294+03:00" start="2026-11-04T08:54:01.9223106+03:00" finish="2026-11-04T08:54:06.4634597+03:00" />
+  <TestSettings name="default" id="7bcf82af-54cf-4d71-9e4d-6aae05fe0872">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_08_54_06" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9d8c6fbf-3f95-44e9-a69c-f27e7a0f28ab" testId="a9b47a84-ff3b-006e-41d4-ef3c94c074bd" testName="ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnIdempotencyKeyLongerThanTheLimitIsCutBeforeItIsWrittenToTheAuditTrail" computerName="SEMH59" duration="00:00:00.0379704" startTime="2026-11-04T08:54:06.3464615+03:00" endTime="2026-11-04T08:54:06.3464810+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9d8c6fbf-3f95-44e9-a69c-f27e7a0f28ab">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnIdempotencyKeyLongerThanTheLimitIsCutBeforeItIsWrittenToTheAuditTrail() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\TenderRejectionAuditHttpTests.cs:line 115&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnIdempotencyKeyLongerThanTheLimitIsCutBeforeItIsWrittenToTheAuditTrail" storage="d:\project\alkaros\tests\host\experience\paymenttender\bin\debug\net8.0\alkaros.host.experience.paymenttender.tests.dll" id="a9b47a84-ff3b-006e-41d4-ef3c94c074bd">
+      <Execution id="9d8c6fbf-3f95-44e9-a69c-f27e7a0f28ab" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests" name="AnIdempotencyKeyLongerThanTheLimitIsCutBeforeItIsWrittenToTheAuditTrail" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a9b47a84-ff3b-006e-41d4-ef3c94c074bd" executionId="9d8c6fbf-3f95-44e9-a69c-f27e7a0f28ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.31]   Discovering: ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.37]   Discovered:  ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.37]   Starting:    ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:03.96]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:03.96]       Expected: True&#xD;
+[xUnit.net 00:00:03.96]       Actual:   False&#xD;
+[xUnit.net 00:00:03.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.96]         D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\TenderRejectionAuditHttpTests.cs(115,0): at ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnIdempotencyKeyLongerThanTheLimitIsCutBeforeItIsWrittenToTheAuditTrail()&#xD;
+[xUnit.net 00:00:03.96]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:03.97]   Finished:    ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T08:54:06.3437646+03:00">
+        <Text>[xUnit.net 00:00:03.96]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnIdempotencyKeyLongerThanTheLimitIsCutBeforeItIsWrittenToTheAuditTrail [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -64,6 +64,46 @@ public static partial class DualScreenApplication
             LogLevel.Warning, new EventId(6941, "BillClosedDisplayPushFailed"),
             "Customer display push after closing bill {BillId} failed.");
 
+    private static readonly Action<ILogger, Guid, Exception?> RejectedTenderAuditFailedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error, new EventId(6943, "RejectedTenderAuditFailed"),
+            "The audit event for a tender refused on bill {BillId} could not be written; the refusal itself stands.");
+
+    /// <summary>
+    /// A tender refused for exceeding what is left to pay moves no money, so only this event tells a manager that a
+    /// cashier tried it. Best effort by design: a failing audit store must not change what the cashier is told.
+    /// </summary>
+    public static async Task RecordRejectedTenderAsync(
+        IAuditEventStore auditEvents, ILoggerFactory loggerFactory, HttpContext context, Guid actorId, Guid terminalId,
+        Guid billId, string method, decimal amount, decimal remainingPayable, string? idempotencyKey, Guid? confirmationId = null)
+    {
+        // The caller may already have hung up; the record of a refused tender is still worth a short try of its own.
+        using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        try
+        {
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "payment.tender-rejected",
+                    aggregateType: "Bill",
+                    aggregateId: billId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: actorId,
+                    reason: "OverRemaining",
+                    afterStateJson: JsonSerializer.Serialize(new
+                    {
+                        reason = "OverRemaining", method, amount, remainingPayable, terminalId, confirmationId,
+                        idempotencyKey = idempotencyKey is { Length: > 100 } ? idempotencyKey[..100] : idempotencyKey,
+                    })),
+                deadline.Token);
+        }
+        catch (Exception exception)
+        {
+            RejectedTenderAuditFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.TenderRejection"), billId, exception);
+        }
+    }
+
     private static readonly Action<ILogger, Guid, Exception?> CloseFailedLog =
         LoggerMessage.Define<Guid>(
             LogLevel.Error, new EventId(6942, "BillCloseFailed"),
@@ -383,6 +423,9 @@ public static partial class DualScreenApplication
             }
             catch (OverAllocationException exception)
             {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, nameof(TenderMethod.BankCard),
+                    exception.RequestedAmount, exception.RemainingPayable, null, confirmationId);
                 return Results.Json(
                     new { error = new { code = "TENDER_OVER_ALLOCATION", message = $"Tutar kalan {FormatLira(exception.RemainingPayable)}'yi aşıyor." } },
                     statusCode: StatusCodes.Status409Conflict);
@@ -438,6 +481,7 @@ public static partial class DualScreenApplication
             SubmitBillTenderRequestV1 request,
             TenderRouter router,
             ICardSettlementOrchestrator cardSettlementOrchestrator,
+            IAuditEventStore auditEvents,
             IBillClosureService billClosure,
             OrderSettlementService orderSettlement,
             DualScreenStore store,
@@ -521,6 +565,9 @@ public static partial class DualScreenApplication
             }
             catch (EftOverTenderException ex)
             {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, method.ToString(), ex.Amount,
+                    ex.RemainingPayable, request.IdempotencyKey);
                 return Results.Json(
                     new
                     {
@@ -593,6 +640,9 @@ public static partial class DualScreenApplication
                 // the real per-bill advisory lock first) must look identical
                 // to the cashier as the client-side-detected case — never a
                 // raw, unhandled 500 with no Turkish message.
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, method.ToString(), ex.RequestedAmount,
+                    ex.RemainingPayable, request.IdempotencyKey);
                 return Results.Json(
                     new
                     {

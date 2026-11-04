@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="dff8131b-d46a-4ded-bac9-a624c626580a" name="semih@SEMH59 2026-11-04 08:04:22" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T08:04:22.6296745+03:00" queuing="2026-11-04T08:04:22.6296747+03:00" start="2026-11-04T08:04:09.3352104+03:00" finish="2026-11-04T08:04:22.6418383+03:00" />
+  <TestSettings name="default" id="c421979f-eaf5-4bc5-868c-dc8c9d9ad25a">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_08_04_22" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="bfea7864-09d7-456c-928a-e55d19b1de73" testId="5b4312e9-3516-ae8a-9389-09394dd85537" testName="ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnAuditStoreThatFailsIsTriedOnceAndTheFailureIsLoggedAsAnError" computerName="SEMH59" duration="00:00:00.0790788" startTime="2026-11-04T08:04:22.4401234+03:00" endTime="2026-11-04T08:04:22.4401694+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bfea7864-09d7-456c-928a-e55d19b1de73">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection was empty</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnAuditStoreThatFailsIsTriedOnceAndTheFailureIsLoggedAsAnError() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\TenderRejectionAuditHttpTests.cs:line 98&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnAuditStoreThatFailsIsTriedOnceAndTheFailureIsLoggedAsAnError" storage="d:\project\alkaros\tests\host\experience\paymenttender\bin\debug\net8.0\alkaros.host.experience.paymenttender.tests.dll" id="5b4312e9-3516-ae8a-9389-09394dd85537">
+      <Execution id="bfea7864-09d7-456c-928a-e55d19b1de73" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests" name="AnAuditStoreThatFailsIsTriedOnceAndTheFailureIsLoggedAsAnError" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="5b4312e9-3516-ae8a-9389-09394dd85537" executionId="bfea7864-09d7-456c-928a-e55d19b1de73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.42]   Discovering: ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.51]   Discovered:  ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.52]   Starting:    ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:12.47]       Assert.Single() Failure: The collection was empty&#xD;
+[xUnit.net 00:00:12.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:12.47]         D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\TenderRejectionAuditHttpTests.cs(98,0): at ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnAuditStoreThatFailsIsTriedOnceAndTheFailureIsLoggedAsAnError()&#xD;
+[xUnit.net 00:00:12.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:12.49]   Finished:    ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T08:04:22.4368592+03:00">
+        <Text>[xUnit.net 00:00:12.46]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.AnAuditStoreThatFailsIsTriedOnceAndTheFailureIsLoggedAsAnError [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

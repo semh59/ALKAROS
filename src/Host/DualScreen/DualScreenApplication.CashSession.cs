@@ -1,3 +1,5 @@
+using ALKAROS.Audit.EventStore;
+using ALKAROS.Payments.Allocations.Persistence;
 using Microsoft.Extensions.Logging;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
@@ -243,6 +245,7 @@ public static partial class DualScreenApplication
             Guid cashSessionId,
             CashTenderRequestV1 request,
             ICashTenderHandler tenderHandler,
+            IAuditEventStore auditEvents,
             ALKAROS.Billing.PaymentClosure.IBillClosureService billClosure,
             ALKAROS.Host.Experience.Orders.OrderSettlementService orderSettlement,
             DualScreenStore store,
@@ -257,11 +260,22 @@ public static partial class DualScreenApplication
             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
             // V1-RMD-401: a cash tender is a payment too — cash.drawer (the money enters the drawer) and payments.take.
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
-            var result = await tenderHandler.HandleAsync(
-                new CashTenderRequest(
-                    cashSessionId, request.BillId, request.AmountDue, request.TenderedAmount,
-                    request.IdempotencyKey, principal.UserId),
-                cancellationToken);
+            CashTenderResult result;
+            try
+            {
+                result = await tenderHandler.HandleAsync(
+                    new CashTenderRequest(
+                        cashSessionId, request.BillId, request.AmountDue, request.TenderedAmount,
+                        request.IdempotencyKey, principal.UserId),
+                    cancellationToken);
+            }
+            catch (OverAllocationException exception)
+            {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, request.BillId, "Cash",
+                    exception.RequestedAmount, exception.RemainingPayable, request.IdempotencyKey);
+                throw;
+            }
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
             // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
             await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);

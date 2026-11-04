@@ -319,6 +319,23 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var retry = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
             new { BillId = billId, AmountDue = 200m, TenderedAmount = 200m, IdempotencyKey = "csh004-over-allocate-key" });
         Assert.Equal(HttpStatusCode.Conflict, retry.StatusCode);
+        // The retry is a second refused attempt by the cashier, so it leaves its own event: two attempts, two events.
+        await using (var audit = _database.DataSource.CreateCommand(
+            """
+            SELECT count(*) FROM audit.audit_events
+            WHERE event_name = 'payment.tender-rejected' AND aggregate_id = @id
+              AND (after_state_json::jsonb ->> 'method') = 'Cash'
+              AND actor_id IN (SELECT user_id FROM identity.users) AND reason = 'OverRemaining'
+              AND (after_state_json::jsonb ->> 'terminalId')::uuid = @terminal
+              AND (after_state_json::jsonb ->> 'idempotencyKey') = 'csh004-over-allocate-key'
+              AND (after_state_json::jsonb ->> 'amount')::numeric = 200
+              AND (after_state_json::jsonb ->> 'remainingPayable')::numeric = 80;
+            """))
+        {
+            audit.Parameters.AddWithValue("id", billId);
+            audit.Parameters.AddWithValue("terminal", terminalId);
+            Assert.Equal(2L, (long)(await audit.ExecuteScalarAsync())!);
+        }
 
         // The bill is still fully payable by a real, correctly-sized tender.
         var valid = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,

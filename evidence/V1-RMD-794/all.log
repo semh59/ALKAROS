@@ -1,0 +1,4 @@
+m16-claim-slip-limit: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.Host.Experience.PaymentTender.T
+m17-audit-log-removed: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 79 ms - ALKAROS.Host.Experience.PaymentTender
+m18-always-record: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 71 ms - ALKAROS.Host.Experience.PaymentTender
+m19-refund-english: exit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 68 ms - ALKAROS.Host.Experience.PaymentTender

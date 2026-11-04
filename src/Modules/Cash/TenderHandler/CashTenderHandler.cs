@@ -168,7 +168,8 @@ public sealed class CashTenderHandler : ICashTenderHandler
     /// V1-RMD-415 (V1-RMD-393 F-12): a key only replays the cash sale it named. A key another tender method
     /// (EFT, card) already used, or one reused for another bill, amount or drawer session, has no cash Sale in
     /// this session behind it; answering 200 there told the cashier to put money in a drawer whose ledger never
-    /// saw it, so the drawer came out over at close.
+    /// saw it, so the drawer came out over at close. The amount handed over is part of the command too: the same
+    /// key with another amount would otherwise answer with the change of the first one.
     /// </summary>
     private async Task<CashTenderResult> BuildReplayResultAsync(
         PaymentAllocation allocation, CashTenderRequest request, CancellationToken cancellationToken)
@@ -178,7 +179,8 @@ public sealed class CashTenderHandler : ICashTenderHandler
         var ledger = await _ledgerRepository.GetBySessionIdAsync(request.CashSessionId, cancellationToken);
         var cashTransaction = ledger.FirstOrDefault(entry =>
             entry.RelatedPaymentId == payment.Id && entry.Type == CashTransactionType.Sale);
-        if (cashTransaction is null || allocation.BillId != request.BillId || allocation.Amount != request.AmountDue)
+        if (cashTransaction is null || allocation.BillId != request.BillId || allocation.Amount != request.AmountDue
+            || (payment.ApprovedAmount ?? 0m) + payment.ChangeAmount != request.TenderedAmount)
             throw new CashTenderIdempotencyKeyReusedException(request.IdempotencyKey);
 
         return new CashTenderResult(

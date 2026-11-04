@@ -242,6 +242,24 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
     }
 
     [Fact]
+    public async Task ACashKeyReusedWithAnotherAmountHandedOverIsRefusedNotReplayedWithTheOldChange()
+    {
+        var sessionId = await SeedOpenSessionAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var idempotencyKey = Guid.NewGuid().ToString();
+        var first = await _handler.HandleAsync(
+            new CashTenderRequest(sessionId, billId, AmountDue: 80m, TenderedAmount: 100m, IdempotencyKey: idempotencyKey));
+        first.ChangeAmount.Should().Be(20m);
+
+        var act = () => _handler.HandleAsync(
+            new CashTenderRequest(sessionId, billId, AmountDue: 80m, TenderedAmount: 200m, IdempotencyKey: idempotencyKey));
+
+        await act.Should().ThrowAsync<CashTenderIdempotencyKeyReusedException>();
+        (await _payments.GetByBillIdAsync(billId)).Should().ContainSingle();
+        (await _ledger.GetBySessionIdAsync(sessionId)).Should().ContainSingle();
+    }
+
+    [Fact]
     public async Task ConcurrentSubmitsOfTheSameCommandProduceExactlyOneRealSetOfRecords()
     {
         var sessionId = await SeedOpenSessionAsync();

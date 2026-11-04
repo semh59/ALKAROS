@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="55c47efb-2999-4610-a703-3cc156314fd9" name="semih@SEMH59 2026-11-04 07:32:59" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T07:32:59.4876877+03:00" queuing="2026-11-04T07:32:59.4876879+03:00" start="2026-11-04T07:32:58.4481266+03:00" finish="2026-11-04T07:32:59.4955967+03:00" />
+  <TestSettings name="default" id="49ea5f3c-a12e-4335-b74c-411dbfcb9faa">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_07_32_59" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1c584fa5-4eba-4188-8cce-15b12ab7e348" testId="6350ec11-20a9-5adc-678d-8a13664994ad" testName="ALKAROS.Host.Experience.PaymentTender.Tests.ErrorMessageLanguageTests.NoResponseMessageOfTheTenderCashAndRefundEndpointsIsEnglish" computerName="SEMH59" duration="00:00:00.0585103" startTime="2026-11-04T07:32:59.3607451+03:00" endTime="2026-11-04T07:32:59.3607759+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c584fa5-4eba-4188-8cce-15b12ab7e348">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Empty() Failure: Collection was not empty&#xD;
+Collection: ["src/Host/DualScreen/DualScreenApplication.Payments"···]</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.PaymentTender.Tests.ErrorMessageLanguageTests.NoResponseMessageOfTheTenderCashAndRefundEndpointsIsEnglish() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\ErrorMessageLanguageTests.cs:line 34&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.PaymentTender.Tests.ErrorMessageLanguageTests.NoResponseMessageOfTheTenderCashAndRefundEndpointsIsEnglish" storage="d:\project\alkaros\tests\host\experience\paymenttender\bin\debug\net8.0\alkaros.host.experience.paymenttender.tests.dll" id="6350ec11-20a9-5adc-678d-8a13664994ad">
+      <Execution id="1c584fa5-4eba-4188-8cce-15b12ab7e348" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\bin\Debug\net8.0\ALKAROS.Host.Experience.PaymentTender.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.PaymentTender.Tests.ErrorMessageLanguageTests" name="NoResponseMessageOfTheTenderCashAndRefundEndpointsIsEnglish" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6350ec11-20a9-5adc-678d-8a13664994ad" executionId="1c584fa5-4eba-4188-8cce-15b12ab7e348" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.22]   Discovering: ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.29]   Starting:    ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+[xUnit.net 00:00:00.40]       Assert.Empty() Failure: Collection was not empty&#xD;
+[xUnit.net 00:00:00.40]       Collection: ["src/Host/DualScreen/DualScreenApplication.Payments"···]&#xD;
+[xUnit.net 00:00:00.40]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.40]         D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\ErrorMessageLanguageTests.cs(34,0): at ALKAROS.Host.Experience.PaymentTender.Tests.ErrorMessageLanguageTests.NoResponseMessageOfTheTenderCashAndRefundEndpointsIsEnglish()&#xD;
+[xUnit.net 00:00:00.40]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.40]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.40]   Finished:    ALKAROS.Host.Experience.PaymentTender.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T07:32:59.3585509+03:00">
+        <Text>[xUnit.net 00:00:00.40]     ALKAROS.Host.Experience.PaymentTender.Tests.ErrorMessageLanguageTests.NoResponseMessageOfTheTenderCashAndRefundEndpointsIsEnglish [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

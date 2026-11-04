@@ -12,6 +12,7 @@ using ALKAROS.CustomerData.Profiles;
 using ALKAROS.Host.Experience.CustomerAccounts;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -137,6 +138,7 @@ public static partial class DualScreenApplication
             Guid billId,
             AccountChargeRequestV1 request,
             IAccountChargeHandler handler,
+            IAuditEventStore auditEvents,
             CustomerAccountsStore accounts,
             IBillClosureService billClosure,
             OrderSettlementService orderSettlement,
@@ -163,6 +165,13 @@ public static partial class DualScreenApplication
             catch (CustomerProfileNotFoundException)
             {
                 return AccountError(context, StatusCodes.Status404NotFound, "CUSTOMER_NOT_FOUND", "Müşteri bulunamadı.");
+            }
+            catch (OverAllocationException exception)
+            {
+                await RecordRejectedTenderAsync(
+                    auditEvents, loggerFactory, context, principal.UserId, terminalId, billId, "Account",
+                    exception.RequestedAmount, exception.RemainingPayable, request.IdempotencyKey);
+                throw;
             }
 
             var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);

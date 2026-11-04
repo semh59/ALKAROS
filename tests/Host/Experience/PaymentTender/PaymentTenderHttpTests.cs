@@ -27,7 +27,7 @@ namespace ALKAROS.Host.Experience.PaymentTender.Tests;
 /// the generic (BankCard/Eft) tender endpoint this task adds.
 /// </summary>
 [Collection("PaymentTender HTTP")]
-public sealed class PaymentTenderHttpTests : IAsyncLifetime
+public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
 {
     private readonly PaymentTenderHttpTestDatabase _database = new();
     private readonly string _webRoot = Path.Combine(Path.GetTempPath(), $"alkaros-pui001-webroot-{Guid.NewGuid():N}");
