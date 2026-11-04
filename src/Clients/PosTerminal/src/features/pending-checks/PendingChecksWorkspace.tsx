@@ -1,8 +1,9 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { notifySessionExpired } from "../../api";
 import { BillingSplitApiError, createBillFromOrder } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
-import { formatMoney } from "../../format";
+import { formatClockMinutes, formatMoney } from "../../format";
 import { PendingChecksApiError, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
 import "./pending-checks.css";
@@ -13,8 +14,12 @@ const REFRESH_MS = 60_000;
 const HUB_RETRY_CAP_MS = 15_000;
 const hubRetryDelay = (attempt: number) => Math.min(HUB_RETRY_CAP_MS, 1_000 * 2 ** Math.min(attempt, 4));
 
-function sentAt(iso: string): string {
-  return new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+const sentAt = formatClockMinutes;
+
+// What a cashier tells a waiter apart by: where it came from and when it was sent, not the technical number.
+function checkTitle(check: PendingCheck): string {
+  const place = check.tableNumber && check.tableNumber !== "—" ? `Masa ${check.tableNumber}` : "Hızlı satış";
+  return `${place} · ${sentAt(check.createdAt)}`;
 }
 
 /**
@@ -106,6 +111,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
       navigateTo(collectionHref(billId));
     } catch (reason) {
       setOpeningOrderId(undefined);
+      if (reason instanceof BillingSplitApiError && reason.status === 401) notifySessionExpired();
       setError(reason instanceof PendingChecksApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap açılamadı. Tekrar deneyin.");
     }
   };
@@ -134,18 +140,16 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
         {(checks ?? []).map((check) => {
           const remaining = Math.max(0, check.total - check.paidAmount);
           return (
-            <li key={check.orderId}>
+            <li key={check.orderId} className="pending-checks__card">
               <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.1"
                 type="button"
                 className="pending-checks__row"
                 disabled={openingOrderId !== undefined}
                 onClick={() => void collect(check)}
-                aria-label={`${check.orderNumber} hesabını tahsil et`}
+                aria-label={`${checkTitle(check)} hesabını tahsil et`}
               >
-                <span className="pending-checks__number">{check.orderNumber}</span>
-                <span className="pending-checks__meta">
-                  Masa {check.tableNumber} · {sentAt(check.createdAt)} · {check.itemCount} kalem
-                </span>
+                <span className="pending-checks__number">{checkTitle(check)}</span>
+                <span className="pending-checks__meta">{check.itemCount} kalem · {check.orderNumber}</span>
                 {check.itemPreview && <span className="pending-checks__preview">{check.itemPreview}</span>}
                 <span className="pending-checks__amount">
                   {check.paidAmount > 0
@@ -160,7 +164,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                   className="pending-checks__recall"
                   disabled={openingOrderId !== undefined}
                   onClick={() => void recall(check)}
-                  aria-label={`${check.orderNumber} hesabını masaya geri gönder`}
+                  aria-label={`Yanlışlıkla gönderildi: masaya geri gönder, ${checkTitle(check)}`}
                 >
                   Yanlışlıkla gönderildi: masaya geri gönder
                 </button>

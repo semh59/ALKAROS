@@ -1054,3 +1054,32 @@ describe("workspace header drawer button", () => {
     expect(document.querySelector(".cash-session-band")).toBeNull();
   });
 });
+
+describe("workspace /tables last update time", () => {
+  let root: Root | null = null;
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it("shows the venue's Istanbul clock, not the device's", async () => {
+    process.env.TZ = "UTC";
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("[]", { status: 200, headers: { "Content-Type": "application/json" } })));
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-24T11:32:00Z"));
+    window.history.replaceState({}, "", "/tables");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="88888888-8888-8888-8888-888888888888" displayName="Test Kullanıcı" capabilities={["tables.status"]}
+          path="/tables" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>,
+    ));
+    for (let i = 0; i < 4; i++) await act(async () => { await Promise.resolve(); });
+
+    expect(document.body.textContent).toContain("Son güncelleme 14:32:00");
+  });
+});

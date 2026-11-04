@@ -16,11 +16,6 @@ export async function loginCashier(page, seed) {
   await page.getByLabel('Kullanıcı adı').fill(seed.cashierUsername);
   await page.getByLabel('Parola').fill(seed.cashierPassword);
   await page.getByRole('button', { name: /Giriş yap/ }).click();
-  await expect(page.getByRole('button', { name: 'Yeni sipariş aç' })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole('button', { name: 'Oturumu kapat' })).toBeVisible({ timeout: 15_000 });
 }
 
-/** Starts a new sale (PosTerminal's own "walk-in" order, no table picker). */
-export async function startOrder(page) {
-  await page.getByRole('button', { name: 'Yeni sipariş aç' }).click();
-  await expect(page.getByText('Soldaki katalogdan ürün seçin.')).toBeVisible();
-}

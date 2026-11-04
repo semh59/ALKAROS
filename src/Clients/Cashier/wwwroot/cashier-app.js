@@ -812,7 +812,7 @@
     if (state.ticketItems.length === 0) return;
     state.parkedTickets.push({
       id: crypto.randomUUID(),
-      parkedAt: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
+      parkedAt: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' }),
       items: [...state.ticketItems]
     });
     saveParkedTickets();

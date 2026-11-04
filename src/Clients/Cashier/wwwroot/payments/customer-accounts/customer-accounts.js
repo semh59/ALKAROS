@@ -6,7 +6,7 @@
   'use strict';
 
   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
-  var dateTime = new Intl.DateTimeFormat('tr-TR', { dateStyle: 'short', timeStyle: 'short' });
+  var dateTime = new Intl.DateTimeFormat('tr-TR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Istanbul' });
   var app = document.getElementById('app');
 
   var state = {
@@ -28,6 +28,7 @@
     receiptAmount: '',
     receiptKey: null,
     lastReceipt: null,
+    canManageCredit: false,
     limitDraft: '',
     termDraft: '',
     busy: false,
@@ -71,14 +72,29 @@
     );
   }
 
+  // The server's own message is shown only for the codes whose text is written for the cashier to act on
+  // (which field is wrong, why credit is refused, how much is owed); every other code has its sentence here.
+  var SERVER_TEXT_CODES = ['VALIDATION_FAILED', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE'];
+  var ERROR_TEXT = {
+    CUSTOMER_NOT_FOUND: 'Müşteri bulunamadı.',
+    CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
+    CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+    TENDER_IDEMPOTENCY_KEY_REUSED: 'İşlem kimliği başka bir tahsilat için zaten kullanılmış.',
+    BILL_NOT_FOUND: 'Hesap bulunamadı.',
+    TENDER_UNSETTLED_PAYMENT_EXISTS: 'Bu hesapta çözülmemiş bir kart ödemesi var; hesaba yazmadan önce kart ödemesinin sonucu netleştirilmeli.',
+  };
+
   function describeHttpFailure(status, body) {
-    if (body && body.error && body.error.message) return body.error.message;
+    var code = body && body.error && body.error.code;
+    if (code && ERROR_TEXT[code]) return ERROR_TEXT[code];
+    if (code && SERVER_TEXT_CODES.indexOf(code) !== -1 && body.error.message) return body.error.message;
     if (status === 401) return 'Oturumunuz sona ermiş. Lütfen tekrar giriş yapın.';
     if (status === 403) return 'Bu işlem için yetkiniz yok.';
     if (status === 404) return 'Kayıt bulunamadı.';
+    if (status === 409) return 'İşlem, kaydın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.';
     if (status === 429) return 'Çok fazla istek gönderildi. Lütfen birkaç saniye bekleyin.';
     if (status >= 500) return 'Sunucu tarafında bir sorun oluştu. Lütfen tekrar deneyin.';
-    return 'İstek tamamlanamadı.';
+    return 'İstek tamamlanamadı. Tekrar deneyin; sürerse yöneticiye bildirin.';
   }
 
   // AbortSignal.timeout is missing in older browsers; without a signal a hung connection would never end.
@@ -131,6 +147,7 @@
         return;
       }
       state.terminalId = result.body.terminalId;
+      state.canManageCredit = (result.body.capabilities || []).indexOf('settings.manage') !== -1;
       return Promise.all([
         api(base() + '/cash-sessions/active'),
         loadCustomers(),
@@ -217,6 +234,7 @@
     }
     state.busy = true;
     state.error = null;
+    render();
     // Kept across a network-failure retry so the retry replays instead of collecting twice.
     if (!state.receiptKey) state.receiptKey = crypto.randomUUID();
     api(base() + '/cash-sessions/' + state.cashSessionId + '/account-receipts', {
@@ -235,7 +253,9 @@
   }
 
   function saveLimit() {
+    if (state.limitDraft.trim() === '') { state.error = 'Kredi limitini yazın (limit yok için 0 yazın).'; render(); return; }
     var limit = Number(state.limitDraft);
+    if (!(limit >= 0)) { state.error = 'Kredi limiti sıfır veya daha büyük bir sayı olmalı.'; render(); return; }
     var term = state.termDraft.trim() === '' ? null : Number(state.termDraft);
     state.busy = true;
     state.error = null;
@@ -246,7 +266,8 @@
     }).then(function (result) {
       state.busy = false;
       if (!result.ok) {
-        state.error = result.status === 401 || result.status === 403
+        if (result.status === 401) { state.phase = 'login'; render(); return; }
+        state.error = result.status === 403
           ? 'Kredi limitini yalnız yönetici oturumu değiştirebilir. Yönetici olarak giriş yapıp tekrar deneyin.'
           : describeHttpFailure(result.status, result.body);
         render();
@@ -344,12 +365,13 @@
       '<input class="sp-input" type="number" step="0.01" min="0.01" id="ca-receipt-amount" placeholder="Tutar" aria-label="Tahsil edilecek tutar" value="' + escapeHtml(state.receiptAmount) + '"' + (canReceive ? '' : ' disabled') + '>' +
       '<button class="sp-btn sp-btn-primary" id="ca-receive" type="button"' + (canReceive ? disabled : ' disabled') + '>Tahsil et</button>' +
       '</div></div>' +
+      (!state.canManageCredit ? '<p class="sp-hint" id="ca-limit-hint">Kredi limitini ve vadeyi yalnız yönetici oturumu değiştirebilir.</p>' :
       '<div class="sp-field"><span class="sp-field-label">Kredi limiti ve vade (yönetici)</span>' +
       '<div class="sp-row">' +
       '<input class="sp-input" type="number" step="0.01" min="0" id="ca-limit" aria-label="Kredi limiti (TL)" value="' + escapeHtml(state.limitDraft) + '">' +
       '<input class="sp-input" type="number" step="1" min="1" max="365" id="ca-term" placeholder="Vade (gün)" aria-label="Vade (gün, boş bırakılırsa vade takibi yok)" value="' + escapeHtml(state.termDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="ca-save-limit" type="button"' + disabled + '>Kaydet</button>' +
-      '</div></div>' +
+      '</div></div>') +
       '<div class="sp-field"><span class="sp-field-label">Fatura için vergi kimliği</span>' +
       '<div class="sp-row ca-tax-row">' + taxFields('ca-edit', state.taxKindDraft, state.taxNumberDraft, state.taxOfficeDraft, 'Müşterinin') +
       '<button class="sp-btn sp-btn-secondary" id="ca-save-tax" type="button"' + disabled + '>Vergi kimliğini kaydet</button>' +

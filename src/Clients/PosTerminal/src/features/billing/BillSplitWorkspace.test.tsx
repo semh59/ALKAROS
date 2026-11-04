@@ -119,8 +119,8 @@ describe("bill split workspace", () => {
     expect(document.body.textContent).not.toMatch(/Person|Seat/);
   });
 
-  it("shows when the bill was last refreshed as a local time", async () => {
-    await render(<BillSplitWorkspace {...props({ lastUpdated: "2026-10-13T10:05:00" })} />);
+  it("shows when the bill was last refreshed as the venue (Istanbul) time", async () => {
+    await render(<BillSplitWorkspace {...props({ lastUpdated: "2026-10-13T07:05:00Z" })} />);
     expect(document.body.textContent).toContain("Güncellendi 10:05");
   });
 

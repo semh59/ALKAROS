@@ -1,0 +1,672 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ApiError, api } from "../api";
+import { tryGetItem, trySetItem } from "../storage";
+import { useRouter } from "../router";
+import { managementText, navLabels, roleLabels } from "../strings";
+import { formatClockTime } from "../format";
+import { ProductionShell } from "../shell";
+import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
+import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
+import { PendingChecksWorkspace } from "../features/pending-checks";
+import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
+import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
+import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogProductDetailsInput, type CatalogWorkspaceState } from "../features/catalog";
+import { KitchenOperationsApiError, KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
+import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
+import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
+import { ManagementArea } from "../features/management";
+import { CashSessionBand, CashSessionLink, type CashSessionStatus } from "../features/cash-session-status";
+
+export type BackendStatus = "checking" | "online" | "offline";
+
+export function ExperiencePage({
+  terminalId,
+  displayName,
+  capabilities,
+  path,
+  backendStatus,
+  customerDisplayUrl = "",
+  cashSession = null,
+  onLogout,
+}: {
+  terminalId: string;
+  displayName: string;
+  capabilities: readonly string[];
+  path: string;
+  backendStatus: BackendStatus;
+  customerDisplayUrl?: string;
+  /** Null when the session has no drawer permission. */
+  cashSession?: CashSessionStatus | null;
+  onLogout: () => Promise<void>;
+}) {
+  const { navigate } = useRouter();
+  const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
+  // Which capability a route needs is a route->permission map, not a role guess.
+  // `pos.cashier.mutate` was dropped from the permission catalog in migration
+  // 049 (V1-IAM-024) — every check below used to key off it, so no session
+  // could ever open Sales/Tables/Billing/Kitchen once granular permissions
+  // shipped. Fixed to the granular codes each route's server endpoint
+  // actually requires.
+  const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
+  const routeNeedsReportsView = path === "/authorization" || path === "/management";
+  const routeNeedsBillsSplit = path === "/billing";
+  const routeNeedsKitchenAdvance = path === "/kitchen";
+  // V12-OUI-004: online food is one screen; its settings tab (V12-OUI-003's platform API settings) is a manager's
+  // integration setting, like the QNB and relay screens. The old separate paths open the matching tab.
+  const onlineTab = onlineHubTabFor(path);
+  // V12-OUI-005/006: a tab with its own capabilities (menu, problems, settings) is closed to other sessions here too.
+  const routeNeedsOnlineTabCapability = onlineTab !== null && onlineTabCapabilities[onlineTab] !== null;
+  const canOpenRoute = routeNeedsOnlineTabCapability
+    ? canSeeOnlineTab(onlineTab!, capabilitySet)
+    : routeNeedsCatalogManage
+    ? capabilitySet.has("catalog.manage")
+    : routeNeedsReportsView
+      ? capabilitySet.has("reports.view")
+      : routeNeedsBillsSplit
+        ? capabilitySet.has("bills.split")
+        : routeNeedsKitchenAdvance
+          // V1-IAM-028: either grant opens the tab — kitchen.advance so a
+          // kitchen-staff-only session can reach it, orders.send so no
+          // existing FOH session regresses even if a fixture/environment
+          // somehow predates the additive migration. Which actions render
+          // inside is decided separately by canAdvance/canOperate below
+          // (KitchenRoute) — this only gates whether the tab opens at all.
+          ? capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")
+          : capabilitySet.has("orders.create") || capabilitySet.has("tables.status");
+  // Role label is derived from the session's capabilities, not from the current
+  // route. (deep-analysis finding F-4)
+  const roleLabel = capabilitySet.has("catalog.manage")
+    ? roleLabels.manager
+    : capabilitySet.has("bills.split")
+      ? roleLabels.cashierOps
+      : roleLabels.limited;
+  const session: ShellSession = {
+    status: "authenticated",
+    identity: {
+      // Branch (Sube) is omitted until there is a real multi-branch model;
+      // a placeholder string would read as data. (deep-analysis finding F-5)
+      terminalName: `Terminal ${terminalId.slice(0, 8).toUpperCase()}`,
+      userName: displayName,
+      roleLabel,
+      capabilities: capabilitySet,
+    } satisfies ShellIdentity,
+  };
+  const authorization: RouteAuthorization = canOpenRoute ? { status: "authorized" } : {
+    status: "forbidden",
+    onReturn: () => navigate("/"),
+  };
+  const [lastOnlineSync, setLastOnlineSync] = useState<string | null>(() => backendStatus === "online" ? new Date().toISOString() : null);
+
+  useEffect(() => {
+    if (backendStatus === "online") {
+      setLastOnlineSync(new Date().toISOString());
+    }
+  }, [backendStatus]);
+
+  const connectivity: Connectivity = backendStatus === "online"
+    ? { status: "online" }
+    : backendStatus === "offline"
+      ? { status: "offline", onRetry: () => window.location.reload() }
+      : { status: "reconnecting" };
+  const freshness: Freshness = backendStatus === "online"
+    ? {
+        status: "fresh",
+        dateTime: lastOnlineSync ?? new Date().toISOString(),
+        label: "Çevrimiçi doğrulandı",
+      }
+    : {
+        status: "stale",
+        dateTime: lastOnlineSync ?? "—",
+        label: lastOnlineSync ? "Bağlantı kesildi" : "Bağlantı bekleniyor",
+        onRefresh: () => window.location.reload(),
+      };
+  const navigation: readonly ShellNavigationItem[] = [
+    { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "orders.create" },
+    { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
+    { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split" },
+    { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "billing", requiredCapability: "orders.create" },
+    // V12-OUI-004: one entry for online food (orders, and for a manager its settings); same permission as accepting a QR order.
+    { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "billing", requiredCapability: "orders.create" },
+    // V1-IAM-028: kitchen.advance is additive — every role that held
+    // orders.send before still holds it, and the new kitchen-staff
+    // ("Mutfak Personeli") role holds ONLY kitchen.advance. Gating the nav
+    // link on orders.send would have locked that role out of the Kitchen
+    // tab entirely.
+    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "kitchen.advance" },
+    { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
+    { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
+    { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
+    { id: "management", label: navLabels.management, href: "/management", icon: "system", requiredCapability: "reports.view" },
+  ];
+  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
+  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
+
+  return <ProductionShell
+    session={session}
+    authorization={authorization}
+    connectivity={connectivity}
+    freshness={freshness}
+    navigation={navigation}
+    onNavigate={navigate}
+    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
+    workspaceTitle={title}
+    workspaceDescription={description}
+    headerActions={<>{cashSession && <CashSessionLink status={cashSession} className="experience-header-link" />}<a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
+  >
+    {cashSession && <CashSessionBand status={cashSession} />}
+    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
+    {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
+    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} />}
+    {onlineTab !== null && (
+      <OnlineFoodHub
+        terminalId={terminalId}
+        tab={onlineTab}
+        capabilities={capabilities}
+        onSelectTab={(tab) => navigate(onlineHubPaths[tab])}
+      />
+    )}
+    {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
+    {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} canManageReprints={capabilitySet.has("kitchen.reprint")} canManageRouting={capabilitySet.has("kitchen.routing.manage")} canSuspendAvailability={capabilitySet.has("kitchen.availability.suspend")} canViewReports={capabilitySet.has("reports.view")} />}
+    {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
+    {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
+    {path === "/management" && canOpenRoute && <ManagementArea capabilities={capabilitySet} />}
+    {onlineTab === null && !(["/", "/tables", "/billing", "/pending-checks", "/catalog", "/kitchen", "/system-health", "/authorization", "/management"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+  </ProductionShell>;
+}
+
+// Exported for the standalone Reservation Station screen (V1-CUI-006),
+// which reuses this exact table-fetching + floor-plan wiring rather than
+// duplicating it.
+export function TableRoute({ terminalId, canManage, reservationOnly = false }: { terminalId: string; canManage: boolean; reservationOnly?: boolean }) {
+  const { navigate } = useRouter();
+  const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
+  const [state, setState] = useState<TableWorkspaceState>("loading");
+  const [zones, setZones] = useState<Awaited<ReturnType<typeof client.listZones>>>([]);
+  const [tables, setTables] = useState<Awaited<ReturnType<typeof client.listTables>>>([]);
+  const [selectedZoneId, setSelectedZoneId] = useState<string>("all");
+  const [floorPlan, setFloorPlan] = useState<FloorPlan | undefined>();
+  const [floorPlanBusy, setFloorPlanBusy] = useState(false);
+  const [floorPlanError, setFloorPlanError] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const [refreshError, setRefreshError] = useState<string>();
+  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  const [orderBusy, setOrderBusy] = useState(false);
+  const [orderError, setOrderError] = useState<string>();
+
+  // A zone nobody has laid out has no plan and the server answers 404 for it. Background refreshes do not
+  // ask again; picking the zone or pressing "Yenile" does.
+  const zonesWithoutPlan = useRef(new Set<string>());
+  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>, silent = false) => {
+    const targetZoneId = (zoneId === "all" && currentZones.length > 0) ? currentZones[0].zoneId : zoneId;
+    if (!targetZoneId || targetZoneId === "all") {
+      setFloorPlan(undefined);
+      return;
+    }
+    if (silent && zonesWithoutPlan.current.has(targetZoneId)) return;
+    try {
+      setFloorPlan(await client.getFloorPlan(targetZoneId));
+      zonesWithoutPlan.current.delete(targetZoneId);
+    } catch (reason) {
+      if ((reason as { status?: number }).status === 404) zonesWithoutPlan.current.add(targetZoneId);
+      if (!silent) setFloorPlan(undefined);
+    }
+  }, [client]);
+
+  // A background refresh (silent) never swaps the screen for the loading state, so an open
+  // dialog and an unsaved floor plan draft survive it; a failed one only raises a banner.
+  const load = useCallback(async (silent = false) => {
+    if (!silent) {
+      setState("loading");
+      setErrorMessage(undefined);
+    }
+    try {
+      const [nextZones, nextTables] = await Promise.all([client.listZones(), client.listTables()]);
+      setZones(nextZones);
+      setTables(nextTables);
+      setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
+      await loadFloorPlanForZone(selectedZoneId, nextZones, silent);
+      setLastUpdated(formatClockTime(new Date()));
+      setRefreshError(undefined);
+      setErrorMessage(undefined);
+      setState(nextTables.length ? "ready" : "empty");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      const failure = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Masa verisi alınamadı.";
+      if (silent) {
+        if (status === 401) setState("unauthorized");
+        else setRefreshError(failure);
+        return;
+      }
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
+      // V1-RMD-367 (module-by-module UI audit, reopening module 6):
+      // tableApi.ts throws its own TableManagementApiError, not the shared
+      // ApiError this checked alone - TableWorkspace.tsx's own errorMessage()
+      // helper already checks both for its action failures, but this
+      // route-level load() (the first fetch, and the one behind the
+      // error/offline/stale states) never got the same fix.
+      setErrorMessage(failure);
+    }
+  }, [client, selectedZoneId, loadFloorPlanForZone]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  // V1-RMD-381 (module-by-module UI audit round 2, T7 - cross-role communication): unlike
+  // KitchenOperationsWorkspace's own 8s poll (POLL_INTERVAL_MS, "the comparison report's own
+  // CRIT finding"), this screen never refreshed on its own - a manager watching the floor plan
+  // saw only whatever was true at the moment they last clicked "Yenile", with no way to know a
+  // waiter/cashier's own table-status change (occupied, cleared, transferred) had landed since.
+  // Same guard as kitchen's own: only while genuinely ready/empty, never while an error/auth/
+  // offline/stale state is already asking for a manual action, and safe during floor-plan
+  // editing (FloorPlanWorkspace's own effect only re-syncs its draft from a fresh `plan` prop
+  // while in "operation" mode, never while "setup").
+  // It keeps polling after a failure too, so the screen recovers by itself when the server returns.
+  useEffect(() => {
+    if (state === "loading" || state === "unauthorized") return;
+    const timer = window.setInterval(() => { void load(true); }, 8_000);
+    return () => window.clearInterval(timer);
+  }, [state, load]);
+
+  const handleSelectZone = (zoneId: string) => {
+    setSelectedZoneId(zoneId);
+    void loadFloorPlanForZone(zoneId, zones);
+  };
+
+  const mutate = async (action: () => Promise<unknown>) => { try { await action(); } finally { await load(true); } };
+  const handleSaveFloorPlan = async (zoneId: string, input: SaveFloorPlanInput): Promise<SaveFloorPlanResult> => {
+    setFloorPlanBusy(true);
+    setFloorPlanError(undefined);
+    try {
+      const result = await client.saveFloorPlan(zoneId, input);
+      zonesWithoutPlan.current.delete(zoneId);
+      setFloorPlan(result.floorPlan);
+      return result;
+    } catch (reason) {
+      const msg = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Kat planı kaydedilemedi.";
+      setFloorPlanError(msg);
+      throw reason;
+    } finally {
+      setFloorPlanBusy(false);
+    }
+  };
+  const selectedTable = tables.find((table) => table.tableId === selectedTableId) ?? null;
+  const canStartTableOrder = selectedTable?.active === true
+    && (selectedTable.status === "Available" || (selectedTable.status === "Occupied" && selectedTable.currentOrderId !== null));
+  const startTableOrder = async () => {
+    if (!selectedTable || !canManage || !canStartTableOrder) return;
+    setOrderBusy(true);
+    setOrderError(undefined);
+    try {
+      await api.startTableOrder(terminalId, selectedTable.tableId, selectedTable.rowVersion);
+      navigate("/");
+    } catch (reason) {
+      setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");
+      await load(true);
+    } finally {
+      setOrderBusy(false);
+    }
+  };
+  return <div className="table-route">
+    <TableWorkspace
+      state={state}
+      zones={zones}
+      tables={tables}
+      canManage={canManage}
+      selectedTableId={selectedTableId}
+      onSelectTable={(tableId) => { setSelectedTableId(tableId); setOrderError(undefined); }}
+      selectedZoneId={selectedZoneId}
+      onSelectZone={handleSelectZone}
+      onRefresh={() => load()}
+      onCreateZone={canManage && !reservationOnly ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
+      onCreateTable={canManage && !reservationOnly ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
+      onUpdateZone={canManage && !reservationOnly ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}
+      onDeleteZone={canManage && !reservationOnly ? (zone) => mutate(() => client.deleteZone(zone)) : undefined}
+      onUpdateTable={canManage && !reservationOnly ? (table, input) => mutate(() => client.updateTable(table, input)) : undefined}
+      onAction={canManage ? (request: TableActionRequest) => mutate(() => client.execute(request)) : undefined}
+      floorPlan={floorPlan}
+      floorPlanBusy={floorPlanBusy}
+      floorPlanError={floorPlanError}
+      onSaveFloorPlan={canManage && !reservationOnly ? handleSaveFloorPlan : undefined}
+      errorMessage={errorMessage}
+      refreshError={refreshError}
+      lastUpdated={lastUpdated}
+    />
+    {selectedTable && state === "ready" && !reservationOnly && <section className="table-order-bridge" aria-label="Masa sipariş bağlamı">
+      <div>
+        <span className="table-order-bridge__kicker">SİPARİŞ BAĞLAMI</span>
+        <strong>{selectedTable.tableNumber}</strong>
+        <p>{selectedTable.currentOrderId ? "Bu masadaki taslak siparişe devam edin." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
+      </div>
+      <button data-telemetry-id="b.routes.workspace.2"
+        className="primary"
+        type="button"
+        disabled={!canManage || !canStartTableOrder || orderBusy}
+        aria-busy={orderBusy}
+        onClick={() => void startTableOrder()}
+      >{orderBusy ? "Sipariş hazırlanıyor…" : selectedTable.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>
+      {!canStartTableOrder && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil; sunucu durumu değiştirilmeden işlem yapılamaz.</small>}
+      {orderError && <p className="table-order-bridge__error" role="alert">{orderError}</p>}
+    </section>}
+  </div>;
+}
+
+function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canApproveRefund }: {
+  terminalId: string; canManage: boolean; canCancel: boolean; canRequestRefund: boolean; canApproveRefund: boolean;
+}) {
+  const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
+  const orderParam = searchParams.get("orderId");
+  const [billId, setBillId] = useState<string>(
+    () => searchParams.get("billId") || tryGetItem("alkaros.current-bill-id") || "",
+  );
+  // Read inside load() without being a dependency: learning the bill id from the first load must not
+  // re-run it (a second createBillFromOrder POST).
+  const billIdRef = useRef(billId);
+  useEffect(() => { billIdRef.current = billId; }, [billId]);
+  const [state, setState] = useState<BillSplitWorkspaceState>("loading");
+  const [design, setDesign] = useState<BillSplitDesign | null>(null);
+  // Owners come from the server (table seats + existing person allocations), not
+  // from client-fabricated placeholder GUIDs. (deep-analysis finding F-2)
+  const [owners, setOwners] = useState<readonly SplitOwnerOption[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+
+  const load = useCallback(async () => {
+    setState("loading");
+    setErrorMessage(undefined);
+    if (!orderParam && !billIdRef.current) {
+      setState("empty");
+      return;
+    }
+    try {
+      const nextDesign = orderParam
+        ? await createBillFromOrder(terminalId, orderParam)
+        : await createBillingSplitClient(terminalId, billIdRef.current).get();
+      setDesign(nextDesign);
+      if (nextDesign.billId && nextDesign.billId !== billIdRef.current) {
+        setBillId(nextDesign.billId);
+        trySetItem("alkaros.current-bill-id", nextDesign.billId);
+      }
+      const ownerClient = createBillingSplitClient(terminalId, nextDesign.billId);
+      try {
+        setOwners(await ownerClient.getOwners());
+      } catch {
+        setOwners([]);
+      }
+      setLastUpdated(new Date().toISOString());
+      setState("ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
+      // V1-RMD-366 (module-by-module UI audit): billingApi.ts throws its OWN
+      // error class (BillingSplitApiError), not the shared ApiError - the
+      // same TableWorkspace.tsx/tableApi.ts gap V1-RMD-114 already closed
+      // for table actions. Checking only ApiError silently discarded the
+      // backend's own Turkish message for every real billing-split failure.
+      setErrorMessage(reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap bölme verisi alınamadı.");
+    }
+  }, [orderParam, terminalId]);
+
+  useEffect(() => { void load(); }, [load]);
+
+  const designBillId = design?.billId;
+  const refundClient = useMemo(
+    () => (designBillId ? createBillingRefundClient(terminalId, designBillId) : null),
+    [terminalId, designBillId],
+  );
+
+  const handleSave = async (request: SaveSplitRequest, currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
+    const targetClient = createBillingSplitClient(terminalId, currentDesign.billId);
+    const updated = await targetClient.save(request, currentDesign);
+    setDesign(updated);
+    if (updated.billId && updated.billId !== billId) {
+      setBillId(updated.billId);
+      trySetItem("alkaros.current-bill-id", updated.billId);
+    }
+    return updated;
+  };
+
+  const handleClear = async (currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
+    const targetClient = createBillingSplitClient(terminalId, currentDesign.billId);
+    const cleared = await targetClient.clear(currentDesign);
+    setDesign(cleared);
+    return cleared;
+  };
+
+  return (
+    <div className="billing-route">
+      <BillSplitWorkspace
+        state={state}
+        design={design}
+        owners={owners}
+        canMutate={canManage}
+        onRefresh={load}
+        onSave={handleSave}
+        onClear={handleClear}
+        errorMessage={errorMessage}
+        lastUpdated={lastUpdated}
+      />
+      {design?.billId && (
+        // The split editor only decides who owes what; collecting the money
+        // happens on the cashier payment page (V13-PUI-001), which had no
+        // inbound link from anywhere in the running app.
+        <a
+          className="billing-route__collect"
+          href={`/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(design.billId)}`}
+        >
+          Tahsilata geç
+        </a>
+      )}
+      {refundClient && (canCancel || canRequestRefund || canApproveRefund) && (
+        <RefundPanel
+          key={designBillId}
+          client={refundClient}
+          canCancel={canCancel}
+          canRequestRefund={canRequestRefund}
+          canApproveRefund={canApproveRefund}
+        />
+      )}
+    </div>
+  );
+}
+
+const emptyCatalogData: CatalogData = {
+  categories: [], taxes: [], products: [], modifierGroups: [], modifiers: [], prices: [], assignments: [],
+};
+
+function CatalogRoute({ canManage }: { canManage: boolean }) {
+  const client = useMemo(() => createCatalogManagementClient(), []);
+  const [state, setState] = useState<CatalogWorkspaceState>("loading");
+  const [data, setData] = useState<CatalogData>(emptyCatalogData);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const load = useCallback(async () => {
+    if (!canManage) { setState("unauthorized"); return; }
+    setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const loaded = await client.load();
+      setData(loaded);
+      setLastUpdated(new Date().toISOString());
+      setState(isCatalogEmpty(loaded) ? "empty" : "ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
+      // V1-RMD-368 (module-by-module UI audit, module 8): catalogApi.ts
+      // throws its own CatalogApiError, not the shared ApiError this
+      // checked alone - same two-error-class gap V1-RMD-114 closed for
+      // tables, now reopened here for the route-level load().
+      setErrorMessage(reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Katalog verisi alınamadı.");
+    }
+  }, [canManage, client]);
+  useEffect(() => { void load(); }, [load]);
+  const create = async (input: CatalogCreateInput) => { await client.create(input); await load(); };
+  const updateProduct = async (productId: string, details: CatalogProductDetailsInput) => { await client.updateProduct(productId, details); await load(); };
+  const setAvailability = async (productId: string, isAvailable: boolean) => { await client.setAvailability(productId, isAvailable); await load(); };
+  const setPrepTime = async (productId: string, prepTimeMinutes: number | null) => { await client.setPrepTime(productId, prepTimeMinutes); await load(); };
+  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} onUpdateProduct={canManage ? updateProduct : undefined} onSetAvailability={canManage ? setAvailability : undefined} onSetPrepTime={canManage ? setPrepTime : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+}
+
+function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canView: boolean }) {
+  const [state, setState] = useState<SystemHealthState>("loading");
+  const [health, setHealth] = useState<KitchenData["health"]>(null);
+  const [backups, setBackups] = useState<KitchenData["backups"]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const load = useCallback(async () => {
+    if (!canView) { setState("unauthorized"); return; }
+    setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const configuration = await loadKitchenRuntimeConfiguration(terminalId);
+      const client = createKitchenOperationsClient(terminalId, configuration.kitchenStationId);
+      const next = await client.load();
+      setHealth(next.health);
+      setBackups(next.backups);
+      setLastUpdated(new Date().toISOString());
+      setState("ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setHealth(null);
+      setBackups([]);
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : "error");
+      // V1-RMD-372 (module-by-module UI audit, module 12): this route reuses
+      // kitchen-operations' client (no dedicated system-health API), whose
+      // real errors are KitchenOperationsApiError, not the shared ApiError
+      // this checked alone - same class of gap as V1-RMD-366/367/368/369.
+      setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : "Sağlık verisi alınamadı.");
+    }
+  }, [canView, terminalId]);
+  useEffect(() => { void load(); }, [load]);
+  return <SystemHealthWorkspace state={state} health={health} backups={backups} onRefresh={load} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+}
+
+const emptyAuthorizationDecisions: AuthorizationDecisionsData = { pendingGrants: [], delegations: [], tightenings: [] };
+
+function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
+  const client = useMemo(() => createAuthorizationDecisionsClient(), []);
+  const [state, setState] = useState<AuthorizationDecisionState>("loading");
+  const [data, setData] = useState<AuthorizationDecisionsData>(emptyAuthorizationDecisions);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const load = useCallback(async (silent = false) => {
+    if (!canView) { setState("unauthorized"); return; }
+    if (!silent) setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const next = await client.load();
+      setData(next);
+      setLastUpdated(new Date().toISOString());
+      setState("ready");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setData(emptyAuthorizationDecisions);
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 403 ? "unauthorized" : "error");
+      setErrorMessage(reason instanceof ApiError ? reason.message : "Yetki verisi alınamadı.");
+    }
+  }, [canView, client]);
+  useEffect(() => { void load(); }, [load]);
+  const act = (run: () => Promise<void>) => async () => { await run(); await load(true); };
+  return <AuthorizationDecisionsWorkspace
+    state={state}
+    pendingGrants={data.pendingGrants}
+    delegations={data.delegations}
+    tightenings={data.tightenings}
+    onApprove={(id) => act(() => client.approve(id))()}
+    onDeny={(id) => act(() => client.deny(id))()}
+    onRevokeDelegation={(id) => act(() => client.revokeDelegation(id))()}
+    onClearTightening={(id) => act(() => client.clearTightening(id))()}
+    onRefresh={() => load()}
+    errorMessage={errorMessage}
+    lastUpdated={lastUpdated}
+  />;
+}
+
+const emptyKitchenData: KitchenData = { tickets: [], printers: [], routes: [], categories: [], unknownDeliveries: [], health: null, backups: [], liveSyncEnabled: false, denseModeThreshold: 9 };
+
+function KitchenRoute({ terminalId, canAdvance, canOperate, canManageReprints, canManageRouting, canSuspendAvailability, canViewReports }: { terminalId: string; canAdvance: boolean; canOperate: boolean; canManageReprints: boolean; canManageRouting: boolean; canSuspendAvailability: boolean; canViewReports: boolean }) {
+  const [stationId, setStationId] = useState("");
+  const [client, setClient] = useState<KitchenOperationsClient | null>(null);
+  const [state, setState] = useState<KitchenWorkspaceState>("loading");
+  const [data, setData] = useState<KitchenData>(emptyKitchenData);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [lastUpdated, setLastUpdated] = useState<string>();
+  const load = useCallback(async () => {
+    if (!canAdvance) { setState("unauthorized"); return; }
+    setState("loading");
+    setErrorMessage(undefined);
+    try {
+      const configuration = await loadKitchenRuntimeConfiguration(terminalId);
+      const nextClient = createKitchenOperationsClient(terminalId, configuration.kitchenStationId);
+      const next = await nextClient.load();
+      setStationId(configuration.kitchenStationId);
+      setClient(nextClient);
+      setData(next);
+      setLastUpdated(new Date().toISOString());
+      setState(next.tickets.length || next.unknownDeliveries.length ? "ready" : "empty");
+    } catch (reason) {
+      const status = (reason as { status?: number }).status;
+      setStationId("");
+      setClient(null);
+      setData(emptyKitchenData);
+      setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
+      // V1-RMD-369 (module-by-module UI audit, module 9): kitchenApi.ts
+      // throws its own KitchenOperationsApiError, not the shared ApiError
+      // this checked alone - same two-error-class gap as V1-RMD-366/367/368.
+      // KitchenOperationsWorkspace.tsx's own action handlers already check
+      // KitchenOperationsApiError correctly; only this route-level load()
+      // (the first fetch, behind the error/offline/conflict states) had it.
+      setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : "Mutfak verisi alınamadı.");
+    }
+  }, [canAdvance, terminalId]);
+  useEffect(() => { void load(); }, [load]);
+
+  // V1-RMD-223: found by an independent audit (2026-09-16) - load() (and
+  // therefore onRefresh, which the workspace's own 8s poll calls) builds a
+  // brand-new client every cycle, so `client` itself is a fresh reference
+  // every poll even though nothing about it actually changed. A plain
+  // `client ? (from, to) => client.getPerformanceReport(from, to) : undefined`
+  // inline closure was a new function identity every render for the same
+  // reason - the report screen's own effect depends on this prop, so it
+  // kept re-firing (the Turkish "loading" state flashing) every poll tick while
+  // someone was reading it, exactly the polling-inclusion the workspace's
+  // own comment says the report is NOT supposed to have. A ref keeps the
+  // callback's identity stable across polls while still always calling
+  // whatever client is current at the time it is actually invoked.
+  const clientRef = useRef(client);
+  useEffect(() => { clientRef.current = client; }, [client]);
+  const loadPerformanceReport = useCallback(
+    (from: string, to: string) => {
+      if (!clientRef.current) return Promise.reject(new Error("Mutfak istemcisi hazır değil."));
+      return clientRef.current.getPerformanceReport(from, to);
+    },
+    [],
+  );
+
+  return <KitchenOperationsWorkspace
+    state={state}
+    stationId={stationId || "Mutfak"}
+    data={data}
+    canAdvance={canAdvance}
+    canOperate={canOperate}
+    canManageReprints={canManageReprints}
+    canManageRouting={canManageRouting}
+    canSuspendAvailability={canSuspendAvailability}
+    canViewReports={canViewReports}
+    onRefresh={load}
+    onTransitionItem={canAdvance && client ? async (ticket, item, target) => { await client.transitionItem(ticket.id, item.id, target, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
+    onUndoItem={canAdvance && client ? async (ticket, item) => { await client.undoItem(ticket.id, item.id, ticket.rowVersion, item.rowVersion); await load(); } : undefined}
+    onTransitionTicket={canOperate && client ? async (ticket, target, reason) => { await client.transitionTicket(ticket.id, target, ticket.rowVersion, reason); await load(); } : undefined}
+    onApproveReprint={canManageReprints && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
+    onRejectReprint={canManageReprints && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}
+    onCreateCategoryRoute={canManageRouting && client ? async (categoryId, printerId) => { await client.createCategoryRoute(categoryId, printerId); await load(); } : undefined}
+    onSavePrinter={canManageRouting && client ? async (printerId, input) => { await client.savePrinter(printerId, input); await load(); } : undefined}
+    // V1-KDS-002: present whenever a client exists - the workspace itself
+    // decides whether the button is enabled or shown-but-locked, matching
+    // this task's own acceptance evidence (a kitchen-staff session must see
+    // the same button, locked, not a hidden one).
+    onSuspendProductAvailability={client ? async (productId) => { const result = await client.suspendProductAvailability(productId); await load(); return result; } : undefined}
+    onLoadPerformanceReport={client ? loadPerformanceReport : undefined}
+    errorMessage={errorMessage}
+    lastUpdated={lastUpdated}
+  />;
+}

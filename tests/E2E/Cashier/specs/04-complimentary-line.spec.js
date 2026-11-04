@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { readSeed, loginCashier, startOrder } from '../lib/testHelpers.js';
+import { readSeed, loginCashier } from '../lib/testHelpers.js';
 
 test.describe('İkram sonrası hesap görünümü (PosTerminal Cashier.tsx)', () => {
   test('ürün ikram edilir; gerçek fiyatıyla + ayrı bir indirim satırı olarak görünür', async ({ page }) => {
     const seed = readSeed();
     await loginCashier(page, seed);
-    await startOrder(page);
 
     await page.getByRole('button', { name: /E2E Kasa Normal Stok/ }).click();
     await expect(page.locator('.ticket-line')).toHaveCount(1);

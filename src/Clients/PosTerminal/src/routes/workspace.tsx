@@ -3,6 +3,7 @@ import { ApiError, api } from "../api";
 import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
 import { managementText, navLabels, roleLabels } from "../strings";
+import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
 import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
@@ -225,7 +226,7 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
       setTables(nextTables);
       setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
       await loadFloorPlanForZone(selectedZoneId, nextZones, silent);
-      setLastUpdated(new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+      setLastUpdated(formatClockTime(new Date()));
       setRefreshError(undefined);
       setErrorMessage(undefined);
       setState(nextTables.length ? "ready" : "empty");

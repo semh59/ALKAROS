@@ -41,13 +41,13 @@ afterEach(() => {
 });
 
 describe("Cashier refreshes only the order after a sale action", () => {
-  it("does not read the session, catalog or runtime config again after opening an order", async () => {
+  it("does not read the session, catalog or runtime config again after the first product tap opened an order", async () => {
     const seen: string[] = [];
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const path = String(input);
       seen.push(`${init?.method ?? "GET"} ${path}`);
       if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
-      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/catalog")) return jsonResponse([{ productId: "p-1", sku: "S1", name: "Ayran", categoryCode: "ICE", categoryName: "İçecek", unitPrice: 20, taxRate: 10 }]);
       if (path.endsWith("/orders/active")) return jsonResponse(null);
       if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
       if (path.endsWith("/orders") && init?.method === "POST") return jsonResponse({ orderId: "order-1", orderNumber: "1", revision: 1 });
@@ -64,7 +64,7 @@ describe("Cashier refreshes only the order after a sale action", () => {
     });
     await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 
-    const openOrder = [...document.querySelectorAll("button")].find((b) => b.textContent === "Sipariş aç");
+    const openOrder = document.querySelector(".product-card");
     expect(openOrder).toBeTruthy();
     seen.length = 0;
     await act(async () => {

@@ -1,7 +1,7 @@
 .pending-checks { display: grid; gap: var(--ds-space-3); }
 .pending-checks__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--ds-space-2); }
-.pending-checks__row { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: .2rem var(--ds-space-3); align-items: center; text-align: left; min-height: 4rem; border: 1px solid #bdc8cd; border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: #152b34; background: #f7fbfd; cursor: pointer; }
-.pending-checks__row:hover:not(:disabled) { border-color: #142b35; }
+.pending-checks__row { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: .2rem var(--ds-space-3); align-items: center; text-align: left; min-height: 4rem; border: 0; border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: #152b34; background: transparent; cursor: pointer; }
+.pending-checks__card:hover:not(:has(:disabled)) { border-color: #142b35; }
 .pending-checks__row:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }
 .pending-checks__row:disabled { opacity: .6; cursor: progress; }
 .pending-checks__number { font-weight: 800; }
@@ -12,6 +12,6 @@
 .pending-checks__empty { color: #61727a; }
 .pending-checks__offline, .pending-checks__stale { border: 1px solid #c58a00; border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: #5c4100; background: #fff6dc; margin: 0; }
 .pending-checks__error { border: 1px solid var(--ds-color-danger); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
-.pending-checks__list li { display: grid; gap: .25rem; }
-.pending-checks__recall { justify-self: start; min-height: 3rem; border: 0; padding: 0 var(--ds-space-2); color: #61727a; background: none; text-decoration: underline; cursor: pointer; }
+.pending-checks__card { display: grid; gap: .25rem; border: 1px solid #bdc8cd; border-radius: var(--ds-radius-sm); background: #f7fbfd; }
+.pending-checks__recall { justify-self: start; min-height: 48px; margin: 0 var(--ds-space-3) var(--ds-space-3); border: 1px solid #4b5e68; border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-3); color: #3a4c55; background: #fff; font: inherit; cursor: pointer; }
 .pending-checks__recall:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }

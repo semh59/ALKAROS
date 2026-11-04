@@ -1,3 +1,5 @@
+import { notifySessionExpired } from "../../api";
+
 /** A check a waiter sent to the till (V1-ORD-006). It is tracked by its own number, never by the table. */
 export interface PendingCheck {
   orderId: string;
@@ -31,6 +33,7 @@ export async function loadPendingChecks(terminalId: string, fetcher: typeof fetc
     throw new PendingChecksApiError(0, "Sunucuya ulaşılamadı. Bekleyen hesaplar okunamadı.");
   }
   if (!response.ok) {
+    if (response.status === 401) notifySessionExpired();
     throw new PendingChecksApiError(
       response.status,
       response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu listeyi görmek için yetkiniz yok." : "Bekleyen hesaplar okunamadı.",
@@ -44,7 +47,14 @@ export function collectionHref(billId: string): string {
   return `/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(billId)}`;
 }
 
-/** Sends a mistakenly sent check back to its table. Refused (with the server's Turkish reason) once money moved. */
+const recallFailureText: Record<string, string> = {
+  TABLE_HAS_OPEN_CHECK: "Bu masada yeni bir hesap açık; önce onu kasaya gönderin.",
+  CHECK_HAS_PAYMENT: "Bu hesapta tahsilat başlamış; masaya geri alınamaz.",
+  CHECK_NOT_RECALLABLE: "Bu hesap artık kasa kuyruğunda değil; liste yenilendi.",
+  INVALID_TABLE: "Hesabın masası bulunamadı; geri gönderilemedi.",
+};
+
+/** Sends a mistakenly sent check back to its table. Refused with a fixed sentence once money moved. */
 export async function recallPendingCheck(terminalId: string, orderId: string, tableId: string, fetcher: typeof fetch = fetch): Promise<void> {
   let response: Response;
   try {
@@ -59,7 +69,8 @@ export async function recallPendingCheck(terminalId: string, orderId: string, ta
     throw new PendingChecksApiError(0, "Sunucuya ulaşılamadı. Hesap geri gönderilemedi.");
   }
   if (!response.ok) {
-    const payload = await response.json().catch(() => undefined) as { error?: { message?: string } } | undefined;
-    throw new PendingChecksApiError(response.status, payload?.error?.message ?? "Hesap masaya geri gönderilemedi.");
+    if (response.status === 401) notifySessionExpired();
+    const payload = await response.json().catch(() => undefined) as { error?: { code?: string } } | undefined;
+    throw new PendingChecksApiError(response.status, recallFailureText[payload?.error?.code ?? ""] ?? "Hesap masaya geri gönderilemedi.");
   }
 }

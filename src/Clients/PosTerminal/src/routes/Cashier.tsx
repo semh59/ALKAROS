@@ -12,7 +12,7 @@ import { ApiError, api, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { navLabels, stateText } from "../strings";
-import { formatMoney, formatQuantity } from "../format";
+import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
 import { onlineHubTabFor } from "../features/online-hub";
@@ -103,6 +103,8 @@ export function Cashier() {
   // (link is back but calls sent while it was down cannot be recovered).
   const [helpLink, setHelpLink] = useState<"ok" | "reconnecting" | "missed">("ok");
   const knownHelpIds = useRef(new Set<string>());
+  // One tap = one action: a second tap during the first one must not open a second order.
+  const addingProduct = useRef(false);
   const pairingTrigger = useRef<HTMLButtonElement>(null);
   const pairingDialog = useRef<HTMLDivElement>(null);
 
@@ -508,7 +510,26 @@ export function Cashier() {
       || product.name.toLocaleLowerCase("tr-TR").includes(normalizedSearch)
       || product.sku.toLocaleLowerCase("tr-TR").includes(normalizedSearch)));
   const itemCount = activeOrder?.lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0;
-  const canStartNextOrder = !activeOrder || !activeOrder.editable;
+
+  const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
+    if (addingProduct.current) return;
+    addingProduct.current = true;
+    try {
+      await execute(async () => {
+        const reused = activeOrder?.editable ? activeOrder : null;
+        const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await api.startOrder(terminalId);
+        try {
+          await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);
+        } catch (reason) {
+          // The order just opened is the till's active one: show it, so the next tap fills it instead of opening another (a 409 is reloaded by execute).
+          if (!reused && !(reason instanceof ApiError && reason.status === 409)) await reloadOrder().catch(() => undefined);
+          throw reason;
+        }
+      });
+    } finally {
+      addingProduct.current = false;
+    }
+  };
 
   if (currentPath !== "/") {
     return <ExperiencePage
@@ -623,11 +644,7 @@ export function Cashier() {
           <span>{activeOrder ? "Toplam" : "Aktif sipariş yok"}</span>
           <strong>{activeOrder ? formatMoney(activeOrder.total) : "Yeni satış"}</strong>
         </div>
-        {!activeOrder ? (
-          <button data-telemetry-id="b.routes.cashier.9" className="primary" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
-            Sipariş aç
-          </button>
-        ) : activeOrder.editable ? (
+        {activeOrder?.editable && (
           <button data-telemetry-id="b.routes.cashier.10"
             className="primary"
             disabled={busy || activeOrder.lines.length === 0}
@@ -636,10 +653,6 @@ export function Cashier() {
               "Sipariş gönderildi. Yeni satış açabilirsiniz.",
             )}
           >Gönder</button>
-        ) : (
-          <button data-telemetry-id="b.routes.cashier.11" className="secondary" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
-            Sonraki sipariş
-          </button>
         )}
       </div>
 
@@ -697,10 +710,10 @@ export function Cashier() {
               <button data-telemetry-id="b.routes.cashier.14"
                 className="product-card"
                 key={product.productId}
-                disabled={busy || !activeOrder?.editable}
+                disabled={busy}
                 onClick={() => {
                   if (product.modifierGroups?.length) setPickingProduct(product);
-                  else void execute(() => api.addItem(terminalId, activeOrder!.orderId!, product.productId, activeOrder!.revision));
+                  else void addProduct(product);
                 }}
               >
                 <span className="product-category">{product.categoryName}</span>
@@ -728,12 +741,9 @@ export function Cashier() {
 
           {!activeOrder ? (
             <div className="new-order-state">
-              <div className="new-order-icon">＋</div>
+              <div className="new-order-icon" aria-hidden="true">＋</div>
               <h3>Siparişe hazır</h3>
-              <p>Ürünleri açmak ve yeni satışa başlamak için sipariş oluşturun.</p>
-              <button data-telemetry-id="b.routes.cashier.15" className="primary large" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
-                Yeni sipariş aç
-              </button>
+              <p>Ürüne dokununca sipariş açılır.</p>
             </div>
           ) : (
             <>
@@ -798,11 +808,6 @@ export function Cashier() {
                   <div><strong>Sipariş gönderildi</strong></div>
                 </div>
               )}
-              {canStartNextOrder && (
-                <button data-telemetry-id="b.routes.cashier.20" className="secondary next-order" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
-                  Sonraki siparişi aç
-                </button>
-              )}
             </>
           )}
 
@@ -814,7 +819,7 @@ export function Cashier() {
           onCancel={() => setPickingProduct(null)}
           onConfirm={(modifierIds) => {
             setPickingProduct(null);
-            void execute(() => api.addItem(terminalId, activeOrder!.orderId!, pickingProduct.productId, activeOrder!.revision, modifierIds));
+            void addProduct(pickingProduct, modifierIds);
           }}
         />
       )}
@@ -842,7 +847,7 @@ export function Cashier() {
               {displaySession === null
                 ? "Bağlı ekran bilgisi alınıyor…"
                 : displaySession.paired && displaySession.expiresAt
-                  ? `Bağlı ekran var; bağlantı ${new Date(displaySession.expiresAt).toLocaleString("tr-TR")} tarihine kadar geçerli (kullanıldıkça uzar).`
+                  ? `Bağlı ekran var; bağlantı ${formatDateTime(displaySession.expiresAt)} tarihine kadar geçerli (kullanıldıkça uzar).`
                   : "Şu an bağlı müşteri ekranı yok."}
             </p>
             {error && <div className="alert error" role="alert">{error}</div>}

@@ -79,7 +79,6 @@ button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visibl
 .primary:hover:not(:disabled) { background: var(--accent-dark); }
 .secondary { color: var(--ink); border: 1px solid var(--line); background: #f5f6f7; }
 .secondary:hover:not(:disabled) { border-color: #bcc5cd; background: #e9edf0; }
-.large { width: 100%; min-height: 56px; }
 label { display: grid; gap: .5rem; color: #3f4a55; font-size: .84rem; font-weight: 800; }
 input {
   width: 100%;
@@ -358,7 +357,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .ticket-totals > div { display: flex; justify-content: space-between; }
 .ticket-totals .grand-total { align-items: end; margin-top: .2rem; padding-top: .75rem; color: var(--ink); border-top: 1px dashed #cbd2d8; font-size: 1rem; font-weight: 850; }
 .grand-total strong { color: var(--ink); font-size: 1.75rem; letter-spacing: -.04em; }
-.submit-order, .next-order { min-height: 54px; margin: 0 1.2rem .75rem; }
+.submit-order { min-height: 54px; margin: 0 1.2rem .75rem; }
 .submitted-state { display: flex; align-items: center; gap: .8rem; margin: 0 1.2rem .75rem; border-radius: 12px; padding: .8rem 1rem; color: #126347; background: var(--green-soft); }
 .submitted-state > span { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: var(--green); font-weight: 900; }
 .submitted-state > div { display: grid; gap: .15rem; }

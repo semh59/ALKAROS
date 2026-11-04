@@ -78,7 +78,7 @@ describe("Cashier tells the operator why they landed back on the login form", ()
       if (path.includes("/auth/login")) {
         return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
       }
-      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/catalog")) return jsonResponse([{ productId: "p-1", sku: "S1", name: "Ayran", categoryCode: "ICE", categoryName: "İçecek", unitPrice: 20, taxRate: 10 }]);
       if (path.endsWith("/orders/active")) return jsonResponse(null);
       if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
       if (path.endsWith("/orders") && init?.method === "POST") {
@@ -98,10 +98,8 @@ describe("Cashier tells the operator why they landed back on the login form", ()
     });
     await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 
-    // Signed in, no active order yet: the "open a new order" button is the
-    // only way to reach orders/start without a full catalog+ticket setup.
-    const openOrderLabel = "Sipariş aç";
-    const openOrder = [...document.querySelectorAll("button")].find((b) => b.textContent === openOrderLabel);
+    // Signed in, no active order yet: the first product tap is what reaches orders/start.
+    const openOrder = document.querySelector(".product-card");
     expect(openOrder).toBeTruthy();
     expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
 

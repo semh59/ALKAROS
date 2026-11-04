@@ -3,6 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { registerSessionExpiredHandler } from "../../api";
 import { PendingChecksWorkspace } from "./PendingChecksWorkspace";
 
 const chime = vi.hoisted(() => vi.fn());
@@ -53,6 +54,7 @@ describe("PendingChecksWorkspace", () => {
     vi.stubGlobal("fetch", fetchMock);
   });
   afterEach(() => {
+    registerSessionExpiredHandler(null);
     act(() => root?.unmount());
     root = null;
     vi.unstubAllGlobals();
@@ -101,7 +103,7 @@ describe("PendingChecksWorkspace", () => {
     const navigateTo = await render();
 
     await act(async () => {
-      (document.querySelector('button[aria-label="S-001 hesabını tahsil et"]') as HTMLButtonElement).click();
+      (document.querySelector('button[aria-label="Masa 5 · 14:32 hesabını tahsil et"]') as HTMLButtonElement).click();
     });
 
     expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-new");
@@ -115,7 +117,7 @@ describe("PendingChecksWorkspace", () => {
     await render();
 
     await act(async () => {
-      (document.querySelector('button[aria-label="S-001 hesabını tahsil et"]') as HTMLButtonElement).click();
+      (document.querySelector('button[aria-label="Masa 5 · 14:32 hesabını tahsil et"]') as HTMLButtonElement).click();
     });
 
     expect(document.body.textContent).not.toContain("Failed to fetch");
@@ -127,7 +129,7 @@ describe("PendingChecksWorkspace", () => {
     const navigateTo = await render();
 
     await act(async () => {
-      (document.querySelector('button[aria-label="S-002 hesabını tahsil et"]') as HTMLButtonElement).click();
+      (document.querySelector('button[aria-label="Masa 5 · 15:10 hesabını tahsil et"]') as HTMLButtonElement).click();
     });
 
     expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-2");
@@ -157,31 +159,80 @@ describe("PendingChecksWorkspace", () => {
     });
     await render();
 
-    expect(document.querySelector('button[aria-label="S-001 hesabını masaya geri gönder"]')).not.toBeNull();
+    expect(document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]')).not.toBeNull();
     // The part-paid check has money on it: no way back.
-    expect(document.querySelector('button[aria-label="S-002 hesabını masaya geri gönder"]')).toBeNull();
+    expect(document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 15:10"]')).toBeNull();
 
     await act(async () => {
-      (document.querySelector('button[aria-label="S-001 hesabını masaya geri gönder"]') as HTMLButtonElement).click();
+      (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
     });
 
     expect(document.body.textContent).not.toContain("S-001");
     expect(document.body.textContent).toContain("S-002");
   });
 
-  it("shows the server's Turkish reason when the check cannot go back", async () => {
+  it.each([
+    ["TABLE_HAS_OPEN_CHECK", "Bu masada yeni bir hesap açık; önce onu kasaya gönderin."],
+    ["CHECK_HAS_PAYMENT", "Bu hesapta tahsilat başlamış; masaya geri alınamaz."],
+    ["CHECK_NOT_RECALLABLE", "Bu hesap artık kasa kuyruğunda değil; liste yenilendi."],
+    ["SOMETHING_NEW", "Hesap masaya geri gönderilemedi."],
+  ])("shows a fixed Turkish sentence for %s when the check cannot go back, never the server's text", async (code, sentence) => {
     fetchMock.mockImplementation(async (url: string) =>
       String(url).includes("recall-from-cashier")
-        ? { ok: false, status: 409, json: async () => ({ error: { message: "Bu masada yeni bir hesap açık; önce onu kasaya gönderin." } }) }
+        ? { ok: false, status: 409, json: async () => ({ error: { code, message: "raw server text" } }) }
         : ok(sample));
     await render();
 
     await act(async () => {
-      (document.querySelector('button[aria-label="S-001 hesabını masaya geri gönder"]') as HTMLButtonElement).click();
+      (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
     });
 
-    expect(document.querySelector('[role="alert"]')?.textContent).toContain("yeni bir hesap açık");
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe(sentence);
+    expect(document.body.textContent).not.toContain("raw server text");
   });
+
+  it("names a row by where it came from and when, with the technical number only as a small extra", async () => {
+    fetchMock.mockResolvedValue(ok([sample[0], { ...sample[1], orderId: "o-3", orderNumber: "S-003", tableNumber: "—", tableId: null, createdAt: "2026-09-24T12:30:00Z" }]));
+    await render();
+
+    const rows = [...document.querySelectorAll("button.pending-checks__row")];
+    expect(rows[0].querySelector(".pending-checks__number")?.textContent).toBe("Masa 5 · 14:32");
+    expect(rows[0].querySelector(".pending-checks__meta")?.textContent).toBe("3 kalem · S-001");
+    expect(rows[1].querySelector(".pending-checks__number")?.textContent).toBe("Hızlı satış · 15:30");
+  });
+
+  it("puts the send-back action inside the check's own card", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    await render();
+
+    const card = document.querySelector("li.pending-checks__card")!;
+    expect(card.querySelector("button.pending-checks__row")).not.toBeNull();
+    expect(card.querySelector("button.pending-checks__recall")).not.toBeNull();
+  });
+
+  it("sends a lost session (401) to the shared sign-in handler", async () => {
+    const expired = vi.fn();
+    registerSessionExpiredHandler(expired);
+    fetchMock.mockResolvedValue({ ok: false, status: 401, json: async () => ({}) });
+    await render();
+
+    expect(expired).toHaveBeenCalled();
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Oturum sona erdi");
+  });
+
+  it("sends a lost session met while opening a check for payment to the sign-in handler", async () => {
+    const expired = vi.fn();
+    registerSessionExpiredHandler(expired);
+    fetchMock.mockImplementation(async (url: string) => String(url).includes("/billing/")
+      ? { ok: false, status: 401, json: async () => ({}) }
+      : ok(sample));
+    await render();
+
+    await act(async () => { (document.querySelector("button.pending-checks__row") as HTMLButtonElement).click(); });
+
+    expect(expired).toHaveBeenCalled();
+  });
+
   it("reloads the list the moment the hub says the queue changed, and again after a reconnect", async () => {
     fetchMock.mockResolvedValue(ok([]));
     await render();
