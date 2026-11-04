@@ -32,6 +32,7 @@ Kapsam dışı: sunucu davranışı (793/794); gün sonu rapor şekli (V1-RMD-79
   - src/Clients/PosTerminal/src/features/billing/refundApi.test.ts (V1-RMD-510) — alan ve cümle testleri.
   - src/Clients/PosTerminal/src/features/billing/billingApi.test.ts (V1-RMD-366) — sözlük testleri.
   - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx (V1-RMD-366) — ham mesaj basılmaz testi.
+  - src/Clients/PosTerminal/src/routes/workspace.test.tsx (V1-CUI-006) — hesap bölme hatasının sabit Türkçe cümleyle gösterildiği test.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — iade ekranı, sözlük, düğme, zaman aşımı, fiş etiketi.
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js (V1-RMD-241) — zaman aşımı.
   - src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js (V1-RMD-443) — zaman aşımı.
@@ -41,7 +42,7 @@ Kapsam dışı: sunucu davranışı (793/794); gün sonu rapor şekli (V1-RMD-79
   - tests/Clients/StaticApps/split-payment-failures.test.js (V1-RMD-264) — sözlük testleri.
   - tests/Clients/StaticApps/error-dictionary-lock.test.js (V1-RMD-264) — yeni dosya: sunucu hata kodlarının sözlükte karşılığı.
   - tests/Clients/StaticApps/client-timeout-fallback.test.js (V1-RMD-734) — yeni dosya: eski tarayıcıda zaman aşımı.
-  - tests/E2E/Cashier/specs/32-manager-end-of-day-and-cash-out-approval.spec.js (V1-CUI-011) — yeni dosya: iki tarayıcı akışı.
+  - tests/E2E/Cashier/specs/32-manager-end-of-day-and-cash-out-approval.spec.js (V1-CUI-011) — yeni dosya: ikinci yönetici onayı ve gün sonu akışı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
