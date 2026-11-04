@@ -1,8 +1,8 @@
 # V1-RMD-800 - Ürün "yarım porsiyon olur" bayrağı ve kesirli miktar doğrulaması
 
 - Task ID: V1-RMD-800
-- Status: Planned
-- Assignee: None
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
