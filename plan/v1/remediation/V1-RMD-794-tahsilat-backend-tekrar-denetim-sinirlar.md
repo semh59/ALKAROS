@@ -1,7 +1,7 @@
 # V1-RMD-794 - Tahsilat (backend): nakit tekrarında alınan tutar, reddedilen tahsilatın izi, istemci sınırlarının kilidi
 
 - Task ID: V1-RMD-794
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
