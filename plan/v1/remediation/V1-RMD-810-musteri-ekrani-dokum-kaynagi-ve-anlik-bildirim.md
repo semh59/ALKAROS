@@ -30,6 +30,7 @@ Kasa incelemesinin G6 grubunun (müşteri ekranı) sunucu tarafı; ekran tarafı
   - tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs (V1-RMD-008) — sözleşme izin listesi.
   - tests/Host/MigrationComposition/DualScreen/CustomerDisplayPaymentProgressTests.cs (V1-RMD-785) — yeni dökümün birim testleri.
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs (V1-RMD-090) — satır tutarı ve indirim beklentileri.
+  - tests/Host/MigrationComposition/DualScreen/CustomerDisplayBillBindingTests.cs (V1-RMD-785) — iptal hesap testi yeni dökümün birim testlerine taşınır.
   - tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs (V13-PUI-001) — indirim, bahşiş, kısmi ödeme, tamamlanma ve iptalde ekran verisi.
   - tests/Host/Experience/PaymentTender/BillClosureLoggingTests.cs (V13-PUI-001) — ortak bildirim yardımcısı testi.
   - src/Clients/PosTerminal/src/contracts.ts (V1-RMD-031) — ekran verisi tipi.
