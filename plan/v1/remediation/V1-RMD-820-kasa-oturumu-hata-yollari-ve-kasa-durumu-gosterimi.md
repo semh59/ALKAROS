@@ -1,7 +1,7 @@
 # V1-RMD-820 - Kasa oturumu ve tahsilat hata yolları: kasa durumu okuma hatası "kasa kapalı" sayılmaz, EFT'ye kayma yok, React kabuğunda Kasa düğmesi ve bandı
 
 - Task ID: V1-RMD-820
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
