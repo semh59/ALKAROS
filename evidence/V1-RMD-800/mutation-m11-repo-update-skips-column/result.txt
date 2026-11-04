@@ -1,0 +1,1 @@
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 346 ms - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0)

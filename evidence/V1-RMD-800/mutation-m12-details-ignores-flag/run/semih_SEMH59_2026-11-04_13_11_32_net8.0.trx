@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="0943c52e-7e86-4e70-919d-ae1ab56d36f9" name="semih@SEMH59 2026-11-04 13:11:32" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T13:11:32.8177366+03:00" queuing="2026-11-04T13:11:32.8177369+03:00" start="2026-11-04T13:11:26.5282144+03:00" finish="2026-11-04T13:11:32.8245449+03:00" />
+  <TestSettings name="default" id="25f724fa-6fc4-4fa1-addc-fd9ade64ed63">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_13_11_32" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="56d5daea-6485-4d38-8cc2-00abf5d50dc2" testId="ccba3f05-9300-99a3-ab16-36d7ceafdbb5" testName="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted" computerName="SEMH59" duration="00:00:01.4952711" startTime="2026-11-04T13:11:32.6768032+03:00" endTime="2026-11-04T13:11:32.6769153+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56d5daea-6485-4d38-8cc2-00abf5d50dc2">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted() in D:\PROJECT\ALKAROS\tests\Host\Experience\Catalog\CatalogManagementHttpTests.cs:line 364&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.catalog.tests\debug\alkaros.host.experience.catalog.tests.dll" id="ccba3f05-9300-99a3-ab16-36d7ceafdbb5">
+      <Execution id="56d5daea-6485-4d38-8cc2-00abf5d50dc2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug\ALKAROS.Host.Experience.Catalog.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests" name="TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ccba3f05-9300-99a3-ab16-36d7ceafdbb5" executionId="56d5daea-6485-4d38-8cc2-00abf5d50dc2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.33]   Discovering: ALKAROS.Host.Experience.Catalog.Tests&#xD;
+[xUnit.net 00:00:01.38]   Discovered:  ALKAROS.Host.Experience.Catalog.Tests&#xD;
+[xUnit.net 00:00:01.39]   Starting:    ALKAROS.Host.Experience.Catalog.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58290&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58290/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58290/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 1335.8477ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58290/api/v1/management/catalog/products/5c4c4327-d986-48b7-8e03-55bbd16dc098/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58290/api/v1/management/catalog/products/5c4c4327-d986-48b7-8e03-55bbd16dc098/details - 200 - application/json;+charset=utf-8 29.1262ms&#xD;
+[xUnit.net 00:00:04.06]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:04.06]       Expected: True&#xD;
+[xUnit.net 00:00:04.06]       Actual:   False&#xD;
+[xUnit.net 00:00:04.06]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.06]         D:\PROJECT\ALKAROS\tests\Host\Experience\Catalog\CatalogManagementHttpTests.cs(364,0): at ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted()&#xD;
+[xUnit.net 00:00:04.06]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.11]   Finished:    ALKAROS.Host.Experience.Catalog.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:11:32.6736676+03:00">
+        <Text>[xUnit.net 00:00:04.05]     ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

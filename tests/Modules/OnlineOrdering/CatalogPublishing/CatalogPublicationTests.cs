@@ -18,7 +18,7 @@ public sealed class CatalogPublishingTestDatabase : PgTestDatabase
                  {
                      "002-inbox-messages.up.sql", "003-outbox-messages.up.sql", "006-catalog.up.sql",
                      "033-message-lease-generation.up.sql", "040-wave9-schema-additions.up.sql",
-                     "053-catalog-products-row-version.up.sql", "066-static-menu.up.sql", "103-products-prep-time.up.sql",
+                     "053-catalog-products-row-version.up.sql", "066-static-menu.up.sql", "103-products-prep-time.up.sql", "216-product-half-portion.up.sql",
                      "144-yemeksepeti-product-mappings.up.sql", "147-online-catalog-publications.up.sql",
                      "152-online-publishing-ordering.up.sql", "154-provider-neutral-inbox-and-mapping.up.sql"
                  })

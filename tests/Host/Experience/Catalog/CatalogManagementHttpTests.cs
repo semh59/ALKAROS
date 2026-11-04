@@ -347,6 +347,52 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        var sku = "HALF-" + Guid.NewGuid().ToString("N")[..8];
+        using var created = await client.PostAsJsonAsync("/api/v1/management/catalog/products",
+            new CreateProductV1(productId, sku, "Pilav", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        Assert.False((await created.Content.ReadFromJsonAsync<ProductV1>())!.AllowsHalfPortion);
+
+        using var on = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/details",
+            new UpdateProductDetailsV1(sku, "Pilav", null, CatalogApiTestDatabase.TaxProfileId, AllowsHalfPortion: true));
+        Assert.Equal(HttpStatusCode.OK, on.StatusCode);
+        Assert.True((await on.Content.ReadFromJsonAsync<ProductV1>())!.AllowsHalfPortion);
+
+        using var renamed = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/details",
+            new UpdateProductDetailsV1(sku, "Pilav büyük", null, CatalogApiTestDatabase.TaxProfileId));
+        Assert.True((await renamed.Content.ReadFromJsonAsync<ProductV1>())!.AllowsHalfPortion);
+
+        using var off = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/details",
+            new UpdateProductDetailsV1(sku, "Pilav büyük", null, CatalogApiTestDatabase.TaxProfileId, AllowsHalfPortion: false));
+        Assert.False((await off.Content.ReadFromJsonAsync<ProductV1>())!.AllowsHalfPortion);
+        Assert.False(await ScalarAsync<bool>("SELECT allows_half_portion FROM catalog.products WHERE product_id = @value;", productId));
+    }
+
+    [Fact]
+    public async Task AProductCreatedAllowingHalfPortionsStoresAndListsTheFlag()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        using var created = await client.PostAsJsonAsync("/api/v1/management/catalog/products",
+            new CreateProductV1(productId, "HALFC-" + Guid.NewGuid().ToString("N")[..8], "Pilav", ProductType.MenuItem, StockMode.Untracked,
+                TaxProfileId: CatalogApiTestDatabase.TaxProfileId, AllowsHalfPortion: true));
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        Assert.True((await created.Content.ReadFromJsonAsync<ProductV1>())!.AllowsHalfPortion);
+
+        var page = await client.GetFromJsonAsync<CatalogPageV1<ProductV1>>("/api/v1/management/catalog/products?limit=100");
+
+        Assert.True(await ScalarAsync<bool>("SELECT allows_half_portion FROM catalog.products WHERE product_id = @value;", productId));
+        Assert.True(page!.Items.Single(p => p.Id == productId).AllowsHalfPortion);
+    }
+
+    [Fact]
     public async Task AnOutOfRangePrepTimeIsRejected()
     {
         // Product.WithPrepTimeMinutes throws ArgumentOutOfRangeException,

@@ -24,7 +24,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version, prep_time_minutes
+                   row_version, prep_time_minutes, allows_half_portion
             FROM {Table}
             WHERE product_id = @id;
             """);
@@ -45,7 +45,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version, prep_time_minutes
+                   row_version, prep_time_minutes, allows_half_portion
             FROM {Table}
             WHERE sku = @sku;
             """);
@@ -66,7 +66,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version, prep_time_minutes
+                   row_version, prep_time_minutes, allows_half_portion
             FROM {Table}
             WHERE category_id = @category_id
             ORDER BY display_order, sku
@@ -93,7 +93,7 @@ public sealed class PostgresProductRepository : IProductRepository
             $"""
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   row_version, prep_time_minutes
+                   row_version, prep_time_minutes, allows_half_portion
             FROM {Table}
             ORDER BY display_order, sku
             LIMIT {MaxUnpagedRows + 1};
@@ -119,10 +119,10 @@ public sealed class PostgresProductRepository : IProductRepository
             INSERT INTO {Table} (
                 product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                 description, printer_route_policy, display_order, current_price, active, is_available,
-                row_version, prep_time_minutes)
+                row_version, prep_time_minutes, allows_half_portion)
             VALUES (@id, @sku, @name, @product_type, @stock_mode, @category_id, @tax_profile_id,
                     @description, @printer_route_policy, @display_order, @current_price, @active, @is_available,
-                    @row_version, @prep_time_minutes);
+                    @row_version, @prep_time_minutes, @allows_half_portion);
             """);
         command.Parameters.AddWithValue("id", product.Id);
         command.Parameters.AddWithValue("sku", product.Sku);
@@ -139,6 +139,7 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
         command.Parameters.AddWithValue("row_version", product.RowVersion);
         command.Parameters.AddWithValue("prep_time_minutes", (object?)product.PrepTimeMinutes ?? DBNull.Value);
+        command.Parameters.AddWithValue("allows_half_portion", product.AllowsHalfPortion);
 
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -165,6 +166,7 @@ public sealed class PostgresProductRepository : IProductRepository
                 active = @active,
                 is_available = @is_available,
                 prep_time_minutes = @prep_time_minutes,
+                allows_half_portion = @allows_half_portion,
                 row_version = row_version + 1
             WHERE product_id = @id AND row_version = @expected_row_version
             RETURNING product_id;
@@ -182,6 +184,7 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("active", product.Active);
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
         command.Parameters.AddWithValue("prep_time_minutes", (object?)product.PrepTimeMinutes ?? DBNull.Value);
+        command.Parameters.AddWithValue("allows_half_portion", product.AllowsHalfPortion);
         command.Parameters.AddWithValue("expected_row_version", expectedRowVersion);
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
@@ -218,6 +221,7 @@ public sealed class PostgresProductRepository : IProductRepository
             reader.GetBoolean(11),
             reader.GetBoolean(12),
             reader.GetInt64(13),
-            reader.IsDBNull(14) ? null : reader.GetInt32(14));
+            reader.IsDBNull(14) ? null : reader.GetInt32(14),
+            reader.GetBoolean(15));
     }
 }

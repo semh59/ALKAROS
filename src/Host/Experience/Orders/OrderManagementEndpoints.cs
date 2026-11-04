@@ -1,5 +1,6 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
@@ -1233,6 +1234,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         // V1-SET-004: the whole feature is turned off for this deployment.
         GarsonFeatureDisabledException => (403, "FEATURE_DISABLED",
             "Bu özellik bu işletme için kapatılmış."),
+        OrderQuantityNotAllowedException => (400, "ORDER_QUANTITY_NOT_ALLOWED", ApiErrorCatalog.OrderQuantityMessage),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         // V1-RMD-162: found by the 2026-09-10 Garson audit — every
         // PostgresException used to fall straight through to the generic

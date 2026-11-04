@@ -1,0 +1,878 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ee37816f-3e70-42d4-adb5-0d61d66b6ad9" name="semih@SEMH59 2026-11-04 10:53:13" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T10:53:13.4347579+03:00" queuing="2026-11-04T10:53:13.4347581+03:00" start="2026-11-04T10:53:03.2586500+03:00" finish="2026-11-04T10:55:00.7289514+03:00" />
+  <TestSettings name="default" id="47b2010f-c960-41cc-833a-e24d950c41a4">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_10_53_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="40b4d1c9-0d83-489c-994f-79b3da5372b9" testId="f1203245-dd4f-64a0-0d45-f3b0a688bc05" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ASelectedExtraIsPricedFromTheCatalogAndRecordedOnTheLine" computerName="SEMH59" duration="00:00:00.1863767" startTime="2026-11-04T10:54:09.8404688+03:00" endTime="2026-11-04T10:54:09.8404689+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="40b4d1c9-0d83-489c-994f-79b3da5372b9" />
+    <UnitTestResult executionId="d42c3951-2af9-4280-a84d-c44254a33671" testId="89a2f6b9-119c-5968-4f44-fb298924146b" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ASecondVisitToAnOccupiedTableCreatesASeparateOrderWithoutChangingTableState" computerName="SEMH59" duration="00:00:01.8404580" startTime="2026-11-04T10:53:13.3918426+03:00" endTime="2026-11-04T10:53:13.3918856+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d42c3951-2af9-4280-a84d-c44254a33671" />
+    <UnitTestResult executionId="12c4af08-70b5-4500-8ae1-0446aff0a76e" testId="61928a1a-61c5-aefc-680c-2910c3a01dbf" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnNfcOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" computerName="SEMH59" duration="00:00:00.4692242" startTime="2026-11-04T10:54:52.3301440+03:00" endTime="2026-11-04T10:54:52.3301442+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12c4af08-70b5-4500-8ae1-0446aff0a76e" />
+    <UnitTestResult executionId="710ad948-c0c8-4945-86c6-241da83d46e1" testId="e1ed3a03-c399-9bf4-fa75-f2aa6e21805d" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AStockItemWithoutADefaultLocationLeavesThePlacedOrderForTheWaiterInsteadOfFailingTheGuest" computerName="SEMH59" duration="00:00:00.2094874" startTime="2026-11-04T10:53:38.5712039+03:00" endTime="2026-11-04T10:53:38.5712041+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="710ad948-c0c8-4945-86c6-241da83d46e1" />
+    <UnitTestResult executionId="6130aa89-707f-486b-ba5a-e9f2cf310518" testId="7249994e-6255-b03c-245d-665d808c37ed" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 201, expected: BadRequest)" computerName="SEMH59" duration="00:00:00.0386999" startTime="2026-11-04T10:54:26.2358099+03:00" endTime="2026-11-04T10:54:26.2358100+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6130aa89-707f-486b-ba5a-e9f2cf310518" />
+    <UnitTestResult executionId="cbcb7d69-0507-4bbc-a06b-74d712b8d3ff" testId="a3df2238-6bf9-925f-f9ca-a0f836cad817" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnAvailableTableSelfChecksInAndTheOrderIsAcceptedWithAKitchenTicket" computerName="SEMH59" duration="00:00:00.1558023" startTime="2026-11-04T10:54:15.5201311+03:00" endTime="2026-11-04T10:54:15.5201318+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cbcb7d69-0507-4bbc-a06b-74d712b8d3ff" />
+    <UnitTestResult executionId="22fd0cdd-c1d5-44c5-884d-f2a99eac7ccf" testId="e302066d-1609-dcc0-15e2-9f046b2806ee" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.RetryingTheSameSubmissionReplaysTheExistingOrderInsteadOfDuplicatingIt" computerName="SEMH59" duration="00:00:00.1797603" startTime="2026-11-04T10:54:57.0826737+03:00" endTime="2026-11-04T10:54:57.0826740+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22fd0cdd-c1d5-44c5-884d-f2a99eac7ccf" />
+    <UnitTestResult executionId="3dd77a33-77bd-4f2c-8f16-8b9fb7b588dc" testId="c25c86eb-d03e-e810-1593-15442ae80902" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AFailedWaiterAnnouncementDoesNotTurnAPlacedOrderIntoAnError" computerName="SEMH59" duration="00:00:00.1283389" startTime="2026-11-04T10:54:38.8968878+03:00" endTime="2026-11-04T10:54:38.8968880+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3dd77a33-77bd-4f2c-8f16-8b9fb7b588dc" />
+    <UnitTestResult executionId="2ffe3798-252f-4fdb-a0c9-f5f8799b33f2" testId="155ddf1e-bb90-99d0-d754-b636f143e599" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 200, expected: OK)" computerName="SEMH59" duration="00:00:00.1480815" startTime="2026-11-04T10:54:30.9786687+03:00" endTime="2026-11-04T10:54:30.9786688+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ffe3798-252f-4fdb-a0c9-f5f8799b33f2" />
+    <UnitTestResult executionId="fda03ccb-4aa2-4fde-be1b-2141c1ca6148" testId="282f323a-b2b2-0257-bda2-5b83e51a1d14" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ADifferentCartUnderTheSameSubmissionIdIsRefusedInsteadOfDroppingTheNewLines" computerName="SEMH59" duration="00:00:00.1921009" startTime="2026-11-04T10:54:42.6755791+03:00" endTime="2026-11-04T10:54:42.6755792+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fda03ccb-4aa2-4fde-be1b-2141c1ca6148" />
+    <UnitTestResult executionId="1223e59c-ef0d-41b8-91ed-9e17f2b8fd6a" testId="404cb369-8b78-30b4-452a-4f3a1bb819be" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AReservedTableRefusesNfcSelfService" computerName="SEMH59" duration="00:00:00.0481273" startTime="2026-11-04T10:54:12.9130124+03:00" endTime="2026-11-04T10:54:12.9130126+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1223e59c-ef0d-41b8-91ed-9e17f2b8fd6a" />
+    <UnitTestResult executionId="c7897e2f-19c1-45a0-b57e-4e7330c3833f" testId="d3d8e2f8-2fdb-2441-e8c5-568e78da91c3" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.MoreExtrasThanAGroupAllowsAreRefused" computerName="SEMH59" duration="00:00:00.0558930" startTime="2026-11-04T10:54:55.9865078+03:00" endTime="2026-11-04T10:54:55.9865080+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c7897e2f-19c1-45a0-b57e-4e7330c3833f" />
+    <UnitTestResult executionId="269eb3a6-46ce-4985-97d9-dcf80941a927" testId="52eae9c3-7521-ece0-aa69-ccce24405507" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnExtraOfAnotherProductIsRefusedAsAValidationError" computerName="SEMH59" duration="00:00:00.0793714" startTime="2026-11-04T10:53:51.4936085+03:00" endTime="2026-11-04T10:53:51.4936089+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="269eb3a6-46ce-4985-97d9-dcf80941a927" />
+    <UnitTestResult executionId="5302e860-7b2a-45ca-887b-2e3ed6b91246" testId="da0abaab-028e-3483-7a52-71e311a18cef" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ResendingTheSameCartWithNewLineIdsStillReplaysTheOrder" computerName="SEMH59" duration="00:00:00.2158289" startTime="2026-11-04T10:54:07.3407738+03:00" endTime="2026-11-04T10:54:07.3407740+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5302e860-7b2a-45ca-887b-2e3ed6b91246" />
+    <UnitTestResult executionId="22ebddc0-0c26-4bbc-9c7d-94d9995abacd" testId="3d82fd7c-d09c-6a87-758d-9accb8604bba" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder" computerName="SEMH59" duration="00:00:00.1960356" startTime="2026-11-04T10:54:34.3544918+03:00" endTime="2026-11-04T10:54:34.3544923+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22ebddc0-0c26-4bbc-9c7d-94d9995abacd" />
+    <UnitTestResult executionId="76886715-39aa-4c18-8c15-a85925dda12e" testId="fc6d6440-0199-d161-4af6-a64ca5ce254c" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.EmptyItemsIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0290630" startTime="2026-11-04T10:54:04.8510848+03:00" endTime="2026-11-04T10:54:04.8510853+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76886715-39aa-4c18-8c15-a85925dda12e" />
+    <UnitTestResult executionId="a6f4dc8c-3d18-47dc-8167-3f7cb26b9f44" testId="19a70ca1-f224-24cf-a36f-e6d9cc87fef5" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.RetryingAnAgeRestrictedSubmissionReplaysTheSamePendingOrder" computerName="SEMH59" duration="00:00:00.1718866" startTime="2026-11-04T10:53:57.3882354+03:00" endTime="2026-11-04T10:53:57.3882359+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6f4dc8c-3d18-47dc-8167-3f7cb26b9f44" />
+    <UnitTestResult executionId="1d22bb98-0577-4ed6-b339-f733089be815" testId="48a1bfea-df7d-0954-199b-c82ce8108009" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnUnknownProductIsRejected" computerName="SEMH59" duration="00:00:00.0509656" startTime="2026-11-04T10:54:48.8613908+03:00" endTime="2026-11-04T10:54:48.8613909+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1d22bb98-0577-4ed6-b339-f733089be815" />
+    <UnitTestResult executionId="ceb6ba2f-9d00-4605-8e42-240fb4c606b8" testId="de4ad81e-3678-37e2-7328-f1c530f9ed88" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.TheCatalogEndpointListsAvailableProductsWithoutAnySession" computerName="SEMH59" duration="00:00:00.0954589" startTime="2026-11-04T10:54:22.2218513+03:00" endTime="2026-11-04T10:54:22.2218515+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ceb6ba2f-9d00-4605-8e42-240fb4c606b8" />
+    <UnitTestResult executionId="7324fa61-d49a-4e1c-848c-b7cce1b8983b" testId="d3fd4689-692a-6475-6e3a-e396c776346b" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnUnavailableProductIsRejected" computerName="SEMH59" duration="00:00:00.0451612" startTime="2026-11-04T10:54:17.8416494+03:00" endTime="2026-11-04T10:54:17.8416497+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7324fa61-d49a-4e1c-848c-b7cce1b8983b" />
+    <UnitTestResult executionId="f2ffa79e-202b-494e-bdbf-1ea20b5c089a" testId="275395e4-7a46-37ab-e607-f6debd102e06" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AQuantityOverTheLimitIsRejected" computerName="SEMH59" duration="00:00:00.0354579" startTime="2026-11-04T10:55:00.6243093+03:00" endTime="2026-11-04T10:55:00.6243096+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f2ffa79e-202b-494e-bdbf-1ea20b5c089a" />
+    <UnitTestResult executionId="06bb97d7-ae13-405f-8a3b-f1a203f62820" testId="f25fd5b1-1afb-f73b-ace6-8d450c570b7a" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnOrderNumberCarriesPartOfTheOrderIdSoTwoOrdersInTheSameInstantCannotCollide" computerName="SEMH59" duration="00:00:00.2998727" startTime="2026-11-04T10:53:17.7633540+03:00" endTime="2026-11-04T10:53:17.7633543+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06bb97d7-ae13-405f-8a3b-f1a203f62820" />
+    <UnitTestResult executionId="89282622-cdbc-4008-b734-a75fa316b6f6" testId="0db3b79b-ca58-00dc-765b-dddf62e45cf6" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnEmptySubmissionIdIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0418850" startTime="2026-11-04T10:54:02.4428060+03:00" endTime="2026-11-04T10:54:02.4428063+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89282622-cdbc-4008-b734-a75fa316b6f6" />
+    <UnitTestResult executionId="371040cb-e70b-4752-ac26-5c3d4501e992" testId="6721413b-6040-3544-43d4-50da1ba9958a" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnUnknownTableIsNotFound" computerName="SEMH59" duration="00:00:00.0481048" startTime="2026-11-04T10:53:21.4124344+03:00" endTime="2026-11-04T10:53:21.4124345+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="371040cb-e70b-4752-ac26-5c3d4501e992" />
+    <UnitTestResult executionId="969efdcc-c4c7-41e5-8752-357068994386" testId="a099ae4f-32c4-7699-de9e-b537160335d6" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.TooManyItemLinesIsRejected" computerName="SEMH59" duration="00:00:00.0430165" startTime="2026-11-04T10:53:29.6158678+03:00" endTime="2026-11-04T10:53:29.6158680+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="969efdcc-c4c7-41e5-8752-357068994386" />
+    <UnitTestResult executionId="8d4381ef-c129-411c-85e6-70c0c0eb27e2" testId="770682ad-7f03-8bf6-d764-604ed3a3d81f" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnOptionalGroupMayBeLeftEmptyButARequiredOneMayNot" computerName="SEMH59" duration="00:00:00.2569838" startTime="2026-11-04T10:53:48.3096587+03:00" endTime="2026-11-04T10:53:48.3096588+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d4381ef-c129-411c-85e6-70c0c0eb27e2" />
+    <UnitTestResult executionId="6e508d79-6824-4a9c-8920-463a7f4e86ad" testId="b7347951-7ca1-b375-af7f-bc0b4181a3e2" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AMixedCartWithOneAgeRestrictedItemStillWithholdsTheWholeOrder" computerName="SEMH59" duration="00:00:00.1734933" startTime="2026-11-04T10:53:33.7362327+03:00" endTime="2026-11-04T10:53:33.7362370+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e508d79-6824-4a9c-8920-463a7f4e86ad" />
+    <UnitTestResult executionId="f5a02dd6-37b6-47f6-b683-048fb5e87934" testId="e383bfe6-66f0-3242-be1f-4a997f3171c4" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnAgeRestrictedItemWithholdsTheTrustedShortcutAndReservesTheTable" computerName="SEMH59" duration="00:00:00.2108558" startTime="2026-11-04T10:53:25.9508505+03:00" endTime="2026-11-04T10:53:25.9508507+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5a02dd6-37b6-47f6-b683-048fb5e87934" />
+    <UnitTestResult executionId="fc7c2b29-b7bf-45d0-a1a4-d54fa5ca3868" testId="56cfb61a-a3b3-d5e1-a417-42b3cabc3026" testName="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnEmptyTableIdIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0323367" startTime="2026-11-04T10:53:42.3710230+03:00" endTime="2026-11-04T10:53:42.3710231+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc7c2b29-b7bf-45d0-a1a4-d54fa5ca3868" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnUnknownTableIsNotFound" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="6721413b-6040-3544-43d4-50da1ba9958a">
+      <Execution id="371040cb-e70b-4752-ac26-5c3d4501e992" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnUnknownTableIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ResendingTheSameCartWithNewLineIdsStillReplaysTheOrder" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="da0abaab-028e-3483-7a52-71e311a18cef">
+      <Execution id="5302e860-7b2a-45ca-887b-2e3ed6b91246" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ResendingTheSameCartWithNewLineIdsStillReplaysTheOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.TheCatalogEndpointListsAvailableProductsWithoutAnySession" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="de4ad81e-3678-37e2-7328-f1c530f9ed88">
+      <Execution id="ceb6ba2f-9d00-4605-8e42-240fb4c606b8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="TheCatalogEndpointListsAvailableProductsWithoutAnySession" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ADifferentCartUnderTheSameSubmissionIdIsRefusedInsteadOfDroppingTheNewLines" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="282f323a-b2b2-0257-bda2-5b83e51a1d14">
+      <Execution id="fda03ccb-4aa2-4fde-be1b-2141c1ca6148" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ADifferentCartUnderTheSameSubmissionIdIsRefusedInsteadOfDroppingTheNewLines" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ASecondVisitToAnOccupiedTableCreatesASeparateOrderWithoutChangingTableState" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="89a2f6b9-119c-5968-4f44-fb298924146b">
+      <Execution id="d42c3951-2af9-4280-a84d-c44254a33671" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ASecondVisitToAnOccupiedTableCreatesASeparateOrderWithoutChangingTableState" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnAgeRestrictedItemWithholdsTheTrustedShortcutAndReservesTheTable" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="e383bfe6-66f0-3242-be1f-4a997f3171c4">
+      <Execution id="f5a02dd6-37b6-47f6-b683-048fb5e87934" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnAgeRestrictedItemWithholdsTheTrustedShortcutAndReservesTheTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnOrderNumberCarriesPartOfTheOrderIdSoTwoOrdersInTheSameInstantCannotCollide" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="f25fd5b1-1afb-f73b-ace6-8d450c570b7a">
+      <Execution id="06bb97d7-ae13-405f-8a3b-f1a203f62820" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnOrderNumberCarriesPartOfTheOrderIdSoTwoOrdersInTheSameInstantCannotCollide" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnEmptyTableIdIsRejectedWithATurkishMessage" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="56cfb61a-a3b3-d5e1-a417-42b3cabc3026">
+      <Execution id="fc7c2b29-b7bf-45d0-a1a4-d54fa5ca3868" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnEmptyTableIdIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnNfcOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="61928a1a-61c5-aefc-680c-2910c3a01dbf">
+      <Execution id="12c4af08-70b5-4500-8ae1-0446aff0a76e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnNfcOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="3d82fd7c-d09c-6a87-758d-9accb8604bba">
+      <Execution id="22ebddc0-0c26-4bbc-9c7d-94d9995abacd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnAvailableTableSelfChecksInAndTheOrderIsAcceptedWithAKitchenTicket" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="a3df2238-6bf9-925f-f9ca-a0f836cad817">
+      <Execution id="cbcb7d69-0507-4bbc-a06b-74d712b8d3ff" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnAvailableTableSelfChecksInAndTheOrderIsAcceptedWithAKitchenTicket" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 201, expected: BadRequest)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="7249994e-6255-b03c-245d-665d808c37ed">
+      <Execution id="6130aa89-707f-486b-ba5a-e9f2cf310518" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ALineNoteIsCappedAtTwoHundredCharactersOnTheServer" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AQuantityOverTheLimitIsRejected" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="275395e4-7a46-37ab-e607-f6debd102e06">
+      <Execution id="f2ffa79e-202b-494e-bdbf-1ea20b5c089a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AQuantityOverTheLimitIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AMixedCartWithOneAgeRestrictedItemStillWithholdsTheWholeOrder" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="b7347951-7ca1-b375-af7f-bc0b4181a3e2">
+      <Execution id="6e508d79-6824-4a9c-8920-463a7f4e86ad" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AMixedCartWithOneAgeRestrictedItemStillWithholdsTheWholeOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnExtraOfAnotherProductIsRefusedAsAValidationError" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="52eae9c3-7521-ece0-aa69-ccce24405507">
+      <Execution id="269eb3a6-46ce-4985-97d9-dcf80941a927" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnExtraOfAnotherProductIsRefusedAsAValidationError" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnOptionalGroupMayBeLeftEmptyButARequiredOneMayNot" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="770682ad-7f03-8bf6-d764-604ed3a3d81f">
+      <Execution id="8d4381ef-c129-411c-85e6-70c0c0eb27e2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnOptionalGroupMayBeLeftEmptyButARequiredOneMayNot" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 200, expected: OK)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="155ddf1e-bb90-99d0-d754-b636f143e599">
+      <Execution id="2ffe3798-252f-4fdb-a0c9-f5f8799b33f2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ALineNoteIsCappedAtTwoHundredCharactersOnTheServer" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.TooManyItemLinesIsRejected" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="a099ae4f-32c4-7699-de9e-b537160335d6">
+      <Execution id="969efdcc-c4c7-41e5-8752-357068994386" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="TooManyItemLinesIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AStockItemWithoutADefaultLocationLeavesThePlacedOrderForTheWaiterInsteadOfFailingTheGuest" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="e1ed3a03-c399-9bf4-fa75-f2aa6e21805d">
+      <Execution id="710ad948-c0c8-4945-86c6-241da83d46e1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AStockItemWithoutADefaultLocationLeavesThePlacedOrderForTheWaiterInsteadOfFailingTheGuest" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ASelectedExtraIsPricedFromTheCatalogAndRecordedOnTheLine" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="f1203245-dd4f-64a0-0d45-f3b0a688bc05">
+      <Execution id="40b4d1c9-0d83-489c-994f-79b3da5372b9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="ASelectedExtraIsPricedFromTheCatalogAndRecordedOnTheLine" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnUnavailableProductIsRejected" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="d3fd4689-692a-6475-6e3a-e396c776346b">
+      <Execution id="7324fa61-d49a-4e1c-848c-b7cce1b8983b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnUnavailableProductIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AFailedWaiterAnnouncementDoesNotTurnAPlacedOrderIntoAnError" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="c25c86eb-d03e-e810-1593-15442ae80902">
+      <Execution id="3dd77a33-77bd-4f2c-8f16-8b9fb7b588dc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AFailedWaiterAnnouncementDoesNotTurnAPlacedOrderIntoAnError" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnUnknownProductIsRejected" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="48a1bfea-df7d-0954-199b-c82ce8108009">
+      <Execution id="1d22bb98-0577-4ed6-b339-f733089be815" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnUnknownProductIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AnEmptySubmissionIdIsRejectedWithATurkishMessage" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="0db3b79b-ca58-00dc-765b-dddf62e45cf6">
+      <Execution id="89282622-cdbc-4008-b734-a75fa316b6f6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AnEmptySubmissionIdIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.RetryingAnAgeRestrictedSubmissionReplaysTheSamePendingOrder" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="19a70ca1-f224-24cf-a36f-e6d9cc87fef5">
+      <Execution id="a6f4dc8c-3d18-47dc-8167-3f7cb26b9f44" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="RetryingAnAgeRestrictedSubmissionReplaysTheSamePendingOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.RetryingTheSameSubmissionReplaysTheExistingOrderInsteadOfDuplicatingIt" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="e302066d-1609-dcc0-15e2-9f046b2806ee">
+      <Execution id="22fd0cdd-c1d5-44c5-884d-f2a99eac7ccf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="RetryingTheSameSubmissionReplaysTheExistingOrderInsteadOfDuplicatingIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.MoreExtrasThanAGroupAllowsAreRefused" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="d3d8e2f8-2fdb-2441-e8c5-568e78da91c3">
+      <Execution id="c7897e2f-19c1-45a0-b57e-4e7330c3833f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="MoreExtrasThanAGroupAllowsAreRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.EmptyItemsIsRejectedWithATurkishMessage" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="fc6d6440-0199-d161-4af6-a64ca5ce254c">
+      <Execution id="76886715-39aa-4c18-8c15-a85925dda12e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="EmptyItemsIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.AReservedTableRefusesNfcSelfService" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.nfcordering.tests\debug\alkaros.host.experience.nfcordering.tests.dll" id="404cb369-8b78-30b4-452a-4f3a1bb819be">
+      <Execution id="1223e59c-ef0d-41b8-91ed-9e17f2b8fd6a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug\ALKAROS.Host.Experience.NfcOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests" name="AReservedTableRefusesNfcSelfService" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f1203245-dd4f-64a0-0d45-f3b0a688bc05" executionId="40b4d1c9-0d83-489c-994f-79b3da5372b9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="89a2f6b9-119c-5968-4f44-fb298924146b" executionId="d42c3951-2af9-4280-a84d-c44254a33671" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="61928a1a-61c5-aefc-680c-2910c3a01dbf" executionId="12c4af08-70b5-4500-8ae1-0446aff0a76e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e1ed3a03-c399-9bf4-fa75-f2aa6e21805d" executionId="710ad948-c0c8-4945-86c6-241da83d46e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7249994e-6255-b03c-245d-665d808c37ed" executionId="6130aa89-707f-486b-ba5a-e9f2cf310518" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a3df2238-6bf9-925f-f9ca-a0f836cad817" executionId="cbcb7d69-0507-4bbc-a06b-74d712b8d3ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e302066d-1609-dcc0-15e2-9f046b2806ee" executionId="22fd0cdd-c1d5-44c5-884d-f2a99eac7ccf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c25c86eb-d03e-e810-1593-15442ae80902" executionId="3dd77a33-77bd-4f2c-8f16-8b9fb7b588dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="155ddf1e-bb90-99d0-d754-b636f143e599" executionId="2ffe3798-252f-4fdb-a0c9-f5f8799b33f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="282f323a-b2b2-0257-bda2-5b83e51a1d14" executionId="fda03ccb-4aa2-4fde-be1b-2141c1ca6148" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="404cb369-8b78-30b4-452a-4f3a1bb819be" executionId="1223e59c-ef0d-41b8-91ed-9e17f2b8fd6a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3d8e2f8-2fdb-2441-e8c5-568e78da91c3" executionId="c7897e2f-19c1-45a0-b57e-4e7330c3833f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52eae9c3-7521-ece0-aa69-ccce24405507" executionId="269eb3a6-46ce-4985-97d9-dcf80941a927" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da0abaab-028e-3483-7a52-71e311a18cef" executionId="5302e860-7b2a-45ca-887b-2e3ed6b91246" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3d82fd7c-d09c-6a87-758d-9accb8604bba" executionId="22ebddc0-0c26-4bbc-9c7d-94d9995abacd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fc6d6440-0199-d161-4af6-a64ca5ce254c" executionId="76886715-39aa-4c18-8c15-a85925dda12e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="19a70ca1-f224-24cf-a36f-e6d9cc87fef5" executionId="a6f4dc8c-3d18-47dc-8167-3f7cb26b9f44" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="48a1bfea-df7d-0954-199b-c82ce8108009" executionId="1d22bb98-0577-4ed6-b339-f733089be815" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de4ad81e-3678-37e2-7328-f1c530f9ed88" executionId="ceb6ba2f-9d00-4605-8e42-240fb4c606b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3fd4689-692a-6475-6e3a-e396c776346b" executionId="7324fa61-d49a-4e1c-848c-b7cce1b8983b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="275395e4-7a46-37ab-e607-f6debd102e06" executionId="f2ffa79e-202b-494e-bdbf-1ea20b5c089a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f25fd5b1-1afb-f73b-ace6-8d450c570b7a" executionId="06bb97d7-ae13-405f-8a3b-f1a203f62820" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0db3b79b-ca58-00dc-765b-dddf62e45cf6" executionId="89282622-cdbc-4008-b734-a75fa316b6f6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6721413b-6040-3544-43d4-50da1ba9958a" executionId="371040cb-e70b-4752-ac26-5c3d4501e992" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a099ae4f-32c4-7699-de9e-b537160335d6" executionId="969efdcc-c4c7-41e5-8752-357068994386" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="770682ad-7f03-8bf6-d764-604ed3a3d81f" executionId="8d4381ef-c129-411c-85e6-70c0c0eb27e2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b7347951-7ca1-b375-af7f-bc0b4181a3e2" executionId="6e508d79-6824-4a9c-8920-463a7f4e86ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e383bfe6-66f0-3242-be1f-4a997f3171c4" executionId="f5a02dd6-37b6-47f6-b683-048fb5e87934" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56cfb61a-a3b3-d5e1-a417-42b3cabc3026" executionId="fc7c2b29-b7bf-45d0-a1a4-d54fa5ca3868" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="29" executed="29" passed="29" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.38]   Discovering: ALKAROS.Host.Experience.NfcOrdering.Tests&#xD;
+[xUnit.net 00:00:01.45]   Discovered:  ALKAROS.Host.Experience.NfcOrdering.Tests&#xD;
+[xUnit.net 00:00:01.46]   Starting:    ALKAROS.Host.Experience.NfcOrdering.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60857&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60857/api/v1/nfc/tables/227f755f-68dd-459d-9819-443de1a99d52/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60857/api/v1/nfc/tables/227f755f-68dd-459d-9819-443de1a99d52/orders - 200 - application/json;+charset=utf-8 564.1738ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60857/api/v1/nfc/tables/227f755f-68dd-459d-9819-443de1a99d52/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60857/api/v1/nfc/tables/227f755f-68dd-459d-9819-443de1a99d52/orders - 200 - application/json;+charset=utf-8 101.5728ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:60890&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:60890/api/v1/nfc/tables/de231bc6-c79b-4404-a8dd-ed7f4eb6da3c/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:60890/api/v1/nfc/tables/de231bc6-c79b-4404-a8dd-ed7f4eb6da3c/orders - 200 - application/json;+charset=utf-8 225.0915ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62884&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62884/api/v1/nfc/tables/393eb639-a67c-4134-82b5-b7f1cd39f18a/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62884/api/v1/nfc/tables/393eb639-a67c-4134-82b5-b7f1cd39f18a/orders - 404 - application/json;+charset=utf-8 33.4960ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62916&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62916/api/v1/nfc/tables/785254eb-73c7-4039-b99a-dbce7b791789/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62916/api/v1/nfc/tables/785254eb-73c7-4039-b99a-dbce7b791789/orders - 200 - application/json;+charset=utf-8 164.8314ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62949&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62949/api/v1/nfc/tables/476c8d21-1c6b-4d36-9f03-6384cf0885d1/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62949/api/v1/nfc/tables/476c8d21-1c6b-4d36-9f03-6384cf0885d1/orders - 400 - application/json;+charset=utf-8 13.6316ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62963&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62963/api/v1/nfc/tables/bb2fdc2b-8713-4cc6-b6f2-0ae1c6c9ef2f/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62963/api/v1/nfc/tables/bb2fdc2b-8713-4cc6-b6f2-0ae1c6c9ef2f/orders - 200 - application/json;+charset=utf-8 128.9709ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62994&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62994/api/v1/nfc/tables/9782ed29-c8be-4749-9f12-41aece8fc0c0/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+warn: ALKAROS.Host.Experience.NfcOrdering.NfcOrderingStore[5311]&#xD;
+      NFC order 8922f43a-7c24-48c9-b648-c1130b56aa01 stays at PendingConfirmation: stock could not be consumed.&#xD;
+      ALKAROS.Host.Experience.Orders.OrderStockConsumption.StockItemHasNoDefaultLocationException: Stock item 'NFC Test Stock Item' (f050d7da-4e84-4764-898c-418cad5554b8) has no default location configured.&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderStockConsumption.OrderStockConsumptionService.ConsumeItemsAsync(Order order, IReadOnlyCollection`1 items, String trigger, Guid actorId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderStockConsumption\OrderStockConsumptionService.cs:line 171&#xD;
+         at ALKAROS.Host.Experience.NfcOrdering.NfcOrderingStore.TryConsumeStockAndAcceptAsync(Order order, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\NfcOrdering\NfcOrderingStore.cs:line 374&#xD;
+         at ALKAROS.Host.Experience.NfcOrdering.NfcOrderingStore.TryConsumeStockAndAcceptAsync(Order order, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\NfcOrdering\NfcOrderingStore.cs:line 377&#xD;
+         at ALKAROS.Host.Experience.NfcOrdering.NfcOrderingStore.TryConsumeStockAndAcceptAsync(Order order, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\NfcOrdering\NfcOrderingStore.cs:line 377&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62994/api/v1/nfc/tables/9782ed29-c8be-4749-9f12-41aece8fc0c0/orders - 200 - application/json;+charset=utf-8 168.7178ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63026&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63026/api/v1/nfc/tables/00000000-0000-0000-0000-000000000000/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63026/api/v1/nfc/tables/00000000-0000-0000-0000-000000000000/orders - 400 - application/json;+charset=utf-8 10.4426ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:63050&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63050/api/v1/nfc/tables/d7033719-af9d-4339-89ac-588dd2aa7db9/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63050/api/v1/nfc/tables/d7033719-af9d-4339-89ac-588dd2aa7db9/orders - 200 - application/json;+charset=utf-8 161.3743ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:63050/api/v1/nfc/tables/d7033719-af9d-4339-89ac-588dd2aa7db9/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:63050/api/v1/nfc/tables/d7033719-af9d-4339-89ac-588dd2aa7db9/orders - 400 - application/json;+charset=utf-8 12.4797ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56822&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56822/api/v1/nfc/tables/9128334a-a15c-4dea-b8e9-25dbfd863fb8/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56822/api/v1/nfc/tables/9128334a-a15c-4dea-b8e9-25dbfd863fb8/orders - 400 - application/json;+charset=utf-8 23.6257ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:62611&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62611/api/v1/nfc/tables/f725e3a5-aac8-48f4-afbe-cdd8d1d83e95/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62611/api/v1/nfc/tables/f725e3a5-aac8-48f4-afbe-cdd8d1d83e95/orders - 200 - application/json;+charset=utf-8 111.3678ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:62611/api/v1/nfc/tables/f725e3a5-aac8-48f4-afbe-cdd8d1d83e95/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:62611/api/v1/nfc/tables/f725e3a5-aac8-48f4-afbe-cdd8d1d83e95/orders - 200 - application/json;+charset=utf-8 24.2469ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56655&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56655/api/v1/nfc/tables/e8c63f02-54c2-4ecc-a9c9-de1687e0067f/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56655/api/v1/nfc/tables/e8c63f02-54c2-4ecc-a9c9-de1687e0067f/orders - 400 - application/json;+charset=utf-8 9.3510ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56771&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56771/api/v1/nfc/tables/d38efcae-9408-444f-b4cb-82600dfdfd67/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56771/api/v1/nfc/tables/d38efcae-9408-444f-b4cb-82600dfdfd67/orders - 400 - application/json;+charset=utf-8 10.6460ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56776&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56776/api/v1/nfc/tables/c2d534e5-97c5-4684-b73a-8a5ed2749d52/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56776/api/v1/nfc/tables/c2d534e5-97c5-4684-b73a-8a5ed2749d52/orders - 200 - application/json;+charset=utf-8 155.5514ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56776/api/v1/nfc/tables/c2d534e5-97c5-4684-b73a-8a5ed2749d52/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56776/api/v1/nfc/tables/c2d534e5-97c5-4684-b73a-8a5ed2749d52/orders - 200 - application/json;+charset=utf-8 16.9039ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56791&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56791/api/v1/nfc/tables/47f5e7f6-6d5c-42ed-839c-2fcb1832baec/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56791/api/v1/nfc/tables/47f5e7f6-6d5c-42ed-839c-2fcb1832baec/orders - 200 - application/json;+charset=utf-8 147.8127ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56798&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56798/api/v1/nfc/tables/3843a615-c201-4fc8-a7d0-ae55c724471b/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56798/api/v1/nfc/tables/3843a615-c201-4fc8-a7d0-ae55c724471b/orders - 409 - application/json;+charset=utf-8 15.6139ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56847&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56847/api/v1/nfc/tables/b653d3fe-b165-4589-922f-01f9c2580f2b/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56847/api/v1/nfc/tables/b653d3fe-b165-4589-922f-01f9c2580f2b/orders - 200 - application/json;+charset=utf-8 125.2266ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:56855&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:56855/api/v1/nfc/tables/29f73073-97c2-40f3-961d-4106a44ede0e/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:56855/api/v1/nfc/tables/29f73073-97c2-40f3-961d-4106a44ede0e/orders - 400 - application/json;+charset=utf-8 18.2986ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53175&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53175/api/v1/nfc/tables/94f2923f-409e-4b89-83fc-f4cdc3ded1ee/catalog - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/nfc/tables/{tableId:guid}/catalog'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'CatalogProductDto[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/nfc/tables/{tableId:guid}/catalog'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53175/api/v1/nfc/tables/94f2923f-409e-4b89-83fc-f4cdc3ded1ee/catalog - 200 - application/json;+charset=utf-8 51.0093ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53201&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53201/api/v1/nfc/tables/0b6d17f6-f079-4dce-a5f6-fb2e3c6e07a9/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53201/api/v1/nfc/tables/0b6d17f6-f079-4dce-a5f6-fb2e3c6e07a9/orders - 400 - application/json;+charset=utf-8 9.0852ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53216&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53216/api/v1/nfc/tables/75982ee8-4308-4aef-b113-b750f0e50cf4/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53216/api/v1/nfc/tables/75982ee8-4308-4aef-b113-b750f0e50cf4/orders - 200 - application/json;+charset=utf-8 122.7782ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53243&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53243/api/v1/nfc/tables/a1a4eaff-3b93-4d79-86b7-6e71968f94ea/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53243/api/v1/nfc/tables/a1a4eaff-3b93-4d79-86b7-6e71968f94ea/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53243/api/v1/nfc/tables/a1a4eaff-3b93-4d79-86b7-6e71968f94ea/orders - 200 - application/json;+charset=utf-8 144.4432ms&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53243/api/v1/nfc/tables/a1a4eaff-3b93-4d79-86b7-6e71968f94ea/orders - 200 - application/json;+charset=utf-8 160.1582ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53265&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53265/api/v1/nfc/tables/1a077b34-62f3-417e-8bcf-1b10356bdd4b/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+warn: ALKAROS.Host.Experience.NfcOrdering.NfcOrderingStore[5310]&#xD;
+      NFC order 6860e47a-8917-4018-80e5-5687796951ec was placed but the waiter announcement failed.&#xD;
+      System.InvalidOperationException: The announcer is down.&#xD;
+         at ALKAROS.Host.Experience.NfcOrdering.Tests.ThrowingAnnouncer.AnnounceAsync(PendingOrderAnnouncement announcement, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\tests\Host\Experience\NfcOrdering\NfcOrderingHttpTests.cs:line 626&#xD;
+         at ALKAROS.Host.Experience.NfcOrdering.NfcOrderingStore.LoadDtoAfterEnsuringAcceptedAsync(Guid orderId, Guid tableId, Guid submissionId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\NfcOrdering\NfcOrderingStore.cs:line 334&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53265/api/v1/nfc/tables/1a077b34-62f3-417e-8bcf-1b10356bdd4b/orders - 200 - application/json;+charset=utf-8 97.9996ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53289&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53289/api/v1/nfc/tables/2fd96501-2576-4142-af9d-abee8662e868/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53289/api/v1/nfc/tables/2fd96501-2576-4142-af9d-abee8662e868/orders - 200 - application/json;+charset=utf-8 140.1023ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53289/api/v1/nfc/tables/2fd96501-2576-4142-af9d-abee8662e868/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53289/api/v1/nfc/tables/2fd96501-2576-4142-af9d-abee8662e868/orders - 409 - application/json;+charset=utf-8 9.5143ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53305&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53305/api/v1/nfc/tables/d210f8fc-a8ce-44a6-a15f-77a0cbec75de/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53305/api/v1/nfc/tables/d210f8fc-a8ce-44a6-a15f-77a0cbec75de/orders - 400 - application/json;+charset=utf-8 30.5354ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59850&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59850/api/v1/nfc/tables/a00d518b-8c52-4ec0-a7f6-0ae2c1b36198/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59850/api/v1/nfc/tables/a00d518b-8c52-4ec0-a7f6-0ae2c1b36198/orders - 200 - application/json;+charset=utf-8 354.9758ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59867&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59867/api/v1/nfc/tables/25806e6f-f3e6-4f88-85b0-fd0c5c0d1d88/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59867/api/v1/nfc/tables/25806e6f-f3e6-4f88-85b0-fd0c5c0d1d88/orders - 400 - application/json;+charset=utf-8 18.9948ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59875&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59875/api/v1/nfc/tables/086c0ebd-8f2d-43d8-93df-8140db874846/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59875/api/v1/nfc/tables/086c0ebd-8f2d-43d8-93df-8140db874846/orders - 200 - application/json;+charset=utf-8 133.8593ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59875/api/v1/nfc/tables/086c0ebd-8f2d-43d8-93df-8140db874846/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59875/api/v1/nfc/tables/086c0ebd-8f2d-43d8-93df-8140db874846/orders - 200 - application/json;+charset=utf-8 15.0641ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:59894&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.NfcOrdering.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:59894/api/v1/nfc/tables/54cfa789-e31b-4875-b156-a4d1b3ad3531/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType8`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/nfc/tables/{tableId:guid}/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:59894/api/v1/nfc/tables/54cfa789-e31b-4875-b156-a4d1b3ad3531/orders - 400 - application/json;+charset=utf-8 8.6275ms&#xD;
+[xUnit.net 00:01:54.91]   Finished:    ALKAROS.Host.Experience.NfcOrdering.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

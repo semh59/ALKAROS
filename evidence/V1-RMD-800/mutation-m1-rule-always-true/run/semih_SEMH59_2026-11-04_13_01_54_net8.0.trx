@@ -1,0 +1,393 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="601c0571-4758-4db3-b8bb-877fa6e5caa6" name="semih@SEMH59 2026-11-04 13:01:54" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T13:01:54.2878390+03:00" queuing="2026-11-04T13:01:54.2878393+03:00" start="2026-11-04T13:01:50.7588661+03:00" finish="2026-11-04T13:01:54.5593395+03:00" />
+  <TestSettings name="default" id="1d3c8873-4721-4764-988f-7dace514f9c4">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_13_01_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="96673f2c-9db7-4b9e-8027-22fbca5e8c58" testId="431dd95d-df28-fba8-5eab-461d1107a56b" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0011045" startTime="2026-11-04T13:01:54.4949069+03:00" endTime="2026-11-04T13:01:54.4949071+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96673f2c-9db7-4b9e-8027-22fbca5e8c58">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3bebf4a8-4788-4319-8f60-023cf9122cce" testId="84777056-736a-c946-7c35-e909aa4ff5d2" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -0,5, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0010036" startTime="2026-11-04T13:01:54.4876489+03:00" endTime="2026-11-04T13:01:54.4876491+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3bebf4a8-4788-4319-8f60-023cf9122cce">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="708425de-258c-4d00-870f-8b196579388e" testId="1a762a61-1575-f96c-3c8e-99947af0b36a" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 25, allowsHalfPortion: False, expected: True)" computerName="SEMH59" duration="00:00:00.0000136" startTime="2026-11-04T13:01:54.4950420+03:00" endTime="2026-11-04T13:01:54.4950421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="708425de-258c-4d00-870f-8b196579388e" />
+    <UnitTestResult executionId="9dc19eb4-cdcc-4669-874e-cb2becca190b" testId="ba914132-8be6-4959-4a95-d2db4968de1e" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -1, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0010310" startTime="2026-11-04T13:01:54.4862923+03:00" endTime="2026-11-04T13:01:54.4862924+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9dc19eb4-cdcc-4669-874e-cb2becca190b">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cf5409f7-d935-48d1-92d8-0b2620520fed" testId="4e45fee0-63fa-1666-20a0-0a620fbd235d" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: True, expected: True)" computerName="SEMH59" duration="00:00:00.0000068" startTime="2026-11-04T13:01:54.4951563+03:00" endTime="2026-11-04T13:01:54.4951565+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf5409f7-d935-48d1-92d8-0b2620520fed" />
+    <UnitTestResult executionId="3e307838-3884-4428-acd2-5f5b95aacf50" testId="da754875-23a4-7693-f59c-02a4502f8806" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: True, expected: True)" computerName="SEMH59" duration="00:00:00.0000142" startTime="2026-11-04T13:01:54.4836900+03:00" endTime="2026-11-04T13:01:54.4836901+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e307838-3884-4428-acd2-5f5b95aacf50" />
+    <UnitTestResult executionId="5703c27d-ac63-49c1-be44-748f61cf4638" testId="a4c5d278-c592-bbda-7195-e8209d498303" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,001, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0018218" startTime="2026-11-04T13:01:54.4830873+03:00" endTime="2026-11-04T13:01:54.4830874+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5703c27d-ac63-49c1-be44-748f61cf4638">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e59f8323-b614-4358-8d45-6ba1a9a05e36" testId="881e4463-4a65-917f-31d7-d683fbd4f48c" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,25, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0010707" startTime="2026-11-04T13:01:54.4903834+03:00" endTime="2026-11-04T13:01:54.4903837+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e59f8323-b614-4358-8d45-6ba1a9a05e36">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e8201f7a-390d-4f0e-b0fd-79d191fc4a63" testId="3f0ea47d-62c3-c479-8c24-dd9d647eebf3" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.3779001" startTime="2026-11-04T13:01:54.4813207+03:00" endTime="2026-11-04T13:01:54.4813210+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8201f7a-390d-4f0e-b0fd-79d191fc4a63">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="00ddd4ef-b238-41d2-a7ab-1166592ad4a4" testId="6394d8be-d1b5-db9b-c3da-ac9394de1520" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: True, expected: True)" computerName="SEMH59" duration="00:00:00.0000135" startTime="2026-11-04T13:01:54.4936282+03:00" endTime="2026-11-04T13:01:54.4936283+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00ddd4ef-b238-41d2-a7ab-1166592ad4a4" />
+    <UnitTestResult executionId="6e28a92e-a5e0-4008-80b6-66ce02c7401a" testId="8629a5ee-1323-c240-0b1a-b047371c6f6a" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0010602" startTime="2026-11-04T13:01:54.4890055+03:00" endTime="2026-11-04T13:01:54.4890057+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e28a92e-a5e0-4008-80b6-66ce02c7401a">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="38fa19c8-6f06-4ea8-93f0-ee32f14817c7" testId="ab70f1e0-2d9c-60e6-2d0f-4832828a30f7" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: False, expected: True)" computerName="SEMH59" duration="00:00:00.1387899" startTime="2026-11-04T13:01:54.0961666+03:00" endTime="2026-11-04T13:01:54.0962005+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="38fa19c8-6f06-4ea8-93f0-ee32f14817c7" />
+    <UnitTestResult executionId="26dc0c64-02e5-458c-9a27-949f4faeef6d" testId="749a6c46-1e08-8558-cbd3-59413bed152b" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0010797" startTime="2026-11-04T13:01:54.4917368+03:00" endTime="2026-11-04T13:01:54.4917370+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26dc0c64-02e5-458c-9a27-949f4faeef6d">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="21a76123-2c7b-45cc-83ce-f2c9c976d3a8" testId="0f638257-0bd3-aa36-2955-b014dde6b385" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,3, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0010699" startTime="2026-11-04T13:01:54.4850125+03:00" endTime="2026-11-04T13:01:54.4850126+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21a76123-2c7b-45cc-83ce-f2c9c976d3a8">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -0,5, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="84777056-736a-c946-7c35-e909aa4ff5d2">
+      <Execution id="3bebf4a8-4788-4319-8f60-023cf9122cce" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,001, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="a4c5d278-c592-bbda-7195-e8209d498303">
+      <Execution id="5703c27d-ac63-49c1-be44-748f61cf4638" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: False, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="ab70f1e0-2d9c-60e6-2d0f-4832828a30f7">
+      <Execution id="38fa19c8-6f06-4ea8-93f0-ee32f14817c7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,3, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="0f638257-0bd3-aa36-2955-b014dde6b385">
+      <Execution id="21a76123-2c7b-45cc-83ce-f2c9c976d3a8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: True, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="4e45fee0-63fa-1666-20a0-0a620fbd235d">
+      <Execution id="cf5409f7-d935-48d1-92d8-0b2620520fed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="431dd95d-df28-fba8-5eab-461d1107a56b">
+      <Execution id="96673f2c-9db7-4b9e-8027-22fbca5e8c58" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="749a6c46-1e08-8558-cbd3-59413bed152b">
+      <Execution id="26dc0c64-02e5-458c-9a27-949f4faeef6d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 25, allowsHalfPortion: False, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="1a762a61-1575-f96c-3c8e-99947af0b36a">
+      <Execution id="708425de-258c-4d00-870f-8b196579388e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -1, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="ba914132-8be6-4959-4a95-d2db4968de1e">
+      <Execution id="9dc19eb4-cdcc-4669-874e-cb2becca190b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: True, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="6394d8be-d1b5-db9b-c3da-ac9394de1520">
+      <Execution id="00ddd4ef-b238-41d2-a7ab-1166592ad4a4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: True, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="da754875-23a4-7693-f59c-02a4502f8806">
+      <Execution id="3e307838-3884-4428-acd2-5f5b95aacf50" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,25, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="881e4463-4a65-917f-31d7-d683fbd4f48c">
+      <Execution id="e59f8323-b614-4358-8d45-6ba1a9a05e36" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="3f0ea47d-62c3-c479-8c24-dd9d647eebf3">
+      <Execution id="e8201f7a-390d-4f0e-b0fd-79d191fc4a63" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="8629a5ee-1323-c240-0b1a-b047371c6f6a">
+      <Execution id="6e28a92e-a5e0-4008-80b6-66ce02c7401a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="431dd95d-df28-fba8-5eab-461d1107a56b" executionId="96673f2c-9db7-4b9e-8027-22fbca5e8c58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84777056-736a-c946-7c35-e909aa4ff5d2" executionId="3bebf4a8-4788-4319-8f60-023cf9122cce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a762a61-1575-f96c-3c8e-99947af0b36a" executionId="708425de-258c-4d00-870f-8b196579388e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba914132-8be6-4959-4a95-d2db4968de1e" executionId="9dc19eb4-cdcc-4669-874e-cb2becca190b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e45fee0-63fa-1666-20a0-0a620fbd235d" executionId="cf5409f7-d935-48d1-92d8-0b2620520fed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da754875-23a4-7693-f59c-02a4502f8806" executionId="3e307838-3884-4428-acd2-5f5b95aacf50" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4c5d278-c592-bbda-7195-e8209d498303" executionId="5703c27d-ac63-49c1-be44-748f61cf4638" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="881e4463-4a65-917f-31d7-d683fbd4f48c" executionId="e59f8323-b614-4358-8d45-6ba1a9a05e36" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3f0ea47d-62c3-c479-8c24-dd9d647eebf3" executionId="e8201f7a-390d-4f0e-b0fd-79d191fc4a63" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6394d8be-d1b5-db9b-c3da-ac9394de1520" executionId="00ddd4ef-b238-41d2-a7ab-1166592ad4a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8629a5ee-1323-c240-0b1a-b047371c6f6a" executionId="6e28a92e-a5e0-4008-80b6-66ce02c7401a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab70f1e0-2d9c-60e6-2d0f-4832828a30f7" executionId="38fa19c8-6f06-4ea8-93f0-ee32f14817c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="749a6c46-1e08-8558-cbd3-59413bed152b" executionId="26dc0c64-02e5-458c-9a27-949f4faeef6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f638257-0bd3-aa36-2955-b014dde6b385" executionId="21a76123-2c7b-45cc-83ce-f2c9c976d3a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="5" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.03]   Discovering: ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:01.13]   Discovered:  ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:01.13]   Starting:    ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:01.69]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.69]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.69]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.69]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.69]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.70]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.70]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.70]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.70]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.70]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.70]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.70]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.70]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.70]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.70]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.70]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.70]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.70]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.70]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.70]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.70]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.70]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.70]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.70]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.70]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.71]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.71]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.71]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.71]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.71]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.71]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:01.71]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.71]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.71]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:01.71]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.71]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.71]   Finished:    ALKAROS.Orders.OrderAggregate.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4785922+03:00">
+        <Text>[xUnit.net 00:00:01.69]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: False, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4820302+03:00">
+        <Text>[xUnit.net 00:00:01.70]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,001, allowsHalfPortion: False, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4840517+03:00">
+        <Text>[xUnit.net 00:00:01.70]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,3, allowsHalfPortion: True, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4853413+03:00">
+        <Text>[xUnit.net 00:00:01.70]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -1, allowsHalfPortion: False, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4866205+03:00">
+        <Text>[xUnit.net 00:00:01.70]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -0,5, allowsHalfPortion: True, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4879647+03:00">
+        <Text>[xUnit.net 00:00:01.70]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: False, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4893633+03:00">
+        <Text>[xUnit.net 00:00:01.70]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,25, allowsHalfPortion: True, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4907033+03:00">
+        <Text>[xUnit.net 00:00:01.71]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: False, expected: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:01:54.4979960+03:00">
+        <Text>[xUnit.net 00:00:01.71]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: True, expected: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

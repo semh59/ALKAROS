@@ -235,7 +235,7 @@ public sealed partial class DualScreenStore
         ProductRow product;
         await using (var productCommand = CreateCommand(connection, transaction,
             """
-            SELECT p.sku, p.name, p.current_price, COALESCE(t.vat_rate, 0)
+            SELECT p.sku, p.name, p.current_price, COALESCE(t.vat_rate, 0), p.allows_half_portion
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
             WHERE p.product_id = @product_id AND p.active AND p.is_available AND p.current_price IS NOT NULL;
@@ -245,8 +245,9 @@ public sealed partial class DualScreenStore
             await using var reader = await productCommand.ExecuteReaderAsync(cancellationToken);
             if (!await reader.ReadAsync(cancellationToken))
                 throw new DualScreenNotFoundException("Product was not found or has no active price.");
-            product = new ProductRow(reader.GetString(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3));
+            product = new ProductRow(reader.GetString(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3), reader.GetBoolean(4));
         }
+        OrderQuantityRule.Require(request.Quantity, product.AllowsHalfPortion, request.ProductId);
 
         // V1-RMD-120: was a raw SELECT ... FOR UPDATE on the single
         // order_items row plus a hand-computed net/tax/gross and either an
@@ -294,6 +295,7 @@ public sealed partial class DualScreenStore
             var quantity = existing.Quantity + request.Quantity;
             if (quantity > 999)
                 throw new ArgumentOutOfRangeException(nameof(request), quantity, "Cumulative quantity must not exceed 999.");
+            OrderQuantityRule.Require(quantity, product.AllowsHalfPortion, request.ProductId);
             updated = order.ChangeItemQuantity(existing.Id, quantity);
         }
         else
@@ -307,6 +309,15 @@ public sealed partial class DualScreenStore
         var revision = await _orderRepository.SaveAsync(updated, order.RowVersion, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new OrderMutationResult(orderId, revision);
+    }
+
+    private static async Task EnsureQuantityAllowedAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid productId, decimal quantity, CancellationToken cancellationToken)
+    {
+        await using var command = CreateCommand(connection, transaction,
+            "SELECT allows_half_portion FROM catalog.products WHERE product_id = @product_id;");
+        command.Parameters.AddWithValue("product_id", productId);
+        OrderQuantityRule.Require(quantity, await command.ExecuteScalarAsync(cancellationToken) is true, productId);
     }
 
     public Task<OrderMutationResult> ChangeItemQuantityAsync(

@@ -1,0 +1,5 @@
+forward to 215 ok
+after up (history backfill): S1=true S2=false
+after down: column exists = 0
+after second up: S1=true S2=false
+after repeated up (idempotent): S1=true S2=false

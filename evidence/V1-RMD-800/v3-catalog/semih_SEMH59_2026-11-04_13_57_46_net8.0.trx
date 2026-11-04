@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="ca4afbb4-fa6c-4307-91a3-29cbec89f7c0" name="semih@SEMH59 2026-11-04 13:57:46" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T13:57:46.0547770+03:00" queuing="2026-11-04T13:57:46.0547774+03:00" start="2026-11-04T13:57:39.1016126+03:00" finish="2026-11-04T13:57:46.9063173+03:00" />
+  <TestSettings name="default" id="633c9aff-e108-4878-b394-79808d9e2ae0">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_13_57_46" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="71a49685-a7c1-4152-9527-6a7ee7ea0d53" testId="9b0d6af0-613d-311e-e41c-517cd800787e" testName="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ProductDetailsReportDuplicateSkuAndUnknownProduct" computerName="SEMH59" duration="00:00:00.1634918" startTime="2026-11-04T13:57:46.5529747+03:00" endTime="2026-11-04T13:57:46.5529752+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71a49685-a7c1-4152-9527-6a7ee7ea0d53" />
+    <UnitTestResult executionId="623cfc20-4408-49bd-abed-5665405191dd" testId="0be5fc6d-cc5b-1dc2-6764-7bd6d83b3617" testName="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.AProductCreatedAllowingHalfPortionsStoresAndListsTheFlag" computerName="SEMH59" duration="00:00:00.1345541" startTime="2026-11-04T13:57:46.1753555+03:00" endTime="2026-11-04T13:57:46.1753557+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="623cfc20-4408-49bd-abed-5665405191dd" />
+    <UnitTestResult executionId="218fbb50-47e0-4f64-af30-de393752e8ef" testId="381a5160-33b7-c748-3ec6-7ec2cf6f8b0e" testName="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ProductDetailsRejectAMissingUnknownOrInactiveTaxProfileAndKeepTheRow" computerName="SEMH59" duration="00:00:00.1950320" startTime="2026-11-04T13:57:46.3799861+03:00" endTime="2026-11-04T13:57:46.3799864+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="218fbb50-47e0-4f64-af30-de393752e8ef" />
+    <UnitTestResult executionId="a3a2f41a-ecf8-4b36-b82f-83cb2157b996" testId="ccba3f05-9300-99a3-ab16-36d7ceafdbb5" testName="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted" computerName="SEMH59" duration="00:00:01.8371051" startTime="2026-11-04T13:57:46.0162675+03:00" endTime="2026-11-04T13:57:46.0162973+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3a2f41a-ecf8-4b36-b82f-83cb2157b996" />
+    <UnitTestResult executionId="a03a0aa5-2a03-441f-8952-8ffc73a101e3" testId="e7d8afd3-9c81-8fa5-6232-afe9b00ebfc6" testName="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ProductDetailsCanBeCorrectedWithoutTouchingTheCachedPrice" computerName="SEMH59" duration="00:00:00.1516939" startTime="2026-11-04T13:57:46.7201811+03:00" endTime="2026-11-04T13:57:46.7201814+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a03a0aa5-2a03-441f-8952-8ffc73a101e3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.catalog.tests\debug\alkaros.host.experience.catalog.tests.dll" id="ccba3f05-9300-99a3-ab16-36d7ceafdbb5">
+      <Execution id="a3a2f41a-ecf8-4b36-b82f-83cb2157b996" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug\ALKAROS.Host.Experience.Catalog.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests" name="TheHalfPortionFlagIsCreatedOffAndTheDetailsUpdateSwitchesItAndLeavesItAloneWhenOmitted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ProductDetailsReportDuplicateSkuAndUnknownProduct" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.catalog.tests\debug\alkaros.host.experience.catalog.tests.dll" id="9b0d6af0-613d-311e-e41c-517cd800787e">
+      <Execution id="71a49685-a7c1-4152-9527-6a7ee7ea0d53" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug\ALKAROS.Host.Experience.Catalog.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests" name="ProductDetailsReportDuplicateSkuAndUnknownProduct" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.AProductCreatedAllowingHalfPortionsStoresAndListsTheFlag" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.catalog.tests\debug\alkaros.host.experience.catalog.tests.dll" id="0be5fc6d-cc5b-1dc2-6764-7bd6d83b3617">
+      <Execution id="623cfc20-4408-49bd-abed-5665405191dd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug\ALKAROS.Host.Experience.Catalog.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests" name="AProductCreatedAllowingHalfPortionsStoresAndListsTheFlag" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ProductDetailsCanBeCorrectedWithoutTouchingTheCachedPrice" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.catalog.tests\debug\alkaros.host.experience.catalog.tests.dll" id="e7d8afd3-9c81-8fa5-6232-afe9b00ebfc6">
+      <Execution id="a03a0aa5-2a03-441f-8952-8ffc73a101e3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug\ALKAROS.Host.Experience.Catalog.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests" name="ProductDetailsCanBeCorrectedWithoutTouchingTheCachedPrice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ProductDetailsRejectAMissingUnknownOrInactiveTaxProfileAndKeepTheRow" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.catalog.tests\debug\alkaros.host.experience.catalog.tests.dll" id="381a5160-33b7-c748-3ec6-7ec2cf6f8b0e">
+      <Execution id="218fbb50-47e0-4f64-af30-de393752e8ef" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug\ALKAROS.Host.Experience.Catalog.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests" name="ProductDetailsRejectAMissingUnknownOrInactiveTaxProfileAndKeepTheRow" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="9b0d6af0-613d-311e-e41c-517cd800787e" executionId="71a49685-a7c1-4152-9527-6a7ee7ea0d53" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0be5fc6d-cc5b-1dc2-6764-7bd6d83b3617" executionId="623cfc20-4408-49bd-abed-5665405191dd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="381a5160-33b7-c748-3ec6-7ec2cf6f8b0e" executionId="218fbb50-47e0-4f64-af30-de393752e8ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ccba3f05-9300-99a3-ab16-36d7ceafdbb5" executionId="a3a2f41a-ecf8-4b36-b82f-83cb2157b996" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7d8afd3-9c81-8fa5-6232-afe9b00ebfc6" executionId="a03a0aa5-2a03-441f-8952-8ffc73a101e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="5" executed="5" passed="5" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.50]   Discovering: ALKAROS.Host.Experience.Catalog.Tests&#xD;
+[xUnit.net 00:00:01.56]   Discovered:  ALKAROS.Host.Experience.Catalog.Tests&#xD;
+[xUnit.net 00:00:01.57]   Starting:    ALKAROS.Host.Experience.Catalog.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51194&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 1615.8310ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products/b8ad4030-c5a0-4c75-b8cd-3959b3ae56a5/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products/b8ad4030-c5a0-4c75-b8cd-3959b3ae56a5/details - 200 - application/json;+charset=utf-8 33.9199ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products/b8ad4030-c5a0-4c75-b8cd-3959b3ae56a5/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products/b8ad4030-c5a0-4c75-b8cd-3959b3ae56a5/details - 200 - application/json;+charset=utf-8 21.3573ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products/b8ad4030-c5a0-4c75-b8cd-3959b3ae56a5/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51194/api/v1/management/catalog/products/b8ad4030-c5a0-4c75-b8cd-3959b3ae56a5/details - 200 - application/json;+charset=utf-8 13.6389ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51196&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51196/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51196/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 93.0240ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:51196/api/v1/management/catalog/products?limit=100 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'CatalogPageV1`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:51196/api/v1/management/catalog/products?limit=100 - 200 - application/json;+charset=utf-8 30.3014ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51198&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 80.2823ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/tax-profiles - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/tax-profiles'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'TaxProfileV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/tax-profiles'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/tax-profiles - 201 - application/json;+charset=utf-8 22.9228ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products/25d72c6d-b597-4149-b752-99fb972d0661/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: A product needs an existing, active tax profile. (Parameter 'taxProfileId')&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.EnsureActiveTaxProfileAsync(Nullable`1 taxProfileId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 135&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.UpdateProductDetailsAsync(Guid productId, UpdateProductDetailsV1 request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 115&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementEndpoints.&lt;&gt;c.&lt;&lt;MapCatalogManagement&gt;b__5_6&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 111&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 275&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products/25d72c6d-b597-4149-b752-99fb972d0661/details - 400 - application/json;+charset=utf-8 46.5038ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products/25d72c6d-b597-4149-b752-99fb972d0661/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: A product needs an existing, active tax profile. (Parameter 'taxProfileId')&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.EnsureActiveTaxProfileAsync(Nullable`1 taxProfileId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 135&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.UpdateProductDetailsAsync(Guid productId, UpdateProductDetailsV1 request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 115&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementEndpoints.&lt;&gt;c.&lt;&lt;MapCatalogManagement&gt;b__5_6&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 111&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 275&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products/25d72c6d-b597-4149-b752-99fb972d0661/details - 400 - application/json;+charset=utf-8 13.7260ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products/25d72c6d-b597-4149-b752-99fb972d0661/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: A product needs an existing, active tax profile. (Parameter 'taxProfileId')&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.EnsureActiveTaxProfileAsync(Nullable`1 taxProfileId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 135&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.UpdateProductDetailsAsync(Guid productId, UpdateProductDetailsV1 request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 115&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementEndpoints.&lt;&gt;c.&lt;&lt;MapCatalogManagement&gt;b__5_6&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 111&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 275&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51198/api/v1/management/catalog/products/25d72c6d-b597-4149-b752-99fb972d0661/details - 400 - application/json;+charset=utf-8 9.8786ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51200&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 75.3829ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 19.6096ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products/0cb34d0a-6ee9-40ad-a1bf-4c48531caf64/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      Npgsql.PostgresException (0x80004005): 23505: duplicate key value violates unique constraint "products_sku_key"&#xD;
+      DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+         at Npgsql.NpgsqlDataReader.&lt;ReadMessage&gt;g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteScalar(Boolean async, CancellationToken cancellationToken)&#xD;
+         at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.UpdateAsync(Product product, Int64 expectedRowVersion, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 190&#xD;
+         at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.UpdateAsync(Product product, Int64 expectedRowVersion, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 192&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementStore.UpdateProductDetailsAsync(Guid productId, UpdateProductDetailsV1 request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementStore.cs:line 125&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagementEndpoints.&lt;&gt;c.&lt;&lt;MapCatalogManagement&gt;b__5_6&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 111&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Catalog.CatalogManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Catalog\CatalogManagementEndpoints.cs:line 275&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+        Exception data:&#xD;
+          Severity: ERROR&#xD;
+          SqlState: 23505&#xD;
+          MessageText: duplicate key value violates unique constraint "products_sku_key"&#xD;
+          Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.&#xD;
+          SchemaName: catalog&#xD;
+          TableName: products&#xD;
+          ConstraintName: products_sku_key&#xD;
+          File: nbtinsert.c&#xD;
+          Line: 666&#xD;
+          Routine: _bt_check_unique&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products/0cb34d0a-6ee9-40ad-a1bf-4c48531caf64/details - 409 - application/json;+charset=utf-8 43.2643ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products/d4eac362-e979-4e48-bfb7-0c43873e73d3/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51200/api/v1/management/catalog/products/d4eac362-e979-4e48-bfb7-0c43873e73d3/details - 404 - application/json;+charset=utf-8 12.5388ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51202&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Catalog.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51202/api/v1/management/catalog/products - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51202/api/v1/management/catalog/products - 201 - application/json;+charset=utf-8 75.9903ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51202/api/v1/management/catalog/categories - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/categories'&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]&#xD;
+      Setting HTTP status code 201.&#xD;
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]&#xD;
+      Writing value of type 'CategoryV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/categories'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51202/api/v1/management/catalog/categories - 201 - application/json;+charset=utf-8 20.9181ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:51202/api/v1/management/catalog/products/581098e5-5d20-43d6-b297-60aa8cc65815/details - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ProductV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/catalog/products/{productId:guid}/details'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:51202/api/v1/management/catalog/products/581098e5-5d20-43d6-b297-60aa8cc65815/details - 200 - application/json;+charset=utf-8 21.8184ms&#xD;
+[xUnit.net 00:00:05.29]   Finished:    ALKAROS.Host.Experience.Catalog.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

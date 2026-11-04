@@ -1,0 +1,972 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="99c427d5-400a-4e33-bde8-ced8fd97b13b" name="semih@SEMH59 2026-11-04 10:58:28" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T10:58:28.5809083+03:00" queuing="2026-11-04T10:58:28.5809085+03:00" start="2026-11-04T10:58:23.6395869+03:00" finish="2026-11-04T10:58:30.5655621+03:00" />
+  <TestSettings name="default" id="3c20f3c5-ec2d-463c-86f4-3d27dda9982c">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_10_58_28" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="96b21b86-6f3b-4397-8059-1378d2df4fed" testId="c78ce521-9789-2938-1ca5-d198fba4e268" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;line\nbreak&quot;)" computerName="SEMH59" duration="00:00:00.0092379" startTime="2026-11-04T10:58:28.5159494+03:00" endTime="2026-11-04T10:58:28.5159501+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96b21b86-6f3b-4397-8059-1378d2df4fed" />
+    <UnitTestResult executionId="3788f545-37fb-42e1-93c1-14f9812a941f" testId="b337a335-9182-cdb7-d28c-10f5dc065dff" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;···)" computerName="SEMH59" duration="00:00:00.0067687" startTime="2026-11-04T10:58:28.5231867+03:00" endTime="2026-11-04T10:58:28.5231869+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3788f545-37fb-42e1-93c1-14f9812a941f" />
+    <UnitTestResult executionId="2fe081a1-1d97-4fc4-b62b-a4f880472c10" testId="35bba00c-22fd-8c17-a404-f1c575302b9c" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnUnknownSkuOrAMomentBeforeTheMappingIsUnmapped" computerName="SEMH59" duration="00:00:00.0088338" startTime="2026-11-04T10:58:28.7913824+03:00" endTime="2026-11-04T10:58:28.7913827+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2fe081a1-1d97-4fc4-b62b-a4f880472c10">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnUnknownSkuOrAMomentBeforeTheMappingIsUnmapped() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 41&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ee08d4e1-d56d-43f3-90b4-baae16a0de90" testId="2fc4e231-198a-285c-44a8-31329d9911a4" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;   &quot;)" computerName="SEMH59" duration="00:00:00.0063165" startTime="2026-11-04T10:58:28.5592481+03:00" endTime="2026-11-04T10:58:28.5592481+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ee08d4e1-d56d-43f3-90b4-baae16a0de90" />
+    <UnitTestResult executionId="52ab41a0-2a01-450c-b04f-100a966c843d" testId="10beb1fd-4e9a-4334-4df5-f67cbb976e77" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;sku\0with-null&quot;)" computerName="SEMH59" duration="00:00:00.0074890" startTime="2026-11-04T10:58:28.5591438+03:00" endTime="2026-11-04T10:58:28.5591440+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52ab41a0-2a01-450c-b04f-100a966c843d" />
+    <UnitTestResult executionId="4022a4d3-55ca-4d39-ba96-9d38c8122b14" testId="1c5472e9-f11d-ccdc-b55e-8cbdd52e6901" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OverlappingHistoryIsAmbiguousAndResolvesToNothing" computerName="SEMH59" duration="00:00:00.0232706" startTime="2026-11-04T10:58:28.7788383+03:00" endTime="2026-11-04T10:58:28.7788387+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4022a4d3-55ca-4d39-ba96-9d38c8122b14" />
+    <UnitTestResult executionId="cd440827-4171-4f36-b5a0-403022d74970" testId="d5a595d7-1e42-ce0c-a597-e9b1c0bbb1d1" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MappingTheSameSkuToTheSameProductAgainIsAReplay" computerName="SEMH59" duration="00:00:00.0088926" startTime="2026-11-04T10:58:28.6326179+03:00" endTime="2026-11-04T10:58:28.6326182+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd440827-4171-4f36-b5a0-403022d74970">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MappingTheSameSkuToTheSameProductAgainIsAReplay() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 153&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="282b5c96-14f4-454b-a10b-2f24eab88ea4" testId="698fed7b-0fac-8f4b-e978-54d8ac20bfe2" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.PublishingNeverTakesASkuThatBelongsToAnotherProduct" computerName="SEMH59" duration="00:00:00.0154192" startTime="2026-11-04T10:58:28.0182672+03:00" endTime="2026-11-04T10:58:28.0182674+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="282b5c96-14f4-454b-a10b-2f24eab88ea4">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.PublishingNeverTakesASkuThatBelongsToAnotherProduct() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 85&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="98396f58-83bc-4ebd-9718-e0253406b2c8" testId="aac29e60-1880-f41b-ad3f-6e7aeb49c8f3" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ThePlatformMigrationRefusesToRollBackOverAnotherPlatformsRows" computerName="SEMH59" duration="00:00:00.0262235" startTime="2026-11-04T10:58:28.5067274+03:00" endTime="2026-11-04T10:58:28.5067278+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="98396f58-83bc-4ebd-9718-e0253406b2c8" />
+    <UnitTestResult executionId="3e1af51a-ee64-45c5-b6ef-e147b9d1e7cc" testId="acfde2f8-7e18-110a-d642-c9e23b52b4f7" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductThatNeedsAModifierChoiceCannotBeSoldThroughTheChannel" computerName="SEMH59" duration="00:00:00.4040611" startTime="2026-11-04T10:58:28.4706712+03:00" endTime="2026-11-04T10:58:28.4706714+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e1af51a-ee64-45c5-b6ef-e147b9d1e7cc">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.ProductMappingRejectedException&gt; to be thrown, but found &lt;Npgsql.PostgresException&gt;:&#xD;
+Npgsql.PostgresException (0x80004005): 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at FluentAssertions.Specialized.AsyncFunctionAssertions`2.InvokeWithInterceptionAsync(Func`1 action)&#xD;
+  Exception data:&#xD;
+    Severity: ERROR&#xD;
+    SqlState: 42703&#xD;
+    MessageText: column "allows_half_portion" does not exist&#xD;
+    Position: 219&#xD;
+    File: parse_relation.c&#xD;
+    Line: 3854&#xD;
+    Routine: errorMissingColumn.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.AsyncFunctionAssertions`2.ThrowAsync[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductThatNeedsAModifierChoiceCannotBeSoldThroughTheChannel() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 211&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cb375ade-8578-48af-88a2-bfe084fe80ba" testId="a112dfbb-b069-f3d5-148f-ea80bd428bbc" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMandatoryChoiceAddedLaterStopsResolution" computerName="SEMH59" duration="00:00:00.0092411" startTime="2026-11-04T10:58:28.4812629+03:00" endTime="2026-11-04T10:58:28.4812631+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cb375ade-8578-48af-88a2-bfe084fe80ba">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMandatoryChoiceAddedLaterStopsResolution() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 223&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8022b693-d481-4f06-b21e-07ff68bd7ea5" testId="ec821d41-fc26-bcd2-2f71-9a72777ee6d7" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti" computerName="SEMH59" duration="00:00:00.2281529" startTime="2026-11-04T10:58:28.0041687+03:00" endTime="2026-11-04T10:58:28.0041883+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8022b693-d481-4f06-b21e-07ff68bd7ea5">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 119&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 129&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="90cdd5af-c4ac-4d93-87a4-10779ea257d8" testId="aca30d46-6cb1-ff85-687b-23ef7d4ac5aa" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.HistoryIsNeverRewrittenBackwards" computerName="SEMH59" duration="00:00:00.0128323" startTime="2026-11-04T10:58:28.7570096+03:00" endTime="2026-11-04T10:58:28.7570097+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90cdd5af-c4ac-4d93-87a4-10779ea257d8">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.HistoryIsNeverRewrittenBackwards() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 70&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9fdec01c-c671-4c12-9989-5a3bb75c20c9" testId="32e81b22-df6c-75f6-2125-c07ec0cfca73" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.RemappingASkuEndsTheOldMappingAndKeepsItsHistory" computerName="SEMH59" duration="00:00:00.0137013" startTime="2026-11-04T10:58:28.6573103+03:00" endTime="2026-11-04T10:58:28.6573105+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fdec01c-c671-4c12-9989-5a3bb75c20c9">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.RemappingASkuEndsTheOldMappingAndKeepsItsHistory() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 56&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e0708264-2016-4411-bb63-c5628bea5ad5" testId="090e7228-ba0a-9abb-2c81-1e91098fbfdf" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheDatabaseItselfRefusesTwoOpenMappingsForOneSku" computerName="SEMH59" duration="00:00:00.0208200" startTime="2026-11-04T10:58:28.6101417+03:00" endTime="2026-11-04T10:58:28.6101421+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0708264-2016-4411-bb63-c5628bea5ad5" />
+    <UnitTestResult executionId="0d9b1072-0fa1-4b92-900e-664d27626eb1" testId="c390cf8e-6b5f-943a-d99a-00ef87df5090" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductIsPublishedUnderOneSkuAtATime" computerName="SEMH59" duration="00:00:00.0080517" startTime="2026-11-04T10:58:28.6219900+03:00" endTime="2026-11-04T10:58:28.6219903+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d9b1072-0fa1-4b92-900e-664d27626eb1">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductIsPublishedUnderOneSkuAtATime() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 165&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0a83065b-6190-4e62-84e9-87010be9079f" testId="52c1e704-50cc-d614-aef2-4b9142376a6e" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;&quot;)" computerName="SEMH59" duration="00:00:00.0064831" startTime="2026-11-04T10:58:28.5344430+03:00" endTime="2026-11-04T10:58:28.5344434+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a83065b-6190-4e62-84e9-87010be9079f" />
+    <UnitTestResult executionId="fcc14c37-675d-4836-885f-b5953bf90447" testId="b009b676-1b8f-dfcf-8437-c0a39f7c8899" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner" computerName="SEMH59" duration="00:00:00.0441074" startTime="2026-11-04T10:58:28.0645159+03:00" endTime="2026-11-04T10:58:28.0645161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fcc14c37-675d-4836-885f-b5953bf90447">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.&lt;&gt;c__DisplayClass21_0.&lt;&lt;ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner&gt;b__0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 259&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 269&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f9bfa683-c4ce-4128-96c6-321f9acbd0f4" testId="0619d4bf-ec0f-e3d8-ef20-65c3048840f1" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheMigrationRollsBackAndReapplies" computerName="SEMH59" duration="00:00:00.0675224" startTime="2026-11-04T10:58:28.7284833+03:00" endTime="2026-11-04T10:58:28.7284834+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f9bfa683-c4ce-4128-96c6-321f9acbd0f4">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ResolveAsync(String externalSku, DateTimeOffset at, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 214&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ResolveAsync(String externalSku, DateTimeOffset at, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 220&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheMigrationRollsBackAndReapplies() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 296&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fd5b09cb-7267-48ff-801e-8c4ab89188aa" testId="4d6ef3bd-2fc8-9760-d0e3-b44a29af29a4" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappedSkuResolvesToItsActiveProduct" computerName="SEMH59" duration="00:00:00.0083351" startTime="2026-11-04T10:58:28.6420063+03:00" endTime="2026-11-04T10:58:28.6420065+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd5b09cb-7267-48ff-801e-8c4ab89188aa">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappedSkuResolvesToItsActiveProduct() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 27&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="474f2450-525a-4846-b495-549a2cfab21b" testId="32b68d12-64cf-cde7-6694-034bb33c6522" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnActorIsRequiredAndSqlInTheSkuIsJustData" computerName="SEMH59" duration="00:00:00.0099350" startTime="2026-11-04T10:58:28.5745291+03:00" endTime="2026-11-04T10:58:28.5745293+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="474f2450-525a-4846-b495-549a2cfab21b">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnActorIsRequiredAndSqlInTheSkuIsJustData() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 336&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="72cd4532-5a0a-4a7f-bb06-9a4f91ff5be0" testId="2e04a429-6b1e-afcf-2080-bae0a08deec3" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OnlyAnExistingActiveProductCanBeMapped" computerName="SEMH59" duration="00:00:00.0149118" startTime="2026-11-04T10:58:28.7440463+03:00" endTime="2026-11-04T10:58:28.7440464+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="72cd4532-5a0a-4a7f-bb06-9a4f91ff5be0">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected a &lt;ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.ProductMappingRejectedException&gt; to be thrown, but found &lt;Npgsql.PostgresException&gt;:&#xD;
+Npgsql.PostgresException (0x80004005): 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219&#xD;
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at FluentAssertions.Specialized.AsyncFunctionAssertions`2.InvokeWithInterceptionAsync(Func`1 action)&#xD;
+  Exception data:&#xD;
+    Severity: ERROR&#xD;
+    SqlState: 42703&#xD;
+    MessageText: column "allows_half_portion" does not exist&#xD;
+    Position: 219&#xD;
+    File: parse_relation.c&#xD;
+    Line: 3854&#xD;
+    Routine: errorMissingColumn.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.AsyncFunctionAssertions`2.ThrowAsync[TException](String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OnlyAnExistingActiveProductCanBeMapped() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 181&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="fc6a5bd1-ca58-4f0f-9d3a-19bde4b8558c" testId="05d08b36-9650-265c-f070-83e891f8eca3" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappingThatStartsLaterIsNotListedAsOpenYet" computerName="SEMH59" duration="00:00:00.0144566" startTime="2026-11-04T10:58:28.5905919+03:00" endTime="2026-11-04T10:58:28.5905920+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc6a5bd1-ca58-4f0f-9d3a-19bde4b8558c">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappingThatStartsLaterIsNotListedAsOpenYet() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 102&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e05af31b-9a97-4ee6-ba8d-d5177a6fe137" testId="e213fd10-c6ac-be87-4541-f89ae1cdb9d4" testName="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductDeactivatedAfterMappingNoLongerResolves" computerName="SEMH59" duration="00:00:00.0092262" startTime="2026-11-04T10:58:28.5627160+03:00" endTime="2026-11-04T10:58:28.5627161+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e05af31b-9a97-4ee6-ba8d-d5177a6fe137">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductDeactivatedAfterMappingNoLongerResolves() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs:line 192&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductThatNeedsAModifierChoiceCannotBeSoldThroughTheChannel" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="acfde2f8-7e18-110a-d642-c9e23b52b4f7">
+      <Execution id="3e1af51a-ee64-45c5-b6ef-e147b9d1e7cc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AProductThatNeedsAModifierChoiceCannotBeSoldThroughTheChannel" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductDeactivatedAfterMappingNoLongerResolves" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="e213fd10-c6ac-be87-4541-f89ae1cdb9d4">
+      <Execution id="e05af31b-9a97-4ee6-ba8d-d5177a6fe137" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AProductDeactivatedAfterMappingNoLongerResolves" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="ec821d41-fc26-bcd2-2f71-9a72777ee6d7">
+      <Execution id="8022b693-d481-4f06-b21e-07ff68bd7ea5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MappingTheSameSkuToTheSameProductAgainIsAReplay" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="d5a595d7-1e42-ce0c-a597-e9b1c0bbb1d1">
+      <Execution id="cd440827-4171-4f36-b5a0-403022d74970" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="MappingTheSameSkuToTheSameProductAgainIsAReplay" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;···)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="b337a335-9182-cdb7-d28c-10f5dc065dff">
+      <Execution id="3788f545-37fb-42e1-93c1-14f9812a941f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="MalformedSkusAreRejectedOnBothPaths" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnUnknownSkuOrAMomentBeforeTheMappingIsUnmapped" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="35bba00c-22fd-8c17-a404-f1c575302b9c">
+      <Execution id="2fe081a1-1d97-4fc4-b62b-a4f880472c10" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AnUnknownSkuOrAMomentBeforeTheMappingIsUnmapped" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.PublishingNeverTakesASkuThatBelongsToAnotherProduct" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="698fed7b-0fac-8f4b-e978-54d8ac20bfe2">
+      <Execution id="282b5c96-14f4-454b-a10b-2f24eab88ea4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="PublishingNeverTakesASkuThatBelongsToAnotherProduct" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductIsPublishedUnderOneSkuAtATime" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="c390cf8e-6b5f-943a-d99a-00ef87df5090">
+      <Execution id="0d9b1072-0fa1-4b92-900e-664d27626eb1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AProductIsPublishedUnderOneSkuAtATime" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OnlyAnExistingActiveProductCanBeMapped" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="2e04a429-6b1e-afcf-2080-bae0a08deec3">
+      <Execution id="72cd4532-5a0a-4a7f-bb06-9a4f91ff5be0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="OnlyAnExistingActiveProductCanBeMapped" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ThePlatformMigrationRefusesToRollBackOverAnotherPlatformsRows" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="aac29e60-1880-f41b-ad3f-6e7aeb49c8f3">
+      <Execution id="98396f58-83bc-4ebd-9718-e0253406b2c8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="ThePlatformMigrationRefusesToRollBackOverAnotherPlatformsRows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;line\nbreak&quot;)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="c78ce521-9789-2938-1ca5-d198fba4e268">
+      <Execution id="96b21b86-6f3b-4397-8059-1378d2df4fed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="MalformedSkusAreRejectedOnBothPaths" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnActorIsRequiredAndSqlInTheSkuIsJustData" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="32b68d12-64cf-cde7-6694-034bb33c6522">
+      <Execution id="474f2450-525a-4846-b495-549a2cfab21b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AnActorIsRequiredAndSqlInTheSkuIsJustData" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;&quot;)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="52c1e704-50cc-d614-aef2-4b9142376a6e">
+      <Execution id="0a83065b-6190-4e62-84e9-87010be9079f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="MalformedSkusAreRejectedOnBothPaths" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;sku\0with-null&quot;)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="10beb1fd-4e9a-4334-4df5-f67cbb976e77">
+      <Execution id="52ab41a0-2a01-450c-b04f-100a966c843d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="MalformedSkusAreRejectedOnBothPaths" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OverlappingHistoryIsAmbiguousAndResolvesToNothing" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="1c5472e9-f11d-ccdc-b55e-8cbdd52e6901">
+      <Execution id="4022a4d3-55ca-4d39-ba96-9d38c8122b14" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="OverlappingHistoryIsAmbiguousAndResolvesToNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.HistoryIsNeverRewrittenBackwards" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="aca30d46-6cb1-ff85-687b-23ef7d4ac5aa">
+      <Execution id="90cdd5af-c4ac-4d93-87a4-10779ea257d8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="HistoryIsNeverRewrittenBackwards" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheDatabaseItselfRefusesTwoOpenMappingsForOneSku" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="090e7228-ba0a-9abb-2c81-1e91098fbfdf">
+      <Execution id="e0708264-2016-4411-bb63-c5628bea5ad5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="TheDatabaseItselfRefusesTwoOpenMappingsForOneSku" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.RemappingASkuEndsTheOldMappingAndKeepsItsHistory" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="32e81b22-df6c-75f6-2125-c07ec0cfca73">
+      <Execution id="9fdec01c-c671-4c12-9989-5a3bb75c20c9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="RemappingASkuEndsTheOldMappingAndKeepsItsHistory" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MalformedSkusAreRejectedOnBothPaths(sku: &quot;   &quot;)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="2fc4e231-198a-285c-44a8-31329d9911a4">
+      <Execution id="ee08d4e1-d56d-43f3-90b4-baae16a0de90" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="MalformedSkusAreRejectedOnBothPaths" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheMigrationRollsBackAndReapplies" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="0619d4bf-ec0f-e3d8-ef20-65c3048840f1">
+      <Execution id="f9bfa683-c4ce-4128-96c6-321f9acbd0f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="TheMigrationRollsBackAndReapplies" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappingThatStartsLaterIsNotListedAsOpenYet" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="05d08b36-9650-265c-f070-83e891f8eca3">
+      <Execution id="fc6a5bd1-ca58-4f0f-9d3a-19bde4b8558c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AMappingThatStartsLaterIsNotListedAsOpenYet" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappedSkuResolvesToItsActiveProduct" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="4d6ef3bd-2fc8-9760-d0e3-b44a29af29a4">
+      <Execution id="fd5b09cb-7267-48ff-801e-8c4ab89188aa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AMappedSkuResolvesToItsActiveProduct" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="b009b676-1b8f-dfcf-8437-c0a39f7c8899">
+      <Execution id="fcc14c37-675d-4836-885f-b5953bf90447" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMandatoryChoiceAddedLaterStopsResolution" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.yemeksepeti.productmapping.tests\debug\alkaros.onlineordering.yemeksepeti.productmapping.tests.dll" id="a112dfbb-b069-f3d5-148f-ea80bd428bbc">
+      <Execution id="cb375ade-8578-48af-88a2-bfe084fe80ba" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests\debug\ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests" name="AMandatoryChoiceAddedLaterStopsResolution" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c78ce521-9789-2938-1ca5-d198fba4e268" executionId="96b21b86-6f3b-4397-8059-1378d2df4fed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b337a335-9182-cdb7-d28c-10f5dc065dff" executionId="3788f545-37fb-42e1-93c1-14f9812a941f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35bba00c-22fd-8c17-a404-f1c575302b9c" executionId="2fe081a1-1d97-4fc4-b62b-a4f880472c10" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fc4e231-198a-285c-44a8-31329d9911a4" executionId="ee08d4e1-d56d-43f3-90b4-baae16a0de90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10beb1fd-4e9a-4334-4df5-f67cbb976e77" executionId="52ab41a0-2a01-450c-b04f-100a966c843d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c5472e9-f11d-ccdc-b55e-8cbdd52e6901" executionId="4022a4d3-55ca-4d39-ba96-9d38c8122b14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d5a595d7-1e42-ce0c-a597-e9b1c0bbb1d1" executionId="cd440827-4171-4f36-b5a0-403022d74970" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="698fed7b-0fac-8f4b-e978-54d8ac20bfe2" executionId="282b5c96-14f4-454b-a10b-2f24eab88ea4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aac29e60-1880-f41b-ad3f-6e7aeb49c8f3" executionId="98396f58-83bc-4ebd-9718-e0253406b2c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="acfde2f8-7e18-110a-d642-c9e23b52b4f7" executionId="3e1af51a-ee64-45c5-b6ef-e147b9d1e7cc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a112dfbb-b069-f3d5-148f-ea80bd428bbc" executionId="cb375ade-8578-48af-88a2-bfe084fe80ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ec821d41-fc26-bcd2-2f71-9a72777ee6d7" executionId="8022b693-d481-4f06-b21e-07ff68bd7ea5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aca30d46-6cb1-ff85-687b-23ef7d4ac5aa" executionId="90cdd5af-c4ac-4d93-87a4-10779ea257d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="32e81b22-df6c-75f6-2125-c07ec0cfca73" executionId="9fdec01c-c671-4c12-9989-5a3bb75c20c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="090e7228-ba0a-9abb-2c81-1e91098fbfdf" executionId="e0708264-2016-4411-bb63-c5628bea5ad5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c390cf8e-6b5f-943a-d99a-00ef87df5090" executionId="0d9b1072-0fa1-4b92-900e-664d27626eb1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52c1e704-50cc-d614-aef2-4b9142376a6e" executionId="0a83065b-6190-4e62-84e9-87010be9079f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b009b676-1b8f-dfcf-8437-c0a39f7c8899" executionId="fcc14c37-675d-4836-885f-b5953bf90447" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0619d4bf-ec0f-e3d8-ef20-65c3048840f1" executionId="f9bfa683-c4ce-4128-96c6-321f9acbd0f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4d6ef3bd-2fc8-9760-d0e3-b44a29af29a4" executionId="fd5b09cb-7267-48ff-801e-8c4ab89188aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="32b68d12-64cf-cde7-6694-034bb33c6522" executionId="474f2450-525a-4846-b495-549a2cfab21b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2e04a429-6b1e-afcf-2080-bae0a08deec3" executionId="72cd4532-5a0a-4a7f-bb06-9a4f91ff5be0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05d08b36-9650-265c-f070-83e891f8eca3" executionId="fc6a5bd1-ca58-4f0f-9d3a-19bde4b8558c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e213fd10-c6ac-be87-4541-f89ae1cdb9d4" executionId="e05af31b-9a97-4ee6-ba8d-d5177a6fe137" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="24" executed="24" passed="8" failed="16" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.10]   Discovering: ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests&#xD;
+[xUnit.net 00:00:01.15]   Discovered:  ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests&#xD;
+[xUnit.net 00:00:01.16]   Starting:    ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests&#xD;
+[xUnit.net 00:00:01.91]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:01.91]       &#xD;
+[xUnit.net 00:00:01.91]       POSITION: 219&#xD;
+[xUnit.net 00:00:01.91]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:01.91]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(119,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti()&#xD;
+[xUnit.net 00:00:01.91]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(129,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti()&#xD;
+[xUnit.net 00:00:01.91]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.92]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:01.92]       &#xD;
+[xUnit.net 00:00:01.92]       POSITION: 219&#xD;
+[xUnit.net 00:00:01.92]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.92]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:01.92]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:01.92]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.92]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.93]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(85,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.PublishingNeverTakesASkuThatBelongsToAnotherProduct()&#xD;
+[xUnit.net 00:00:01.93]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.97]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:01.97]       &#xD;
+[xUnit.net 00:00:01.97]       POSITION: 219&#xD;
+[xUnit.net 00:00:01.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:01.97]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(259,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.&lt;&gt;c__DisplayClass21_0.&lt;&lt;ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:01.97]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.97]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(269,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner()&#xD;
+[xUnit.net 00:00:01.97]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.38]       Expected a &lt;ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.ProductMappingRejectedException&gt; to be thrown, but found &lt;Npgsql.PostgresException&gt;:&#xD;
+[xUnit.net 00:00:02.38]       Npgsql.PostgresException (0x80004005): 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.38]       &#xD;
+[xUnit.net 00:00:02.38]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.38]          at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.38]          at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.38]          at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+[xUnit.net 00:00:02.38]          at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+[xUnit.net 00:00:02.38]          at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+[xUnit.net 00:00:02.38]          at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+[xUnit.net 00:00:02.38]          at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+[xUnit.net 00:00:02.38]          at FluentAssertions.Specialized.AsyncFunctionAssertions`2.InvokeWithInterceptionAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:02.38]         Exception data:&#xD;
+[xUnit.net 00:00:02.38]           Severity: ERROR&#xD;
+[xUnit.net 00:00:02.38]           SqlState: 42703&#xD;
+[xUnit.net 00:00:02.38]           MessageText: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.38]           Position: 219&#xD;
+[xUnit.net 00:00:02.38]           File: parse_relation.c&#xD;
+[xUnit.net 00:00:02.38]           Line: 3854&#xD;
+[xUnit.net 00:00:02.38]           Routine: errorMissingColumn.&#xD;
+[xUnit.net 00:00:02.38]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.38]            at FluentAssertions.Specialized.AsyncFunctionAssertions`2.ThrowAsync[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.38]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(211,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductThatNeedsAModifierChoiceCannotBeSoldThroughTheChannel()&#xD;
+[xUnit.net 00:00:02.38]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.39]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.39]       &#xD;
+[xUnit.net 00:00:02.39]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.39]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.39]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(223,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMandatoryChoiceAddedLaterStopsResolution()&#xD;
+[xUnit.net 00:00:02.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.47]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.47]       &#xD;
+[xUnit.net 00:00:02.47]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.47]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.47]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(192,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductDeactivatedAfterMappingNoLongerResolves()&#xD;
+[xUnit.net 00:00:02.47]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.48]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.48]       &#xD;
+[xUnit.net 00:00:02.48]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.48]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.48]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(336,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnActorIsRequiredAndSqlInTheSkuIsJustData()&#xD;
+[xUnit.net 00:00:02.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.50]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.50]       &#xD;
+[xUnit.net 00:00:02.50]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.50]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.50]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(102,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappingThatStartsLaterIsNotListedAsOpenYet()&#xD;
+[xUnit.net 00:00:02.50]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.53]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.53]       &#xD;
+[xUnit.net 00:00:02.53]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.53]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.53]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.53]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(165,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductIsPublishedUnderOneSkuAtATime()&#xD;
+[xUnit.net 00:00:02.53]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.54]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.54]       &#xD;
+[xUnit.net 00:00:02.54]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.54]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.54]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(153,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MappingTheSameSkuToTheSameProductAgainIsAReplay()&#xD;
+[xUnit.net 00:00:02.54]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.55]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.55]       &#xD;
+[xUnit.net 00:00:02.55]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.55]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.55]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(27,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappedSkuResolvesToItsActiveProduct()&#xD;
+[xUnit.net 00:00:02.55]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.56]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.56]       &#xD;
+[xUnit.net 00:00:02.56]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.56]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.56]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(56,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.RemappingASkuEndsTheOldMappingAndKeepsItsHistory()&#xD;
+[xUnit.net 00:00:02.57]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.63]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.63]       &#xD;
+[xUnit.net 00:00:02.63]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.63]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.63]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.63]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.64]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(214,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ResolveAsync(String externalSku, DateTimeOffset at, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(220,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ResolveAsync(String externalSku, DateTimeOffset at, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.64]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(296,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheMigrationRollsBackAndReapplies()&#xD;
+[xUnit.net 00:00:02.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.65]       Expected a &lt;ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.ProductMappingRejectedException&gt; to be thrown, but found &lt;Npgsql.PostgresException&gt;:&#xD;
+[xUnit.net 00:00:02.65]       Npgsql.PostgresException (0x80004005): 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.65]       &#xD;
+[xUnit.net 00:00:02.65]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.65]          at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.65]          at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.65]          at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+[xUnit.net 00:00:02.65]          at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+[xUnit.net 00:00:02.65]          at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+[xUnit.net 00:00:02.65]          at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+[xUnit.net 00:00:02.65]          at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+[xUnit.net 00:00:02.65]          at FluentAssertions.Specialized.AsyncFunctionAssertions`2.InvokeWithInterceptionAsync(Func`1 action)&#xD;
+[xUnit.net 00:00:02.65]         Exception data:&#xD;
+[xUnit.net 00:00:02.65]           Severity: ERROR&#xD;
+[xUnit.net 00:00:02.65]           SqlState: 42703&#xD;
+[xUnit.net 00:00:02.65]           MessageText: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.65]           Position: 219&#xD;
+[xUnit.net 00:00:02.65]           File: parse_relation.c&#xD;
+[xUnit.net 00:00:02.65]           Line: 3854&#xD;
+[xUnit.net 00:00:02.65]           Routine: errorMissingColumn.&#xD;
+[xUnit.net 00:00:02.65]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.65]            at FluentAssertions.Specialized.AsyncFunctionAssertions`2.ThrowAsync[TException](String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:02.65]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(181,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OnlyAnExistingActiveProductCanBeMapped()&#xD;
+[xUnit.net 00:00:02.65]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.66]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.66]       &#xD;
+[xUnit.net 00:00:02.66]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.66]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.66]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.66]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(70,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.HistoryIsNeverRewrittenBackwards()&#xD;
+[xUnit.net 00:00:02.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.70]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:02.70]       &#xD;
+[xUnit.net 00:00:02.70]       POSITION: 219&#xD;
+[xUnit.net 00:00:02.70]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:02.70]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:02.70]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\YemeksepetiProductMappingTests.cs(41,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnUnknownSkuOrAMomentBeforeTheMappingIsUnmapped()&#xD;
+[xUnit.net 00:00:02.70]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.41]   Finished:    ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.0001836+03:00">
+        <Text>[xUnit.net 00:00:01.91]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnotherPlatformsMappingsNeitherBlockNorAnswerForYemeksepeti [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.0166356+03:00">
+        <Text>[xUnit.net 00:00:01.92]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.PublishingNeverTakesASkuThatBelongsToAnotherProduct [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.0627997+03:00">
+        <Text>[xUnit.net 00:00:01.97]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.ConcurrentMappingsOfOneSkuLeaveExactlyOneWinner [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.4680590+03:00">
+        <Text>[xUnit.net 00:00:02.38]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductThatNeedsAModifierChoiceCannotBeSoldThroughTheChannel [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.4795447+03:00">
+        <Text>[xUnit.net 00:00:02.39]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMandatoryChoiceAddedLaterStopsResolution [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.5920048+03:00">
+        <Text>[xUnit.net 00:00:02.47]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductDeactivatedAfterMappingNoLongerResolves [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.5921039+03:00">
+        <Text>[xUnit.net 00:00:02.48]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnActorIsRequiredAndSqlInTheSkuIsJustData [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.5921797+03:00">
+        <Text>[xUnit.net 00:00:02.50]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappingThatStartsLaterIsNotListedAsOpenYet [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.6203035+03:00">
+        <Text>[xUnit.net 00:00:02.53]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AProductIsPublishedUnderOneSkuAtATime [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.6308968+03:00">
+        <Text>[xUnit.net 00:00:02.54]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.MappingTheSameSkuToTheSameProductAgainIsAReplay [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.6405371+03:00">
+        <Text>[xUnit.net 00:00:02.55]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AMappedSkuResolvesToItsActiveProduct [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.6558517+03:00">
+        <Text>[xUnit.net 00:00:02.56]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.RemappingASkuEndsTheOldMappingAndKeepsItsHistory [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.7257135+03:00">
+        <Text>[xUnit.net 00:00:02.63]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.TheMigrationRollsBackAndReapplies [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.7414244+03:00">
+        <Text>[xUnit.net 00:00:02.65]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.OnlyAnExistingActiveProductCanBeMapped [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.7554337+03:00">
+        <Text>[xUnit.net 00:00:02.66]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.HistoryIsNeverRewrittenBackwards [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:58:28.7900642+03:00">
+        <Text>[xUnit.net 00:00:02.70]     ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.YemeksepetiProductMappingTests.AnUnknownSkuOrAMomentBeforeTheMappingIsUnmapped [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -6,6 +6,7 @@ using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Inventory.MovementReversal;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.PaymentAggregate;
 using Npgsql;
 using NpgsqlTypes;
@@ -237,6 +238,8 @@ public sealed class PaymentRefundStore
             ? (summary.OriginalPayableAmount - summary.TotalDiscounts) / summary.OriginalPayableAmount
             : 1m;
         var refunded = await PostgresRefundRequestRepository.RefundedQuantitiesAsync(billId, connection, transaction, cancellationToken);
+        var halfPortionProducts = await HalfPortionProductsAsync(
+            connection, transaction, bill.Items.Select(candidate => candidate.ProductId).Distinct().ToArray(), cancellationToken);
 
         var total = 0m;
         foreach (var item in items)
@@ -245,6 +248,13 @@ public sealed class PaymentRefundStore
                 ?? throw new RefundInputException(
                     $"Bill item {item.BillItemId} is not on this bill.", "REFUND_ITEM_NOT_ON_BILL", "Seçilen kalem bu hesapta yok.");
             var left = line.Quantity - refunded.GetValueOrDefault(item.BillItemId);
+            // With the flag off, a line sold in fractions and the fraction left of a line refunded in halves stay refundable.
+            var allowsHalfPortion = halfPortionProducts.Contains(line.ProductId);
+            if (!OrderQuantityRule.IsAllowed(item.Quantity, allowsHalfPortion)
+                && (allowsHalfPortion || line.Quantity % 1m == 0m) && item.Quantity != left)
+                throw new RefundInputException(
+                    "This product is refunded in whole units only.", "REFUND_QUANTITY_NOT_WHOLE",
+                    "Bu ürün yalnız tam adet olarak iade edilebilir.");
             if (item.Quantity > left)
                 throw new RefundItemQuantityException(item.BillItemId);
             total += decimal.Round(line.GrossAmount * item.Quantity / line.Quantity * ratio, 2, MidpointRounding.AwayFromZero);
@@ -253,6 +263,19 @@ public sealed class PaymentRefundStore
         if (total <= 0m)
             throw new RefundInputException("The refund amount must be above zero.", "REFUND_AMOUNT_INVALID", "İade tutarı sıfırdan büyük olmalı.");
         return (total, items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
+    }
+
+    private static async Task<HashSet<Guid>> HalfPortionProductsAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid[] productIds, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT product_id FROM catalog.products WHERE product_id = ANY(@ids) AND allows_half_portion;", connection, transaction);
+        command.Parameters.AddWithValue("ids", productIds);
+        var result = new HashSet<Guid>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(reader.GetGuid(0));
+        return result;
     }
 
     /// <summary>Puts the refunded units that were marked for it back to stock, in the caller's transaction.</summary>

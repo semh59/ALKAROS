@@ -1487,6 +1487,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var tableId = await _database.SeedTableAsync();
         var product = await _database.SeedStockedProductAsync("Tavuk şiş", 420m, 10m);
+        await _database.ExecuteAsync("UPDATE catalog.products SET allows_half_portion = true WHERE product_id = @id;", ("id", product));
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -1865,6 +1866,7 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var tableId = await _database.SeedTableAsync();
         var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        await _database.ExecuteAsync("UPDATE catalog.products SET allows_half_portion = true WHERE product_id = @id;", ("id", product));
         var extraRice = await _database.SeedModifierAsync(product, "Ekstra pilav", 120m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);

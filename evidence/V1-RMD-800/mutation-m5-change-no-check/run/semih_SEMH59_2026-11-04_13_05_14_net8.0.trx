@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e2b33069-b6b9-4141-8e51-ca0181f857e9" name="semih@SEMH59 2026-11-04 13:05:14" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T13:05:14.2414572+03:00" queuing="2026-11-04T13:05:14.2414575+03:00" start="2026-11-04T13:04:56.1915637+03:00" finish="2026-11-04T13:07:18.2968100+03:00" />
+  <TestSettings name="default" id="f9688764-4a93-4eb8-ad4c-9ba4dd4fd717">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_13_05_14" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d5a425c3-7f44-4378-a980-9f0464d819ed" testId="f7b76a2b-42b1-6ff8-b9a3-ed8fdc04f51f" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 0,5)" computerName="SEMH59" duration="00:00:00.0449134" startTime="2026-11-04T13:06:20.9410104+03:00" endTime="2026-11-04T13:06:20.9410106+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5a425c3-7f44-4378-a980-9f0464d819ed" />
+    <UnitTestResult executionId="eb54e5a9-0b0f-422c-bb97-075a5f2735aa" testId="3ca2f983-7b2d-ac37-71a3-1e171965cd5d" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 1,5)" computerName="SEMH59" duration="00:00:00.1585602" startTime="2026-11-04T13:06:56.3706862+03:00" endTime="2026-11-04T13:06:56.3706873+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb54e5a9-0b0f-422c-bb97-075a5f2735aa" />
+    <UnitTestResult executionId="5624ba88-998d-431a-9d7a-198cabdfc620" testId="f9be8748-2ad8-bc04-1c76-d93cb3f8bf13" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 1,5)" computerName="SEMH59" duration="00:00:00.0487451" startTime="2026-11-04T13:05:53.9924039+03:00" endTime="2026-11-04T13:05:53.9924043+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5624ba88-998d-431a-9d7a-198cabdfc620" />
+    <UnitTestResult executionId="b6fe4ffa-3d77-431e-9086-18bfa5bee4e6" testId="41b11327-5bd2-a9cf-6e46-201b4c5def0f" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 0,25)" computerName="SEMH59" duration="00:00:00.0427471" startTime="2026-11-04T13:07:18.2103917+03:00" endTime="2026-11-04T13:07:18.2103924+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6fe4ffa-3d77-431e-9086-18bfa5bee4e6" />
+    <UnitTestResult executionId="3682fdc6-675e-4d19-a200-05497d1f6c5b" testId="dacbfbe2-1e41-70e9-fee0-80ee668f6bd6" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: False, quantity: 2)" computerName="SEMH59" duration="00:00:00.0534718" startTime="2026-11-04T13:05:27.2562958+03:00" endTime="2026-11-04T13:05:27.2562969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3682fdc6-675e-4d19-a200-05497d1f6c5b" />
+    <UnitTestResult executionId="42c7ed05-4632-4f0d-8cab-4d355d8db0f1" testId="b3aa50e2-4f53-2c1d-5659-14eed579fbf5" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 2)" computerName="SEMH59" duration="00:00:00.0511179" startTime="2026-11-04T13:05:41.1089195+03:00" endTime="2026-11-04T13:05:41.1089200+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42c7ed05-4632-4f0d-8cab-4d355d8db0f1" />
+    <UnitTestResult executionId="8c528328-9f1a-4468-8493-c55c20d5a83d" testId="77c4efcd-88d6-bb48-3a28-bd3826801b27" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt" computerName="SEMH59" duration="00:00:00.0809163" startTime="2026-11-04T13:06:07.1391294+03:00" endTime="2026-11-04T13:06:07.1391296+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c528328-9f1a-4468-8493-c55c20d5a83d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(ALKAROS.Orders.OrderAggregate.OrderQuantityNotAllowedException)</Message>
+          <StackTrace>   at ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt() in D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenHalfPortionTests.cs:line 97&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="303f92ce-e8e0-4d90-84a5-9b5d9027c1c8" testId="16543c63-75b0-c0ff-e689-4aeaf8cbb7b9" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 0,5)" computerName="SEMH59" duration="00:00:00.2173482" startTime="2026-11-04T13:05:14.2113362+03:00" endTime="2026-11-04T13:05:14.2113547+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="303f92ce-e8e0-4d90-84a5-9b5d9027c1c8" />
+    <UnitTestResult executionId="4f87936b-9989-44ee-8866-cc9e52e97c26" testId="30ebf039-4fce-3b6a-9486-cd2e9d6d2474" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 1,3)" computerName="SEMH59" duration="00:00:00.0486293" startTime="2026-11-04T13:06:33.9356392+03:00" endTime="2026-11-04T13:06:33.9356414+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4f87936b-9989-44ee-8866-cc9e52e97c26" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 1,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="f9be8748-2ad8-bc04-1c76-d93cb3f8bf13">
+      <Execution id="5624ba88-998d-431a-9d7a-198cabdfc620" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 0,25)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="41b11327-5bd2-a9cf-6e46-201b4c5def0f">
+      <Execution id="b6fe4ffa-3d77-431e-9086-18bfa5bee4e6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 1,3)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="30ebf039-4fce-3b6a-9486-cd2e9d6d2474">
+      <Execution id="4f87936b-9989-44ee-8866-cc9e52e97c26" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 2)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="b3aa50e2-4f53-2c1d-5659-14eed579fbf5">
+      <Execution id="42c7ed05-4632-4f0d-8cab-4d355d8db0f1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 0,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="16543c63-75b0-c0ff-e689-4aeaf8cbb7b9">
+      <Execution id="303f92ce-e8e0-4d90-84a5-9b5d9027c1c8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 0,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="f7b76a2b-42b1-6ff8-b9a3-ed8fdc04f51f">
+      <Execution id="d5a425c3-7f44-4378-a980-9f0464d819ed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="77c4efcd-88d6-bb48-3a28-bd3826801b27">
+      <Execution id="8c528328-9f1a-4468-8493-c55c20d5a83d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: False, quantity: 2)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="dacbfbe2-1e41-70e9-fee0-80ee668f6bd6">
+      <Execution id="3682fdc6-675e-4d19-a200-05497d1f6c5b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 1,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="3ca2f983-7b2d-ac37-71a3-1e171965cd5d">
+      <Execution id="eb54e5a9-0b0f-422c-bb97-075a5f2735aa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f7b76a2b-42b1-6ff8-b9a3-ed8fdc04f51f" executionId="d5a425c3-7f44-4378-a980-9f0464d819ed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ca2f983-7b2d-ac37-71a3-1e171965cd5d" executionId="eb54e5a9-0b0f-422c-bb97-075a5f2735aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9be8748-2ad8-bc04-1c76-d93cb3f8bf13" executionId="5624ba88-998d-431a-9d7a-198cabdfc620" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="41b11327-5bd2-a9cf-6e46-201b4c5def0f" executionId="b6fe4ffa-3d77-431e-9086-18bfa5bee4e6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dacbfbe2-1e41-70e9-fee0-80ee668f6bd6" executionId="3682fdc6-675e-4d19-a200-05497d1f6c5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b3aa50e2-4f53-2c1d-5659-14eed579fbf5" executionId="42c7ed05-4632-4f0d-8cab-4d355d8db0f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77c4efcd-88d6-bb48-3a28-bd3826801b27" executionId="8c528328-9f1a-4468-8493-c55c20d5a83d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16543c63-75b0-c0ff-e689-4aeaf8cbb7b9" executionId="303f92ce-e8e0-4d90-84a5-9b5d9027c1c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="30ebf039-4fce-3b6a-9486-cd2e9d6d2474" executionId="4f87936b-9989-44ee-8866-cc9e52e97c26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="9" executed="9" passed="8" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.61]   Discovering: ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.71]   Discovered:  ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:00.72]   Starting:    ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:01:10.47]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:01:10.48]       Expected: typeof(ALKAROS.Orders.OrderAggregate.OrderQuantityNotAllowedException)&#xD;
+[xUnit.net 00:01:10.48]       Stack Trace:&#xD;
+[xUnit.net 00:01:10.48]         D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenHalfPortionTests.cs(97,0): at ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt()&#xD;
+[xUnit.net 00:01:10.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:02:21.55]   Finished:    ALKAROS.Host.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:06:07.1373804+03:00">
+        <Text>[xUnit.net 00:01:10.47]     ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

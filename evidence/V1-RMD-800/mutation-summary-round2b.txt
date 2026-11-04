@@ -1,0 +1,1 @@
+m6-draft-no-check Başarısız! - Başarısız:     5, Başarılı:     4, Atlanan:     0, Toplam:     9, Süre: 23 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8. restored

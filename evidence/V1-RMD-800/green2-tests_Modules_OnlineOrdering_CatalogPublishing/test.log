@@ -1,0 +1,16 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Secrets\debug\ALKAROS.Secrets.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Catalog\debug\ALKAROS.Catalog.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.SensitiveData\debug\ALKAROS.SensitiveData.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering\debug\ALKAROS.OnlineOrdering.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.OnlineOrdering.CatalogPublishing.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.CatalogPublishing.Tests\debug\ALKAROS.OnlineOrdering.CatalogPublishing.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.CatalogPublishing.Tests\debug\ALKAROS.OnlineOrdering.CatalogPublishing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-800\green2-tests_Modules_OnlineOrdering_CatalogPublishing\semih_SEMH59_2026-11-04_11_01_27_net8.0.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:    16, Atlanan:     0, Toplam:    16, Süre: 2 s - ALKAROS.OnlineOrdering.CatalogPublishing.Tests.dll (net8.0)

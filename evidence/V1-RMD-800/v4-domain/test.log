@@ -1,0 +1,14 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Orders.OrderAggregate.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-800\v4-domain\semih_SEMH59_2026-11-04_14_10_26_net8.0.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:   175, Atlanan:     0, Toplam:   175, Süre: 1 s - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)

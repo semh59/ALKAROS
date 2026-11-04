@@ -220,6 +220,7 @@ public sealed class ApiErrorCatalogTests
         { null, Uninitialized<DualScreenConflictException>(), 409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi." },
         { null, Uninitialized<SubmitOrderIdempotencyConflictException>(), 409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış." },
         { null, Uninitialized<OrderNotFoundException>(), 404, "ORDER_NOT_FOUND", "Sipariş bulunamadı." },
+        { null, Uninitialized<OrderQuantityNotAllowedException>(), 400, "ORDER_QUANTITY_NOT_ALLOWED", ApiErrorCatalog.OrderQuantityMessage },
         { null, Uninitialized<CashSessionNotFoundException>(), 404, "CASH_SESSION_NOT_FOUND", "Kasa oturumu bulunamadı." },
         { null, Uninitialized<ActiveCashSessionExistsException>(), 409, "ACTIVE_CASH_SESSION_EXISTS", "Bu terminalde zaten açık bir kasa oturumu var." },
         { null, Uninitialized<InvalidCashSessionStateException>(), 409, "INVALID_CASH_SESSION_STATE", "Kasa oturumu bu işlem için uygun durumda değil." },

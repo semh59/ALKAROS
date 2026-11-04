@@ -669,6 +669,10 @@ public static class ApiErrorCatalog
                 ? label + (exception is ArgumentOutOfRangeException ? " izin verilen aralığın dışında." : " geçersiz veya eksik.")
                 : "İstek doğrulanamadı.");
 
+    /// <summary>The answer to an order quantity the product does not allow (a fraction of a unit on a product without the half-portion setting).</summary>
+    public const string OrderQuantityMessage =
+        "Bu ürün için bu adet girilemez: tam adet girin. Yarım porsiyon yalnız ayarı açık ürünlerde, 0,5'in katı olarak girilebilir.";
+
     /// <summary>The Host default for exceptions no area answers (formerly DualScreenApplication.WriteErrorAsync).</summary>
     public static (int Status, string Code, string Message) Default(Exception exception)
         => exception switch
@@ -680,6 +684,7 @@ public static class ApiErrorCatalog
             DualScreenConflictException => (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
             OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
+            OrderQuantityNotAllowedException => (400, "ORDER_QUANTITY_NOT_ALLOWED", OrderQuantityMessage),
             // V13-CSH-004: Cash/CashTender domain exceptions, most specific
             // first (CashVarianceThresholdExceededException/
             // ActiveCashSessionExistsException/InvalidCashSessionStateException

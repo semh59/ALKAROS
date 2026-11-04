@@ -47,7 +47,9 @@ public sealed record ProductV1(
     bool IsAvailable = true,
     // V1-WTR-017: manager-entered estimated prep time in minutes (1-180),
     // null when never set. See Product.PrepTimeMinutes.
-    int? PrepTimeMinutes = null);
+    int? PrepTimeMinutes = null,
+    // Whether the product may be ordered in half-unit steps (1.5); see Product.AllowsHalfPortion.
+    bool AllowsHalfPortion = false);
 
 public sealed record CreateProductV1(
     Guid Id,
@@ -63,7 +65,8 @@ public sealed record CreateProductV1(
     decimal? CurrentPrice = null,
     bool Active = true,
     bool IsAvailable = true,
-    int? PrepTimeMinutes = null);
+    int? PrepTimeMinutes = null,
+    bool AllowsHalfPortion = false);
 
 public sealed record UpdateProductDetailsV1(
     string Sku,
@@ -71,7 +74,9 @@ public sealed record UpdateProductDetailsV1(
     Guid? CategoryId,
     Guid? TaxProfileId,
     string? Description = null,
-    int DisplayOrder = 0);
+    int DisplayOrder = 0,
+    // null keeps the stored value, so a client that does not know the flag leaves it alone.
+    bool? AllowsHalfPortion = null);
 
 public sealed record SetProductAvailabilityV1(bool IsAvailable);
 

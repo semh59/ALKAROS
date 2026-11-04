@@ -1009,3 +1009,28 @@ public class OrderKitchenStateSyncTests
             id ?? Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Adana Kebap", 1, 150m, 10m,
             status: OrderItemState.Active, kitchenState: kitchenState);
 }
+
+public class OrderQuantityRuleTests
+{
+    [Theory]
+    [InlineData(1, false, true)]
+    [InlineData(25, false, true)]
+    [InlineData(1.5, false, false)]
+    [InlineData(0.5, false, false)]
+    [InlineData(0.001, false, false)]
+    [InlineData(0, false, false)]
+    [InlineData(-1, false, false)]
+    [InlineData(1, true, true)]
+    [InlineData(1.5, true, true)]
+    [InlineData(0.5, true, true)]
+    [InlineData(1.3, true, false)]
+    [InlineData(0.25, true, false)]
+    [InlineData(0, true, false)]
+    [InlineData(-0.5, true, false)]
+    public void OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(double quantity, bool allowsHalfPortion, bool expected)
+        => OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion).Should().Be(expected);
+
+    [Fact]
+    public void AnEnormousWholeQuantityIsJudgedWithoutOverflowing()
+        => OrderQuantityRule.IsAllowed(decimal.MaxValue, true).Should().BeTrue();
+}

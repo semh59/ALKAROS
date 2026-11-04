@@ -1,0 +1,4 @@
+m17-draft-exemption-by-id-only: Başarısız! - Başarısız:     2, Başarılı:     9, Atlanan:     0, Toplam:    11, S� restored=yes
+m18-create-ignores-flag: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S� restored=yes
+m19-list-reads-false: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S� restored=yes
+m20-backfill-wrong-condition: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S� restored=yes

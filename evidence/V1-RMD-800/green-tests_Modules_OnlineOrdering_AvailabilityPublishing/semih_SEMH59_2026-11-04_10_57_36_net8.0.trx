@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="463a493a-17a2-40d9-ad94-487a699f07f4" name="semih@SEMH59 2026-11-04 10:57:36" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T10:57:36.7680384+03:00" queuing="2026-11-04T10:57:36.7680386+03:00" start="2026-11-04T10:57:30.5842400+03:00" finish="2026-11-04T10:57:41.7747804+03:00" />
+  <TestSettings name="default" id="7f9bdaaa-94a1-4bcd-ab7f-834908d6efc4">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_10_57_36" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="80df28cf-c7be-4aa7-9e06-c8d46576425e" testId="d204ffb2-7d71-d11d-f95a-17cd1677dc3c" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheLastPortionGoingToAnotherChannelReachesThisChannelExactlyOnce" computerName="SEMH59" duration="00:00:00.3774005" startTime="2026-11-04T10:57:38.0037959+03:00" endTime="2026-11-04T10:57:38.0037963+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="80df28cf-c7be-4aa7-9e06-c8d46576425e" />
+    <UnitTestResult executionId="d629d9c7-7be8-4526-9dc4-970cdbed07f8" testId="2d0a46ff-7ff7-b35c-786c-2199cc056b80" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AChangeDuringADeliveryIsSentNextAndAnOldDeliveryNeverWinsLater" computerName="SEMH59" duration="00:00:00.2878285" startTime="2026-11-04T10:57:35.7745739+03:00" endTime="2026-11-04T10:57:35.7745745+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d629d9c7-7be8-4526-9dc4-970cdbed07f8" />
+    <UnitTestResult executionId="8780551b-f0bb-4e63-a3bd-e20282ba1748" testId="86a102a3-8495-e855-0bd8-30a05e03f2da" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.OnePassSendsOneBoundedBatchPerChannel" computerName="SEMH59" duration="00:00:00.2573002" startTime="2026-11-04T10:57:36.8712536+03:00" endTime="2026-11-04T10:57:36.8712540+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8780551b-f0bb-4e63-a3bd-e20282ba1748" />
+    <UnitTestResult executionId="4d309301-1138-4b32-80b2-1bc3c0cf942f" testId="8d32199a-1a34-caa2-7b4f-9460324d1cf5" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheYemeksepetiChannelKnowsMappedProductsSendsQuantityOnlyAndNeedsCredentials" computerName="SEMH59" duration="00:00:00.2324227" startTime="2026-11-04T10:57:37.1399785+03:00" endTime="2026-11-04T10:57:37.1399788+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d309301-1138-4b32-80b2-1bc3c0cf942f">
+      <Output>
+        <ErrorInfo>
+          <Message>Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+&#xD;
+POSITION: 219</Message>
+          <StackTrace>   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 33&#xD;
+   at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs:line 37&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 275&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 107&#xD;
+   at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs:line 44&#xD;
+   at ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheYemeksepetiChannelKnowsMappedProductsSendsQuantityOnlyAndNeedsCredentials() in D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\AvailabilityPublishing\AvailabilityPublicationTests.cs:line 358&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b42d7159-a428-4b68-88cb-8846d2b4456b" testId="0b0fde4c-0e29-bfd4-6027-d35932dde8d1" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.ADisabledChannelIsNeitherComputedNorCalled" computerName="SEMH59" duration="00:00:00.0330613" startTime="2026-11-04T10:57:37.6256845+03:00" endTime="2026-11-04T10:57:37.6256850+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b42d7159-a428-4b68-88cb-8846d2b4456b" />
+    <UnitTestResult executionId="120c9eda-ec61-4654-8454-2f1263b1b0dc" testId="1f556beb-f5b6-50fc-3d8d-a8a3daa47d38" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AFailedDeliveryIsRecordedRetriedAndSurfacesAsDivergence" computerName="SEMH59" duration="00:00:00.1275161" startTime="2026-11-04T10:57:37.4242219+03:00" endTime="2026-11-04T10:57:37.4242223+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="120c9eda-ec61-4654-8454-2f1263b1b0dc" />
+    <UnitTestResult executionId="8dcd8280-cf42-4414-8a46-83c1c4ea1893" testId="109d727f-fd09-0f6a-f05c-e8279b323bb8" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheMigrationRollsBackAndReapplies" computerName="SEMH59" duration="00:00:00.0754210" startTime="2026-11-04T10:57:37.2960906+03:00" endTime="2026-11-04T10:57:37.2960910+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8dcd8280-cf42-4414-8a46-83c1c4ea1893" />
+    <UnitTestResult executionId="784d82e8-96fd-4012-a5e8-dec44251476c" testId="7106e370-c3a7-400f-1f50-d1a89167c68b" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.OneBadSkuNeverBlocksTheOtherProducts" computerName="SEMH59" duration="00:00:00.2504018" startTime="2026-11-04T10:57:36.5179637+03:00" endTime="2026-11-04T10:57:36.5179640+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="784d82e8-96fd-4012-a5e8-dec44251476c" />
+    <UnitTestResult executionId="70b72458-d75c-49ed-8530-dc44aee69231" testId="c2375c75-b2bd-2284-01f9-6c3e6a9bef21" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.ADelayedOlderObservationNeverOverwritesANewerState" computerName="SEMH59" duration="00:00:00.2687516" startTime="2026-11-04T10:57:35.4851048+03:00" endTime="2026-11-04T10:57:35.4851373+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70b72458-d75c-49ed-8530-dc44aee69231" />
+    <UnitTestResult executionId="5ad0ec51-7bc3-42fe-b0f9-866008932771" testId="335de36a-1ebc-ae90-0948-286ce4251f59" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.ParallelDeliveriesNeverSendAProductTwice" computerName="SEMH59" duration="00:00:00.4918599" startTime="2026-11-04T10:57:36.2669937+03:00" endTime="2026-11-04T10:57:36.2669941+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ad0ec51-7bc3-42fe-b0f9-866008932771" />
+    <UnitTestResult executionId="baa1f584-8d3c-40e2-b1aa-6257105a87ef" testId="aa7524c6-630d-321d-188d-813f7f21798a" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AFailedRowWaitsLongerAfterEachFailureAndIsNotRetriedBeforeItIsDue" computerName="SEMH59" duration="00:00:00.0948036" startTime="2026-11-04T10:57:36.6132867+03:00" endTime="2026-11-04T10:57:36.6132871+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="baa1f584-8d3c-40e2-b1aa-6257105a87ef" />
+    <UnitTestResult executionId="d74923b3-83bb-4f83-9ba4-fdce98e9046f" testId="f9894a67-ae59-6900-75c0-7552ac4b8040" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AProductSellsAsManyUnitsAsItsScarcestIngredientAllows" computerName="SEMH59" duration="00:00:00.0972278" startTime="2026-11-04T10:57:37.5219722+03:00" endTime="2026-11-04T10:57:37.5219725+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d74923b3-83bb-4f83-9ba4-fdce98e9046f" />
+    <UnitTestResult executionId="db03b84c-d9ba-42f3-a54a-1fceaccf6cd8" testId="b9b507ff-6bbc-ef86-4536-f383b7e7ef41" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AProductTheChannelNoLongerPublishesLeavesNoStaleState" computerName="SEMH59" duration="00:00:00.0870959" startTime="2026-11-04T10:57:37.2201331+03:00" endTime="2026-11-04T10:57:37.2201335+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db03b84c-d9ba-42f3-a54a-1fceaccf6cd8" />
+    <UnitTestResult executionId="d861ec6c-60a5-4473-9875-98d1e0e68e19" testId="c8b1ba53-20c0-d508-bd20-485c781e9deb" testName="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AMultiplierChangeIsPublishedEvenWithoutAnyStockMovement" computerName="SEMH59" duration="00:00:00.0695329" startTime="2026-11-04T10:57:37.5920462+03:00" endTime="2026-11-04T10:57:37.5920467+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d861ec6c-60a5-4473-9875-98d1e0e68e19" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AMultiplierChangeIsPublishedEvenWithoutAnyStockMovement" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="c8b1ba53-20c0-d508-bd20-485c781e9deb">
+      <Execution id="d861ec6c-60a5-4473-9875-98d1e0e68e19" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="AMultiplierChangeIsPublishedEvenWithoutAnyStockMovement" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AProductTheChannelNoLongerPublishesLeavesNoStaleState" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="b9b507ff-6bbc-ef86-4536-f383b7e7ef41">
+      <Execution id="db03b84c-d9ba-42f3-a54a-1fceaccf6cd8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="AProductTheChannelNoLongerPublishesLeavesNoStaleState" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheMigrationRollsBackAndReapplies" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="109d727f-fd09-0f6a-f05c-e8279b323bb8">
+      <Execution id="8dcd8280-cf42-4414-8a46-83c1c4ea1893" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="TheMigrationRollsBackAndReapplies" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheLastPortionGoingToAnotherChannelReachesThisChannelExactlyOnce" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="d204ffb2-7d71-d11d-f95a-17cd1677dc3c">
+      <Execution id="80df28cf-c7be-4aa7-9e06-c8d46576425e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="TheLastPortionGoingToAnotherChannelReachesThisChannelExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.ADelayedOlderObservationNeverOverwritesANewerState" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="c2375c75-b2bd-2284-01f9-6c3e6a9bef21">
+      <Execution id="70b72458-d75c-49ed-8530-dc44aee69231" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="ADelayedOlderObservationNeverOverwritesANewerState" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AProductSellsAsManyUnitsAsItsScarcestIngredientAllows" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="f9894a67-ae59-6900-75c0-7552ac4b8040">
+      <Execution id="d74923b3-83bb-4f83-9ba4-fdce98e9046f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="AProductSellsAsManyUnitsAsItsScarcestIngredientAllows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.ParallelDeliveriesNeverSendAProductTwice" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="335de36a-1ebc-ae90-0948-286ce4251f59">
+      <Execution id="5ad0ec51-7bc3-42fe-b0f9-866008932771" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="ParallelDeliveriesNeverSendAProductTwice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AChangeDuringADeliveryIsSentNextAndAnOldDeliveryNeverWinsLater" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="2d0a46ff-7ff7-b35c-786c-2199cc056b80">
+      <Execution id="d629d9c7-7be8-4526-9dc4-970cdbed07f8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="AChangeDuringADeliveryIsSentNextAndAnOldDeliveryNeverWinsLater" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheYemeksepetiChannelKnowsMappedProductsSendsQuantityOnlyAndNeedsCredentials" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="8d32199a-1a34-caa2-7b4f-9460324d1cf5">
+      <Execution id="4d309301-1138-4b32-80b2-1bc3c0cf942f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="TheYemeksepetiChannelKnowsMappedProductsSendsQuantityOnlyAndNeedsCredentials" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AFailedDeliveryIsRecordedRetriedAndSurfacesAsDivergence" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="1f556beb-f5b6-50fc-3d8d-a8a3daa47d38">
+      <Execution id="120c9eda-ec61-4654-8454-2f1263b1b0dc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="AFailedDeliveryIsRecordedRetriedAndSurfacesAsDivergence" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.ADisabledChannelIsNeitherComputedNorCalled" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="0b0fde4c-0e29-bfd4-6027-d35932dde8d1">
+      <Execution id="b42d7159-a428-4b68-88cb-8846d2b4456b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="ADisabledChannelIsNeitherComputedNorCalled" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.AFailedRowWaitsLongerAfterEachFailureAndIsNotRetriedBeforeItIsDue" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="aa7524c6-630d-321d-188d-813f7f21798a">
+      <Execution id="baa1f584-8d3c-40e2-b1aa-6257105a87ef" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="AFailedRowWaitsLongerAfterEachFailureAndIsNotRetriedBeforeItIsDue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.OneBadSkuNeverBlocksTheOtherProducts" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="7106e370-c3a7-400f-1f50-d1a89167c68b">
+      <Execution id="784d82e8-96fd-4012-a5e8-dec44251476c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="OneBadSkuNeverBlocksTheOtherProducts" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.OnePassSendsOneBoundedBatchPerChannel" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.onlineordering.availabilitypublishing.tests\debug\alkaros.onlineordering.availabilitypublishing.tests.dll" id="86a102a3-8495-e855-0bd8-30a05e03f2da">
+      <Execution id="8780551b-f0bb-4e63-a3bd-e20282ba1748" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests\debug\ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests" name="OnePassSendsOneBoundedBatchPerChannel" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d204ffb2-7d71-d11d-f95a-17cd1677dc3c" executionId="80df28cf-c7be-4aa7-9e06-c8d46576425e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2d0a46ff-7ff7-b35c-786c-2199cc056b80" executionId="d629d9c7-7be8-4526-9dc4-970cdbed07f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="86a102a3-8495-e855-0bd8-30a05e03f2da" executionId="8780551b-f0bb-4e63-a3bd-e20282ba1748" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8d32199a-1a34-caa2-7b4f-9460324d1cf5" executionId="4d309301-1138-4b32-80b2-1bc3c0cf942f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0b0fde4c-0e29-bfd4-6027-d35932dde8d1" executionId="b42d7159-a428-4b68-88cb-8846d2b4456b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f556beb-f5b6-50fc-3d8d-a8a3daa47d38" executionId="120c9eda-ec61-4654-8454-2f1263b1b0dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="109d727f-fd09-0f6a-f05c-e8279b323bb8" executionId="8dcd8280-cf42-4414-8a46-83c1c4ea1893" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7106e370-c3a7-400f-1f50-d1a89167c68b" executionId="784d82e8-96fd-4012-a5e8-dec44251476c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2375c75-b2bd-2284-01f9-6c3e6a9bef21" executionId="70b72458-d75c-49ed-8530-dc44aee69231" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="335de36a-1ebc-ae90-0948-286ce4251f59" executionId="5ad0ec51-7bc3-42fe-b0f9-866008932771" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa7524c6-630d-321d-188d-813f7f21798a" executionId="baa1f584-8d3c-40e2-b1aa-6257105a87ef" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9894a67-ae59-6900-75c0-7552ac4b8040" executionId="d74923b3-83bb-4f83-9ba4-fdce98e9046f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b9b507ff-6bbc-ef86-4536-f383b7e7ef41" executionId="db03b84c-d9ba-42f3-a54a-1fceaccf6cd8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8b1ba53-20c0-d508-bd20-485c781e9deb" executionId="d861ec6c-60a5-4473-9875-98d1e0e68e19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="13" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.40]   Discovering: ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests&#xD;
+[xUnit.net 00:00:01.44]   Discovered:  ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests&#xD;
+[xUnit.net 00:00:01.45]   Starting:    ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests&#xD;
+[xUnit.net 00:00:04.10]       Npgsql.PostgresException : 42703: column "allows_half_portion" does not exist&#xD;
+[xUnit.net 00:00:04.10]       &#xD;
+[xUnit.net 00:00:04.10]       POSITION: 219&#xD;
+[xUnit.net 00:00:04.10]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+[xUnit.net 00:00:04.10]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource&lt;TResult&gt;.GetResult(Int16 token)&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(33,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]         D:\PROJECT\ALKAROS\src\Modules\Catalog\ProductCatalog\PostgresProductRepository.cs(37,0): at ALKAROS.Catalog.ProductCatalog.PostgresProductRepository.GetByIdAsync(Guid id, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(275,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.ProductGapAsync(Guid productId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(107,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapCoreAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, Boolean requireUnowned, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]         D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\Yemeksepeti\ProductMapping\PostgresYemeksepetiProductMappingService.cs(44,0): at ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.PostgresYemeksepetiProductMappingService.MapAsync(String externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:04.10]         D:\PROJECT\ALKAROS\tests\Modules\OnlineOrdering\AvailabilityPublishing\AvailabilityPublicationTests.cs(358,0): at ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheYemeksepetiChannelKnowsMappedProductsSendsQuantityOnlyAndNeedsCredentials()&#xD;
+[xUnit.net 00:00:04.10]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.67]   Finished:    ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T10:57:37.1363264+03:00">
+        <Text>[xUnit.net 00:00:04.10]     ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.AvailabilityPublicationTests.TheYemeksepetiChannelKnowsMappedProductsSendsQuantityOnlyAndNeedsCredentials [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

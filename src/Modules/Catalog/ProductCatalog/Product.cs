@@ -22,7 +22,8 @@ public sealed class Product
         bool active = true,
         bool isAvailable = true,
         long rowVersion = 1,
-        int? prepTimeMinutes = null)
+        int? prepTimeMinutes = null,
+        bool allowsHalfPortion = false)
     {
         if (string.IsNullOrWhiteSpace(sku))
             throw new ArgumentException("Product SKU cannot be empty.", nameof(sku));
@@ -48,6 +49,7 @@ public sealed class Product
         IsAvailable = isAvailable;
         RowVersion = rowVersion;
         PrepTimeMinutes = prepTimeMinutes;
+        AllowsHalfPortion = allowsHalfPortion;
     }
 
     public Guid Id { get; }
@@ -87,6 +89,9 @@ public sealed class Product
     /// </summary>
     public int? PrepTimeMinutes { get; }
 
+    /// <summary>Whether the product may be ordered in half-unit steps (1.5); every other product is sold in whole units.</summary>
+    public bool AllowsHalfPortion { get; }
+
     /// <summary>Hides the product from sales clients without deleting it.</summary>
     public Product Suspend() => IsAvailable ? WithAvailability(false) : this;
 
@@ -96,15 +101,20 @@ public sealed class Product
     /// <summary>Sets or clears (null) the manager-entered prep-time estimate.</summary>
     public Product WithPrepTimeMinutes(int? prepTimeMinutes) => new(
         Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
-        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, IsAvailable, RowVersion, prepTimeMinutes);
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, IsAvailable, RowVersion, prepTimeMinutes, AllowsHalfPortion);
+
+    /// <summary>Sets whether the product may be ordered in half-unit steps.</summary>
+    public Product WithAllowsHalfPortion(bool allowsHalfPortion) => allowsHalfPortion == AllowsHalfPortion ? this : new(
+        Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, IsAvailable, RowVersion, PrepTimeMinutes, allowsHalfPortion);
 
     /// <summary>Corrects the manager-entered identity, classification and display fields.</summary>
     public Product WithDetails(
         string sku, string name, Guid? categoryId, Guid? taxProfileId, string? description, int displayOrder) => new(
         Id, sku, name, ProductType, StockMode, categoryId, taxProfileId, description,
-        PrinterRoutePolicy, displayOrder, CurrentPrice, Active, IsAvailable, RowVersion, PrepTimeMinutes);
+        PrinterRoutePolicy, displayOrder, CurrentPrice, Active, IsAvailable, RowVersion, PrepTimeMinutes, AllowsHalfPortion);
 
     private Product WithAvailability(bool isAvailable) => new(
         Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
-        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable, RowVersion, PrepTimeMinutes);
+        PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable, RowVersion, PrepTimeMinutes, AllowsHalfPortion);
 }

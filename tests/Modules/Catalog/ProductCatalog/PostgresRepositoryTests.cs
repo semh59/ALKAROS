@@ -29,6 +29,7 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
         EnsureAvailabilityColumn(database.DataSource);
         EnsureRowVersionColumn(database.DataSource);
         EnsurePrepTimeColumn(database.DataSource);
+        EnsureHalfPortionColumn(database.DataSource);
         _categories = new PostgresCategoryRepository(database.DataSource);
         _taxProfiles = new PostgresTaxProfileRepository(database.DataSource);
         _modifierGroups = new PostgresModifierGroupRepository(database.DataSource);
@@ -63,6 +64,13 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
     {
         using var command = dataSource.CreateCommand(
             "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS prep_time_minutes INTEGER NULL;");
+        command.ExecuteNonQuery();
+    }
+
+    private static void EnsureHalfPortionColumn(NpgsqlDataSource dataSource)
+    {
+        using var command = dataSource.CreateCommand(
+            "ALTER TABLE catalog.products ADD COLUMN IF NOT EXISTS allows_half_portion BOOLEAN NOT NULL DEFAULT FALSE;");
         command.ExecuteNonQuery();
     }
 
@@ -294,6 +302,23 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
 
         var byCategory = await _products.GetByCategoryAsync(categoryId);
         Assert.Contains(byCategory, p => p.Id == id);
+    }
+
+    [Fact]
+    public async Task TheHalfPortionFlagDefaultsToOffAndSurvivesAnUpdate()
+    {
+        var id = Guid.NewGuid();
+        await _products.AddAsync(new Product(id, "SKU-HALF", "Half", ProductType.MenuItem, StockMode.Untracked));
+        Assert.False((await _products.GetByIdAsync(id))!.AllowsHalfPortion);
+
+        var flagged = (await _products.GetByIdAsync(id))!.WithAllowsHalfPortion(true);
+        await _products.UpdateAsync(flagged, flagged.RowVersion);
+        var reloaded = (await _products.GetByIdAsync(id))!;
+        Assert.True(reloaded.AllowsHalfPortion);
+
+        var renamed = reloaded.WithPrepTimeMinutes(10);
+        await _products.UpdateAsync(renamed, reloaded.RowVersion);
+        Assert.True((await _products.GetByIdAsync(id))!.AllowsHalfPortion);
     }
 
     [Fact]

@@ -96,7 +96,8 @@ public sealed class CatalogManagementStore
             request.CurrentPrice,
             request.Active,
             request.IsAvailable,
-            prepTimeMinutes: request.PrepTimeMinutes);
+            prepTimeMinutes: request.PrepTimeMinutes,
+            allowsHalfPortion: request.AllowsHalfPortion);
         await _products.AddAsync(product, cancellationToken);
         return ToDto(product);
     }
@@ -119,6 +120,8 @@ public sealed class CatalogManagementStore
             request.TaxProfileId,
             NormalizeOptional(request.Description, null, nameof(request.Description)),
             request.DisplayOrder);
+        if (request.AllowsHalfPortion is { } allowsHalfPortion)
+            updated = updated.WithAllowsHalfPortion(allowsHalfPortion);
         await _products.UpdateAsync(updated, product.RowVersion, cancellationToken);
         return ToDto(updated);
     }
@@ -358,7 +361,7 @@ public sealed class CatalogManagementStore
             """
             SELECT product_id, sku, name, product_type, stock_mode, category_id, tax_profile_id,
                    description, printer_route_policy, display_order, current_price, active, is_available,
-                   prep_time_minutes
+                   prep_time_minutes, allows_half_portion
             FROM catalog.products
             WHERE NOT @has_cursor
                OR (sku COLLATE "C", product_id) > (@cursor_code COLLATE "C", @cursor_id)
@@ -377,7 +380,7 @@ public sealed class CatalogManagementStore
                 reader.IsDBNull(7) ? null : reader.GetString(7),
                 reader.IsDBNull(8) ? null : reader.GetString(8),
                 reader.GetInt32(9), reader.IsDBNull(10) ? null : reader.GetDecimal(10), reader.GetBoolean(11),
-                reader.GetBoolean(12), reader.IsDBNull(13) ? null : reader.GetInt32(13)),
+                reader.GetBoolean(12), reader.IsDBNull(13) ? null : reader.GetInt32(13), reader.GetBoolean(14)),
             item => EncodeCursor(new CursorPayload("products", item.Sku, null, item.Id)),
             cancellationToken);
     }
@@ -674,7 +677,8 @@ public sealed class CatalogManagementStore
             value.CurrentPrice,
             value.Active,
             value.IsAvailable,
-            value.PrepTimeMinutes);
+            value.PrepTimeMinutes,
+            value.AllowsHalfPortion);
 
     private static ModifierGroupV1 ToDto(ModifierGroup value)
         => new(

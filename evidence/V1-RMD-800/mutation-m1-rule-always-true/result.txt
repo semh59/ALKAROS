@@ -1,0 +1,1 @@
+Başarısız! - Başarısız:     9, Başarılı:     5, Atlanan:     0, Toplam:    14, Süre: 537 ms - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)

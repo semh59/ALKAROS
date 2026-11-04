@@ -17,3 +17,27 @@ internal static class OrderMath
     public static decimal RoundQuantity(decimal value)
         => Math.Round(value, 3, MidpointRounding.AwayFromZero);
 }
+
+/// <summary>
+/// The unit rule for an ordered or refunded quantity: whole units for every product, half-unit steps (1.5) only for a
+/// product that allows half portions.
+/// </summary>
+public static class OrderQuantityRule
+{
+    public static bool IsAllowed(decimal quantity, bool allowsHalfPortion)
+        => quantity > 0m && quantity % (allowsHalfPortion ? 0.5m : 1m) == 0m;
+
+    /// <exception cref="OrderQuantityNotAllowedException">The product does not allow this quantity.</exception>
+    public static void Require(decimal quantity, bool allowsHalfPortion, Guid productId)
+    {
+        if (!IsAllowed(quantity, allowsHalfPortion))
+            throw new OrderQuantityNotAllowedException(productId, quantity);
+    }
+}
+
+public sealed class OrderQuantityNotAllowedException(Guid productId, decimal quantity) : ArgumentException(
+    $"Quantity {quantity} is not allowed for product {productId}: whole units only, or multiples of 0.5 for a product that allows half portions.",
+    nameof(quantity))
+{
+    public Guid ProductId { get; } = productId;
+}

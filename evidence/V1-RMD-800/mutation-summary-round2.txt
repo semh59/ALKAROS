@@ -1,0 +1,8 @@
+m6-draft-no-check D:\PROJECT\ALKAROS\src\Host\Experience\Orders\TableDraft\TableDraftService.cs(163,28): error CS0103: 'modifiers' adı geçerli bağlamda yok [D:\PROJECT\ALKAROS restored
+m14-draft-held-line-not-exempt Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 17 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8. restored
+m15-merge-total-unchecked Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 3 m 5 s - ALKAROS.Host.Tests.dll (net8.0) restored
+m7-refund-no-check Başarısız! - Başarısız:     3, Başarılı:     2, Atlanan:     0, Toplam:     5, Süre: 42 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m8-refund-no-legacy-line Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 51 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m9-refund-no-finish-left Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 39 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m10-refund-flag-ignored Başarısız! - Başarısız:     3, Başarılı:     2, Atlanan:     0, Toplam:     5, Süre: 34 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m16-refund-flag-on-fractional-line-free Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored

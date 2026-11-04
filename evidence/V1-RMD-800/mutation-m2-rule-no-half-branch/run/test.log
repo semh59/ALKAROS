@@ -1,0 +1,44 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Orders.OrderAggregate.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.47]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: True, expected: True) [FAIL]
+  Başarısız ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: True, expected: True) [59 ms]
+  Hata İletisi:
+   Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be True, but found False.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[xUnit.net 00:00:00.50]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: True, expected: True) [FAIL]
+  Başarısız ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: True, expected: True) [1 ms]
+  Hata İletisi:
+   Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be True, but found False.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-800\mutation-m2-rule-no-half-branch\run\semih_SEMH59_2026-11-04_13_02_02_net8.0.trx
+
+Başarısız! - Başarısız:     2, Başarılı:    12, Atlanan:     0, Toplam:    14, Süre: 102 ms - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)

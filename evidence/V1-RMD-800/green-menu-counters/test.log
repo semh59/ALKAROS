@@ -1,0 +1,16 @@
+  Geri y�klenecek projeler belirleniyor...
+  D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\ALKAROS.Menu.CounterProjection.Tests.csproj geri y�klendi (408 ms i�inde).
+  Geri y�kleme i�in 8 proje i�inden 7 tanesi g�ncel.
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Measurements\debug\ALKAROS.Measurements.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Menu\debug\ALKAROS.Menu.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Inventory\debug\ALKAROS.Inventory.dll
+  ALKAROS.Menu.CounterProjection.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Menu.CounterProjection.Tests\debug\ALKAROS.Menu.CounterProjection.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Menu.CounterProjection.Tests\debug\ALKAROS.Menu.CounterProjection.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-800\green-menu-counters\semih_SEMH59_2026-11-04_10_43_00_net8.0.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:    33, Atlanan:     0, Toplam:    33, Süre: 4 s - ALKAROS.Menu.CounterProjection.Tests.dll (net8.0)

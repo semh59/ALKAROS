@@ -157,9 +157,7 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(1L, await ScalarAsync<long>(source, columnCount));
         Assert.Equal(1L, await ScalarAsync<long>(source, constraintCount));
 
-        // A migration can only be rolled back once every later one is, so unwind from the newest down to 202.
-        foreach (var id in new[] { "210", "209", "208", "207", "206", "205", "204", "203", "202" })
-            Rollback(OrderPath(), MigrationsPath(), id);
+        RollBackDownTo("202");
         Assert.Equal(0L, await ScalarAsync<long>(source, columnCount));
         Assert.Equal(0L, await ScalarAsync<long>(source, constraintCount));
 
@@ -177,13 +175,46 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(2L, await ScalarAsync<long>(source, rules));
         Assert.Equal(0L, await ScalarAsync<long>(source, redundantIndex));
 
-        Rollback(OrderPath(), MigrationsPath(), "210");
-        Rollback(OrderPath(), MigrationsPath(), "209");
+        RollBackDownTo("209");
         Assert.Equal(0L, await ScalarAsync<long>(source, rules));
         Assert.Equal(1L, await ScalarAsync<long>(source, redundantIndex));
 
         Migrate(OrderPath(), MigrationsPath());
         Assert.Equal(2L, await ScalarAsync<long>(source, rules));
+    }
+
+    [Fact]
+    public async Task TheHalfPortionMigrationFlagsOnlyProductsAlreadySoldInFractionsAndRollsBackCleanly()
+    {
+        const string flags = "SELECT string_agg(sku || '=' || allows_half_portion::text, ' ' ORDER BY sku) FROM catalog.products;";
+        var (order, migrations) = CopyUpTo("215");
+        Migrate(order, migrations);
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        await source.CreateCommand(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode) VALUES
+                ('aaaaaaaa-0000-0000-0000-000000000001', 'S1', 'Half sold', 1, 1),
+                ('aaaaaaaa-0000-0000-0000-000000000002', 'S2', 'Whole sold', 1, 1);
+            INSERT INTO orders.orders (order_id, source, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES ('bbbbbbbb-0000-0000-0000-000000000001', 'Cashier', 'Submitted', 'NotRequired', 'O-800', now(), now());
+            INSERT INTO orders.order_items (order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate,
+                tax_amount, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, created_at, updated_at)
+            VALUES
+                (gen_random_uuid(), 'bbbbbbbb-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000001', 'Half sold', 1.5, 10, 10,
+                 1.36, 13.64, 15, 'Active', 'Sent', 'NotApplicable', now(), now()),
+                (gen_random_uuid(), 'bbbbbbbb-0000-0000-0000-000000000001', 'aaaaaaaa-0000-0000-0000-000000000002', 'Whole sold', 2, 10, 10,
+                 1.82, 18.18, 20, 'Active', 'Sent', 'NotApplicable', now(), now());
+            """).ExecuteNonQueryAsync();
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal("S1=true S2=false", await ScalarAsync<string>(source, flags));
+
+        Rollback(OrderPath(), MigrationsPath(), "216");
+        Assert.Equal(0L, await ScalarAsync<long>(source,
+            "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'catalog' AND table_name = 'products' AND column_name = 'allows_half_portion';"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal("S1=true S2=false", await ScalarAsync<string>(source, flags));
     }
 
     [Theory]
@@ -228,6 +259,17 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         var order = Path.Combine(_scratch, "order.json");
         File.WriteAllText(order, manifest.ToJsonString());
         return (order, migrations);
+    }
+
+    // A migration can only be rolled back once every later one is, so unwind from the newest down to the given id.
+    private void RollBackDownTo(string firstId)
+    {
+        var ids = JsonNode.Parse(File.ReadAllText(OrderPath()))!["migrations"]!.AsArray()
+            .Select(entry => entry!["id"]!.GetValue<string>())
+            .Where(id => string.CompareOrdinal(id, firstId) >= 0)
+            .OrderByDescending(id => id, StringComparer.Ordinal);
+        foreach (var id in ids)
+            Rollback(OrderPath(), MigrationsPath(), id);
     }
 
     private void Migrate(string order, string migrations) => Run(order, migrations, null);

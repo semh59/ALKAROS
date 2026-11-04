@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="49bdb993-53f5-4d19-ada1-1faa3109ad56" name="semih@SEMH59 2026-11-04 13:07:44" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T13:07:44.9136011+03:00" queuing="2026-11-04T13:07:44.9136014+03:00" start="2026-11-04T13:07:40.2552831+03:00" finish="2026-11-04T13:07:50.9314919+03:00" />
+  <TestSettings name="default" id="66c513d4-572f-4795-b4b0-37afd299fb08">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_13_07_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ba74b24d-93c0-4cdc-81a7-8ea6e24b6862" testId="6b0721f8-371c-34ef-18f6-851deea4c658" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: False, quantity: 0,5)" computerName="SEMH59" duration="00:00:00.3276253" startTime="2026-11-04T13:07:47.2535332+03:00" endTime="2026-11-04T13:07:47.2535336+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba74b24d-93c0-4cdc-81a7-8ea6e24b6862">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: BadRequest&#xD;
+Actual:   OK</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 36&#xD;
+   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="462be423-a65d-4e4b-a165-1a0599891f58" testId="56f84e41-463b-8e75-afa2-466d7341aa92" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: True, quantity: 2)" computerName="SEMH59" duration="00:00:00.3196326" startTime="2026-11-04T13:07:48.0455940+03:00" endTime="2026-11-04T13:07:48.0455942+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="462be423-a65d-4e4b-a165-1a0599891f58" />
+    <UnitTestResult executionId="de524f0b-2ab0-4520-ba8e-aed7a8fea81f" testId="78d2f040-d7d7-c07a-f530-5e8df35b2de6" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: True, quantity: 0,25)" computerName="SEMH59" duration="00:00:00.3137248" startTime="2026-11-04T13:07:45.7426193+03:00" endTime="2026-11-04T13:07:45.7426194+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de524f0b-2ab0-4520-ba8e-aed7a8fea81f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: BadRequest&#xD;
+Actual:   OK</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 36&#xD;
+   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="94ac16ed-e9c7-4466-92fb-9e4ea67628ec" testId="eebd03de-7b98-4cc6-f2d6-a17598dfb638" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: True, quantity: 1,5)" computerName="SEMH59" duration="00:00:00.3581935" startTime="2026-11-04T13:07:50.8441284+03:00" endTime="2026-11-04T13:07:50.8441286+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94ac16ed-e9c7-4466-92fb-9e4ea67628ec" />
+    <UnitTestResult executionId="c4b0dd6e-39f8-48da-abb3-4a0372de7fed" testId="d0b48bc2-d654-2860-2387-aa9fdde10079" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: True, quantity: 1,3)" computerName="SEMH59" duration="00:00:00.2814887" startTime="2026-11-04T13:07:46.4500372+03:00" endTime="2026-11-04T13:07:46.4500373+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c4b0dd6e-39f8-48da-abb3-4a0372de7fed">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: BadRequest&#xD;
+Actual:   OK</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 36&#xD;
+   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c2d25823-c769-454e-a2b7-29e64a043b15" testId="3dfcb935-8dde-68df-4e43-fc5792fbce58" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: False, quantity: 1,5)" computerName="SEMH59" duration="00:00:02.0586890" startTime="2026-11-04T13:07:44.8719523+03:00" endTime="2026-11-04T13:07:44.8719869+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2d25823-c769-454e-a2b7-29e64a043b15">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: BadRequest&#xD;
+Actual:   OK</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 36&#xD;
+   at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity) in D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5030aad1-f348-4ea1-93c0-8833d099cdbf" testId="0d3ec070-ca40-91a4-c5b9-3dea22cc6e2b" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: True, quantity: 0,5)" computerName="SEMH59" duration="00:00:00.3365403" startTime="2026-11-04T13:07:49.8865165+03:00" endTime="2026-11-04T13:07:49.8865168+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5030aad1-f348-4ea1-93c0-8833d099cdbf" />
+    <UnitTestResult executionId="4ff1926a-03f3-4cf8-ada3-9da9ca74672e" testId="1b7ffbac-769a-4dab-eec9-4dc492df81f8" testName="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: False, quantity: 2)" computerName="SEMH59" duration="00:00:00.3629555" startTime="2026-11-04T13:07:48.9116897+03:00" endTime="2026-11-04T13:07:48.9116901+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ff1926a-03f3-4cf8-ada3-9da9ca74672e" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: True, quantity: 0,25)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="78d2f040-d7d7-c07a-f530-5e8df35b2de6">
+      <Execution id="de524f0b-2ab0-4520-ba8e-aed7a8fea81f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: True, quantity: 0,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="0d3ec070-ca40-91a4-c5b9-3dea22cc6e2b">
+      <Execution id="5030aad1-f348-4ea1-93c0-8833d099cdbf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AnAllowedQuantityIsStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: True, quantity: 2)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="56f84e41-463b-8e75-afa2-466d7341aa92">
+      <Execution id="462be423-a65d-4e4b-a165-1a0599891f58" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AnAllowedQuantityIsStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: False, quantity: 0,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="6b0721f8-371c-34ef-18f6-851deea4c658">
+      <Execution id="ba74b24d-93c0-4cdc-81a7-8ea6e24b6862" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: False, quantity: 1,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="3dfcb935-8dde-68df-4e43-fc5792fbce58">
+      <Execution id="c2d25823-c769-454e-a2b7-29e64a043b15" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: True, quantity: 1,3)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="d0b48bc2-d654-2860-2387-aa9fdde10079">
+      <Execution id="c4b0dd6e-39f8-48da-abb3-4a0372de7fed" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: True, quantity: 1,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="eebd03de-7b98-4cc6-f2d6-a17598dfb638">
+      <Execution id="94ac16ed-e9c7-4466-92fb-9e4ea67628ec" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AnAllowedQuantityIsStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AnAllowedQuantityIsStoredExactly(allowsHalfPortion: False, quantity: 2)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.experience.orders.tabledraft.tests\debug\alkaros.host.experience.orders.tabledraft.tests.dll" id="1b7ffbac-769a-4dab-eec9-4dc492df81f8">
+      <Execution id="4ff1926a-03f3-4cf8-ada3-9da9ca74672e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug\ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests" name="AnAllowedQuantityIsStoredExactly" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6b0721f8-371c-34ef-18f6-851deea4c658" executionId="ba74b24d-93c0-4cdc-81a7-8ea6e24b6862" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="56f84e41-463b-8e75-afa2-466d7341aa92" executionId="462be423-a65d-4e4b-a165-1a0599891f58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78d2f040-d7d7-c07a-f530-5e8df35b2de6" executionId="de524f0b-2ab0-4520-ba8e-aed7a8fea81f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eebd03de-7b98-4cc6-f2d6-a17598dfb638" executionId="94ac16ed-e9c7-4466-92fb-9e4ea67628ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d0b48bc2-d654-2860-2387-aa9fdde10079" executionId="c4b0dd6e-39f8-48da-abb3-4a0372de7fed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3dfcb935-8dde-68df-4e43-fc5792fbce58" executionId="c2d25823-c769-454e-a2b7-29e64a043b15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d3ec070-ca40-91a4-c5b9-3dea22cc6e2b" executionId="5030aad1-f348-4ea1-93c0-8833d099cdbf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b7ffbac-769a-4dab-eec9-4dc492df81f8" executionId="4ff1926a-03f3-4cf8-ada3-9da9ca74672e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="4" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.75]   Discovering: ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:00.83]   Discovered:  ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+[xUnit.net 00:00:00.84]   Starting:    ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50346&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50346/api/v1/terminals/afb60365-819d-4cbc-bef4-4e3c6828ef2b/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50346/api/v1/terminals/afb60365-819d-4cbc-bef4-4e3c6828ef2b/orders/table-draft - 200 - application/json;+charset=utf-8 422.9461ms&#xD;
+[xUnit.net 00:00:03.96]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.96]       Expected: BadRequest&#xD;
+[xUnit.net 00:00:03.96]       Actual:   OK&#xD;
+[xUnit.net 00:00:03.96]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.96]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(36,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:03.96]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(39,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:03.96]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50352&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50352/api/v1/terminals/f2ec6a2b-13fa-44b9-a8f2-c540dacaeab1/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50352/api/v1/terminals/f2ec6a2b-13fa-44b9-a8f2-c540dacaeab1/orders/table-draft - 200 - application/json;+charset=utf-8 161.0635ms&#xD;
+[xUnit.net 00:00:04.83]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:04.84]       Expected: BadRequest&#xD;
+[xUnit.net 00:00:04.84]       Actual:   OK&#xD;
+[xUnit.net 00:00:04.84]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.84]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(36,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:04.84]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(39,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:04.84]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50358&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50358/api/v1/terminals/4344b151-b3d7-41ad-aad7-72c0ed77f1ee/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50358/api/v1/terminals/4344b151-b3d7-41ad-aad7-72c0ed77f1ee/orders/table-draft - 200 - application/json;+charset=utf-8 167.5365ms&#xD;
+[xUnit.net 00:00:05.54]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.54]       Expected: BadRequest&#xD;
+[xUnit.net 00:00:05.54]       Actual:   OK&#xD;
+[xUnit.net 00:00:05.54]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.54]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(36,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:05.54]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(39,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:05.54]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50365&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50365/api/v1/terminals/7f9d8e04-91c0-4c44-87b3-40ca08b6ed21/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50365/api/v1/terminals/7f9d8e04-91c0-4c44-87b3-40ca08b6ed21/orders/table-draft - 200 - application/json;+charset=utf-8 166.7181ms&#xD;
+[xUnit.net 00:00:06.35]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:06.35]       Expected: BadRequest&#xD;
+[xUnit.net 00:00:06.35]       Actual:   OK&#xD;
+[xUnit.net 00:00:06.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.35]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(36,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:06.35]         D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\TableDraft\TableDraftHalfPortionHttpTests.cs(39,0): at ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(Boolean allowsHalfPortion, Double quantity)&#xD;
+[xUnit.net 00:00:06.35]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50371&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50371/api/v1/terminals/b1c58c5a-7531-41ac-b1b4-0b171ee5c8cb/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50371/api/v1/terminals/b1c58c5a-7531-41ac-b1b4-0b171ee5c8cb/orders/table-draft - 200 - application/json;+charset=utf-8 184.1406ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58257&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58257/api/v1/terminals/a2ab48e5-19ce-459e-8a26-47ef08c84f74/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58257/api/v1/terminals/a2ab48e5-19ce-459e-8a26-47ef08c84f74/orders/table-draft - 200 - application/json;+charset=utf-8 226.0013ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58686&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58686/api/v1/terminals/ae973ce7-9d10-463d-9c17-1d8786dc1053/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58686/api/v1/terminals/ae973ce7-9d10-463d-9c17-1d8786dc1053/orders/table-draft - 200 - application/json;+charset=utf-8 167.3185ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58871&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.Orders.TableDraft.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58871/api/v1/terminals/0c1d1057-7609-40dd-a202-449087a69a76/orders/table-draft - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/table-draft'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58871/api/v1/terminals/0c1d1057-7609-40dd-a202-449087a69a76/orders/table-draft - 200 - application/json;+charset=utf-8 226.6749ms&#xD;
+[xUnit.net 00:00:09.94]   Finished:    ALKAROS.Host.Experience.Orders.TableDraft.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:07:44.8674655+03:00">
+        <Text>[xUnit.net 00:00:03.96]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: False, quantity: 1,5) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:07:45.7420390+03:00">
+        <Text>[xUnit.net 00:00:04.83]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: True, quantity: 0,25) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:07:46.4495736+03:00">
+        <Text>[xUnit.net 00:00:05.54]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: True, quantity: 1,3) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:07:47.2528975+03:00">
+        <Text>[xUnit.net 00:00:06.35]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.TableDraftHalfPortionHttpTests.AQuantityTheProductDoesNotAllowIsRefusedAndNothingIsStored(allowsHalfPortion: False, quantity: 0,5) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

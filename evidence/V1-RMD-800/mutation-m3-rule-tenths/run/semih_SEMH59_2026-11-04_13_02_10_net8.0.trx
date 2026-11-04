@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="22e682a4-a958-467b-b2a6-8831587ef6c3" name="semih@SEMH59 2026-11-04 13:02:10" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T13:02:10.1251509+03:00" queuing="2026-11-04T13:02:10.1251511+03:00" start="2026-11-04T13:02:09.0487397+03:00" finish="2026-11-04T13:02:10.1635965+03:00" />
+  <TestSettings name="default" id="eec13933-a04c-40a4-af0a-d0cbad63e0d7">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_13_02_10" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="301dcd72-b152-4692-af37-85c371d8a587" testId="3f0ea47d-62c3-c479-8c24-dd9d647eebf3" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0003268" startTime="2026-11-04T13:02:09.9869640+03:00" endTime="2026-11-04T13:02:09.9869641+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="301dcd72-b152-4692-af37-85c371d8a587" />
+    <UnitTestResult executionId="02c72674-d277-413c-a800-a1de7af36103" testId="749a6c46-1e08-8558-cbd3-59413bed152b" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0000058" startTime="2026-11-04T13:02:10.0902518+03:00" endTime="2026-11-04T13:02:10.0902519+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02c72674-d277-413c-a800-a1de7af36103" />
+    <UnitTestResult executionId="e6a1b3de-c529-4348-a02e-4d8e1f98983c" testId="ab70f1e0-2d9c-60e6-2d0f-4832828a30f7" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: False, expected: True)" computerName="SEMH59" duration="00:00:00.0123161" startTime="2026-11-04T13:02:09.9837871+03:00" endTime="2026-11-04T13:02:09.9838090+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e6a1b3de-c529-4348-a02e-4d8e1f98983c" />
+    <UnitTestResult executionId="366d3615-20d6-4b30-bab3-4f02189d7e6d" testId="0f638257-0bd3-aa36-2955-b014dde6b385" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,3, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0715216" startTime="2026-11-04T13:02:10.0621259+03:00" endTime="2026-11-04T13:02:10.0621264+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="366d3615-20d6-4b30-bab3-4f02189d7e6d">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected) in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1031&#xD;
+   at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="d217b6ad-97ab-4632-9d92-82c88e8782a3" testId="ba914132-8be6-4959-4a95-d2db4968de1e" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -1, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0000177" startTime="2026-11-04T13:02:10.0623703+03:00" endTime="2026-11-04T13:02:10.0623703+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d217b6ad-97ab-4632-9d92-82c88e8782a3" />
+    <UnitTestResult executionId="3e160258-1506-44b1-8688-3d19f3f7871f" testId="da754875-23a4-7693-f59c-02a4502f8806" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: True, expected: True)" computerName="SEMH59" duration="00:00:00.0000100" startTime="2026-11-04T13:02:09.9874020+03:00" endTime="2026-11-04T13:02:09.9874020+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3e160258-1506-44b1-8688-3d19f3f7871f" />
+    <UnitTestResult executionId="150cafa5-516d-4708-bb5e-02c82308f4bb" testId="6394d8be-d1b5-db9b-c3da-ac9394de1520" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: True, expected: True)" computerName="SEMH59" duration="00:00:00.0000041" startTime="2026-11-04T13:02:10.0903871+03:00" endTime="2026-11-04T13:02:10.0903871+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="150cafa5-516d-4708-bb5e-02c82308f4bb" />
+    <UnitTestResult executionId="e19f57dc-35db-4803-92c8-a87e246b7905" testId="4e45fee0-63fa-1666-20a0-0a620fbd235d" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: True, expected: True)" computerName="SEMH59" duration="00:00:00.0000051" startTime="2026-11-04T13:02:10.0905030+03:00" endTime="2026-11-04T13:02:10.0905031+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e19f57dc-35db-4803-92c8-a87e246b7905" />
+    <UnitTestResult executionId="cddd9483-ed82-4929-b093-ae839189bd9d" testId="84777056-736a-c946-7c35-e909aa4ff5d2" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -0,5, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0000053" startTime="2026-11-04T13:02:10.0624216+03:00" endTime="2026-11-04T13:02:10.0624217+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cddd9483-ed82-4929-b093-ae839189bd9d" />
+    <UnitTestResult executionId="7b006f02-47bd-46de-b783-5a01b2773949" testId="8629a5ee-1323-c240-0b1a-b047371c6f6a" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0000052" startTime="2026-11-04T13:02:10.0624711+03:00" endTime="2026-11-04T13:02:10.0624711+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b006f02-47bd-46de-b783-5a01b2773949" />
+    <UnitTestResult executionId="380f78b1-6c0b-43fc-aeaf-d78671cb5fc1" testId="a4c5d278-c592-bbda-7195-e8209d498303" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,001, allowsHalfPortion: False, expected: False)" computerName="SEMH59" duration="00:00:00.0000098" startTime="2026-11-04T13:02:09.9873409+03:00" endTime="2026-11-04T13:02:09.9873409+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="380f78b1-6c0b-43fc-aeaf-d78671cb5fc1" />
+    <UnitTestResult executionId="32b66166-4997-4e6c-8789-a2deca2c6050" testId="1a762a61-1575-f96c-3c8e-99947af0b36a" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 25, allowsHalfPortion: False, expected: True)" computerName="SEMH59" duration="00:00:00.0000038" startTime="2026-11-04T13:02:10.0904657+03:00" endTime="2026-11-04T13:02:10.0904657+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32b66166-4997-4e6c-8789-a2deca2c6050" />
+    <UnitTestResult executionId="d42a17b6-99a6-4007-b97c-a9579eb81637" testId="431dd95d-df28-fba8-5eab-461d1107a56b" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0000040" startTime="2026-11-04T13:02:10.0904280+03:00" endTime="2026-11-04T13:02:10.0904280+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d42a17b6-99a6-4007-b97c-a9579eb81637" />
+    <UnitTestResult executionId="a2a9fc60-e120-43cc-b826-f721258e5295" testId="881e4463-4a65-917f-31d7-d683fbd4f48c" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,25, allowsHalfPortion: True, expected: False)" computerName="SEMH59" duration="00:00:00.0000050" startTime="2026-11-04T13:02:10.0625189+03:00" endTime="2026-11-04T13:02:10.0625189+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2a9fc60-e120-43cc-b826-f721258e5295" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -0,5, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="84777056-736a-c946-7c35-e909aa4ff5d2">
+      <Execution id="cddd9483-ed82-4929-b093-ae839189bd9d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,001, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="a4c5d278-c592-bbda-7195-e8209d498303">
+      <Execution id="380f78b1-6c0b-43fc-aeaf-d78671cb5fc1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: False, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="ab70f1e0-2d9c-60e6-2d0f-4832828a30f7">
+      <Execution id="e6a1b3de-c529-4348-a02e-4d8e1f98983c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,3, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="0f638257-0bd3-aa36-2955-b014dde6b385">
+      <Execution id="366d3615-20d6-4b30-bab3-4f02189d7e6d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: True, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="4e45fee0-63fa-1666-20a0-0a620fbd235d">
+      <Execution id="e19f57dc-35db-4803-92c8-a87e246b7905" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="431dd95d-df28-fba8-5eab-461d1107a56b">
+      <Execution id="d42a17b6-99a6-4007-b97c-a9579eb81637" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="749a6c46-1e08-8558-cbd3-59413bed152b">
+      <Execution id="02c72674-d277-413c-a800-a1de7af36103" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 25, allowsHalfPortion: False, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="1a762a61-1575-f96c-3c8e-99947af0b36a">
+      <Execution id="32b66166-4997-4e6c-8789-a2deca2c6050" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: -1, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="ba914132-8be6-4959-4a95-d2db4968de1e">
+      <Execution id="d217b6ad-97ab-4632-9d92-82c88e8782a3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1, allowsHalfPortion: True, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="6394d8be-d1b5-db9b-c3da-ac9394de1520">
+      <Execution id="150cafa5-516d-4708-bb5e-02c82308f4bb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,5, allowsHalfPortion: True, expected: True)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="da754875-23a4-7693-f59c-02a4502f8806">
+      <Execution id="3e160258-1506-44b1-8688-3d19f3f7871f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0,25, allowsHalfPortion: True, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="881e4463-4a65-917f-31d7-d683fbd4f48c">
+      <Execution id="a2a9fc60-e120-43cc-b826-f721258e5295" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 0, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="3f0ea47d-62c3-c479-8c24-dd9d647eebf3">
+      <Execution id="301dcd72-b152-4692-af37-85c371d8a587" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,5, allowsHalfPortion: False, expected: False)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="8629a5ee-1323-c240-0b1a-b047371c6f6a">
+      <Execution id="7b006f02-47bd-46de-b783-5a01b2773949" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests" name="OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="3f0ea47d-62c3-c479-8c24-dd9d647eebf3" executionId="301dcd72-b152-4692-af37-85c371d8a587" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="749a6c46-1e08-8558-cbd3-59413bed152b" executionId="02c72674-d277-413c-a800-a1de7af36103" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ab70f1e0-2d9c-60e6-2d0f-4832828a30f7" executionId="e6a1b3de-c529-4348-a02e-4d8e1f98983c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0f638257-0bd3-aa36-2955-b014dde6b385" executionId="366d3615-20d6-4b30-bab3-4f02189d7e6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ba914132-8be6-4959-4a95-d2db4968de1e" executionId="d217b6ad-97ab-4632-9d92-82c88e8782a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da754875-23a4-7693-f59c-02a4502f8806" executionId="3e160258-1506-44b1-8688-3d19f3f7871f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6394d8be-d1b5-db9b-c3da-ac9394de1520" executionId="150cafa5-516d-4708-bb5e-02c82308f4bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e45fee0-63fa-1666-20a0-0a620fbd235d" executionId="e19f57dc-35db-4803-92c8-a87e246b7905" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84777056-736a-c946-7c35-e909aa4ff5d2" executionId="cddd9483-ed82-4929-b093-ae839189bd9d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8629a5ee-1323-c240-0b1a-b047371c6f6a" executionId="7b006f02-47bd-46de-b783-5a01b2773949" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a4c5d278-c592-bbda-7195-e8209d498303" executionId="380f78b1-6c0b-43fc-aeaf-d78671cb5fc1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a762a61-1575-f96c-3c8e-99947af0b36a" executionId="32b66166-4997-4e6c-8789-a2deca2c6050" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="431dd95d-df28-fba8-5eab-461d1107a56b" executionId="d42a17b6-99a6-4007-b97c-a9579eb81637" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="881e4463-4a65-917f-31d7-d683fbd4f48c" executionId="a2a9fc60-e120-43cc-b826-f721258e5295" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="14" executed="14" passed="13" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.22]   Discovering: ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:00.35]   Discovered:  ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:00.36]   Starting:    ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:00.50]       Expected OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion) to be False, but found True.&#xD;
+[xUnit.net 00:00:00.50]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:00.50]            at FluentAssertions.Primitives.BooleanAssertions`1.Be(Boolean expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:00.50]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1031,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Double quantity, Boolean allowsHalfPortion, Boolean expected)&#xD;
+[xUnit.net 00:00:00.50]            at InvokeStub_OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.50]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.53]   Finished:    ALKAROS.Orders.OrderAggregate.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T13:02:10.0601686+03:00">
+        <Text>[xUnit.net 00:00:00.50]     ALKAROS.Orders.OrderAggregate.Tests.OrderQuantityRuleTests.OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(quantity: 1,3, allowsHalfPortion: True, expected: False) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

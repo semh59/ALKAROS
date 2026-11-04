@@ -1,0 +1,13 @@
+m1-rule-always-true Başarısız! - Başarısız:     9, Başarılı:     5, Atlanan:     0, Toplam:    14, Süre: 537 ms - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0) restored
+m2-rule-no-half-branch Başarısız! - Başarısız:     2, Başarılı:    12, Atlanan:     0, Toplam:    14, Süre: 102 ms - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0) restored
+m3-rule-tenths Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 119 ms - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0) restored
+m4-add-no-check Başarısız! - Başarısız:     4, Başarılı:     5, Atlanan:     0, Toplam:     9, Süre: 1 m 45 s - ALKAROS.Host.Tests.dll (net8.0) restored
+m5-change-no-check Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 2 m 4 s - ALKAROS.Host.Tests.dll (net8.0) restored
+m6-draft-no-check Başarısız! - Başarısız:     4, Başarılı:     4, Atlanan:     0, Toplam:     8, Süre: 8 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0 restored
+m7-refund-no-check Başarısız! - Başarısız:     2, Başarılı:     2, Atlanan:     0, Toplam:     4, Süre: 15 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m8-refund-no-legacy-line Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 13 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m9-refund-no-finish-left Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 12 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m10-refund-flag-ignored Başarısız! - Başarısız:     2, Başarılı:     2, Atlanan:     0, Toplam:     4, Süre: 11 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) restored
+m11-repo-update-skips-column Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 346 ms - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0) restored
+m12-details-ignores-flag Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Catalog.Tests.dll (net8.0) restored
+m13-details-null-resets Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 456 ms - ALKAROS.Host.Experience.Catalog.Tests.dll (net8.0) restored

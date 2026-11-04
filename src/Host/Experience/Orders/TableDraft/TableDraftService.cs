@@ -132,19 +132,19 @@ public sealed class TableDraftService
         var validSeatIds = await ResolveValidSeatIdsAsync(
             connection, transaction, request.TableId, request.Items, cancellationToken);
 
+        var heldQuantities = existingOrder is null
+            ? []
+            : await ResolveHeldQuantitiesAsync(connection, transaction, existingOrder.OrderId, cancellationToken);
+
         var newItems = new List<OrderItem>();
         foreach (var i in request.Items)
         {
             if (!catalog.TryGetValue(i.ProductId, out var product))
                 throw new KeyNotFoundException($"Product {i.ProductId} was not found, is not available, or has no active price.");
-            // V1-RMD-146: the contract is decimal now, so a quantity smaller
-            // than the column's own precision would round to zero on the way
-            // in and the aggregate's quantity > 0 rule would never see it.
-            if (i.Quantity < MinimumOrderQuantity)
-                throw new ArgumentOutOfRangeException(
-                    nameof(request),
-                    $"Quantity for product {i.ProductId} must be at least {MinimumOrderQuantity}.");
-            var (productName, unitPrice, taxRate) = product;
+            var (productName, unitPrice, taxRate, allowsHalfPortion) = product;
+            // A line the order already holds at this quantity stays as it is when the flag is switched off later.
+            if (!heldQuantities.TryGetValue(i.Id, out var heldQuantity) || heldQuantity != i.Quantity)
+                OrderQuantityRule.Require(i.Quantity, allowsHalfPortion, i.ProductId);
             // V1-RMD-147: the contract carried a Modifiers field all along and
             // this constructor was hard-coded to null, so every extra a waiter
             // picked was silently dropped.
@@ -666,14 +666,27 @@ public sealed class TableDraftService
         return modifiers;
     }
 
-    private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate)>> ResolveCatalogProductsAsync(
+    private static async Task<Dictionary<Guid, decimal>> ResolveHeldQuantitiesAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var cmd = new NpgsqlCommand(
+            "SELECT order_item_id, quantity FROM orders.order_items WHERE order_id = @order_id;", connection, transaction);
+        cmd.Parameters.AddWithValue("order_id", orderId);
+        var result = new Dictionary<Guid, decimal>();
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result[reader.GetGuid(0)] = reader.GetDecimal(1);
+        return result;
+    }
+
+    private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate, bool AllowsHalfPortion)>> ResolveCatalogProductsAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         IEnumerable<Guid> productIds,
         CancellationToken cancellationToken)
     {
         var ids = productIds.Distinct().ToArray();
-        var result = new Dictionary<Guid, (string, decimal, decimal)>();
+        var result = new Dictionary<Guid, (string, decimal, decimal, bool)>();
         if (ids.Length == 0)
             return result;
 
@@ -689,7 +702,7 @@ public sealed class TableDraftService
         // One round trip for the whole draft instead of one per line.
         await using var cmd = new NpgsqlCommand(
             """
-            SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0)
+            SELECT p.product_id, p.name, p.current_price, COALESCE(t.vat_rate, 0), p.allows_half_portion
             FROM catalog.products p
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
             WHERE p.product_id = ANY(@product_ids) AND p.active AND p.is_available AND p.current_price IS NOT NULL;
@@ -698,7 +711,7 @@ public sealed class TableDraftService
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            result[reader.GetGuid(0)] = (reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3));
+            result[reader.GetGuid(0)] = (reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3), reader.GetBoolean(4));
         }
 
         return result;

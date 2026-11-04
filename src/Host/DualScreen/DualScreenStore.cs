@@ -401,6 +401,9 @@ public sealed partial class DualScreenStore
             ?? throw new DualScreenNotFoundException("Active order was not found for this terminal.");
 
         Order updated;
+        if (!remove && order.Items.FirstOrDefault(candidate => candidate.Id == itemId) is { } line)
+            await EnsureQuantityAllowedAsync(connection, transaction, line.ProductId, quantity, cancellationToken);
+
         try
         {
             updated = remove ? order.RemoveItem(itemId) : order.ChangeItemQuantity(itemId, quantity);
@@ -536,7 +539,7 @@ public sealed partial class DualScreenStore
             displayId, terminalId, null, 0, "Idle", false, null, [], 0, 0, 0, 0, "TRY",
             DateTimeOffset.UtcNow, "Sıradaki işlem bekleniyor.");
 
-    private sealed record ProductRow(string Sku, string Name, decimal UnitPrice, decimal TaxRate);
+    private sealed record ProductRow(string Sku, string Name, decimal UnitPrice, decimal TaxRate, bool AllowsHalfPortion);
     private sealed record CatalogRow(
         CatalogProductDto Product,
         int CategorySort,

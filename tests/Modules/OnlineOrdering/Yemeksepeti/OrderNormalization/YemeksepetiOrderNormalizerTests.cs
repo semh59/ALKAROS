@@ -19,6 +19,7 @@ public sealed class NormalizationTestDatabase : PgTestDatabase
                      "040-wave9-schema-additions.up.sql",
                      "053-catalog-products-row-version.up.sql",
                      "103-products-prep-time.up.sql",
+                     "216-product-half-portion.up.sql",
                      "144-yemeksepeti-product-mappings.up.sql",
                      "154-provider-neutral-inbox-and-mapping.up.sql"
                  })

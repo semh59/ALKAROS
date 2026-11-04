@@ -453,6 +453,52 @@ public sealed class DailyMenuCounterEndToEndTests : IClassFixture<CounterProject
         (await CountersAsync(seed.MenuItemId)).Should().Be(counters);
     }
 
+    [Fact]
+    public async Task AHalfPortionOrderCountsAsOneAndAHalfPortionsAndARefundedHalfGivesHalfBackMatchingRebuildAndDrift()
+    {
+        var seed = await SeedAsync();
+        await ReserveAsync(seed, 2.5m);
+        var orderItemId = Guid.NewGuid();
+        await SellDirectlyAsync(seed, orderItemId, 1.5m, ReservationChannel.Waiter);
+        await RecordConsumptionAsync(seed, orderItemId, 0.225m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ReservedPortions.Should().Be(2.5m);
+        counters.ConsumedPortions.Should().Be(1.5m);
+
+        await ReturnShareAsync(orderItemId, returned: 0.5m, previously: 0m, total: 1.5m);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(1m);
+
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+        var before = await CountersAsync(seed.MenuItemId);
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        (await CountersAsync(seed.MenuItemId)).Should().Be(before);
+    }
+
+    [Fact]
+    public async Task AVoidedHalfPortionLineGivesAllItsPortionsBackAndOneTheKitchenStartedIsWastedMatchingRebuildAndDrift()
+    {
+        var seed = await SeedAsync();
+        var notStarted = Guid.NewGuid();
+        var started = Guid.NewGuid();
+        await SellDirectlyAsync(seed, notStarted, 1.5m, ReservationChannel.Waiter);
+        await SellDirectlyAsync(seed, started, 2.5m, ReservationChannel.Waiter);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+        (await CountersAsync(seed.MenuItemId)).ConsumedPortions.Should().Be(4m);
+
+        await ReturnPortionsAsync(notStarted, 1.5m, 1.5m);
+        await WastePortionsAsync(started);
+        await OutboxTestDrain.DrainAsync(_db.DataSource, Consumers);
+
+        var counters = await CountersAsync(seed.MenuItemId);
+        counters.ConsumedPortions.Should().Be(0m);
+        counters.WastePortions.Should().Be(2.5m);
+        (await _projector.DetectDriftAsync(seed.MenuId)).HasDrift.Should().BeFalse();
+        await _projector.RebuildDailyMenuCountersAsync(seed.MenuId);
+        (await CountersAsync(seed.MenuItemId)).Should().Be(counters);
+    }
+
     private async Task AdjustAsync(Func<PostgresReservationAwareConsumptionGuard, NpgsqlConnection, NpgsqlTransaction, Task> adjust)
     {
         await using var conn = await _db.DataSource.OpenConnectionAsync();

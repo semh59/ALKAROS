@@ -1,0 +1,22 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Catalog\debug\ALKAROS.Catalog.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Catalog.ProductCatalog.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Catalog.ProductCatalog.Tests\debug\ALKAROS.Catalog.ProductCatalog.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Catalog.ProductCatalog.Tests\debug\ALKAROS.Catalog.ProductCatalog.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.90]     ALKAROS.Catalog.ProductCatalog.Tests.PostgresRepositoryTests.TheHalfPortionFlagDefaultsToOffAndSurvivesAnUpdate [FAIL]
+  Başarısız ALKAROS.Catalog.ProductCatalog.Tests.PostgresRepositoryTests.TheHalfPortionFlagDefaultsToOffAndSurvivesAnUpdate [346 ms]
+  Hata İletisi:
+   Assert.True() Failure
+Expected: True
+Actual:   False
+  Yığın İzleme:
+     at ALKAROS.Catalog.ProductCatalog.Tests.PostgresRepositoryTests.TheHalfPortionFlagDefaultsToOffAndSurvivesAnUpdate() in D:\PROJECT\ALKAROS\tests\Modules\Catalog\ProductCatalog\PostgresRepositoryTests.cs:line 317
+--- End of stack trace from previous location ---
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-800\mutation-m11-repo-update-skips-column\run\semih_SEMH59_2026-11-04_13_11_09_net8.0.trx
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 346 ms - ALKAROS.Catalog.ProductCatalog.Tests.dll (net8.0)

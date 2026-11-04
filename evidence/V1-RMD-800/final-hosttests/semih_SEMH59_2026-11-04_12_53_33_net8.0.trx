@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="847d6c76-86f8-474b-a8c5-313f3a6255d5" name="semih@SEMH59 2026-11-04 12:53:33" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T12:53:33.8257066+03:00" queuing="2026-11-04T12:53:33.8257069+03:00" start="2026-11-04T12:53:31.4201091+03:00" finish="2026-11-04T12:56:41.5318425+03:00" />
+  <TestSettings name="default" id="5a53973b-bba0-4d95-8ea4-e6cc8cdd9254">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_12_53_33" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ea30be24-0eea-4681-ac69-d202dd80ee25" testId="78627862-54d7-0ca4-657f-450135ae0786" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.RuntimeManifestContainsOnlyImplementedMigrationPairs" computerName="SEMH59" duration="00:00:00.0202434" startTime="2026-11-04T12:53:33.9132548+03:00" endTime="2026-11-04T12:53:33.9132552+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea30be24-0eea-4681-ac69-d202dd80ee25" />
+    <UnitTestResult executionId="22b6b6da-021c-4df2-ae4e-5e5e49a21649" testId="f7b76a2b-42b1-6ff8-b9a3-ed8fdc04f51f" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 0,5)" computerName="SEMH59" duration="00:00:00.1455068" startTime="2026-11-04T12:55:33.5017355+03:00" endTime="2026-11-04T12:55:33.5017360+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22b6b6da-021c-4df2-ae4e-5e5e49a21649" />
+    <UnitTestResult executionId="fcfddcba-c934-4eeb-a8e7-d6207363bb66" testId="2dc60f99-0b96-ff85-7eff-91c7bf83d017" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces" computerName="SEMH59" duration="00:00:00.0277928" startTime="2026-11-04T12:53:33.6640001+03:00" endTime="2026-11-04T12:53:33.6640394+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fcfddcba-c934-4eeb-a8e7-d6207363bb66" />
+    <UnitTestResult executionId="2f064ad5-b94f-4cea-b122-d32dbebec5c0" testId="59e5ebaa-4f31-f7b9-7701-48ae119fb183" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsNonZeroPaddedPosition" computerName="SEMH59" duration="00:00:00.0156643" startTime="2026-11-04T12:53:33.8054111+03:00" endTime="2026-11-04T12:53:33.8054117+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f064ad5-b94f-4cea-b122-d32dbebec5c0" />
+    <UnitTestResult executionId="a1a01333-3a30-4087-a73d-de8c221d6804" testId="cd2381c0-92db-e0f1-7218-199652831f7d" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsInvalidPhase" computerName="SEMH59" duration="00:00:00.0162738" startTime="2026-11-04T12:53:33.8219348+03:00" endTime="2026-11-04T12:53:33.8219352+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a1a01333-3a30-4087-a73d-de8c221d6804" />
+    <UnitTestResult executionId="158e4d6a-203e-4b78-8fd2-1dd4867d28fb" testId="ce863169-5a28-a1b5-e916-79f212f12ed4" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsMalformedJson" computerName="SEMH59" duration="00:00:00.0069168" startTime="2026-11-04T12:53:33.9364834+03:00" endTime="2026-11-04T12:53:33.9364839+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="158e4d6a-203e-4b78-8fd2-1dd4867d28fb" />
+    <UnitTestResult executionId="d44c1393-0278-47e6-b637-ea3c27fa59dc" testId="e367b460-37ec-8bcd-5c04-31018794125e" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDescendingPositions" computerName="SEMH59" duration="00:00:00.0149077" startTime="2026-11-04T12:53:33.7722650+03:00" endTime="2026-11-04T12:53:33.7722659+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d44c1393-0278-47e6-b637-ea3c27fa59dc" />
+    <UnitTestResult executionId="9f01f29f-fa1c-44a4-a10a-b6f282fdd2c7" testId="dacbfbe2-1e41-70e9-fee0-80ee668f6bd6" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: False, quantity: 2)" computerName="SEMH59" duration="00:00:00.0816042" startTime="2026-11-04T12:54:20.6217311+03:00" endTime="2026-11-04T12:54:20.6217315+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9f01f29f-fa1c-44a4-a10a-b6f282fdd2c7" />
+    <UnitTestResult executionId="d86ef7d4-956d-4664-af2c-d0c3321a34dc" testId="f9be8748-2ad8-bc04-1c76-d93cb3f8bf13" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 1,5)" computerName="SEMH59" duration="00:00:00.0781228" startTime="2026-11-04T12:54:50.3262949+03:00" endTime="2026-11-04T12:54:50.3262952+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d86ef7d4-956d-4664-af2c-d0c3321a34dc" />
+    <UnitTestResult executionId="94ed735f-5263-4bb7-ac74-de064e5864f4" testId="0c7f9fb1-7e94-63c7-733c-8d8d2b9ce1b8" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAEntryWithoutTables" computerName="SEMH59" duration="00:00:00.0157618" startTime="2026-11-04T12:53:33.9292196+03:00" endTime="2026-11-04T12:53:33.9292201+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="94ed735f-5263-4bb7-ac74-de064e5864f4" />
+    <UnitTestResult executionId="97fb303f-ea95-433d-acc7-ee3da74156c1" testId="cabad244-b5c7-3a50-ace7-e0ca7dae618b" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseBIdOutsideItsRange" computerName="SEMH59" duration="00:00:00.0150932" startTime="2026-11-04T12:53:33.7569840+03:00" endTime="2026-11-04T12:53:33.7569842+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97fb303f-ea95-433d-acc7-ee3da74156c1" />
+    <UnitTestResult executionId="842e7b94-7394-4505-9a1a-f8ccdd78b3b7" testId="30ebf039-4fce-3b6a-9486-cd2e9d6d2474" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 1,3)" computerName="SEMH59" duration="00:00:00.0533408" startTime="2026-11-04T12:55:58.8826336+03:00" endTime="2026-11-04T12:55:58.8826341+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="842e7b94-7394-4505-9a1a-f8ccdd78b3b7" />
+    <UnitTestResult executionId="c8508ffe-32bc-44ad-8d72-502b6064d4d2" testId="77c4efcd-88d6-bb48-3a28-bd3826801b27" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt" computerName="SEMH59" duration="00:00:00.1396701" startTime="2026-11-04T12:55:17.4151506+03:00" endTime="2026-11-04T12:55:17.4151510+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8508ffe-32bc-44ad-8d72-502b6064d4d2" />
+    <UnitTestResult executionId="a34c8acc-4ee7-4c59-97af-54c7ad514d34" testId="16543c63-75b0-c0ff-e689-4aeaf8cbb7b9" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 0,5)" computerName="SEMH59" duration="00:00:00.3036532" startTime="2026-11-04T12:53:53.3950024+03:00" endTime="2026-11-04T12:53:53.3950027+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a34c8acc-4ee7-4c59-97af-54c7ad514d34" />
+    <UnitTestResult executionId="8c7ef5ab-bb52-439b-9463-6590362ba5c3" testId="a49491bb-872c-7afe-0e27-13f309194451" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyDeferredConstraint" computerName="SEMH59" duration="00:00:00.0151468" startTime="2026-11-04T12:53:33.8437181+03:00" endTime="2026-11-04T12:53:33.8437184+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c7ef5ab-bb52-439b-9463-6590362ba5c3" />
+    <UnitTestResult executionId="cd0ed8fa-ca33-428f-a1d8-ed28cb973a1d" testId="b3aa50e2-4f53-2c1d-5659-14eed579fbf5" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 2)" computerName="SEMH59" duration="00:00:00.0763319" startTime="2026-11-04T12:54:36.2259062+03:00" endTime="2026-11-04T12:54:36.2259067+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd0ed8fa-ca33-428f-a1d8-ed28cb973a1d" />
+    <UnitTestResult executionId="f3dc238e-a6d7-4f54-be9a-34a4d1580801" testId="6bcad70c-4435-08db-47c0-62389c1be428" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadsWhenPositionsAreComplete" computerName="SEMH59" duration="00:00:00.0196338" startTime="2026-11-04T12:53:33.8635337+03:00" endTime="2026-11-04T12:53:33.8635343+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f3dc238e-a6d7-4f54-be9a-34a4d1580801" />
+    <UnitTestResult executionId="d57ed144-8822-4582-9a0a-e9575c4cbb3e" testId="cf62529d-d822-36d1-ba5a-98a67ae4834d" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadThrowsWhenFileIsMissing" computerName="SEMH59" duration="00:00:00.0050674" startTime="2026-11-04T12:53:33.7227092+03:00" endTime="2026-11-04T12:53:33.7227096+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d57ed144-8822-4582-9a0a-e9575c4cbb3e" />
+    <UnitTestResult executionId="bdc75d19-37de-419f-8137-2079784aad27" testId="b56f90ac-0bb2-9cea-3718-0330451b4611" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsUnsupportedVersion" computerName="SEMH59" duration="00:00:00.0062236" startTime="2026-11-04T12:53:33.8283848+03:00" endTime="2026-11-04T12:53:33.8283853+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bdc75d19-37de-419f-8137-2079784aad27" />
+    <UnitTestResult executionId="eefef7ef-c61b-4a99-b223-c9143b02a2f4" testId="8eebbe50-83e5-134c-975f-61da0a637a73" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyMigrationList" computerName="SEMH59" duration="00:00:00.0157438" startTime="2026-11-04T12:53:33.8794998+03:00" endTime="2026-11-04T12:53:33.8795001+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eefef7ef-c61b-4a99-b223-c9143b02a2f4" />
+    <UnitTestResult executionId="65297e37-0b7d-4890-8110-67cadbacf013" testId="f353b480-b204-2468-926d-c8be2bf4c178" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDuplicatePosition" computerName="SEMH59" duration="00:00:00.0732379" startTime="2026-11-04T12:53:33.7417384+03:00" endTime="2026-11-04T12:53:33.7417390+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="65297e37-0b7d-4890-8110-67cadbacf013" />
+    <UnitTestResult executionId="76b98f5d-4d3a-4d70-b4d2-9622d4285657" testId="3ca2f983-7b2d-ac37-71a3-1e171965cd5d" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 1,5)" computerName="SEMH59" duration="00:00:00.0459279" startTime="2026-11-04T12:56:14.3974170+03:00" endTime="2026-11-04T12:56:14.3974174+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76b98f5d-4d3a-4d70-b4d2-9622d4285657" />
+    <UnitTestResult executionId="593d34e5-f576-46b4-828c-d08095cbd5a4" testId="45b62088-4ffe-0a73-a2e1-aab0e98bb134" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyPhaseBEntry" computerName="SEMH59" duration="00:00:00.0050505" startTime="2026-11-04T12:53:33.8847761+03:00" endTime="2026-11-04T12:53:33.8847768+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="593d34e5-f576-46b4-828c-d08095cbd5a4" />
+    <UnitTestResult executionId="d2a3f9ec-ec86-4876-a172-87dc340fb10f" testId="69bc786f-ea2a-68f8-7912-359015106001" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered" computerName="SEMH59" duration="00:00:00.0078155" startTime="2026-11-04T12:53:33.8927892+03:00" endTime="2026-11-04T12:53:33.8927895+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d2a3f9ec-ec86-4876-a172-87dc340fb10f" />
+    <UnitTestResult executionId="697cf48a-784c-48e6-9617-65ff1bb70e02" testId="41b11327-5bd2-a9cf-6e46-201b4c5def0f" testName="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 0,25)" computerName="SEMH59" duration="00:00:00.0518148" startTime="2026-11-04T12:56:41.4295111+03:00" endTime="2026-11-04T12:56:41.4295117+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="697cf48a-784c-48e6-9617-65ff1bb70e02" />
+    <UnitTestResult executionId="769b5ad6-541a-452e-a731-1b98d84ae5a1" testId="7ef8a1b8-e972-ca16-1c49-5e1cf013ed49" testName="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAIdOutsideItsRange" computerName="SEMH59" duration="00:00:00.0171714" startTime="2026-11-04T12:53:33.7895286+03:00" endTime="2026-11-04T12:53:33.7895291+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="769b5ad6-541a-452e-a731-1b98d84ae5a1" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyPhaseBEntry" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="45b62088-4ffe-0a73-a2e1-aab0e98bb134">
+      <Execution id="593d34e5-f576-46b4-828c-d08095cbd5a4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsEmptyPhaseBEntry" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsMalformedJson" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="ce863169-5a28-a1b5-e916-79f212f12ed4">
+      <Execution id="158e4d6a-203e-4b78-8fd2-1dd4867d28fb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsMalformedJson" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="77c4efcd-88d6-bb48-3a28-bd3826801b27">
+      <Execution id="c8508ffe-32bc-44ad-8d72-502b6064d4d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="ChangingALineToAFractionIsRefusedUnlessTheProductAllowsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadsWhenPositionsAreComplete" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="6bcad70c-4435-08db-47c0-62389c1be428">
+      <Execution id="f3dc238e-a6d7-4f54-be9a-34a4d1580801" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestLoadsWhenPositionsAreComplete" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 0,25)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="41b11327-5bd2-a9cf-6e46-201b4c5def0f">
+      <Execution id="697cf48a-784c-48e6-9617-65ff1bb70e02" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyDeferredConstraint" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="a49491bb-872c-7afe-0e27-13f309194451">
+      <Execution id="8c7ef5ab-bb52-439b-9463-6590362ba5c3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsEmptyDeferredConstraint" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestLoadThrowsWhenFileIsMissing" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="cf62529d-d822-36d1-ba5a-98a67ae4834d">
+      <Execution id="d57ed144-8822-4582-9a0a-e9575c4cbb3e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestLoadThrowsWhenFileIsMissing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 1,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="f9be8748-2ad8-bc04-1c76-d93cb3f8bf13">
+      <Execution id="d86ef7d4-956d-4664-af2c-d0c3321a34dc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="69bc786f-ea2a-68f8-7912-359015106001">
+      <Execution id="d2a3f9ec-ec86-4876-a172-87dc340fb10f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ExtensionConsumerAndOwnershipAssertionRemainStrictlyOrdered" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsEmptyMigrationList" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="8eebbe50-83e5-134c-975f-61da0a637a73">
+      <Execution id="eefef7ef-c61b-4a99-b223-c9143b02a2f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsEmptyMigrationList" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="2dc60f99-0b96-ff85-7eff-91c7bf83d017">
+      <Execution id="fcfddcba-c934-4eeb-a8e7-d6207363bb66" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 2)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="b3aa50e2-4f53-2c1d-5659-14eed579fbf5">
+      <Execution id="cd0ed8fa-ca33-428f-a1d8-ed28cb973a1d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDescendingPositions" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="e367b460-37ec-8bcd-5c04-31018794125e">
+      <Execution id="d44c1393-0278-47e6-b637-ea3c27fa59dc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsDescendingPositions" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: False, quantity: 2)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="dacbfbe2-1e41-70e9-fee0-80ee668f6bd6">
+      <Execution id="9f01f29f-fa1c-44a4-a10a-b6f282fdd2c7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: True, quantity: 1,3)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="30ebf039-4fce-3b6a-9486-cd2e9d6d2474">
+      <Execution id="842e7b94-7394-4505-9a1a-f8ccdd78b3b7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAEntryWithoutTables" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="0c7f9fb1-7e94-63c7-733c-8d8d2b9ce1b8">
+      <Execution id="94ed735f-5263-4bb7-ac74-de064e5864f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsPhaseAEntryWithoutTables" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseBIdOutsideItsRange" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="cabad244-b5c7-3a50-ace7-e0ca7dae618b">
+      <Execution id="97fb303f-ea95-433d-acc7-ee3da74156c1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsPhaseBIdOutsideItsRange" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.RuntimeManifestContainsOnlyImplementedMigrationPairs" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="78627862-54d7-0ca4-657f-450135ae0786">
+      <Execution id="ea30be24-0eea-4681-ac69-d202dd80ee25" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="RuntimeManifestContainsOnlyImplementedMigrationPairs" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsPhaseAIdOutsideItsRange" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="7ef8a1b8-e972-ca16-1c49-5e1cf013ed49">
+      <Execution id="769b5ad6-541a-452e-a731-1b98d84ae5a1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsPhaseAIdOutsideItsRange" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsDuplicatePosition" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="f353b480-b204-2468-926d-c8be2bf4c178">
+      <Execution id="65297e37-0b7d-4890-8110-67cadbacf013" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsDuplicatePosition" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 1,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="3ca2f983-7b2d-ac37-71a3-1e171965cd5d">
+      <Execution id="76b98f5d-4d3a-4d70-b4d2-9622d4285657" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsUnsupportedVersion" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="b56f90ac-0bb2-9cea-3718-0330451b4611">
+      <Execution id="bdc75d19-37de-419f-8137-2079784aad27" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsUnsupportedVersion" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnUnitTheProductDoesNotAllowIsRefusedOnAdd(allowsHalfPortion: False, quantity: 0,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="f7b76a2b-42b1-6ff8-b9a3-ed8fdc04f51f">
+      <Execution id="22b6b6da-021c-4df2-ae4e-5e5e49a21649" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnUnitTheProductDoesNotAllowIsRefusedOnAdd" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests.AnAllowedUnitIsAddedAndStoredExactly(allowsHalfPortion: True, quantity: 0,5)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="16543c63-75b0-c0ff-e689-4aeaf8cbb7b9">
+      <Execution id="a34c8acc-4ee7-4c59-97af-54c7ad514d34" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.DualScreen.DualScreenHalfPortionTests" name="AnAllowedUnitIsAddedAndStoredExactly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsNonZeroPaddedPosition" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="59e5ebaa-4f31-f7b9-7701-48ae119fb183">
+      <Execution id="2f064ad5-b94f-4cea-b122-d32dbebec5c0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsNonZeroPaddedPosition" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Tests.Manifest.ManifestTests.ManifestRejectsInvalidPhase" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.host.tests\debug\alkaros.host.tests.dll" id="cd2381c0-92db-e0f1-7218-199652831f7d">
+      <Execution id="a1a01333-3a30-4087-a73d-de8c221d6804" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Tests\debug\ALKAROS.Host.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Tests.Manifest.ManifestTests" name="ManifestRejectsInvalidPhase" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="78627862-54d7-0ca4-657f-450135ae0786" executionId="ea30be24-0eea-4681-ac69-d202dd80ee25" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7b76a2b-42b1-6ff8-b9a3-ed8fdc04f51f" executionId="22b6b6da-021c-4df2-ae4e-5e5e49a21649" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2dc60f99-0b96-ff85-7eff-91c7bf83d017" executionId="fcfddcba-c934-4eeb-a8e7-d6207363bb66" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59e5ebaa-4f31-f7b9-7701-48ae119fb183" executionId="2f064ad5-b94f-4cea-b122-d32dbebec5c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cd2381c0-92db-e0f1-7218-199652831f7d" executionId="a1a01333-3a30-4087-a73d-de8c221d6804" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ce863169-5a28-a1b5-e916-79f212f12ed4" executionId="158e4d6a-203e-4b78-8fd2-1dd4867d28fb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e367b460-37ec-8bcd-5c04-31018794125e" executionId="d44c1393-0278-47e6-b637-ea3c27fa59dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dacbfbe2-1e41-70e9-fee0-80ee668f6bd6" executionId="9f01f29f-fa1c-44a4-a10a-b6f282fdd2c7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9be8748-2ad8-bc04-1c76-d93cb3f8bf13" executionId="d86ef7d4-956d-4664-af2c-d0c3321a34dc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c7f9fb1-7e94-63c7-733c-8d8d2b9ce1b8" executionId="94ed735f-5263-4bb7-ac74-de064e5864f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cabad244-b5c7-3a50-ace7-e0ca7dae618b" executionId="97fb303f-ea95-433d-acc7-ee3da74156c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="30ebf039-4fce-3b6a-9486-cd2e9d6d2474" executionId="842e7b94-7394-4505-9a1a-f8ccdd78b3b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="77c4efcd-88d6-bb48-3a28-bd3826801b27" executionId="c8508ffe-32bc-44ad-8d72-502b6064d4d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="16543c63-75b0-c0ff-e689-4aeaf8cbb7b9" executionId="a34c8acc-4ee7-4c59-97af-54c7ad514d34" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a49491bb-872c-7afe-0e27-13f309194451" executionId="8c7ef5ab-bb52-439b-9463-6590362ba5c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b3aa50e2-4f53-2c1d-5659-14eed579fbf5" executionId="cd0ed8fa-ca33-428f-a1d8-ed28cb973a1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6bcad70c-4435-08db-47c0-62389c1be428" executionId="f3dc238e-a6d7-4f54-be9a-34a4d1580801" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf62529d-d822-36d1-ba5a-98a67ae4834d" executionId="d57ed144-8822-4582-9a0a-e9575c4cbb3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b56f90ac-0bb2-9cea-3718-0330451b4611" executionId="bdc75d19-37de-419f-8137-2079784aad27" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8eebbe50-83e5-134c-975f-61da0a637a73" executionId="eefef7ef-c61b-4a99-b223-c9143b02a2f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f353b480-b204-2468-926d-c8be2bf4c178" executionId="65297e37-0b7d-4890-8110-67cadbacf013" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3ca2f983-7b2d-ac37-71a3-1e171965cd5d" executionId="76b98f5d-4d3a-4d70-b4d2-9622d4285657" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="45b62088-4ffe-0a73-a2e1-aab0e98bb134" executionId="593d34e5-f576-46b4-828c-d08095cbd5a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="69bc786f-ea2a-68f8-7912-359015106001" executionId="d2a3f9ec-ec86-4876-a172-87dc340fb10f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="41b11327-5bd2-a9cf-6e46-201b4c5def0f" executionId="697cf48a-784c-48e6-9617-65ff1bb70e02" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ef8a1b8-e972-ca16-1c49-5e1cf013ed49" executionId="769b5ad6-541a-452e-a731-1b98d84ae5a1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="26" executed="26" passed="26" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:01.15]   Discovering: ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:01.29]   Discovered:  ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:00:01.29]   Starting:    ALKAROS.Host.Tests&#xD;
+[xUnit.net 00:03:09.14]   Finished:    ALKAROS.Host.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

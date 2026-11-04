@@ -28,7 +28,7 @@ public sealed class AvailabilityTestDatabase : PgTestDatabase
         foreach (var file in new[]
                  {
                      "006-catalog.up.sql", "040-wave9-schema-additions.up.sql", "053-catalog-products-row-version.up.sql",
-                     "103-products-prep-time.up.sql", "059-stock-master.up.sql", "118-stock-items-reorder-point.up.sql",
+                     "103-products-prep-time.up.sql", "216-product-half-portion.up.sql", "059-stock-master.up.sql", "118-stock-items-reorder-point.up.sql",
                      "060-stock-movements.up.sql", "061-stock-balances.up.sql", "063-waste-records.up.sql",
                      "064-portion-reservations.up.sql", "065-reservation-balance-projection.up.sql",
                      "087-inventory-stock-balances-non-negative.up.sql", "144-yemeksepeti-product-mappings.up.sql",
