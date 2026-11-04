@@ -229,6 +229,9 @@ public static class BillingSplitApplication
             if (summary.AdjustedPayableAmount <= 0m)
                 await DualScreenApplication.TryCloseBillAsync(
                     billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+            else
+                await DualScreenApplication.NotifyCustomerDisplayAsync(
+                    customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
             return Results.Ok(new ApplyBillDiscountResultV1(
                 "Applied",
                 billId,
@@ -256,12 +259,16 @@ public static class BillingSplitApplication
             IBillingSplitSessionAuthorizer authorizer,
             BillingSplitStore store,
             IAuditEventStore auditEvents,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
             var (adjustment, summary) = await store.ApplyTipAsync(
                 billId, request, principal.UserId, auditEvents, context.TraceIdentifier, cancellationToken);
+            await DualScreenApplication.NotifyCustomerDisplayAsync(
+                customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
             return Results.Ok(new ApplyBillTipResultV1(
                 billId,
                 adjustment.Id,

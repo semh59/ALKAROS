@@ -412,7 +412,62 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
 
         var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
 
-        Assert.Equal(4.00m, Assert.Single(snapshot.Lines).LineTotal);
+        var line = Assert.Single(snapshot.Lines);
+        Assert.Equal(4.00m, line.LineTotal);
+        Assert.Equal(4.00m, line.DiscountAmount);
+    }
+
+    [Fact]
+    public async Task AnOrderBuiltThroughTheStoreShowsLinesThatAddUpToItsTotals()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
+        var added = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 3m, order.Revision), CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 2m, added.Revision), CancellationToken.None);
+
+        var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        var line = Assert.Single(snapshot.Lines);
+        Assert.Equal(5m, line.Quantity);
+        Assert.Equal(5.00m, line.LineTotal);
+        Assert.Equal(5.00m, snapshot.Subtotal);
+        Assert.Equal(0m, snapshot.DiscountTotal);
+        Assert.Equal(5.00m, snapshot.Total);
+    }
+
+    [Fact]
+    public async Task ADiscountedLineIsShownBeforeItsDiscountSoTheLinesAddUpToTheSubtotal()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 2m, order.Revision), CancellationToken.None);
+        await using (var discount = _dataSource!.CreateCommand(
+            """
+            UPDATE orders.order_items
+            SET discount_amount = 0.50, net_amount = 1.50, tax_amount = 0, gross_amount = 1.50
+            WHERE order_id = @order_id;
+            UPDATE orders.orders
+            SET subtotal = 2.00, discount_total = 0.50, total = 1.50
+            WHERE order_id = @order_id;
+            """))
+        {
+            discount.Parameters.AddWithValue("order_id", order.OrderId);
+            await discount.ExecuteNonQueryAsync();
+        }
+
+        var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        var line = Assert.Single(snapshot.Lines);
+        Assert.Equal(2.00m, line.LineTotal);
+        Assert.Equal(0.50m, line.DiscountAmount);
+        Assert.Equal(2.00m, snapshot.Subtotal);
+        Assert.Equal(0.50m, snapshot.DiscountTotal);
+        Assert.Equal(1.50m, snapshot.Total);
     }
 
     [Fact]
@@ -446,7 +501,9 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
 
         var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
 
-        Assert.Equal(7.00m, Assert.Single(snapshot.Lines).LineTotal);
+        var line = Assert.Single(snapshot.Lines);
+        Assert.Equal(7.00m, line.LineTotal);
+        Assert.Equal(7.00m, line.DiscountAmount);
     }
 
     [Fact]

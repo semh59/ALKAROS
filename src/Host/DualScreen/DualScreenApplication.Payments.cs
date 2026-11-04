@@ -110,29 +110,41 @@ public static partial class DualScreenApplication
             "Closing bill {BillId} after a payment failed; the bill stays open.");
 
     /// <summary>
+    /// Tells the terminal's customer display that what it shows has changed, so it reloads at once instead of at its
+    /// next poll. Best effort by design: nobody may be watching (no paired display, or it is offline), and a failed
+    /// push must never turn a successful payment, discount or tip into an error response.
+    /// </summary>
+    public static async Task NotifyCustomerDisplayAsync(
+        IHubContext<CustomerDisplayHub> hub, ILoggerFactory loggerFactory, Guid terminalId, Guid billId, string kind,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await hub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
+                CustomerDisplayHub.SnapshotChanged, new { kind }, cancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            DisplayPushFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure"), billId, exception);
+        }
+    }
+
+    /// <summary>
     /// V1-RMD-276: closes the bill after a successful tender. Best effort by design: the money
     /// has already been recorded, so a failure to flip the bill state must never turn a
     /// successful payment into an error response; the bill just stays open and the next
     /// tender or close attempt completes it.
-    /// </summary>
-    /// <summary>
-    /// V1-RMD-294: reproduced locally first, as the task required. CustomerDisplaySnapshotDto is built
-    /// entirely from orders.orders/order_items (DualScreenStore.Display.cs), so a bill DISCOUNT - which only
-    /// ever touches billing.bill_adjustments, never orders.orders - changes nothing the display's own
-    /// snapshot query reads; there is no stale amount to refresh there under today's data model. A COMPLETED
-    /// order (this order's own Total/Message fields DO change - see GetSnapshotAsync's Completed branch and
-    /// its own Turkish thank-you message) was the one real gap: nothing told the display, so it kept showing
-    /// the last active order forever after the bill that completed it was paid.
     /// </summary>
     public static async Task<bool> TryCloseBillAsync(
         IBillClosureService billClosure, OrderSettlementService orderSettlement, Guid billId,
         IHubContext<CustomerDisplayHub> hub, ILoggerFactory loggerFactory, Guid terminalId, CancellationToken cancellationToken)
     {
         var logger = loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure");
+        var closed = false;
         try
         {
             var result = await billClosure.TryCloseAsync(billId, cancellationToken);
-            var closed = result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
+            closed = result.Outcome is BillClosureOutcome.Closed or BillClosureOutcome.AlreadyClosed;
             // V1-RMD-282: a settled check closes its order (and frees a table it was still attached to).
             if (closed)
             {
@@ -147,26 +159,17 @@ public static partial class DualScreenApplication
                     OrderNotCompletedLog(logger, billId, exception);
                 }
             }
-            // Every tender moves what is left to pay, not only the one that closes the bill. Best effort: nobody
-            // may be watching (no paired display, or it is offline), and a failed push must never turn a
-            // successful payment into an error response - the display simply shows the stale state until its own
-            // next natural refresh.
-            try
-            {
-                await hub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
-                    CustomerDisplayHub.SnapshotChanged, new { kind = closed ? "BillSettled" : "PaymentChanged" }, cancellationToken);
-            }
-            catch (Exception exception) when (exception is not OperationCanceledException)
-            {
-                DisplayPushFailedLog(logger, billId, exception);
-            }
-            return closed;
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             CloseFailedLog(logger, billId, exception);
-            return false;
         }
+
+        // Every tender moves what is left to pay, not only the one that closes the bill, and the display must hear
+        // of it even when closing failed.
+        await NotifyCustomerDisplayAsync(
+            hub, loggerFactory, terminalId, billId, closed ? "BillSettled" : "PaymentChanged", cancellationToken);
+        return closed;
     }
 
     private static IResult MapManualResolutionError(ManualPaymentResolutionException exception)
@@ -710,17 +713,7 @@ public static partial class DualScreenApplication
                 context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
             var bound = await store.BindBillOrderToDisplayAsync(terminalId, billId, cancellationToken);
             if (bound)
-            {
-                try
-                {
-                    await customerDisplayHub.Clients.Group(TerminalGroup(terminalId)).SendAsync(
-                        CustomerDisplayHub.SnapshotChanged, new { kind = "PaymentChanged" }, cancellationToken);
-                }
-                catch (Exception exception) when (exception is not OperationCanceledException)
-                {
-                    DisplayPushFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure"), billId, exception);
-                }
-            }
+                await NotifyCustomerDisplayAsync(customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
             return Results.Ok(new ShowBillOnDisplayResultV1(bound));
         }).WithTags("PaymentTender").RequireRateLimiting("terminal-write");
 

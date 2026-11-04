@@ -20,22 +20,26 @@ public sealed class CustomerDisplayContractTests
     ];
     private static readonly string[] ExpectedProperties =
     [
-        "currency", "discountTotal", "displayId", "editable", "lines", "message", "orderId", "orderNumber",
-        "paidTotal", "remainingTotal", "revision", "serverTimestamp", "state", "subtotal", "taxTotal", "terminalId", "total",
+        "currency", "discountTotal", "displayId", "editable", "feeTotal", "lines", "message", "orderId", "orderNumber",
+        "paidTotal", "remainingTotal", "revision", "serverTimestamp", "state", "subtotal", "taxTotal", "terminalId", "tipTotal", "total",
     ];
+    private static readonly string[] ExpectedLineProperties = ["discountAmount", "itemId", "lineTotal", "name", "quantity", "unitPrice"];
 
     [Fact]
     public void SnapshotSerializesOnlyTheCustomerAllowlist()
     {
         var snapshot = new CustomerDisplaySnapshotDto(
             Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 7, "Active", true, "POS-7",
-            [new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 2, 100, 220)],
+            [new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 2, 100, 220, 0)],
             200, 0, 20, 220, "TRY", DateTimeOffset.UtcNow, "Siparişiniz hazırlanıyor.");
 
         using var json = JsonDocument.Parse(JsonSerializer.Serialize(snapshot, SerializerOptions));
         var properties = json.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray();
 
         Assert.Equal(ExpectedProperties, properties);
+        var lineProperties = json.RootElement.GetProperty("lines")[0].EnumerateObject()
+            .Select(property => property.Name).Order().ToArray();
+        Assert.Equal(ExpectedLineProperties, lineProperties);
         var serialized = json.RootElement.GetRawText();
         Assert.DoesNotContain("token", serialized, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("password", serialized, StringComparison.OrdinalIgnoreCase);

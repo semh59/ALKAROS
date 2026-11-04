@@ -147,7 +147,9 @@ export interface DisplayLine {
   name: string;
   quantity: number;
   unitPrice: number;
+  /** Before the line's own discount, so the lines add up to the subtotal. */
   lineTotal: number;
+  discountAmount: number;
 }
 
 export interface DisplaySnapshot {
@@ -169,6 +171,8 @@ export interface DisplaySnapshot {
   paidTotal: number;
   /** Null while the order has no live bill. */
   remainingTotal: number | null;
+  tipTotal: number;
+  feeTotal: number;
 }
 
 export interface PairingCreated {

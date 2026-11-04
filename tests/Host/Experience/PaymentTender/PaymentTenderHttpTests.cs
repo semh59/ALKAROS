@@ -1146,11 +1146,129 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         var billId = await _database.SeedBillAsync(payable: 100m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
-        var displayId = Guid.NewGuid();
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
 
+        var bound = await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { });
+        Assert.Equal(HttpStatusCode.OK, bound.StatusCode);
+        Assert.True((await bound.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("bound").GetBoolean());
+        var tender = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd785-eft" });
+        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
+
+        var snapshot = await DisplaySnapshotAsync(client, displayId, displayCookie);
+        Assert.Equal(60m, snapshot.GetProperty("paidTotal").GetDecimal());
+        Assert.Equal(40m, snapshot.GetProperty("remainingTotal").GetDecimal());
+        Assert.Equal(CustomerDisplayPaymentProgress.PartiallyPaidMessage, snapshot.GetProperty("message").GetString());
+
+        var active = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/orders/active", cookie))
+            .Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(40m, active.GetProperty("remainingTotal").GetDecimal());
+    }
+
+    [Fact]
+    public async Task TheCustomerDisplayStatementAddsUpAfterADiscountATipAndAPartialPayment()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(
+            terminalId, "g6-statement", true, "bills.discount", "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 200m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
+        var billPath = $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}";
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { })).StatusCode);
+
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, billPath + "/discount", cookie,
+            new { IdempotencyKey = "g6-discount", CalculationType = "Percentage", Value = 10m, ReasonCode = "PromotionalOffer" })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, billPath + "/tip", cookie,
+            new { IdempotencyKey = "g6-tip", Amount = 15m })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 100m, IdempotencyKey = "g6-eft" })).StatusCode);
+
+        var snapshot = await DisplaySnapshotAsync(client, displayId, displayCookie);
+        var line = Assert.Single(snapshot.GetProperty("lines").EnumerateArray());
+        Assert.Equal(200m, line.GetProperty("lineTotal").GetDecimal());
+        Assert.Equal(200m, snapshot.GetProperty("subtotal").GetDecimal());
+        Assert.Equal(20m, snapshot.GetProperty("discountTotal").GetDecimal());
+        Assert.Equal(15m, snapshot.GetProperty("tipTotal").GetDecimal());
+        Assert.Equal(195m, snapshot.GetProperty("total").GetDecimal());
+        Assert.Equal(100m, snapshot.GetProperty("paidTotal").GetDecimal());
+        Assert.Equal(95m, snapshot.GetProperty("remainingTotal").GetDecimal());
+        Assert.Equal(CustomerDisplayPaymentProgress.PartiallyPaidMessage, snapshot.GetProperty("message").GetString());
+    }
+
+    [Fact]
+    public async Task APaymentThatCompletesTheOrderLeavesTheDisplayWithTheRightTotalAndEverythingPaid()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "g6-completed", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 200m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tip", cookie,
+            new { IdempotencyKey = "g6-tip", Amount = 20m })).StatusCode);
+
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 220m, IdempotencyKey = "g6-eft" })).StatusCode);
+
+        var snapshot = await DisplaySnapshotAsync(client, displayId, displayCookie);
+        Assert.Equal("Completed", snapshot.GetProperty("state").GetString());
+        Assert.Equal(220m, snapshot.GetProperty("total").GetDecimal());
+        Assert.Equal(220m, snapshot.GetProperty("paidTotal").GetDecimal());
+        Assert.Equal(0m, snapshot.GetProperty("remainingTotal").GetDecimal());
+        Assert.Equal("Teşekkür ederiz.", snapshot.GetProperty("message").GetString());
+    }
+
+    [Fact]
+    public async Task ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "g6-cancel", true, "bills.cancel");
+        var billId = await _database.SeedBillAsync(payable: 200m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { })).StatusCode);
+        Assert.Equal("Active", (await DisplaySnapshotAsync(client, displayId, displayCookie)).GetProperty("state").GetString());
+
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/cancel", cookie, new { Reason = "Müşteri vazgeçti" })).StatusCode);
+
+        var snapshot = await DisplaySnapshotAsync(client, displayId, displayCookie);
+        Assert.Equal("Idle", snapshot.GetProperty("state").GetString());
+        Assert.Empty(snapshot.GetProperty("lines").EnumerateArray());
+        Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ABillOpenedAfterACancelledOneShowsOnlyTheNewBill()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "g6-reopen", true, "bills.split");
+        var cancelledBillId = await _database.SeedBillAsync(payable: 200m);
+        await _database.MarkBillCancelledAsync(cancelledBillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
+        var (newBillId, newItemId) = await _database.SeedReplacementBillAsync(cancelledBillId);
+        Assert.NotEqual(cancelledBillId, newBillId);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ShowOnDisplayPath(terminalId, newBillId), cookie, new { })).StatusCode);
+
+        var snapshot = await DisplaySnapshotAsync(client, displayId, displayCookie);
+        Assert.Equal("Active", snapshot.GetProperty("state").GetString());
+        Assert.Equal(newItemId, Assert.Single(snapshot.GetProperty("lines").EnumerateArray()).GetProperty("itemId").GetGuid());
+        Assert.Equal(200m, snapshot.GetProperty("total").GetDecimal());
+        Assert.Equal(200m, snapshot.GetProperty("remainingTotal").GetDecimal());
+    }
+
+    private static async Task<(Guid DisplayId, string Cookie)> PairDisplayAsync(HttpClient client, Guid terminalId, string cashierCookie)
+    {
+        var displayId = Guid.NewGuid();
         var pairing = await (await PostAsync(client, "/api/v1/customer-displays/pairing-requests", null, new { DisplayId = displayId }))
             .Content.ReadFromJsonAsync<JsonElement>();
-        var approved = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/pairings/approve", cookie,
+        var approved = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/pairings/approve", cashierCookie,
             new { Code = pairing.GetProperty("code").GetString() });
         Assert.Equal(HttpStatusCode.NoContent, approved.StatusCode);
         var completed = await PostAsync(client,
@@ -1160,24 +1278,12 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         var displayCookie = completed.Headers.GetValues("Set-Cookie")
             .Single(value => value.StartsWith(DualScreenApplication.DisplayCookieName + "=", StringComparison.Ordinal))
             .Split(';')[0];
-
-        var bound = await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { });
-        Assert.Equal(HttpStatusCode.OK, bound.StatusCode);
-        Assert.True((await bound.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("bound").GetBoolean());
-        var tender = await PostAsync(client, TendersPath(terminalId, billId), cookie,
-            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd785-eft" });
-        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
-
-        var snapshot = await (await GetAsync(client, $"/api/v1/customer-displays/{displayId:D}/snapshot", displayCookie))
-            .Content.ReadFromJsonAsync<JsonElement>();
-        Assert.Equal(60m, snapshot.GetProperty("paidTotal").GetDecimal());
-        Assert.Equal(40m, snapshot.GetProperty("remainingTotal").GetDecimal());
-        Assert.Equal(CustomerDisplayPaymentProgress.PartiallyPaidMessage, snapshot.GetProperty("message").GetString());
-
-        var active = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/orders/active", cookie))
-            .Content.ReadFromJsonAsync<JsonElement>();
-        Assert.Equal(40m, active.GetProperty("remainingTotal").GetDecimal());
+        return (displayId, displayCookie);
     }
+
+    private static async Task<JsonElement> DisplaySnapshotAsync(HttpClient client, Guid displayId, string displayCookie)
+        => await (await GetAsync(client, $"/api/v1/customer-displays/{displayId:D}/snapshot", displayCookie))
+            .Content.ReadFromJsonAsync<JsonElement>();
 
     [Fact]
     public async Task WithoutPaymentsTakeABillCannotBeShownOnTheCustomerDisplay()
@@ -1310,7 +1416,8 @@ internal sealed class PaymentTenderHttpTestDatabase
     /// A real cashier: a user with a cashier device session on <paramref name="terminalId"/> whose role holds
     /// payments.take (V1-RMD-401) unless <paramref name="takesPayments"/> is false.
     /// </summary>
-    public async Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken, bool takesPayments = true)
+    public async Task<string> SeedCashierSessionAsync(
+        Guid terminalId, string rawToken, bool takesPayments = true, params string[] extraPermissions)
     {
         var userId = Guid.NewGuid();
         var roleId = Guid.NewGuid();
@@ -1320,7 +1427,8 @@ internal sealed class PaymentTenderHttpTestDatabase
             VALUES (@user_id, @username, 'x', 'PaymentTender Test Cashier', true);
             INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'PaymentTender Test Cashier Role');
             INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code = 'payments.take' AND @takes_payments;
+            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions
+            WHERE (code = 'payments.take' AND @takes_payments) OR code = ANY(@extra_permissions);
             INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (gen_random_uuid(), @user_id, @role_id);
 
             INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
@@ -1330,6 +1438,7 @@ internal sealed class PaymentTenderHttpTestDatabase
         command.Parameters.AddWithValue("role_id", roleId);
         command.Parameters.AddWithValue("role_code", "pui001-cashier-" + roleId.ToString("N")[..8]);
         command.Parameters.AddWithValue("takes_payments", takesPayments);
+        command.Parameters.AddWithValue("extra_permissions", extraPermissions);
         command.Parameters.AddWithValue("username", "pui001-cashier-" + userId.ToString("N")[..8]);
         command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
         command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
@@ -1544,6 +1653,45 @@ internal sealed class PaymentTenderHttpTestDatabase
         await using var reader = await command.ExecuteReaderAsync();
         await reader.ReadAsync();
         return (reader.GetDecimal(0), reader.GetDecimal(1));
+    }
+
+    public Task MarkBillCancelledAsync(Guid billId)
+        => DataSource.CreateCommand("UPDATE billing.bills SET status = 'Cancelled', cancelled_at = now() WHERE bill_id = '" + billId + "';").ExecuteNonQueryAsync();
+
+    /// <summary>Copies the order item of <paramref name="billId"/> and opens a new bill holding just the copy.</summary>
+    public async Task<(Guid BillId, Guid ItemId)> SeedReplacementBillAsync(Guid billId)
+    {
+        var bills = new PostgresBillRepository(DataSource);
+        var old = await bills.GetByIdAsync(billId) ?? throw new InvalidOperationException("Bill was not found.");
+        var copiedItemId = Guid.NewGuid();
+        string columns;
+        await using (var read = DataSource.CreateCommand(
+            """
+            SELECT string_agg(quote_ident(column_name), ', ')
+            FROM information_schema.columns
+            WHERE table_schema = 'orders' AND table_name = 'order_items' AND column_name <> 'order_item_id';
+            """))
+            columns = (string)(await read.ExecuteScalarAsync())!;
+        await using (var copy = DataSource.CreateCommand(
+            $"INSERT INTO orders.order_items (order_item_id, {columns}) SELECT @new_id, {columns} FROM orders.order_items WHERE order_item_id = @old_id;"))
+        {
+            copy.Parameters.AddWithValue("new_id", copiedItemId);
+            copy.Parameters.AddWithValue("old_id", old.Items[0].OrderItemId);
+            await copy.ExecuteNonQueryAsync();
+        }
+
+        var order = await new PostgresOrderRepository(DataSource).GetByIdAsync(old.OrderId!.Value)
+            ?? throw new InvalidOperationException("Order was not found.");
+        var newBillId = Guid.NewGuid();
+        await bills.AddAsync(new Bill(
+            id: newBillId,
+            billNumber: "BILL-" + Guid.NewGuid().ToString("N")[..8],
+            items: [BillItem.FromOrderItem(newBillId, order.Items.Single(item => item.Id == copiedItemId))],
+            tableId: old.TableId,
+            orderId: order.Id,
+            status: BillState.Open,
+            currencyCode: "TRY"));
+        return (newBillId, copiedItemId);
     }
 
     public Task UncloseBillAsync(Guid billId)

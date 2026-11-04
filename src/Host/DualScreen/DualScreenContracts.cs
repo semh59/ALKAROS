@@ -134,8 +134,13 @@ public sealed record CustomerDisplayLineDto(
     string Name,
     decimal Quantity,
     decimal UnitPrice,
-    decimal LineTotal);
+    decimal LineTotal,
+    decimal DiscountAmount);
 
+/// <remarks>
+/// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and
+/// <c>Subtotal - DiscountTotal + FeeTotal + TipTotal = Total</c>. While the order has a live bill and nothing is over-allocated, <c>Total = PaidTotal + RemainingTotal</c>.
+/// </remarks>
 public sealed record CustomerDisplaySnapshotDto(
     Guid DisplayId,
     Guid TerminalId,
@@ -153,7 +158,9 @@ public sealed record CustomerDisplaySnapshotDto(
     DateTimeOffset ServerTimestamp,
     string Message,
     decimal PaidTotal = 0m,
-    decimal? RemainingTotal = null);
+    decimal? RemainingTotal = null,
+    decimal TipTotal = 0m,
+    decimal FeeTotal = 0m);
 
 public sealed record ApiErrorEnvelope([property: JsonPropertyName("error")] ApiError Error);
 

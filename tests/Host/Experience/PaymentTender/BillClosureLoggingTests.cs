@@ -9,29 +9,32 @@ namespace ALKAROS.Host.Experience.PaymentTender.Tests;
 public sealed class BillClosureLoggingTests
 {
     [Fact]
-    public async Task AFailedClosureIsLoggedAndTheAnswerIsNotClosed()
+    public async Task AFailedClosureIsLoggedAndTheAnswerIsNotClosedButTheDisplayStillHearsOfThePayment()
     {
         var logs = new CapturingLoggerFactory();
+        var hub = new RecordingHub();
 
         var closed = await DualScreenApplication.TryCloseBillAsync(
-            new ThrowingClosure(), null!, Guid.NewGuid(), null!, logs, Guid.NewGuid(), CancellationToken.None);
+            new ThrowingClosure(), null!, Guid.NewGuid(), hub, logs, Guid.NewGuid(), CancellationToken.None);
 
         Assert.False(closed);
-        Assert.Contains("BillCloseFailed", logs.Events);
+        Assert.Equal(["BillCloseFailed"], logs.Events);
+        Assert.Contains("PaymentChanged", Assert.Single(hub.Pushes).Argument);
     }
 
     [Fact]
     public async Task AClosedBillWhoseOrderCannotBeCompletedStaysClosedAndIsLogged()
     {
         var logs = new CapturingLoggerFactory();
+        var hub = new RecordingHub();
 
-        // The order hand-over and the display push both fail here (null collaborators); the bill itself closed.
+        // The order hand-over fails here (null settlement service); the bill itself closed.
         var closed = await DualScreenApplication.TryCloseBillAsync(
-            new FixedClosure(BillClosureOutcome.Closed), null!, Guid.NewGuid(), null!, logs, Guid.NewGuid(), CancellationToken.None);
+            new FixedClosure(BillClosureOutcome.Closed), null!, Guid.NewGuid(), hub, logs, Guid.NewGuid(), CancellationToken.None);
 
         Assert.True(closed);
-        Assert.Contains("BillClosedOrderNotCompleted", logs.Events);
-        Assert.Contains("BillClosedDisplayPushFailed", logs.Events);
+        Assert.Equal(["BillClosedOrderNotCompleted"], logs.Events);
+        Assert.Contains("BillSettled", Assert.Single(hub.Pushes).Argument);
     }
 
     [Fact]
@@ -50,6 +53,17 @@ public sealed class BillClosureLoggingTests
         Assert.Equal(DualScreenApplication.TerminalGroup(terminalId), push.Group);
         Assert.Equal(CustomerDisplayHub.SnapshotChanged, push.Method);
         Assert.Contains("PaymentChanged", push.Argument);
+    }
+
+    [Fact]
+    public async Task AFailedDisplayPushIsLoggedAndNeverThrows()
+    {
+        var logs = new CapturingLoggerFactory();
+
+        await DualScreenApplication.NotifyCustomerDisplayAsync(
+            null!, logs, Guid.NewGuid(), Guid.NewGuid(), "PaymentChanged", CancellationToken.None);
+
+        Assert.Equal(["BillClosedDisplayPushFailed"], logs.Events);
     }
 
     private sealed class RecordingHub : IHubContext<CustomerDisplayHub>

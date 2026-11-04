@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -1544,12 +1545,158 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 
-    private async Task<WebApplication> StartAsync()
+    [Fact]
+    public async Task ATipTellsTheCustomerDisplayAtOnce()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var hub = new RecordingHub();
+        await using var app = await StartAsync(hub);
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip", cookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 10m)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var push = Assert.Single(hub.Pushes);
+        Assert.Equal(DualScreenApplication.TerminalGroup(terminalId), push.Group);
+        Assert.Equal(CustomerDisplayHub.SnapshotChanged, push.Method);
+        Assert.Contains("PaymentChanged", push.Argument);
+    }
+
+    [Fact]
+    public async Task ARefusedTipTellsTheCustomerDisplayNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var hub = new RecordingHub();
+        await using var app = await StartAsync(hub);
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip", cookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 0m)));
+
+        Assert.False(response.IsSuccessStatusCode);
+        Assert.Empty(hub.Pushes);
+    }
+
+    [Theory]
+    [InlineData(10, "PaymentChanged")]
+    [InlineData(100, "BillSettled")]
+    public async Task ADiscountTellsTheCustomerDisplayAtOnceWhetherOrNotItSettlesTheBill(int percentage, string kind)
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        var hub = new RecordingHub();
+        await using var app = await StartAsync(hub);
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount", cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", percentage, "PromotionalOffer")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var push = Assert.Single(hub.Pushes);
+        Assert.Equal(DualScreenApplication.TerminalGroup(terminalId), push.Group);
+        Assert.Equal(CustomerDisplayHub.SnapshotChanged, push.Method);
+        Assert.Contains(kind, push.Argument);
+    }
+
+    [Fact]
+    public async Task ATipAndADiscountStillSucceedWhenTheCustomerDisplayCannotBeReached()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.split", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        var hub = new RecordingHub { Fails = true };
+        await using var app = await StartAsync(hub);
+        using var client = CreateClient(app);
+        var billPath = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}";
+
+        using var tip = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, billPath + "/tip", cookie, new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 10m)));
+        using var discount = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, billPath + "/discount", cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer")));
+
+        Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+        Assert.Equal(2, hub.Pushes.Count);
+    }
+
+    [Fact]
+    public async Task ARefusedDiscountTellsTheCustomerDisplayNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        var hub = new RecordingHub();
+        await using var app = await StartAsync(hub);
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount", cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 150m, "PromotionalOffer")));
+
+        Assert.False(response.IsSuccessStatusCode);
+        Assert.Empty(hub.Pushes);
+    }
+
+    private sealed class RecordingHub : IHubContext<CustomerDisplayHub>
+    {
+        public List<(string Group, string Method, string Argument)> Pushes { get; } = [];
+
+        public bool Fails { get; init; }
+
+        public IHubClients Clients => new RecordingClients(Pushes, Fails);
+
+        public IGroupManager Groups => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingClients(List<(string Group, string Method, string Argument)> pushes, bool fails) : IHubClients
+    {
+        public IClientProxy Group(string groupName) => new RecordingProxy(groupName, pushes, fails);
+
+        public IClientProxy All => throw new NotSupportedException();
+
+        public IClientProxy AllExcept(IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Client(string connectionId) => throw new NotSupportedException();
+
+        public IClientProxy Clients(IReadOnlyList<string> connectionIds) => throw new NotSupportedException();
+
+        public IClientProxy GroupExcept(string groupName, IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Groups(IReadOnlyList<string> groupNames) => throw new NotSupportedException();
+
+        public IClientProxy User(string userId) => throw new NotSupportedException();
+
+        public IClientProxy Users(IReadOnlyList<string> userIds) => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingProxy(string group, List<(string Group, string Method, string Argument)> pushes, bool fails) : IClientProxy
+    {
+        public Task SendCoreAsync(string method, object?[] args, CancellationToken cancellationToken = default)
+        {
+            pushes.Add((group, method, JsonSerializer.Serialize(args[0])));
+            return fails ? throw new InvalidOperationException("The display connection is down.") : Task.CompletedTask;
+        }
+    }
+
+    private async Task<WebApplication> StartAsync(IHubContext<CustomerDisplayHub>? hub = null)
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(NpgsqlDataSource.Create(_database.ConnectionString));
         builder.Services.AddBillingSplitExperience();
+        if (hub is not null)
+            builder.Services.AddSingleton(hub);
         var app = builder.Build();
         app.MapBillingSplitApi();
         await app.StartAsync();

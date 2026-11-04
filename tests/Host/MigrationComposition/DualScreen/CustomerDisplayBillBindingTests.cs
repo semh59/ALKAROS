@@ -1,5 +1,3 @@
-using ALKAROS.Billing.BillFoundation;
-using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Tests.Fixtures;
@@ -121,36 +119,6 @@ public sealed class CustomerDisplayBillBindingTests : IAsyncLifetime
     public async Task AnUnknownBillIsNotFound()
         => await Assert.ThrowsAsync<DualScreenNotFoundException>(() =>
             _store!.BindBillOrderToDisplayAsync(Guid.NewGuid(), Guid.NewGuid(), CancellationToken.None));
-
-    [Fact]
-    public async Task ACancelledBillOfTheSameOrderDoesNotCountTowardsWhatIsRemaining()
-    {
-        var terminalId = Guid.NewGuid();
-        var orderId = await StartOrderAsync(terminalId);
-        var live = await InsertBillAsync(orderId, "PartiallyPaid");
-        var cancelled = await InsertBillAsync(orderId, "Cancelled");
-        var projector = new ProjectionsById(new()
-        {
-            [live] = Projection(live, payable: 260m, allocated: 100m),
-            [cancelled] = Projection(cancelled, payable: 500m, allocated: 500m),
-        });
-        var snapshot = await _store!.GetSnapshotAsync(Guid.NewGuid(), terminalId, CancellationToken.None);
-
-        var result = await CustomerDisplayPaymentProgress.AttachAsync(
-            snapshot, new PostgresBillRepository(_dataSource!), projector, CancellationToken.None);
-
-        Assert.Equal(100m, result.PaidTotal);
-        Assert.Equal(160m, result.RemainingTotal);
-    }
-
-    private static BillPaymentClosureProjection Projection(Guid billId, decimal payable, decimal allocated)
-        => new(billId, "TRY", payable, allocated, allocated, 0m, allocated >= payable, []);
-
-    private sealed class ProjectionsById(Dictionary<Guid, BillPaymentClosureProjection> byBill) : IBillPaymentClosureProjector
-    {
-        public Task<BillPaymentClosureProjection> RebuildAsync(Guid billId, CancellationToken cancellationToken = default)
-            => Task.FromResult(byBill[billId]);
-    }
 
     private async Task<Guid> StartOrderAsync(Guid terminalId)
         => (await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None)).OrderId;

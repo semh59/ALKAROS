@@ -258,7 +258,7 @@ public sealed partial class DualScreenStore
         var lines = new List<CustomerDisplayLineDto>();
         await using (var lineCommand = CreateCommand(connection, transaction,
             """
-            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status,
+            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status, discount_amount,
                    COALESCE((SELECT sum(round(m.price_delta * m.quantity, 2))
                              FROM orders.order_item_modifiers m
                              WHERE m.order_item_id = i.order_item_id), 0)
@@ -274,23 +274,19 @@ public sealed partial class DualScreenStore
                 var quantity = reader.GetDecimal(2);
                 var unitPrice = reader.GetDecimal(3);
                 var storedGrossAmount = reader.GetDecimal(4);
-                var status = reader.GetString(5);
-                var modifierTotal = reader.GetDecimal(6);
-                // V1-CUI-011: a Complimentary item's own persisted
-                // gross_amount is 0 (PDF:I.28.1/V0-DOM-006 - "effective
-                // payable amounts" are zeroed), so showing it as-is would
-                // render the line as free/invisible instead of at its real
-                // price with the discount surfaced separately in
-                // DiscountTotal (same "real price + separate discount line"
-                // contract as BillItem.cs, V1-RMD-228). Reconstructed from
-                // unit_price/quantity plus the line's modifiers (menu prices
-                // are tax-inclusive, so that is the gross OrderItem's own
-                // constructor derives for a non-discounted line).
-                var lineTotal = status == "Complimentary"
+                var complimentary = reader.GetString(5) == "Complimentary";
+                var storedDiscount = reader.GetDecimal(6);
+                var modifierTotal = reader.GetDecimal(7);
+                // Every line is shown before its discount, so the lines add up to the order's subtotal and the
+                // discount is a figure of its own. A complimentary item's persisted gross_amount is 0, so its real
+                // price is rebuilt from unit price, quantity and modifiers (menu prices are tax-inclusive) and it
+                // counts as fully discounted.
+                var lineTotal = complimentary
                     ? Math.Round(unitPrice * quantity + modifierTotal, 2, MidpointRounding.AwayFromZero)
-                    : storedGrossAmount;
+                    : storedGrossAmount + storedDiscount;
                 lines.Add(new CustomerDisplayLineDto(
-                    reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal));
+                    reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal,
+                    complimentary ? lineTotal : storedDiscount));
             }
         }
 

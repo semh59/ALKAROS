@@ -28,6 +28,8 @@ const snapshot: DisplaySnapshot = {
   message: "Aktif",
   paidTotal: 0,
   remainingTotal: null,
+  tipTotal: 0,
+  feeTotal: 0,
 };
 
 describe("customer display freshness", () => {
