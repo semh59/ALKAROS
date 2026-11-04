@@ -15,6 +15,7 @@
 
   var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', Eft: 'EFT/Havale', Account: 'Hesaba yaz (cari)' };
 
+  var MAX_SPLIT_PEOPLE = 50;
   var state = {
     phase: 'checking',
     terminalId: null,
@@ -540,8 +541,9 @@
   }
 
   function submitEqualSplit() {
-    var count = Math.max(2, Math.round(Number(state.splitCount) || 2));
+    var count = Math.min(MAX_SPLIT_PEOPLE, Math.max(2, Math.round(Number(state.splitCount) || 2)));
     state.splitLeft = count;
+    state.splitCount = count;
     state.amountDraft = nextShare().toFixed(2);
     // V1-RMD-314: a recalculated split amount is a genuinely different tender attempt.
     state.tenderIdempotencyKey = null;
@@ -1784,7 +1786,7 @@
       (state.locked ? '' :
         renderFold('split', 'Eşit bölüştür',
           '<div class="sp-row">' +
-          '<input class="sp-input" type="number" min="2" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
+          '<input class="sp-input" type="number" min="2" max="' + MAX_SPLIT_PEOPLE + '" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
           '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
           '</div>' + renderSavedShares(), state.savedShares.length > 0) +
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
-import { formatMoney } from "../../format";
+import { formatMoney, formatDayMonthTime } from "../../format";
 import {
   OnlineMenuApiError,
   loadOnlineMenu,
@@ -17,7 +17,7 @@ import {
 import "./online-menu.css";
 
 const when = (iso: string) =>
-  new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  formatDayMonthTime(iso);
 const money = (value: number | null) => (value === null ? "—" : formatMoney(value));
 const failure = (error: unknown, fallback: string) => (error instanceof OnlineMenuApiError ? error.message : fallback);
 

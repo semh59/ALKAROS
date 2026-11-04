@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useId, useState } from "react";
-import { formatMoney } from "../../format";
+import { formatMoney, formatDayMonthTime } from "../../format";
 import { platformLabel } from "../online-operations";
 import {
   OnlineProblemsApiError,
@@ -14,7 +14,7 @@ import {
 import "./online-problems.css";
 
 const when = (iso: string) =>
-  new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  formatDayMonthTime(iso);
 const failure = (error: unknown, fallback: string) => (error instanceof OnlineProblemsApiError ? error.message : fallback);
 
 /**

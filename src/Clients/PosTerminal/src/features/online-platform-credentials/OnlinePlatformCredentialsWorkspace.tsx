@@ -8,10 +8,11 @@ import {
   saveOnlinePlatformCredentials,
   type OnlinePlatformCredentials,
 } from "./onlinePlatformCredentialsApi";
+import { formatShortDateTime } from "../../format";
 import "./online-platform-credentials.css";
 
 const dateTime = (iso: string) =>
-  new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  formatShortDateTime(iso);
 
 const failure = (error: unknown, fallback: string) => {
   if (!(error instanceof OnlinePlatformCredentialsApiError)) return fallback;

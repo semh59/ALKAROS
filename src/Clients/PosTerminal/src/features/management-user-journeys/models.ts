@@ -1,3 +1,4 @@
+import { formatDateTime } from "../../format";
 export interface ActionSummary { key: string; count: number; averageMilliseconds: number; maxMilliseconds: number; errorCount: number }
 export interface RequestSummary {
   traceId: string; method: string; route: string; statusCode: number; startedAt: string; durationMilliseconds: number;
@@ -13,6 +14,6 @@ export const stepKindLabel = label({ interaction: "Düğme", request: "İstek", 
 export const roleLabel = label({ cashier: "Kasiyer", waiter: "Garson", kitchen: "Mutfak", manager: "Müdür" });
 export const sortLabel = label({ slowest: "En yavaş", failing: "En hatalı", recent: "En yeni" });
 
-export const formatWhen = (iso: string) => new Date(iso).toLocaleString("tr-TR");
+export const formatWhen = (iso: string) => formatDateTime(iso);
 export const formatMilliseconds = (value: number) => `${Math.round(value).toLocaleString("tr-TR")} ms`;
 export const isGuid = (value: string) => /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value);

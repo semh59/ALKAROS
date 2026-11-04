@@ -7,6 +7,7 @@ import {
   printerProfileLabels,
   ticketStatusLabels,
 } from "../../strings";
+import { formatShortDateTime } from "../../format";
 
 export { backupStatusLabels, healthSnapshotStaleText, healthStatusLabels, itemStatusLabels, printerProfileLabels, ticketStatusLabels };
 
@@ -331,7 +332,7 @@ export function healthSnapshotStaleMessage(capturedAt: string): string {
   const captured = Date.parse(capturedAt);
   return Number.isNaN(captured)
     ? healthSnapshotStaleText.unreadable
-    : healthSnapshotStaleText.since(new Date(captured).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" }));
+    : healthSnapshotStaleText.since(formatShortDateTime(new Date(captured)));
 }
 
 export function healthStatusLabel(status: KitchenHealthSnapshot["databaseStatus"] | null | undefined): string {

@@ -1,7 +1,7 @@
 /* ALKAROS design tokens — V1 unified baseline.
  * Changes vs the pre-handoff file are marked CHANGED / NEW; every other value
- * is byte-identical. --ds-font-sans / --ds-font-mono require the font links in
- * index.html (see the note at the bottom of this file). */
+ * is byte-identical. --ds-font-sans / --ds-font-mono name the brand families first and
+ * fall back to the system fonts: no page loads a font from another host. */
 :root {
   color-scheme: light;
 
@@ -102,10 +102,3 @@
    * A single source for the countdown shown in the POS and the waiter PWA. */
   --ds-undo-window: 60s;
 }
-
-/* index.html additions required by --ds-font-sans / --ds-font-mono:
- *   <link rel="preconnect" href="https://fonts.googleapis.com">
- *   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- *   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
- * For an offline-capable terminal, self-host both families and swap the link
- * for local @font-face rules — the token values do not change. */

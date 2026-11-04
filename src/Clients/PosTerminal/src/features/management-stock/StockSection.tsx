@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Button, SelectField, StateMessage, TextField } from "../../design-system";
-import { formatQuantity } from "../../format";
+import { formatQuantity, formatDateTime, venueToday } from "../../format";
 import { commonActions, managementText } from "../../strings";
 import { createStockClient, type StockClient } from "./stockApi";
 import {
@@ -11,7 +11,7 @@ import { errorText } from "../management/panel";
 import "./management-stock.css";
 
 const t = managementText.stock;
-const today = () => new Date().toLocaleDateString("sv-SE");
+const today = () => venueToday();
 
 type Panel<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };
 
@@ -264,7 +264,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
           <thead><tr><th>{t.name}</th><th>{t.quantity}</th><th>{t.wasteSource}</th><th>{t.reason}</th><th>{t.recordedAt}</th></tr></thead>
           <tbody>{records.map((record) => <tr key={record.id}>
             <td>{itemName(record.stockItemId)}</td><td>{stat(record.quantity)} {record.unitCode}</td>
-            <td>{wasteSourceLabel(record.wasteSource)}</td><td>{record.reason}</td><td>{new Date(record.recordedAt).toLocaleString("tr-TR")}</td>
+            <td>{wasteSourceLabel(record.wasteSource)}</td><td>{record.reason}</td><td>{formatDateTime(record.recordedAt)}</td>
           </tr>)}</tbody>
         </table>)}
       </div>}

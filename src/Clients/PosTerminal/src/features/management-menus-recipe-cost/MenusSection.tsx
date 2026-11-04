@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { Button, SelectField, TextField } from "../../design-system";
-import { formatMoney, formatQuantity } from "../../format";
+import { formatMoney, formatQuantity, venueToday } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createMenusClient, type MenusClient } from "./api";
@@ -9,7 +9,7 @@ import { dailyMenuStatusLabel, parseNumber, type DailyMenuDetails, type DailyMen
 import "./management-menus-recipe-cost.css";
 
 const t = managementText.menus;
-const today = () => new Date().toLocaleDateString("sv-SE");
+const today = () => venueToday();
 type ItemEdit = { kind: "price" | "portions"; item: DailyMenuItem };
 
 export function MenusSection({ client }: ManagementSectionProps & { client?: MenusClient }) {

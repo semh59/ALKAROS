@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { playNewItemChime } from "../../audioAlerts";
-import { formatMoney } from "../../format";
+import { formatMoney, formatClockMinutes } from "../../format";
 import {
   OnlineOperationsApiError,
   acceptQrOrder,
@@ -30,7 +30,7 @@ const filters: readonly { value: SourceFilter; label: string }[] = [
   { value: "online", label: "Online platformlar" },
 ];
 
-const time = (iso: string) => new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+const time = (iso: string) => formatClockMinutes(iso);
 
 /**
  * V12-OUI-001: one queue for QR orders waiting for staff and online-channel orders. Every action is sent

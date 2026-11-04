@@ -7,6 +7,7 @@ import { createTableQrClient, type TableQrClient } from "./api";
 import type { TableQrRow } from "./models";
 import { QrCodeSvg } from "./QrCodeSvg";
 import "./management-table-qr.css";
+import { formatDateTime } from "../../format";
 
 const t = managementText.tableQr;
 
@@ -55,7 +56,7 @@ export function TableQrSection({ client }: Partial<ManagementSectionProps> & { c
         <thead><tr><th>{t.table}</th><th>{t.status}</th><th>{t.actions}</th></tr></thead>
         <tbody>{rows.map((row) => <tr key={row.tableId}>
           <td>{tableName(row)}</td>
-          <td>{row.qrIssuedAt ? `${t.hasQr} ${new Date(row.qrIssuedAt).toLocaleString("tr-TR")}` : t.noQr}</td>
+          <td>{row.qrIssuedAt ? `${t.hasQr} ${formatDateTime(row.qrIssuedAt)}` : t.noQr}</td>
           <td><div className="mtq__actions">
             {row.qrIssuedAt === null
               ? <Button data-telemetry-id="b.management-table-qr.tableqrsection.1" variant="secondary" disabled={busy} aria-label={`${t.issue} ${tableName(row)}`} onClick={() => void run(row, "issue")}>{t.issue}</Button>

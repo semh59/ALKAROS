@@ -16,6 +16,18 @@ export const formatClockMinutes = (value: string | Date) =>
 export const formatDateTime = (value: string | Date) =>
   new Date(value).toLocaleString("tr-TR", { timeZone: venueTimeZone });
 
+export const formatShortDateTime = (value: string | Date) =>
+  new Date(value).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short", timeZone: venueTimeZone });
+
+export const formatDayMonthTime = (value: string | Date) =>
+  new Date(value).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", timeZone: venueTimeZone });
+
+export const formatDate = (value: string | Date) =>
+  new Date(value).toLocaleDateString("tr-TR", { timeZone: venueTimeZone });
+
+/** The venue's current calendar day as yyyy-mm-dd, for a business-day field's default. */
+export const venueToday = () => new Date().toLocaleDateString("sv-SE", { timeZone: venueTimeZone });
+
 export const formatDecimal = (value: number, digits = 1) =>
   new Intl.NumberFormat("tr-TR", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
 

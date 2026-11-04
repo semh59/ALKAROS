@@ -1,3 +1,4 @@
+import { formatDateTime } from "../../format";
 export interface ErrorEventItem {
   fingerprint: string; layer: string; severity: string; category: string; status: string;
   occurrenceCount: number; firstSeenAt: string; lastSeenAt: string; terminalLabel: string | null; synthetic: boolean;
@@ -34,6 +35,6 @@ export const categoryLabel = label({
   "printer.delivery_unknown": "Yazdırma sonucu belirsiz", "printer.job_failed": "Yazdırma başarısız", "printer.queue_stuck": "Yazdırma kuyruğu takıldı",
 });
 
-export const formatWhen = (iso: string) => new Date(iso).toLocaleString("tr-TR");
+export const formatWhen = (iso: string) => formatDateTime(iso);
 export const fill = (template: string, ...values: readonly (string | number)[]) =>
   values.reduce<string>((text, value, index) => text.replace(`{${index}}`, String(value)), template);

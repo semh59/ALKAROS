@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ApiError, api } from "../api";
 import type { TokenTerminalCredentialStatus } from "../contracts";
 import { savedId } from "../storage";
+import { formatDateTime } from "../format";
 
 type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 
@@ -197,7 +198,7 @@ export function TokenTerminalSettings() {
           <h2>Token/Beko Terminal Bağlantısı</h2>
           <p>
             {status?.configured
-              ? "● Yapılandırıldı" + (status.updatedAt ? ` — son güncelleme: ${new Date(status.updatedAt).toLocaleString("tr-TR")}` : "")
+              ? "● Yapılandırıldı" + (status.updatedAt ? ` — son güncelleme: ${formatDateTime(status.updatedAt)}` : "")
               : "● Henüz yapılandırılmadı"}
           </p>
         </div>

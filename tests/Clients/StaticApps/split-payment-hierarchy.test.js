@@ -128,6 +128,29 @@ describe("split-payment.js page hierarchy", () => {
     expect(Boolean(fold("split").compareDocumentPosition(chips) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
   });
 
+  it("limits the equal split to 50 people in the field and in the maths", async () => {
+    await open();
+    expect($("split-count").max).toBe("50");
+  });
+
+  // 70 ₺ remaining: people -> each share
+  it.each([
+    ["500", "50", "1.40"],
+    ["51", "50", "1.40"],
+    ["50", "50", "1.40"],
+    ["1", "2", "35.00"],
+    ["", "2", "35.00"],
+  ])("splitting between %s people is calculated for %s people", async (typed, counted, share) => {
+    await open();
+
+    $("split-count").value = typed;
+    $("split-count").dispatchEvent(new Event("input", { bubbles: true }));
+    $("apply-split").click();
+
+    expect($("amount-draft").value).toBe(share);
+    expect($("split-count").value).toBe(counted);
+  });
+
   it("keeps the manual reconciliation warning first, above the summary, when the bill is locked", async () => {
     await open(locked);
 

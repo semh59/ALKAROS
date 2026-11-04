@@ -1,3 +1,4 @@
+import { formatDateTime } from "../../format";
 export interface UserLookup { userId: string; displayName: string; active: boolean; isLocked: boolean }
 export interface TerminalBinding { terminalId: string; bound: boolean; createdAt: string; lastUserName: string | null; lastLoginAt: string | null }
 export interface MaintenanceJob {
@@ -28,7 +29,7 @@ export const alertSeverityLabel = label({ Info: "Bilgi", Warning: "Uyarı", Crit
 export const alertStatusLabel = label({ Open: "Açık", Acknowledged: "Görüldü", Escalated: "Üst seviyeye taşındı", Suppressed: "Susturuldu", Resolved: "Çözüldü" });
 export const healthStatusLabel = label({ Healthy: "Sağlıklı", Degraded: "Kısmen bozuk", Unhealthy: "Sağlıksız" });
 
-export const formatWhen = (iso: string | null) => iso ? new Date(iso).toLocaleString("tr-TR") : "—";
+export const formatWhen = (iso: string | null) => iso ? formatDateTime(iso) : "—";
 
 export function formatDuration(seconds: number): string {
   if (seconds < 3600) return `${Math.round(seconds / 60)} dk`;

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { playNewItemChime } from "../../audioAlerts";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
-import { formatClockTime, formatDecimal, formatGigabytes } from "../../format";
+import { formatClockTime, formatDecimal, formatGigabytes, formatClockMinutes, formatShortDateTime } from "../../format";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
   healthSnapshotStaleMessage,
@@ -574,7 +574,7 @@ function formatMinutes(value: number): string {
 
 function formatHour(iso: string): string {
   const parsed = new Date(iso);
-  return Number.isNaN(parsed.getTime()) ? iso : parsed.toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", hour12: false });
+  return Number.isNaN(parsed.getTime()) ? iso : formatClockMinutes(parsed);
 }
 
 // V1-KIT-014/V1-KDS-009: mean AND median shown side by side on purpose —
@@ -762,7 +762,7 @@ function ItemRow({
 }
 
 function formatBackupDate(iso: string): string {
-  return new Date(iso).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" });
+  return formatShortDateTime(iso);
 }
 
 // V1-RMD-225: found by an independent audit (2026-09-16) - GetRecentBackupsAsync

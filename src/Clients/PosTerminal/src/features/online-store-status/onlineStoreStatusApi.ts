@@ -1,3 +1,4 @@
+import { formatClockMinutes } from "../../format";
 /** V12-ONL-011: open the restaurant, close it for today, or pause it as busy — per online platform. */
 
 export type StoreState = "Open" | "ClosedToday" | "Busy" | "ClosedUntil";
@@ -20,7 +21,7 @@ export class OnlineStoreStatusApiError extends Error {}
 
 export const busyChoices: readonly number[] = [30, 60];
 
-const time = (iso: string) => new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+const time = (iso: string) => formatClockMinutes(iso);
 
 // Every server value shown to a person goes through these; an unknown one is never shown raw.
 export function requestedText(status: OnlineStoreStatus): string {

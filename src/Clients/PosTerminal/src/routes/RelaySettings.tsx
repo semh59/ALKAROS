@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ApiError, api } from "../api";
 import type { RelayCredentialStatus } from "../contracts";
 import { savedId } from "../storage";
+import { formatDateTime } from "../format";
 
 type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
 
@@ -201,7 +202,7 @@ export function RelaySettings() {
           <h2>Uzaktan Sipariş Bağlantısı</h2>
           <p>
             {status?.configured
-              ? "● Yapılandırıldı" + (status.updatedAt ? ` — son güncelleme: ${new Date(status.updatedAt).toLocaleString("tr-TR")}` : "")
+              ? "● Yapılandırıldı" + (status.updatedAt ? ` — son güncelleme: ${formatDateTime(status.updatedAt)}` : "")
               : "● Henüz yapılandırılmadı"}
           </p>
         </div>
@@ -248,7 +249,7 @@ export function RelaySettings() {
             <p>
               {status.tunnelHostname
                 ? "● Etkin — " + status.tunnelHostname
-                  + (status.tunnelUpdatedAt ? ` (son güncelleme: ${new Date(status.tunnelUpdatedAt).toLocaleString("tr-TR")})` : "")
+                  + (status.tunnelUpdatedAt ? ` (son güncelleme: ${formatDateTime(status.tunnelUpdatedAt)})` : "")
                 : "● Henüz etkinleştirilmedi"}
             </p>
             {status.tunnelHostname && (

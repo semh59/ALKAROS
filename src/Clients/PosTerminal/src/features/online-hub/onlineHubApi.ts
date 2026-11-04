@@ -1,3 +1,4 @@
+import { formatDayMonthTime } from "../../format";
 /** V12-OUI-004: the online food screen's tabs and its platform status line. */
 
 export type OnlineHubTab = "orders" | "menu" | "problems" | "settings";
@@ -51,7 +52,7 @@ export const canSeeOnlineTab = (tab: OnlineHubTab, capabilities: ReadonlySet<str
 };
 
 const time = (iso: string) =>
-  new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  formatDayMonthTime(iso);
 
 /** One line per platform, in Turkish; never the raw status code. */
 export function channelStatusText(channel: OnlineChannelHealth): string {
