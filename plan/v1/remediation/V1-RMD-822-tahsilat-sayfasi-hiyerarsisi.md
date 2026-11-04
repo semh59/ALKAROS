@@ -29,6 +29,7 @@ Kapsam dışı: dokunma hedefi boyutları ve axe (V1-RMD-824); düşük kalemler
   - tests/E2E/Cashier/specs/18-discount-and-tip.spec.js (V1-RMD-298) — bölümü açar.
   - tests/E2E/Cashier/specs/21-accessibility-keyboard-and-labels.spec.js (V1-RMD-356) — bölümü açar.
   - tests/E2E/Cashier/specs/25-split-payment-accessibility.spec.js (V1-RMD-362) — bölümü açar.
+  - tests/E2E/Cashier/specs/14-till-queue-of-sent-checks.spec.js (V1-RMD-281) — geri gönder düğmesinin erişilebilir adı V1-RMD-821 ile değişti; arama kalıbı düzeltilir.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
