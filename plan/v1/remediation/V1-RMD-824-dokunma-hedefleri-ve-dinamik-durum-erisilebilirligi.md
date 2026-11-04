@@ -21,6 +21,7 @@ Kapsam dışı: düşük kalemler, yazı tipleri, dist (V1-RMD-823).
 ## Owned surface
 
 - `evidence/V1-RMD-824/**`
+- `src/Clients/PosTerminal/src/dynamic-a11y.test.ts`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css (V1-RMD-241) — çip ve kupür girdisi 48 px.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css (V1-RMD-443) — onay kutusu, ölü sekme stilleri, pasif düğme kontrastı.
@@ -31,7 +32,6 @@ Kapsam dışı: düşük kalemler, yazı tipleri, dist (V1-RMD-823).
   - src/Clients/PosTerminal/src/styles.css (V1-RMD-042) — arama kutusu 48 px.
   - src/Clients/PosTerminal/src/touchTargets.test.ts (V1-RMD-699) — arama kutusu kuralı.
   - tests/Clients/StaticApps/cashier-touch-targets.test.js (V1-RMD-109) — yeni dosya: vanilla kasa sayfaları boyut testi.
-  - src/Clients/PosTerminal/src/dynamic-a11y.test.ts (V1-RMD-092) — yeni dosya: dinamik durum axe ve kontrast testi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
