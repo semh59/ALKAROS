@@ -10,8 +10,8 @@
 
 Kasa incelemesinin G5 grubunun kesirli miktar kısmı (`7-birlesik-dogrulama.md` satır 13: `DualScreenStore.Orders.cs:224`, `PaymentRefunds.cs:236`). Bugün ürün bazında bayrak yok: sipariş miktarı `0 < q <= 999` aralığındaki herhangi bir ondalık olabiliyor (örneğin 1,3 veya 0,001), iade 3 ondalığa kadar kabul ediyor. PO kararı (2026-11-04): ürün formunda "yarım porsiyon olur" kutusu; yalnız işaretli üründe 1,5 gibi yarım katlı adet kabul edilir, diğer ürünlerde adet tam sayı olmalıdır.
 
-1. Katalog: `catalog.products.allows_half_portion` (varsayılan false). `Product` bayrağı taşır; yönetim uçları oluşturma, listeleme ve tek alan güncellemesi (`POST .../products/{id}/half-portion`) sunar. Bayrağın düşürülmesi mevcut siparişlere dokunmaz.
-2. Kural tek yerde: `OrderMath.IsQuantityAllowed(miktar, bayrak)` (miktar > 0; tam sayı her zaman; bayrak açıksa 0,5'in katı). Sipariş ekleme (kasa hattı `AddItemAsync`, miktar değiştirme `MutateExistingItemAsync`) ve masa taslağı (`TableDraftService`) bu kuralı katalogdan okunan bayrakla uygular; ihlalde 400. QR ve NFC müşteri kanalları miktarı zaten `int` taşır, değişmez.
+1. Katalog: `catalog.products.allows_half_portion` (varsayılan false). `Product` bayrağı taşır; yönetim uçları oluşturma, listeleme ve ürün ayrıntı güncellemesinde (`POST .../products/{id}/details`, alan boş bırakılırsa değer korunur) bayrağı taşır. Geçiş 216, daha önce kesirli adetle satılmış ürünlerin bayrağını açık başlatır (bayraktan önceki veri satışta kesilmez). Bayrağın düşürülmesi mevcut siparişlere dokunmaz.
+2. Kural tek yerde: `OrderMath.IsQuantityAllowed(miktar, bayrak)` (miktar > 0; tam sayı her zaman; bayrak açıksa 0,5'in katı). Sipariş ekleme (kasa hattı `AddItemAsync`, miktar değiştirme `MutateExistingItemAsync`) ve masa taslağı (`TableDraftService`) bu kuralı katalogdan okunan bayrakla uygular; ihlalde 400 ve sabit kod `ORDER_QUANTITY_NOT_ALLOWED` (Türkçe nedenli). QR ve NFC müşteri kanalları miktarı zaten `int` taşır, değişmez.
 3. İade: `PaymentRefunds.PriceItemsAsync` aynı kuralı uygular; geriye uyum için kalemin satış miktarı kesirliyse (bayraktan önceki veri) iade miktarı eskisi gibi en çok 3 ondalıkla serbesttir. Daha önce kaydedilmiş iade istekleri yeniden doğrulanmaz.
 4. Günlük menü sayaçları (`NUMERIC(10,3)`): 1,5 adetlik kalemin rezervasyonu, tüketimi ve iptal/iadede geri alınması 1,5 porsiyon olarak sayılır; bu testle kanıtlanır (kod değişmesi gerekirse düzeltilir).
 
@@ -60,6 +60,9 @@ Kapsam dışı: bayrağı kullanan arayüz (V1-RMD-803), çevrimiçi sağlayıc�
   - tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/YemeksepetiOrderNormalizerTests.cs (V12-ONL-007) — fixture migration listesi.
   - tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.csproj (V12-MAP-001) — migration fixture.
   - tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ProductMappingTestDatabase.cs (V12-MAP-001) — fixture migration listesi.
+  - src/Host/Composition/Errors/ApiErrorCatalog.cs (V1-RMD-431) — yeni hata kodu.
+  - src/Host/Experience/Orders/OrderManagementEndpoints.cs (V1-RMD-127) — masa taslağı hata eşlemesi.
+  - tests/Host/Errors/ApiErrorCatalogTests.cs (V1-RMD-431) — yeni hata kodu satırı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
