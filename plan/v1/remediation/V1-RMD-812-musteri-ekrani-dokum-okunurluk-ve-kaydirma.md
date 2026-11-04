@@ -1,7 +1,7 @@
 # V1-RMD-812 - Müşteri ekranı arayüzü: tutarlı döküm, tamamlanan ödeme, uzaktan okunurluk ve kaydırma
 
 - Task ID: V1-RMD-812
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
