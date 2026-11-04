@@ -142,7 +142,8 @@ body {
 .sp-summary-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px; font-size: 13px; }
 .sp-summary-row .value { font-weight: 700; color: var(--color-ink); }
 .sp-summary-row.is-total .value { font-size: 20px; }
-.sp-summary-row.is-remaining .value { color: var(--color-danger); }
+.sp-summary-row.is-remaining { padding: 8px 2px; font-size: 15px; font-weight: 700; }
+.sp-summary-row.is-remaining .value { font-size: 28px; color: var(--color-danger); }
 .sp-summary-row.is-remaining.is-zero .value { color: var(--color-success); }
 
 .sp-divider { height: 1px; background: var(--color-border); }
@@ -234,3 +235,10 @@ body {
   #receipt-print .sp-receipt-total td { font-weight: 700; }
   #receipt-print .sp-receipt-note { text-align: center; margin: 4px 0; }
 }
+
+.sp-fold { border-top: 1px solid var(--color-border); padding: 4px 0; }
+.sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }
+.sp-fold > summary::-webkit-details-marker { display: none; }
+.sp-fold > summary::before { content: "▸"; }
+.sp-fold[open] > summary::before { content: "▾"; }
+.sp-fold > summary:focus-visible { outline: 3px solid var(--color-focus, #1F4E79); outline-offset: 2px; }

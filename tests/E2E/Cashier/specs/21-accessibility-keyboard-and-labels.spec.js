@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readSeed, loginCashier } from '../lib/testHelpers.js';
-import { loginViaApi, createBill, openSplitPayment } from '../lib/paymentHelpers.js';
+import { loginViaApi, createBill, openSplitPayment, openFold } from '../lib/paymentHelpers.js';
 
 // V1-RMD-356 (independent 2026-09-26 audit, a low-severity finding): three accessibility gaps across the
 // vanilla Cashier client's static pages - a product card that was focusable (tabindex="0" role="button") but
@@ -65,6 +65,7 @@ test.describe('Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356)', () => {
     // Each of these has only a group-level <span class="sp-field-label"> in the markup (describing the whole
     // form, e.g. "İndirim / düzeltme ekle"), never one bound to the individual input - aria-label is what
     // makes getByLabel (and a screen reader) resolve them at all.
+    await openFold(page, 'discount-tip');
     await expect(page.getByLabel('İndirim gerekçesi')).toBeVisible();
     await expect(page.getByLabel('İndirim hesaplama türü')).toBeVisible();
     await expect(page.getByLabel('İndirim değeri')).toBeVisible();

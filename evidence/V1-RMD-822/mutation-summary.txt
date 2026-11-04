@@ -1,0 +1,1 @@
+M1 label, M2 Kalan size, M3 remember choice, M4 forced-open ignored, M4b forced-open sticky, M5 title, M6 forced-open condition: 7/7 killed (each run: 1-2 failed of 9), files restored with cmp.

@@ -1,0 +1,195 @@
+[global-setup] applied 215 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 44 tests using 1 worker
+
+  ok  1 [chromium] › specs\07-split-payment-bankcard-lock.spec.js:15:3 › Hesap Ödeme - kart tahsilatı kilidi (V13-PUI-001, V1-RMD-258) › kart tahsilatı asla onaylanmış görünmez, hesap kapanmaz, kilit yenilemede korunur (4.5s)
+  ok  2 [chromium] › specs\07-split-payment-bankcard-lock.spec.js:57:3 › Hesap Ödeme - kart tahsilatı kilidi (V13-PUI-001, V1-RMD-258) › sunucu, çözülmemiş kart tahsilatı varken doğrudan gelen yeni tahsilatı reddeder (1.2s)
+  ok  3 [chromium] › specs\08-split-payment-eft.spec.js:29:3 › Hesap Ödeme - EFT/Havale (V13-PAY-005, V13-PUI-004) › onay kutusu işaretlenmeden EFT eklenemez; işaretlenince tam tutar hesabı kapatır, para üstü yoktur (2.7s)
+  ok  4 [chromium] › specs\08-split-payment-eft.spec.js:58:3 › Hesap Ödeme - EFT/Havale (V13-PAY-005, V13-PUI-004) › onay yöntem değişince ve her başarılı tahsilattan sonra sıfırlanır; kısmi EFT kalanı düşürür (1.9s)
+  ok  5 [chromium] › specs\08-split-payment-eft.spec.js:81:3 › Hesap Ödeme - EFT/Havale (V13-PAY-005, V13-PUI-004) › klavye odağı yöntem seçimi ve onay kutusu yeniden çizimlerinde kaybolmaz (1.3s)
+  ok  6 [chromium] › specs\08-split-payment-eft.spec.js:102:3 › Hesap Ödeme - EFT/Havale (V13-PAY-005, V13-PUI-004) › not alanına yazılan öznitelik/HTML enjeksiyonu çalışmaz, yeniden çizimde olduğu gibi korunur (1.3s)
+  ok  7 [chromium] › specs\08-split-payment-eft.spec.js:121:3 › Hesap Ödeme - EFT/Havale (V13-PAY-005, V13-PUI-004) › sınır değerler: kalanı bir kuruş aşan, sıfır ve boş tutar istek çıkmadan reddedilir (2.0s)
+  ok  8 [chromium] › specs\09-split-payment-race-and-edges.spec.js:18:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › eşzamanlı tahsilatlar hesabı asla aşmaz: kazananlar uygulanır, kaybedenler Türkçe 409 alır (1.3s)
+  ok  9 [chromium] › specs\09-split-payment-race-and-edges.spec.js:46:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › aynı idempotency anahtarıyla tekrarlanan tahsilat ikinci bir tahsis oluşturmaz (968ms)
+  ok 10 [chromium] › specs\09-split-payment-race-and-edges.spec.js:63:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › V1-RMD-314 (K3): ağ hatası sonrası "tekrar dene" aynı idempotency anahtarını kullanır, mükerrer tahsis oluşturmaz (1.4s)
+  ok 11 [chromium] › specs\09-split-payment-race-and-edges.spec.js:86:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › eşit bölüşümün kuruş kalıntısı gizlenmez: kalan görünür kalır ve elle kapatılır (2.8s)
+  ok 12 [chromium] › specs\09-split-payment-race-and-edges.spec.js:115:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › tamamen ödenmiş hesap yeniden yüklenince "Hesap Ödendi" gösterir ve tahsilat formu açmaz (1.6s)
+  ok 13 [chromium] › specs\09-split-payment-race-and-edges.spec.js:129:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › geçersiz durumlar: billId yok, bilinmeyen billId ve oturumsuz erişim güvenli ekranlar gösterir (1.1s)
+  ok 14 [chromium] › specs\10-split-payment-cash-and-mixed.spec.js:25:3 › Hesap Ödeme - Nakit ve karma tahsilat (V13-CSH-004, V13-PUI-001) › açık kasa oturumunda Nakit seçilebilir ve varsayılandır; tam nakit hesabı kapatır (1.4s)
+  ok 15 [chromium] › specs\10-split-payment-cash-and-mixed.spec.js:45:3 › Hesap Ödeme - Nakit ve karma tahsilat (V13-CSH-004, V13-PUI-001) › Nakit + EFT karması yalnız sunucu tahsisleri hesabı tamamlayınca kapanır (1.9s)
+  ok 16 [chromium] › specs\10-split-payment-cash-and-mixed.spec.js:65:3 › Hesap Ödeme - Nakit ve karma tahsilat (V13-CSH-004, V13-PUI-001) › Nakit tutarı kalanı aşarsa istek çıkmadan reddedilir ve hesap değişmez (1.1s)
+  ok 17 [chromium] › specs\10-split-payment-cash-and-mixed.spec.js:77:3 › Hesap Ödeme - Nakit ve karma tahsilat (V13-CSH-004, V13-PUI-001) › bir sekmede kapanan hesap, açık kalan ikinci sekmede yeni tahsilatı sunucudan reddettirir (2.0s)
+  ok 18 [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:36:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › çözülmemiş kart tahsilatı olan masa PosTerminal'den devredilemez; hiçbir şey değişmez (4.0s)
+  ok 19 [chromium] › specs\11-cross-client-payment-aware-transfer.spec.js:88:3 › Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258) › kısmen ödenmiş (tüm ödemeleri çözülmüş) masa devredilir; tahsis aynı hesapta kalır (3.3s)
+  ok 20 [chromium] › specs\12-manual-card-payment-resolution.spec.js:24:3 › Kart ödemesinin elle çözümü (V1-RMD-264) › yetkisiz kasiyer çözemez; müdür "kart çekilmedi" der ve hesap kilidi kalkar (2.1s)
+  ok 21 [chromium] › specs\12-manual-card-payment-resolution.spec.js:60:3 › Kart ödemesinin elle çözümü (V1-RMD-264) › "kart çekildi": bir müdür fiş numarasıyla bildirir, KENDİSİ onaylayamaz; ikinci müdür onaylayınca hesap ödenir (2.0s)
+  ok 22 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:21:3 › Kasa: canlı bekleyen hesap bildirimi (V1-RMD-287) › garson hesabı gönderince sayfa yenilenmeden kuyrukta belirir (2.8s)
+  ok 23 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:39:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › garsonun gönderdiği iki hesap ayırt edilir, biri tahsil edilince yalnız o kuyruktan çıkar (5.1s)
+  x  24 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:90:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › yanlışlıkla gönderilen hesap kasadan masaya geri gönderilir; tahsilat başlamış hesapta seçenek yoktur (33.2s)
+  ok 25 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:134:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › kuyruk boşken bunu söyler (1.7s)
+  ok 26 [chromium] › specs\15-session-expiry.spec.js:9:3 › Statik Kasa sayfaları: oturum düşünce giriş ekranına döner (V1-RMD-291) › Hesap Ödeme: tahsilat sırasında 401 alınca giriş ekranına döner (1.6s)
+  ok 27 [chromium] › specs\15-session-expiry.spec.js:30:3 › Statik Kasa sayfaları: oturum düşünce giriş ekranına döner (V1-RMD-291) › Kasa Oturumu: vardiya açılışı sırasında 401 alınca gerçek giriş formuna döner (1.0s)
+  ok 28 [chromium] › specs\16-customer-display-refresh-on-payment.spec.js:12:3 › Müşteri ekranı: ödeme siparişi tamamlayınca anında günceller (V1-RMD-294) › son tahsilat siparişi tamamlayınca eşleştirilmiş ekran 2 sn içinde "Teşekkür ederiz." gösterir (5.2s)
+  ok 29 [chromium] › specs\18-discount-and-tip.spec.js:14:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › indirim ve bahşiş kaydedilir; tahsilat tavanı düzeltilmiş tutara göre gerçekten değişir (3.5s)
+  ok 30 [chromium] › specs\18-discount-and-tip.spec.js:53:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › bahşiş dahil düzeltilmiş tutar artık gerçekten tahsil edilebiliyor; onu aşan tutar hâlâ reddedilir (2.2s)
+  ok 31 [chromium] › specs\18-discount-and-tip.spec.js:75:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › yetkisiz kullanıcı reddedilir: indirim isteği yönetici onayına düşer, ret Türkçe gösterilir (1.5s)
+  x  32 [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (33.8s)
+  x  33 [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra bahşiş: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (34.1s)
+  ok 34 [chromium] › specs\21-accessibility-keyboard-and-labels.spec.js:14:3 › Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356) › ürün kartı Enter/Space ile sepete eklenir; miktar düğmeleri ve arama kutusu adlandırılmıştır (2.0s)
+  ok 35 [chromium] › specs\21-accessibility-keyboard-and-labels.spec.js:43:3 › Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356) › Kasa Oturumu giriş ve açılış alanları <label for> ile programatik olarak bağlanmıştır (955ms)
+  ok 36 [chromium] › specs\21-accessibility-keyboard-and-labels.spec.js:57:3 › Kasa erişilebilirlik: klavye ve etiketler (V1-RMD-356) › Tahsilat ekranındaki indirim ve bahşiş alanları erişilebilir adlar taşır (1.6s)
+  ok 37 [chromium] › specs\25-split-payment-accessibility.spec.js:7:3 › Hesap Ödeme - erişilebilirlik (V1-RMD-362) › hata/uyarı kutuları role taşır; ödeme yöntemi seçimi radiogroup/radio semantiğine sahip (1.7s)
+  ok 38 [chromium] › specs\29-split-payment-pending-confirmation-poll.spec.js:15:3 › Hesap Ödeme - onay bekleyen kart tahsilatı otomatik güncellenir (V1-RMD-378) › ikinci müdürün onayı, ilk müdürün açık ekranına sayfa yenilenmeden yansır (7.2s)
+  ok 39 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 768 px genişlikte pencere içinde ve tıklanabilir (1.5s)
+  ok 40 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 929 px genişlikte pencere içinde ve tıklanabilir (1.4s)
+  ok 41 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1024 px genişlikte pencere içinde ve tıklanabilir (1.4s)
+  ok 42 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1440 px genişlikte pencere içinde ve tıklanabilir (1.5s)
+  ok 43 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:25:3 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › ödeme sayfasından "Kasaya dön" ana kasaya götürür (1.3s)
+  ok 44 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:36:3 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › kasa oturumu sayfasından "Kasaya dön" hızlı kasaya götürür (1.0s)
+[global-teardown] Host stopped, database dropped
+
+
+  1) [chromium] › specs\14-till-queue-of-sent-checks.spec.js:90:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › yanlışlıkla gönderilen hesap kasadan masaya geri gönderilir; tahsilat başlamış hesapta seçenek yoktur 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /hesabını masaya geri gönder/ }).filter({ hasText: 'Yanlışlıkla' }).first() to be visible
+
+
+      104 |     expect((await tableRow()).currentOrderId).toBeNull();
+      105 |
+    > 106 |     await page.getByRole('button', { name: /hesabını masaya geri gönder/ }).filter({ hasText: 'Yanlışlıkla' }).first().waitFor();
+          |                                                                                                                        ^
+      107 |     await page.locator('li', { has: row }).getByRole('button', { name: /masaya geri gönder/ }).click();
+      108 |
+      109 |     // Hesap kuyruktan çıktı, masa yeniden dolu ve hesabına bağlı.
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\14-till-queue-of-sent-checks.spec.js:106:120
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\14-till-queue-of-sent-chec-8cc11-amış-hesapta-seçenek-yoktur-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\14-till-queue-of-sent-chec-8cc11-amış-hesapta-seçenek-yoktur-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\14-till-queue-of-sent-chec-8cc11-amış-hesapta-seçenek-yoktur-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\14-till-queue-of-sent-chec-8cc11-amış-hesapta-seçenek-yoktur-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\14-till-queue-of-sent-chec-8cc11-amış-hesapta-seçenek-yoktur-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('#discount-value')
+        - locator resolved to <input value="" min="0.01" step="0.01" type="number" class="sp-input" id="discount-value" placeholder="Değer" aria-label="İndirim değeri"/>
+        - fill("10")
+      - attempting fill action
+        2 × waiting for element to be visible, enabled and editable
+          - element is not visible
+        - retrying fill action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and editable
+          - element is not visible
+        - retrying fill action
+          - waiting 100ms
+        64 × waiting for element to be visible, enabled and editable
+           - element is not visible
+         - retrying fill action
+           - waiting 500ms
+
+
+      121 |       };
+      122 |
+    > 123 |       await page.locator(form.input).fill(form.first);
+          |                                      ^
+      124 |       await submit(1);
+      125 |       await submit(2);
+      126 |       await page.locator(form.input).fill(form.edited);
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\18-discount-and-tip.spec.js:123:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra bahşiş: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('#tip-amount')
+        - locator resolved to <input value="" min="0.01" step="0.01" type="number" id="tip-amount" class="sp-input" placeholder="Tutar" aria-label="Bahşiş tutarı"/>
+        - fill("5")
+      - attempting fill action
+        2 × waiting for element to be visible, enabled and editable
+          - element is not visible
+        - retrying fill action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and editable
+          - element is not visible
+        - retrying fill action
+          - waiting 100ms
+        64 × waiting for element to be visible, enabled and editable
+           - element is not visible
+         - retrying fill action
+           - waiting 500ms
+
+
+      121 |       };
+      122 |
+    > 123 |       await page.locator(form.input).fill(form.first);
+          |                                      ^
+      124 |       await submit(1);
+      125 |       await submit(2);
+      126 |       await page.locator(form.input).fill(form.edited);
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\18-discount-and-tip.spec.js:123:38
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--6c9f6-utar-yeni-anahtarı-kullanır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--6c9f6-utar-yeni-anahtarı-kullanır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\18-discount-and-tip-Hesap--6c9f6-utar-yeni-anahtarı-kullanır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--6c9f6-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\18-discount-and-tip-Hesap--6c9f6-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › specs\14-till-queue-of-sent-checks.spec.js:90:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › yanlışlıkla gönderilen hesap kasadan masaya geri gönderilir; tahsilat başlamış hesapta seçenek yoktur 
+    [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+    [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra bahşiş: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+  41 passed (3.9m)

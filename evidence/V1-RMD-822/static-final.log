@@ -1,0 +1,50 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ error-dictionary-lock.test.js (3 tests | 1 failed) 64ms
+     × has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server 27ms
+ ❯ waiter-app.test.js (8 tests | 1 failed) 11664ms
+     × sends the cart to the kitchen via table-draft then submit-draft, in that order 5027ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server
+AssertionError: expected [ 'REFUND_QUANTITY_NOT_WHOLE' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "REFUND_QUANTITY_NOT_WHOLE",
++ ]
+
+ ❯ error-dictionary-lock.test.js:66:21
+     64|       else if (entries.get(code) !== message) different.push(code);
+     65|     }
+     66|     expect(missing).toEqual([]);
+       |                     ^
+     67|     expect(different).toEqual([]);
+     68|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  waiter-app.test.js > waiter-app.js > sends the cart to the kitchen via table-draft then submit-draft, in that order
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ waiter-app.test.js:85:3
+     83|   });
+     84|
+     85|   it("sends the cart to the kitchen via table-draft then submit-draft,…
+       |   ^
+     86|     // Regression coverage for a Critical finding (2026-09-06, V1-RMD-…
+     87|     // neither production client ever called submit-draft, so an order
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 23 passed (25)
+      Tests  2 failed | 290 passed (292)
+   Start at  20:00:26
+   Duration  26.90s (transform 72.33s, setup 1.95s, import 7.38s, tests 126.55s, environment 79.43s)
+

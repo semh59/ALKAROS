@@ -91,6 +91,7 @@
     refundBusy: false,
     refundError: null,
     refundNotice: null,
+    folds: {},
     refundListFailed: false,
     refundAllowance: null,
     billItems: [],
@@ -1747,6 +1748,15 @@
       '</div>';
   }
 
+  // Rarely used sections fold away so the payment form stays under the summary. The cashier's own choice (a click on
+  // the heading) wins and survives every redraw; until then a section with a result to show opens by itself.
+  function renderFold(name, title, body, forceOpen) {
+    if (!body) return '';
+    var open = state.folds[name] === undefined ? forceOpen : state.folds[name];
+    return '<details class="sp-fold" id="fold-' + name + '" data-fold="' + name + '"' + (open ? ' open' : '') + '>' +
+      '<summary id="fold-' + name + '-summary">' + title + '</summary>' + body + '</details>';
+  }
+
   function renderReady() {
     var s = state.summary;
     var remaining = remainingAmount();
@@ -1766,15 +1776,11 @@
       renderCashStateNotice() +
       renderStaleNotice() +
       renderChangeDue() +
-      '<div class="sp-summary-row is-total"><span>Toplam</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
-      '<div class="sp-summary-row"><span>Tahsil edilen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
+      '<div class="sp-summary-row is-total"><span>Hesap toplamı</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
+      '<div class="sp-summary-row"><span>Ödenen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
       '<div class="sp-summary-row is-remaining' + (remaining <= 0.004 ? ' is-zero' : '') + '">' +
       '<span>Kalan</span><span class="value">' + formatMoney(remaining) + '</span></div>' +
       '<div class="sp-divider"></div>' +
-      renderAdjustmentList() +
-      (state.locked ? '' : renderDiscountForm() + renderTipForm()) +
-      renderAllocationLines() +
-      renderRefundSection(true) +
       (state.locked ? '' :
         '<div class="sp-field"><span class="sp-field-label">Eşit bölüştür</span>' +
         '<div class="sp-row">' +
@@ -1787,13 +1793,13 @@
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
         '<span class="sp-amount-suffix">₺</span></div></div>' +
         (state.selectedMethod === 'Cash'
-          ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-dim)">(isteğe bağlı)</span></span>' +
+          ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-muted)">(isteğe bağlı)</span></span>' +
             '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
             '<span class="sp-amount-suffix">₺</span></div>' +
             '<div class="sp-change-preview" id="change-preview" role="status"></div></div>'
           : '') +
         (state.selectedMethod === 'BankCard' || state.selectedMethod === 'Eft'
-          ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></span>' +
+          ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-muted)">(opsiyonel)</span></span>' +
             '<input class="sp-input" type="text" id="note-draft" aria-label="Ödeme notu (opsiyonel)" value="' + escapeHtml(state.noteDraft) + '"></div>'
           : '') +
         (state.selectedMethod === 'Account' ? renderCustomerPicker() : '') +
@@ -1804,7 +1810,20 @@
         '<button class="sp-btn sp-btn-primary" id="submit-tender" ' +
         (submitTenderDisabled() ? 'disabled' : '') + '>' +
         (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>') +
+      renderAdjustmentList() +
+      renderAllocationLines() +
+      (state.locked ? '' : renderFold('discount-tip', 'İndirim ve bahşiş', renderDiscountForm() + renderTipForm(),
+        !!(state.discountNotice || state.discountError || state.discountConfirm || state.tipError))) +
+      renderFold('refund', 'İade ve iptal', renderRefundSection(true),
+        !!(state.refundError || state.refundNotice || state.confirmKey || (state.refundRequests && state.refundRequests.length > 0))) +
       '</div>';
+
+    document.querySelectorAll('details.sp-fold > summary').forEach(function (summary) {
+      summary.addEventListener('click', function () {
+        var details = summary.parentElement;
+        state.folds[details.getAttribute('data-fold')] = !details.open;
+      });
+    });
 
     document.querySelectorAll('.sp-method-chip').forEach(function (button) {
       button.addEventListener('click', function () {

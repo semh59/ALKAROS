@@ -103,7 +103,7 @@ test.describe('Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280)', () => {
     };
     expect((await tableRow()).currentOrderId).toBeNull();
 
-    await page.getByRole('button', { name: /hesabını masaya geri gönder/ }).filter({ hasText: 'Yanlışlıkla' }).first().waitFor();
+    await page.getByRole('button', { name: /masaya geri gönder/ }).filter({ hasText: 'Yanlışlıkla' }).first().waitFor();
     await page.locator('li', { has: row }).getByRole('button', { name: /masaya geri gönder/ }).click();
 
     // Hesap kuyruktan çıktı, masa yeniden dolu ve hesabına bağlı.

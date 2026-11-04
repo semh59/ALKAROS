@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readSeed } from '../lib/testHelpers.js';
-import { loginViaApi, createBill, openSplitPayment } from '../lib/paymentHelpers.js';
+import { loginViaApi, createBill, openSplitPayment, openFold } from '../lib/paymentHelpers.js';
 
 // V1-RMD-362 (module-by-module UI audit, 2026-09-27): the Hesap Ödeme (split-payment) module.
 test.describe('Hesap Ödeme - erişilebilirlik (V1-RMD-362)', () => {
@@ -31,6 +31,7 @@ test.describe('Hesap Ödeme - erişilebilirlik (V1-RMD-362)', () => {
     await page.getByRole('button', { name: 'Ödemeyi Ekle' }).click();
     await expect(page.locator('.sp-alert-danger')).toHaveAttribute('role', 'alert');
 
+    await openFold(page, 'discount-tip');
     // A real discount success notice.
     await page.locator('#discount-value').fill('10');
     await page.getByRole('button', { name: 'İndirim uygula' }).click();

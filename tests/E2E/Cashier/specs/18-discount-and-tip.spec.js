@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readSeed } from '../lib/testHelpers.js';
-import { loginViaApi, createBill, openSplitPayment, selectMethod, setAmount } from '../lib/paymentHelpers.js';
+import { loginViaApi, createBill, openSplitPayment, openFold, selectMethod, setAmount } from '../lib/paymentHelpers.js';
 
 // V1-RMD-292: billing/bills/{id}/discount, /tip and (read-only) /adjustments had no client.
 //
@@ -18,6 +18,7 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RM
 
     await openSplitPayment(page, billId);
     await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+    await openFold(page, 'discount-tip');
     await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺100,00');
 
     // %10 indirim: gerçek bir sunucu kaydı oluşur ve görünür, tavan hemen 90 ₺'ye düşer.
@@ -55,6 +56,7 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RM
     const billId = await createBill(page, terminalId, seed, { quantity: 1 }); // 100 ₺
     await openSplitPayment(page, billId);
     await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+    await openFold(page, 'discount-tip');
 
     await page.locator('#tip-amount').fill('20');
     await page.getByRole('button', { name: 'Bahşiş ekle' }).click();
@@ -76,6 +78,7 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RM
     const billId = await createBill(page, terminalId, seed, { quantity: 1 });
     await openSplitPayment(page, billId);
     await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+    await openFold(page, 'discount-tip');
 
     await page.route('**/billing/bills/**/discount', (route) => route.fulfill({
       status: 403,
@@ -104,6 +107,7 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RM
       const billId = await createBill(page, terminalId, seed, { quantity: 1 }); // 100 ₺
       await openSplitPayment(page, billId);
       await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+      await openFold(page, 'discount-tip');
 
       const url = `**/api/v1/terminals/${terminalId}/billing/bills/${billId}/${form.path}`;
       const keys = [];

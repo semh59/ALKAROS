@@ -159,3 +159,9 @@ export async function selectMethod(page, method) {
 export async function setAmount(page, amount) {
   await page.locator('#amount-draft').fill(String(amount));
 }
+
+/** The discount/tip and refund sections start folded; a test opens one before it touches its fields. */
+export async function openFold(page, name) {
+  const fold = page.locator(`#fold-${name}`);
+  if (!(await fold.evaluate((element) => element.open))) await fold.locator('summary').click();
+}

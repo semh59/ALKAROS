@@ -1,0 +1,17 @@
+[global-setup] applied 215 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 9 tests using 1 worker
+
+  ok 1 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:21:3 › Kasa: canlı bekleyen hesap bildirimi (V1-RMD-287) › garson hesabı gönderince sayfa yenilenmeden kuyrukta belirir (3.3s)
+  ok 2 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:39:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › garsonun gönderdiği iki hesap ayırt edilir, biri tahsil edilince yalnız o kuyruktan çıkar (5.3s)
+  ok 3 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:90:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › yanlışlıkla gönderilen hesap kasadan masaya geri gönderilir; tahsilat başlamış hesapta seçenek yoktur (5.6s)
+  ok 4 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:134:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › kuyruk boşken bunu söyler (2.1s)
+  ok 5 [chromium] › specs\18-discount-and-tip.spec.js:14:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › indirim ve bahşiş kaydedilir; tahsilat tavanı düzeltilmiş tutara göre gerçekten değişir (2.5s)
+  ok 6 [chromium] › specs\18-discount-and-tip.spec.js:53:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › bahşiş dahil düzeltilmiş tutar artık gerçekten tahsil edilebiliyor; onu aşan tutar hâlâ reddedilir (2.3s)
+  ok 7 [chromium] › specs\18-discount-and-tip.spec.js:75:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › yetkisiz kullanıcı reddedilir: indirim isteği yönetici onayına düşer, ret Türkçe gösterilir (1.5s)
+  ok 8 [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (2.0s)
+  ok 9 [chromium] › specs\18-discount-and-tip.spec.js:104:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra bahşiş: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (2.2s)
+[global-teardown] Host stopped, database dropped
+
+  9 passed (51.2s)

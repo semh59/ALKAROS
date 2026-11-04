@@ -1,7 +1,7 @@
 # V1-RMD-822 - Tahsilat sayfası hiyerarşisi: Kalan en büyük, "Ödemeyi Ekle" görünür, indirim/bahşiş/iade katlanır
 
 - Task ID: V1-RMD-822
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
