@@ -11,7 +11,7 @@
 Kasa incelemesinin G7 grubunun üçüncü parçasından bu görevde kapatılan kalemler (`2-arayuz-kodu.md` K14, K17; `3-tasarim.md` T-16 yazı tipi; `7-birlesik-dogrulama.md` satır 28 devamı). PO kararları (2026-11-04): PosTerminal `index.html` Google Fonts dış isteği kalkar (lisans/yerel dosya yoksa sistem yazı tipi); saat biçimleyicilerinde saat dilimi; kişi sayısı sınırı. Kodda doğrulanan durum:
 
 1. `PosTerminal/index.html` ve `nfc.html` her açılışta `fonts.googleapis.com` ve `fonts.gstatic.com` adreslerine istek atar: çevrimdışı kasada bekleme ve gizlilik sızıntısı. Yazı tipi yığınları (`--ds-font-sans`) zaten sistem yazı tiplerine düşer; yerel yazı tipi dosyası için depoda lisanslı dosya yoktur ve yeni bağımlılık eklenemez, bu yüzden bağlantılar kalkar ve sistem yazı tipi kullanılır. Test: iki HTML'de harici adres yoktur.
-2. Mutfak, yönetim kapanış, hata olayları, güvenlik/sistem, kullanıcı yolculukları, stok atığı, masa QR ve katalog fiyat tarihleri cihaz saat dilimine göre biçimlenir; `format.ts` biçimleyicileri (V1-RMD-821) `Europe/Istanbul` kullanır. Düzeltme: ortak `formatShortDateTime`, `formatDate`, `venueToday` eklenir ve bu yerler onları kullanır (tarih-yalnız iş günü alanları yerel gece yarısı olarak ayrıştırıldığından dokunulmaz). Gün başlangıcı `venueToday()` ile alınır.
+2. Mutfak, yönetim kapanış, hata olayları, güvenlik/sistem, kullanıcı yolculukları, stok atığı, masa QR, katalog fiyat tarihleri, röle/Token/QNB ayar ekranları ve online ekranların (merkez, sorunlar, menü, kimlik bilgileri, mağaza durumu, operasyon) saatleri cihaz saat dilimine göre biçimlenir; `format.ts` biçimleyicileri (V1-RMD-821) `Europe/Istanbul` kullanır. Düzeltme: ortak `formatShortDateTime`, `formatDate`, `venueToday` eklenir ve bu yerler onları kullanır (tarih-yalnız iş günü alanları yerel gece yarısı olarak ayrıştırıldığından dokunulmaz). Gün başlangıcı `venueToday()` ile alınır.
 3. Eşit bölüştürmede kişi sayısı üst sınırsızdır (yazılan 1e6 kişiye bölünür). Düzeltme: en çok 50; alan `max=50` taşır ve hesap sınıra kırpar.
 
 Doğrulanıp değişiklik gerekmediği anlaşılanlar: `cashier-app.js` kod eşleşmesi iki tarafı aynı `toLowerCase` ile karşılaştırır (Türkçe yerel ayarlı küçültme "SIR"/"sir" eşleşmesini bozardı, bu yüzden değiştirilmez); `ApiError.message` sunucunun Türkçe eşlenmiş metnidir (V1-RMD-114 denetimi), ham istemci hatası değildir.
@@ -39,6 +39,15 @@ Bu görevde yapılmayanlar (ayrı görev gerektirir, raporda açıkça listeleni
   - src/Clients/PosTerminal/src/features/management-menus-recipe-cost/RecipeCostSection.tsx (V1-RMD-567) — gün.
   - src/Clients/PosTerminal/src/features/management-table-qr/TableQrSection.tsx (V1-RMD-779) — saat dilimi.
   - src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx (V1-RMD-784) — fiyat tarihleri.
+  - src/Clients/PosTerminal/src/routes/RelaySettings.tsx (V1-RMD-567) — saat dilimi.
+  - src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx (V1-RMD-567) — saat dilimi.
+  - src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx (V1-RMD-567) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/online-hub/onlineHubApi.ts (V1-RMD-476) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/online-platform-credentials/OnlinePlatformCredentialsWorkspace.tsx (V1-RMD-567) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/online-problems/OnlineProblemsTab.tsx (V1-RMD-567) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/online-menu/OnlineMenuTab.tsx (V1-RMD-567) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/online-store-status/onlineStoreStatusApi.ts (V1-RMD-371) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx (V1-RMD-567) — saat dilimi.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — kişi sayısı sınırı.
   - tests/Clients/StaticApps/split-payment-hierarchy.test.js (V1-RMD-109) — kişi sayısı testi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
