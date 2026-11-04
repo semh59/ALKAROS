@@ -14,10 +14,14 @@ public interface IManualCardConfirmationService
         Guid paymentId, Guid requesterUserId, string slipNumber, string? note, InTransactionRecorder<ManualCardConfirmation> record,
         CancellationToken cancellationToken = default);
 
-    /// <summary><paramref name="billId"/> must be the confirmation's own bill; anything else is "not found" and changes nothing.</summary>
+    /// <summary>
+    /// <paramref name="billId"/> must be the confirmation's own bill; anything else is "not found" and changes nothing.
+    /// The claimant may approve their own claim only when <paramref name="selfApprovalAllowed"/> (the business's
+    /// shared self-approval setting, read by the caller); the stored row is then marked self approved.
+    /// </summary>
     Task<ManualCardConfirmation> ApproveAsync(
-        Guid confirmationId, Guid billId, Guid approverUserId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
-        CancellationToken cancellationToken = default);
+        Guid confirmationId, Guid billId, Guid approverUserId, string? note, bool selfApprovalAllowed,
+        InTransactionRecorder<ManualCardConfirmation> record, CancellationToken cancellationToken = default);
 
     Task<ManualCardConfirmation> RejectAsync(
         Guid confirmationId, Guid billId, Guid userId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
@@ -99,8 +103,8 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
     }
 
     public async Task<ManualCardConfirmation> ApproveAsync(
-        Guid confirmationId, Guid billId, Guid approverUserId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
-        CancellationToken cancellationToken = default)
+        Guid confirmationId, Guid billId, Guid approverUserId, string? note, bool selfApprovalAllowed,
+        InTransactionRecorder<ManualCardConfirmation> record, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(record);
         var trimmedNote = NormalizeNote(note);
@@ -116,7 +120,8 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
             ?? throw new ManualResolutionConfirmationNotFoundException(confirmationId);
         if (confirmation.Status != ManualCardConfirmationStatus.Pending)
             throw new ManualResolutionConfirmationDecidedException(confirmationId, confirmation.Status.ToString());
-        if (confirmation.RequestedBy == approverUserId)
+        var selfApproved = confirmation.RequestedBy == approverUserId;
+        if (selfApproved && !selfApprovalAllowed)
             throw new ManualResolutionSameActorException();
 
         var payment = await _payments.GetByIdAsync(confirmation.PaymentId, cancellationToken)
@@ -154,12 +159,12 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
         var decidedAt = DateTimeOffset.UtcNow;
         await _confirmations.DecideAsync(
             confirmation.Id, ManualCardConfirmationStatus.Approved, approverUserId, decidedAt, trimmedNote,
-            confirmation.RowVersion, connection, transaction, cancellationToken);
+            selfApproved, confirmation.RowVersion, connection, transaction, cancellationToken);
 
         var approvedConfirmation = confirmation with
         {
             Status = ManualCardConfirmationStatus.Approved, DecidedBy = approverUserId, DecidedAt = decidedAt,
-            DecisionNote = trimmedNote, RowVersion = confirmation.RowVersion + 1,
+            DecisionNote = trimmedNote, RowVersion = confirmation.RowVersion + 1, SelfApproved = selfApproved,
         };
         await record(approvedConfirmation, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
@@ -188,7 +193,7 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
         var decidedAt = DateTimeOffset.UtcNow;
         await _confirmations.DecideAsync(
             confirmation.Id, ManualCardConfirmationStatus.Rejected, userId, decidedAt, trimmedNote,
-            confirmation.RowVersion, connection, transaction, cancellationToken);
+            selfApproved: false, confirmation.RowVersion, connection, transaction, cancellationToken);
         var rejectedConfirmation = confirmation with
         {
             Status = ManualCardConfirmationStatus.Rejected, DecidedBy = userId, DecidedAt = decidedAt,

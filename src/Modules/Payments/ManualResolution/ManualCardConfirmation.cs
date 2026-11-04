@@ -8,8 +8,9 @@ public enum ManualCardConfirmationStatus
 }
 
 /// <summary>
-/// V1-RMD-283: a claim that an unconfirmed card payment WAS charged, backed by the receipt (slip) number.
-/// It moves money only when a second, different authorized person approves it.
+/// A claim that an unconfirmed card payment WAS charged, backed by the receipt (slip) number.
+/// It moves money only when a second, different authorized person approves it; the person who claimed it approves it
+/// themselves only when the business turned the shared self-approval setting on, and the row then says so.
 /// </summary>
 public sealed record ManualCardConfirmation(
     Guid Id,
@@ -24,4 +25,5 @@ public sealed record ManualCardConfirmation(
     Guid? DecidedBy,
     DateTimeOffset? DecidedAt,
     string? DecisionNote,
-    long RowVersion);
+    long RowVersion,
+    bool SelfApproved = false);

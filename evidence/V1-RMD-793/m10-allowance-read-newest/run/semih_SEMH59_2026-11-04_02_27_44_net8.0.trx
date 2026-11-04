@@ -1,0 +1,410 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8d090e38-dc59-445a-8b8a-4184ff653f96" name="semih@SEMH59 2026-11-04 02:27:44" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T02:27:44.7322808+03:00" queuing="2026-11-04T02:27:44.7322812+03:00" start="2026-11-04T02:27:38.9935979+03:00" finish="2026-11-04T02:27:48.9303039+03:00" />
+  <TestSettings name="default" id="bb6cec1d-b73d-47ef-adcf-e35f38b04848">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_02_27_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0c1db4f2-2460-4472-ab05-2c0cd96790cf" testId="891d0d86-308c-6f9a-ab71-f0a5e75c3ad2" testName="ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill" computerName="SEMH59" duration="00:00:00.6603837" startTime="2026-11-04T02:27:44.7014361+03:00" endTime="2026-11-04T02:27:44.7014706+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c1db4f2-2460-4472-ab05-2c0cd96790cf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: RefundAllowanceV1 { HasOpenSession = False, Allowance = 0, Used = 0, Remaining = 0 }&#xD;
+Actual:   RefundAllowanceV1 { HasOpenSession = True, Allowance = 0,00, Used = 0,00, Remaining = 0,00 }</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 109&#xD;
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 109&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9ce4277c-484c-40df-8d0b-4e0c05308f88" testId="fba745a2-c368-6322-e58e-2145525c3cf9" testName="ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt" computerName="SEMH59" duration="00:00:00.5887341" startTime="2026-11-04T02:27:48.8385357+03:00" endTime="2026-11-04T02:27:48.8385360+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ce4277c-484c-40df-8d0b-4e0c05308f88">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: RefundAllowanceV1 { HasOpenSession = True, Allowance = 100, Used = 0, Remaining = 100 }&#xD;
+Actual:   RefundAllowanceV1 { HasOpenSession = True, Allowance = 0,00, Used = 0,00, Remaining = 0,00 }</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 88&#xD;
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 99&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="fba745a2-c368-6322-e58e-2145525c3cf9">
+      <Execution id="9ce4277c-484c-40df-8d0b-4e0c05308f88" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests" name="TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill" storage="d:\project\alkaros\tests\host\experience\billing\bin\debug\net8.0\alkaros.host.experience.billing.tests.dll" id="891d0d86-308c-6f9a-ab71-f0a5e75c3ad2">
+      <Execution id="0c1db4f2-2460-4472-ab05-2c0cd96790cf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests" name="TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="891d0d86-308c-6f9a-ab71-f0a5e75c3ad2" executionId="0c1db4f2-2460-4472-ab05-2c0cd96790cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fba745a2-c368-6322-e58e-2145525c3cf9" executionId="9ce4277c-484c-40df-8d0b-4e0c05308f88" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="2" executed="2" passed="0" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.25]   Discovering: ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:00.31]   Discovered:  ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:00.32]   Starting:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:51090&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:51090/api/v1/terminals/5608757e-6fe1-4d75-b807-98abb1c0ec13/billing/refund-allowance - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/refund-allowance'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RefundAllowanceV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/refund-allowance'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:51090/api/v1/terminals/5608757e-6fe1-4d75-b807-98abb1c0ec13/billing/refund-allowance - 200 - application/json;+charset=utf-8 193.1924ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 109&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.GetAllowanceAsync(HttpClient client, String cookie) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 794&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpClient.&lt;SendAsync&gt;g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder.SetResult()&#xD;
+         at System.Net.Http.HttpConnection.InitialFillAsync(Boolean async)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Net.Sockets.SocketAsyncEventArgs.&lt;&gt;c.&lt;.cctor&gt;b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)&#xD;
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()&#xD;
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()&#xD;
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 104&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 109&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.GetAllowanceAsync(HttpClient client, String cookie) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 794&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpClient.&lt;SendAsync&gt;g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder.SetResult()&#xD;
+         at System.Net.Http.HttpConnection.InitialFillAsync(Boolean async)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Net.Sockets.SocketAsyncEventArgs.&lt;&gt;c.&lt;.cctor&gt;b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)&#xD;
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()&#xD;
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()&#xD;
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 104&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:05.13]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:05.14]       Expected: RefundAllowanceV1 { HasOpenSession = False, Allowance = 0, Used = 0, Remaining = 0 }&#xD;
+[xUnit.net 00:00:05.14]       Actual:   RefundAllowanceV1 { HasOpenSession = True, Allowance = 0,00, Used = 0,00, Remaining = 0,00 }&#xD;
+[xUnit.net 00:00:05.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.14]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs(109,0): at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill()&#xD;
+[xUnit.net 00:00:05.14]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs(109,0): at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill()&#xD;
+[xUnit.net 00:00:05.14]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52015&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:52015/api/v1/terminals/d13ab8f9-8762-4159-8c34-51daf1881457/billing/refund-allowance - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/refund-allowance'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RefundAllowanceV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/refund-allowance'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:52015/api/v1/terminals/d13ab8f9-8762-4159-8c34-51daf1881457/billing/refund-allowance - 200 - application/json;+charset=utf-8 199.5216ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52015/api/v1/terminals/d13ab8f9-8762-4159-8c34-51daf1881457/billing/refund-allowance - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/refund-allowance'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RefundAllowanceV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/refund-allowance'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52015/api/v1/terminals/d13ab8f9-8762-4159-8c34-51daf1881457/billing/refund-allowance - 200 - application/json;+charset=utf-8 7.4770ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 99&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.GetAllowanceAsync(HttpClient client, String cookie) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 794&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpClient.&lt;SendAsync&gt;g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Net.Sockets.SocketAsyncEventArgs.&lt;&gt;c.&lt;.cctor&gt;b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)&#xD;
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()&#xD;
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()&#xD;
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 104&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs:line 99&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.GetAllowanceAsync(HttpClient client, String cookie) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 794&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpClient.&lt;SendAsync&gt;g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncValueTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Net.Sockets.SocketAsyncEventArgs.&lt;&gt;c.&lt;.cctor&gt;b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)&#xD;
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()&#xD;
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()&#xD;
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 104&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:09.27]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:09.27]       Expected: RefundAllowanceV1 { HasOpenSession = True, Allowance = 100, Used = 0, Remaining = 100 }&#xD;
+[xUnit.net 00:00:09.27]       Actual:   RefundAllowanceV1 { HasOpenSession = True, Allowance = 0,00, Used = 0,00, Remaining = 0,00 }&#xD;
+[xUnit.net 00:00:09.27]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.27]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs(88,0): at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt()&#xD;
+[xUnit.net 00:00:09.27]         D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\RefundTerminalSessionHttpTests.cs(99,0): at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt()&#xD;
+[xUnit.net 00:00:09.27]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.28]   Finished:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T02:27:44.6985219+03:00">
+        <Text>[xUnit.net 00:00:05.13]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyAtATerminalWhereTheCashierHasNoOpenTill [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T02:27:48.8377074+03:00">
+        <Text>[xUnit.net 00:00:09.27]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRefundAllowanceBelongsToTheTillOfTheTerminalItWasGrantedAt [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

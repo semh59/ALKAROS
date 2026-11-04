@@ -16,7 +16,7 @@ public interface IManualCardConfirmationRepository
     /// <summary>Records the decision; throws <see cref="ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException"/> when the row changed meanwhile.</summary>
     Task DecideAsync(
         Guid id, ManualCardConfirmationStatus status, Guid decidedBy, DateTimeOffset decidedAt, string? note,
-        long expectedRowVersion, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        bool selfApproved, long expectedRowVersion, NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
 
     /// <summary>Newest first, bounded by <paramref name="limit"/> (max 500). <paramref name="status"/> null = all.</summary>

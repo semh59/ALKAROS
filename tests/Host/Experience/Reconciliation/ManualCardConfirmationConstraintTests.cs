@@ -89,4 +89,40 @@ public sealed class ManualCardConfirmationConstraintTests : IAsyncLifetime
             ("decided_at", isPending ? DBNull.Value : DateTimeOffset.UtcNow));
         Assert.Equal(1, rows);
     }
+
+    [Theory]
+    [InlineData("Approved", true, false, false)]
+    [InlineData("Approved", true, true, true)]
+    [InlineData("Approved", false, true, false)]
+    [InlineData("Approved", false, false, true)]
+    [InlineData("Rejected", true, false, true)]
+    [InlineData("Rejected", true, true, false)]
+    public async Task TheSelfApprovedFlagIsSetExactlyWhenTheClaimantApprovedTheirOwnClaim(
+        string status, bool decidedByTheClaimant, bool selfApproved, bool accepted)
+    {
+        var claimant = Guid.NewGuid();
+        var sql =
+            """
+            INSERT INTO payments.manual_card_confirmations
+                (confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at, decided_by, decided_at,
+                 self_approved)
+            VALUES (gen_random_uuid(), @payment_id, @bill_id, 'TEST-SLIP-SELF', 100, @status, @requested_by, now(),
+                    @decided_by, now(), @self_approved);
+            """;
+        (string, object)[] parameters =
+        [
+            ("payment_id", _paymentId), ("bill_id", _billId), ("status", status), ("requested_by", claimant),
+            ("decided_by", decidedByTheClaimant ? claimant : Guid.NewGuid()), ("self_approved", selfApproved),
+        ];
+
+        if (accepted)
+        {
+            Assert.Equal(1, await _database.ExecuteAsync(sql, parameters));
+        }
+        else
+        {
+            var ex = await Assert.ThrowsAsync<PostgresException>(() => _database.ExecuteAsync(sql, parameters));
+            Assert.Equal("23514", ex.SqlState);
+        }
+    }
 }

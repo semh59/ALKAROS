@@ -1,0 +1,19 @@
+forward to 214 ok
+after up (P1 cash with terminal 33333333-3333-3333-3333-333333333333, P2 Card, P3 Eft expected)
+aaaaaaaa-0000-0000-0000-000000000001 Cash 33333333-3333-3333-3333-333333333333
+aaaaaaaa-0000-0000-0000-000000000002 Card 33333333-3333-3333-3333-333333333333
+aaaaaaaa-0000-0000-0000-000000000003 Eft 33333333-3333-3333-3333-333333333333
+self row accepted
+self approved claim accepted
+down refused while self approved rows exist (expected)
+after down (methods back to Cash/Manual/Manual, terminal column gone)
+aaaaaaaa-0000-0000-0000-000000000001 Cash -
+aaaaaaaa-0000-0000-0000-000000000002 Manual -
+aaaaaaaa-0000-0000-0000-000000000003 Manual -
+0
+0
+after re-up
+aaaaaaaa-0000-0000-0000-000000000001 Cash
+aaaaaaaa-0000-0000-0000-000000000002 Card
+aaaaaaaa-0000-0000-0000-000000000003 Eft
+after second up (idempotent) ok

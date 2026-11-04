@@ -40,9 +40,11 @@ public sealed record RefundRequestV1(
     string? SlipNumber,
     bool BillCancelled,
     bool ApprovedFromAllowance = false,
-    IReadOnlyList<RefundItemV1>? Items = null);
+    IReadOnlyList<RefundItemV1>? Items = null,
+    Guid? TerminalId = null,
+    bool SelfApproved = false);
 
-public sealed record RefundAllowanceInputV1(Guid CashierUserId, decimal Amount);
+public sealed record RefundAllowanceInputV1(Guid CashierUserId, Guid CashierTerminalId, decimal Amount);
 
 public sealed record RefundAllowanceV1(bool HasOpenSession, decimal Allowance, decimal Used, decimal Remaining);
 
@@ -80,9 +82,10 @@ public sealed class RefundAccountChargeUnsupportedException(Guid paymentId)
     : Exception($"Payment {paymentId} was charged to a customer account and cannot be refunded here.");
 
 /// <summary>
-/// Refund of one approved payment: a cashier asks, someone else decides. Approved cash goes out of the cashier's open
-/// cash session at once; any other method waits for the manual result (slip number). Once every payment of the bill
-/// is back the bill is cancelled.
+/// Refund of one approved payment: a cashier asks, someone else decides (the person who asked decides too only when
+/// the shared self-approval setting is on, and the record says so). Approved cash goes out of the open cash session of
+/// the terminal the cashier asked at; a card refund waits for the slip number and a transfer refund for the person to
+/// confirm it was sent. Once every payment of the bill is back the bill is cancelled.
 /// </summary>
 public sealed class PaymentRefundStore
 {
@@ -112,7 +115,7 @@ public sealed class PaymentRefundStore
     }
 
     public async Task<RefundRequestV1> RequestAsync(
-        Guid billId, Guid paymentId, string? reason, Guid userId, IReadOnlyList<RefundItemInputV1>? items,
+        Guid billId, Guid paymentId, string? reason, Guid userId, Guid terminalId, IReadOnlyList<RefundItemInputV1>? items,
         string? idempotencyKey, CancellationToken cancellationToken)
     {
         var text = RequireText(reason, MaxTextLength, "Refund reason", "İade gerekçesi");
@@ -155,22 +158,8 @@ public sealed class PaymentRefundStore
                 throw new RefundPaymentNotRefundableException(paymentId);
         }
 
-        string method;
-        await using (var kind = new NpgsqlCommand(
-            """
-            SELECT CASE
-                WHEN EXISTS (SELECT 1 FROM customer_account.account_transactions a
-                             WHERE a.source_reference_type = 'Payment' AND a.source_reference_id = @id
-                               AND a.transaction_type = 'Charge') THEN 'Account'
-                WHEN EXISTS (SELECT 1 FROM cash.cash_transactions c
-                             WHERE c.related_payment_id = @id AND c.type = 'Sale') THEN 'Cash'
-                ELSE 'Manual' END;
-            """, connection, transaction))
-        {
-            kind.Parameters.Add("id", NpgsqlDbType.Uuid).Value = paymentId;
-            method = (string)(await kind.ExecuteScalarAsync(cancellationToken))!;
-        }
-        if (method == "Account")
+        var method = await PaymentMethodLookup.ForPaymentAsync(connection, transaction, paymentId, cancellationToken);
+        if (method == PaymentMethodLookup.Account)
             throw new RefundAccountChargeUnsupportedException(paymentId);
 
         IReadOnlyList<RefundRequestItem>? priced = null;
@@ -187,7 +176,7 @@ public sealed class PaymentRefundStore
         var requestId = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
         var created = new RefundRequest(
-            requestId, billId, paymentId, amount, method, text, "Requested", userId, now, null, null, null, null, key);
+            requestId, billId, paymentId, amount, method, text, "Requested", userId, now, null, null, null, null, key, terminalId);
         if (!await PostgresRefundRequestRepository.TryInsertAsync(created, connection, transaction, cancellationToken))
             throw new RefundAlreadyRequestedException(paymentId);
         if (priced is not null)
@@ -195,9 +184,10 @@ public sealed class PaymentRefundStore
 
         var request = new RefundRequestV1(
             requestId, billId, paymentId, amount, method, text, "Requested", userId, now, null, null, null, false,
-            Items: priced?.Select(item => new RefundItemV1(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
+            Items: priced?.Select(item => new RefundItemV1(item.BillItemId, item.Quantity, item.RestoreStock)).ToList(),
+            TerminalId: terminalId);
         await AuditStepAsync("refund.requested", request, userId, text, connection, transaction, cancellationToken);
-        var sessionId = await FindOpenSessionAsync(connection, transaction, userId, cancellationToken);
+        var sessionId = await FindOpenSessionAsync(connection, transaction, terminalId, userId, cancellationToken);
         if (sessionId is null || !await PostgresRefundAllowanceRepository.TrySpendAsync(sessionId.Value, amount, connection, transaction, cancellationToken))
         {
             await transaction.CommitAsync(cancellationToken);
@@ -205,7 +195,7 @@ public sealed class PaymentRefundStore
         }
 
         var billCancelled = false;
-        var completed = method == "Cash";
+        var completed = method == PaymentMethodLookup.Cash;
         if (completed)
             billCancelled = await PayOutCashAsync(connection, transaction, request, sessionId.Value, userId, now, cancellationToken);
         await PostgresRefundRequestRepository.MarkApprovedAsync(
@@ -284,8 +274,10 @@ public sealed class PaymentRefundStore
 
     /// <summary>Gives the cashier's open shift a refund budget the cashier may spend without a second person.</summary>
     public async Task<RefundAllowanceV1> SetAllowanceAsync(
-        Guid cashierUserId, decimal amount, Guid actorId, CancellationToken cancellationToken)
+        Guid cashierUserId, Guid cashierTerminalId, decimal amount, Guid actorId, bool selfApprovalAllowed,
+        CancellationToken cancellationToken)
     {
+        EnsureMayDecide(cashierUserId, actorId, selfApprovalAllowed);
         if (amount < 0 || amount > MaxAllowance)
             throw new RefundInputException(
                 $"Allowance must be between 0 and {MaxAllowance}.", "ALLOWANCE_INVALID",
@@ -294,7 +286,7 @@ public sealed class PaymentRefundStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var change = await PostgresRefundAllowanceRepository.SetAsync(
-            cashierUserId, amount, connection, transaction, cancellationToken);
+            cashierUserId, cashierTerminalId, amount, connection, transaction, cancellationToken);
         if (change.SessionId is not { } sessionId)
             throw new RefundNoOpenCashSessionException(cashierUserId);
         if (!change.Applied)
@@ -309,21 +301,25 @@ public sealed class PaymentRefundStore
                 Guid.NewGuid(), "refund.allowance.set", "CashSession", sessionId, "User", sessionId.ToString("N"),
                 actorId, "Shift refund allowance set",
                 beforeStateJson: JsonSerializer.Serialize(new { allowance = before }),
-                afterStateJson: JsonSerializer.Serialize(new { allowance = amount, cashierUserId })),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    allowance = amount, cashierUserId, cashierTerminalId, selfApproved = cashierUserId == actorId,
+                })),
             connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new RefundAllowanceV1(true, amount, used, amount - used);
     }
 
-    public async Task<RefundAllowanceV1> GetAllowanceAsync(Guid cashierUserId, CancellationToken cancellationToken)
+    public async Task<RefundAllowanceV1> GetAllowanceAsync(
+        Guid cashierUserId, Guid terminalId, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
             """
             SELECT refund_allowance, refund_allowance_used FROM cash.cash_sessions
-            WHERE cashier_user_id = @user AND status = 'Open'
-            ORDER BY opened_at DESC LIMIT 1;
+            WHERE cashier_user_id = @user AND terminal_id = @terminal AND status = 'Open';
             """);
         command.Parameters.Add("user", NpgsqlDbType.Uuid).Value = cashierUserId;
+        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
             return new RefundAllowanceV1(false, 0m, 0m, 0m);
@@ -333,15 +329,17 @@ public sealed class PaymentRefundStore
     }
 
     public async Task<IReadOnlyList<RefundRequestV1>> ListAsync(
-        string? status, Guid? billId, DateTimeOffset? before, int limit, CancellationToken cancellationToken)
+        string? status, Guid? billId, DateTimeOffset? before, bool? selfApproved, int limit, CancellationToken cancellationToken)
     {
-        var rows = await PostgresRefundRequestRepository.ListAsync(_dataSource, status, billId, before, limit, cancellationToken);
+        var rows = await PostgresRefundRequestRepository.ListAsync(
+            _dataSource, status, billId, before, selfApproved, limit, cancellationToken);
         var items = await PostgresRefundRequestRepository.LoadItemsForAsync(
             _dataSource, rows.Select(row => row.Id).ToArray(), cancellationToken);
         return rows.Select(row => WithItems(ToDto(row), items.GetValueOrDefault(row.Id))).ToList();
     }
 
-    public async Task<RefundRequestV1> ApproveAsync(Guid requestId, Guid deciderId, CancellationToken cancellationToken)
+    public async Task<RefundRequestV1> ApproveAsync(
+        Guid requestId, Guid deciderId, bool selfApprovalAllowed, CancellationToken cancellationToken)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
@@ -349,17 +347,21 @@ public sealed class PaymentRefundStore
         await LockBillAsync(connection, transaction, request.BillId, cancellationToken);
         if (request.Status != "Requested")
             throw new RefundStateException(requestId, request.Status);
-        if (request.RequestedBy == deciderId)
-            throw new RefundSelfDecisionException();
+        EnsureMayDecide(request.RequestedBy, deciderId, selfApprovalAllowed);
+        var mode = request.RequestedBy == deciderId ? "Self" : "Manager";
 
         var now = DateTimeOffset.UtcNow;
         var billCancelled = false;
         string status;
-        if (request.Method == "Cash")
+        if (request.Method == PaymentMethodLookup.Cash)
         {
-            var sessionId = await FindOpenSessionAsync(connection, transaction, request.RequestedBy, cancellationToken)
-                ?? throw new RefundNoOpenCashSessionException(request.RequestedBy);
-            billCancelled = await PayOutCashAsync(connection, transaction, request, sessionId, deciderId, now, cancellationToken);
+            // A request made before the terminal was recorded has no till to pay from; it is asked again.
+            var sessionId = request.TerminalId is { } terminalId
+                ? await FindOpenSessionAsync(connection, transaction, terminalId, request.RequestedBy, cancellationToken)
+                : null;
+            if (sessionId is null)
+                throw new RefundNoOpenCashSessionException(request.RequestedBy);
+            billCancelled = await PayOutCashAsync(connection, transaction, request, sessionId.Value, deciderId, now, cancellationToken);
             status = "Completed";
         }
         else
@@ -368,42 +370,45 @@ public sealed class PaymentRefundStore
         }
 
         await PostgresRefundRequestRepository.MarkApprovedAsync(
-            requestId, status == "Completed", deciderId, "Manager", now, connection, transaction, cancellationToken);
+            requestId, status == "Completed", deciderId, mode, now, connection, transaction, cancellationToken);
 
-        await AuditStepAsync("refund.approved", request, deciderId, "Manager", connection, transaction, cancellationToken);
-        if (status == "Completed")
-            await AuditRefundAsync(request, deciderId, null, billCancelled, connection, transaction, cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-        return request with
+        var approved = request with
         {
             Status = status, DecidedBy = deciderId, DecidedAt = now, BillCancelled = billCancelled,
+            SelfApproved = mode == "Self",
         };
+        await AuditStepAsync("refund.approved", approved, deciderId, mode, connection, transaction, cancellationToken);
+        if (status == "Completed")
+            await AuditRefundAsync(approved, deciderId, null, billCancelled, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return approved;
     }
 
     public async Task<RefundRequestV1> RejectAsync(
-        Guid requestId, Guid deciderId, string? note, CancellationToken cancellationToken)
+        Guid requestId, Guid deciderId, string? note, bool selfApprovalAllowed, CancellationToken cancellationToken)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var request = await LoadAsync(connection, transaction, requestId, cancellationToken);
         if (request.Status != "Requested")
             throw new RefundStateException(requestId, request.Status);
-        if (request.RequestedBy == deciderId)
-            throw new RefundSelfDecisionException();
+        EnsureMayDecide(request.RequestedBy, deciderId, selfApprovalAllowed);
         var text = RequireText(note, MaxTextLength, "Rejection note", "Ret notu");
+        var selfDecided = request.RequestedBy == deciderId;
 
         var now = DateTimeOffset.UtcNow;
-        await PostgresRefundRequestRepository.MarkRejectedAsync(requestId, deciderId, text, now, connection, transaction, cancellationToken);
+        await PostgresRefundRequestRepository.MarkRejectedAsync(
+            requestId, deciderId, selfDecided ? "Self" : null, text, now, connection, transaction, cancellationToken);
 
         await _audit.AppendAsync(
             new AuditEvent(
                 Guid.NewGuid(), "refund.rejected", "Payment", request.PaymentId, "User", requestId.ToString("N"),
                 deciderId, text,
                 beforeStateJson: JsonSerializer.Serialize(new { status = "Requested" }),
-                afterStateJson: JsonSerializer.Serialize(new { status = "Rejected", requestId })),
+                afterStateJson: JsonSerializer.Serialize(new { status = "Rejected", requestId, selfApproved = selfDecided })),
             connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-        return request with { Status = "Rejected", DecidedBy = deciderId, DecidedAt = now };
+        return request with { Status = "Rejected", DecidedBy = deciderId, DecidedAt = now, SelfApproved = selfDecided };
     }
 
     public async Task<RefundRequestV1> CompleteManualAsync(
@@ -415,7 +420,11 @@ public sealed class PaymentRefundStore
         await LockBillAsync(connection, transaction, request.BillId, cancellationToken);
         if (request.Status != "AwaitingManualRefund")
             throw new RefundStateException(requestId, request.Status);
-        var slip = RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası");
+        // A card refund is proven by its slip; a transfer has no document the system could check, so it only needs
+        // the person to say it was sent.
+        var slip = request.Method == PaymentMethodLookup.Card
+            ? RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası")
+            : null;
         var noteText = string.IsNullOrWhiteSpace(note) ? null : RequireText(note, MaxTextLength, "Note", "Not");
 
         var now = DateTimeOffset.UtcNow;
@@ -464,7 +473,7 @@ public sealed class PaymentRefundStore
                 afterStateJson: JsonSerializer.Serialize(new
                 {
                     request.Method, request.BillId, requestId = request.RequestId, requestedBy = request.RequestedBy,
-                    amount = request.Amount,
+                    amount = request.Amount, selfApproved = request.SelfApproved,
                 })),
             connection, transaction, cancellationToken);
 
@@ -480,7 +489,7 @@ public sealed class PaymentRefundStore
                 {
                     status = "Refunded", request.Method, slipNumber = slip, request.BillId, billCancelled,
                     requestId = request.RequestId, requestedBy = request.RequestedBy,
-                    viaAllowance = request.ApprovedFromAllowance,
+                    viaAllowance = request.ApprovedFromAllowance, selfApproved = request.SelfApproved,
                 })),
             connection, transaction, cancellationToken);
 
@@ -522,15 +531,17 @@ public sealed class PaymentRefundStore
         return (long)(await command.ExecuteScalarAsync(cancellationToken))! > 0;
     }
 
+    /// <summary>The cashier's open session at the terminal; a terminal has at most one open session.</summary>
     private static async Task<Guid?> FindOpenSessionAsync(
-        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid cashierUserId, CancellationToken cancellationToken)
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid terminalId, Guid cashierUserId,
+        CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
             """
             SELECT cash_session_id FROM cash.cash_sessions
-            WHERE cashier_user_id = @user AND status = 'Open'
-            ORDER BY opened_at DESC LIMIT 1;
+            WHERE terminal_id = @terminal AND cashier_user_id = @user AND status = 'Open';
             """, connection, transaction);
+        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
         command.Parameters.Add("user", NpgsqlDbType.Uuid).Value = cashierUserId;
         return await command.ExecuteScalarAsync(cancellationToken) as Guid?;
     }
@@ -560,7 +571,14 @@ public sealed class PaymentRefundStore
     private static RefundRequestV1 ToDto(RefundRequest row) => new(
         row.Id, row.BillId, row.PaymentId, row.Amount, row.Method, row.Reason, row.Status, row.RequestedBy,
         row.RequestedAt, row.DecidedBy, row.DecidedAt, row.SlipNumber, BillCancelled: false,
-        ApprovedFromAllowance: row.ApprovalMode == "Allowance");
+        ApprovedFromAllowance: row.ApprovalMode == "Allowance", TerminalId: row.TerminalId,
+        SelfApproved: row.ApprovalMode == "Self");
+
+    private static void EnsureMayDecide(Guid requestedBy, Guid deciderId, bool selfApprovalAllowed)
+    {
+        if (requestedBy == deciderId && !selfApprovalAllowed)
+            throw new RefundSelfDecisionException();
+    }
 
     private static string RequireText(string? value, int max, string what, string turkishName)
     {

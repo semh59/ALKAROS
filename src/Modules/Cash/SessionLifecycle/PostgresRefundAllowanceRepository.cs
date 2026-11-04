@@ -9,17 +9,17 @@ public sealed record RefundAllowanceChange(Guid? SessionId, bool Applied, decima
 /// <summary>Owns the shift refund allowance columns of cash.cash_sessions; every write runs in the caller's transaction.</summary>
 public static class PostgresRefundAllowanceRepository
 {
-    /// <summary>Sets the allowance of the cashier's newest open session unless it is below what was already used.</summary>
+    /// <summary>Sets the allowance of the cashier's open session at the terminal unless it is below what was already used.</summary>
     public static async Task<RefundAllowanceChange> SetAsync(
-        Guid cashierUserId, decimal amount, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        Guid cashierUserId, Guid terminalId, decimal amount, NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
         await using var command = new NpgsqlCommand(
             """
             WITH target AS (
                 SELECT cash_session_id, refund_allowance AS previous FROM cash.cash_sessions
-                WHERE cashier_user_id = @user AND status = 'Open'
-                ORDER BY opened_at DESC LIMIT 1 FOR UPDATE),
+                WHERE cashier_user_id = @user AND terminal_id = @terminal AND status = 'Open'
+                FOR UPDATE),
             changed AS (
                 UPDATE cash.cash_sessions s SET refund_allowance = @amount
                 FROM target t
@@ -29,6 +29,7 @@ public static class PostgresRefundAllowanceRepository
                    (SELECT cash_session_id FROM changed), (SELECT refund_allowance_used FROM changed);
             """, connection, transaction);
         command.Parameters.Add("user", NpgsqlDbType.Uuid).Value = cashierUserId;
+        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
         command.Parameters.Add("amount", NpgsqlDbType.Numeric).Value = amount;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         await reader.ReadAsync(cancellationToken);

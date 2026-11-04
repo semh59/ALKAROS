@@ -13,6 +13,8 @@ using ALKAROS.Payments.CardSettlement;
 using ALKAROS.Payments.EftTender;
 using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Payments.TenderRouting;
+using ALKAROS.Settings.ManagerSelfApproval;
+using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -136,7 +138,7 @@ public static partial class DualScreenApplication
             ManualResolutionAlreadyPendingException => (StatusCodes.Status409Conflict, "CONFIRMATION_PENDING", "Bu ödeme için onay bekleyen bir bildirim var."),
             ManualResolutionNotResolvableException => (StatusCodes.Status409Conflict, "PAYMENT_NOT_RESOLVABLE", "Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin."),
             ManualResolutionConfirmationDecidedException => (StatusCodes.Status409Conflict, "CONFIRMATION_DECIDED", "Bu bildirim zaten karara bağlanmış."),
-            ManualResolutionSameActorException => (StatusCodes.Status403Forbidden, "SAME_ACTOR", "Bildirimi yapan kişi onaylayamaz; başka bir yetkili onaylamalı."),
+            ManualResolutionSameActorException => (StatusCodes.Status403Forbidden, "SAME_ACTOR", "Bildirimi yapan kişi onaylayamaz; başka bir yetkili onaylamalı. Tek yöneticili işletmelerde Ayarlar'dan \"Yönetici kendi talebini onaylayabilir\" açılabilir."),
             ManualResolutionReasonInvalidException => (StatusCodes.Status400BadRequest, "NOTE_INVALID", "Not en fazla 500 karakter olabilir."),
             ManualResolutionConfirmationNotFoundException or ManualResolutionPaymentNotFoundException =>
                 (StatusCodes.Status404NotFound, "NOT_FOUND", "Kayıt bulunamadı."),
@@ -340,6 +342,7 @@ public static partial class DualScreenApplication
             Guid confirmationId,
             DecideCardConfirmationRequestV1 request,
             IManualCardConfirmationService confirmationService,
+            ISettingsService settings,
             IBillClosureService billClosure,
             OrderSettlementService orderSettlement,
             IAuditEventStore auditEvents,
@@ -356,6 +359,7 @@ public static partial class DualScreenApplication
             {
                 var decided = await confirmationService.ApproveAsync(
                     confirmationId, billId, principal.UserId, request?.Note,
+                    await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken),
                     (approved, connection, transaction, token) => auditEvents.AppendAsync(
                         new AuditEvent(
                             id: Guid.NewGuid(),
@@ -370,6 +374,7 @@ public static partial class DualScreenApplication
                             {
                                 confirmationId = approved.Id, slipNumber = approved.SlipNumber, amount = approved.Amount,
                                 requestedBy = approved.RequestedBy, approvedBy = principal.UserId, billId,
+                                selfApproved = approved.SelfApproved,
                             })),
                         connection, transaction, token),
                     cancellationToken);

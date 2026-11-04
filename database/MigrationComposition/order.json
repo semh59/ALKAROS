@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "214"
+    "max": "215"
   },
   "migrations": [
     {
@@ -1842,6 +1842,15 @@
       "phase": "B",
       "tables": [
         "daily_business_days"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "215",
+      "phase": "B",
+      "tables": [
+        "refund_requests",
+        "manual_card_confirmations"
       ],
       "deferredConstraints": []
     }

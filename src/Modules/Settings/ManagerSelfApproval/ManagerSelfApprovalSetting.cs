@@ -3,9 +3,10 @@ namespace ALKAROS.Settings.ManagerSelfApproval;
 using ALKAROS.Settings.TypedSettings;
 
 /// <summary>
-/// whether a manager may approve their own cash-out request or reconcile a cash session they ran or closed (and,
-/// in a later task, their own refund request). Off by default: the second pair of eyes stays the rule until the business owner, who
-/// may be the only manager on site, turns it on. An approval made under this setting is recorded as a self approval.
+/// whether a manager may approve their own cash-out request, reconcile a cash session they ran or closed, decide their
+/// own refund request (and give themselves a refund allowance) or approve their own "the card was charged" claim. Off
+/// by default: the second pair of eyes stays the rule until the business owner, who may be the only manager on site,
+/// turns it on. A decision made under this setting is recorded as a self approval.
 /// One setting for every approval flow - there is no second definition.
 /// </summary>
 public static class ManagerSelfApprovalSetting
@@ -28,7 +29,8 @@ public static class ManagerSelfApprovalSetting
                     SettingScope.Global,
                     ModuleOwner,
                     Description:
-                        "Lets a manager approve their own cash-out request or reconcile a session they ran or closed. " +
+                        "Lets a manager approve their own cash-out request, reconcile a session they ran or closed, " +
+                        "decide their own refund request or card-charged claim and give themselves a refund allowance. " +
                         "Off by default: a second person decides."),
                 cancellationToken);
         }

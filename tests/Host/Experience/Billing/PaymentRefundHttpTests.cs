@@ -13,7 +13,7 @@ using Xunit;
 namespace ALKAROS.Host.Experience.Billing.Tests;
 
 [Collection("Billing split PostgreSQL HTTP")]
-public sealed class PaymentRefundHttpTests : IAsyncLifetime
+public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
 {
     private readonly BillingSplitTestDatabase _database = new();
     private NpgsqlDataSource _source = null!;
@@ -172,12 +172,11 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     public async Task ManualRefundWaitsForTheSlipNumberThenRefundsAndCancelsTheBill()
     {
         var seeded = await _database.SeedBillAsync();
-        await _database.SeedCollectedAsync(seeded.BillId, 100m, _cashierId);
-        var paymentId = await PaymentIdAsync(seeded.BillId);
+        var paymentId = await CardPaymentAsync(seeded.BillId, 100m);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
-        Assert.Equal("Manual", request.Method);
+        Assert.Equal("Card", request.Method);
 
         var approved = await DecideAsync(client, request.RequestId, "approve", _managerCookie);
         Assert.Equal("AwaitingManualRefund", approved.Status);
@@ -279,8 +278,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     {
         var seeded = await _database.SeedBillAsync();
         var cashPayment = await CashPaymentAsync(seeded.BillId, 100m);
-        await _database.SeedCollectedAsync(seeded.BillId, 50m, _cashierId);
-        var manualPayment = (await PaymentIdsAsync(seeded.BillId)).Single(id => id != cashPayment);
+        var manualPayment = await CardPaymentAsync(seeded.BillId, 50m);
         await OpenSessionAsync(_cashierId);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
@@ -333,7 +331,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         var store = new PaymentRefundStore(_source, new FailingAuditEventStore());
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => store.RejectAsync(request.RequestId, _managerId, "Gerekçe yetersiz", CancellationToken.None));
+            () => store.RejectAsync(request.RequestId, _managerId, "Gerekçe yetersiz", false, CancellationToken.None));
 
         Assert.Equal("Requested", await Scalar<string>("SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
     }
@@ -640,8 +638,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     public async Task ACardRefundWithinTheAllowanceReservesItAndTheCashierRecordsTheSlip()
     {
         var seeded = await _database.SeedBillAsync();
-        await _database.SeedCollectedAsync(seeded.BillId, 100m, _cashierId);
-        var paymentId = await PaymentIdAsync(seeded.BillId);
+        var paymentId = await CardPaymentAsync(seeded.BillId, 100m);
         await OpenSessionAsync(_cashierId);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
@@ -649,7 +646,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
 
         var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
 
-        Assert.Equal("Manual", request.Method);
+        Assert.Equal("Card", request.Method);
         Assert.Equal("AwaitingManualRefund", request.Status);
         Assert.True(request.ApprovedFromAllowance);
         Assert.Equal(0m, (await GetAllowanceAsync(client, _cashierCookie)).Remaining);
@@ -685,7 +682,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
             await lockRow.ExecuteNonQueryAsync();
         }
         var approving = client.SendAsync(Post($"refund-requests/{request.RequestId:D}/approve", _managerCookie));
-        await Task.Delay(1500);
+        await WaitUntilARequestWaitsOnALockAsync();
         await using (var count = new NpgsqlCommand(
             "UPDATE cash.cash_sessions SET status = 'Counting' WHERE cash_session_id = @id;", connection, holder))
         {
@@ -725,13 +722,14 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     {
         var (selfId, selfCookie) = await _database.SeedSessionWithPermissionsAsync(
             _terminalId, "supervisor", "payments.refund.request", "payments.refund.approve");
+        var selfTerminalId = Guid.NewGuid();
         await OpenSessionAsync(_cashierId);
-        await OpenSessionAsync(selfId);
+        await OpenSessionAsync(selfId, terminalId: selfTerminalId);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        using var byCashier = await PutAllowanceAsync(client, selfId, 50m, _cashierCookie);
-        using var toSelf = await PutAllowanceAsync(client, selfId, 50m, selfCookie);
+        using var byCashier = await PutAllowanceAsync(client, selfId, 50m, _cashierCookie, selfTerminalId);
+        using var toSelf = await PutAllowanceAsync(client, selfId, 50m, selfCookie, selfTerminalId);
         using var negative = await PutAllowanceAsync(client, _cashierId, -1m, _managerCookie);
         using var noSession = await PutAllowanceAsync(client, Guid.NewGuid(), 50m, _managerCookie);
 
@@ -775,11 +773,12 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<RefundAllowanceV1>())!;
     }
 
-    private Task<HttpResponseMessage> PutAllowanceAsync(HttpClient client, Guid cashierUserId, decimal amount, string cookie)
+    private Task<HttpResponseMessage> PutAllowanceAsync(
+        HttpClient client, Guid cashierUserId, decimal amount, string cookie, Guid? cashierTerminalId = null)
     {
         var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/terminals/{_terminalId:D}/billing/refund-allowance")
         {
-            Content = JsonContent.Create(new RefundAllowanceInputV1(cashierUserId, amount)),
+            Content = JsonContent.Create(new RefundAllowanceInputV1(cashierUserId, cashierTerminalId ?? _terminalId, amount)),
         };
         request.Headers.TryAddWithoutValidation("Cookie", cookie);
         return client.SendAsync(request);
@@ -1001,8 +1000,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     public async Task ACardItemRefundPutsStockBackWhenTheSlipIsRecorded()
     {
         var seeded = await _database.SeedBillAsync();
-        await _database.SeedCollectedAsync(seeded.BillId, 250m, _cashierId);
-        var paymentId = await PaymentIdAsync(seeded.BillId);
+        var paymentId = await CardPaymentAsync(seeded.BillId, 250m);
         var stockItemId = await SeedConsumptionAsync(seeded.FirstItemId, 20m);
         await using var app = await StartAsync(withStock: true);
         using var client = CreateClient(app);
@@ -1071,11 +1069,27 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<List<RefundRequestV1>>())!;
     }
 
-    private async Task<Guid> CashPaymentAsync(Guid billId, decimal amount)
+    /// <summary>An approved payment that a second person confirmed as charged to the card.</summary>
+    private async Task<Guid> CardPaymentAsync(Guid billId, decimal amount)
     {
         await _database.SeedCollectedAsync(billId, amount, _cashierId);
         var paymentId = (await PaymentIdsAsync(billId)).Last();
-        var sessionId = await OpenSessionAsync(_cashierId, closed: true);
+        await Execute(
+            """
+            INSERT INTO payments.manual_card_confirmations
+                (confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at,
+                 decided_by, decided_at, row_version)
+            VALUES (gen_random_uuid(), @p, @b, 'CARD-' || substr(@p::text, 1, 8), @a, 'Approved', @r, now(), @d, now(), 2);
+            """, paymentId, ("b", billId), ("a", amount), ("r", _cashierId), ("d", _managerId));
+        return paymentId;
+    }
+
+    /// <summary>An approved payment taken in cash; its sale is in <paramref name="saleSessionId"/> or in a till closed long ago.</summary>
+    private async Task<Guid> CashPaymentAsync(Guid billId, decimal amount, Guid? saleSessionId = null)
+    {
+        await _database.SeedCollectedAsync(billId, amount, _cashierId);
+        var paymentId = (await PaymentIdsAsync(billId)).Last();
+        var sessionId = saleSessionId ?? await OpenSessionAsync(_cashierId, closed: true);
         await Execute(
             """
             INSERT INTO cash.cash_transactions
@@ -1085,7 +1099,22 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return paymentId;
     }
 
-    private async Task<Guid> OpenSessionAsync(Guid cashierUserId, bool closed = false)
+    /// <summary>Returns once a backend of the test database is blocked behind a lock, so a race test never guesses a delay.</summary>
+    private async Task WaitUntilARequestWaitsOnALockAsync()
+    {
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            await using var command = _source.CreateCommand(
+                "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid() AND wait_event_type = 'Lock' AND query ILIKE '%cash_sessions%';");
+            if ((long)(await command.ExecuteScalarAsync())! > 0)
+                return;
+            await Task.Delay(100);
+        }
+
+        Assert.Fail("The request never waited on the session lock.");
+    }
+
+    private async Task<Guid> OpenSessionAsync(Guid cashierUserId, bool closed = false, Guid? terminalId = null)
     {
         var sessionId = Guid.NewGuid();
         await using var command = _source.CreateCommand(
@@ -1093,9 +1122,10 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
             INSERT INTO cash.cash_sessions
                 (cash_session_id, cashier_user_id, terminal_id, status, opening_balance, expected_cash, actual_cash,
                  difference, opened_at, closed_at, created_at, updated_at)
-            VALUES (@s, @u, gen_random_uuid(), @status, 0, 0, 0, 0, now(), @closed_at, now(), now());
+            VALUES (@s, @u, @t, @status, 0, 0, 0, 0, now(), @closed_at, now(), now());
             """);
         command.Parameters.AddWithValue("s", sessionId);
+        command.Parameters.AddWithValue("t", terminalId ?? (closed ? Guid.NewGuid() : _terminalId));
         command.Parameters.AddWithValue("u", cashierUserId);
         command.Parameters.AddWithValue("status", closed ? "Closed" : "Open");
         command.Parameters.AddWithValue("closed_at", closed ? DateTime.UtcNow : DBNull.Value);

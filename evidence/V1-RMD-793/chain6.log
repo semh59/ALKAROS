@@ -1,0 +1,6 @@
+m18-no-share-lock: exit=0 
+m19-grant-always-self: exit=0 
+m20-reject-audit-flag: exit=0 
+m21-complete-audit-flag: exit=0 
+m22-any-attempt-is-card: exit=0 
+m23-spend-ignores-status: exit=0 

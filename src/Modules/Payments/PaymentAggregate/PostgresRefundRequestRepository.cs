@@ -18,7 +18,8 @@ public sealed record RefundRequest(
     DateTimeOffset? DecidedAt,
     string? SlipNumber,
     string? ApprovalMode = null,
-    string? IdempotencyKey = null);
+    string? IdempotencyKey = null,
+    Guid? TerminalId = null);
 
 /// <summary>One bill item (and quantity) a refund request pays back.</summary>
 public sealed record RefundRequestItem(Guid BillItemId, decimal Quantity, bool RestoreStock);
@@ -32,7 +33,7 @@ public static class PostgresRefundRequestRepository
 {
     private const string Columns =
         "refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, "
-        + "decided_by, decided_at, slip_number, approval_mode, idempotency_key";
+        + "decided_by, decided_at, slip_number, approval_mode, idempotency_key, terminal_id";
 
     /// <summary>Inserts a Requested row; returns false when the payment already has an open request.</summary>
     /// <remarks>The caller looks the idempotency key up first (under the bill lock), so a clash on it is not expected here.</remarks>
@@ -46,8 +47,8 @@ public static class PostgresRefundRequestRepository
                 """
                 INSERT INTO payments.refund_requests
                     (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at,
-                     idempotency_key)
-                VALUES (@id, @bill, @payment, @amount, @method, @reason, 'Requested', @by, @at, @key);
+                     idempotency_key, terminal_id)
+                VALUES (@id, @bill, @payment, @amount, @method, @reason, 'Requested', @by, @at, @key, @terminal);
                 """, connection, transaction);
             insert.Parameters.Add("id", NpgsqlDbType.Uuid).Value = request.Id;
             insert.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = request.BillId;
@@ -58,6 +59,7 @@ public static class PostgresRefundRequestRepository
             insert.Parameters.Add("by", NpgsqlDbType.Uuid).Value = request.RequestedBy;
             insert.Parameters.Add("at", NpgsqlDbType.TimestampTz).Value = request.RequestedAt.UtcDateTime;
             insert.Parameters.Add("key", NpgsqlDbType.Text).Value = (object?)request.IdempotencyKey ?? DBNull.Value;
+            insert.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = (object?)request.TerminalId ?? DBNull.Value;
             await insert.ExecuteNonQueryAsync(cancellationToken);
             return true;
         }
@@ -97,7 +99,7 @@ public static class PostgresRefundRequestRepository
 
     /// <summary>Newest first; <paramref name="before"/> pages back from the last row of the previous page.</summary>
     public static async Task<IReadOnlyList<RefundRequest>> ListAsync(
-        NpgsqlDataSource dataSource, string? status, Guid? billId, DateTimeOffset? before, int limit,
+        NpgsqlDataSource dataSource, string? status, Guid? billId, DateTimeOffset? before, bool? selfApproved, int limit,
         CancellationToken cancellationToken = default)
     {
         await using var command = dataSource.CreateCommand(
@@ -106,12 +108,14 @@ public static class PostgresRefundRequestRepository
             WHERE (@status::text IS NULL OR status = @status)
               AND (@bill::uuid IS NULL OR bill_id = @bill)
               AND (@before::timestamptz IS NULL OR requested_at < @before)
+              AND (@self::boolean IS NULL OR (approval_mode = 'Self') = @self)
             ORDER BY requested_at DESC, refund_request_id DESC
             LIMIT @limit;
             """);
         command.Parameters.Add("status", NpgsqlDbType.Text).Value = (object?)status ?? DBNull.Value;
         command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = (object?)billId ?? DBNull.Value;
         command.Parameters.Add("before", NpgsqlDbType.TimestampTz).Value = before is { } at ? at.UtcDateTime : DBNull.Value;
+        command.Parameters.Add("self", NpgsqlDbType.Boolean).Value = (object?)selfApproved ?? DBNull.Value;
         command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = Math.Clamp(limit, 1, MaxListLimit);
         var result = new List<RefundRequest>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -139,19 +143,21 @@ public static class PostgresRefundRequestRepository
             ("at", NpgsqlDbType.TimestampTz, at.UtcDateTime), ("id", NpgsqlDbType.Uuid, requestId));
 
     public static Task MarkRejectedAsync(
-        Guid requestId, Guid deciderId, string note, DateTimeOffset at, NpgsqlConnection connection,
+        Guid requestId, Guid deciderId, string? approvalMode, string note, DateTimeOffset at, NpgsqlConnection connection,
         NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
         => ExecuteAsync(
             """
             UPDATE payments.refund_requests
-            SET status = 'Rejected', decided_by = @by, decided_at = @at, decision_note = @note, row_version = row_version + 1
+            SET status = 'Rejected', decided_by = @by, decided_at = @at, decision_note = @note, approval_mode = @mode,
+                row_version = row_version + 1
             WHERE refund_request_id = @id;
             """, connection, transaction, cancellationToken,
             ("by", NpgsqlDbType.Uuid, deciderId), ("at", NpgsqlDbType.TimestampTz, at.UtcDateTime),
+            ("mode", NpgsqlDbType.Text, (object?)approvalMode ?? DBNull.Value),
             ("note", NpgsqlDbType.Text, note), ("id", NpgsqlDbType.Uuid, requestId));
 
     public static Task MarkCompletedAsync(
-        Guid requestId, string slipNumber, string? note, Guid completedBy, DateTimeOffset at,
+        Guid requestId, string? slipNumber, string? note, Guid completedBy, DateTimeOffset at,
         NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
         => ExecuteAsync(
             """
@@ -160,7 +166,7 @@ public static class PostgresRefundRequestRepository
                 completed_by = @by, completed_at = @at, row_version = row_version + 1
             WHERE refund_request_id = @id;
             """, connection, transaction, cancellationToken,
-            ("slip", NpgsqlDbType.Text, slipNumber), ("note", NpgsqlDbType.Text, (object?)note ?? DBNull.Value),
+            ("slip", NpgsqlDbType.Text, (object?)slipNumber ?? DBNull.Value), ("note", NpgsqlDbType.Text, (object?)note ?? DBNull.Value),
             ("by", NpgsqlDbType.Uuid, completedBy), ("at", NpgsqlDbType.TimestampTz, at.UtcDateTime),
             ("id", NpgsqlDbType.Uuid, requestId));
 
@@ -288,5 +294,6 @@ public static class PostgresRefundRequestRepository
         reader.IsDBNull(10) ? null : new DateTimeOffset(reader.GetDateTime(10), TimeSpan.Zero),
         reader.IsDBNull(11) ? null : reader.GetString(11),
         reader.IsDBNull(12) ? null : reader.GetString(12),
-        reader.IsDBNull(13) ? null : reader.GetString(13));
+        reader.IsDBNull(13) ? null : reader.GetString(13),
+        reader.IsDBNull(14) ? null : reader.GetGuid(14));
 }

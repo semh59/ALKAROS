@@ -72,7 +72,7 @@ public static partial class DualScreenApplication
                 var adjustments = await adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
                 var summary = AdjustmentCalculator.Calculate(bill, adjustments);
                 var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
-                var methods = await PaymentMethodsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
+                var methods = await PaymentMethodLookup.ForPaymentsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
                 var refunded = await RefundedQuantitiesAsync(dataSource, billId, cancellationToken);
                 var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
                 var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
@@ -102,7 +102,7 @@ public static partial class DualScreenApplication
                         .Select(p => new BillReceiptPaymentV1(
                             p.Id,
                             p.ApprovedAmount!.Value,
-                            methods.GetValueOrDefault(p.Id, "Manual"),
+                            methods[p.Id],
                             p.Status.ToString(),
                             p.ApprovedAt,
                             paidBack.GetValueOrDefault(p.Id)))
@@ -165,34 +165,6 @@ public static partial class DualScreenApplication
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result[reader.GetGuid(0)] = reader.GetDecimal(1);
-        return result;
-    }
-
-    private static async Task<Dictionary<Guid, string>> PaymentMethodsAsync(
-        NpgsqlDataSource dataSource, Guid[] paymentIds, CancellationToken cancellationToken)
-    {
-        var result = new Dictionary<Guid, string>();
-        if (paymentIds.Length == 0)
-            return result;
-
-        await using var command = dataSource.CreateCommand(
-            """
-            SELECT p.id,
-                   CASE
-                       WHEN EXISTS (SELECT 1 FROM customer_account.account_transactions a
-                                    WHERE a.source_reference_type = 'Payment' AND a.source_reference_id = p.id
-                                      AND a.transaction_type = 'Charge') THEN 'Account'
-                       WHEN EXISTS (SELECT 1 FROM cash.cash_transactions c
-                                    WHERE c.related_payment_id = p.id AND c.type = 'Sale') THEN 'Cash'
-                       WHEN EXISTS (SELECT 1 FROM payments.card_settlement_attempts s
-                                    WHERE s.payment_id = p.id AND s.outcome = 'Approved') THEN 'Card'
-                       ELSE 'Manual' END
-            FROM unnest(@ids) AS p(id);
-            """);
-        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = paymentIds;
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-            result[reader.GetGuid(0)] = reader.GetString(1);
         return result;
     }
 }

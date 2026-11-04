@@ -1,0 +1,6 @@
+m18-no-share-lock: exit=0 Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 13 s - ALKAROS.Host.Experience.Billing.Tests.
+m19-grant-always-self: exit=1 Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 13 s - ALKAROS.Host.Experience.Billing.Tests.
+m20-reject-audit-flag: exit=1 Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 12 s - ALKAROS.Host.Experience.Billing.Tests.
+m21-complete-audit-flag: exit=1 Başarısız! - Başarısız:     2, Başarılı:     2, Atlanan:     0, Toplam:     4, Süre: 12 s - ALKAROS.Host.Experience.Billing.Tests.
+m22-any-attempt-is-card: exit=1 Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 4 s - ALKAROS.Host.Experience.Billing.Tests.d
+m23-spend-ignores-status: exit=1 Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 14 s - ALKAROS.Host.Experience.Billing.Tests.

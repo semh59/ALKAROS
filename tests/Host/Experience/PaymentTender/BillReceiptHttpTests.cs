@@ -77,9 +77,41 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.All(payments, p => Assert.NotEqual(JsonValueKind.Null, p.GetProperty("at").ValueKind));
         Assert.Equal(60m, payments.Single(p => p.GetProperty("method").GetString() == "Cash").GetProperty("amount").GetDecimal());
         Assert.Equal(20m, payments.Single(p => p.GetProperty("method").GetString() == "Account").GetProperty("amount").GetDecimal());
-        Assert.Equal(25m, payments.Single(p => p.GetProperty("method").GetString() == "Manual").GetProperty("amount").GetDecimal());
+        Assert.Equal(25m, payments.Single(p => p.GetProperty("method").GetString() == "Eft").GetProperty("amount").GetDecimal());
         Assert.Equal(5m, payments.Single(p => p.GetProperty("method").GetString() == "Card").GetProperty("amount").GetDecimal());
         Assert.All(payments, p => Assert.Equal("Approved", p.GetProperty("status").GetString()));
+    }
+
+    [Fact]
+    public async Task ACardChargeConfirmedByASecondPersonShowsAsACardNotAsATransfer()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-manual-card");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 40m);
+        var paymentId = await FirstPaymentIdAsync(billId, 40m);
+        await _database.SeedManagerSessionAsync(terminalId, "receipt-manual-card-manager");
+        var (claimant, approver) = await _database.TwoUsersAsync();
+        await using (var insert = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO payments.manual_card_confirmations
+                (confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at, decided_by, decided_at)
+            VALUES (gen_random_uuid(), @p, @b, 'FIS-RCPT', 40, 'Approved', @r, now(), @d, now());
+            """))
+        {
+            insert.Parameters.AddWithValue("p", paymentId);
+            insert.Parameters.AddWithValue("b", billId);
+            insert.Parameters.AddWithValue("r", claimant);
+            insert.Parameters.AddWithValue("d", approver);
+            await insert.ExecuteNonQueryAsync();
+        }
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await GetAsync(client, ReceiptPath(terminalId, billId), cookie);
+
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Card", Assert.Single(body.GetProperty("payments").EnumerateArray()).GetProperty("method").GetString());
     }
 
     [Fact]
@@ -308,7 +340,7 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
             """
             INSERT INTO payments.refund_requests
                 (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at)
-            VALUES (@r, @b, @p, 10, 'Manual', 'Test', @s, @u, now());
+            VALUES (@r, @b, @p, 10, 'Eft', 'Test', @s, @u, now());
             INSERT INTO payments.refund_request_items (refund_request_id, bill_item_id, quantity, restore_stock)
             VALUES (@r, @i, 1, false);
             """);

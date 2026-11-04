@@ -16,6 +16,7 @@ using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.ManagerSelfApproval;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -322,7 +323,8 @@ public static class BillingSplitApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
             return Results.Ok(await store.RequestAsync(
-                billId, request.PaymentId, request.Reason, principal.UserId, request.Items, idempotencyKey, cancellationToken));
+                billId, request.PaymentId, request.Reason, principal.UserId, terminalId, request.Items, idempotencyKey,
+                cancellationToken));
         });
 
         refundsGroup.MapGet("/refund-requests", async (
@@ -330,6 +332,7 @@ public static class BillingSplitApplication
             string? status,
             Guid? billId,
             DateTimeOffset? before,
+            bool? selfApproved,
             int? limit,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
@@ -340,7 +343,7 @@ public static class BillingSplitApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
             return Results.Ok(await store.ListAsync(
-                status, billId, before, limit ?? PostgresRefundRequestRepository.MaxListLimit, cancellationToken));
+                status, billId, before, selfApproved, limit ?? PostgresRefundRequestRepository.MaxListLimit, cancellationToken));
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (
@@ -348,13 +351,16 @@ public static class BillingSplitApplication
             Guid requestId,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            ISettingsService settings,
             PaymentRefundStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
-            return Results.Ok(await store.ApproveAsync(requestId, principal.UserId, cancellationToken));
+            return Results.Ok(await store.ApproveAsync(
+                requestId, principal.UserId, await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken),
+                cancellationToken));
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/reject", async (
@@ -363,13 +369,16 @@ public static class BillingSplitApplication
             RefundDecisionInputV1 request,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            ISettingsService settings,
             PaymentRefundStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
-            return Results.Ok(await store.RejectAsync(requestId, principal.UserId, request.Note, cancellationToken));
+            return Results.Ok(await store.RejectAsync(
+                requestId, principal.UserId, request.Note,
+                await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken), cancellationToken));
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/complete", async (
@@ -398,7 +407,7 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
-            return Results.Ok(await store.GetAllowanceAsync(principal.UserId, cancellationToken));
+            return Results.Ok(await store.GetAllowanceAsync(principal.UserId, terminalId, cancellationToken));
         });
 
         refundsGroup.MapPut("/refund-allowance", async (
@@ -406,15 +415,16 @@ public static class BillingSplitApplication
             RefundAllowanceInputV1 request,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            ISettingsService settings,
             PaymentRefundStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
-            if (request.CashierUserId == principal.UserId)
-                throw new RefundSelfDecisionException();
-            return Results.Ok(await store.SetAllowanceAsync(request.CashierUserId, request.Amount, principal.UserId, cancellationToken));
+            return Results.Ok(await store.SetAllowanceAsync(
+                request.CashierUserId, request.CashierTerminalId, request.Amount, principal.UserId,
+                await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken), cancellationToken));
         });
 
         var group = endpoints.MapGroup(RoutePrefix)
@@ -639,9 +649,9 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         RefundPaymentNotRefundableException => (409, "PAYMENT_NOT_REFUNDABLE", "Bu ödeme iade edilemez; yalnızca onaylanmış ve iade edilmemiş ödeme iade istenebilir."),
         RefundAlreadyRequestedException => (409, "REFUND_ALREADY_REQUESTED", "Bu ödeme için açık bir iade isteği zaten var."),
         RefundStateException => (409, "REFUND_STATE", "İade isteği bu durumda değil; sayfayı yenileyin."),
-        RefundSelfDecisionException => (403, "SELF_DECISION", "İadeyi isteyen kişi kendi isteğini onaylayamaz veya reddedemez."),
-        RefundNoOpenCashSessionException => (409, "NO_OPEN_CASH_SESSION", "İadeyi ödeyecek kasiyerin açık kasa oturumu yok."),
-        ALKAROS.Cash.TenderHandler.ClosedCashSessionException => (409, "NO_OPEN_CASH_SESSION", "İadeyi ödeyecek kasiyerin açık kasa oturumu yok."),
+        RefundSelfDecisionException => (403, "SELF_DECISION", "İadeyi isteyen kişi kendi isteği hakkında karar veremez; başka bir yetkili onaylamalı veya reddetmeli. Tek yöneticili işletmelerde Ayarlar'dan \"Yönetici kendi talebini onaylayabilir\" açılabilir."),
+        RefundNoOpenCashSessionException => (409, "NO_OPEN_CASH_SESSION", "İadeyi isteyen kasiyerin, isteği yaptığı terminalde açık kasa oturumu yok."),
+        ALKAROS.Cash.TenderHandler.ClosedCashSessionException => (409, "NO_OPEN_CASH_SESSION", "İadeyi isteyen kasiyerin, isteği yaptığı terminalde açık kasa oturumu yok."),
         RefundItemQuantityException => (409, "REFUND_ITEM_QUANTITY", "Bu kalemden istenen adet iade edilebilir adedi aşıyor."),
         RefundAmountExceedsPaymentException => (409, "REFUND_AMOUNT_EXCEEDS_PAYMENT", "İade tutarı seçilen ödemenin kalan tutarını aşıyor."),
         RefundAccountChargeUnsupportedException => (409, "ACCOUNT_REFUND_UNSUPPORTED", "Müşteri hesabına yazılan ödeme buradan iade edilemez."),

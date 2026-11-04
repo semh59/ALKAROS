@@ -7,7 +7,7 @@ public sealed class PostgresManualCardConfirmationRepository : IManualCardConfir
 {
     private const string Columns =
         "confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at, request_note, " +
-        "decided_by, decided_at, decision_note, row_version";
+        "decided_by, decided_at, decision_note, row_version, self_approved";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -59,20 +59,21 @@ public sealed class PostgresManualCardConfirmationRepository : IManualCardConfir
 
     public async Task DecideAsync(
         Guid id, ManualCardConfirmationStatus status, Guid decidedBy, DateTimeOffset decidedAt, string? note,
-        long expectedRowVersion, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        bool selfApproved, long expectedRowVersion, NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
         await using var command = new NpgsqlCommand(
             """
             UPDATE payments.manual_card_confirmations
             SET status = @status, decided_by = @decided_by, decided_at = @decided_at, decision_note = @note,
-                row_version = row_version + 1
+                self_approved = @self_approved, row_version = row_version + 1
             WHERE confirmation_id = @id AND status = 'Pending' AND row_version = @expected;
             """, connection, transaction);
         command.Parameters.AddWithValue("status", status.ToString());
         command.Parameters.AddWithValue("decided_by", decidedBy);
         command.Parameters.AddWithValue("decided_at", decidedAt);
         command.Parameters.AddWithValue("note", (object?)note ?? DBNull.Value);
+        command.Parameters.AddWithValue("self_approved", selfApproved);
         command.Parameters.AddWithValue("id", id);
         command.Parameters.AddWithValue("expected", expectedRowVersion);
         if (await command.ExecuteNonQueryAsync(cancellationToken) == 0)
@@ -104,5 +105,5 @@ public sealed class PostgresManualCardConfirmationRepository : IManualCardConfir
         reader.GetFieldValue<DateTimeOffset>(7), reader.IsDBNull(8) ? null : reader.GetString(8),
         reader.IsDBNull(9) ? null : reader.GetGuid(9),
         reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10),
-        reader.IsDBNull(11) ? null : reader.GetString(11), reader.GetInt64(12));
+        reader.IsDBNull(11) ? null : reader.GetString(11), reader.GetInt64(12), reader.GetBoolean(13));
 }

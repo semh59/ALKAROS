@@ -902,7 +902,7 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         await using var transaction = await connection.BeginTransactionAsync();
 
         await Assert.ThrowsAsync<ALKAROS.Payments.PaymentAggregate.PaymentConcurrencyException>(() => repository.DecideAsync(
-            confirmationId, ManualCardConfirmationStatus.Approved, userB, DateTimeOffset.UtcNow, null, 999, connection, transaction));
+            confirmationId, ManualCardConfirmationStatus.Approved, userB, DateTimeOffset.UtcNow, null, false, 999, connection, transaction));
     }
 
     [Fact]
@@ -931,7 +931,7 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         // No claim was kept, so a real one is still accepted; its approval and rejection that cannot be audited are undone.
         var confirmationId = (await confirmations.RequestAsync(paymentId, userA, "FIS-649", null, (_, _, _, _) => Task.CompletedTask)).Id;
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => confirmations.ApproveAsync(confirmationId, billId, userB, null, failConfirmation));
+            () => confirmations.ApproveAsync(confirmationId, billId, userB, null, false, failConfirmation));
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => confirmations.RejectAsync(confirmationId, billId, userB, null, failConfirmation));
 
@@ -994,6 +994,75 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
 
         var again = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "approve"), managerB, new { });
         Assert.Equal(HttpStatusCode.Conflict, again.StatusCode);
+    }
+
+    [Fact]
+    public async Task TheClaimantApprovesTheirOwnCardChargedClaimOnlyWhenTheSharedSettingIsOnAndTheRowSaysSo()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd793-cashier");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd793-1");
+        var manager = await _database.SeedManagerSessionAsync(terminalId, "rmd793-manager");
+        var claim = await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "FIS-793" });
+        var confirmationId = (await claim.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("confirmationId").GetGuid();
+
+        var refused = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "approve"), manager, new { });
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        var refusal = (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("SAME_ACTOR", refusal.GetProperty("code").GetString());
+        Assert.Contains("başka bir yetkili", refusal.GetProperty("message").GetString());
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+
+        await using (var enable = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner)
+            VALUES (gen_random_uuid(), 'approvals.manager_self_approval_enabled', 'true', 'Boolean', 'Global', 'cash')
+            ON CONFLICT (setting_key) DO UPDATE SET setting_value = 'true';
+            """))
+        {
+            await enable.ExecuteNonQueryAsync();
+        }
+        var approved = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "approve"), manager, new { });
+
+        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
+        Assert.Equal("Approved", await _database.PaymentStatusAsync(paymentId));
+        await using var read = _database.DataSource.CreateCommand(
+            "SELECT self_approved FROM payments.manual_card_confirmations WHERE confirmation_id = @id;");
+        read.Parameters.AddWithValue("id", confirmationId);
+        Assert.True((bool)(await read.ExecuteScalarAsync())!);
+        await using var audit = _database.DataSource.CreateCommand(
+            """
+            SELECT count(*) FROM audit.audit_events
+            WHERE aggregate_id = @p AND event_name = 'payment.manual-resolution.card-charged-approved'
+              AND (after_state_json::jsonb ->> 'selfApproved') = 'true';
+            """);
+        audit.Parameters.AddWithValue("p", paymentId);
+        Assert.Equal(1L, (long)(await audit.ExecuteScalarAsync())!);
+    }
+
+    [Fact]
+    public async Task TheClaimantMayRejectTheirOwnCardChargedClaimAndTheRowIsNotMarkedSelfApproved()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd793-rej-cashier");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd793-rej-1");
+        var manager = await _database.SeedManagerSessionAsync(terminalId, "rmd793-rej-manager");
+        var claim = await PostAsync(client, ClaimPath(terminalId, billId, paymentId), manager, new { SlipNumber = "FIS-794" });
+        var confirmationId = (await claim.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("confirmationId").GetGuid();
+
+        var rejected = await PostAsync(client, DecidePath(terminalId, billId, confirmationId, "reject"), manager, new { Note = "Yanlış fiş girildi." });
+
+        Assert.Equal(HttpStatusCode.OK, rejected.StatusCode);
+        await using var read = _database.DataSource.CreateCommand(
+            "SELECT status || ':' || self_approved FROM payments.manual_card_confirmations WHERE confirmation_id = @id;");
+        read.Parameters.AddWithValue("id", confirmationId);
+        Assert.Equal("Rejected:false", (string)(await read.ExecuteScalarAsync())!);
     }
 
     [Fact]
