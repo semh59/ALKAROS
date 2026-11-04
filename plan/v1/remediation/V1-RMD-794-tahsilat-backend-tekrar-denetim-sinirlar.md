@@ -33,6 +33,7 @@ Kapsam dışı: iade tarafı (V1-RMD-793, Done); arayüzler ve E2E (V1-RMD-795);
   - tests/Host/Experience/PaymentTender/TenderRejectionAuditHttpTests.cs (V1-RMD-258) — yeni dosya: denetim izi ve Türkçe hata taraması.
   - tests/Host/Experience/CashSession/ClientLimitLockTests.cs (V1-RMD-788) — yeni dosya: istemci sınırlarının sunucu sabitlerine kilidi.
   - tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs (V1-RMD-258) — yalnız sınıfın partial yapılması.
+  - tests/Host/Experience/PaymentTender/ClaimSlipLimitHttpTests.cs (V1-RMD-258) — yeni dosya: kart çekildi bildirimi fiş uzunluğunun ekranla sunucu arasındaki kilidi.
   - tests/Host/Experience/PaymentTender/ErrorMessageLanguageTests.cs (V1-RMD-258) — yeni dosya: hata metinlerinin Türkçe olduğunun tarama kilidi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
