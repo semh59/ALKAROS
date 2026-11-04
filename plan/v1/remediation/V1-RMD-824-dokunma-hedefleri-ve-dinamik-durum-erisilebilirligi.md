@@ -24,6 +24,9 @@ Kapsam dışı: düşük kalemler, yazı tipleri, dist (V1-RMD-823).
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css (V1-RMD-241) — çip ve kupür girdisi 48 px.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css (V1-RMD-443) — onay kutusu, ölü sekme stilleri, pasif düğme kontrastı.
+  - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — eşit bölüştürme katlanır bölüme alınır: ödeme düğmesi ilk ekranda kalır.
+  - tests/Clients/StaticApps/split-payment-hierarchy.test.js (V1-RMD-109) — bölüm testi.
+  - tests/E2E/Cashier/specs/09-split-payment-race-and-edges.spec.js (V1-RMD-314) — eşit bölüştürme bölümünü açar.
   - src/Clients/Cashier/wwwroot/cashier-app.css (V1-CUI-008) — seçenek satırı ve oturum bağlantıları 48 px.
   - src/Clients/PosTerminal/src/styles.css (V1-RMD-042) — arama kutusu 48 px.
   - src/Clients/PosTerminal/src/touchTargets.test.ts (V1-RMD-699) — arama kutusu kuralı.
