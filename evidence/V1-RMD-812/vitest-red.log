@@ -1,33 +1,270 @@
 
  RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
 
- ❯ src/routes/CustomerDisplay.test.tsx (0 test)
+ ❯ src/routes/CustomerDisplay.test.tsx (58 tests | 13 failed) 1599ms
+     × lists the statement in the order a customer reads it: subtotal, discount, tip, fee, bill total, paid, VAT 39ms
+     × shows a bill total once a tip alone separates the subtotal from what is due 14ms
+     × marks a discounted line with its discount and a complimentary line as an offer, each at its full price 25ms
+     × no longer prints the technical live-update and revision label 19ms
+     × tells a customer who has paid in full how much was paid 11ms
+       × says how many items are out of sight when the list is longer than the screen 35ms
+       × pages through a long list on its own and starts over at the end 45ms
+       × turns the page without animation when the viewer asked for reduced motion 39ms
+       × sets item names, amounts and prices in type a customer can read from the other side of a counter 1ms
+       × fits the active screen inside the window: one column that fills the height, the connection notice in the flow 1ms
+       × keeps the totals card on screen at 1024 x 600 by letting only the item list scroll 1ms
+       × keeps .display-table-head legible on its background (contrast 4.5:1) 1ms
+       × keeps .display-total-breakdown legible on its background (contrast 4.5:1) 1ms
 
-⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
 
- FAIL  src/routes/CustomerDisplay.test.tsx [ src/routes/CustomerDisplay.test.tsx ]
-Error: Transform failed with 1 error:
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > lists the statement in the order a customer reads it: subtotal, discount, tip, fee, bill total, paid, VAT
+AssertionError: expected [ …(5) ] to deeply equal [ { label: 'Ara toplam', …(1) }, …(6) ]
 
-[31m[PARSE_ERROR] [0mUnterminated regular expression
-     [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/routes/CustomerDisplay.test.tsx:997:99 [38;5;246m][0m
-     [38;5;246m│[0m
- [38;5;246m997 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249m [0m[38;5;249mc[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249md[0m[38;5;249mi[0m[38;5;249ms[0m[38;5;249mp[0m[38;5;249ml[0m[38;5;249ma[0m[38;5;249my[0m[38;5;249mS[0m[38;5;249mt[0m[38;5;249my[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249ms[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m[38;5;249mr[0m[38;5;249me[0m[38;5;249ma[0m[38;5;249md[0m[38;5;249mF[0m[38;5;249mi[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249mS[0m[38;5;249my[0m[38;5;249mn[0m[38;5;249mc[0m[38;5;249m([0m[38;5;249mn[0m[38;5;249me[0m[38;5;249mw[0m[38;5;249m [0m[38;5;249mU[0m[38;5;249mR[0m[38;5;249mL[0m[38;5;249m([0m[38;5;249m"[0m[38;5;249m.[0m[38;5;249m.[0m[38;5;249m/[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249my[0m[38;5;249ml[0m[38;5;249me[0m[38;5;249ms[0m[38;5;249m.[0m[38;5;249mc[0m[38;5;249ms[0m[38;5;249ms[0m[38;5;249m"[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249mi[0m[38;5;249mm[0m[38;5;249mp[0m[38;5;249mo[0m[38;5;249mr[0m[38;5;249mt[0m[38;5;249m.[0m[38;5;249mm[0m[38;5;249me[0m[38;5;249mt[0m[38;5;249ma[0m[38;5;249m.[0m[38;5;249mu[0m[38;5;249mr[0m[38;5;249ml[0m[38;5;249m)[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249m"[0m[38;5;249mu[0m[38;5;249mt[0m[38;5;249mf[0m[38;5;249m8[0m[38;5;249m"[0m[38;5;249m)[0m[38;5;249m.[0m[38;5;249mr[0m[38;5;249me[0m[38;5;249mp[0m[38;5;249ml[0m[38;5;249ma[0m[38;5;249mc[0m[38;5;249me[0m[38;5;249m([0m/
- [38;5;240m    │[0m                                                                                                   ─┬  
- [38;5;240m    │[0m                                                                                                    ╰── 
-[38;5;246m─────╯[0m
+- Expected
++ Received
 
-  Plugin: vite:oxc
-  File: D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/CustomerDisplay.test.tsx
- ❯ transformWithOxc node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:4103:19
- ❯ TransformPluginContext.transform node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:4174:26
- ❯ EnvironmentPluginContainer.transform node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:30932:51
- ❯ loadAndTransform node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:20671:26
+@@ -1,29 +1,21 @@
+  [
+    {
++     "label": "Hesap toplamı",
++     "value": "₺870,00",
++   },
++   {
++     "label": "Ödenen",
++     "value": "₺400,00",
++   },
++   {
+      "label": "Ara toplam",
+      "value": "₺960,00",
+    },
+    {
+      "label": "İndirim",
+      "value": "−₺160,00",
+-   },
+-   {
+-     "label": "Bahşiş",
+-     "value": "+₺50,00",
+-   },
+-   {
+-     "label": "Ücret",
+-     "value": "+₺20,00",
+-   },
+-   {
+-     "label": "Hesap toplamı",
+-     "value": "₺870,00",
+-   },
+-   {
+-     "label": "Ödenen",
+-     "value": "−₺400,00",
+    },
+    {
+      "label": "İçindeki KDV",
+      "value": "₺50,91",
+    },
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+ ❯ src/routes/CustomerDisplay.test.tsx:764:29
+    762|     });
+    763|
+    764|     expect(statementRows()).toEqual([
+       |                             ^
+    765|       { label: "Ara toplam", value: money(960) },
+    766|       { label: "İndirim", value: `−${money(160)}` },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > shows a bill total once a tip alone separates the subtotal from what is due
+AssertionError: expected [ 'Ara toplam', 'İçindeki KDV' ] to deeply equal [ 'Ara toplam', 'Bahşiş', …(2) ]
+
+- Expected
++ Received
+
+  [
+    "Ara toplam",
+-   "Bahşiş",
+-   "Hesap toplamı",
+    "İçindeki KDV",
+  ]
+
+ ❯ src/routes/CustomerDisplay.test.tsx:788:53
+    786|     await showSnapshot({ tipTotal: 30, total: 590 });
+    787|
+    788|     expect(statementRows().map((row) => row.label)).toEqual(["Ara topl…
+       |                                                     ^
+    789|   });
+    790|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > marks a discounted line with its discount and a complimentary line as an offer, each at its full price
+AssertionError: expected 'Ayran₺100,00 · KDV dahil4₺400,00' to contain 'İndirim −₺40,00'
+
+Expected: "İndirim −₺40,00"
+Received: "Ayran₺100,00 · KDV dahil4₺400,00"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:804:34
+    802|     expect(lines[0].textContent).not.toContain("İndirim");
+    803|     expect(lines[0].textContent).not.toContain("İkram");
+    804|     expect(lines[1].textContent).toContain(`İndirim −${money(40)}`);
+       |                                  ^
+    805|     expect(lines[1].textContent).toContain(money(400));
+    806|     expect(lines[2].textContent).toContain("İkram");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > no longer prints the technical live-update and revision label
+AssertionError: expected 'AALKAROSSiparişS-042Sipariş güncellen…' not to contain 'Canlı güncelleme'
+
+Expected: "Canlı güncelleme"
+Received: "AALKAROSSiparişS-042Sipariş güncelleniyorSİPARİŞİNİZÜrünler2 adetÜrünAdetTutarKöfte₺280,00 · KDV dahil2₺560,00ÖDENECEK TOPLAM₺560,00Ara toplam₺560,00İçindeki KDV₺50,91✓Siparişiniz hazırlanıyor.Canlı güncelleme · v3"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:814:43
+    812|     await showSnapshot({});
+    813|
+    814|     expect(document.body.textContent).not.toContain("Canlı güncelleme"…
+       |                                           ^
+    815|     expect(document.body.textContent).not.toContain("v3");
+    816|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > tells a customer who has paid in full how much was paid
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ src/routes/CustomerDisplay.test.tsx:823:55
+    821|     const screen = document.querySelector(".completed-screen")!;
+    822|     expect(screen.textContent).toContain("Teşekkür ederiz.");
+    823|     expect(screen.querySelector(".display-paid-total")!.textContent).t…
+       |                                                       ^
+    824|   });
+    825|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > long orders > says how many items are out of sight when the list is longer than the screen
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ src/routes/CustomerDisplay.test.tsx:870:59
+    868|       await showSnapshot({ lines: manyLines });
+    869|
+    870|       expect(document.querySelector(".display-more-lines")!.textConten…
+       |                                                           ^
+    871|     });
+    872|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > long orders > pages through a long list on its own and starts over at the end
+AssertionError: expected last "vi.fn()" call to have been called with [ { top: 450, behavior: 'smooth' } ]
+
+- Expected:
+[
+  {
+    "behavior": "smooth",
+    "top": 450,
+  },
+]
+
++ Received:
+undefined
+
+ ❯ src/routes/CustomerDisplay.test.tsx:892:24
+    890|
+    891|       await tick(6_000);
+    892|       expect(scrollTo).toHaveBeenLastCalledWith({ top: 450, behavior: …
+       |                        ^
+    893|       expect(document.querySelector(".display-more-lines")!.textConten…
+    894|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > long orders > turns the page without animation when the viewer asked for reduced motion
+AssertionError: expected last "vi.fn()" call to have been called with [ { top: 450, behavior: 'auto' } ]
+
+- Expected:
+[
+  {
+    "behavior": "auto",
+    "top": 450,
+  },
+]
+
++ Received:
+undefined
+
+ ❯ src/routes/CustomerDisplay.test.tsx:910:24
+    908|       await tick(6_000);
+    909|
+    910|       expect(scrollTo).toHaveBeenLastCalledWith({ top: 450, behavior: …
+       |                        ^
+    911|     });
+    912|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > stylesheet > sets item names, amounts and prices in type a customer can read from the other side of a counter
+AssertionError: expected 16 to be greater than or equal to 28
+ ❯ src/routes/CustomerDisplay.test.tsx:1027:54
+    1025|
+    1026|     it("sets item names, amounts and prices in type a customer can rea…
+    1027|       expect(smallestFontPx(".display-line strong")).toBeGreaterThanOr…
+       |                                                      ^
+    1028|       expect(smallestFontPx(".display-line small")).toBeGreaterThanOrE…
+    1029|       expect(smallestFontPx(".display-quantity")).toBeGreaterThanOrEqu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > stylesheet > fits the active screen inside the window: one column that fills the height, the connection notice in the flow
+Error: .active-display has no height
+ ❯ declaration src/routes/CustomerDisplay.test.tsx:1006:25
+    1004|     const declaration = (selector: string, property: string) => {
+    1005|       const match = new RegExp(`[{;\\s]${property}:\\s*([^;]+)`).exec(…
+    1006|       if (!match) throw new Error(`${selector} has no ${property}`);
+       |                         ^
+    1007|       return match[1].trim();
+    1008|     };
+ ❯ src/routes/CustomerDisplay.test.tsx:1033:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > stylesheet > keeps the totals card on screen at 1024 x 600 by letting only the item list scroll
+Error: .display-lines-card has no min-height
+ ❯ declaration src/routes/CustomerDisplay.test.tsx:1006:25
+    1004|     const declaration = (selector: string, property: string) => {
+    1005|       const match = new RegExp(`[{;\\s]${property}:\\s*([^;]+)`).exec(…
+    1006|       if (!match) throw new Error(`${selector} has no ${property}`);
+       |                         ^
+    1007|       return match[1].trim();
+    1008|     };
+ ❯ src/routes/CustomerDisplay.test.tsx:1042:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > stylesheet > keeps .display-table-head legible on its background (contrast 4.5:1)
+AssertionError: expected 4.280964173467602 to be greater than or equal to 4.5
+ ❯ src/routes/CustomerDisplay.test.tsx:1053:82
+    1051|       [".display-total-breakdown", "#f5f2ed"],
+    1052|     ])("keeps %s legible on its background (contrast 4.5:1)", (selecto…
+    1053|       expect(contrast(rgbOf(declaration(selector, "color")), rgbOf(bac…
+       |                                                                                  ^
+    1054|     });
+    1055|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > stylesheet > keeps .display-total-breakdown legible on its background (contrast 4.5:1)
+AssertionError: expected 4.346335608748548 to be greater than or equal to 4.5
+ ❯ src/routes/CustomerDisplay.test.tsx:1053:82
+    1051|       [".display-total-breakdown", "#f5f2ed"],
+    1052|     ])("keeps %s legible on its background (contrast 4.5:1)", (selecto…
+    1053|       expect(contrast(rgbOf(declaration(selector, "color")), rgbOf(bac…
+       |                                                                                  ^
+    1054|     });
+    1055|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
 
 
  Test Files  1 failed (1)
-      Tests  no tests
-   Start at  14:19:39
-   Duration  2.04s (transform 0ms, setup 0ms, import 0ms, tests 0ms, environment 1.57s)
+      Tests  13 failed | 45 passed (58)
+   Start at  14:20:08
+   Duration  3.88s (transform 372ms, setup 0ms, import 417ms, tests 1.60s, environment 1.48s)
 

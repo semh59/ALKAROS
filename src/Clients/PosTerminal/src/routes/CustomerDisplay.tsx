@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api, type IdleScreensaver } from "../api";
-import type { PairingCreated } from "../contracts";
+import type { DisplayLine, DisplaySnapshot, PairingCreated } from "../contracts";
 import { Icon, type IconName } from "../design-system";
 import { afterFailure, afterSnapshot, displayPresentation, type DisplayFreshness } from "../stale";
 import { formatMoney, formatQuantity } from "../format";
@@ -338,7 +338,11 @@ export function CustomerDisplay() {
         title="Teşekkür ederiz."
         description={snapshot.message || "Siparişiniz tamamlandı. Afiyet olsun."}
         icon="check"
-      />
+      >
+        {snapshot.paidTotal > 0 && (
+          <div className="display-paid-total"><span>Ödenen toplam</span><strong>{formatMoney(snapshot.paidTotal, snapshot.currency)}</strong></div>
+        )}
+      </DisplayMessageScreen>
     );
   }
 
@@ -401,37 +405,100 @@ export function CustomerDisplay() {
             <strong>{formatQuantity(snapshot.lines.reduce((sum, line) => sum + line.quantity, 0))} adet</strong>
           </div>
           <div className="display-table-head"><span>Ürün</span><span>Adet</span><span>Tutar</span></div>
-          <div className="display-lines-scroll">
-            {snapshot.lines.map((line) => (
-              <div className="display-line" key={line.itemId}>
-                <div><strong>{line.name}</strong><small>{formatMoney(line.lineTotal / line.quantity, snapshot.currency)} · KDV dahil</small></div>
-                <span className="display-quantity">{formatQuantity(line.quantity)}</span>
-                <strong>{formatMoney(line.lineTotal, snapshot.currency)}</strong>
-              </div>
-            ))}
-          </div>
+          <DisplayLines lines={snapshot.lines} currency={snapshot.currency} />
         </div>
         <aside className="display-total-card">
           <span className="display-kicker">{partlyPaid ? "KALAN TUTAR" : "ÖDENECEK TOPLAM"}</span>
-          <strong>{formatMoney(typeof snapshot.remainingTotal === "number" ? snapshot.remainingTotal : snapshot.total, snapshot.currency)}</strong>
-          <div className="display-total-breakdown">
-            {partlyPaid && (
-              <>
-                <div><span>Hesap toplamı</span><span>{formatMoney(snapshot.paidTotal + (snapshot.remainingTotal ?? 0), snapshot.currency)}</span></div>
-                <div><span>Ödenen</span><span>{formatMoney(snapshot.paidTotal, snapshot.currency)}</span></div>
-              </>
-            )}
-            <div><span>Ara toplam</span><span>{formatMoney(snapshot.subtotal, snapshot.currency)}</span></div>
-            {snapshot.discountTotal > 0 && (
-              <div><span>İndirim</span><span>−{formatMoney(snapshot.discountTotal, snapshot.currency)}</span></div>
-            )}
-            <div><span>İçindeki KDV</span><span>{formatMoney(snapshot.taxTotal, snapshot.currency)}</span></div>
-          </div>
+          <strong className="display-total-figure">{formatMoney(typeof snapshot.remainingTotal === "number" ? snapshot.remainingTotal : snapshot.total, snapshot.currency)}</strong>
+          <DisplayStatement snapshot={snapshot} partlyPaid={partlyPaid} />
           <div className="display-message"><span>✓</span><p>{snapshot.message}</p></div>
-          <small>Canlı güncelleme · v{snapshot.revision}</small>
         </aside>
       </section>
     </main>
+  );
+}
+
+// The customer reads the bill top to bottom: what was ordered, what was taken off, what was added, what is owed, what is paid.
+function DisplayStatement({ snapshot, partlyPaid }: { snapshot: DisplaySnapshot; partlyPaid: boolean }) {
+  const money = (value: number) => formatMoney(value, snapshot.currency);
+  const adjusted = snapshot.discountTotal > 0 || snapshot.tipTotal > 0 || snapshot.feeTotal > 0 || partlyPaid;
+  return (
+    <div className="display-total-breakdown">
+      <div><span>Ara toplam</span><span>{money(snapshot.subtotal)}</span></div>
+      {snapshot.discountTotal > 0 && <div><span>İndirim</span><span>−{money(snapshot.discountTotal)}</span></div>}
+      {snapshot.tipTotal > 0 && <div><span>Bahşiş</span><span>+{money(snapshot.tipTotal)}</span></div>}
+      {snapshot.feeTotal > 0 && <div><span>Ücret</span><span>+{money(snapshot.feeTotal)}</span></div>}
+      {adjusted && <div><span>Hesap toplamı</span><span>{money(snapshot.total)}</span></div>}
+      {partlyPaid && <div><span>Ödenen</span><span>−{money(snapshot.paidTotal)}</span></div>}
+      <div><span>İçindeki KDV</span><span>{money(snapshot.taxTotal)}</span></div>
+    </div>
+  );
+}
+
+const pageSeconds = 6;
+
+// A long order cannot all be seen at once: the list turns its own pages, and says how many items are still below.
+function DisplayLines({ lines, currency }: { lines: DisplayLine[]; currency: string }) {
+  const list = useRef<HTMLDivElement>(null);
+  const [below, setBelow] = useState(0);
+
+  const measure = useCallback(() => {
+    const element = list.current;
+    if (!element) return;
+    const bottom = element.scrollTop + element.clientHeight;
+    setBelow(Array.from(element.children).filter((row) => (row as HTMLElement).offsetTop + (row as HTMLElement).offsetHeight > bottom + 1).length);
+  }, []);
+
+  useLayoutEffect(measure, [lines, measure]);
+
+  useEffect(() => {
+    // The box changes size with the window, the connection notice and web fonts, not only when it scrolls.
+    const observer = new ResizeObserver(measure);
+    observer.observe(list.current!);
+    const timer = window.setInterval(() => {
+      const element = list.current;
+      if (!element || element.scrollHeight <= element.clientHeight) return;
+      const end = element.scrollHeight - element.clientHeight;
+      // The next page starts at the first item that was cut off, so no item is ever shown half.
+      const firstCutOff = Array.from(element.children).find(
+        (row) => (row as HTMLElement).offsetTop + (row as HTMLElement).offsetHeight > element.scrollTop + element.clientHeight + 1,
+      ) as HTMLElement | undefined;
+      // An item taller than the box cannot be started again, so the page moves on by a box height instead.
+      const next = firstCutOff && firstCutOff.offsetTop > element.scrollTop ? firstCutOff.offsetTop : element.scrollTop + element.clientHeight;
+      const top = element.scrollTop >= end - 1 ? 0 : Math.min(end, next);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      element.scrollTo({ top, behavior: reduceMotion ? "auto" : "smooth" });
+    }, pageSeconds * 1_000);
+    return () => {
+      observer.disconnect();
+      window.clearInterval(timer);
+    };
+  }, [measure]);
+
+  return (
+    <>
+      <div className="display-lines-scroll" ref={list} onScroll={measure}>
+        {lines.map((line) => (
+          <div className="display-line" key={line.itemId}>
+            <div>
+              <strong>{line.name}</strong>
+              <small>{formatMoney(line.lineTotal / line.quantity, currency)} · KDV dahil</small>
+              {line.discountAmount > 0 && (
+                <em className="display-line-note">
+                  {line.discountAmount >= line.lineTotal ? "İkram" : `İndirim −${formatMoney(line.discountAmount, currency)}`}
+                </em>
+              )}
+            </div>
+            <span className="display-quantity">{formatQuantity(line.quantity)}</span>
+            <div className="display-line-amount">
+              <strong>{formatMoney(line.lineTotal - line.discountAmount, currency)}</strong>
+              {line.discountAmount > 0 && <s>{formatMoney(line.lineTotal, currency)}</s>}
+            </div>
+          </div>
+        ))}
+      </div>
+      {below > 0 && <div className="display-more-lines" role="status">+{below} kalem daha</div>}
+    </>
   );
 }
 
@@ -448,6 +515,7 @@ function DisplayMessageScreen({
   icon,
   busy = false,
   alert = false,
+  children,
 }: {
   className: string;
   kicker: string;
@@ -457,6 +525,7 @@ function DisplayMessageScreen({
   icon?: IconName;
   busy?: boolean;
   alert?: boolean;
+  children?: ReactNode;
 }) {
   return (
     <main className={`display-shell ${className}`}>
@@ -472,6 +541,7 @@ function DisplayMessageScreen({
         <span className="display-kicker">{kicker}</span>
         <h1>{title}</h1>
         <p>{description}</p>
+        {children}
         {action}
       </section>
     </main>

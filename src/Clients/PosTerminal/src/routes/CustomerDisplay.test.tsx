@@ -4,6 +4,9 @@ import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { formatMoney } from "../format";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -14,6 +17,15 @@ const jsonResponse = (body: unknown, status = 200) =>
 // Cashier.help-alerts.test.tsx's own SignalR mock - the reason no other
 // hub usage in this codebase is unit-tested at a deeper layer than "does it
 // call start()".
+// jsdom has no layout engine, so no ResizeObserver; the stub lets a test say "the box changed size".
+const resizeObservers = new Set<() => void>();
+class ResizeObserverStub {
+  constructor(private readonly callback: () => void) {}
+  observe() { resizeObservers.add(this.callback); }
+  disconnect() { resizeObservers.delete(this.callback); }
+}
+(globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = ResizeObserverStub;
+
 const startMock = vi.fn(async () => undefined);
 const hub: { changed?: () => void; reconnected?: () => void; closed?: () => void } = {};
 vi.mock("@microsoft/signalr", () => ({
@@ -38,8 +50,9 @@ vi.mock("@microsoft/signalr", () => ({
 const snapshot = {
   displayId: "d-1", terminalId: "t-1", orderId: "o-1", revision: 3, state: "Active", editable: true,
   orderNumber: "S-042",
-  lines: [{ itemId: "i-1", name: "Köfte", quantity: 2, lineTotal: 560 }],
+  lines: [{ itemId: "i-1", name: "Köfte", quantity: 2, unitPrice: 280, lineTotal: 560, discountAmount: 0 }],
   subtotal: 560, discountTotal: 0, taxTotal: 50.91, total: 560, currency: "TRY",
+  paidTotal: 0, remainingTotal: null, tipTotal: 0, feeTotal: 0,
   serverTimestamp: "2026-09-27T12:00:00Z", message: "Siparişiniz hazırlanıyor.",
 };
 
@@ -120,7 +133,7 @@ describe("CustomerDisplay", () => {
       const path = String(input);
       if (path.includes("/snapshot")) {
         return jsonResponse({
-          ...snapshot, total: 260, paidTotal: 100, remainingTotal: 140, message: "Ödemenizin bir bölümü alındı; kalan tutar ödenecek.",
+          ...snapshot, total: 240, paidTotal: 100, remainingTotal: 140, message: "Ödemenizin bir bölümü alındı; kalan tutar ödenecek.",
         });
       }
       throw new Error(`unexpected fetch: ${path}`);
@@ -727,5 +740,394 @@ describe("CustomerDisplay", () => {
     const fetchesBefore = fetchMock.mock.calls.length;
     await act(async () => { hub.reconnected?.(); });
     expect(fetchMock.mock.calls.length).toBe(fetchesBefore + 1);
+  });
+
+  async function showSnapshot(extra: Record<string, unknown>) {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ ...snapshot, ...extra });
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    await render();
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+  }
+
+  const statementRows = () =>
+    Array.from(document.querySelectorAll(".display-total-breakdown > div")).map((row) => ({
+      label: row.children[0].textContent,
+      value: row.children[1].textContent,
+    }));
+
+  const money = (value: number) => formatMoney(value, "TRY");
+
+  it("lists the statement in the order a customer reads it: subtotal, discount, tip, fee, bill total, paid, VAT", async () => {
+    await showSnapshot({
+      lines: [
+        { itemId: "i-1", name: "Köfte", quantity: 2, unitPrice: 280, lineTotal: 560, discountAmount: 0 },
+        { itemId: "i-2", name: "Ayran", quantity: 4, unitPrice: 100, lineTotal: 400, discountAmount: 40 },
+      ],
+      subtotal: 960, discountTotal: 160, tipTotal: 50, feeTotal: 20, total: 870, paidTotal: 400, remainingTotal: 470,
+    });
+
+    expect(statementRows()).toEqual([
+      { label: "Ara toplam", value: money(960) },
+      { label: "İndirim", value: `−${money(160)}` },
+      { label: "Bahşiş", value: `+${money(50)}` },
+      { label: "Ücret", value: `+${money(20)}` },
+      { label: "Hesap toplamı", value: money(870) },
+      { label: "Ödenen", value: `−${money(400)}` },
+      { label: "İçindeki KDV", value: money(50.91) },
+    ]);
+    const card = document.querySelector(".display-total-card")!;
+    expect(card.querySelector(".display-kicker")!.textContent).toBe("KALAN TUTAR");
+    expect(card.querySelector(".display-total-figure")!.textContent).toBe(money(470));
+  });
+
+  it("shows only the rows that exist: no tip, fee, bill total or paid row on a plain unpaid order", async () => {
+    await showSnapshot({ tipTotal: 0, feeTotal: 0, paidTotal: 0, remainingTotal: null });
+
+    expect(statementRows().map((row) => row.label)).toEqual(["Ara toplam", "İçindeki KDV"]);
+    expect(document.querySelector(".display-total-card .display-kicker")!.textContent).toBe("ÖDENECEK TOPLAM");
+  });
+
+  it("shows a bill total once a tip alone separates the subtotal from what is due", async () => {
+    await showSnapshot({ tipTotal: 30, total: 590 });
+
+    expect(statementRows().map((row) => row.label)).toEqual(["Ara toplam", "Bahşiş", "Hesap toplamı", "İçindeki KDV"]);
+  });
+
+  it("marks a discounted line with its discount and a complimentary line as an offer, showing what is charged and the price it replaces", async () => {
+    await showSnapshot({
+      lines: [
+        { itemId: "i-1", name: "Köfte", quantity: 2, unitPrice: 280, lineTotal: 560, discountAmount: 0 },
+        { itemId: "i-2", name: "Ayran", quantity: 4, unitPrice: 100, lineTotal: 400, discountAmount: 40 },
+        { itemId: "i-3", name: "Künefe", quantity: 1, unitPrice: 150, lineTotal: 150, discountAmount: 150 },
+      ],
+      subtotal: 1110, discountTotal: 190, total: 920,
+    });
+
+    const amount = (line: Element) => line.querySelector(".display-line-amount strong")!.textContent;
+    const struck = (line: Element) => line.querySelector(".display-line-amount s")?.textContent;
+    const lines = Array.from(document.querySelectorAll(".display-line"));
+    expect(lines[0].textContent).not.toContain("İndirim");
+    expect(lines[0].textContent).not.toContain("İkram");
+    expect(amount(lines[0])).toBe(money(560));
+    expect(struck(lines[0])).toBeUndefined();
+    expect(lines[1].textContent).toContain(`İndirim −${money(40)}`);
+    expect(amount(lines[1])).toBe(money(360));
+    expect(struck(lines[1])).toBe(money(400));
+    expect(lines[2].textContent).toContain("İkram");
+    expect(lines[2].textContent).not.toContain("İndirim");
+    expect(amount(lines[2])).toBe(money(0));
+    expect(struck(lines[2])).toBe(money(150));
+  });
+
+  it("no longer prints the technical live-update and revision label", async () => {
+    await showSnapshot({});
+
+    expect(document.body.textContent).not.toContain("Canlı güncelleme");
+    expect(document.body.textContent).not.toContain("v3");
+  });
+
+  it("tells a customer who has paid in full how much was paid", async () => {
+    await showSnapshot({ state: "Completed", total: 870, paidTotal: 870, remainingTotal: 0, message: "Ödemeniz alındı." });
+
+    const screen = document.querySelector(".completed-screen")!;
+    expect(screen.textContent).toContain("Teşekkür ederiz.");
+    expect(screen.querySelector(".display-paid-total")!.textContent).toBe(`Ödenen toplam${money(870)}`);
+  });
+
+  it("shows no paid amount on a completed order that has no payment on record", async () => {
+    await showSnapshot({ state: "Completed", paidTotal: 0 });
+
+    expect(document.querySelector(".completed-screen")!.textContent).not.toContain("Ödenen toplam");
+  });
+
+  describe("long orders", () => {
+    const manyLines = Array.from({ length: 12 }, (_, index) => (
+      { itemId: `i-${index}`, name: `Ürün ${index + 1}`, quantity: 1, unitPrice: 10, lineTotal: 10, discountAmount: 0 }
+    ));
+    const layout = { clientHeight: 500, scrollHeight: 1_200, lineHeight: 100 };
+    const scrollTops = new WeakMap<Element, number>();
+    let scrollTo: ReturnType<typeof vi.fn>;
+
+    const stubLayout = (reducedMotion = false) => {
+      const proto = HTMLElement.prototype;
+      const isList = (element: Element) => element.classList.contains("display-lines-scroll");
+      Object.defineProperty(proto, "clientHeight", { configurable: true, get() { return isList(this) ? layout.clientHeight : 0; } });
+      Object.defineProperty(proto, "scrollHeight", { configurable: true, get() { return isList(this) ? layout.scrollHeight : 0; } });
+      Object.defineProperty(proto, "scrollTop", { configurable: true, get() { return scrollTops.get(this) ?? 0; }, set(value: number) { scrollTops.set(this, value); } });
+      Object.defineProperty(proto, "offsetHeight", { configurable: true, get() { return this.classList.contains("display-line") ? layout.lineHeight : 0; } });
+      Object.defineProperty(proto, "offsetTop", {
+        configurable: true,
+        get() { return this.classList.contains("display-line") ? Array.from(this.parentElement!.children).indexOf(this) * layout.lineHeight : 0; },
+      });
+      scrollTo = vi.fn(function (this: HTMLElement, options: ScrollToOptions) {
+        scrollTops.set(this, options.top ?? 0);
+        this.dispatchEvent(new Event("scroll"));
+      });
+      proto.scrollTo = scrollTo as unknown as typeof proto.scrollTo;
+      vi.stubGlobal("matchMedia", (query: string) => ({ matches: reducedMotion && query.includes("reduce"), media: query }));
+    };
+
+    afterEach(() => {
+      for (const property of ["clientHeight", "scrollHeight", "scrollTop", "offsetHeight", "offsetTop"]) {
+        delete (HTMLElement.prototype as unknown as Record<string, unknown>)[property];
+      }
+      delete (HTMLElement.prototype as unknown as Record<string, unknown>).scrollTo;
+    });
+
+    it("says how many items are out of sight when the list is longer than the screen", async () => {
+      stubLayout();
+      await showSnapshot({ lines: manyLines });
+
+      expect(document.querySelector(".display-more-lines")!.textContent).toBe("+7 kalem daha");
+    });
+
+    it("shows no indicator when every item fits", async () => {
+      stubLayout();
+      layout.scrollHeight = 500;
+      try {
+        await showSnapshot({ lines: manyLines.slice(0, 4) });
+      } finally {
+        layout.scrollHeight = 1_200;
+      }
+
+      expect(document.querySelector(".display-more-lines")).toBeNull();
+    });
+
+    it("pages through a long list on its own and starts over at the end", async () => {
+      vi.useFakeTimers();
+      stubLayout();
+      await showSnapshot({ lines: manyLines });
+      await tick(0);
+
+      await tick(6_000);
+      expect(scrollTo).toHaveBeenLastCalledWith({ top: 500, behavior: "smooth" });
+      expect(document.querySelector(".display-more-lines")!.textContent).toBe("+2 kalem daha");
+
+      await tick(6_000);
+      expect(scrollTo).toHaveBeenLastCalledWith({ top: 700, behavior: "smooth" });
+      expect(document.querySelector(".display-more-lines")).toBeNull();
+
+      await tick(6_000);
+      expect(scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: "smooth" });
+      expect(document.querySelector(".display-more-lines")!.textContent).toBe("+7 kalem daha");
+    });
+
+    it("starts each page at the first item that was cut off, whatever the item height", async () => {
+      vi.useFakeTimers();
+      stubLayout();
+      layout.lineHeight = 120;
+      layout.scrollHeight = 1_440;
+      try {
+        await showSnapshot({ lines: manyLines });
+        await tick(6_000);
+        expect(scrollTo).toHaveBeenLastCalledWith({ top: 480, behavior: "smooth" });
+      } finally {
+        layout.lineHeight = 100;
+        layout.scrollHeight = 1_200;
+      }
+    });
+
+    it("moves on past an item taller than the list instead of sticking to it", async () => {
+      vi.useFakeTimers();
+      stubLayout();
+      layout.lineHeight = 600;
+      layout.scrollHeight = 7_200;
+      try {
+        await showSnapshot({ lines: manyLines });
+        await tick(6_000);
+        expect(scrollTo).toHaveBeenLastCalledWith({ top: 500, behavior: "smooth" });
+      } finally {
+        layout.lineHeight = 100;
+        layout.scrollHeight = 1_200;
+      }
+    });
+
+    it("turns the page without animation when the viewer asked for reduced motion", async () => {
+      vi.useFakeTimers();
+      stubLayout(true);
+      await showSnapshot({ lines: manyLines });
+      await tick(6_000);
+
+      expect(scrollTo).toHaveBeenLastCalledWith({ top: 500, behavior: "auto" });
+    });
+
+    it("measures again when the list box changes size, and stops watching and paging once the screen is gone", async () => {
+      vi.useFakeTimers();
+      stubLayout();
+      await showSnapshot({ lines: manyLines });
+      expect(document.querySelector(".display-more-lines")!.textContent).toBe("+7 kalem daha");
+
+      layout.clientHeight = 700;
+      try {
+        await act(async () => { resizeObservers.forEach((callback) => callback()); });
+        expect(document.querySelector(".display-more-lines")!.textContent).toBe("+5 kalem daha");
+
+        await act(async () => root!.unmount());
+        root = null;
+        expect(resizeObservers.size).toBe(0);
+        await tick(30_000);
+        expect(scrollTo).not.toHaveBeenCalled();
+      } finally {
+        layout.clientHeight = 500;
+      }
+    });
+
+    it("does not scroll a list that fits", async () => {
+      vi.useFakeTimers();
+      stubLayout();
+      layout.scrollHeight = 500;
+      try {
+        await showSnapshot({ lines: manyLines.slice(0, 4) });
+        await tick(30_000);
+      } finally {
+        layout.scrollHeight = 1_200;
+      }
+
+      expect(scrollTo).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("idle screen and freshness", () => {
+    const settle = async () => {
+      for (let round = 0; round < 4; round += 1) await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    };
+
+    it("shows the business's own picture on an idle screen, and a video when that is what it uploaded", async () => {
+      const createObjectURL = vi.fn(() => "blob:idle");
+      (URL as unknown as { createObjectURL: unknown }).createObjectURL = createObjectURL;
+      (URL as unknown as { revokeObjectURL: unknown }).revokeObjectURL = vi.fn();
+      let contentType = "image/png";
+      vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+        const path = String(input);
+        if (path.includes("/snapshot")) return jsonResponse({ ...snapshot, state: "Idle", lines: [], orderId: null });
+        if (path.includes("/screensaver")) return new Response("x", { status: 200, headers: { "Content-Type": contentType } });
+        throw new Error(`unexpected fetch: ${path}`);
+      }));
+
+      await render();
+      await settle();
+      expect(document.querySelector("img.idle-screensaver-image")!.getAttribute("src")).toBe("blob:idle");
+      expect(document.querySelector("video")).toBeNull();
+
+      await act(async () => root!.unmount());
+      root = null;
+      contentType = "video/mp4";
+      await render();
+      await settle();
+      expect(document.querySelector("video.idle-screensaver-image")!.getAttribute("src")).toBe("blob:idle");
+    });
+
+    it("falls back to the welcome card when no picture is set", async () => {
+      vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+        const path = String(input);
+        if (path.includes("/snapshot")) return jsonResponse({ ...snapshot, state: "Idle", lines: [], orderId: null });
+        if (path.includes("/screensaver")) return new Response("", { status: 404 });
+        throw new Error(`unexpected fetch: ${path}`);
+      }));
+
+      await render();
+      await act(async () => Promise.resolve());
+      await act(async () => Promise.resolve());
+
+      expect(document.querySelector(".idle-screensaver-image")).toBeNull();
+      expect(document.body.textContent).toContain("Siparişiniz için hazırız.");
+    });
+
+    it("keeps the last amounts for nine seconds without an answer and removes them at ten", async () => {
+      vi.useFakeTimers();
+      let calls = 0;
+      vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+        const path = String(input);
+        if (!path.includes("/snapshot")) throw new Error(`unexpected fetch: ${path}`);
+        calls += 1;
+        return calls === 1 ? jsonResponse(snapshot) : jsonResponse({ error: { code: "X", message: "x" } }, 503);
+      }));
+
+      await render();
+      await tick(0);
+      await tick(5_000);
+      await tick(4_000);
+      expect(document.body.textContent).toContain("S-042");
+      expect(document.querySelector(".connection-banner")).not.toBeNull();
+
+      await tick(1_000);
+      expect(document.body.textContent).not.toContain("S-042");
+      expect(document.body.textContent).toContain("Bilgi güncellenemiyor");
+    });
+  });
+
+  describe("stylesheet", () => {
+    const displayStyles = readFileSync(join(process.cwd(), "src", "styles.css"), "utf8").split(String.fromCharCode(13)).join("");
+    const rule = (selector: string) => {
+      const start = displayStyles.indexOf(`\n${selector} {`);
+      if (start < 0) throw new Error(`no rule for ${selector}`);
+      return displayStyles.slice(start, displayStyles.indexOf("}", start));
+    };
+    const declaration = (selector: string, property: string) => {
+      const match = new RegExp(`[{;\\s]${property}:\\s*([^;]+)`).exec(rule(selector));
+      if (!match) throw new Error(`${selector} has no ${property}`);
+      return match[1].trim();
+    };
+    // Smallest size the rule can produce: the first argument of clamp(), or the plain value.
+    const smallestFontPx = (selector: string) => {
+      const value = declaration(selector, "font-size");
+      const first = /^clamp\(\s*([\d.]+)(rem|px)/.exec(value) ?? /^([\d.]+)(rem|px)/.exec(value);
+      if (!first) throw new Error(`cannot read ${value}`);
+      return Number(first[1]) * (first[2] === "rem" ? 16 : 1);
+    };
+    const rgbOf = (hex: string) => [0, 1, 2].map((index) => parseInt(hex.slice(1 + index * 2, 3 + index * 2), 16) / 255);
+    const luminance = (rgb: number[]) => {
+      const [r, g, b] = rgb.map((value) => (value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4));
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const contrast = (foreground: number[], background: number[]) => {
+      const [light, dark] = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
+      return (light + 0.05) / (dark + 0.05);
+    };
+
+    it("sets item names, amounts and prices in type a customer can read from the other side of a counter", () => {
+      expect(smallestFontPx(".display-line strong")).toBeGreaterThanOrEqual(28);
+      expect(smallestFontPx(".display-line small")).toBeGreaterThanOrEqual(16);
+      expect(smallestFontPx(".display-quantity")).toBeGreaterThanOrEqual(28);
+    });
+
+    it("fits the active screen inside the window: one column that fills the height, the connection notice in the flow", () => {
+      expect(declaration(".active-display", "height")).toMatch(/^100d?vh$/);
+      expect(declaration(".active-display", "display")).toBe("flex");
+      expect(declaration(".display-order-grid", "flex")).toBe("1");
+      expect(declaration(".display-order-grid", "min-height")).toBe("0");
+      expect(declaration(".active-display .connection-banner", "position")).toBe("static");
+    });
+
+    it("lets the short-screen margin of the connection notice win over the base margin", () => {
+      expect(displayStyles.lastIndexOf("\n  .active-display .connection-banner")).toBeGreaterThan(displayStyles.lastIndexOf("\n.active-display .connection-banner"));
+    });
+
+    it("keeps the totals card on screen at 1024 x 600 by letting only the item list scroll", () => {
+      expect(declaration(".display-lines-scroll", "overflow-y")).toBe("auto");
+      expect(declaration(".display-lines-scroll", "scrollbar-width")).toBe("none");
+      expect(declaration(".display-lines-card", "min-height")).toBe("0");
+      expect(declaration(".display-total-card", "overflow-y")).toBe("auto");
+    });
+
+    it.each([
+      [".display-table-head", "#111b25"],
+      [".display-order-number span", "#111b25"],
+      [".display-line small", "#1a232c"],
+      [".display-center-card small", "#0d151d"],
+      [".display-total-breakdown", "#f5f2ed"],
+    ])("keeps %s legible on its background (contrast 4.5:1)", (selector, background) => {
+      expect(contrast(rgbOf(declaration(selector, "color")), rgbOf(background))).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it("keeps the brand badge legible on a screensaver picture of any lightness, worst case a white one", () => {
+      const alpha = Number(/rgba\(13, 21, 29, ([\d.]+)\)/.exec(declaration(".idle-screen-with-image .display-brand", "background"))![1]);
+      const overWhite = [13, 21, 29].map((value) => (value * alpha + 255 * (1 - alpha)) / 255);
+      expect(contrast(rgbOf("#f8fafb"), overWhite)).toBeGreaterThanOrEqual(4.5);
+    });
   });
 });
