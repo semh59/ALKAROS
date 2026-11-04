@@ -1,0 +1,39 @@
+import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+import { readSeed, loginCashier } from '../lib/testHelpers.js';
+import { loginViaApi, createBill, openCashSession, openSplitPayment, selectMethod, openFold } from '../lib/paymentHelpers.js';
+
+const out = 'D:/PROJECT/ALKAROS/evidence/V1-RMD-824/touch-sweep.json';
+const result = {};
+const measure = (page, selector) => page.locator(selector).evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; }));
+
+test('touch sweep', async ({ page }) => {
+  const seed = readSeed();
+  const terminalId = await loginViaApi(page, seed);
+  await openCashSession(page, terminalId, 500);
+  const billId = await createBill(page, terminalId, seed, { quantity: 1 });
+  for (const width of [360, 768, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    const r = (result[width] = {});
+    await openSplitPayment(page, billId);
+    await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+    await selectMethod(page, 'Eft');
+    r.eftCheckbox = await measure(page, '#eft-confirm');
+    r.methodChips = await measure(page, '.sp-method-chip');
+    r.submit = await measure(page, '#submit-tender');
+    r.foldSummaries = await measure(page, '.sp-fold > summary');
+    r.overflowX = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    r.remainingFont = await page.locator('.sp-summary-row.is-remaining .value').evaluate((e) => getComputedStyle(e).fontSize);
+    r.totalFont = await page.locator('.sp-summary-row.is-total .value').evaluate((e) => getComputedStyle(e).fontSize);
+    r.submitBottom = await page.locator('#submit-tender').evaluate((e) => Math.round(e.getBoundingClientRect().bottom)); r.innerHeight = 800;
+    r.disabledSubmitContrastBg = await page.locator('#submit-tender').evaluate((e) => getComputedStyle(e).backgroundColor);
+    await page.goto('/cashier/payments/cash-session/index.html');
+    await page.waitForTimeout(800);
+    r.cashSessionButtons = await measure(page, 'button, input.cs-denom-count');
+    r.cashSessionOverflowX = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    await page.goto('/cashier/index.html');
+    await page.waitForTimeout(800);
+    r.sessionPills = await measure(page, 'a.session-pill');
+  }
+  fs.writeFileSync(out, JSON.stringify(result, null, 1));
+});

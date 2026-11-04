@@ -17,6 +17,7 @@
   --color-surface: #FFFFFF;
   --color-surface-active: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
   --color-border: #C8D0D7;
+  --color-disabled: #DDE3E8;
   --color-success: #176548;
   --color-warning: #735400;
   --color-danger: #9a2530;
@@ -151,6 +152,10 @@ body {
   align-items: center;
   gap: 6px;
   font-weight: 600;
+}
+
+a.session-pill {
+  min-height: var(--touch-target);
 }
 
 /* Main Split View */
@@ -628,7 +633,9 @@ body {
 }
 
 .btn-ticket-action--primary:disabled {
-  opacity: 0.5;
+  background: var(--color-disabled);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
   cursor: not-allowed;
 }
 
@@ -664,7 +671,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 44px;
+  min-height: var(--touch-target);
   padding: 4px 0;
   cursor: pointer;
 }

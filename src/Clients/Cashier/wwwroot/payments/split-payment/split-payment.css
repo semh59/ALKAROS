@@ -13,6 +13,7 @@
   --color-canvas: #F4F6F8;
   --color-surface: #FFFFFF;
   --color-border: #C8D0D7;
+  --color-disabled: #DDE3E8;
   --color-success: #176548;
   --color-warning: #735400;
   --color-danger: #9a2530;
@@ -89,14 +90,14 @@ body {
 .sp-input:focus { outline: 2px solid var(--color-brand); outline-offset: 1px; }
 
 .sp-confirm-row {
-  display: flex; align-items: flex-start; gap: 10px;
+  display: flex; align-items: center; gap: 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 12px 14px;
   background: var(--color-canvas);
 }
 .sp-confirm-row input[type="checkbox"] {
-  width: 32px; height: 32px; flex: 0 0 auto; margin-top: 1px;
+  width: var(--touch-target); height: var(--touch-target); flex: 0 0 auto;
   accent-color: var(--color-brand);
 }
 .sp-confirm-row label { font-size: 14px; line-height: 1.4; color: var(--color-ink); }
@@ -122,22 +123,16 @@ body {
   min-height: var(--touch-target); cursor: pointer; font-family: inherit;
 }
 .sp-btn:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
-.sp-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.sp-btn:disabled { cursor: not-allowed; }
 .sp-btn-primary { background: var(--color-ink); color: #FFFFFF; }
 .sp-btn-secondary { background: var(--color-surface); color: var(--color-ink); border: 1.5px solid var(--color-border); }
+.sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-danger:disabled, .sp-btn-ghost:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
 .sp-btn-danger { background: var(--color-danger); color: #FFFFFF; }
 .sp-btn-ghost { background: transparent; color: var(--color-brand); padding: 6px; font-size: 13px; min-height: auto; }
 
 .sp-row { display: flex; gap: 10px; }
 .sp-row > * { flex: 1; }
 
-.sp-tabs { display: flex; gap: 4px; background: var(--color-canvas); border-radius: var(--radius-md); padding: 4px; }
-.sp-tab {
-  flex: 1; border: none; border-radius: 8px; background: transparent;
-  color: var(--color-text-muted); font-size: 13px; font-weight: 700;
-  padding: 10px 0; cursor: pointer; font-family: inherit;
-}
-.sp-tab.is-active { background: var(--color-ink); color: #FFFFFF; }
 
 .sp-summary-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px; font-size: 13px; }
 .sp-summary-row .value { font-weight: 700; color: var(--color-ink); }
@@ -236,8 +231,10 @@ body {
   #receipt-print .sp-receipt-note { text-align: center; margin: 4px 0; }
 }
 
-.sp-fold { border-top: 1px solid var(--color-border); padding: 4px 0; }
-.sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }
+.sp-fold { margin-top: 8px; }
+html { scroll-padding-bottom: 80px; }
+#submit-tender { position: sticky; bottom: 8px; z-index: 2; box-shadow: 0 0 0 6px var(--color-surface); }
+.sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }
 .sp-fold > summary::-webkit-details-marker { display: none; }
 .sp-fold > summary::before { content: "▸"; }
 .sp-fold[open] > summary::before { content: "▾"; }

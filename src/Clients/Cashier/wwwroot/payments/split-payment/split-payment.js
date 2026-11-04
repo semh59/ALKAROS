@@ -1782,12 +1782,11 @@
       '<span>Kalan</span><span class="value">' + formatMoney(remaining) + '</span></div>' +
       '<div class="sp-divider"></div>' +
       (state.locked ? '' :
-        '<div class="sp-field"><span class="sp-field-label">Eşit bölüştür</span>' +
-        '<div class="sp-row">' +
-        '<input class="sp-input" type="number" min="2" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
-        '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
-        '</div></div>' +
-        renderSavedShares() +
+        renderFold('split', 'Eşit bölüştür',
+          '<div class="sp-row">' +
+          '<input class="sp-input" type="number" min="2" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
+          '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
+          '</div>' + renderSavedShares(), state.savedShares.length > 0) +
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +

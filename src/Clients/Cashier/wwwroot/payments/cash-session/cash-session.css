@@ -14,6 +14,7 @@
   --color-canvas: #F4F6F8;
   --color-surface: #FFFFFF;
   --color-border: #C8D0D7;
+  --color-disabled: #DDE3E8;
   --color-success: #176548;
   --color-warning: #735400;
   --color-danger: #9a2530;
@@ -146,7 +147,7 @@ body {
   font-family: inherit;
 }
 .cs-btn:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
-.cs-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.cs-btn:disabled { cursor: not-allowed; }
 .cs-btn-primary { background: var(--color-ink); color: #FFFFFF; }
 .cs-btn-danger { background: var(--color-danger); color: #FFFFFF; }
 .cs-btn-success { background: var(--color-success); color: #FFFFFF; }
@@ -162,6 +163,7 @@ body {
   font-size: 13px;
   min-height: var(--touch-target);
 }
+.cs-btn:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
 
 .cs-row { display: flex; gap: 10px; }
 .cs-row > * { flex: 1; }
@@ -242,7 +244,7 @@ body {
 #movement-form { display: contents; }
 .cs-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .cs-chip {
-  min-height: 44px; padding: 0 16px; border: 1px solid var(--color-border, #D5DBE0); border-radius: 22px;
+  min-height: var(--touch-target); padding: 0 16px; border: 1px solid var(--color-border, #D5DBE0); border-radius: 22px;
   background: var(--color-canvas); color: var(--color-ink); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
 }
 
@@ -262,7 +264,7 @@ body {
 }
 .cs-denom-label { font-size: 14px; font-weight: 700; color: var(--color-ink); }
 .cs-denom-count {
-  min-height: 44px; padding: 0 10px; border: 1.5px solid var(--color-border);
+  min-height: var(--touch-target); padding: 0 10px; border: 1.5px solid var(--color-border);
   border-radius: var(--radius-sm); font-size: 15px; font-family: inherit; text-align: center;
 }
 .cs-denom-count:focus { outline: 2px solid var(--color-brand); outline-offset: 1px; }

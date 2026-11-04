@@ -67,6 +67,11 @@ describe("split-payment.js page hierarchy", () => {
     expect(follows($("discount-value"))).toBe(true);
   });
 
+  it("keeps the submit button in reach while the form is scrolled, without covering the fields above it", () => {
+    expect(css).toMatch(/#submit-tender\s*\{[^}]*position:\s*sticky;[^}]*bottom:\s*\d+px/);
+    expect(css).toMatch(/scroll-padding-bottom:\s*\d+px/);
+  });
+
   it("starts with the discount, tip and refund sections folded", async () => {
     await open();
 
@@ -112,6 +117,15 @@ describe("split-payment.js page hierarchy", () => {
 
     const lines = [...document.querySelectorAll(".sp-field-label")].find((label) => label.textContent === "Uygulanan tahsilatlar");
     expect(Boolean($("submit-tender").compareDocumentPosition(lines) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+  });
+
+  it("folds the equal-split helper above the method chips, so the form under the summary stays short", async () => {
+    await open();
+
+    expect(fold("split").open).toBe(false);
+    expect(fold("split").querySelector("summary").textContent).toBe("Eşit bölüştür");
+    const chips = document.querySelector(".sp-method-chip");
+    expect(Boolean(fold("split").compareDocumentPosition(chips) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
   });
 
   it("keeps the manual reconciliation warning first, above the summary, when the bill is locked", async () => {

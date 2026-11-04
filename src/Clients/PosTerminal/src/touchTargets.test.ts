@@ -14,6 +14,7 @@ const targets: ReadonlyArray<readonly [file: string, selector: string]> = [
   ["./styles.css", ".quantity-controls .remove {"],
   ["./styles.css", ".pairing-card summary {"],
   ["./styles.css", ".dialog-close {"],
+  ["./styles.css", ".search-field input {"],
   ["./features/pending-checks/pending-checks.css", ".pending-checks__recall {"],
   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-workspace__feedback button {"],
   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-density button, .kitchen-view-mode button {"],
@@ -27,7 +28,7 @@ function sizesOf(css: string, opening: string): number[] {
   const start = css.indexOf(opening);
   expect(start, `${opening} not found`).toBeGreaterThanOrEqual(0);
   const body = css.slice(start + opening.length, css.indexOf("}", start));
-  return [...body.matchAll(/(?:min-)?(?:height|width):\s*([\d.]+)(px|rem)/g)]
+  return [...body.matchAll(/(?<![-\w])(?:min-)?(?:height|width):\s*([\d.]+)(px|rem)/g)]
     .map((match) => (match[2] === "rem" ? Number(match[1]) * 16 : Number(match[1])));
 }
 

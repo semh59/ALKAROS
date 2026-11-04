@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { randomUUID } from 'node:crypto';
 import { readSeed } from '../lib/testHelpers.js';
 import {
-  loginViaApi, createBill, openSplitPayment, setAmount, readTenderSummary, SPLIT_PAYMENT_PATH,
+  loginViaApi, openFold, createBill, openSplitPayment, setAmount, readTenderSummary, SPLIT_PAYMENT_PATH,
 } from '../lib/paymentHelpers.js';
 
 const addButton = (page) => page.getByRole('button', { name: 'Ödemeyi Ekle' });
@@ -91,6 +91,7 @@ test.describe('Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-R
     await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
 
     // 100 / 3 = 33,33: üç eşit tahsilat 99,99 eder, 1 kuruş açıkta kalır.
+    await openFold(page, 'split');
     await page.locator('#split-count').fill('3');
     await page.getByRole('button', { name: 'Hesapla' }).click();
     await expect(page.locator('#amount-draft')).toHaveValue('33.33');

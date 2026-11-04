@@ -1,0 +1,245 @@
+{
+ "360": {
+  "eftCheckbox": [
+   {
+    "w": 48,
+    "h": 48
+   }
+  ],
+  "methodChips": [
+   {
+    "w": 67,
+    "h": 48
+   },
+   {
+    "w": 143,
+    "h": 48
+   },
+   {
+    "w": 103,
+    "h": 48
+   },
+   {
+    "w": 138,
+    "h": 48
+   }
+  ],
+  "submit": [
+   {
+    "w": 268,
+    "h": 50
+   }
+  ],
+  "foldSummaries": [
+   {
+    "w": 268,
+    "h": 48
+   },
+   {
+    "w": 268,
+    "h": 48
+   },
+   {
+    "w": 268,
+    "h": 48
+   }
+  ],
+  "overflowX": 0,
+  "remainingFont": "28px",
+  "totalFont": "20px",
+  "submitBottom": 792,
+  "innerHeight": 800,
+  "disabledSubmitContrastBg": "rgb(221, 227, 232)",
+  "cashSessionButtons": [
+   {
+    "w": 127,
+    "h": 52
+   },
+   {
+    "w": 127,
+    "h": 52
+   },
+   {
+    "w": 264,
+    "h": 48
+   },
+   {
+    "w": 264,
+    "h": 50
+   }
+  ],
+  "cashSessionOverflowX": 0,
+  "sessionPills": [
+   {
+    "w": 102,
+    "h": 48
+   },
+   {
+    "w": 100,
+    "h": 48
+   }
+  ]
+ },
+ "768": {
+  "eftCheckbox": [
+   {
+    "w": 48,
+    "h": 48
+   }
+  ],
+  "methodChips": [
+   {
+    "w": 67,
+    "h": 48
+   },
+   {
+    "w": 143,
+    "h": 48
+   },
+   {
+    "w": 103,
+    "h": 48
+   },
+   {
+    "w": 138,
+    "h": 48
+   }
+  ],
+  "submit": [
+   {
+    "w": 504,
+    "h": 50
+   }
+  ],
+  "foldSummaries": [
+   {
+    "w": 504,
+    "h": 48
+   },
+   {
+    "w": 504,
+    "h": 48
+   },
+   {
+    "w": 504,
+    "h": 48
+   }
+  ],
+  "overflowX": 0,
+  "remainingFont": "28px",
+  "totalFont": "20px",
+  "submitBottom": 792,
+  "innerHeight": 800,
+  "disabledSubmitContrastBg": "rgb(221, 227, 232)",
+  "cashSessionButtons": [
+   {
+    "w": 183,
+    "h": 52
+   },
+   {
+    "w": 183,
+    "h": 52
+   },
+   {
+    "w": 376,
+    "h": 48
+   },
+   {
+    "w": 376,
+    "h": 50
+   }
+  ],
+  "cashSessionOverflowX": 0,
+  "sessionPills": [
+   {
+    "w": 106,
+    "h": 48
+   },
+   {
+    "w": 101,
+    "h": 48
+   }
+  ]
+ },
+ "1280": {
+  "eftCheckbox": [
+   {
+    "w": 48,
+    "h": 48
+   }
+  ],
+  "methodChips": [
+   {
+    "w": 67,
+    "h": 48
+   },
+   {
+    "w": 143,
+    "h": 48
+   },
+   {
+    "w": 103,
+    "h": 48
+   },
+   {
+    "w": 138,
+    "h": 48
+   }
+  ],
+  "submit": [
+   {
+    "w": 504,
+    "h": 50
+   }
+  ],
+  "foldSummaries": [
+   {
+    "w": 504,
+    "h": 48
+   },
+   {
+    "w": 504,
+    "h": 48
+   },
+   {
+    "w": 504,
+    "h": 48
+   }
+  ],
+  "overflowX": 0,
+  "remainingFont": "28px",
+  "totalFont": "20px",
+  "submitBottom": 792,
+  "innerHeight": 800,
+  "disabledSubmitContrastBg": "rgb(221, 227, 232)",
+  "cashSessionButtons": [
+   {
+    "w": 183,
+    "h": 52
+   },
+   {
+    "w": 183,
+    "h": 52
+   },
+   {
+    "w": 376,
+    "h": 48
+   },
+   {
+    "w": 376,
+    "h": 50
+   }
+  ],
+  "cashSessionOverflowX": 0,
+  "sessionPills": [
+   {
+    "w": 134,
+    "h": 48
+   },
+   {
+    "w": 127,
+    "h": 48
+   }
+  ]
+ }
+}
