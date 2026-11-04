@@ -11,7 +11,7 @@
 Kasa incelemesinin G4 grubunun tahsilat tarafı (`7-birlesik-dogrulama.md`), PO kararları değişmeden:
 
 1. F0409: nakit tahsilatın tekrarında (`BuildReplayResultAsync`) hesap ve tutar karşılaştırılıyor ama müşterinin verdiği `TenderedAmount` karşılaştırılmıyordu; aynı anahtarla başka bir verilen tutar (ve dolayısıyla başka para üstü) 200 ile eski sonucu döndürüyordu. Kayıtlı verilen tutar (`ApprovedAmount + ChangeAmount`) istekle farklıysa tekrar bugünkü Türkçe 409 `TENDER_IDEMPOTENCY_KEY_REUSED` ile reddedilir; aynı istek eskisi gibi aynı sonucu döner.
-2. Reddedilen tahsilatın izi: kalan tutarı aşan kart ve EFT tahsilatı (`TENDER_OVER_ALLOCATION`) yalnız 409 dönüyor, denetim kaydı bırakmıyordu. Reddedilen her kalan-aşımı için `payment.tender-rejected` denetim olayı (hesap, yöntem, istenen tutar, kalan tutar, kasiyer, tahsilat kimliği anahtarı) yazılır; yazım başarısız olursa kasiyer yine aynı Türkçe 409'u görür ve hata günlüğe düşer, tahsilat sonucu değişmez.
+2. Reddedilen tahsilatın izi: kalan tutarı aşan kart ve EFT tahsilatı (`TENDER_OVER_ALLOCATION`) yalnız 409 dönüyor, denetim kaydı bırakmıyordu. Kart, EFT, nakit, cari hesaba yazma ve elle kart onayı yollarında reddedilen her kalan-aşımı için `payment.tender-rejected` denetim olayı (hesap, yöntem, istenen tutar, kalan tutar, kasiyer, tahsilat kimliği anahtarı) yazılır; yazım başarısız olursa kasiyer yine aynı Türkçe 409'u görür ve hata günlüğe düşer, tahsilat sonucu değişmez.
 3. İstemci sınırlarının tek kaynağı: iade ve kasa açıklaması 500 karakter sınırı, kasa kapanış fark toleransı (0-500), nakit çıkış onay eşiği ve diğer sayısal ayar aralıkları istemcide ayrıca yazılı. Kaynak sunucudaki sabitlerdir (`CashSessionPolicy.MaxExplanationLength`, `CashTransaction.MaxReasonLength`, `*Setting.MaxValue`); istemci değerleri bu sabitlere kilitlenir: bir sabit değişir de istemci değişmezse test kırılır. Arayüzün kendisi V1-RMD-795'in.
 4. Türkçe hata metinleri: tahsilat ve iade uçlarının bütün hata yanıtları taranır; İngilizce sızıntı varsa düzeltilir, yoksa tarama testi kalıcı kilit olur.
 
@@ -25,6 +25,10 @@ Kapsam dışı: iade tarafı (V1-RMD-793, Done); arayüzler ve E2E (V1-RMD-795);
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Cash/TenderHandler/CashTenderHandler.cs (V13-CSH-003) — tekrar yolunda verilen tutar karşılaştırması.
   - src/Host/DualScreen/DualScreenApplication.Payments.cs (V1-RMD-258) — reddedilen tahsilatın denetim olayı.
+  - src/Host/DualScreen/DualScreenApplication.CashSession.cs (V13-CSH-004) — nakit tahsilatta reddedilen kalan aşımının denetim olayı.
+  - src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs (V1-RMD-442) — cari hesaba yazmada reddedilen kalan aşımının denetim olayı.
+  - tests/Host/Experience/CashSession/CashSessionHttpTests.cs (V13-CSH-004) — nakit aşım testine denetim olayı doğrulaması.
+  - tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs (V1-RMD-442) — yeni cari aşım denetim testi.
   - tests/Modules/Cash/TenderHandler/CashTenderHandlerTests.cs (V13-CSH-003) — F0409 testleri.
   - tests/Host/Experience/PaymentTender/TenderRejectionAuditHttpTests.cs (V1-RMD-258) — yeni dosya: denetim izi ve Türkçe hata taraması.
   - tests/Host/Experience/CashSession/ClientLimitLockTests.cs (V1-RMD-788) — yeni dosya: istemci sınırlarının sunucu sabitlerine kilidi.
