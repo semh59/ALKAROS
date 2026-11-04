@@ -44,7 +44,13 @@ Kapsam dışı: bayrağı kullanan arayüz (V1-RMD-803), çevrimiçi sağlayıc�
   - tests/Host/Experience/Billing/RefundHalfPortionHttpTests.cs (V1-RMD-508) — yeni dosya: iade miktarı testleri.
   - tests/Host/Experience/Orders/TableDraft/TableDraftHalfPortionHttpTests.cs (V1-RMD-146) — yeni dosya: taslak testleri.
   - tests/Host/MigrationComposition/DualScreen/DualScreenHalfPortionTests.cs (V1-RMD-120) — yeni dosya: kasa hattı testleri.
-  - tests/Modules/Menu/CounterProjection/DailyMenuFractionalPortionTests.cs (V1-RMD-783) — yeni dosya: kesirli sayaç testleri.
+  - tests/Modules/Menu/CounterProjection/DailyMenuCounterEndToEndTests.cs (V1-RMD-783) — kesirli sayaç testi.
+  - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftHttpTests.cs (V1-RMD-146) — yarım porsiyon kullanan iki mevcut test bayraklı ürüne geçer.
+  - tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj (V1-RMD-486) — migration fixture.
+  - tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj (V1-RMD-184) — migration fixture.
+  - tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj (V1-RMD-184) — migration fixture.
+  - tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj (V1-RMD-184) — migration fixture.
+  - tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj (V1-RMD-184) — migration fixture.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
