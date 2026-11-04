@@ -51,6 +51,15 @@ Kapsam dışı: bayrağı kullanan arayüz (V1-RMD-803), çevrimiçi sağlayıc�
   - tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj (V1-RMD-184) — migration fixture.
   - tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj (V1-RMD-184) — migration fixture.
   - tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj (V1-RMD-184) — migration fixture.
+  - tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj (V1-RMD-472) — migration fixture.
+  - tests/Modules/OnlineOrdering/AvailabilityPublishing/ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.csproj (V12-ONL-004) — migration fixture.
+  - tests/Modules/OnlineOrdering/AvailabilityPublishing/AvailabilityPublicationTests.cs (V12-ONL-004) — fixture migration listesi.
+  - tests/Modules/OnlineOrdering/CatalogPublishing/ALKAROS.OnlineOrdering.CatalogPublishing.Tests.csproj (V12-ONL-003) — migration fixture.
+  - tests/Modules/OnlineOrdering/CatalogPublishing/CatalogPublicationTests.cs (V1-RMD-477) — fixture migration listesi.
+  - tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization.Tests.csproj (V12-ONL-007) — migration fixture.
+  - tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/YemeksepetiOrderNormalizerTests.cs (V12-ONL-007) — fixture migration listesi.
+  - tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.csproj (V12-MAP-001) — migration fixture.
+  - tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ProductMappingTestDatabase.cs (V12-MAP-001) — fixture migration listesi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
