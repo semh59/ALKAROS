@@ -1,0 +1,62 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > completes a transfer refund without a slip field and sends no slip number
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793774417087-0.9461006237921535:197:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793774417087-0.9461006237921535:339:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793774417087-0.9461006237921535:396:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > completes a transfer refund without a slip field and sends no slip number
+Müşteri ekranına bağlanamadı: [TypeError: Failed to parse URL from /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display] {
+  [cause]: TypeError: Invalid URL
+      at new URL (node:internal/url:840:25)
+      at new URL (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/vitest@4.1.11_jsdom@26.1.0_vite@8.3.0/node_modules/vitest/dist/chunks/index.DC7d2Pf8.js:557:2)
+      at new Request (node:internal/deps/undici/undici:12072:25)
+      at fetch (node:internal/deps/undici/undici:12997:25)
+      at fetch (node:internal/deps/undici/undici:17708:10)
+      at fetch (node:internal/bootstrap/web/exposed-window-or-worker:83:12)
+      at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793774417087-0.9461006237921535:197:12)
+      at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793774417087-0.9461006237921535:339:5)
+      at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793774417087-0.9461006237921535:396:7 {
+    code: 'ERR_INVALID_URL',
+    input: '/api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display'
+  }
+}
+
+ ❯ split-payment-refunds.test.js (14 tests | 1 failed) 2099ms
+     × completes a transfer refund without a slip field and sends no slip number 120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > completes a transfer refund without a slip field and sends no slip number
+AssertionError: expected { slipNumber: '', note: null } to deeply equal { slipNumber: null, note: null }
+
+- Expected
++ Received
+
+  {
+    "note": null,
+-   "slipNumber": null,
++   "slipNumber": "",
+  }
+
+ ❯ split-payment-refunds.test.js:249:49
+    247|
+    248|     await vi.waitFor(() => expect(posted(fetchMock, "/complete")).not.…
+    249|     expect(posted(fetchMock, "/complete").body).toEqual({ slipNumber: …
+       |                                                 ^
+    250|   });
+    251|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  09:40:14
+   Duration  3.44s (transform 587ms, setup 25ms, import 57ms, tests 2.10s, environment 988ms)
+

@@ -187,6 +187,37 @@ describe("split-payment.js failure states", () => {
     await vi.waitFor(() => expect(app().textContent).toContain("gerçekleşmiş olabilir"));
   });
 
+  async function failingTender(error, status = 409) {
+    const fetchMock = await open(routes({
+      cashSession: { status: 404 },
+      extra: [{ test: (url, init) => url.endsWith("/tenders/") && init?.method === "POST", status, body: { error } }],
+    }));
+    await vi.waitFor(() => expect(document.getElementById("eft-confirm")).not.toBeNull());
+    document.getElementById("eft-confirm").click();
+    document.getElementById("submit-tender").click();
+    return fetchMock;
+  }
+
+  it("shows the fixed sentence of the error code and never the English text the server sent", async () => {
+    await failingTender({ code: "TENDER_BILL_NOT_PAYABLE", message: "The bill was cancelled." });
+
+    await vi.waitFor(() => expect(app().textContent).toContain("Bu hesap iptal edilmiş; tahsilat alınamaz."));
+    expect(app().textContent).not.toContain("The bill was cancelled.");
+  });
+
+  it("falls back to the sentence of the status when the code is unknown, never printing the server text", async () => {
+    await failingTender({ code: "SOMETHING_NEW", message: "Something unexpected happened." });
+
+    await vi.waitFor(() => expect(app().textContent).toContain("çakışıyor"));
+    expect(app().textContent).not.toContain("Something unexpected happened.");
+  });
+
+  it("shows the server sentence for the code that carries the amount left to pay", async () => {
+    await failingTender({ code: "TENDER_OVER_ALLOCATION", message: "Tutar kalan 40,00 ₺'yi aşıyor." });
+
+    await vi.waitFor(() => expect(app().textContent).toContain("Tutar kalan 40,00 ₺'yi aşıyor."));
+  });
+
   it("reloads the bill after a conflict instead of leaving the stale screen", async () => {
     const fetchMock = await open(routes({
       tenders: { body: paid },

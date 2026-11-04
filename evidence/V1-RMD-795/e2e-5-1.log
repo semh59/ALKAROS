@@ -1,0 +1,9 @@
+[global-setup] applied 214 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer
+[2/2] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır
+[global-teardown] Host stopped, database dropped
+  2 passed (17.8s)

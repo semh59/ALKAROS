@@ -73,12 +73,23 @@ describe("billing refund client", () => {
     const client = createBillingRefundClient("t 1", "b1", fetcher as unknown as typeof fetch);
 
     await client.getAllowance();
-    await client.setAllowance("u1", 150);
+    await client.setAllowance("u1", "t-asked", 150);
 
     expect(fetcher.mock.calls[0][0]).toBe("/api/v1/terminals/t%201/billing/refund-allowance");
     expect(fetcher.mock.calls[0][1].method).toBe("GET");
     expect(fetcher.mock.calls[1][1].method).toBe("PUT");
-    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({ cashierUserId: "u1", amount: 150 });
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({ cashierUserId: "u1", cashierTerminalId: "t-asked", amount: 150 });
+  });
+
+  it("completes a card refund with its slip and a transfer refund with none", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({})));
+    const client = createBillingRefundClient("t1", "b1", fetcher as unknown as typeof fetch);
+
+    await client.complete("r1", "POS-1");
+    await client.complete("r2", null);
+
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({ slipNumber: "POS-1", note: null });
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({ slipNumber: null, note: null });
   });
 
   it("reads the bill items and sends item lines with a refund request", async () => {
@@ -101,9 +112,9 @@ describe("billing refund client", () => {
   });
 
   it("describes allowance failures with fixed sentences", () => {
-    expect(describeAllowanceFailure(new RefundApiError(403, "SELF_DECISION", "x"))).toBe("Kendinize iade bütçesi veremezsiniz.");
+    expect(describeAllowanceFailure(new RefundApiError(403, "SELF_DECISION", "x"))).toContain("Yönetici kendi talebini onaylayabilir");
     expect(describeAllowanceFailure(new RefundApiError(400, "REFUND_INPUT_INVALID", "x"))).toContain("düşük");
-    expect(describeAllowanceFailure(new RefundApiError(409, "NO_OPEN_CASH_SESSION", "x"))).toBe("Kasiyerin açık kasa oturumu yok.");
+    expect(describeAllowanceFailure(new RefundApiError(409, "NO_OPEN_CASH_SESSION", "x"))).toContain("terminalde açık kasa oturumu yok");
     expect(describeAllowanceFailure(new RefundApiError(0, "NETWORK_UNAVAILABLE", "x"))).toContain("Sunucuya ulaşılamadı");
   });
 
@@ -112,10 +123,11 @@ describe("billing refund client", () => {
 
     expect(text(0)).toContain("Sunucuya ulaşılamadı");
     expect(text(401)).toContain("Yeniden giriş");
-    expect(text(403, "SELF_DECISION")).toContain("Kendi açtığınız");
+    expect(text(403, "SELF_DECISION")).toContain("başka bir yetkili");
+    expect(text(403, "SELF_DECISION")).toContain("Yönetici kendi talebini onaylayabilir");
     expect(text(403)).toContain("yetkiniz yok");
     expect(text(400)).toContain("eksik");
-    expect(text(409, "NO_OPEN_CASH_SESSION")).toContain("kasa oturumu");
+    expect(text(409, "NO_OPEN_CASH_SESSION")).toContain("yaptığı terminalde açık kasa oturumu yok");
     expect(text(409, "ACCOUNT_REFUND_UNSUPPORTED")).toContain("Cari hesaba");
     expect(text(409, "REFUND_STATE")).toContain("Güncel veriyi alıp");
     expect(text(500)).toContain("tamamlanamadı");

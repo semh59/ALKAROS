@@ -1,0 +1,52 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+ ❯ src/routes/workspace.test.tsx (31 tests | 1 failed) 2518ms
+     × shows the split-design endpoint's own error message, not the generic fallback 47ms
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /billing route surfaces the real backend error message > shows the split-design endpoint's own error message, not the generic fallback
+AssertionError: expected 'Ana içeriğe geçTerminalTerminal 66666…' to contain 'Bu hesap zaten kapatılmış.'
+
+Expected: "Bu hesap zaten kapatılmış."
+Received: "Ana içeriğe geçTerminalTerminal 66666666KullanıcıTest KullanıcıRolKasiyer / OperasyonMüşteri ekranıÇıkışHesapHesap bölmeKişi, ürün veya tutar bazlı hesap paylaştırmaHesap alınamadıHesap dağıtımı kaydedilemedi.Tekrar deneÇevrimiçiVeri: Çevrimiçi doğrulandı"
+
+ ❯ src/routes/workspace.test.tsx:372:39
+    370|     await act(async () => Promise.resolve());
+    371|
+    372|     expect(document.body.textContent).toContain("Bu hesap zaten kapatı…
+       |                                       ^
+    373|     expect(document.body.textContent).not.toContain("Hesap bölme veris…
+    374|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 87 passed (88)
+      Tests  1 failed | 858 passed (859)
+   Start at  09:41:24
+   Duration  31.31s (transform 17.02s, setup 0ms, import 34.65s, tests 88.84s, environment 161.35s)
+

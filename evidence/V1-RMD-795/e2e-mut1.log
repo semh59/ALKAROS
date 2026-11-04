@@ -1,0 +1,55 @@
+[global-setup] applied 214 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer
+  1) [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('[data-request-action="approve"]')
+    Expected: 0
+    Received: 1
+    Timeout:  8000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('[data-request-action="approve"]') with timeout 8000ms
+      - waiting for locator('[data-request-action="approve"]')
+        19 × locator resolved to 1 element
+           - unexpected value "1"
+
+
+      32 |     await page.getByRole('button', { name: 'Onaya gönder' }).click();
+      33 |     await expect(page.locator('#pending-requests')).toContainText('E2E test - ikinci yönetici onayı');
+    > 34 |     await expect(page.locator('[data-request-action="approve"]')).toHaveCount(0);
+         |                                                                   ^
+      35 |     await expect(page.locator('#pending-requests')).toContainText('Kendi talebinizi onaylayamazsınız');
+      36 |
+      37 |     await switchToSecondManager(page, seed, terminalId);
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\32-manager-end-of-day-and-cash-out-approval.spec.js:34:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--9f775-layınca-tutar-kasadan-düşer-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--9f775-layınca-tutar-kasadan-düşer-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\32-manager-end-of-day-and--9f775-layınca-tutar-kasadan-düşer-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--9f775-layınca-tutar-kasadan-düşer-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\32-manager-end-of-day-and--9f775-layınca-tutar-kasadan-düşer-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/2] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır
+[global-teardown] Host stopped, database dropped
+  1 failed
+    [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer 
+  1 passed (27.8s)

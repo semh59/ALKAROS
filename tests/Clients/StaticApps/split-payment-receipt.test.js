@@ -35,7 +35,7 @@ const receipt = {
   payments: [
     { paymentId: "p1", amount: 60, method: "Cash", status: "Approved", at: "2026-10-13T10:30:00Z" },
     { paymentId: "p2", amount: 30, method: "Account", status: "Approved", at: "2026-10-13T10:31:00Z" },
-    { paymentId: "p3", amount: 20, method: "Manual", status: "Refunded", at: "2026-10-13T10:32:00Z" },
+    { paymentId: "p3", amount: 20, method: "Eft", status: "Refunded", at: "2026-10-13T10:32:00Z" },
     { paymentId: "p4", amount: 15, method: "Card", status: "Approved", at: "2026-10-13T10:33:00Z" },
   ],
 };
@@ -102,10 +102,10 @@ describe("split-payment.js information receipt", () => {
     expect(text).toContain("Nakit");
     expect(text).toContain("Cari hesap");
     expect(text).toContain("Banka kartı");
-    expect(text).toContain("EFT / diğer (İade edildi)");
+    expect(text).toContain("Havale / EFT (İade edildi)");
     expect(sheet().querySelector("b")).toBeNull();
     expect(text).toContain("Ayran <b>");
-    expect(text).not.toMatch(/Approved|Refunded|Manual|Card|DiscountAmount/);
+    expect(text).not.toMatch(/Approved|Refunded|Manual|Eft|Card|DiscountAmount/);
   });
 
   it("prints the tax per rate with a total and the line discount under its item", async () => {

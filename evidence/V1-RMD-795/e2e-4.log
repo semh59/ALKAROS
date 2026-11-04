@@ -1,0 +1,100 @@
+[global-setup] applied 214 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 6 tests using 1 worker
+
+[1/6] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer
+[2/6] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır
+[3/6] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer
+[4/6] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır
+  1) [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: 'İş gününü aç' }).or(getByRole('button', { name: 'İş gününü kapat' }))
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: 'İş gününü aç' }).or(getByRole('button', { name: 'İş gününü kapat' })) with timeout 15000ms
+      - waiting for getByRole('button', { name: 'İş gününü aç' }).or(getByRole('button', { name: 'İş gününü kapat' }))
+
+
+      61 |     const openDay = page.getByRole('button', { name: 'İş gününü aç' });
+      62 |     const closeDay = page.getByRole('button', { name: 'İş gününü kapat' });
+    > 63 |     await expect(openDay.or(closeDay)).toBeVisible({ timeout: 15_000 });
+         |                                        ^
+      64 |     if (await openDay.isVisible()) {
+      65 |       await openDay.click();
+      66 |       await expect(page.getByText('İş günü açıldı.')).toBeVisible();
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\32-manager-end-of-day-and-cash-out-approval.spec.js:63:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat1\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat1\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat1\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat1\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat1\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[5/6] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer
+[6/6] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır
+  2) [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: 'İş gününü aç' }).or(getByRole('button', { name: 'İş gününü kapat' }))
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: 'İş gününü aç' }).or(getByRole('button', { name: 'İş gününü kapat' })) with timeout 15000ms
+      - waiting for getByRole('button', { name: 'İş gününü aç' }).or(getByRole('button', { name: 'İş gününü kapat' }))
+
+
+      61 |     const openDay = page.getByRole('button', { name: 'İş gününü aç' });
+      62 |     const closeDay = page.getByRole('button', { name: 'İş gününü kapat' });
+    > 63 |     await expect(openDay.or(closeDay)).toBeVisible({ timeout: 15_000 });
+         |                                        ^
+      64 |     if (await openDay.isVisible()) {
+      65 |       await openDay.click();
+      66 |       await expect(page.getByText('İş günü açıldı.')).toBeVisible();
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\32-manager-end-of-day-and-cash-out-approval.spec.js:63:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat2\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat2\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat2\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat2\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\32-manager-end-of-day-and--2fdd2-arısını-onaylayarak-kapatır-chromium-repeat2\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[global-teardown] Host stopped, database dropped
+  2 failed
+    [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır 
+    [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, açık hesap uyarısını onaylayarak kapatır 
+  4 passed (57.7s)

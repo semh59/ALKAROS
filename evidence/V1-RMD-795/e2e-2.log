@@ -1,0 +1,48 @@
+[global-setup] applied 214 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:19:3 › Yönetici onayı ve gün sonu › eşik üstü nakit çıkışı kasiyer onaylayamaz; ikinci yönetici onaylayınca tutar kasadan düşer
+[2/2] [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, kapanış özetini görür ve kapatır
+  1) [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, kapanış özetini görür ve kapatır 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('tab', { name: 'Gün sonu ve mutabakat' })
+
+
+      53 |     await page.getByRole('button', { name: /Giriş yap/ }).click();
+      54 |     await page.getByRole('link', { name: 'Yönetim' }).first().click();
+    > 55 |     await page.getByRole('tab', { name: 'Gün sonu ve mutabakat' }).click();
+         |                                                                    ^
+      56 |
+      57 |     const openDay = page.getByRole('button', { name: 'İş gününü aç' });
+      58 |     const closeDay = page.getByRole('button', { name: 'İş gününü kapat' });
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\32-manager-end-of-day-and-cash-out-approval.spec.js:55:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--6b2ca-ış-özetini-görür-ve-kapatır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--6b2ca-ış-özetini-görür-ve-kapatır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\32-manager-end-of-day-and--6b2ca-ış-özetini-görür-ve-kapatır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\32-manager-end-of-day-and--6b2ca-ış-özetini-görür-ve-kapatır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\32-manager-end-of-day-and--6b2ca-ış-özetini-görür-ve-kapatır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[global-teardown] Host stopped, database dropped
+  1 failed
+    [chromium] › specs\32-manager-end-of-day-and-cash-out-approval.spec.js:48:3 › Yönetici onayı ve gün sonu › yönetici iş gününü açar, kapanış özetini görür ve kapatır 
+  1 passed (48.2s)

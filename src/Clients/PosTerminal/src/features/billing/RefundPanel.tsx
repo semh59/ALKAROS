@@ -109,7 +109,9 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
         return;
       }
       const fromAllowance = action === "request" && result && result.approvedFromAllowance
-        ? (result.status === "Completed" ? refundText.completedFromAllowance : refundText.reservedFromAllowance)
+        ? (result.status === "Completed"
+          ? refundText.completedFromAllowance
+          : result.method === "Eft" ? refundText.reservedFromAllowanceTransfer : refundText.reservedFromAllowance)
         : undefined;
       const base = fromAllowance ?? {
         request: refundText.requested, approve: refundText.approved, reject: refundText.rejected,
@@ -225,9 +227,10 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
       {requests.map((row) => <div key={row.requestId} className="refund-panel__row">
         <strong>{money(row.amount)} · {refundMethodLabels[row.method] ?? refundText.unknown}</strong>
         <span className="refund-panel__status">{refundStatusLabels[row.status] ?? refundText.unknown}</span>
+        {row.selfApproved && <span className="refund-panel__status">{refundText.selfApproved}</span>}
         <span>{row.reason}</span>
         {row.status === "Requested" && canApproveRefund && <>
-          {row.requestedBy && <>
+          {row.requestedBy && row.terminalId && <>
             <TextField
               label={refundText.allowanceLabel}
               inputMode="decimal"
@@ -239,7 +242,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
               disabled={busy || parseAmount(texts[`allowance:${row.requestId}`]) === null}
               onClick={() => void run(
                 "allowance",
-                () => client.setAllowance(row.requestedBy ?? "", parseAmount(texts[`allowance:${row.requestId}`]) ?? 0),
+                () => client.setAllowance(row.requestedBy ?? "", row.terminalId ?? "", parseAmount(texts[`allowance:${row.requestId}`]) ?? 0),
                 describeAllowanceFailure,
               )}
             >
@@ -252,7 +255,13 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
             {refundText.reject}
           </Button>
         </>}
-        {row.status === "AwaitingManualRefund" && <>
+        {row.status === "AwaitingManualRefund" && row.method === "Eft" && <>
+          <span>{refundText.transferHint}</span>
+          <Button data-telemetry-id="b.billing.refundpanel.11" disabled={busy} onClick={() => void run("complete", () => client.complete(row.requestId, null))}>
+            {refundText.completeSent}
+          </Button>
+        </>}
+        {row.status === "AwaitingManualRefund" && row.method !== "Eft" && <>
           <TextField
             label={refundText.slipLabel}
             maxLength={50}

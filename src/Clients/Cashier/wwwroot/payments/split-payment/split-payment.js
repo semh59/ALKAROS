@@ -116,8 +116,64 @@
     return new URLSearchParams(window.location.search).get(name);
   }
 
+  // One fixed Turkish sentence per server error code. The server text is never printed, except for the few codes
+  // whose sentence carries the amounts or the credit reason of this very request (SERVER_TEXT_CODES).
+  var ERROR_TEXTS = {
+    ACCOUNT_REFUND_UNSUPPORTED: 'Müşteri hesabına yazılan ödeme buradan iade edilemez.',
+    ACTIVE_CASH_SESSION_EXISTS: 'Bu terminalde zaten açık bir kasa oturumu var.',
+    ALLOWANCE_BELOW_USED: 'İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.',
+    BILL_BUSY: 'Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin.',
+    BILL_HAS_PAYMENT: 'Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli.',
+    BILL_NOT_FOUND: 'Hesap bulunamadı.',
+    CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
+    CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+    CONCURRENT_MODIFICATION: 'Hesap bölme tasarımı başka bir işlem tarafından değiştirildi.',
+    CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
+    CONFIRMATION_DECIDED: 'Bu bildirim zaten karara bağlanmış.',
+    CONFIRMATION_PENDING: 'Bu ödeme için onay bekleyen bir bildirim var.',
+    CUSTOMER_NOT_FOUND: 'Müşteri bulunamadı.',
+    DISCOUNT_BELOW_COLLECTED: 'Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.',
+    DISCOUNT_EXCEEDS_PAYABLE: 'İndirim toplamı hesap tutarını aşıyor.',
+    FEATURE_DISABLED: 'Bu özellik bu işletme için kapatılmış.',
+    GRANT_DENIED: 'İndirim isteği reddedildi.',
+    IDEMPOTENCY_KEY_INVALID: 'İşlem anahtarı boş olamaz ve 128 karakteri aşamaz.',
+    IDEMPOTENCY_KEY_REUSED: 'Bu işlem anahtarı farklı bir istek için zaten kullanılmış.',
+    INSUFFICIENT_CASH_TENDER: 'Verilen tutar hesaplanan tutarı karşılamıyor.',
+    INVALID_CASH_SESSION_STATE: 'Kasa oturumu bu işlem için uygun durumda değil.',
+    ITEM_SPLIT_ON_ADJUSTED_BILL: 'İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın.',
+    NOTE_INVALID: 'Not en fazla 500 karakter olabilir.',
+    NO_OPEN_CASH_SESSION: 'İadeyi isteyen kasiyerin, isteği yaptığı terminalde açık kasa oturumu yok.',
+    OVER_ALLOCATION: 'İstenen tutar hesabın kalan bakiyesini aşıyor.',
+    PAYMENT_NOT_REFUNDABLE: 'Bu ödeme iade edilemez; yalnızca onaylanmış ve iade edilmemiş ödeme iade istenebilir.',
+    PAYMENT_NOT_RESOLVABLE: 'Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin.',
+    REASON_REQUIRED: 'İptal gerekçesi 1 ile 500 karakter arasında olmalı.',
+    REFUND_ALREADY_REQUESTED: 'Bu ödeme için açık bir iade isteği zaten var.',
+    REFUND_AMOUNT_EXCEEDS_PAYMENT: 'İade tutarı seçilen ödemenin kalan tutarını aşıyor.',
+    REFUND_AMOUNT_INVALID: 'İade tutarı sıfırdan büyük olmalı.',
+    REFUND_ITEMS_DUPLICATE: 'Aynı kalem iade listesinde bir kez yer alabilir.',
+    REFUND_ITEM_NOT_ON_BILL: 'Seçilen kalem bu hesapta yok.',
+    REFUND_ITEM_QUANTITY: 'Bu kalemden istenen adet iade edilebilir adedi aşıyor.',
+    REFUND_QUANTITY_INVALID: 'İade adedi sıfırdan büyük olmalı ve en çok 3 ondalık içermeli.',
+    REFUND_STATE: 'İade isteği bu durumda değil; sayfayı yenileyin.',
+    REFUND_STOCK_UNAVAILABLE: 'Stoka geri alma bu işletmede kullanılamıyor.',
+    RESOLUTION_REASON_INVALID: 'Gerekçe yazmalısınız (en fazla 500 karakter).',
+    SAME_ACTOR: 'Bildirimi yapan kişi onaylayamaz; başka bir yetkili onaylamalı. Tek yöneticili işletmelerde Ayarlar\'dan "Yönetici kendi talebini onaylayabilir" açılabilir.',
+    SELF_DECISION: 'İadeyi isteyen kişi kendi isteği hakkında karar veremez; başka bir yetkili onaylamalı veya reddetmeli. Tek yöneticili işletmelerde Ayarlar\'dan "Yönetici kendi talebini onaylayabilir" açılabilir.',
+    SLIP_INVALID: 'Fiş numarası 4-32 karakter olmalı (harf, rakam, - ve /).',
+    SLIP_REUSED: 'Bu fiş numarası başka bir ödemeye zaten bağlı.',
+    TENDER_BILL_NOT_PAYABLE: 'Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin.',
+    TENDER_IDEMPOTENCY_KEY_REUSED: 'İşlem kimliği başka bir tutarla zaten kullanılmış.',
+    TENDER_METHOD_UNKNOWN: 'Tanınmayan ödeme yöntemi.',
+    UNSUPPORTED_BILL_STATE: 'Bu hesap durumunda bölme tasarımı değiştirilemez.',
+    UNSUPPORTED_ORDER_STATE: 'Bu sipariş durumunda hesap açılamaz.',
+    USE_CASH_TENDER_ENDPOINT: 'Nakit ödeme için kasa oturumunun kendi tahsilat adresi kullanılmalı.',
+  };
+  var SERVER_TEXT_CODES = ['TENDER_OVER_ALLOCATION', 'TENDER_UNSETTLED_PAYMENT_EXISTS', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE'];
+
   function describeHttpFailure(status, body) {
-    if (body && body.error && body.error.message) return body.error.message;
+    var code = body && body.error && body.error.code;
+    if (code && ERROR_TEXTS[code]) return ERROR_TEXTS[code];
+    if (code && SERVER_TEXT_CODES.indexOf(code) !== -1 && body.error.message) return body.error.message;
     if (status === 401) return 'Oturumunuz sona ermiş. Lütfen tekrar giriş yapın.';
     if (status === 403) return 'Bu işlem için yetkiniz yok.';
     if (status === 404) return 'Kayıt bulunamadı.';
@@ -127,6 +183,15 @@
     return 'İstek tamamlanamadı.';
   }
 
+  // AbortSignal.timeout is missing in older browsers; without a signal a hung connection would never end.
+  function timeoutSignal(ms) {
+    if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) return AbortSignal.timeout(ms);
+    if (typeof AbortController === 'undefined') return undefined;
+    var controller = new AbortController();
+    setTimeout(function () { controller.abort(); }, ms);
+    return controller.signal;
+  }
+
   function api(path, options) {
     options = options || {};
     return fetch(path, {
@@ -134,7 +199,7 @@
       credentials: 'include',
       headers: options.body ? Object.assign({ 'Content-Type': 'application/json' }, options.headers) : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
-      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+      signal: timeoutSignal(15000),
     }).then(function (response) {
       // V1-RMD-291: one place catches a dropped session, from ANY call, not
       // just the bootstrap check - before this a 401 from a mid-use action
@@ -460,7 +525,7 @@
         state.decisionNote = '';
         return refreshSummary().then(function () { render(); });
       }
-      state.error = result.status === 403 && !(result.body && result.body.error && result.body.error.message)
+      state.error = result.status === 403 && !(result.body && result.body.error && result.body.error.code)
         ? 'Bu işlem için müdür yetkisi gerekir. Yetkili bir kullanıcıyla giriş yapın.'
         : describeHttpFailure(result.status, result.body);
       render();
@@ -956,7 +1021,7 @@
     Completed: 'Tamamlandı',
     Rejected: 'Reddedildi',
   };
-  var REFUND_METHOD_LABELS = { Cash: 'Nakit', Manual: 'Kart / elle iade' };
+  var REFUND_METHOD_LABELS = { Cash: 'Nakit', Card: 'Kart', Eft: 'Havale / EFT', Account: 'Cari hesap' };
 
   // A retry of the same refund after a lost response reuses its key, so the server returns the stored request
   // instead of paying out twice; the key is dropped once the server answered.
@@ -1215,6 +1280,11 @@
             confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary') +
             '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="reject" data-request-id="' + id + '"' +
             (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')) + '>Reddet</button>';
+        } else if (row.status === 'AwaitingManualRefund' && row.method === 'Eft') {
+          actions =
+            '<span class="sp-alert-body">Havale / EFT iadesi için fiş numarası gerekmez; parayı gönderince onaylayın.</span>' +
+            '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="complete" data-request-id="' + id + '"' +
+            disabled + '>Havale gönderildi</button>';
         } else if (row.status === 'AwaitingManualRefund') {
           actions =
             '<input class="sp-input" type="text" maxlength="50" data-refund-slip="' + id + '" aria-label="İade fiş numarası" ' +
@@ -1226,6 +1296,7 @@
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(row.amount) + ' · ' +
           escapeHtml(REFUND_METHOD_LABELS[row.method] || 'Bilinmiyor') + '</span>' +
           '<span class="sp-line-status">' + escapeHtml(REFUND_STATUS_LABELS[row.status] || 'Bilinmiyor') + '</span>' +
+          (row.selfApproved ? '<span class="sp-line-status">Kendi onayı</span>' : '') +
           '<span class="sp-alert-body">' + escapeHtml(row.reason) + '</span>' + actions + '</div>'
         );
       }).join('') +
@@ -1292,8 +1363,10 @@
         method: 'POST', body: { note: state.refundNotes[requestId] || '' },
       });
     } else {
+      var completing = (state.refundRequests || []).filter(function (row) { return row.requestId === requestId; })[0];
       call = api(refundsBase() + '/' + requestId + '/complete', {
-        method: 'POST', body: { slipNumber: state.refundSlips[requestId] || '', note: null },
+        method: 'POST',
+        body: { slipNumber: completing && completing.method === 'Eft' ? null : (state.refundSlips[requestId] || ''), note: null },
       });
     }
     state.refundBusy = true;
@@ -1319,7 +1392,9 @@
       state.refundNotice = fromAllowance
         ? (result.body.status === 'Completed'
           ? 'İade vardiya bütçenizden tamamlandı.'
-          : 'İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.')
+          : result.body.method === 'Eft'
+            ? 'İade vardiya bütçenizden ayrıldı; havaleyi gönderince onaylayarak tamamlayın.'
+            : 'İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.')
         : asksRefund ? 'İade isteği gönderildi; onay bekliyor.'
         : action === 'reject' ? 'İade isteği reddedildi.'
         : action === 'approve' ? 'İade isteği onaylandı.' : 'İade tamamlandı.';
@@ -1406,6 +1481,18 @@
     );
   }
 
+  // Cash taken that is less than the amount can never be sent: the button stays off until the amount is covered.
+  function tenderedIsShort() {
+    var tendered = Number(state.tenderedDraft);
+    return state.selectedMethod === 'Cash' && String(state.tenderedDraft).trim() !== '' && tendered > 0
+      && tendered < Number(state.amountDraft) - 0.004;
+  }
+
+  function submitTenderDisabled() {
+    return !!(state.busy || tenderedIsShort() || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
+      || (state.selectedMethod === 'Account' && !selectedCustomer()));
+  }
+
   // Alınan para girildikçe sayfayı yeniden çizmeden önizlemeyi ve düğmeyi günceller.
   function updateChangePreview() {
     var preview = document.getElementById('change-preview');
@@ -1419,10 +1506,12 @@
         : 'Para üstü: ' + formatMoney(Math.max(0, tendered - amount));
       preview.className = 'sp-change-preview' + (short ? ' is-short' : '');
     }
+    var submit = document.getElementById('submit-tender');
+    if (submit) submit.disabled = submitTenderDisabled();
   }
 
   // Bilgi fişi: mali olmayan hesap özeti; sunucudan okunur, #receipt-print içine yazılır ve tarayıcı yazdırma penceresi açılır.
-  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Card: 'Banka kartı', Manual: 'EFT / diğer' };
+  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Card: 'Banka kartı', Eft: 'Havale / EFT' };
   var RECEIPT_ADJUSTMENTS = {
     DiscountPercentage: 'İndirim', DiscountAmount: 'İndirim', ServiceFee: 'Hizmet bedeli',
     Kuver: 'Kuver', Tip: 'Bahşiş', CustomFee: 'Ek ücret',
@@ -1605,8 +1694,7 @@
             '<label for="eft-confirm">Tutarı işletmenin banka hesap hareketinde gördüm</label></div>'
           : '') +
         '<button class="sp-btn sp-btn-primary" id="submit-tender" ' +
-        ((state.busy || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
-          || (state.selectedMethod === 'Account' && !selectedCustomer())) ? 'disabled' : '') + '>' +
+        (submitTenderDisabled() ? 'disabled' : '') + '>' +
         (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>') +
       '</div>';
 

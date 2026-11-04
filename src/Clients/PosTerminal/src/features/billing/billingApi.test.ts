@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it, vi } from "vitest";
-import { createBillingSplitClient } from "./billingApi";
+import { createBillingSplitClient, describeSplitFailure } from "./billingApi";
 import type { BillSplitDesign } from "./models";
 
 const design: BillSplitDesign = {
@@ -26,8 +26,30 @@ describe("billing split client", () => {
     expect(fetcher).toHaveBeenNthCalledWith(2, "/api/v1/terminals/terminal%2F1/billing/bills/bill%2F1/split-design/clear", expect.objectContaining({ method: "POST" }));
   });
 
-  it("preserves the server error envelope", async () => {
+  it("keeps the status and code of the server error but replaces its text with a fixed Turkish sentence", async () => {
     const fetcher = vi.fn().mockResolvedValue(response({ error: { code: "CONCURRENT_MODIFICATION", message: "stale" } }, 409));
-    await expect(createBillingSplitClient("terminal", "bill", fetcher).get()).rejects.toMatchObject({ status: 409, code: "CONCURRENT_MODIFICATION" });
+    const failure = createBillingSplitClient("terminal", "bill", fetcher).get();
+    await expect(failure).rejects.toMatchObject({ status: 409, code: "CONCURRENT_MODIFICATION" });
+    await expect(failure).rejects.toThrow("başka bir işlem tarafından değiştirildi");
+    await expect(failure).rejects.not.toThrow("stale");
+  });
+
+  it("gives every known split error code and every status a Turkish sentence of its own", () => {
+    const codes = [
+      "UNAUTHORIZED", "FORBIDDEN", "NOT_FOUND", "GRANT_DENIED", "UNSUPPORTED_ORDER_STATE", "CONCURRENT_MODIFICATION",
+      "UNSUPPORTED_BILL_STATE", "DISCOUNT_BELOW_COLLECTED", "ITEM_SPLIT_ON_ADJUSTED_BILL", "BILL_HAS_PAYMENT",
+      "DISCOUNT_REASON_INVALID", "DISCOUNT_TYPE_INVALID", "DISCOUNT_VALUE_INVALID", "IDEMPOTENCY_KEY_INVALID",
+      "NOTES_TOO_LONG", "TIP_AMOUNT_INVALID",
+    ];
+    const sentences = codes.map((code) => describeSplitFailure(500, code));
+    expect(new Set(sentences).size).toBeGreaterThanOrEqual(15);
+    for (const sentence of sentences) expect(sentence).toMatch(/[ıİşŞğĞüÜöÖçÇ]/);
+    expect(describeSplitFailure(0, "X")).toContain("Sunucuya ulaşılamadı");
+    expect(describeSplitFailure(401, "X")).toContain("Oturum");
+    expect(describeSplitFailure(403, "X")).toContain("yetkiniz yok");
+    expect(describeSplitFailure(404, "X")).toContain("bulunamadı");
+    expect(describeSplitFailure(409, "X")).toContain("yenileyip");
+    expect(describeSplitFailure(400, "X")).toContain("geçersiz");
+    expect(describeSplitFailure(500, "X")).toBe("Hesap dağıtımı kaydedilemedi.");
   });
 });

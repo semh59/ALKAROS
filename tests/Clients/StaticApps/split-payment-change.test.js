@@ -100,15 +100,22 @@ describe("split-payment.js optional cash change", () => {
     expect(preview()).toBe("");
   });
 
-  it("refuses a tendered amount below the amount due without calling the server", async () => {
+  it("keeps the add button off while the cash taken is less than the amount due, and never calls the server", async () => {
     const fetchMock = await open();
     await vi.waitFor(() => expect(tenderedField()).not.toBeNull());
+    const submit = () => document.getElementById("submit-tender");
+    expect(submit().disabled).toBe(false);
 
     typeTendered("80");
-    document.getElementById("submit-tender").click();
-
-    await vi.waitFor(() => expect(app().textContent).toContain("Alınan para tutardan az olamaz"));
+    expect(submit().disabled).toBe(true);
+    submit().click();
     expect(tenderBody(fetchMock)).toBeNull();
+
+    typeTendered("100");
+    expect(submit().disabled).toBe(false);
+
+    typeTendered("");
+    expect(submit().disabled).toBe(false);
   });
 
   it("accepts a tendered amount equal to the amount due", async () => {

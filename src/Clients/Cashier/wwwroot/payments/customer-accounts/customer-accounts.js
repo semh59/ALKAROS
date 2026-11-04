@@ -81,6 +81,15 @@
     return 'İstek tamamlanamadı.';
   }
 
+  // AbortSignal.timeout is missing in older browsers; without a signal a hung connection would never end.
+  function timeoutSignal(ms) {
+    if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) return AbortSignal.timeout(ms);
+    if (typeof AbortController === 'undefined') return undefined;
+    var controller = new AbortController();
+    setTimeout(function () { controller.abort(); }, ms);
+    return controller.signal;
+  }
+
   function api(path, options) {
     options = options || {};
     return fetch(path, {
@@ -88,7 +97,7 @@
       credentials: 'include',
       headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
-      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+      signal: timeoutSignal(15000),
     }).then(function (response) {
       if (response.status === 204) return { ok: true, status: response.status, body: null };
       return response.json().catch(function () { return null; }).then(function (body) {

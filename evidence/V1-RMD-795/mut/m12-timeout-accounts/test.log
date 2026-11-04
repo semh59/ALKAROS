@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ client-timeout-fallback.test.js (3 tests | 1 failed) 187ms
+     × gives every request a signal of its own that aborts after fifteen seconds 38ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  client-timeout-fallback.test.js > customer-accounts without AbortSignal.timeout > gives every request a signal of its own that aborts after fifteen seconds
+AssertionError: expected undefined to be defined
+ ❯ client-timeout-fallback.test.js:42:22
+     40|     expect(signal.aborted).toBe(false);
+     41|     const deadline = timers.mock.calls.find(([, delay]) => delay === 1…
+     42|     expect(deadline).toBeDefined();
+       |                      ^
+     43|     deadline[0]();
+     44|     expect(signal.aborted).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  09:47:48
+   Duration  1.46s (transform 129ms, setup 25ms, import 50ms, tests 187ms, environment 940ms)
+

@@ -75,19 +75,14 @@ describe("bill split workspace", () => {
     expect(checks[0].checked).toBe(true); expect(checks[1].checked).toBe(true);
   });
 
-  it("shows the backend's own Turkish message for a real BillingSplitApiError, not the generic fallback", async () => {
-    // V1-RMD-366 (module-by-module UI audit, 2026-09-27): onSave/onClear's
-    // REAL failures reach this component as billingApi.ts's own
-    // BillingSplitApiError, not the shared ApiError the V1-RMD-114 test
-    // above checks - that test's own mock (`new ApiError(...)`) never
-    // actually exercised this file's `instanceof` check against the class
-    // production code really throws, which is why this went unnoticed.
-    const onSave = vi.fn().mockRejectedValue(new BillingSplitApiError(422, "ITEM_OVER_ALLOCATED", "Bir kalemin dağıtılan miktarı sunucuda artık geçerli değil."));
+  it("shows a fixed Turkish sentence for the error code of a real BillingSplitApiError, never the server text", async () => {
+    const onSave = vi.fn().mockRejectedValue(new BillingSplitApiError(409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "raw english server text"));
     await render(<BillSplitWorkspace {...props({ onSave })} />);
     const checks = [...document.querySelectorAll<HTMLInputElement>('.bill-split__owner-picker input')];
     await click(checks[0]); await click(checks[1]);
     await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Dağıtımı kaydet")!);
-    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Bir kalemin dağıtılan miktarı sunucuda artık geçerli değil.");
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("ürün bazında bölünemez");
+    expect(document.body.textContent).not.toContain("raw english server text");
   });
 
   it("tells a conflict by its status, not by words in the server message", async () => {
@@ -96,7 +91,8 @@ describe("bill split workspace", () => {
     const checks = [...document.querySelectorAll<HTMLInputElement>('.bill-split__owner-picker input')];
     await click(checks[0]); await click(checks[1]);
     await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Dağıtımı kaydet")!);
-    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Sürüm bilgisi geçersiz");
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Hesap dağıtımı kaydedilemedi.");
+    expect(document.body.textContent).not.toContain("Sürüm bilgisi geçersiz");
     expect(document.querySelector('[role="alert"]')?.textContent).not.toContain("Taslağınız korundu");
   });
 

@@ -1,0 +1,76 @@
+import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+const read = (path) => readFileSync(resolve(repoRoot, path), "utf8");
+
+// Codes the payment screen can meet that carry no fixed sentence: the status fallback of the screen answers them.
+const STATUS_FALLBACK = new Set(["INTERNAL_ERROR", "DATABASE_UNAVAILABLE", "REQUEST_CANCELLED", "NOT_FOUND", "FORBIDDEN", "UNAUTHORIZED", "VALIDATION_FAILED"]);
+const CATALOG_CODES = ["INSUFFICIENT_CASH_TENDER", "OVER_ALLOCATION", "ACTIVE_CASH_SESSION_EXISTS", "CASH_OUT_EXCEEDS_DRAWER", "INVALID_CASH_SESSION_STATE"];
+const SERVER_SOURCES = [
+  "src/Host/DualScreen/DualScreenApplication.Payments.cs",
+  "src/Host/Experience/Billing/BillingSplitApplication.cs",
+  "src/Host/Experience/Billing/PaymentRefunds.cs",
+  "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
+];
+const RESPONSE = new RegExp(
+  String.raw`\(\d{3},\s*"([A-Z][A-Z0-9_]{3,})",\s*(\$?)"((?:[^"\\]|\\.)*)"`
+  + String.raw`|code\s*=\s*"([A-Z][A-Z0-9_]{3,})"[^;]*?message\s*=\s*(\$?)"((?:[^"\\]|\\.)*)"`
+  + String.raw`|"([A-Z][A-Z0-9_]{3,})",\s*"((?:[^"\\]|\\.)*)"`,
+  "gs",
+);
+
+function serverCodes() {
+  const found = new Map();
+  const collect = (text, only) => {
+    for (const match of text.matchAll(RESPONSE)) {
+      const code = match[1] ?? match[4] ?? match[7];
+      const interpolated = (match[2] ?? match[5] ?? "") === "$";
+      const message = (match[3] ?? match[6] ?? match[8]).replaceAll('\\"', '"');
+      if ((!only || only.includes(code)) && !found.has(code)) found.set(code, { interpolated, message });
+    }
+  };
+  for (const source of SERVER_SOURCES) collect(read(source));
+  collect(read("src/Host/Composition/Errors/ApiErrorCatalog.cs"), CATALOG_CODES);
+  return found;
+}
+
+function screenDictionary() {
+  const script = read("src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js");
+  const block = script.slice(script.indexOf("var ERROR_TEXTS = {"), script.indexOf("var SERVER_TEXT_CODES"));
+  const entries = new Map();
+  for (const match of block.matchAll(/^\s+([A-Z][A-Z0-9_]+): '((?:[^'\\]|\\.)*)',$/gm)) entries.set(match[1], match[2].replaceAll("\\'", "'"));
+  const serverText = script.match(/var SERVER_TEXT_CODES = \[([^\]]*)\]/)[1].match(/[A-Z_]+/g);
+  return { entries, serverText };
+}
+
+describe("payment screen error dictionary", () => {
+  const server = serverCodes();
+  const { entries, serverText } = screenDictionary();
+
+  it("finds the server codes and the screen sentences it compares", () => {
+    expect(server.size).toBeGreaterThanOrEqual(50);
+    expect(entries.size).toBeGreaterThanOrEqual(45);
+  });
+
+  it("has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server", () => {
+    const missing = [];
+    const different = [];
+    for (const [code, { interpolated, message }] of server) {
+      if (STATUS_FALLBACK.has(code) || interpolated) continue;
+      if (!entries.has(code)) missing.push(code);
+      else if (entries.get(code) !== message) different.push(code);
+    }
+    expect(missing).toEqual([]);
+    expect(different).toEqual([]);
+  });
+
+  it("lets the server text through only for the codes whose sentence carries this request's amounts or credit reason", () => {
+    const interpolated = [...server].filter(([, value]) => value.interpolated).map(([code]) => code);
+    for (const code of interpolated) expect([...serverText, ...STATUS_FALLBACK]).toContain(code);
+    expect([...serverText].sort()).toEqual(["CREDIT_DENIED", "RECEIPT_EXCEEDS_BALANCE", "TENDER_OVER_ALLOCATION", "TENDER_UNSETTLED_PAYMENT_EXISTS"]);
+    for (const code of serverText) expect(entries.has(code)).toBe(false);
+  });
+});

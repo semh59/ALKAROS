@@ -1,7 +1,7 @@
 # V1-RMD-795 - İade ve tahsilat ekranları, hata sözlüğü, yönetici gün sonu ve nakit çıkış onayı E2E
 
 - Task ID: V1-RMD-795
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

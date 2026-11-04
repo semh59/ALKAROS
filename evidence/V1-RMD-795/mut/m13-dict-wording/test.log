@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ error-dictionary-lock.test.js (3 tests | 1 failed) 10ms
+     × lets the server text through only for the codes whose sentence carries this request's amounts or credit reason 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > lets the server text through only for the codes whose sentence carries this request's amounts or credit reason
+AssertionError: expected [ …(10) ] to include 'TENDER_OVER_ALLOCATION'
+ ❯ error-dictionary-lock.test.js:72:82
+     70|   it("lets the server text through only for the codes whose sentence c…
+     71|     const interpolated = [...server].filter(([, value]) => value.inter…
+     72|     for (const code of interpolated) expect([...serverText, ...STATUS_…
+       |                                                                                  ^
+     73|     expect([...serverText].sort()).toEqual(["CREDIT_DENIED", "RECEIPT_…
+     74|     for (const code of serverText) expect(entries.has(code)).toBe(fals…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  09:47:51
+   Duration  1.34s (transform 30ms, setup 24ms, import 30ms, tests 10ms, environment 1.01s)
+

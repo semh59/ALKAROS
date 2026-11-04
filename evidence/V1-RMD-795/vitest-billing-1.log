@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+ ❯ src/features/billing/RefundPanel.test.tsx (29 tests | 1 failed) 1051ms
+     × explains an allowance refusal with a fixed sentence 35ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/RefundPanel.test.tsx > refund panel > explains an allowance refusal with a fixed sentence
+AssertionError: expected 'İptal ve iadeKendinize iade bütçesi b…' to contain 'Kendinize iade bütçesi veremezsiniz.'
+
+Expected: "Kendinize iade bütçesi veremezsiniz."
+Received: "İptal ve iadeKendinize iade bütçesi başka bir yetkili vermeli; tek yöneticiyseniz Ayarlar'dan "Yönetici kendi talebini onaylayabilir" ayarını açın.İade istekleri₺100,00 · NakitOnay bekliyorYanlış tutarBu kasiyerin vardiya iade bütçesi (₺)Bütçe verRet gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerOnaylaReddet"
+
+ ❯ src/features/billing/RefundPanel.test.tsx:406:39
+    404|     await click("Bütçe ver");
+    405|
+    406|     expect(document.body.textContent).toContain("Kendinize iade bütçes…
+       |                                       ^
+    407|     expect(document.body.textContent).not.toContain("SELF_DECISION");
+    408|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 58 passed (59)
+   Start at  09:27:26
+   Duration  5.51s (transform 1.08s, setup 0ms, import 2.15s, tests 2.36s, environment 15.43s)
+

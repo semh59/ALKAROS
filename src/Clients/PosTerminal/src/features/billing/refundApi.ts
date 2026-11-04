@@ -23,6 +23,8 @@ export interface RefundRequestRow {
   billCancelled?: boolean;
   requestedBy?: string;
   approvedFromAllowance?: boolean;
+  terminalId?: string;
+  selfApproved?: boolean;
   items?: readonly RefundItemInput[];
 }
 
@@ -60,9 +62,9 @@ export interface BillingRefundClient {
   getItems: () => Promise<readonly BillReceiptItem[]>;
   approve: (requestId: string) => Promise<RefundRequestRow>;
   reject: (requestId: string, note: string) => Promise<RefundRequestRow>;
-  complete: (requestId: string, slipNumber: string) => Promise<RefundRequestRow>;
+  complete: (requestId: string, slipNumber: string | null) => Promise<RefundRequestRow>;
   getAllowance: () => Promise<RefundAllowance>;
-  setAllowance: (cashierUserId: string, amount: number) => Promise<RefundAllowance>;
+  setAllowance: (cashierUserId: string, cashierTerminalId: string, amount: number) => Promise<RefundAllowance>;
 }
 
 /** Fixed Turkish sentence per outcome; the server body and HTTP status never reach the screen. */
@@ -72,11 +74,11 @@ export function describeRefundFailure(error: unknown): string {
   if (status === 0) return "Sunucuya ulaşılamadı. Bağlantınızı kontrol edin.";
   if (status === 401) return "Oturum süresi doldu. Yeniden giriş yapın.";
   if (status === 403) return code === "SELF_DECISION"
-    ? "Kendi açtığınız iade isteğini siz onaylayamazsınız."
+    ? "Kendi açtığınız iade isteğini başka bir yetkili onaylamalı. Tek yöneticiyseniz Ayarlar'dan \"Yönetici kendi talebini onaylayabilir\" ayarını açın."
     : "Bu işlem için yetkiniz yok.";
   if (status === 400) return "Gerekçe veya fiş numarası eksik ya da geçersiz.";
   if (status === 409) {
-    if (code === "NO_OPEN_CASH_SESSION") return "Açık kasa oturumu yok. Önce kasayı açın.";
+    if (code === "NO_OPEN_CASH_SESSION") return "İadeyi isteyen kasiyerin, isteği yaptığı terminalde açık kasa oturumu yok. Önce o terminalde kasayı açın.";
     if (code === "REFUND_ITEM_QUANTITY") return "Seçilen adet iade edilebilir adedi aşıyor. Güncel veriyi alıp yeniden deneyin.";
     if (code === "REFUND_AMOUNT_EXCEEDS_PAYMENT") return "İade tutarı seçilen ödemenin kalan tutarını aşıyor. Başka ödeme seçin.";
     if (code === "ACCOUNT_REFUND_UNSUPPORTED") return "Cari hesaba yazılan ödeme buradan iade edilemez.";
@@ -89,9 +91,9 @@ export function describeRefundFailure(error: unknown): string {
 export function describeAllowanceFailure(error: unknown): string {
   const status = error instanceof RefundApiError ? error.status : -1;
   const code = error instanceof RefundApiError ? error.code : "";
-  if (status === 403 && code === "SELF_DECISION") return "Kendinize iade bütçesi veremezsiniz.";
+  if (status === 403 && code === "SELF_DECISION") return "Kendinize iade bütçesi başka bir yetkili vermeli; tek yöneticiyseniz Ayarlar'dan \"Yönetici kendi talebini onaylayabilir\" ayarını açın.";
   if (status === 400) return "Tutar geçersiz ya da kasiyerin bu vardiyada harcadığından düşük.";
-  if (status === 409) return "Kasiyerin açık kasa oturumu yok.";
+  if (status === 409) return "Kasiyerin iade isteğinin geldiği terminalde açık kasa oturumu yok.";
   return describeRefundFailure(error);
 }
 
@@ -142,6 +144,7 @@ export function createBillingRefundClient(terminalId: string, billId: string, fe
     reject: (requestId, note) => call(`${refundsBase}/${encodeURIComponent(requestId)}/reject`, "POST", { note }),
     complete: (requestId, slipNumber) => call(`${refundsBase}/${encodeURIComponent(requestId)}/complete`, "POST", { slipNumber, note: null }),
     getAllowance: () => call<RefundAllowance>(`${base}/refund-allowance`),
-    setAllowance: (cashierUserId, amount) => call<RefundAllowance>(`${base}/refund-allowance`, "PUT", { cashierUserId, amount }),
+    setAllowance: (cashierUserId, cashierTerminalId, amount) =>
+      call<RefundAllowance>(`${base}/refund-allowance`, "PUT", { cashierUserId, cashierTerminalId, amount }),
   };
 }

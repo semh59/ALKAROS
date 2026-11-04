@@ -99,7 +99,7 @@ describe("refund panel", () => {
   });
 
   it("offers no refund line for a payment that already waits for a manual refund, nor without the request permission", async () => {
-    const waiting = makeClient({ listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Manual" })]) });
+    const waiting = makeClient({ listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]) });
     await render({ client: waiting });
     expect(document.body.textContent).not.toContain("İade gerekçesi");
     expect(document.body.textContent).not.toContain("Onayla");
@@ -157,13 +157,13 @@ describe("refund panel", () => {
     expect(document.body.textContent).not.toContain("Reddet");
   });
 
-  it("completes a manual refund with the slip number", async () => {
+  it("completes a card refund with the slip number", async () => {
     const client = makeClient({
-      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Manual" })]),
+      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]),
     });
     await render({ client });
     expect(document.body.textContent).toContain("Elle iade bekliyor");
-    expect(document.body.textContent).toContain("Kart / elle iade");
+    expect(document.body.textContent).toContain("₺100,00 · Kart");
 
     const complete = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "İadeyi tamamla")!;
     expect(complete().disabled).toBe(true);
@@ -292,12 +292,50 @@ describe("refund panel", () => {
 
     await act(async () => root!.unmount());
     const card = makeClient({
-      requestRefund: vi.fn().mockResolvedValue(request("AwaitingManualRefund", { method: "Manual", approvedFromAllowance: true })),
+      requestRefund: vi.fn().mockResolvedValue(request("AwaitingManualRefund", { method: "Card", approvedFromAllowance: true })),
     });
     await render({ client: card });
     await pick("İade gerekçesi", "İkram");
     await click("İade iste");
     expect(document.body.textContent).toContain("fiş numarasını girerek tamamlayın");
+
+    await act(async () => root!.unmount());
+    const transfer = makeClient({
+      requestRefund: vi.fn().mockResolvedValue(request("AwaitingManualRefund", { method: "Eft", approvedFromAllowance: true })),
+    });
+    await render({ client: transfer });
+    await pick("İade gerekçesi", "İkram");
+    await click("İade iste");
+    expect(document.body.textContent).toContain("havaleyi gönderince");
+    expect(document.body.textContent).not.toContain("fiş numarasını girerek");
+  });
+
+  it("completes a transfer refund without asking for a slip number", async () => {
+    const client = makeClient({
+      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Eft" })]),
+    });
+    await render({ client });
+    expect(document.body.textContent).toContain("₺100,00 · Havale / EFT");
+    expect(document.body.textContent).not.toContain("İade fiş numarası");
+
+    await click("Havale gönderildi");
+
+    expect(client.complete).toHaveBeenCalledWith("r1", null);
+  });
+
+  it("labels every refund method the server can send and marks a self-approved request", async () => {
+    const rows = [
+      request("Completed", { requestId: "r1", method: "Cash" }),
+      request("Completed", { requestId: "r2", method: "Card" }),
+      request("Completed", { requestId: "r3", method: "Eft", selfApproved: true }),
+      request("Completed", { requestId: "r4", method: "Account" }),
+    ];
+    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue(rows) }) });
+
+    const text = document.body.textContent ?? "";
+    for (const label of ["₺100,00 · Nakit", "₺100,00 · Kart", "₺100,00 · Havale / EFT", "₺100,00 · Cari hesap"]) expect(text).toContain(label);
+    expect(text.match(/Kendi onayı/g)).toHaveLength(1);
+    expect(text).not.toContain("Bilinmiyor");
   });
 
   it("shows the remaining shift allowance only when there is one", async () => {
@@ -324,7 +362,9 @@ describe("refund panel", () => {
   });
 
   it("lets an approver give the requester a shift allowance from a waiting request", async () => {
-    const client = makeClient({ listRequests: vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier" })]) });
+    const client = makeClient({
+      listRequests: vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier", terminalId: "t-asked" })]),
+    });
     await render({ client });
     const give = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Bütçe ver")!;
     expect(give().disabled).toBe(true);
@@ -336,30 +376,34 @@ describe("refund panel", () => {
     await type("Bu kasiyerin vardiya iade bütçesi", "150,5");
     await click("Bütçe ver");
 
-    expect(client.setAllowance).toHaveBeenCalledWith("u-cashier", 150.5);
+    expect(client.setAllowance).toHaveBeenCalledWith("u-cashier", "t-asked", 150.5);
     expect(document.body.textContent).toContain("Kasiyerin vardiya iade bütçesi güncellendi.");
   });
 
   it("offers no allowance field without the approve permission or without a known requester", async () => {
-    const rows = vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier" })]);
+    const rows = vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier", terminalId: "t-asked" })]);
     await render({ client: makeClient({ listRequests: rows }), canApproveRefund: false });
     expect(document.body.textContent).not.toContain("Bütçe ver");
 
     await act(async () => root!.unmount());
     await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([request("Requested")]) }) });
     expect(document.body.textContent).not.toContain("Bütçe ver");
+
+    await act(async () => root!.unmount());
+    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier" })]) }) });
+    expect(document.body.textContent).not.toContain("Bütçe ver");
   });
 
   it("explains an allowance refusal with a fixed sentence", async () => {
     const client = makeClient({
-      listRequests: vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier" })]),
+      listRequests: vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u-cashier", terminalId: "t-asked" })]),
       setAllowance: vi.fn().mockRejectedValue(new RefundApiError(403, "SELF_DECISION", "x")),
     });
     await render({ client });
     await type("Bu kasiyerin vardiya iade bütçesi", "100");
     await click("Bütçe ver");
 
-    expect(document.body.textContent).toContain("Kendinize iade bütçesi veremezsiniz.");
+    expect(document.body.textContent).toContain("Kendinize iade bütçesi başka bir yetkili vermeli");
     expect(document.body.textContent).not.toContain("SELF_DECISION");
   });
 

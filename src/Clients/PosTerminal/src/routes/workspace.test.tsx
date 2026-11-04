@@ -337,7 +337,7 @@ describe("workspace /billing route surfaces the real backend error message", () 
     expect(document.body.textContent).not.toContain("Hesap alınamadı");
   });
 
-  it("shows the split-design endpoint's own error message, not the generic fallback", async () => {
+  it("shows the fixed Turkish sentence for the split-design error code, not the generic fallback or the server text", async () => {
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
       if (path.includes("/split-design")) {
@@ -347,7 +347,7 @@ describe("workspace /billing route surfaces the real backend error message", () 
         // of what this test is pinning. Any other status falls to the
         // generic "error" state, whose StateMessage does show it.
         return new Response(
-          JSON.stringify({ error: { code: "BILL_ALREADY_SETTLED", message: "Bu hesap zaten kapatılmış." } }),
+          JSON.stringify({ error: { code: "UNSUPPORTED_BILL_STATE", message: "raw english text" } }),
           { status: 422, headers: { "Content-Type": "application/json" } },
         );
       }
@@ -369,7 +369,8 @@ describe("workspace /billing route surfaces the real backend error message", () 
     await act(async () => Promise.resolve());
     await act(async () => Promise.resolve());
 
-    expect(document.body.textContent).toContain("Bu hesap zaten kapatılmış.");
+    expect(document.body.textContent).toContain("Bu hesap durumunda değişiklik yapılamaz.");
+    expect(document.body.textContent).not.toContain("raw english text");
     expect(document.body.textContent).not.toContain("Hesap bölme verisi alınamadı.");
   });
 });

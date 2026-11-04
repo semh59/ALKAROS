@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/refundApi.test.ts (11 tests | 1 failed) 26ms
+     × reads the shift allowance and sets it for a cashier on the allowance route 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/refundApi.test.ts > billing refund client > reads the shift allowance and sets it for a cashier on the allowance route
+AssertionError: expected { cashierUserId: 'u1', amount: 150 } to deeply equal { cashierUserId: 'u1', …(2) }
+
+- Expected
++ Received
+
+  {
+    "amount": 150,
+-   "cashierTerminalId": "t-asked",
+    "cashierUserId": "u1",
+  }
+
+ ❯ src/features/billing/refundApi.test.ts:81:55
+     79|     expect(fetcher.mock.calls[0][1].method).toBe("GET");
+     80|     expect(fetcher.mock.calls[1][1].method).toBe("PUT");
+     81|     expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({ cashie…
+       |                                                       ^
+     82|   });
+     83|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  09:40:53
+   Duration  1.52s (transform 47ms, setup 0ms, import 68ms, tests 26ms, environment 1.16s)
+

@@ -98,11 +98,22 @@ describe("split-payment.js shift refund allowance", () => {
   it("asks for the slip number when a card refund was reserved from the allowance", async () => {
     await open({
       allowance: shift(150, 0),
-      requestResult: row("AwaitingManualRefund", { method: "Manual", approvedFromAllowance: true }),
+      requestResult: row("AwaitingManualRefund", { method: "Card", approvedFromAllowance: true }),
     });
     await askForRefund();
 
     await vi.waitFor(() => expect(app().textContent).toContain("fiş numarasını girerek tamamlayın"));
+  });
+
+  it("asks the cashier to confirm the transfer, not for a slip, when a transfer refund was reserved from the allowance", async () => {
+    await open({
+      allowance: shift(150, 0),
+      requestResult: row("AwaitingManualRefund", { method: "Eft", approvedFromAllowance: true }),
+    });
+    await askForRefund();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("havaleyi gönderince onaylayarak tamamlayın"));
+    expect(app().textContent).not.toContain("fiş numarasını girerek");
   });
 
   it("keeps the waiting-for-approval message when the refund went to the manager", async () => {

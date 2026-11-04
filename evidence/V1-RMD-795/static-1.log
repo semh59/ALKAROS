@@ -1,0 +1,66 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > labels adjustments, deductions, payment methods and refunded payments in Turkish and escapes item names
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793773799906-0.5804089319238025:197:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793773799906-0.5804089319238025:339:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793773799906-0.5804089319238025:396:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-change.test.js > split-payment.js optional cash change > refuses a tendered amount below the amount due without calling the server
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793773800701-0.25399578435182557:197:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793773800701-0.25399578435182557:339:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793773800701-0.25399578435182557:396:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt.test.js (10 tests | 1 failed) 3513ms
+     × labels adjustments, deductions, payment methods and refunded payments in Turkish and escapes item names 318ms
+ ❯ split-payment-change.test.js (11 tests | 1 failed) 4912ms
+     × refuses a tendered amount below the amount due without calling the server 1352ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-change.test.js > split-payment.js optional cash change > refuses a tendered amount below the amount due without calling the server
+AssertionError: expected 'Hesap ÖdemeTahsilatToplam₺100,00Tahsi…' to contain 'Alınan para tutardan az olamaz'
+
+Expected: "Alınan para tutardan az olamaz"
+Received: "Hesap ÖdemeTahsilatToplam₺100,00Tahsil edilen₺0,00Kalan₺100,00İndirim / düzeltme ekleMüşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltmeYüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekleBahşiş ekleHesabı iptal etGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerHesabı iptal etEşit bölüştürHesaplaÖdeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺Alınan para (isteğe bağlı)₺Alınan para tutardan az.Ödemeyi Ekle"
+
+ ❯ split-payment-change.test.js:110:54
+    108|     document.getElementById("submit-tender").click();
+    109|
+    110|     await vi.waitFor(() => expect(app().textContent).toContain("Alınan…
+       |                                                      ^
+    111|     expect(tenderBody(fetchMock)).toBeNull();
+    112|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > labels adjustments, deductions, payment methods and refunded payments in Turkish and escapes item names
+AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' to contain 'EFT / diğer (İade edildi)'
+
+Expected: "EFT / diğer (İade edildi)"
+Received: "Bilgi FişiBu belge mali fiş değildir.Hesap: H-104213.10.2026 13:05:002 × Taş fırın pizza₺80,001 × Ayran <b>₺20,00Ara toplam₺100,00Bahşiş₺20,00İndirim-₺10,00Toplam₺110,00Nakit₺60,00Cari hesap₺30,00Diğer (İade edildi)₺20,00Banka kartı₺15,00Teşekkür ederiz."
+
+ ❯ split-payment-receipt.test.js:105:18
+    103|     expect(text).toContain("Cari hesap");
+    104|     expect(text).toContain("Banka kartı");
+    105|     expect(text).toContain("EFT / diğer (İade edildi)");
+       |                  ^
+    106|     expect(sheet().querySelector("b")).toBeNull();
+    107|     expect(text).toContain("Ayran <b>");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 16 passed (18)
+      Tests  2 failed | 233 passed (235)
+   Start at  09:29:56
+   Duration  17.04s (transform 29.84s, setup 899ms, import 2.84s, tests 62.35s, environment 33.84s)
+

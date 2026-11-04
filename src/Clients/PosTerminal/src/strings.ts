@@ -1224,6 +1224,9 @@ export const refundText = {
   rejectNoteLabel: "Ret gerekçesi",
   slipLabel: "İade fiş numarası",
   complete: "İadeyi tamamla",
+  completeSent: "Havale gönderildi",
+  selfApproved: "Kendi onayı",
+  transferHint: "Havale / EFT iadesi için fiş numarası gerekmez; parayı gönderince onaylayın.",
   requested: "İade isteği gönderildi; onay bekliyor.",
   approved: "İade isteği onaylandı.",
   rejected: "İade isteği reddedildi.",
@@ -1245,6 +1248,7 @@ export const refundText = {
   allowanceRemaining: "Kalan vardiya iade bütçeniz",
   completedFromAllowance: "İade vardiya bütçenizden tamamlandı.",
   reservedFromAllowance: "İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.",
+  reservedFromAllowanceTransfer: "İade vardiya bütçenizden ayrıldı; havaleyi gönderince onaylayarak tamamlayın.",
   itemsHeading: "Ürün bazlı iade",
   itemsLeft: "kalan",
   itemsQuantityLabel: "iade adedi",
@@ -1268,5 +1272,7 @@ export const refundStatusLabels: Record<string, string> = {
 
 export const refundMethodLabels: Record<string, string> = {
   Cash: "Nakit",
-  Manual: "Kart / elle iade",
+  Card: "Kart",
+  Eft: "Havale / EFT",
+  Account: "Cari hesap",
 };

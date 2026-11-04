@@ -19,6 +19,38 @@ export class BillingSplitApiError extends Error {
   constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
 }
 
+const splitFailureTexts: Record<string, string> = {
+  UNAUTHORIZED: "Oturum süresi doldu. Yeniden giriş yapın.",
+  FORBIDDEN: "Bu işlem için yetkiniz yok.",
+  NOT_FOUND: "İstenen kayıt bulunamadı. Hesabı yenileyin.",
+  GRANT_DENIED: "İndirim isteği reddedildi.",
+  UNSUPPORTED_ORDER_STATE: "Bu sipariş durumunda hesap açılamaz.",
+  CONCURRENT_MODIFICATION: "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi. Hesabı yenileyin.",
+  UNSUPPORTED_BILL_STATE: "Bu hesap durumunda değişiklik yapılamaz.",
+  DISCOUNT_BELOW_COLLECTED: "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.",
+  ITEM_SPLIT_ON_ADJUSTED_BILL: "İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın.",
+  BILL_HAS_PAYMENT: "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli.",
+  DISCOUNT_REASON_INVALID: "İndirim gerekçesi eksik ya da geçersiz.",
+  DISCOUNT_TYPE_INVALID: "İndirim türü geçersiz.",
+  DISCOUNT_VALUE_INVALID: "İndirim değeri geçersiz.",
+  IDEMPOTENCY_KEY_INVALID: "İşlem kimliği geçersiz. Sayfayı yenileyip yeniden deneyin.",
+  NOTES_TOO_LONG: "Not çok uzun.",
+  TIP_AMOUNT_INVALID: "Bahşiş tutarı geçersiz.",
+};
+
+/** Fixed Turkish sentence per server error code; the server body never reaches the screen. */
+export function describeSplitFailure(status: number, code: string): string {
+  const known = splitFailureTexts[code];
+  if (known) return known;
+  if (status === 0) return "Sunucuya ulaşılamadı.";
+  if (status === 401) return splitFailureTexts.UNAUTHORIZED;
+  if (status === 403) return splitFailureTexts.FORBIDDEN;
+  if (status === 404) return splitFailureTexts.NOT_FOUND;
+  if (status === 409) return "Hesap başka bir yerde değişti. Hesabı yenileyip yeniden deneyin.";
+  if (status === 400) return "Girilen değerler geçersiz. Kontrol edip yeniden deneyin.";
+  return "Hesap dağıtımı kaydedilemedi.";
+}
+
 export interface BillingSplitClient {
   get: () => Promise<BillSplitDesign>;
   getOwners: () => Promise<SplitOwnerOption[]>;
@@ -49,8 +81,9 @@ export function createBillingSplitClient(terminalId: string, billId: string, fet
       throw new BillingSplitApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Dağıtım taslağı korundu.");
     }
     if (!response.ok) {
-      const payload = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-      throw new BillingSplitApiError(response.status, payload?.error?.code ?? "REQUEST_FAILED", payload?.error?.message ?? "Hesap dağıtımı kaydedilemedi.");
+      const payload = await response.json().catch(() => undefined) as { error?: { code?: string } } | undefined;
+      const code = payload?.error?.code ?? "REQUEST_FAILED";
+      throw new BillingSplitApiError(response.status, code, describeSplitFailure(response.status, code));
     }
     return response.json() as Promise<BillSplitDesign>;
   }
@@ -97,8 +130,9 @@ export async function createBillFromOrder(
     throw new BillingSplitApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Adisyon oluşturulamadı.");
   }
   if (!response.ok) {
-    const payload = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-    throw new BillingSplitApiError(response.status, payload?.error?.code ?? "REQUEST_FAILED", payload?.error?.message ?? "Adisyon oluşturulamadı.");
+    const payload = await response.json().catch(() => undefined) as { error?: { code?: string } } | undefined;
+    const code = payload?.error?.code ?? "REQUEST_FAILED";
+    throw new BillingSplitApiError(response.status, code, describeSplitFailure(response.status, code));
   }
   return response.json() as Promise<BillSplitDesign>;
 }

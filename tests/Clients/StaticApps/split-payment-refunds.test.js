@@ -224,8 +224,8 @@ describe("split-payment.js cancel and refund", () => {
     expect(app().textContent).not.toContain("Başka hesabın isteği");
   });
 
-  it("completes a manual refund with the slip number", async () => {
-    const fetchMock = await open(routes({ summary: paidSummary, requests: [request("AwaitingManualRefund", { method: "Manual" })] }));
+  it("completes a card refund with the slip number", async () => {
+    const fetchMock = await open(routes({ summary: paidSummary, requests: [request("AwaitingManualRefund", { method: "Card" })] }));
     await vi.waitFor(() => expect(document.querySelector('[data-refund-action="complete"]')).not.toBeNull());
     expect(app().textContent).toContain("Elle iade bekliyor");
 
@@ -234,5 +234,52 @@ describe("split-payment.js cancel and refund", () => {
 
     await vi.waitFor(() => expect(posted(fetchMock, "/complete")).not.toBeNull());
     expect(posted(fetchMock, "/complete").body).toEqual({ slipNumber: "POS-4471", note: null });
+  });
+
+  it("completes a transfer refund without a slip field and sends no slip number", async () => {
+    const fetchMock = await open(routes({ summary: paidSummary, requests: [request("AwaitingManualRefund", { method: "Eft" })] }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="complete"]')).not.toBeNull());
+
+    expect(document.querySelector("[data-refund-slip]")).toBeNull();
+    expect(app().textContent).toContain("Havale / EFT");
+    expect(app().textContent).toContain("fiş numarası gerekmez");
+    document.querySelector('[data-refund-action="complete"]').click();
+
+    await vi.waitFor(() => expect(posted(fetchMock, "/complete")).not.toBeNull());
+    expect(posted(fetchMock, "/complete").body).toEqual({ slipNumber: null, note: null });
+  });
+
+  it("names every method the server can send and marks a self-approved request", async () => {
+    await open(routes({
+      summary: paidSummary,
+      requests: [
+        request("Completed", { requestId: "r-cash", method: "Cash" }),
+        request("Completed", { requestId: "r-card", method: "Card" }),
+        request("Completed", { requestId: "r-eft", method: "Eft", selfApproved: true }),
+        request("Completed", { requestId: "r-acc", method: "Account" }),
+      ],
+    }));
+    await vi.waitFor(() => expect(app().textContent).toContain("Havale / EFT"));
+
+    const text = app().textContent;
+    for (const label of ["Nakit", "Kart", "Havale / EFT", "Cari hesap"]) expect(text).toContain(label);
+    expect(text.match(/Kendi onayı/g)).toHaveLength(1);
+    expect(text).not.toContain("Bilinmiyor");
+  });
+
+  it("explains a refused self decision with a fixed sentence, never the server text", async () => {
+    await open(routes({
+      summary: paidSummary,
+      requests: [request("Requested")],
+      post: { approve: { status: 403, body: { error: { code: "SELF_DECISION", message: "raw english text" } } } },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+
+    document.querySelector('[data-refund-action="approve"]').click();
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+    document.querySelector('[data-refund-action="approve"]').click();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("Yönetici kendi talebini onaylayabilir"));
+    expect(app().textContent).not.toContain("raw english text");
   });
 });

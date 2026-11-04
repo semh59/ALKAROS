@@ -137,6 +137,15 @@
 
   var TIME_FORMAT = { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' };
 
+  // AbortSignal.timeout is missing in older browsers; without a signal a hung connection would never end.
+  function timeoutSignal(ms) {
+    if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) return AbortSignal.timeout(ms);
+    if (typeof AbortController === 'undefined') return undefined;
+    var controller = new AbortController();
+    setTimeout(function () { controller.abort(); }, ms);
+    return controller.signal;
+  }
+
   function api(path, options) {
     options = options || {};
     return fetch(path, {
@@ -144,7 +153,7 @@
       credentials: 'include',
       headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
-      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+      signal: timeoutSignal(15000),
     }).then(function (response) {
       // V1-RMD-291: one place catches a dropped session, from ANY call, not
       // just the bootstrap check - before this a 401 from a mid-use action
