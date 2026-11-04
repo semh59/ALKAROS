@@ -35,6 +35,7 @@ Kapsam dışı: kalem "Kaldır" geri alma, mikro metin/kontrast, başlık tutarl
   - src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css (V1-RMD-281) — kart yerleşimi.
   - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx (V1-RMD-281) — etiket, 401, geri gönderme testleri.
   - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx (V1-RMD-366) — saat dilimi.
+  - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx (V1-RMD-366) — saat testi cihaz saatine değil anlık zamana bağlanır.
   - src/Clients/PosTerminal/src/routes/Cashier.sale-refresh.test.tsx (V1-RMD-719) — açma düğmesi yerine ürün dokunuşu.
   - src/Clients/PosTerminal/src/routes/Cashier.session-ended-message.test.tsx (V1-RMD-388) — açma düğmesi yerine ürün dokunuşu.
   - src/Clients/PosTerminal/src/routes/Cashier.modifier-picker.test.tsx (V1-RMD-774) — sipariş seçim onayında açılır.
