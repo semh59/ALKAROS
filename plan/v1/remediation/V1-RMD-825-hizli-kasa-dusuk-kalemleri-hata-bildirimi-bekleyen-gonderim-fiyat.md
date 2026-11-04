@@ -25,6 +25,7 @@ Kasa incelemesinin G7c kalemlerinden vanilla kasa (`Cashier/wwwroot`) parçası 
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js (V1-RMD-241) — vardiya kapanışında bekleyen gönderim anahtarını siler.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — hesap bulunamadı ekranı.
   - tests/Clients/StaticApps/cashier-low-items.test.js (V1-RMD-109) — yeni dosya: bu görevin testleri.
+  - tests/Clients/StaticApps/cashier-app.test.js (V1-RMD-253) — bildirim metni okuyucusu kapat düğmesini saymaz.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
