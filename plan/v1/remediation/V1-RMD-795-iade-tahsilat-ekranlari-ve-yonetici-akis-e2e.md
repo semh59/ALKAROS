@@ -37,6 +37,7 @@ Kapsam dışı: sunucu davranışı (793/794); gün sonu rapor şekli (V1-RMD-79
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js (V1-RMD-241) — zaman aşımı.
   - src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js (V1-RMD-443) — zaman aşımı.
   - tests/Clients/StaticApps/split-payment-refunds.test.js (V1-RMD-512) — iade yöntemi ve fiş testleri.
+  - tests/Clients/StaticApps/split-payment-allowance.test.js (V1-RMD-512) — bütçeden ayrılan havale iadesi cümlesi.
   - tests/Clients/StaticApps/split-payment-change.test.js (V1-RMD-515) — pasif düğme testi.
   - tests/Clients/StaticApps/split-payment-receipt.test.js (V1-RMD-517) — fiş etiketi.
   - tests/Clients/StaticApps/split-payment-failures.test.js (V1-RMD-264) — sözlük testleri.
