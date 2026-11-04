@@ -155,7 +155,12 @@ body {
   cursor: pointer; font-family: inherit;
 }
 .sp-method-chip.is-active { background: var(--color-ink); color: #FFFFFF; border-color: var(--color-ink); }
-.sp-method-chip:disabled { opacity: 0.4; cursor: not-allowed; }
+.sp-method-chip:disabled {
+  background: var(--color-canvas); color: var(--color-text-muted);
+  border-style: dashed; cursor: not-allowed;
+}
+.sp-hint { margin: 8px 0 0; font-size: 14px; color: var(--color-text-muted); }
+.sp-notice-actions { margin-top: 10px; }
 
 .sp-line {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;

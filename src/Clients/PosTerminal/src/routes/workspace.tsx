@@ -14,6 +14,7 @@ import { KitchenOperationsApiError, KitchenOperationsWorkspace, createKitchenOpe
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
 import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
 import { ManagementArea } from "../features/management";
+import { CashSessionBand, CashSessionLink, type CashSessionStatus } from "../features/cash-session-status";
 
 export type BackendStatus = "checking" | "online" | "offline";
 
@@ -24,6 +25,7 @@ export function ExperiencePage({
   path,
   backendStatus,
   customerDisplayUrl = "",
+  cashSession = null,
   onLogout,
 }: {
   terminalId: string;
@@ -32,6 +34,8 @@ export function ExperiencePage({
   path: string;
   backendStatus: BackendStatus;
   customerDisplayUrl?: string;
+  /** Null when the session has no drawer permission. */
+  cashSession?: CashSessionStatus | null;
   onLogout: () => Promise<void>;
 }) {
   const { navigate } = useRouter();
@@ -146,8 +150,9 @@ export function ExperiencePage({
     activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
-    headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
+    headerActions={<>{cashSession && <CashSessionLink status={cashSession} className="experience-header-link" />}<a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
+    {cashSession && <CashSessionBand status={cashSession} />}
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} />}

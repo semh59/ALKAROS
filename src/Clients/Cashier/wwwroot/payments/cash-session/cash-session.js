@@ -243,8 +243,12 @@
         });
       }
       if (!result.ok) {
-        state.phase = 'login';
-        render();
+        if (result.status === 401) {
+          state.phase = 'login';
+          render();
+        } else {
+          failActiveSessionRead(describeHttpFailure(result.status, result.body));
+        }
         return;
       }
       state.session = result.body;
@@ -252,8 +256,20 @@
       if (state.phase === 'open') return loadMovements();
       render();
     }).catch(function () {
-      setError('Kasa durumu okunamadı. Bağlantınızı kontrol edin.');
+      failActiveSessionRead('Kasa durumu okunamadı. Sunucuya ulaşılamadı; bağlantınızı kontrol edip yeniden deneyin.');
     });
+  }
+
+  // On first load there is no screen to keep, so the failure gets its own screen with a retry; a re-read
+  // after an action keeps the screen the cashier is on and shows the failure on it.
+  function failActiveSessionRead(message) {
+    if (state.phase !== 'checking') {
+      setError(message);
+      return;
+    }
+    state.error = message;
+    state.phase = 'loadError';
+    render();
   }
 
   function movementsBase() {

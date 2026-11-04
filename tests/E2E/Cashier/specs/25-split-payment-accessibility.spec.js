@@ -9,15 +9,16 @@ test.describe('Hesap Ödeme - erişilebilirlik (V1-RMD-362)', () => {
     const terminalId = await loginViaApi(page, seed);
     const billId = await createBill(page, terminalId, seed, { quantity: 1 });
 
-    await openSplitPayment(page, billId);
+    await openSplitPayment(page, billId, { chooseEftWhenDrawerClosed: false });
     await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
 
     await expect(page.locator('.sp-method-chips')).toHaveAttribute('role', 'radiogroup');
-    // This test's cashier has no open cash session (loginViaApi/createBill open no kasa oturumu),
-    // so the page's own default lands on Eft (state.cashSessionOpen is false) - real, current
-    // behavior, not an assumption this test invents.
+    // This test's cashier has no open cash session, so no method is preselected: the cashier chooses.
     const eftChip = page.locator('.sp-method-chip', { hasText: 'EFT/Havale' });
     await expect(eftChip).toHaveAttribute('role', 'radio');
+    await expect(eftChip).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('#cash-state-notice')).toContainText('Kasa oturumu kapalı');
+    await eftChip.click();
     await expect(eftChip).toHaveAttribute('aria-checked', 'true');
     const cardChip = page.locator('.sp-method-chip', { hasText: 'Kredi/Banka Kartı' });
     await expect(cardChip).toHaveAttribute('aria-checked', 'false');

@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ error-dictionary-lock.test.js (3 tests | 1 failed) 36ms
+     × has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server
+AssertionError: expected [ 'STOCK_RESTORE_FAILED', …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "STOCK_RESTORE_FAILED",
++   "REFUND_QUANTITY_NOT_WHOLE",
++ ]
+
+ ❯ error-dictionary-lock.test.js:66:21
+     64|       else if (entries.get(code) !== message) different.push(code);
+     65|     }
+     66|     expect(missing).toEqual([]);
+       |                     ^
+     67|     expect(different).toEqual([]);
+     68|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 22 passed (23)
+      Tests  1 failed | 270 passed (271)
+   Start at  18:58:15
+   Duration  30.28s (transform 59.53s, setup 1.70s, import 7.45s, tests 109.04s, environment 113.14s)
+

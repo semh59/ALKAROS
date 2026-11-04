@@ -1015,3 +1015,42 @@ describe("workspace /billing route opens an order's bill once", () => {
     expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("/from-order/"))).toHaveLength(1);
   });
 });
+
+describe("workspace header drawer button", () => {
+  let root: Root | null = null;
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+  });
+
+  async function render(cashSession: { state: "open" | "closed" | "unknown" | null; reload: () => void } | null) {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse([])));
+    window.history.replaceState({}, "", "/authorization");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="22222222-2222-2222-2222-222222222222" displayName="Deniz Kaya" capabilities={["reports.view"]}
+          path="/authorization" backendStatus="online" cashSession={cashSession} onLogout={async () => {}} />
+      </RouterProvider>,
+    ));
+  }
+
+  it("shows the drawer state as a link to the drawer page, and a band while it is not open", async () => {
+    await render({ state: "closed", reload: () => {} });
+
+    const link = document.querySelector<HTMLAnchorElement>("a.cash-session-link")!;
+    expect(link.textContent).toBe("Kasa: Kapalı");
+    expect(link.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+    expect(document.querySelector(".cash-session-band")?.textContent).toContain("Kasa oturumu kapalı");
+  });
+
+  it("shows neither the link nor the band for a session without the drawer permission", async () => {
+    await render(null);
+
+    expect(document.querySelector("a.cash-session-link")).toBeNull();
+    expect(document.querySelector(".cash-session-band")).toBeNull();
+  });
+});

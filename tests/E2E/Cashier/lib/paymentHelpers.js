@@ -138,8 +138,17 @@ export async function readTenderSummary(page, terminalId, billId) {
   );
 }
 
-export async function openSplitPayment(page, billId) {
+/**
+ * With the drawer closed the page leaves the method unselected on purpose; unless a test is about exactly that
+ * (`chooseEftWhenDrawerClosed: false`), the helper picks EFT the way a cashier would.
+ */
+export async function openSplitPayment(page, billId, { chooseEftWhenDrawerClosed = true } = {}) {
   await page.goto(`${SPLIT_PAYMENT_PATH}?billId=${billId}`);
+  if (!chooseEftWhenDrawerClosed) return;
+  await page.getByRole('heading', { name: 'Tahsilat' }).waitFor({ timeout: 15_000 });
+  // A bill locked by an unsettled card payment draws no tender form at all.
+  const cashChip = page.locator('.sp-method-chip[data-method="Cash"]');
+  if (await cashChip.count() > 0 && await cashChip.isDisabled()) await selectMethod(page, 'Eft');
 }
 
 /** Selects a tender method chip by its Turkish label. */

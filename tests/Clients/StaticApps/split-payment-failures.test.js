@@ -40,6 +40,13 @@ async function open(routeSet) {
 
 const app = () => document.getElementById("app");
 
+// A closed drawer leaves the method unselected; the cashier picks EFT on purpose.
+async function chooseEft() {
+  await vi.waitFor(() => expect(document.querySelector('.sp-method-chip[data-method="Eft"]')).not.toBeNull());
+  document.querySelector('.sp-method-chip[data-method="Eft"]').click();
+  expect(document.getElementById("eft-confirm")).not.toBeNull();
+}
+
 function reasonKey(selector) {
   if (selector === "#cancel-reason") return "cancel";
   const refund = selector.match(/data-refund-reason="([^"]+)"/);
@@ -72,7 +79,7 @@ describe("split-payment.js failure states", () => {
       cashSession: { status: 404 },
       extra: [{ test: (url, init) => url.endsWith("/tenders/") && init?.method === "POST", body: { outcome: "Declined", approvedAmount: null, reason: "x" } }],
     }));
-    await vi.waitFor(() => expect(document.getElementById("eft-confirm")).not.toBeNull());
+    await chooseEft();
     document.getElementById("eft-confirm").click();
 
     document.getElementById("submit-tender").click();
@@ -174,7 +181,7 @@ describe("split-payment.js failure states", () => {
 
   it("warns that a payment may have gone through when the network drops during a tender", async () => {
     const fetchMock = await open(routes({ cashSession: { status: 404 } }));
-    await vi.waitFor(() => expect(document.getElementById("eft-confirm")).not.toBeNull());
+    await chooseEft();
     document.getElementById("eft-confirm").click();
     const original = fetchMock.getMockImplementation();
     fetchMock.mockImplementation(async (url, init) => {
@@ -192,7 +199,7 @@ describe("split-payment.js failure states", () => {
       cashSession: { status: 404 },
       extra: [{ test: (url, init) => url.endsWith("/tenders/") && init?.method === "POST", status, body: { error } }],
     }));
-    await vi.waitFor(() => expect(document.getElementById("eft-confirm")).not.toBeNull());
+    await chooseEft();
     document.getElementById("eft-confirm").click();
     document.getElementById("submit-tender").click();
     return fetchMock;

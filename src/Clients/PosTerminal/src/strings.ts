@@ -1276,3 +1276,16 @@ export const refundMethodLabels: Record<string, string> = {
   Eft: "Havale / EFT",
   Account: "Cari hesap",
 };
+
+/** The drawer (kasa oturumu) button and band shown on every till screen. */
+export const cashSessionText = {
+  checking: "Kasa: Kontrol…",
+  open: "Kasa: Açık",
+  closed: "Kasa: Kapalı",
+  unknown: "Kasa: Bilinmiyor",
+  forbidden: "Kasa: İzin yok",
+  closedBand: "Kasa oturumu kapalı. Nakit tahsilat için önce kasayı açın.",
+  unknownBand: "Kasa durumu okunamadı. Nakit tahsilat yapmadan önce durumu yeniden okuyun.",
+  openAction: "Kasayı aç",
+  retry: "Kasa durumunu yeniden oku",
+} as const;

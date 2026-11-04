@@ -18,6 +18,7 @@ import { playNewItemChime } from "../audioAlerts";
 import { onlineHubTabFor } from "../features/online-hub";
 import { useNewOrderChime } from "../features/online-operations/useNewOrderChime";
 import { usePendingChecksAlert } from "../features/pending-checks";
+import { CashSessionBand, CashSessionLink, useCashSessionState } from "../features/cash-session-status";
 import { CashierModifierPicker } from "./CashierModifierPicker";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 
@@ -78,6 +79,7 @@ export function Cashier() {
   const [session, setSession] = useState<CashierSession>("checking");
   const sessionRef = useRef<CashierSession>("checking");
   useEffect(() => { sessionRef.current = session; }, [session]);
+  const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   // V1-RMD-388 (Tur 2, T7): only set by the session-expired handler below,
@@ -516,6 +518,7 @@ export function Cashier() {
       path={currentPath}
       backendStatus={backendStatus}
       customerDisplayUrl={customerDisplayUrl}
+      cashSession={cashSession}
       onLogout={logout}
     />;
   }
@@ -547,6 +550,7 @@ export function Cashier() {
             </button>
           )}
           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
+          {cashSession && <CashSessionLink status={cashSession} />}
           {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
           <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
           <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
@@ -567,6 +571,8 @@ export function Cashier() {
           </button>
         </div>
       </header>
+
+      {cashSession && <CashSessionBand status={cashSession} />}
 
       {helpLink !== "ok" && (
         <div className="help-alerts" role="status" aria-live="polite">

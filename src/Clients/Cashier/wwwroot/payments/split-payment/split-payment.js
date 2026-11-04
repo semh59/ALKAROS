@@ -21,7 +21,11 @@
     billId: null,
     summary: null,
     cashSessionId: null,
-    cashSessionOpen: false,
+    // 'open', 'closed' (the server answered 404), 'forbidden' (403: this user may not use the drawer) or 'unknown'
+    // (the read failed); only 'closed' means closed.
+    cashState: 'unknown',
+    cashStateMessage: '',
+    summaryStale: false,
     selectedMethod: 'Cash',
     splitCount: 2,
     splitLeft: 0,
@@ -154,6 +158,7 @@
     REFUND_ITEM_NOT_ON_BILL: 'Seçilen kalem bu hesapta yok.',
     REFUND_ITEM_QUANTITY: 'Bu kalemden istenen adet iade edilebilir adedi aşıyor.',
     REFUND_QUANTITY_INVALID: 'İade adedi sıfırdan büyük olmalı ve en çok 3 ondalık içermeli.',
+    STOCK_RESTORE_FAILED: 'Ürünün stoğu geri verilemedi; iptal yapılmadı.',
     REFUND_STATE: 'İade isteği bu durumda değil; sayfayı yenileyin.',
     REFUND_STOCK_UNAVAILABLE: 'Stoka geri alma bu işletmede kullanılamıyor.',
     RESOLUTION_REASON_INVALID: 'Gerekçe yazmalısınız (en fazla 500 karakter).',
@@ -257,13 +262,24 @@
   // action from whoever is looking at it.
   var pendingConfirmationPollTimer = null;
   // The poll redraws the whole page; put the caret back so a cashier typing a note is not thrown out of the field.
+  // Fields drawn without an id are found again by the data attribute that identifies them.
+  var FIELD_KEYS = ['data-refund-reason', 'data-refund-note', 'data-item-qty', 'data-refund-slip', 'data-reason-select'];
+  function focusSelector(element) {
+    if (!element || !app.contains(element)) return '';
+    if (element.id) return '#' + element.id;
+    for (var i = 0; i < FIELD_KEYS.length; i++) {
+      var value = element.getAttribute(FIELD_KEYS[i]);
+      if (value !== null) return '[' + FIELD_KEYS[i] + '="' + value.replace(/"/g, '\\"') + '"]';
+    }
+    return '';
+  }
   function renderKeepingFocus() {
     var active = document.activeElement;
-    var id = active && app.contains(active) ? active.id : '';
-    var start = id && typeof active.selectionStart === 'number' ? active.selectionStart : null;
-    var end = id && typeof active.selectionEnd === 'number' ? active.selectionEnd : null;
+    var selector = focusSelector(active);
+    var start = selector && typeof active.selectionStart === 'number' ? active.selectionStart : null;
+    var end = selector && typeof active.selectionEnd === 'number' ? active.selectionEnd : null;
     render();
-    var again = id ? document.getElementById(id) : null;
+    var again = selector ? document.querySelector(selector) : null;
     if (!again) return;
     again.focus();
     if (start !== null && again.setSelectionRange) again.setSelectionRange(start, end);
@@ -272,6 +288,7 @@
     var pending = state.summary && state.summary.unsettledPayment && state.summary.unsettledPayment.pendingConfirmation;
     if (pending && !pendingConfirmationPollTimer) {
       pendingConfirmationPollTimer = window.setInterval(function () {
+        if (summaryReadsInFlight > 0) return;
         refreshSummary().then(renderKeepingFocus);
       }, 5000);
     } else if (!pending && pendingConfirmationPollTimer) {
@@ -343,10 +360,60 @@
     });
   }
 
+  // A failed read is a result like any other here: the bill must stay payable by the other methods.
+  function readCashSession() {
+    return api('/api/v1/terminals/' + state.terminalId + '/cash-sessions/active').catch(function () {
+      return { ok: false, status: 0, body: null };
+    });
+  }
+
+  // Only a 404 means "no open drawer"; anything else that is not a success is a failed read, never "closed".
+  // Cash is never swapped for another method on the cashier's behalf: it is just left unselected.
+  function applyCashSession(result) {
+    state.cashSessionId = result.ok ? result.body.cashSessionId : null;
+    state.cashState = result.ok ? 'open' : result.status === 404 ? 'closed' : result.status === 403 ? 'forbidden' : 'unknown';
+    state.cashStateMessage = state.cashState === 'unknown'
+      ? (result.status === 0 ? 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.' : describeHttpFailure(result.status, result.body))
+      : '';
+    if (state.cashState === 'open') {
+      if (!state.selectedMethod) state.selectedMethod = 'Cash';
+    } else if (state.selectedMethod === 'Cash') {
+      state.selectedMethod = null;
+    }
+  }
+
+  function retryCashState() {
+    readCashSession().then(function (result) {
+      applyCashSession(result);
+      render();
+    });
+  }
+
+  function renderCashStateNotice() {
+    if (state.cashState === 'open') return '';
+    if (state.cashState === 'forbidden') {
+      return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
+        '<div class="sp-alert-title">Nakit tahsilat için kasa izniniz yok</div>' +
+        '<div class="sp-alert-body">Kart, EFT veya cari hesapla devam edebilirsiniz; nakit için kasa izni olan bir kullanıcı gerekir.</div></div></div>';
+    }
+    var closed = state.cashState === 'closed';
+    return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
+      '<div class="sp-alert-title">' + (closed ? 'Kasa oturumu kapalı' : 'Kasa durumu okunamadı') + '</div>' +
+      '<div class="sp-alert-body">' +
+      (closed
+        ? 'Nakit tahsilat için önce kasa oturumunu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.'
+        : escapeHtml(state.cashStateMessage) + ' Nakit tahsilat kasa durumu okunana kadar kapalı; diğer yöntemlerle devam edebilirsiniz.') +
+      '</div><div class="sp-notice-actions">' +
+      (closed
+        ? '<a class="sp-btn sp-btn-secondary" href="/cashier/payments/cash-session/index.html">Kasayı aç</a>'
+        : '<button type="button" class="sp-btn sp-btn-secondary" id="retry-cash-state">Kasa durumunu yeniden oku</button>') +
+      '</div></div></div>';
+  }
+
   function loadEverything() {
     Promise.all([
       api(tendersBase()),
-      api('/api/v1/terminals/' + state.terminalId + '/cash-sessions/active'),
+      readCashSession(),
       api(billBase() + '/adjustments'),
     ]).then(function (results) {
       var summaryResult = results[0];
@@ -372,9 +439,7 @@
       state.error = null;
 
       state.summary = summaryResult.body;
-      state.cashSessionOpen = cashResult.ok;
-      state.cashSessionId = cashResult.ok ? cashResult.body.cashSessionId : null;
-      if (!state.cashSessionOpen) state.selectedMethod = 'Eft';
+      applyCashSession(cashResult);
       applyAdjustmentsResult(adjustmentsResult);
 
       // V1-RMD-258/V13-RMD-002: the server persists a real, unresolved
@@ -424,9 +489,20 @@
 
   // ---- actions ---------------------------------------------------------
 
+  // Reads that overlap (the poll, a tender's own re-read) must not let an older answer overwrite a newer one,
+  // and a failed read must not leave stale amounts looking current.
+  var summaryReadSequence = 0;
+  var summaryReadsInFlight = 0;
   function refreshSummary() {
+    var mine = ++summaryReadSequence;
+    summaryReadsInFlight++;
     return api(tendersBase()).then(function (result) {
-      if (!result.ok) return;
+      if (mine !== summaryReadSequence) return true;
+      if (!result.ok) {
+        state.summaryStale = true;
+        return false;
+      }
+      state.summaryStale = false;
       state.summary = result.body;
       // Re-derive the lock from server truth on every refresh, same as
       // loadEverything() does on initial load (V1-RMD-258/V13-RMD-002) -
@@ -434,7 +510,27 @@
       // and clears it once a real resolution exists server-side.
       state.locked = !!state.summary.unsettledPayment;
       if (remainingAmount() <= 0.004 && !state.locked) state.phase = 'paid';
+      return true;
+    }).catch(function () {
+      if (mine === summaryReadSequence) state.summaryStale = true;
+      return false;
+    }).then(function (fresh) {
+      summaryReadsInFlight--;
+      return fresh;
     });
+  }
+
+  function retrySummary() {
+    refreshSummary().then(render);
+  }
+
+  function renderStaleNotice() {
+    if (!state.summaryStale) return '';
+    return '<div class="sp-alert sp-alert-warning" id="summary-stale-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
+      '<div class="sp-alert-title">Hesap bilgisi güncellenemedi</div>' +
+      '<div class="sp-alert-body">Ekrandaki tutarlar eski olabilir. Yeni tahsilat eklemeden önce hesabı yeniden okuyun.</div>' +
+      '<div class="sp-notice-actions"><button type="button" class="sp-btn sp-btn-secondary" id="retry-summary">Hesabı yeniden oku</button></div>' +
+      '</div></div>';
   }
 
   function nextShare() {
@@ -685,6 +781,14 @@
   }
 
   function submitTender() {
+    if (!state.selectedMethod) {
+      setError('Ödeme yöntemini seçin.');
+      return;
+    }
+    if (state.summaryStale) {
+      setError('Hesap bilgisi güncellenemedi; yeni tahsilat eklemeden önce hesabı yeniden okuyun.');
+      return;
+    }
     var amount = Number(state.amountDraft);
     if (!(amount > 0)) {
       setError('Tutar sıfırdan büyük olmalı.');
@@ -848,16 +952,18 @@
     return (
       '<div class="sp-method-chips" role="radiogroup" aria-label="Ödeme yöntemi">' +
       methods.map(function (method) {
-        var disabled = method === 'Cash' && !state.cashSessionOpen;
+        var disabled = method === 'Cash' && state.cashState !== 'open';
         var active = state.selectedMethod === method;
+        var reason = !disabled ? '' : state.cashState === 'closed' ? ' (kasa kapalı)' : state.cashState === 'forbidden' ? ' (kasa izni yok)' : ' (kasa durumu bilinmiyor)';
         return (
           '<button type="button" class="sp-method-chip' + (active ? ' is-active' : '') + '" ' +
           'role="radio" aria-checked="' + active + '" ' +
           'data-method="' + method + '"' + (disabled ? ' disabled' : '') + '>' +
-          escapeHtml(METHOD_LABELS[method]) + (disabled ? ' (kasa kapalı)' : '') + '</button>'
+          escapeHtml(METHOD_LABELS[method]) + reason + '</button>'
         );
       }).join('') +
-      '</div>'
+      '</div>' +
+      (state.selectedMethod ? '' : '<p class="sp-hint" id="method-hint">Devam etmek için bir yöntem seçin.</p>')
     );
   }
 
@@ -1489,7 +1595,7 @@
   }
 
   function submitTenderDisabled() {
-    return !!(state.busy || tenderedIsShort() || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
+    return !!(state.busy || state.summaryStale || !state.selectedMethod || tenderedIsShort() || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
       || (state.selectedMethod === 'Account' && !selectedCustomer()));
   }
 
@@ -1657,6 +1763,8 @@
           'eklemeden önce mutabakat tamamlanmalı. Mutabakatı yalnızca müdür tamamlayabilir; müdüre yönlendirin.</div></div></div>' +
           renderResolution()
         : '') +
+      renderCashStateNotice() +
+      renderStaleNotice() +
       renderChangeDue() +
       '<div class="sp-summary-row is-total"><span>Toplam</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
       '<div class="sp-summary-row"><span>Tahsil edilen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
@@ -1684,7 +1792,7 @@
             '<span class="sp-amount-suffix">₺</span></div>' +
             '<div class="sp-change-preview" id="change-preview" role="status"></div></div>'
           : '') +
-        (state.selectedMethod !== 'Cash' && state.selectedMethod !== 'Account'
+        (state.selectedMethod === 'BankCard' || state.selectedMethod === 'Eft'
           ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></span>' +
             '<input class="sp-input" type="text" id="note-draft" aria-label="Ödeme notu (opsiyonel)" value="' + escapeHtml(state.noteDraft) + '"></div>'
           : '') +
@@ -1778,6 +1886,10 @@
     if (resolveButton) resolveButton.addEventListener('click', resolveNotCharged);
     var submitButton = document.getElementById('submit-tender');
     if (submitButton) submitButton.addEventListener('click', submitTender);
+    var retryCashButton = document.getElementById('retry-cash-state');
+    if (retryCashButton) retryCashButton.addEventListener('click', retryCashState);
+    var retrySummaryButton = document.getElementById('retry-summary');
+    if (retrySummaryButton) retrySummaryButton.addEventListener('click', retrySummary);
     var discountReasonInput = document.getElementById('discount-reason');
     if (discountReasonInput) discountReasonInput.addEventListener('change', function () { state.discountReason = this.value; });
     var discountCalcTypeInput = document.getElementById('discount-calc-type');

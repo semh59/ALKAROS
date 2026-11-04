@@ -1,0 +1,11 @@
+.cash-session-link--open { border-color: #4cc38a; }
+.cash-session-link--closed, .cash-session-link--unknown, .cash-session-link--forbidden { border-color: #f0b429; }
+.cash-session-band {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem;
+  margin: 0; padding: .5rem 1rem; border: 1px solid #c58a00; color: #5c4100; background: #fff6dc; font-weight: 700;
+}
+.cash-session-band a, .cash-session-band button {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 0 .75rem;
+  color: #5c4100; font: inherit; font-weight: 800; text-decoration: underline; border: 0; background: none; cursor: pointer;
+}
+.cash-session-band a:focus-visible, .cash-session-band button:focus-visible { outline: 3px solid #142b35; outline-offset: 2px; }
