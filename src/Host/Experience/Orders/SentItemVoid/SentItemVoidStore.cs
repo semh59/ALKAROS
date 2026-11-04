@@ -1,11 +1,6 @@
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
-using ALKAROS.Inventory.CrossChannelReservation;
-using ALKAROS.Inventory.MovementLedger;
-using ALKAROS.Inventory.MovementReversal;
-using ALKAROS.Inventory.StockMaster;
-using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
@@ -40,30 +35,21 @@ namespace ALKAROS.Host.Experience.Orders.SentItemVoid;
 public sealed class SentItemVoidStore
 {
     private readonly IOrderRepository _orders;
-    private readonly IKitchenTicketRepository _tickets;
     private readonly IBillRepository _bills;
-    private readonly IStockMovementRepository _stockMovements;
-    private readonly IStockMovementReversalService _stockReversal;
-    private readonly IReservationAwareConsumptionGuard _portions;
+    private readonly OrderItemVoidEffects _effects;
     private readonly NpgsqlDataSource _dataSource;
     private readonly IAuditEventStore _auditEvents;
 
     public SentItemVoidStore(
         IOrderRepository orders,
-        IKitchenTicketRepository tickets,
         IBillRepository bills,
-        IStockMovementRepository stockMovements,
-        IStockMovementReversalService stockReversal,
-        IReservationAwareConsumptionGuard portions,
+        OrderItemVoidEffects effects,
         NpgsqlDataSource dataSource,
         IAuditEventStore auditEvents)
     {
-        _portions = portions ?? throw new ArgumentNullException(nameof(portions));
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
-        _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
-        _stockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
-        _stockReversal = stockReversal ?? throw new ArgumentNullException(nameof(stockReversal));
+        _effects = effects ?? throw new ArgumentNullException(nameof(effects));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _auditEvents = auditEvents ?? throw new ArgumentNullException(nameof(auditEvents));
     }
@@ -121,17 +107,8 @@ public sealed class SentItemVoidStore
 
         var voidedOrder = order.CancelItem(command.OrderItemId, historyReason, command.ActorId, now);
 
-        // V1-RMD-424 (V1-RMD-398 G-12): the Order write and the stock restore of an item the kitchen had not started
-        // commit together. The restore used to be a best-effort step after the Order was saved, so a failed restore
-        // left the item voided and its stock gone for good (the audit recorded StockRestored=false). Keyed off
-        // `item.KitchenState` captured BEFORE CancelItem() above - this store's own precondition allows Held, Sent,
-        // Preparing or Ready.
-        //
-        // V1-RMD-318 (independent 2026-09-26 audit, finding K6): a `Held` item (a later course of a multi-course
-        // round - Order.FireRound's own doc comment) is just as much "nothing physically used yet" as `Sent` is (this
-        // whole method's own class doc comment above) - it was activated and had its stock CONSUMED at the same
-        // fire-round moment a Sent item was (OrderSubmissionStockDispatcher filters on IsActive, not KitchenState).
-        var restoresStock = item.KitchenState is KitchenState.Sent or KitchenState.Held;
+        // The Order write and the stock restore of an item the kitchen had not started commit together
+        // (OrderItemVoidEffects): a failed restore leaves the item un-voided instead of voided with its stock gone.
         long newOrderRowVersion;
         bool stockRestored;
         bool kitchenCancelled;
@@ -141,17 +118,17 @@ public sealed class SentItemVoidStore
         {
             newOrderRowVersion = await _orders.SaveAsync(
                 voidedOrder, command.ExpectedRowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
-            stockRestored = restoresStock
-                && await RestoreStockForVoidedItemAsync(item, command, connection, transaction, cancellationToken)
-                    .ConfigureAwait(false);
-            // The daily menu counts the line's ordered quantity as portions: given back with its stock, wasted once the kitchen started.
-            if (stockRestored)
-                await _portions.ReturnPortionsAsync(item.Id, item.Quantity, item.Quantity, connection, transaction, cancellationToken)
-                    .ConfigureAwait(false);
-            else if (!restoresStock)
-                await _portions.WastePortionsAsync(item.Id, connection, transaction, cancellationToken).ConfigureAwait(false);
-            kitchenCancelled = await CancelKitchenTicketItemAsync(
-                command.OrderId, command.OrderItemId, historyReason, now, connection, transaction, cancellationToken).ConfigureAwait(false);
+            var effects = await _effects.ApplyAsync(
+                item,
+                command.ActorId,
+                $"VoidSent:{command.ReasonCode} — kitchen had not started (item {item.Id:D})",
+                historyReason,
+                now,
+                connection,
+                transaction,
+                cancellationToken).ConfigureAwait(false);
+            stockRestored = effects.StockRestored;
+            kitchenCancelled = effects.KitchenTicketItemCancelled;
             wasteConverted = billContext is not null
                 && await ApplyBillWasteConversionAsync(
                     billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, connection, transaction, cancellationToken)
@@ -163,94 +140,6 @@ public sealed class SentItemVoidStore
 
         return new SentItemVoidResult(
             order.Id, item.Id, newOrderRowVersion, voidedOrder.Total, kitchenCancelled, wasteConverted, stockRestored, now);
-    }
-
-    /// <summary>
-    /// Reverses every Consumption movement OrderStockConsumptionService
-    /// recorded for this exact order item at Accept time (found via
-    /// `sourceReferenceId = item.Id` — deliberately per-item, not
-    /// per-order, so a sibling item's own consumption on the same order is
-    /// never touched). Only reached when the item never left `Sent`
-    /// (nothing was physically used yet); a movement already reversed by
-    /// some other path (should not happen — a stock movement source item id
-    /// is unique to one void attempt) is skipped rather than double-applied.
-    /// Returns false (not an error) if there was nothing to reverse — e.g.
-    /// the mapping existed at Accept time but was since removed and the
-    /// ledger genuinely has no Consumption row, which the immutable ledger
-    /// would still show even then, so this is a defensive fallback rather
-    /// than an expected outcome.
-    /// </summary>
-    private async Task<bool> RestoreStockForVoidedItemAsync(
-        OrderItem item,
-        SentItemVoidCommand command,
-        NpgsqlConnection connection,
-        NpgsqlTransaction transaction,
-        CancellationToken cancellationToken)
-    {
-        var movements = await _stockMovements.GetBySourceAsync(StockMovementSourceType.Order, item.Id, cancellationToken)
-            .ConfigureAwait(false);
-
-        var restoredAny = false;
-        foreach (var movement in movements)
-        {
-            if (movement.MovementType != StockMovementType.Consumption)
-                continue;
-            if (!await _stockReversal.CanReverseAsync(movement.Id, cancellationToken).ConfigureAwait(false))
-                continue;
-
-            try
-            {
-                await _stockReversal.ReverseMovementAsync(
-                    new StockMovementReversalRequest(
-                        movement.Id,
-                        Reason: $"VoidSent:{command.ReasonCode} — kitchen had not started (item {item.Id:D})",
-                        ActorId: command.ActorId),
-                    connection,
-                    transaction,
-                    cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception exception) when (exception is StockMovementReversalException
-                or DuplicateReversalException
-                or StockMovementNotFoundException
-                or InactiveStockItemException
-                or InactiveStockLocationException
-                or StockItemNotFoundException
-                or StockLocationNotFoundException)
-            {
-                throw new VoidStockRestoreFailedException(item.Id, exception);
-            }
-            restoredAny = true;
-        }
-
-        return restoredAny;
-    }
-
-    /// <summary>
-    /// Mirror cancellation on the matching kitchen ticket item, if one exists, inside the void's transaction. A
-    /// missing ticket item (the live kitchen sync may be off) is not a reason to fail the void.
-    /// </summary>
-    private async Task<bool> CancelKitchenTicketItemAsync(
-        Guid orderId,
-        Guid orderItemId,
-        string reason,
-        DateTimeOffset now,
-        NpgsqlConnection connection,
-        NpgsqlTransaction transaction,
-        CancellationToken cancellationToken)
-    {
-        var tickets = await _tickets.GetByOrderIdAsync(orderId, connection, transaction, cancellationToken).ConfigureAwait(false);
-        foreach (var ticket in tickets)
-        {
-            var match = ticket.Items.FirstOrDefault(i => i.OrderItemId == orderItemId);
-            if (match is null || !match.CanTransitionTo(KitchenTicketItemState.Cancelled))
-                continue;
-
-            var updated = ticket.UpdateItemStatus(match.Id, KitchenTicketItemState.Cancelled, reason, now);
-            await _tickets.SaveAsync(updated, ticket.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
-            return true;
-        }
-
-        return false;
     }
 
     /// <summary>

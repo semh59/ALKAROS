@@ -462,7 +462,7 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
         var paymentId = await PaymentIdAsync(seeded.BillId);
         await Execute("UPDATE payments.payments SET status = 'Refunded' WHERE payment_id = @p", paymentId);
         var (_, cancelCookie) = await _database.SeedSessionWithPermissionsAsync(_terminalId, "cashier", "bills.cancel");
-        await using var app = await StartAsync();
+        await using var app = await StartAsync(withStock: true);
         using var client = CreateClient(app);
         var cancel = new HttpRequestMessage(
             HttpMethod.Post, $"/api/v1/terminals/{_terminalId:D}/billing/bills/{seeded.BillId:D}/cancel");
@@ -1218,6 +1218,8 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
         }
 
         builder.Services.AddBillingSplitExperience();
+        if (!withStock)
+            Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.RemoveAll<ALKAROS.Inventory.MovementReversal.IStockMovementReversalService>(builder.Services);
         var app = builder.Build();
         app.MapBillingSplitApi();
         await app.StartAsync();

@@ -277,7 +277,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders"] =
-                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Menu", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Menu", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings", "ALKAROS.Tables"],
             ["ALKAROS.Host.Experience.KitchenOperations"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Operations", "ALKAROS.Orders", "ALKAROS.Settings"],
             // V11-RCP-003: a manager-only surface saying which recipe a
@@ -289,13 +289,13 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.DualScreen"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Observability", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Privacy", "ALKAROS.QrOrdering", "ALKAROS.QrRelay", "ALKAROS.Security", "ALKAROS.Settings", "ALKAROS.CustomerAccounts"],
             ["ALKAROS.Host.Experience.Billing"] =
-                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Settings"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Settings", "ALKAROS.Tables"],
             ["ALKAROS.Host.Experience.CustomerAccounts"] =
                 ["ALKAROS.CustomerAccounts", "ALKAROS.CustomerData"],
             ["ALKAROS.Host.Experience.Observability"] =
                 ["ALKAROS.Identity", "ALKAROS.Observability"],
             ["ALKAROS.Host.Experience.SecurityAdministration"] =
-                ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Operations", "ALKAROS.Secrets", "ALKAROS.Security", "ALKAROS.Support"],
+                ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Operations", "ALKAROS.Secrets", "ALKAROS.Security", "ALKAROS.Support", "ALKAROS.Tables"],
             ["ALKAROS.Host.Observability"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Observability", "ALKAROS.Operations", "ALKAROS.QrRelay"],
             // Areas added when the list was widened to every Host namespace: each is pinned to the modules it

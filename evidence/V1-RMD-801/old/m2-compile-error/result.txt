@@ -1,0 +1,1 @@
+D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderItemVoidEffects.cs(40,13): error CS0162: Ulaşılamayan kod algılandı [D:\PROJECT\ALKAROS\src\Host\ALKAROS.

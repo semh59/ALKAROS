@@ -2,6 +2,7 @@ using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders.OrderCancellation;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
@@ -77,6 +78,7 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
         // V1-RMD-282: closes the order once its check is paid.
         services.TryAddSingleton<OrderSettlementService>();
+        services.TryAddSingleton<ALKAROS.Tables.TableRelease.ITableReleasePort, ALKAROS.Tables.TableRelease.PostgresTableReleasePort>();
         // Refactor step 4/7 (docs/engineering/garson-refactor-plan.md).
         services.TryAddSingleton<TableDraftService>();
         // Refactor step 5/7 (docs/engineering/garson-refactor-plan.md).
@@ -146,6 +148,7 @@ public static class OrderManagementEndpoints
         // all three.
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
+        services.AddOrderCancellation();
         services.TryAddSingleton<SentItemVoidStore>();
         services.TryAddSingleton<OrderCommandReplayStore>();
         // V1-RMD-143: Semih's decision (2026-09-09) that Accept should really
@@ -857,6 +860,32 @@ public static class OrderManagementEndpoints
             return Results.Ok(applied);
         });
 
+        // The whole order is taken back: its lines (stock and portions of lines the kitchen had not started go
+        // back, started lines are waste), open bills and table, with a mandatory reason. bills.cancel gates it, as
+        // it gates cancelling a bill.
+        group.MapPost("/{orderId:guid}/cancel", async (
+            Guid terminalId,
+            Guid orderId,
+            CancelOrderRequestV1 request,
+            OrderCancellationStore store,
+            OrderCommandReplayStore replays,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.BillsCancel, cancellationToken);
+            var result = await replays.ExecuteAsync(
+                $"orders:{terminalId:N}:{userId:N}:cancel",
+                request.IdempotencyKey,
+                request,
+                () => store.CancelAsync(
+                    orderId, request.Reason, request.ExpectedRowVersion, userId, context.TraceIdentifier, cancellationToken),
+                cancellationToken);
+            return Results.Ok(result);
+        });
+
         // V1-RMD-137: found by an independent audit (2026-09-09) — an
         // age-restricted order (V12-NFC-002) is deliberately parked at
         // PendingConfirmation for a staff ID check at the point of service,
@@ -1198,6 +1227,10 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
         OrderClosedException => (409, "ORDER_CLOSED", "Sipariş kapanmış; bu işlem yapılamaz."),
         CheckNotYetOrderedException => (409, "ORDER_NOT_SUBMITTED", "Sipariş henüz mutfağa gönderilmedi; kasaya gönderilemez."),
+        OrderCancelReasonException => (400, "REASON_REQUIRED", OrderCancellationMessages.Reason),
+        OrderCancelNotAllowedException => (409, "ORDER_CANCEL_NOT_ALLOWED", OrderCancellationMessages.NotAllowed),
+        OrderCancelHasPaymentException => (409, "ORDER_HAS_PAYMENT", OrderCancellationMessages.HasPayment),
+        OrderCancelHasServedItemsException => (409, "ORDER_HAS_SERVED_ITEMS", OrderCancellationMessages.HasServedItems),
         VoidStockRestoreFailedException => (409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."),
         OrderNotAwaitingConfirmationException => (409, "ORDER_NOT_PENDING_CONFIRMATION", "Sipariş onay bekleyen durumda değil."),
         // V1-RMD-143: Semih's decision (2026-09-09) — Accept refuses outright

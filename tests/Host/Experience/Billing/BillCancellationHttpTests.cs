@@ -95,10 +95,10 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
         var seeded = await _database.SeedBillAsync();
         var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "cashier", "bills.cancel");
         await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
-        var store = new BillCancellationStore(source, new FailingAuditEventStore());
+        var store = OrderCancellationStores.CreateBill(source, new FailingAuditEventStore());
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", userId, "corr", CancellationToken.None));
+            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", false, userId, "corr", CancellationToken.None));
 
         await using var read = source.CreateCommand(
             """

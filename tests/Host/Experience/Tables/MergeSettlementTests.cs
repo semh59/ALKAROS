@@ -44,6 +44,21 @@ public sealed class MergeSettlementTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SettlingAnOrderForgetsItsSentCheckRecord()
+    {
+        var merged = await SeedMergedTablesAsync();
+        await Exec(
+            "INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order, @table);",
+            ("order", merged.PrimaryOrder), ("table", merged.Primary));
+
+        Assert.True(await SettleAsync(merged.PrimaryBill));
+
+        await using var command = Source.CreateCommand("SELECT count(*) FROM table_mgmt.table_sent_checks WHERE order_id = @id;");
+        command.Parameters.AddWithValue("id", merged.PrimaryOrder);
+        Assert.Equal(0L, (long)(await command.ExecuteScalarAsync())!);
+    }
+
+    [Fact]
     public async Task PayingAnOrderThatIsNotThePrimaryPointerLeavesTheMergeAndTablesAlone()
     {
         var merged = await SeedMergedTablesAsync();
@@ -63,7 +78,8 @@ public sealed class MergeSettlementTests : IAsyncLifetime
             "UPDATE billing.bills SET status = 'Paid', paid_amount = payable_amount, allocated_amount = payable_amount WHERE bill_id = @id;",
             ("id", billId));
         return await new OrderSettlementService(
-            new PostgresOrderRepository(Source), new PostgresBillRepository(Source), Source)
+            new PostgresOrderRepository(Source), new PostgresBillRepository(Source), Source,
+            new ALKAROS.Tables.TableRelease.PostgresTableReleasePort())
             .CompleteForPaidBillAsync(billId);
     }
 

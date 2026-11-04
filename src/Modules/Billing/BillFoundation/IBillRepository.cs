@@ -97,4 +97,31 @@ public interface IBillRepository
         Npgsql.NpgsqlConnection connection,
         Npgsql.NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Cancels every bill of <paramref name="orderId"/> that is not Paid or Cancelled, recording who and why, inside
+    /// the caller's transaction (whole-order cancellation). Returns the number of bills cancelled.
+    /// </summary>
+    Task<int> CancelOpenBillsOfOrderAsync(
+        Guid orderId,
+        string reason,
+        Guid cancelledBy,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Cancels one bill (any state but Cancelled) inside the caller's transaction, freeing its order items for a
+    /// fresh bill and recording who cancelled it and why. Returns false when it was already Cancelled. Whether a
+    /// bill may be cancelled (money on it) is the caller's decision.
+    /// </summary>
+    Task<bool> CancelBillAsync(
+        Guid billId,
+        string reason,
+        Guid cancelledBy,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

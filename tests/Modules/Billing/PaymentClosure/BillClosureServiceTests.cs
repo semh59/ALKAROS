@@ -117,5 +117,11 @@ public sealed class BillClosureServiceTests
 
         public Task<int> CancelActiveBillsForOrderAsync(Guid orderId, DateTimeOffset timestamp, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
+
+        public Task<int> CancelOpenBillsOfOrderAsync(Guid orderId, string reason, Guid cancelledBy, DateTimeOffset timestamp, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<bool> CancelBillAsync(Guid billId, string reason, Guid cancelledBy, DateTimeOffset timestamp, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
     }
 }

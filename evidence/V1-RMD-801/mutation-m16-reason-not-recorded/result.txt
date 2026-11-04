@@ -1,0 +1,1 @@
+Başarısız! - Başarısız:     2, Başarılı:    31, Atlanan:     0, Toplam:    33, Süre: 1 m 42 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)

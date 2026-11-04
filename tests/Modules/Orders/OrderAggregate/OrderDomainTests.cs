@@ -1030,7 +1030,89 @@ public class OrderQuantityRuleTests
     public void OnlyAWholeNumberOrAHalfStepOfAFlaggedProductIsAllowed(double quantity, bool allowsHalfPortion, bool expected)
         => OrderQuantityRule.IsAllowed((decimal)quantity, allowsHalfPortion).Should().Be(expected);
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void AnEnormousWholeQuantityIsJudgedWithoutOverflowing(bool allowsHalfPortion)
+        => OrderQuantityRule.IsAllowed(decimal.MaxValue, allowsHalfPortion).Should().BeTrue();
+
+    [Theory]
+    [InlineData("1000000000000000000000000000.5", true, true)]
+    [InlineData("1000000000000000000000000000.5", false, false)]
+    [InlineData("1000000000000000000000000000.25", true, false)]
+    public void AHalfStepFarBeyondTheOrderLimitIsStillJudgedByTheSameRule(string quantity, bool allowsHalfPortion, bool expected)
+        => OrderQuantityRule.IsAllowed(decimal.Parse(quantity, System.Globalization.CultureInfo.InvariantCulture), allowsHalfPortion)
+            .Should().Be(expected);
+}
+
+public class OrderCancelWholeTests
+{
+    private static OrderItem Line(OrderItemState state, KitchenState kitchen = KitchenState.NotSent)
+        => new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Kazandibi", 1, 40m, 10m, status: state, kitchenState: kitchen);
+
+    private static Order OrderOf(OrderState status, params OrderItem[] items)
+        => new(Guid.NewGuid(), OrderSource.Cashier, "ORD-5001", items, status: status);
+
     [Fact]
-    public void AnEnormousWholeQuantityIsJudgedWithoutOverflowing()
-        => OrderQuantityRule.IsAllowed(decimal.MaxValue, true).Should().BeTrue();
+    public void EveryLiveLineIsCancelledAndTheReasonAndActorAreOnTheHistory()
+    {
+        var actor = Guid.NewGuid();
+        var at = DateTimeOffset.UtcNow;
+        var order = OrderOf(
+            OrderState.Submitted,
+            Line(OrderItemState.Active, KitchenState.Sent),
+            Line(OrderItemState.Active, KitchenState.Preparing),
+            Line(OrderItemState.Draft));
+
+        var cancelled = order.CancelWhole("Müşteri gitti", actor, at);
+
+        cancelled.Status.Should().Be(OrderState.Cancelled);
+        cancelled.CancelledAt.Should().Be(at);
+        cancelled.Items.Should().OnlyContain(i => i.Status == OrderItemState.Cancelled && i.KitchenState == KitchenState.Cancelled);
+        var entry = cancelled.History[^1];
+        entry.Reason.Should().Be("Müşteri gitti");
+        entry.ChangedBy.Should().Be(actor);
+        entry.OldStatus.Should().Be(OrderState.Submitted);
+        entry.NewStatus.Should().Be(OrderState.Cancelled);
+    }
+
+    [Fact]
+    public void LinesThatAreAlreadyCancelledOrComplimentaryAreLeftAsTheyWere()
+    {
+        var order = OrderOf(
+            OrderState.Submitted,
+            Line(OrderItemState.Active, KitchenState.Sent),
+            Line(OrderItemState.Cancelled, KitchenState.Cancelled),
+            Line(OrderItemState.Complimentary, KitchenState.Sent));
+
+        var cancelled = order.CancelWhole("Vazgeçti", Guid.NewGuid());
+
+        cancelled.Items.Select(i => i.Status).Should().Equal(
+            OrderItemState.Cancelled, OrderItemState.Cancelled, OrderItemState.Complimentary);
+    }
+
+    [Fact]
+    public void AServedLineRefusesTheWholeCancellation()
+    {
+        var order = OrderOf(
+            OrderState.Submitted,
+            Line(OrderItemState.Active, KitchenState.Sent),
+            Line(OrderItemState.Active, KitchenState.Served));
+
+        var act = () => order.CancelWhole("Deneme", Guid.NewGuid());
+
+        act.Should().Throw<InvalidOperationException>().WithMessage("*has served items*");
+    }
+
+    [Theory]
+    [InlineData(OrderState.Served)]
+    [InlineData(OrderState.Completed)]
+    [InlineData(OrderState.Cancelled)]
+    [InlineData(OrderState.Rejected)]
+    public void AnOrderPastTheCancellableStatesRefusesTheCancellation(OrderState status)
+    {
+        var act = () => OrderOf(status, Line(OrderItemState.Active, KitchenState.Sent)).CancelWhole("Deneme", Guid.NewGuid());
+
+        act.Should().Throw<InvalidOperationException>();
+    }
 }

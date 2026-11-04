@@ -7,6 +7,7 @@ using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Tables.TableRelease;
 using ALKAROS.Payments.PaymentAggregate;
 using Npgsql;
 using NpgsqlTypes;
@@ -100,6 +101,7 @@ public sealed class PaymentRefundStore
     private readonly PostgresPaymentReversalRepository _reversals;
     private readonly PostgresCashTransactionLedgerRepository _cash;
     private readonly PostgresBillRepository _bills;
+    private readonly PostgresTableReleasePort _tables = new();
     private readonly PostgresBillAdjustmentRepository _adjustments;
     private readonly IStockMovementReversalService? _stockReturn;
 
@@ -520,38 +522,25 @@ public sealed class PaymentRefundStore
     /// Cancels the bill once at least one payment of it was refunded and none still holds money; the allocations stay
     /// as the record of what was paid.
     /// </summary>
-    private static async Task<bool> CancelBillWhenFullyRefundedAsync(
+    private async Task<bool> CancelBillWhenFullyRefundedAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, Guid actorId,
         DateTimeOffset now, CancellationToken cancellationToken)
     {
-        await using var command = new NpgsqlCommand(
+        await using var decision = new NpgsqlCommand(
             """
-            WITH decision AS (
-                SELECT EXISTS (SELECT 1 FROM payments.payments WHERE bill_id = @bill AND status = 'Refunded')
-                   AND NOT EXISTS (SELECT 1 FROM payments.payments
-                                   WHERE bill_id = @bill
-                                     AND status IN ('Approved', 'PartiallyRefunded', 'Pending', 'Unknown', 'ReconciliationRequired'))
-                       AS close_it),
-            cancelled AS (
-                UPDATE billing.bills
-                SET status = 'Cancelled', cancelled_at = @now, updated_at = @now,
-                    cancellation_reason = 'Ödeme iade edildi', cancelled_by = @actor, row_version = row_version + 1
-                WHERE bill_id = @bill AND status <> 'Cancelled' AND (SELECT close_it FROM decision)
-                RETURNING bill_id),
-            items AS (
-                UPDATE billing.bill_items SET superseded_at = @now
-                WHERE bill_id IN (SELECT bill_id FROM cancelled) AND superseded_at IS NULL
-                RETURNING 1),
-            pointer AS (
-                UPDATE table_mgmt.tables SET current_bill_id = NULL, row_version = row_version + 1
-                WHERE current_bill_id IN (SELECT bill_id FROM cancelled)
-                RETURNING 1)
-            SELECT count(*) FROM cancelled;
+            SELECT EXISTS (SELECT 1 FROM payments.payments WHERE bill_id = @bill AND status = 'Refunded')
+               AND NOT EXISTS (SELECT 1 FROM payments.payments
+                               WHERE bill_id = @bill
+                                 AND status IN ('Approved', 'PartiallyRefunded', 'Pending', 'Unknown', 'ReconciliationRequired'));
             """, connection, transaction);
-        command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
-        command.Parameters.Add("now", NpgsqlDbType.TimestampTz).Value = now.UtcDateTime;
-        command.Parameters.Add("actor", NpgsqlDbType.Uuid).Value = actorId;
-        return (long)(await command.ExecuteScalarAsync(cancellationToken))! > 0;
+        decision.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+        if (!(bool)(await decision.ExecuteScalarAsync(cancellationToken))!)
+            return false;
+
+        if (!await _bills.CancelBillAsync(billId, "Ödeme iade edildi", actorId, now, connection, transaction, cancellationToken))
+            return false;
+        await _tables.ClearBillPointerAsync(billId, connection, transaction, cancellationToken);
+        return true;
     }
 
     /// <summary>The cashier's open session at the terminal; a terminal has at most one open session.</summary>

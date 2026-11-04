@@ -1,0 +1,16 @@
+m1-started-lines-restore-stock Başarısız! - Başarısız:     1, Başarılı:    32, Atlanan:     0, Toplam:    33, Süre: 2 m 16 s - ALKA restored
+m2-portions-never-returned D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderItemVoidEffects.cs(40,13): error CS0162: Ulaşılamayan kod restored
+m3-no-money-check Başarısız! - Başarısız:     3, Başarılı:    30, Atlanan:     0, Toplam:    33, Süre: 1 m 54 s - ALKA restored
+m4-no-served-check Başarısız! - Başarısız:     1, Başarılı:    32, Atlanan:     0, Toplam:    33, Süre: 1 m 51 s - ALKA restored
+m5-bills-not-cancelled D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCancellation\OrderCancellationStore.cs(20,21): error CS9113 restored
+m6-table-not-released Başarısız! - Başarısız:     3, Başarılı:    30, Atlanan:     0, Toplam:    33, Süre: 2 m 3 s - ALKAR restored
+m7-no-audit D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCancellation\OrderCancellationStore.cs(102,46): error CS016 restored
+m8-wrong-permission Başarısız! - Başarısız:    12, Başarılı:    21, Atlanan:     0, Toplam:    33, Süre: 2 m 2 s - ALKAR restored
+m9-order-flag-ignored Başarısız! - Başarısız:     1, Başarılı:    32, Atlanan:     0, Toplam:    33, Süre: 2 m 12 s - ALKA restored
+m10-bill-pointer-not-cleared Başarısız! - Başarısız:     1, Başarılı:    32, Atlanan:     0, Toplam:    33, Süre: 2 m 38 s - ALKA restored
+m11-sent-check-not-forgotten Başarısız! - Başarısız:     1, Başarılı:    32, Atlanan:     0, Toplam:    33, Süre: 1 m 59 s - ALKA restored
+m12-items-not-superseded Başarısız! - Başarısız:     5, Başarılı:    28, Atlanan:     0, Toplam:    33, Süre: 1 m 48 s - ALKA restored
+m13-domain-served-allowed Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 185 ms - ALKARO restored
+m14-paid-bill-not-money Başarısız! - Başarısız:     1, Başarılı:    32, Atlanan:     0, Toplam:    33, Süre: 1 m 44 s - ALKA restored
+m15-money-ignores-inflight Başarısız! - Başarısız:     5, Başarılı:    28, Atlanan:     0, Toplam:    33, Süre: 1 m 45 s - ALKA restored
+m16-reason-not-recorded Başarısız! - Başarısız:     2, Başarılı:    31, Atlanan:     0, Toplam:    33, Süre: 1 m 42 s - ALKA restored

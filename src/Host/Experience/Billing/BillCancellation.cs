@@ -1,4 +1,7 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Experience.Orders.OrderCancellation;
+using ALKAROS.Tables.TableRelease;
 using Npgsql;
 using NpgsqlTypes;
 using System.Data;
@@ -6,9 +9,10 @@ using System.Text.Json;
 
 namespace ALKAROS.Host.Experience.Billing;
 
-public sealed record CancelBillRequestV1(string? Reason);
+/// <param name="CancelOrder">Also cancels the order of the bill (and its stock, portions, kitchen lines, table) in the same transaction.</param>
+public sealed record CancelBillRequestV1(string? Reason, bool CancelOrder = false);
 
-public sealed record CancelBillResultV1(Guid BillId, string Status, string Reason, DateTimeOffset CancelledAt);
+public sealed record CancelBillResultV1(Guid BillId, string Status, string Reason, DateTimeOffset CancelledAt, bool OrderCancelled = false);
 
 /// <summary>The bill is already paid or money has moved on it; the payment must be refunded first (PO 2026-10-13).</summary>
 public sealed class BillCancelHasPaymentException(Guid billId)
@@ -20,15 +24,21 @@ public sealed class BillCancelNotAllowedException(Guid billId, string status)
 public sealed class BillCancelReasonException() : Exception("A cancellation reason of 1 to 500 characters is required.");
 
 /// <summary>
-/// Cancels an unpaid bill with a mandatory reason. The order stays on its table, so the till can open a
-/// fresh bill for it (cancelled bills no longer hold the bill number or the order item ids).
+/// Cancels an unpaid bill with a mandatory reason. By default the order stays on its table, so the till can open a
+/// fresh bill for it (cancelled bills no longer hold the bill number or the order item ids); with
+/// <c>CancelOrder</c> the order is cancelled in the same transaction.
 /// </summary>
-public sealed class BillCancellationStore(NpgsqlDataSource dataSource, IAuditEventStore auditEvents)
+public sealed class BillCancellationStore(
+    NpgsqlDataSource dataSource,
+    IAuditEventStore auditEvents,
+    IBillRepository bills,
+    ITableReleasePort tables,
+    OrderCancellationStore orderCancellation)
 {
     public const int MaxReasonLength = 500;
 
     public async Task<CancelBillResultV1> CancelAsync(
-        Guid billId, string? reason, Guid actorId, string correlationId, CancellationToken cancellationToken)
+        Guid billId, string? reason, bool cancelOrder, Guid actorId, string correlationId, CancellationToken cancellationToken)
     {
         var trimmed = reason?.Trim();
         if (string.IsNullOrEmpty(trimmed) || trimmed.Length > MaxReasonLength)
@@ -36,48 +46,49 @@ public sealed class BillCancellationStore(NpgsqlDataSource dataSource, IAuditEve
 
         var now = DateTimeOffset.UtcNow;
         string previousStatus;
+        var orderCancelled = false;
+        Guid? orderId;
         await using (var connection = await dataSource.OpenConnectionAsync(cancellationToken))
         await using (var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))
         {
-            await using (var lockCommand = new NpgsqlCommand(
-                "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction))
+            // With the order flag every bill of the order is locked, in id order like every other caller, so two
+            // cancellations or a hand-off on the same order cannot lock them crosswise.
+            Guid? lockOrderId;
+            await using (var find = new NpgsqlCommand("SELECT order_id FROM billing.bills WHERE bill_id = @bill_id;", connection, transaction))
             {
-                lockCommand.Parameters.AddWithValue($"bill-settlement:{billId:N}");
-                await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+                find.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
+                lockOrderId = await find.ExecuteScalarAsync(cancellationToken) as Guid?;
             }
+            if (cancelOrder && lockOrderId is { } orderToLock)
+                await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderToLock, [], cancellationToken);
+            await BillMoneyGuard.LockBillAsync(connection, transaction, billId, cancellationToken);
 
             await using (var read = new NpgsqlCommand(
-                "SELECT status FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, transaction))
+                "SELECT status, order_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, transaction))
             {
                 read.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
-                previousStatus = await read.ExecuteScalarAsync(cancellationToken) as string
-                    ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+                await using var reader = await read.ExecuteReaderAsync(cancellationToken);
+                if (!await reader.ReadAsync(cancellationToken))
+                    throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+                previousStatus = reader.GetString(0);
+                orderId = reader.IsDBNull(1) ? null : reader.GetGuid(1);
             }
 
             if (previousStatus == "Cancelled")
                 throw new BillCancelNotAllowedException(billId, previousStatus);
-            if (previousStatus == "Paid" || await HasMoneyAsync(connection, transaction, billId, cancellationToken))
+            if (previousStatus == "Paid" || await BillMoneyGuard.BillHasMoneyAsync(connection, transaction, billId, cancellationToken))
                 throw new BillCancelHasPaymentException(billId);
 
-            await using (var cancel = new NpgsqlCommand(
-                """
-                UPDATE billing.bill_items SET superseded_at = @now WHERE bill_id = @bill_id AND superseded_at IS NULL;
-
-                UPDATE billing.bills
-                SET status = 'Cancelled', cancelled_at = @now, updated_at = @now,
-                    cancellation_reason = @reason, cancelled_by = @actor, row_version = row_version + 1
-                WHERE bill_id = @bill_id;
-
-                UPDATE table_mgmt.tables
-                SET current_bill_id = NULL, row_version = row_version + 1
-                WHERE current_bill_id = @bill_id;
-                """, connection, transaction))
+            if (cancelOrder && orderId is { } ownOrderId)
             {
-                cancel.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
-                cancel.Parameters.Add("now", NpgsqlDbType.TimestampTz).Value = now;
-                cancel.Parameters.Add("reason", NpgsqlDbType.Text).Value = trimmed;
-                cancel.Parameters.Add("actor", NpgsqlDbType.Uuid).Value = actorId;
-                await cancel.ExecuteNonQueryAsync(cancellationToken);
+                await orderCancellation.CancelInTransactionAsync(
+                    ownOrderId, trimmed, expectedRowVersion: null, actorId, correlationId, connection, transaction, cancellationToken);
+                orderCancelled = true;
+            }
+            else
+            {
+                await bills.CancelBillAsync(billId, trimmed, actorId, now, connection, transaction, cancellationToken);
+                await tables.ClearBillPointerAsync(billId, connection, transaction, cancellationToken);
             }
 
             await auditEvents.AppendAsync(
@@ -91,29 +102,12 @@ public sealed class BillCancellationStore(NpgsqlDataSource dataSource, IAuditEve
                     actorId: actorId,
                     reason: trimmed,
                     beforeStateJson: JsonSerializer.Serialize(new { status = previousStatus }),
-                    afterStateJson: JsonSerializer.Serialize(new { status = "Cancelled" })),
+                    afterStateJson: JsonSerializer.Serialize(new { status = "Cancelled", orderCancelled })),
                 connection, transaction, cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
         }
 
-        return new CancelBillResultV1(billId, "Cancelled", trimmed, now);
-    }
-
-    // Same predicate as CashierHandoffStore.HasMoneyAsync: an allocation, or a payment still in flight; a
-    // payment that has been refunded in full no longer holds money.
-    private static async Task<bool> HasMoneyAsync(
-        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
-    {
-        await using var money = new NpgsqlCommand(
-            """
-            SELECT EXISTS (SELECT 1 FROM payments.payment_allocations a
-                           JOIN payments.payments ap ON ap.payment_id = a.payment_id
-                           WHERE a.bill_id = @bill_id AND ap.status <> 'Refunded')
-                OR EXISTS (SELECT 1 FROM payments.payments p
-                           WHERE p.bill_id = @bill_id AND p.status IN ('Pending', 'Unknown', 'ReconciliationRequired'));
-            """, connection, transaction);
-        money.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
-        return (bool)(await money.ExecuteScalarAsync(cancellationToken))!;
+        return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled);
     }
 }

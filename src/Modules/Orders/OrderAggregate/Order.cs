@@ -569,6 +569,24 @@ public sealed class Order
     }
 
     /// <summary>
+    /// Cancels the whole order: every Draft or Active line is cancelled and the order becomes Cancelled, with the
+    /// reason and actor on its status history. A line the kitchen already served cannot be taken back (comp or
+    /// refund territory), so such an order is refused as a whole and nothing changes.
+    /// </summary>
+    public Order CancelWhole(string reason, Guid changedBy, DateTimeOffset? changedAt = null)
+    {
+        if (!CanTransitionTo(OrderState.Cancelled))
+            throw new InvalidOperationException($"Order {Id} cannot be cancelled from {Status}.");
+        if (_items.Any(item => item.Status == OrderItemState.Active && item.KitchenState == KitchenState.Served))
+            throw new InvalidOperationException($"Order {Id} has served items and cannot be cancelled.");
+
+        var items = _items
+            .Select(item => item.Status is OrderItemState.Draft or OrderItemState.Active && item.KitchenState != KitchenState.Cancelled ? item.Cancel() : item)
+            .ToList();
+        return RebuildWith(items: items).TransitionTo(OrderState.Cancelled, reason, changedBy, changedAt);
+    }
+
+    /// <summary>
     /// V1-KIT-005: mirrors a kitchen ticket item's state onto its order
     /// item. A no-op — returns this same instance — when the item is no
     /// longer Active (already voided/comped before the event arrived) or

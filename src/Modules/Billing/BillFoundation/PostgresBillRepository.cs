@@ -157,28 +157,80 @@ public sealed class PostgresBillRepository : IBillRepository
 
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
-        // Superseding the items frees order_item_id for the bill re-created after the order is edited; the
-        // returned count is the bills cancelled, so the item update must not be a separate counted statement.
-        command.CommandText = $"""
-            WITH cancelled AS (
-                UPDATE {BillsTable}
-                SET status = 'Cancelled',
-                    cancelled_at = @timestamp,
-                    updated_at = @timestamp,
-                    row_version = row_version + 1
-                WHERE order_id = @order_id AND status NOT IN ('Paid', 'Cancelled')
-                RETURNING bill_id),
-            superseded AS (
-                UPDATE {BillItemsTable}
-                SET superseded_at = @timestamp
-                WHERE superseded_at IS NULL AND bill_id IN (SELECT bill_id FROM cancelled)
-                RETURNING 1)
-            SELECT count(*) FROM cancelled;
-            """;
+        command.CommandText = CancelStatement("order_id = @order_id AND status NOT IN ('Paid', 'Cancelled')");
         command.Parameters.AddWithValue("order_id", orderId);
         command.Parameters.AddWithValue("timestamp", timestamp);
+        command.Parameters.AddWithValue("reason", DBNull.Value);
+        command.Parameters.AddWithValue("cancelled_by", DBNull.Value);
         return (int)(long)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
+
+    public async Task<int> CancelOpenBillsOfOrderAsync(
+        Guid orderId,
+        string reason,
+        Guid cancelledBy,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason);
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = CancelStatement("order_id = @order_id AND status NOT IN ('Paid', 'Cancelled')");
+        command.Parameters.AddWithValue("order_id", orderId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        command.Parameters.AddWithValue("reason", reason);
+        command.Parameters.AddWithValue("cancelled_by", cancelledBy);
+        return (int)(long)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
+    public async Task<bool> CancelBillAsync(
+        Guid billId,
+        string reason,
+        Guid cancelledBy,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason);
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = CancelStatement("bill_id = @bill_id AND status <> 'Cancelled'");
+        command.Parameters.AddWithValue("bill_id", billId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        command.Parameters.AddWithValue("reason", reason);
+        command.Parameters.AddWithValue("cancelled_by", cancelledBy);
+        return (long)(await command.ExecuteScalarAsync(cancellationToken))! > 0;
+    }
+
+    // The one cancellation statement. Superseding the items frees order_item_id for the bill re-created after the
+    // order is edited; the returned count is the bills cancelled, so the item update is not a counted statement.
+    private static string CancelStatement(string billFilter) => $"""
+        WITH cancelled AS (
+            UPDATE {BillsTable}
+            SET status = 'Cancelled',
+                cancelled_at = @timestamp,
+                updated_at = @timestamp,
+                cancellation_reason = @reason,
+                cancelled_by = @cancelled_by,
+                row_version = row_version + 1
+            WHERE {billFilter}
+            RETURNING bill_id),
+        superseded AS (
+            UPDATE {BillItemsTable}
+            SET superseded_at = @timestamp
+            WHERE superseded_at IS NULL AND bill_id IN (SELECT bill_id FROM cancelled)
+            RETURNING 1)
+        SELECT count(*) FROM cancelled;
+        """;
 
     public async Task<int> ReparentBillToTableAsync(
         Guid billId,

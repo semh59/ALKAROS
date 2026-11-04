@@ -1,7 +1,7 @@
 # V1-RMD-801 - Sipariş iptal ucu, hesap iptalinde "siparişi de iptal et" ve hesap iptali kuralının tek yere alınması
 
 - Task ID: V1-RMD-801
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
@@ -39,8 +39,13 @@ Kapsam dışı: hesapsız asılı siparişlerin yönetici temizliği, boş açı
   - src/Host/Experience/Billing/BillingSplitApplication.cs (V1-IAM-024) — sipariş iptali kayıtları.
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs (V1-RMD-127) — iptal ucu ve hata eşlemesi.
   - src/Host/Experience/Orders/OrderManagementContracts.cs (V1-BIL-005) — iptal isteği ve sonucu.
-  - src/Host/Composition/Errors/ApiErrorCatalog.cs (V1-RMD-489) — yeni hata kodları.
-  - tests/Host/Errors/ApiErrorCatalogTests.cs (V1-RMD-786) — yeni hata satırları.
+  - src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs (V1-RMD-267) — sipariş kapatma servisi masa portunu kullanır.
+  - tests/Host/Experience/Tables/MergeSettlementTests.cs (V1-RMD-710) — servis yeni yapıcıyı kullanır.
+  - tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs (V1-RMD-159) — Orders Host alanı Tables modülünü kullanır (onaylı kenar).
+  - docs/architecture/module-dependency-rules.md (V0-ARC-001) — aynı kenarların kaydı.
+  - tests/Architecture/ApiConventions/api_convention_allowlist.json (V1-RMD-429) — yeni uç, diğer sipariş uçları gibi yetki cevabı bilinen sapmada.
+  - tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs (V1-RMD-298) — sahte depo yeni sözleşme yöntemini taşır.
+  - tests/Host/Experience/Billing/PaymentRefundHttpTests.cs (V1-RMD-508) — stok servisi olmayan kurulum, ortak kayıtla gelen servisi çıkarır.
   - tests/Host/Experience/Billing/BillCancellationHttpTests.cs (V1-RMD-506) — sipariş bayrağı testleri.
   - tests/Host/Experience/Billing/OrderCancellationHttpTests.cs (V1-RMD-040) — yeni dosya: sipariş iptali uç testleri.
   - tests/Architecture/ModuleBoundaries/HostForeignWriteLockTests.cs (V1-RMD-002) — yeni dosya: B11 mimari kilidi.
@@ -64,7 +69,7 @@ Kapsam dışı: hesapsız asılı siparişlerin yönetici temizliği, boş açı
 
 ## Acceptance evidence
 
-1. Kırmızı sonra yeşil: `OrderDomainTests`, `OrderCancellationHttpTests`, `BillCancellationHttpTests`, `PaymentRefundHttpTests`, `RefundHalfPortionHttpTests`, VoidSent ve Comp/Void/Confirmation uç testleri, TableDraft, `ApiErrorCatalogTests`, ModuleBoundaries ve ApiConventions, gerçek exit code ile `evidence/V1-RMD-801/` altında.
+1. Kırmızı sonra yeşil: `OrderDomainTests`, `OrderCancellationHttpTests`, `BillCancellationHttpTests`, `PaymentRefundHttpTests`, `RefundHalfPortionHttpTests`, VoidSent ve Comp/Void/Confirmation uç testleri, TableDraft, Tables uç testleri, ModuleBoundaries ve ApiConventions, gerçek exit code ile `evidence/V1-RMD-801/` altında.
 2. Mutasyon: stok iadesi/fire ayrımı, para kontrolü, hesap iptali, masa serbest bırakma, denetim, izin ve mimari kural bozulunca en az bir test kırılır; kaynak `cmp` ile geri alınır.
 3. Plan audit ve consistency audit 0 hata/0 uyarı; kapsam aracı exit 0.
 4. qa-backend ve qa-test-kalitesi incelemeleri sırayla, bulgular giderilir, düzeltmelerden sonra doğrulama turu.

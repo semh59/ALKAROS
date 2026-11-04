@@ -57,6 +57,7 @@ public static class SecurityAdministrationEndpoints
         services.TryAddSingleton<MaintenanceJobRunner>();
         services.TryAddScoped<MaintenanceRunContext>();
         services.TryAddSingleton<ALKAROS.Host.Experience.Orders.OrderSettlementService>();
+        services.TryAddSingleton<ALKAROS.Tables.TableRelease.ITableReleasePort, ALKAROS.Tables.TableRelease.PostgresTableReleasePort>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, OffsiteBackupMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RestoreVerificationMaintenanceJob>());

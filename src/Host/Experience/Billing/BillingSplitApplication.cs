@@ -12,6 +12,8 @@ using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.OrderCancellation;
+using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Orders.OrderAggregate;
@@ -75,6 +77,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IBillClosureService, BillClosureService>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, BillClosureSweeper>());
         services.TryAddSingleton<OrderSettlementService>();
+        services.TryAddSingleton<ALKAROS.Tables.TableRelease.ITableReleasePort, ALKAROS.Tables.TableRelease.PostgresTableReleasePort>();
         services.TryAddSingleton<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
         services.TryAddSingleton<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
         services.TryAddSingleton<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
@@ -95,6 +98,7 @@ public static class BillingSplitApplication
         // real callers anywhere in the codebase — this is its first.
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddSingleton<BillingSplitStore>();
+        services.AddOrderCancellation();
         services.TryAddSingleton<BillCancellationStore>();
         services.TryAddSingleton<PaymentRefundStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
@@ -149,7 +153,7 @@ public static class BillingSplitApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.BillsCancel, cancellationToken);
             return Results.Ok(await store.CancelAsync(
-                billId, request.Reason, principal.UserId, context.TraceIdentifier, cancellationToken));
+                billId, request.Reason, request.CancelOrder, principal.UserId, context.TraceIdentifier, cancellationToken));
         });
 
         // V1-RMD-103 (B1): bills.discount is grant-class (model §3), same
@@ -662,6 +666,11 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         RefundItemQuantityException => (409, "REFUND_ITEM_QUANTITY", "Bu kalemden istenen adet iade edilebilir adedi aşıyor."),
         RefundAmountExceedsPaymentException => (409, "REFUND_AMOUNT_EXCEEDS_PAYMENT", "İade tutarı seçilen ödemenin kalan tutarını aşıyor."),
         RefundAccountChargeUnsupportedException => (409, "ACCOUNT_REFUND_UNSUPPORTED", "Müşteri hesabına yazılan ödeme buradan iade edilemez."),
+        OrderCancelNotAllowedException => (409, "ORDER_CANCEL_NOT_ALLOWED", OrderCancellationMessages.NotAllowed),
+        OrderCancelHasPaymentException => (409, "ORDER_HAS_PAYMENT", OrderCancellationMessages.HasPayment),
+        OrderCancelHasServedItemsException => (409, "ORDER_HAS_SERVED_ITEMS", OrderCancellationMessages.HasServedItems),
+        VoidStockRestoreFailedException => (409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."),
+        ALKAROS.Orders.SubmitOrder.OrderNotFoundException => (404, "NOT_FOUND", "İstenen sipariş bulunamadı."),
         BillCancelReasonException => (400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         OperationCanceledException => (499, "REQUEST_CANCELLED", "İstek iptal edildi."),

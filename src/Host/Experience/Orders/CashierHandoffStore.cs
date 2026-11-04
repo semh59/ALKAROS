@@ -1,6 +1,7 @@
 using System.Data;
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Billing.BillFoundation;
 using Npgsql;
 using NpgsqlTypes;
@@ -124,7 +125,7 @@ public sealed class CashierHandoffStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var lockedBillIds = new HashSet<Guid>();
-        await LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
+        await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
 
         Guid? currentOrderId;
         await using (var lockTable = new NpgsqlCommand(
@@ -162,7 +163,7 @@ public sealed class CashierHandoffStore
         }
 
         // A bill the till opened after the locks above were taken is locked now; the check below then sees it.
-        await LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
+        await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
         if (await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
             throw new CheckHasPaymentException(orderId);
 
@@ -199,32 +200,6 @@ public sealed class CashierHandoffStore
     }
 
     /// <summary>Takes the <c>bill-settlement</c> lock of every bill of the order not locked yet, in bill-id order.</summary>
-    private static async Task LockOrderBillsAsync(
-        NpgsqlConnection connection,
-        NpgsqlTransaction transaction,
-        Guid orderId,
-        HashSet<Guid> lockedBillIds,
-        CancellationToken cancellationToken)
-    {
-        var billIds = new List<Guid>();
-        await using (var read = new NpgsqlCommand(
-            "SELECT bill_id FROM billing.bills WHERE order_id = @order_id ORDER BY bill_id;", connection, transaction))
-        {
-            read.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
-            await using var reader = await read.ExecuteReaderAsync(cancellationToken);
-            while (await reader.ReadAsync(cancellationToken))
-                billIds.Add(reader.GetGuid(0));
-        }
-
-        foreach (var billId in billIds.Where(lockedBillIds.Add))
-        {
-            await using var lockCommand = new NpgsqlCommand(
-                "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
-            lockCommand.Parameters.AddWithValue($"bill-settlement:{billId:N}");
-            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
-        }
-    }
-
     private static async Task<bool> HasMoneyAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {

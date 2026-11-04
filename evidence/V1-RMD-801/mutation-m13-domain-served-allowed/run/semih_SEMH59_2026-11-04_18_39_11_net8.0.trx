@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4d460edf-8475-4ef0-a9fb-68a8df5c3fe8" name="semih@SEMH59 2026-11-04 18:39:11" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T18:39:11.5155469+03:00" queuing="2026-11-04T18:39:11.5155472+03:00" start="2026-11-04T18:39:09.6856272+03:00" finish="2026-11-04T18:39:11.5279536+03:00" />
+  <TestSettings name="default" id="fbd63b0b-c624-4981-8c79-23527621ac13">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-11-04_18_39_11" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ec55db6c-ef6a-4c6d-b725-70456201ddaa" testId="0897f69b-b79c-f27b-5912-781567e07b5f" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Served)" computerName="SEMH59" duration="00:00:00.0002463" startTime="2026-11-04T18:39:10.8501981+03:00" endTime="2026-11-04T18:39:10.8501982+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec55db6c-ef6a-4c6d-b725-70456201ddaa" />
+    <UnitTestResult executionId="0fa43591-24cb-45a6-8dce-561c2fde3d2c" testId="bbbc32be-c040-4390-999f-b6e242b3dc53" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Completed)" computerName="SEMH59" duration="00:00:00.0006812" startTime="2026-11-04T18:39:10.8495007+03:00" endTime="2026-11-04T18:39:10.8495009+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0fa43591-24cb-45a6-8dce-561c2fde3d2c" />
+    <UnitTestResult executionId="fba8d8cf-531d-43c0-9761-50f2c37f2525" testId="4459a9db-da1d-2508-03f8-9d903d32b1b2" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.LinesThatAreAlreadyCancelledOrComplimentaryAreLeftAsTheyWere" computerName="SEMH59" duration="00:00:00.0329327" startTime="2026-11-04T18:39:10.8401968+03:00" endTime="2026-11-04T18:39:10.8402193+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fba8d8cf-531d-43c0-9761-50f2c37f2525" />
+    <UnitTestResult executionId="d3b8a3be-3da3-4322-9170-b431a652df54" testId="c34f1639-de93-b1af-e4cb-868e9ee99812" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AServedLineRefusesTheWholeCancellation" computerName="SEMH59" duration="00:00:00.4983378" startTime="2026-11-04T18:39:11.3578933+03:00" endTime="2026-11-04T18:39:11.3578937+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3b8a3be-3da3-4322-9170-b431a652df54">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected exception message to match the equivalent of "*has served items*", but "Order item 7ffd4550-6750-4799-a0d3-fe0a1010cfbf cannot be voided once it reached kitchen state Served." does not.&#xD;
+</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.CollectingAssertionStrategy.ThrowIfAny(IDictionary`2 context)&#xD;
+   at FluentAssertions.Execution.AssertionScope.Dispose()&#xD;
+   at FluentAssertions.Specialized.ExceptionAssertions`1.ExceptionMessageAssertion.Execute(IEnumerable`1 messages, String expectation, String because, Object[] becauseArgs)&#xD;
+   at FluentAssertions.Specialized.ExceptionAssertions`1.WithMessage(String expectedWildcardPattern, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AServedLineRefusesTheWholeCancellation() in D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs:line 1104&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="e2bf6ceb-351a-4b04-8103-1846e753286f" testId="ced229db-3681-900c-9cbf-0b1c55e22cd4" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Cancelled)" computerName="SEMH59" duration="00:00:00.0089374" startTime="2026-11-04T18:39:10.8487742+03:00" endTime="2026-11-04T18:39:10.8487747+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e2bf6ceb-351a-4b04-8103-1846e753286f" />
+    <UnitTestResult executionId="9c1d76f3-4a9c-4d20-b773-85479a945761" testId="3dedeb08-cd64-ab6a-503d-79c0bd60c60b" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.EveryLiveLineIsCancelledAndTheReasonAndActorAreOnTheHistory" computerName="SEMH59" duration="00:00:00.0102301" startTime="2026-11-04T18:39:11.3617227+03:00" endTime="2026-11-04T18:39:11.3617231+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c1d76f3-4a9c-4d20-b773-85479a945761" />
+    <UnitTestResult executionId="4520f244-bd46-4075-bcc5-74da842b6910" testId="6dee68f1-8bc7-02f4-fd4e-0cd9e43ef1bb" testName="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Rejected)" computerName="SEMH59" duration="00:00:00.0002966" startTime="2026-11-04T18:39:10.8499325+03:00" endTime="2026-11-04T18:39:10.8499328+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4520f244-bd46-4075-bcc5-74da842b6910" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Rejected)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="6dee68f1-8bc7-02f4-fd4e-0cd9e43ef1bb">
+      <Execution id="4520f244-bd46-4075-bcc5-74da842b6910" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="AnOrderPastTheCancellableStatesRefusesTheCancellation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.LinesThatAreAlreadyCancelledOrComplimentaryAreLeftAsTheyWere" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="4459a9db-da1d-2508-03f8-9d903d32b1b2">
+      <Execution id="fba8d8cf-531d-43c0-9761-50f2c37f2525" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="LinesThatAreAlreadyCancelledOrComplimentaryAreLeftAsTheyWere" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.EveryLiveLineIsCancelledAndTheReasonAndActorAreOnTheHistory" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="3dedeb08-cd64-ab6a-503d-79c0bd60c60b">
+      <Execution id="9c1d76f3-4a9c-4d20-b773-85479a945761" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="EveryLiveLineIsCancelledAndTheReasonAndActorAreOnTheHistory" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Served)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="0897f69b-b79c-f27b-5912-781567e07b5f">
+      <Execution id="ec55db6c-ef6a-4c6d-b725-70456201ddaa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="AnOrderPastTheCancellableStatesRefusesTheCancellation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Cancelled)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="ced229db-3681-900c-9cbf-0b1c55e22cd4">
+      <Execution id="e2bf6ceb-351a-4b04-8103-1846e753286f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="AnOrderPastTheCancellableStatesRefusesTheCancellation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AServedLineRefusesTheWholeCancellation" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="c34f1639-de93-b1af-e4cb-868e9ee99812">
+      <Execution id="d3b8a3be-3da3-4322-9170-b431a652df54" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="AServedLineRefusesTheWholeCancellation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AnOrderPastTheCancellableStatesRefusesTheCancellation(status: Completed)" storage="d:\project\alkaros\artifacts\g5\bin\alkaros.orders.orderaggregate.tests\debug\alkaros.orders.orderaggregate.tests.dll" id="bbbc32be-c040-4390-999f-b6e242b3dc53">
+      <Execution id="0fa43591-24cb-45a6-8dce-561c2fde3d2c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders.OrderAggregate.Tests\debug\ALKAROS.Orders.OrderAggregate.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests" name="AnOrderPastTheCancellableStatesRefusesTheCancellation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0897f69b-b79c-f27b-5912-781567e07b5f" executionId="ec55db6c-ef6a-4c6d-b725-70456201ddaa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bbbc32be-c040-4390-999f-b6e242b3dc53" executionId="0fa43591-24cb-45a6-8dce-561c2fde3d2c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4459a9db-da1d-2508-03f8-9d903d32b1b2" executionId="fba8d8cf-531d-43c0-9761-50f2c37f2525" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c34f1639-de93-b1af-e4cb-868e9ee99812" executionId="d3b8a3be-3da3-4322-9170-b431a652df54" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ced229db-3681-900c-9cbf-0b1c55e22cd4" executionId="e2bf6ceb-351a-4b04-8103-1846e753286f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3dedeb08-cd64-ab6a-503d-79c0bd60c60b" executionId="9c1d76f3-4a9c-4d20-b773-85479a945761" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6dee68f1-8bc7-02f4-fd4e-0cd9e43ef1bb" executionId="4520f244-bd46-4075-bcc5-74da842b6910" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="6" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.30]   Discovering: ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:00.42]   Discovered:  ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:00.43]   Starting:    ALKAROS.Orders.OrderAggregate.Tests&#xD;
+[xUnit.net 00:00:01.03]       Expected exception message to match the equivalent of "*has served items*", but "Order item 7ffd4550-6750-4799-a0d3-fe0a1010cfbf cannot be voided once it reached kitchen state Served." does not.&#xD;
+[xUnit.net 00:00:01.03]       &#xD;
+[xUnit.net 00:00:01.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.03]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.03]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.03]            at FluentAssertions.Execution.CollectingAssertionStrategy.ThrowIfAny(IDictionary`2 context)&#xD;
+[xUnit.net 00:00:01.03]            at FluentAssertions.Execution.AssertionScope.Dispose()&#xD;
+[xUnit.net 00:00:01.03]            at FluentAssertions.Specialized.ExceptionAssertions`1.ExceptionMessageAssertion.Execute(IEnumerable`1 messages, String expectation, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.03]            at FluentAssertions.Specialized.ExceptionAssertions`1.WithMessage(String expectedWildcardPattern, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.03]         D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\OrderDomainTests.cs(1104,0): at ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AServedLineRefusesTheWholeCancellation()&#xD;
+[xUnit.net 00:00:01.03]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:01.03]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.04]   Finished:    ALKAROS.Orders.OrderAggregate.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-11-04T18:39:11.3549564+03:00">
+        <Text>[xUnit.net 00:00:01.03]     ALKAROS.Orders.OrderAggregate.Tests.OrderCancelWholeTests.AServedLineRefusesTheWholeCancellation [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
