@@ -74,6 +74,7 @@ describe("CustomerDisplay", () => {
   const tick = (ms: number) => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
   const pairingBody = (code: string) => ({
     requestId: `r-${code}`, displayId: "d-1", secret: "s-1", code, expiresAt: new Date(Date.now() + 120_000).toISOString(),
+    expiresInSeconds: 120,
   });
 
   it("shows the pairing code when the display has no session yet", async () => {
@@ -81,7 +82,7 @@ describe("CustomerDisplay", () => {
       const path = String(input);
       if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "Eşleştirme gerekli." } }, 401);
       if (path.includes("/pairing-requests")) {
-        return jsonResponse({ requestId: "r-1", displayId: "d-1", secret: "s-1", code: "A7K2M9P4", expiresAt: new Date(Date.now() + 120_000).toISOString() });
+        return jsonResponse({ requestId: "r-1", displayId: "d-1", secret: "s-1", code: "A7K2M9P4", expiresAt: new Date(Date.now() + 120_000).toISOString(), expiresInSeconds: 120 });
       }
       throw new Error(`unexpected fetch: ${path}`);
     }));
@@ -206,6 +207,7 @@ describe("CustomerDisplay", () => {
     await render();
     await tick(0);
     expect(document.body.textContent).toContain("Ekran bilgisi alınamadı");
+    expect(document.body.textContent).not.toContain("saniye sonra");
 
     await tick(1_000);
     expect(document.body.textContent).toContain("S-042");
@@ -235,7 +237,7 @@ describe("CustomerDisplay", () => {
     expect(document.body.textContent).toContain("AAAA1111");
     expect(document.body.textContent).not.toContain("Ekran bilgisi alınamadı");
 
-    await tick(2_000);
+    await tick(6_000);
     expect(document.body.textContent).toContain("BBBB2222");
   });
 
@@ -253,6 +255,425 @@ describe("CustomerDisplay", () => {
 
     expect(document.body.textContent).toContain("“Ekranı eşleştir” düğmesiyle açılan pencereye");
     expect(document.body.textContent).toContain("2 dakika sonra");
+  });
+
+  it("counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead", async () => {
+    vi.useFakeTimers();
+    let created = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        return jsonResponse({ ...pairingBody("DDDD4444"), expiresAt: new Date(Date.now() - 480_000).toISOString() });
+      }
+      if (path.includes("/complete")) return jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(60_000);
+    expect(created).toBe(1);
+    expect(document.body.textContent).toContain("2 dakika sonra");
+
+    await tick(60_000);
+    expect(created).toBe(2);
+  });
+
+  it("tells a rate-limited display how long it waits, counts down and asks again by itself", async () => {
+    vi.useFakeTimers();
+    let created = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        if (created === 1) {
+          return new Response(JSON.stringify({ error: { code: "RATE_LIMITED", message: "RAW-SERVER-TEXT" } }), {
+            status: 429, headers: { "Content-Type": "application/json", "Retry-After": "7" },
+          });
+        }
+        return jsonResponse(pairingBody("EEEE5555"));
+      }
+      if (path.includes("/complete")) return jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    expect(document.body.textContent).toContain("Kısa sürede çok fazla deneme yapıldı");
+    expect(document.body.textContent).toContain("7 saniye");
+    expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+
+    await tick(1_000);
+    expect(document.body.textContent).toContain("6 saniye");
+
+    for (let second = 0; second < 6; second += 1) await tick(1_000);
+    expect(created).toBe(2);
+    expect(document.body.textContent).toContain("EEEE5555");
+  });
+
+  it("waits out a rate-limited snapshot request instead of hammering the server", async () => {
+    vi.useFakeTimers();
+    let calls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (!path.includes("/snapshot")) throw new Error(`unexpected fetch: ${path}`);
+      calls += 1;
+      if (calls === 1) {
+        return new Response(JSON.stringify({ error: { code: "RATE_LIMITED", message: "RAW-SERVER-TEXT" } }), {
+          status: 429, headers: { "Content-Type": "application/json", "Retry-After": "5" },
+        });
+      }
+      return jsonResponse(snapshot);
+    }));
+
+    await render();
+    await tick(0);
+    expect(document.body.textContent).toContain("5 saniye");
+
+    for (let second = 0; second < 4; second += 1) await tick(1_000);
+    expect(calls).toBe(1);
+    await tick(1_000);
+    expect(calls).toBe(2);
+    expect(document.body.textContent).toContain("S-042");
+  });
+
+  it("retries what failed when the retry button is pressed: a new code after a failed code request", async () => {
+    vi.useFakeTimers();
+    const paths: string[] = [];
+    let created = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      paths.push(path);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        return created === 1 ? jsonResponse({ error: { code: "X", message: "x" } }, 503) : jsonResponse(pairingBody("FFFF6666"));
+      }
+      if (path.includes("/complete")) return jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    const snapshotsBefore = paths.filter((path) => path.includes("/snapshot")).length;
+    await act(async () => { (document.querySelector(".display-retry") as HTMLButtonElement).click(); });
+    await tick(0);
+
+    expect(paths.filter((path) => path.includes("/snapshot")).length).toBe(snapshotsBefore);
+    expect(document.body.textContent).toContain("FFFF6666");
+  });
+
+  it("retries what failed when the retry button is pressed: the screen request after a failed first load", async () => {
+    vi.useFakeTimers();
+    let calls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (!String(input).includes("/snapshot")) throw new Error(`unexpected fetch: ${String(input)}`);
+      calls += 1;
+      return calls === 1 ? jsonResponse({ error: { code: "X", message: "x" } }, 503) : jsonResponse(snapshot);
+    }));
+
+    await render();
+    await tick(0);
+    await act(async () => { (document.querySelector(".display-retry") as HTMLButtonElement).click(); });
+    await tick(0);
+
+    expect(calls).toBe(2);
+    expect(document.body.textContent).toContain("S-042");
+  });
+
+  it("stops polling a ready screen while the server asks it to wait", async () => {
+    vi.useFakeTimers();
+    let calls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (!path.includes("/snapshot")) throw new Error(`unexpected fetch: ${path}`);
+      calls += 1;
+      if (calls === 2) {
+        return new Response(JSON.stringify({ error: { code: "RATE_LIMITED", message: "x" } }), {
+          status: 429, headers: { "Content-Type": "application/json", "Retry-After": "12" },
+        });
+      }
+      return jsonResponse(snapshot);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(5_000);
+    expect(calls).toBe(2);
+    await tick(5_000);
+    expect(calls).toBe(2);
+    await act(async () => { hub.changed?.(); });
+    expect(calls).toBe(2);
+    await tick(10_000);
+    expect(calls).toBe(3);
+    expect(document.body.textContent).toContain("S-042");
+  });
+
+  it("keeps a ready screen quiet for five seconds after a 429 without Retry-After, whatever wakes it", async () => {
+    vi.useFakeTimers();
+    let calls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (!String(input).includes("/snapshot")) throw new Error(`unexpected fetch: ${String(input)}`);
+      calls += 1;
+      return calls === 2 ? jsonResponse({ error: { code: "RATE_LIMITED", message: "x" } }, 429) : jsonResponse(snapshot);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(5_000);
+    expect(calls).toBe(2);
+    await act(async () => { hub.changed?.(); });
+    await act(async () => { hub.reconnected?.(); });
+    await act(async () => { window.dispatchEvent(new Event("online")); });
+    expect(calls).toBe(2);
+    await tick(5_000);
+    expect(calls).toBe(3);
+  });
+
+  it("stops asking whether a pairing was approved while the server asks it to wait", async () => {
+    vi.useFakeTimers();
+    let completions = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) return jsonResponse(pairingBody("GGGG7777"));
+      if (path.includes("/complete")) {
+        completions += 1;
+        return new Response(JSON.stringify({ error: { code: "RATE_LIMITED", message: "x" } }), {
+          status: 429, headers: { "Content-Type": "application/json", "Retry-After": "10" },
+        });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(2_000);
+    expect(completions).toBe(1);
+    await tick(6_000);
+    expect(completions).toBe(1);
+    await tick(4_000);
+    expect(completions).toBe(2);
+  });
+
+  it("ignores a late answer about a code that was already replaced", async () => {
+    vi.useFakeTimers();
+    let created = 0;
+    let late: ((response: Response) => void) | undefined;
+    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return Promise.resolve(jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401));
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        return Promise.resolve(jsonResponse(pairingBody(created === 1 ? "IIII9999" : "JJJJ1010")));
+      }
+      if (path.includes("/complete")) {
+        return created === 1 && !late
+          ? new Promise<Response>((resolve) => { late = resolve; })
+          : Promise.resolve(jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409));
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(2_000);
+    expect(late).toBeDefined();
+    await tick(118_000);
+    expect(created).toBe(2);
+
+    await act(async () => { late!(jsonResponse({ error: { code: "PAIRING_EXPIRED", message: "x" } }, 410)); });
+    await tick(0);
+
+    expect(created).toBe(2);
+    expect(document.body.textContent).toContain("JJJJ1010");
+  });
+
+  it("does not loop on new codes when an older Host sends no lifetime", async () => {
+    vi.useFakeTimers();
+    let created = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        const { expiresInSeconds: _lifetime, ...withoutLifetime } = pairingBody("HHHH8888");
+        return jsonResponse(withoutLifetime);
+      }
+      if (path.includes("/complete")) return jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(60_000);
+
+    expect(created).toBe(1);
+    expect(document.body.textContent).toContain("2 dakika sonra");
+  });
+
+  it("shows the code as ready once the cashier approved it", async () => {
+    vi.useFakeTimers();
+    let approved = false;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return approved ? jsonResponse(snapshot) : jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) return jsonResponse(pairingBody("KKKK1212"));
+      if (path.includes("/complete")) {
+        approved = true;
+        return jsonResponse({ displayId: "d-1" });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    expect(document.body.textContent).toContain("KKKK1212");
+    await tick(2_000);
+
+    expect(document.body.textContent).toContain("S-042");
+    expect(document.body.textContent).not.toContain("KKKK1212");
+  });
+
+  it("waits five seconds before asking whether a pairing was approved when a 429 names no Retry-After", async () => {
+    vi.useFakeTimers();
+    let completions = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) return jsonResponse(pairingBody("LLLL3434"));
+      if (path.includes("/complete")) {
+        completions += 1;
+        return jsonResponse({ error: { code: "RATE_LIMITED", message: "x" } }, 429);
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    await tick(2_000);
+    expect(completions).toBe(1);
+    await tick(2_000);
+    await tick(2_000);
+    expect(completions).toBe(1);
+    await tick(2_000);
+    expect(completions).toBe(2);
+  });
+
+  it("counts down five seconds after a first load answered 429 without Retry-After", async () => {
+    vi.useFakeTimers();
+    let calls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (!String(input).includes("/snapshot")) throw new Error(`unexpected fetch: ${String(input)}`);
+      calls += 1;
+      return calls === 1 ? jsonResponse({ error: { code: "RATE_LIMITED", message: "x" } }, 429) : jsonResponse(snapshot);
+    }));
+
+    await render();
+    await tick(0);
+    expect(document.body.textContent).toContain("5 saniye");
+    for (let second = 0; second < 4; second += 1) await tick(1_000);
+    expect(calls).toBe(1);
+    await tick(1_000);
+    expect(calls).toBe(2);
+  });
+
+  it.each([
+    [90, 89, 90, "2 dakika sonra"],
+    [300, 299, 300, "5 dakika sonra"],
+    [30, 29, 30, "1 dakika sonra"],
+    [0, 119, 120, "2 dakika sonra"],
+    [-5, 119, 120, "2 dakika sonra"],
+    [Number.NaN, 119, 120, "2 dakika sonra"],
+  ])("with a code lifetime of %d seconds asks for a new code at %d..%d seconds and says %s", async (lifetime, before, at, sentence) => {
+    vi.useFakeTimers();
+    let created = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        return jsonResponse({ ...pairingBody("MMMM5656"), expiresInSeconds: lifetime });
+      }
+      if (path.includes("/complete")) return jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    expect(document.body.textContent).toContain(sentence);
+    await tick(before * 1_000);
+    expect(created).toBe(1);
+    await tick((at - before) * 1_000);
+    expect(created).toBe(2);
+  });
+
+  it("backs off 1, 2 and 4 seconds on repeated failures and starts again at 1 second after a success", async () => {
+    vi.useFakeTimers();
+    let created = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) return jsonResponse({ error: { code: "UNAUTHORIZED", message: "x" } }, 401);
+      if (path.endsWith("/pairing-requests")) {
+        created += 1;
+        return created <= 3 || created === 5 ? jsonResponse({ error: { code: "X", message: "x" } }, 503) : jsonResponse(pairingBody("NNNN7878"));
+      }
+      if (path.includes("/complete")) return jsonResponse({ error: { code: "PAIRING_NOT_APPROVED", message: "x" } }, 409);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await tick(0);
+    expect(created).toBe(1);
+    await tick(999);
+    expect(created).toBe(1);
+    await tick(1);
+    expect(created).toBe(2);
+    await tick(1_000);
+    expect(created).toBe(2);
+    await tick(999);
+    expect(created).toBe(2);
+    await tick(1);
+    expect(created).toBe(3);
+    for (let second = 0; second < 3; second += 1) await tick(1_000);
+    expect(created).toBe(3);
+    await tick(999);
+    expect(created).toBe(3);
+    await tick(1);
+    expect(created).toBe(4);
+
+    await tick(120_000);
+    expect(created).toBe(5);
+    await tick(999);
+    expect(created).toBe(5);
+    await tick(1);
+    expect(created).toBe(6);
+  });
+
+  it.each([
+    [500, "Sunucu şu an yanıt veremiyor"],
+    [403, "Kasiyerden yardım isteyin"],
+    [0, "Sunucuya ulaşılamadı"],
+  ])("never prints the server's own wording for a %i answer and counts nothing down", async (status, sentence) => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/snapshot")) {
+        if (status === 0) throw new TypeError("RAW-SERVER-TEXT");
+        return jsonResponse({ error: { code: "X", message: "RAW-SERVER-TEXT" } }, status);
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render();
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain(sentence);
+    expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    expect(document.body.textContent).not.toContain("saniye sonra");
   });
 
   it("drops a slow older snapshot that arrives after a newer one", async () => {

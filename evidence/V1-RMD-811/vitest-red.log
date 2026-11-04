@@ -1,0 +1,122 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (10 tests | 1 failed) 66ms
+     × carries the Retry-After seconds of a rate-limited answer and nothing without the header 43ms
+ ❯ src/routes/CustomerDisplay.test.tsx (16 tests | 5 failed) 815ms
+     × counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead 33ms
+     × tells a rate-limited display how long it waits, counts down and asks again by itself 14ms
+     × waits out a rate-limited snapshot request instead of hammering the server 10ms
+     × never prints the server's own wording for a 500 answer 16ms
+     × never prints the server's own wording for a 403 answer 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > ApiError retry hint > carries the Retry-After seconds of a rate-limited answer and nothing without the header
+AssertionError: expected undefined to be 9 // Object.is equality
+
+- Expected:
+9
+
++ Received:
+undefined
+
+ ❯ src/api.test.ts:26:51
+     24|
+     25|     expect(first).toBeInstanceOf(ApiError);
+     26|     expect((first as ApiError).retryAfterSeconds).toBe(9);
+       |                                                   ^
+     27|     expect((second as ApiError).retryAfterSeconds).toBeUndefined();
+     28|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead
+AssertionError: expected 3 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/routes/CustomerDisplay.test.tsx:276:21
+    274|     await tick(0);
+    275|     await tick(60_000);
+    276|     expect(created).toBe(1);
+       |                     ^
+    277|     expect(document.body.textContent).toContain("2 dakika sonra");
+    278|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > tells a rate-limited display how long it waits, counts down and asks again by itself
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain 'Kısa sürede çok fazla deneme yapıldı'
+
+Expected: "Kısa sürede çok fazla deneme yapıldı"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXTTekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:304:39
+    302|     await render();
+    303|     await tick(0);
+    304|     expect(document.body.textContent).toContain("Kısa sürede çok fazla…
+       |                                       ^
+    305|     expect(document.body.textContent).toContain("7 saniye");
+    306|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > waits out a rate-limited snapshot request instead of hammering the server
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain '5 saniye'
+
+Expected: "5 saniye"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXTTekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:333:39
+    331|     await render();
+    332|     await tick(0);
+    333|     expect(document.body.textContent).toContain("5 saniye");
+       |                                       ^
+    334|
+    335|     await tick(4_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > never prints the server's own wording for a 500 answer
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain 'Sunucu şu an yanıt veremiyor'
+
+Expected: "Sunucu şu an yanıt veremiyor"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXTTekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:356:39
+    354|     await act(async () => Promise.resolve());
+    355|
+    356|     expect(document.body.textContent).toContain(sentence);
+       |                                       ^
+    357|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    358|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > never prints the server's own wording for a 403 answer
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain 'Kasiyerden yardım isteyin'
+
+Expected: "Kasiyerden yardım isteyin"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXTTekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:356:39
+    354|     await act(async () => Promise.resolve());
+    355|
+    356|     expect(document.body.textContent).toContain(sentence);
+       |                                       ^
+    357|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    358|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 20 passed (26)
+   Start at  13:05:38
+   Duration  2.22s (transform 262ms, setup 0ms, import 333ms, tests 881ms, environment 867ms)
+

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (20 tests | 1 failed) 570ms
+     × stops asking whether a pairing was approved while the server asks it to wait 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > stops asking whether a pairing was approved while the server asks it to wait
+AssertionError: expected 4 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 4
+
+ ❯ src/routes/CustomerDisplay.test.tsx:417:25
+    415|     expect(completions).toBe(1);
+    416|     await tick(6_000);
+    417|     expect(completions).toBe(1);
+       |                         ^
+    418|     await tick(4_000);
+    419|     expect(completions).toBe(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 30 passed (31)
+   Start at  13:13:32
+   Duration  1.60s (transform 203ms, setup 0ms, import 265ms, tests 616ms, environment 597ms)
+

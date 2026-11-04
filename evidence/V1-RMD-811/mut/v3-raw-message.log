@@ -1,0 +1,64 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (16 tests | 3 failed) 1507ms
+     × tells a rate-limited display how long it waits, counts down and asks again by itself 46ms
+     × never prints the server's own wording for a 500 answer 25ms
+     × never prints the server's own wording for a 403 answer 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > tells a rate-limited display how long it waits, counts down and asks again by itself
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain 'Kısa sürede çok fazla deneme yapıldı'
+
+Expected: "Kısa sürede çok fazla deneme yapıldı"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXT 7 saniye sonra kendiliğinden yeniden denenecek.Tekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:304:39
+    302|     await render();
+    303|     await tick(0);
+    304|     expect(document.body.textContent).toContain("Kısa sürede çok fazla…
+       |                                       ^
+    305|     expect(document.body.textContent).toContain("7 saniye");
+    306|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > never prints the server's own wording for a 500 answer
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain 'Sunucu şu an yanıt veremiyor'
+
+Expected: "Sunucu şu an yanıt veremiyor"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXTTekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:356:39
+    354|     await act(async () => Promise.resolve());
+    355|
+    356|     expect(document.body.textContent).toContain(sentence);
+       |                                       ^
+    357|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    358|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > never prints the server's own wording for a 403 answer
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain 'Kasiyerden yardım isteyin'
+
+Expected: "Kasiyerden yardım isteyin"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıRAW-SERVER-TEXTTekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:356:39
+    354|     await act(async () => Promise.resolve());
+    355|
+    356|     expect(document.body.textContent).toContain(sentence);
+       |                                       ^
+    357|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    358|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 23 passed (26)
+   Start at  13:07:27
+   Duration  3.72s (transform 428ms, setup 0ms, import 508ms, tests 1.61s, environment 1.37s)
+

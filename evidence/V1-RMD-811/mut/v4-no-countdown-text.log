@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (16 tests | 2 failed) 1189ms
+     × tells a rate-limited display how long it waits, counts down and asks again by itself 22ms
+     × waits out a rate-limited snapshot request instead of hammering the server 18ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > tells a rate-limited display how long it waits, counts down and asks again by itself
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain '7 saniye'
+
+Expected: "7 saniye"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıKısa sürede çok fazla deneme yapıldı.Tekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:305:39
+    303|     await tick(0);
+    304|     expect(document.body.textContent).toContain("Kısa sürede çok fazla…
+    305|     expect(document.body.textContent).toContain("7 saniye");
+       |                                       ^
+    306|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    307|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > waits out a rate-limited snapshot request instead of hammering the server
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain '5 saniye'
+
+Expected: "5 saniye"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıKısa sürede çok fazla deneme yapıldı.Tekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:333:39
+    331|     await render();
+    332|     await tick(0);
+    333|     expect(document.body.textContent).toContain("5 saniye");
+       |                                       ^
+    334|
+    335|     for (let second = 0; second < 4; second += 1) await tick(1_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 24 passed (26)
+   Start at  13:07:33
+   Duration  3.69s (transform 703ms, setup 0ms, import 642ms, tests 1.29s, environment 1.56s)
+

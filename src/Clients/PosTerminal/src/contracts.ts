@@ -181,6 +181,8 @@ export interface PairingCreated {
   secret: string;
   code: string;
   expiresAt: string;
+  /** The code's remaining life as the server counts it; the display's own clock is not trusted. */
+  expiresInSeconds: number;
 }
 
 // The till's view of its customer display: whether one is paired and when that pairing ends.

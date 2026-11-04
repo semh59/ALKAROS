@@ -1,7 +1,7 @@
 # V1-RMD-811 - Müşteri ekranı eşleştirme: sunucu süresine göre geri sayım, hız sınırında anlaşılır bekleme, sabit Türkçe hata cümleleri
 
 - Task ID: V1-RMD-811
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

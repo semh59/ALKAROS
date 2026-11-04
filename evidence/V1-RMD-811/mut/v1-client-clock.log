@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (16 tests | 1 failed) 638ms
+     × counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead
+AssertionError: expected 3 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/routes/CustomerDisplay.test.tsx:276:21
+    274|     await tick(0);
+    275|     await tick(60_000);
+    276|     expect(created).toBe(1);
+       |                     ^
+    277|     expect(document.body.textContent).toContain("2 dakika sonra");
+    278|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  13:07:18
+   Duration  1.96s (transform 212ms, setup 0ms, import 279ms, tests 695ms, environment 803ms)
+

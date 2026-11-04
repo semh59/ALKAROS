@@ -1,0 +1,13 @@
+w1 exit=1 (non-zero = killed) restored
+w2 exit=1 (non-zero = killed) restored
+w3 exit=1 (non-zero = killed) restored
+w4 exit=1 (non-zero = killed) restored
+w5 exit=1 (non-zero = killed) restored
+w6 exit=1 (non-zero = killed) restored
+w7 exit=0 (non-zero = killed) restored
+w8 exit=1 (non-zero = killed) restored
+x1 exit=1 (non-zero = killed) restored
+x2 exit=1 (non-zero = killed) restored
+x3 exit=1 (non-zero = killed) restored
+x4 exit=1 (non-zero = killed) restored
+x5 exit=1 (non-zero = killed) restored

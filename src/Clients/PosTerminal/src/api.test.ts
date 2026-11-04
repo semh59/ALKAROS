@@ -7,6 +7,45 @@ const jsonResponse = (body: unknown, status = 200) =>
 const plainErrorResponse = (status: number) =>
   new Response("Bad gateway", { status, headers: { "Content-Type": "text/plain" } });
 
+describe("ApiError retry hint", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("carries the Retry-After seconds of a rate-limited answer and nothing without the header", async () => {
+    const limited = (headers: Record<string, string>) =>
+      new Response(JSON.stringify({ error: { code: "RATE_LIMITED", message: "x" } }), { status: 429, headers });
+    vi.stubGlobal("fetch", vi.fn()
+      .mockResolvedValueOnce(limited({ "Content-Type": "application/json", "Retry-After": "9" }))
+      .mockResolvedValueOnce(limited({ "Content-Type": "application/json" })));
+
+    const first = await api.createPairing("d").catch((reason: unknown) => reason);
+    const second = await api.createPairing("d").catch((reason: unknown) => reason);
+
+    expect(first).toBeInstanceOf(ApiError);
+    expect((first as ApiError).retryAfterSeconds).toBe(9);
+    expect((second as ApiError).retryAfterSeconds).toBeUndefined();
+  });
+
+  it.each([
+    ["86400", 300],
+    ["301", 300],
+    ["300", 300],
+    ["299", 299],
+    ["0", undefined],
+    ["-3", undefined],
+    ["abc", undefined],
+    ["", undefined],
+  ])("reads Retry-After %j as %j: capped so a screen is never parked for a day, never zero or negative", async (header, expected) => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(
+      new Response("{}", { status: 429, headers: { "Content-Type": "application/json", "Retry-After": header } })));
+
+    const failure = await api.createPairing("d").catch((reason: unknown) => reason);
+
+    expect((failure as ApiError).retryAfterSeconds).toBe(expected);
+  });
+});
+
 /**
  * V12-QRT-001: `placeNfcOrder`'s bounded, backed-off retry — the client-side
  * half of "no outage queue on the transport, so durability comes from an

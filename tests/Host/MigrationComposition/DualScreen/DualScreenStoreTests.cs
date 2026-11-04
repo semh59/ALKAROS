@@ -11,6 +11,8 @@ namespace ALKAROS.Host.Tests.DualScreen;
 [Collection("Host database password environment")]
 public sealed class DualScreenStoreTests : IAsyncLifetime
 {
+    private static readonly System.Text.Json.JsonSerializerOptions WebJson = new(System.Text.Json.JsonSerializerDefaults.Web);
+
     private readonly TestDatabase _database = new();
     private NpgsqlDataSource? _dataSource;
     private DualScreenStore? _store;
@@ -83,6 +85,8 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         Assert.Equal(terminalId, completed.TerminalId);
         // The pairing code lives two minutes and the display session twelve hours, both counted from the database now().
         Assert.InRange(created.ExpiresAt - DateTimeOffset.UtcNow, TimeSpan.FromSeconds(60), TimeSpan.FromMinutes(2.1));
+        Assert.Equal(120, created.ExpiresInSeconds);
+        Assert.Contains("\"expiresInSeconds\":120", System.Text.Json.JsonSerializer.Serialize(created, WebJson));
         Assert.InRange(completed.ExpiresAt - DateTimeOffset.UtcNow, TimeSpan.FromHours(11.9), TimeSpan.FromHours(12.1));
         Assert.Equal(1L, await ScalarAsync<long>(
             "SELECT count(*) FROM customer_display.display_sessions WHERE display_id = @id AND expires_at > now();",

@@ -59,7 +59,7 @@ public sealed partial class DualScreenStore
                 }
 
                 await transaction.CommitAsync(cancellationToken);
-                return new PairingRequestCreated(requestId, displayId, secret, code, expiresAt);
+                return new PairingRequestCreated(requestId, displayId, secret, code, expiresAt, (int)PairingLifetime.TotalSeconds);
             }
             catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
             {

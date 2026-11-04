@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (16 tests | 2 failed) 681ms
+     × states the pairing instruction with the till's own button name and the real code lifetime 15ms
+     × counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > states the pairing instruction with the till's own button name and the real code lifetime
+AssertionError: expected 'AALKAROSGÜVENLİ EKRAN BAĞLANTISIMüşte…' to contain '2 dakika sonra'
+
+Expected: "2 dakika sonra"
+Received: "AALKAROSGÜVENLİ EKRAN BAĞLANTISIMüşteri ekranınıkasaya bağlayınBu kodu kasadaki “Ekranı eşleştir” düğmesiyle açılan pencereye girin.CCCC3333Kod 4 dakika sonra otomatik olarak yenilenir."
+
+ ❯ src/routes/CustomerDisplay.test.tsx:256:39
+    254|
+    255|     expect(document.body.textContent).toContain("“Ekranı eşleştir” düğ…
+    256|     expect(document.body.textContent).toContain("2 dakika sonra");
+       |                                       ^
+    257|   });
+    258|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > counts the code lifetime from the server's seconds, not from a clock that is ten minutes ahead
+AssertionError: expected 'AALKAROSGÜVENLİ EKRAN BAĞLANTISIMüşte…' to contain '2 dakika sonra'
+
+Expected: "2 dakika sonra"
+Received: "AALKAROSGÜVENLİ EKRAN BAĞLANTISIMüşteri ekranınıkasaya bağlayınBu kodu kasadaki “Ekranı eşleştir” düğmesiyle açılan pencereye girin.DDDD4444Kod 4 dakika sonra otomatik olarak yenilenir."
+
+ ❯ src/routes/CustomerDisplay.test.tsx:277:39
+    275|     await tick(60_000);
+    276|     expect(created).toBe(1);
+    277|     expect(document.body.textContent).toContain("2 dakika sonra");
+       |                                       ^
+    278|
+    279|     await tick(60_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 24 passed (26)
+   Start at  13:07:38
+   Duration  2.24s (transform 295ms, setup 0ms, import 395ms, tests 740ms, environment 889ms)
+

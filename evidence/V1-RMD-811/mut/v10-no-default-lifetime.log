@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (20 tests | 1 failed) 626ms
+     × does not loop on new codes when an older Host sends no lifetime 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > does not loop on new codes when an older Host sends no lifetime
+AssertionError: expected 3 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 3
+
+ ❯ src/routes/CustomerDisplay.test.tsx:441:21
+    439|     await tick(60_000);
+    440|
+    441|     expect(created).toBe(1);
+       |                     ^
+    442|     expect(document.body.textContent).toContain("2 dakika sonra");
+    443|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 30 passed (31)
+   Start at  13:13:38
+   Duration  1.71s (transform 239ms, setup 0ms, import 274ms, tests 678ms, environment 656ms)
+

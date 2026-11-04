@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (11 tests | 1 failed) 66ms
+     × caps an absurd Retry-After so a screen is never parked for a day 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > ApiError retry hint > caps an absurd Retry-After so a screen is never parked for a day
+AssertionError: expected 86400 to be 300 // Object.is equality
+
+- Expected
++ Received
+
+- 300
++ 86400
+
+ ❯ src/api.test.ts:36:53
+     34|     const failure = await api.createPairing("d").catch((reason: unknow…
+     35|
+     36|     expect((failure as ApiError).retryAfterSeconds).toBe(300);
+       |                                                     ^
+     37|   });
+     38| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 30 passed (31)
+   Start at  13:13:41
+   Duration  1.76s (transform 244ms, setup 0ms, import 321ms, tests 688ms, environment 696ms)
+

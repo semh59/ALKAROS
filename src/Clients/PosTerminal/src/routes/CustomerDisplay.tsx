@@ -12,13 +12,39 @@ type DisplaySession = "checking" | "pairing" | "ready" | "error";
 // A pairing request the Host will never accept again: the display must ask for a fresh code on its own.
 const endedPairingCodes = new Set(["PAIRING_EXPIRED", "PAIRING_CONSUMED", "PAIRING_LOCKED"]);
 
+// What the code is worth if an older Host does not say how long it lives.
+const defaultCodeSeconds = 120;
+const codeSeconds = (created: PairingCreated) =>
+  Number.isFinite(created.expiresInSeconds) && created.expiresInSeconds > 0 ? created.expiresInSeconds : defaultCodeSeconds;
+
+// A 429 without Retry-After still pauses the display for a moment instead of being asked again at once.
+const defaultRateLimitSeconds = 5;
+const rateLimitWait = (reason: ApiError) => reason.retryAfterSeconds ?? defaultRateLimitSeconds;
+
 const retryDelay = (attempt: number) => Math.min(15_000, 1_000 * 2 ** Math.min(attempt, 4));
+
+// The display never prints the server's own wording: every failure is one of these fixed sentences.
+function describeFailure(reason: unknown): { text: string; retryAfter?: number } {
+  const status = reason instanceof ApiError ? reason.status : -1;
+  if (status === 429) {
+    return { text: "Kısa sürede çok fazla deneme yapıldı.", retryAfter: rateLimitWait(reason as ApiError) };
+  }
+  if (status === 0) return { text: "Sunucuya ulaşılamadı. Bağlantıyı kontrol edin." };
+  if (status >= 500) return { text: "Sunucu şu an yanıt veremiyor." };
+  return { text: "Ekran bilgisi alınamadı. Kasiyerden yardım isteyin." };
+}
 
 export function CustomerDisplay() {
   const [displayId] = useState(() => savedId("alkaros.customer-display-id"));
   const [pairing, setPairing] = useState<PairingCreated | null>(null);
   const [pairingMinutes, setPairingMinutes] = useState(1);
   const [pairingError, setPairingError] = useState("");
+  const [retryIn, setRetryIn] = useState<number | null>(null);
+  const [showCountdown, setShowCountdown] = useState(false);
+  const retryAction = useRef<"pairing" | "snapshot">("snapshot");
+  const failures = useRef(0);
+  // A rate-limited answer pauses every request the display makes on its own until the server's Retry-After has passed.
+  const pausedUntil = useRef(0);
   const [displaySession, setDisplaySession] = useState<DisplaySession>("checking");
   const [freshness, setFreshness] = useState<DisplayFreshness>({
     snapshot: null,
@@ -32,7 +58,17 @@ export function CustomerDisplay() {
   const hasSuccessfulSnapshot = useRef(false);
   const requestSequence = useRef(0);
   const appliedSequence = useRef(0);
-  const [failedAttempts, setFailedAttempts] = useState(0);
+
+  const failWith = useCallback((reason: unknown, action: "pairing" | "snapshot") => {
+    const failure = describeFailure(reason);
+    if (failure.retryAfter !== undefined) pausedUntil.current = Date.now() + failure.retryAfter * 1_000;
+    failures.current += 1;
+    retryAction.current = action;
+    setPairingError(failure.text);
+    setShowCountdown(failure.retryAfter !== undefined);
+    setRetryIn(failure.retryAfter ?? retryDelay(failures.current - 1) / 1_000);
+    setDisplaySession("error");
+  }, []);
 
   const beginPairing = useCallback(async () => {
     if (pairingRequestInFlight.current) return;
@@ -42,25 +78,26 @@ export function CustomerDisplay() {
     setPairingError("");
     try {
       const created = await api.createPairing(displayId);
-      setPairingMinutes(Math.max(1, Math.round((new Date(created.expiresAt).getTime() - Date.now()) / 60_000)));
+      failures.current = 0;
+      setPairingMinutes(Math.max(1, Math.round(codeSeconds(created) / 60)));
       setPairing(created);
     } catch (reason) {
-      setPairingError(reason instanceof ApiError ? reason.message : "Eşleştirme başlatılamadı.");
-      setDisplaySession("error");
+      failWith(reason, "pairing");
     } finally {
       pairingRequestInFlight.current = false;
     }
-  }, [displayId]);
+  }, [displayId, failWith]);
 
   const refresh = useCallback(async () => {
     // Polling, the hub and the online event can overlap; an answer older than one already shown is dropped.
     const sequence = ++requestSequence.current;
+    setRetryIn(null);
     try {
       const snapshot = await api.snapshot(displayId);
       if (sequence < appliedSequence.current) return;
       appliedSequence.current = sequence;
       hasSuccessfulSnapshot.current = true;
-      setFailedAttempts(0);
+      failures.current = 0;
       setFreshness(afterSnapshot(snapshot, Date.now()));
       setPairing(null);
       setPairingError("");
@@ -71,20 +108,30 @@ export function CustomerDisplay() {
       if (reason instanceof ApiError && reason.status === 401) {
         await beginPairing();
       } else if (!hasSuccessfulSnapshot.current) {
-        setPairingError(reason instanceof ApiError ? reason.message : "Ekran bilgisi alınamadı.");
-        setFailedAttempts((count) => count + 1);
-        setDisplaySession("error");
+        failWith(reason, "snapshot");
+      } else if (reason instanceof ApiError && reason.status === 429) {
+        pausedUntil.current = Date.now() + rateLimitWait(reason) * 1_000;
       }
     }
-  }, [beginPairing, displayId]);
+  }, [beginPairing, displayId, failWith]);
 
-  // A network drop, a 5xx or a 429 on the first load used to leave the error screen up until someone touched
-  // it; the screen now tries again by itself, backing off up to 15 seconds.
+  // Anything the display starts on its own (polling, hub, coming back online) waits out a rate limit; only a person's tap does not.
+  const refreshUnlessPaused = useCallback(() => {
+    if (Date.now() >= pausedUntil.current) void refresh();
+  }, [refresh]);
+
+  // A network drop, a 5xx or a 429 used to leave the error screen up until someone touched it; the screen now tries
+  // again by itself, after the server's Retry-After or a backoff of up to 15 seconds, counting the seconds down.
   useEffect(() => {
-    if (displaySession !== "error") return;
-    const timer = window.setTimeout(() => void refresh(), retryDelay(Math.max(0, failedAttempts - 1)));
+    if (displaySession !== "error" || retryIn === null) return;
+    if (retryIn <= 0) {
+      setRetryIn(null);
+      void (retryAction.current === "pairing" ? beginPairing() : refresh());
+      return;
+    }
+    const timer = window.setTimeout(() => setRetryIn(retryIn - 1), 1_000);
     return () => window.clearTimeout(timer);
-  }, [displaySession, failedAttempts, refresh]);
+  }, [beginPairing, displaySession, refresh, retryIn]);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -94,38 +141,44 @@ export function CustomerDisplay() {
 
   useEffect(() => {
     if (!pairing || displaySession !== "pairing") return;
+    // A failure that arrives after the code was replaced must not start yet another code; a success is always real.
+    let active = true;
     const timer = window.setInterval(() => {
+      if (Date.now() < pausedUntil.current) return;
       api.completePairing(pairing.requestId, pairing.secret)
-        .then(() => {
-          setPairing(null);
-          return refresh();
-        })
+        .then(() => refresh())
         .catch((reason: unknown) => {
-          // Not approved yet, a dropped connection, a 429 or a 5xx: keep polling the same request.
-          if (!(reason instanceof ApiError) || reason.status === 409 || reason.status === 429 || reason.status >= 500 || reason.status === 0) return;
+          if (!active) return;
+          if (reason instanceof ApiError && reason.status === 429) {
+            pausedUntil.current = Date.now() + rateLimitWait(reason) * 1_000;
+            return;
+          }
+          // Not approved yet, a dropped connection or a 5xx: keep polling the same request.
+          if (!(reason instanceof ApiError) || reason.status === 409 || reason.status >= 500 || reason.status === 0) return;
           // The request is over (expired, used, locked, unknown): ask for a new code instead of an error screen.
           if (endedPairingCodes.has(reason.code) || reason.status === 404 || reason.status === 401) {
             void beginPairing();
             return;
           }
           setPairing(null);
-          setPairingError(reason.message);
-          setDisplaySession("error");
+          failWith(reason, "pairing");
         });
     }, 2_000);
-    return () => window.clearInterval(timer);
-  }, [beginPairing, displaySession, pairing, refresh]);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
+  }, [beginPairing, displaySession, failWith, pairing, refresh]);
 
   useEffect(() => {
     if (!pairing) return;
-    const expiresIn = Math.max(0, new Date(pairing.expiresAt).getTime() - Date.now());
-    const timer = window.setTimeout(() => void beginPairing(), expiresIn);
+    const timer = window.setTimeout(() => void beginPairing(), codeSeconds(pairing) * 1_000);
     return () => window.clearTimeout(timer);
   }, [beginPairing, pairing]);
 
   useEffect(() => {
     if (displaySession !== "ready") return;
-    const polling = window.setInterval(() => void refresh(), 5_000);
+    const polling = window.setInterval(refreshUnlessPaused, 5_000);
     // The reconnect policy never gives up, and a connection that still ends (or never starts) is started
     // again with the same backoff, so live updates return without a page reload.
     const connection = new HubConnectionBuilder()
@@ -143,9 +196,9 @@ export function CustomerDisplay() {
         restartTimer = window.setTimeout(start, retryDelay(attempt++));
       });
     };
-    connection.on("SnapshotChanged", () => void refresh());
+    connection.on("SnapshotChanged", refreshUnlessPaused);
     connection.onreconnecting(() => setFreshness((previous) => ({ ...previous, connectionLost: true })));
-    connection.onreconnected(() => void refresh());
+    connection.onreconnected(refreshUnlessPaused);
     connection.onclose(() => {
       if (disposed) return;
       setFreshness((previous) => ({ ...previous, connectionLost: true }));
@@ -158,7 +211,7 @@ export function CustomerDisplay() {
       window.clearTimeout(restartTimer);
       void connection.stop();
     };
-  }, [displaySession, refresh]);
+  }, [displaySession, refreshUnlessPaused]);
 
   useEffect(() => {
     if (!freshness.connectionLost || freshness.lastSuccessAt === null) return;
@@ -172,14 +225,14 @@ export function CustomerDisplay() {
 
   useEffect(() => {
     const markOffline = () => setFreshness((previous) => afterFailure(previous, Date.now()));
-    const markOnline = () => void refresh();
+    const markOnline = refreshUnlessPaused;
     window.addEventListener("offline", markOffline);
     window.addEventListener("online", markOnline);
     return () => {
       window.removeEventListener("offline", markOffline);
       window.removeEventListener("online", markOnline);
     };
-  }, [refresh]);
+  }, [refreshUnlessPaused]);
 
   useEffect(() => {
     if (freshness.snapshot?.state !== "Completed") {
@@ -258,8 +311,9 @@ export function CustomerDisplay() {
         className="unavailable-screen"
         kicker="BAĞLANTI KURULAMADI"
         title="Ekran bilgisi alınamadı"
-        description={pairingError || "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip yeniden deneyin."}
-        action={<button data-telemetry-id="b.routes.customerdisplay.1" className="display-retry" onClick={() => void refresh()}>Tekrar dene</button>}
+        description={`${pairingError || "Sunucuya ulaşılamadı. Bağlantıyı kontrol edin."}${
+          showCountdown && retryIn !== null ? ` ${retryIn} saniye sonra kendiliğinden yeniden denenecek.` : ""}`}
+        action={<button data-telemetry-id="b.routes.customerdisplay.1" className="display-retry" onClick={() => void (retryAction.current === "pairing" ? beginPairing() : refresh())}>Tekrar dene</button>}
         alert
       />
     );

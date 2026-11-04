@@ -121,7 +121,12 @@ public sealed record SubmitOrderRequest(string OperationId, long ExpectedRevisio
 
 public sealed record PairingRequestCreate(Guid DisplayId);
 
-public sealed record PairingRequestCreated(Guid RequestId, Guid DisplayId, string Secret, string Code, DateTimeOffset ExpiresAt);
+/// <remarks>
+/// <c>ExpiresInSeconds</c> is how long the code lives from this answer on, so a display whose clock is off counts
+/// down by its own timer instead of comparing <c>ExpiresAt</c> with its clock.
+/// </remarks>
+public sealed record PairingRequestCreated(
+    Guid RequestId, Guid DisplayId, string Secret, string Code, DateTimeOffset ExpiresAt, int ExpiresInSeconds);
 
 public sealed record PairingApprovalRequest(string Code);
 

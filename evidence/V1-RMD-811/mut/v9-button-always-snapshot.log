@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (20 tests | 1 failed) 565ms
+     × retries what failed when the retry button is pressed: a new code after a failed code request 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > retries what failed when the retry button is pressed: a new code after a failed code request
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/routes/CustomerDisplay.test.tsx:364:71
+    362|     await tick(0);
+    363|
+    364|     expect(paths.filter((path) => path.includes("/snapshot")).length).…
+       |                                                                       ^
+    365|     expect(document.body.textContent).toContain("FFFF6666");
+    366|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 30 passed (31)
+   Start at  13:13:35
+   Duration  1.55s (transform 209ms, setup 0ms, import 266ms, tests 612ms, environment 575ms)
+

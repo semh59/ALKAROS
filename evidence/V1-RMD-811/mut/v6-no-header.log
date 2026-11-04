@@ -1,0 +1,68 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (10 tests | 1 failed) 57ms
+     × carries the Retry-After seconds of a rate-limited answer and nothing without the header 39ms
+ ❯ src/routes/CustomerDisplay.test.tsx (16 tests | 2 failed) 536ms
+     × tells a rate-limited display how long it waits, counts down and asks again by itself 15ms
+     × waits out a rate-limited snapshot request instead of hammering the server 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > ApiError retry hint > carries the Retry-After seconds of a rate-limited answer and nothing without the header
+AssertionError: expected undefined to be 9 // Object.is equality
+
+- Expected:
+9
+
++ Received:
+undefined
+
+ ❯ src/api.test.ts:26:51
+     24|
+     25|     expect(first).toBeInstanceOf(ApiError);
+     26|     expect((first as ApiError).retryAfterSeconds).toBe(9);
+       |                                                   ^
+     27|     expect((second as ApiError).retryAfterSeconds).toBeUndefined();
+     28|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > tells a rate-limited display how long it waits, counts down and asks again by itself
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain '7 saniye'
+
+Expected: "7 saniye"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıKısa sürede çok fazla deneme yapıldı. 1 saniye sonra kendiliğinden yeniden denenecek.Tekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:305:39
+    303|     await tick(0);
+    304|     expect(document.body.textContent).toContain("Kısa sürede çok fazla…
+    305|     expect(document.body.textContent).toContain("7 saniye");
+       |                                       ^
+    306|     expect(document.body.textContent).not.toContain("RAW-SERVER-TEXT");
+    307|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > waits out a rate-limited snapshot request instead of hammering the server
+AssertionError: expected 'AALKAROSBAĞLANTI KURULAMADIEkran bilg…' to contain '5 saniye'
+
+Expected: "5 saniye"
+Received: "AALKAROSBAĞLANTI KURULAMADIEkran bilgisi alınamadıKısa sürede çok fazla deneme yapıldı. 1 saniye sonra kendiliğinden yeniden denenecek.Tekrar dene"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:333:39
+    331|     await render();
+    332|     await tick(0);
+    333|     expect(document.body.textContent).toContain("5 saniye");
+       |                                       ^
+    334|
+    335|     for (let second = 0; second < 4; second += 1) await tick(1_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 23 passed (26)
+   Start at  13:07:42
+   Duration  1.70s (transform 220ms, setup 0ms, import 301ms, tests 593ms, environment 693ms)
+

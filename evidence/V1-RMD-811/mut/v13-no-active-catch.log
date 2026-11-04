@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (21 tests | 1 failed) 590ms
+     × ignores a late answer about a code that was already replaced 22ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > ignores a late answer about a code that was already replaced
+AssertionError: expected 3 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 3
+
+ ❯ src/routes/CustomerDisplay.test.tsx:451:21
+    449|     await tick(0);
+    450|
+    451|     expect(created).toBe(2);
+       |                     ^
+    452|     expect(document.body.textContent).toContain("JJJJ1010");
+    453|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 20 passed (21)
+   Start at  13:14:12
+   Duration  1.59s (transform 186ms, setup 0ms, import 216ms, tests 590ms, environment 570ms)
+

@@ -59,6 +59,7 @@ export class ApiError extends Error {
     public readonly status: number,
     public readonly code: string,
     message: string,
+    public readonly retryAfterSeconds?: number,
   ) {
     super(message);
   }
@@ -91,6 +92,11 @@ async function withIdempotentRetry<T>(attempt: () => Promise<T>): Promise<T> {
 }
 
 const pendingSubmissions = new Map<string, string>();
+
+function retryAfterSeconds(headers: Headers): number | undefined {
+  const seconds = Number.parseInt(headers.get("Retry-After") ?? "", 10);
+  return Number.isFinite(seconds) && seconds > 0 ? Math.min(seconds, 300) : undefined;
+}
 
 // `keepSessionOn401`: the manager-only help-request calls answer 401 to a cashier-only session, which
 // must not be read as that cashier's own session having ended.
@@ -135,6 +141,7 @@ async function request<T>(
       response.status,
       body?.error?.code ?? "REQUEST_FAILED",
       body?.error?.message ?? "İşlem tamamlanamadı.",
+      retryAfterSeconds(response.headers),
     );
   }
   onHeaders?.(response.headers);
