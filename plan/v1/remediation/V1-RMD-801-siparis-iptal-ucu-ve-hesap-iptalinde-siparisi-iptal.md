@@ -1,7 +1,7 @@
 # V1-RMD-801 - Sipariş iptal ucu, hesap iptalinde "siparişi de iptal et" ve hesap iptali kuralının tek yere alınması
 
 - Task ID: V1-RMD-801
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
