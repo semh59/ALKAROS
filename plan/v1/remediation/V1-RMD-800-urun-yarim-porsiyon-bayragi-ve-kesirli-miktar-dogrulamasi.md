@@ -11,8 +11,8 @@
 Kasa incelemesinin G5 grubunun kesirli miktar kısmı (`7-birlesik-dogrulama.md` satır 13: `DualScreenStore.Orders.cs:224`, `PaymentRefunds.cs:236`). Bugün ürün bazında bayrak yok: sipariş miktarı `0 < q <= 999` aralığındaki herhangi bir ondalık olabiliyor (örneğin 1,3 veya 0,001), iade 3 ondalığa kadar kabul ediyor. PO kararı (2026-11-04): ürün formunda "yarım porsiyon olur" kutusu; yalnız işaretli üründe 1,5 gibi yarım katlı adet kabul edilir, diğer ürünlerde adet tam sayı olmalıdır.
 
 1. Katalog: `catalog.products.allows_half_portion` (varsayılan false). `Product` bayrağı taşır; yönetim uçları oluşturma, listeleme ve ürün ayrıntı güncellemesinde (`POST .../products/{id}/details`, alan boş bırakılırsa değer korunur) bayrağı taşır. Geçiş 216, daha önce kesirli adetle satılmış ürünlerin bayrağını açık başlatır (bayraktan önceki veri satışta kesilmez). Bayrağın düşürülmesi mevcut siparişlere dokunmaz.
-2. Kural tek yerde: `OrderMath.IsQuantityAllowed(miktar, bayrak)` (miktar > 0; tam sayı her zaman; bayrak açıksa 0,5'in katı). Sipariş ekleme (kasa hattı `AddItemAsync`, miktar değiştirme `MutateExistingItemAsync`) ve masa taslağı (`TableDraftService`) bu kuralı katalogdan okunan bayrakla uygular; ihlalde 400 ve sabit kod `ORDER_QUANTITY_NOT_ALLOWED` (Türkçe nedenli). QR ve NFC müşteri kanalları miktarı zaten `int` taşır, değişmez.
-3. İade: `PaymentRefunds.PriceItemsAsync` aynı kuralı uygular; geriye uyum için kalemin satış miktarı kesirliyse (bayraktan önceki veri) iade miktarı eskisi gibi en çok 3 ondalıkla serbesttir. Daha önce kaydedilmiş iade istekleri yeniden doğrulanmaz.
+2. Kural tek yerde: `OrderQuantityRule.IsAllowed(miktar, bayrak)` (miktar > 0; tam sayı her zaman; bayrak açıksa 0,5'in katı). Sipariş ekleme (kasa hattı `AddItemAsync`, miktar değiştirme `MutateExistingItemAsync`) ve masa taslağı (`TableDraftService`) bu kuralı katalogdan okunan bayrakla uygular; ihlalde 400 ve sabit kod `ORDER_QUANTITY_NOT_ALLOWED` (Türkçe nedenli). QR ve NFC müşteri kanalları miktarı zaten `int` taşır, değişmez.
+3. İade: `PaymentRefunds.PriceItemsAsync` aynı kuralı uygular; geriye uyum için bayrağı kapalı üründe satış miktarı kesirli olan kalem (bayraktan önceki veri) ve yarımlarla iade edilmiş kalemin kalan kesri eskisi gibi iade edilebilir; bayrağı açık üründe yalnız 0,5'in katları kabul edilir. Masa taslağında siparişin zaten tuttuğu aynı satır ve miktar, bayrak sonradan kapansa da kaydedilmeye devam eder; kasa hattında birleşen toplam da kurala tabidir. Daha önce kaydedilmiş iade istekleri yeniden doğrulanmaz.
 4. Günlük menü sayaçları (`NUMERIC(10,3)`): 1,5 adetlik kalemin rezervasyonu, tüketimi ve iptal/iadede geri alınması 1,5 porsiyon olarak sayılır; bu testle kanıtlanır (kod değişmesi gerekirse düzeltilir).
 
 Kapsam dışı: bayrağı kullanan arayüz (V1-RMD-803), çevrimiçi sağlayıcı siparişleri (miktarı sağlayıcı belirler), müşteri ekranı sözleşmesi (V1-RMD-810 çalışıyor; bayrak ürün listesine arayüz görevinde eklenir).
@@ -24,10 +24,9 @@ Kapsam dışı: bayrağı kullanan arayüz (V1-RMD-803), çevrimiçi sağlayıc�
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Catalog/ProductCatalog/Product.cs (V1-WTR-017) — bayrak alanı.
   - src/Modules/Catalog/ProductCatalog/PostgresProductRepository.cs (V1-RMD-076) — sütun okuma ve yazma.
-  - src/Modules/Orders/OrderAggregate/OrderMath.cs (V1-RMD-467) — tek miktar kuralı.
+  - src/Modules/Orders/OrderAggregate/OrderMath.cs (V1-RMD-467) — tek miktar kuralı ve hata türü.
   - src/Host/Experience/Catalog/CatalogManagementContracts.cs (V1-WTR-017) — sözleşme alanı ve tek alan isteği.
   - src/Host/Experience/Catalog/CatalogManagementStore.cs (V1-RMD-119) — oluşturma, liste, tek alan güncelleme.
-  - src/Host/Experience/Catalog/CatalogManagementEndpoints.cs (V1-RMD-121) — yeni uç.
   - src/Host/DualScreen/DualScreenStore.Orders.cs (V1-RMD-774) — ekleme doğrulaması.
   - src/Host/DualScreen/DualScreenStore.cs (V1-RMD-120) — miktar değiştirme doğrulaması.
   - src/Host/Experience/Orders/TableDraft/TableDraftService.cs (V1-RMD-774) — taslak doğrulaması.
@@ -36,7 +35,6 @@ Kapsam dışı: bayrağı kullanan arayüz (V1-RMD-803), çevrimiçi sağlayıc�
   - src/Host/Composition/Migrations/MigrationManifest.cs (V1-FND-004) — yalnız PhaseBMax.
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs (V1-GOV-007) — yalnız yeni migration kimliği.
   - tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs (V1-RMD-698) — geri alma ve yeniden uygulama.
-  - tests/Architecture/ApiConventions/idempotency_allowlist.json (V1-RMD-430) — yeni uç kaydı.
   - tests/Modules/Orders/OrderAggregate/OrderDomainTests.cs (V1-RMD-467) — kural birim testleri.
   - tests/Modules/Catalog/ProductCatalog/PostgresRepositoryTests.cs (V1-WTR-017) — sütun gidiş dönüşü.
   - tests/Host/Experience/Catalog/CatalogManagementHttpTests.cs (V1-RMD-426) — uç testleri.
