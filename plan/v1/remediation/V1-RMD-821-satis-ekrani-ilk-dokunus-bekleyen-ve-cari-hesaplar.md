@@ -1,7 +1,7 @@
 # V1-RMD-821 - Satış ekranında ilk dokunuşta sipariş, bekleyen hesapların okunur etiketi ve oturum hatası, saat dilimi, cari hesap ekranı doğrulamaları
 
 - Task ID: V1-RMD-821
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
