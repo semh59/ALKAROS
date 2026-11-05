@@ -55,6 +55,7 @@ Kapsam dışı: arayüz (V1-RMD-803).
   - tests/Modules/Tables/PaymentTopology/PaymentAwareTableTopologyPolicyTests.cs (V13-TBL-001) — durum kümesi testi.
   - tests/Architecture/ModuleBoundaries/HostForeignWriteLockTests.cs (V1-RMD-002) — BillingSplitStore masa yazımı kalkar, sayım küçülür.
   - tests/Architecture/ApiConventions/api_convention_allowlist.json (V1-RMD-429) — iki yeni yönetici ucu.
+  - tests/Architecture/ApiConventions/idempotency_allowlist.json (V1-RMD-429) — temizleme ucu anahtarsız, tekrarı güvenli (temizlenen sipariş aday olmaktan çıkar).
   - tests/Host/Experience/Billing/OrderCleanupTests.cs (V1-RMD-040) — yeni dosya: süpürücü testleri.
   - tests/Host/Experience/Billing/PaidOrderRepairTests.cs (V1-RMD-040) — yeni dosya: onarım testleri.
   - tests/Host/Experience/Billing/ClosureSettlementLockTests.cs (V1-RMD-040) — yeni dosya: kapanış kilidi testleri.
