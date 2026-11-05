@@ -1,7 +1,7 @@
 # V1-RMD-825 - Hızlı kasa düşük kalemleri: kalıcı hata bildirimi, yenilemede kaybolmayan gönderim, bayat fiyat, hesap bulunamadı ekranı
 
 - Task ID: V1-RMD-825
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

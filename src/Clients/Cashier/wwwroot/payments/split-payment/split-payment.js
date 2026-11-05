@@ -930,7 +930,8 @@
       '<div class="sp-card sp-center-text">' +
       '<span class="sp-icon-circle danger">!</span>' +
       '<h1 class="sp-title">Hesap Bulunamadı</h1>' +
-      '<p class="sp-subtitle">Bu sayfa geçerli bir hesap kimliği (billId) gerektirir.</p>' +
+      '<p class="sp-subtitle">Hesap açılamadı. Bekleyen hesaplardan tekrar seçin.</p>' +
+      '<a class="sp-btn sp-btn-primary" href="/pending-checks">Bekleyen hesaplara dön</a>' +
       '</div>';
   }
 

@@ -122,6 +122,7 @@ body {
   font-size: 15px; font-weight: 700; padding: 15px;
   min-height: var(--touch-target); cursor: pointer; font-family: inherit;
 }
+a.sp-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
 .sp-btn:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }
 .sp-btn:disabled { cursor: not-allowed; }
 .sp-btn-primary { background: var(--color-ink); color: #FFFFFF; }

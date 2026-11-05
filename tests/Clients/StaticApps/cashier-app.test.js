@@ -83,7 +83,7 @@ async function startAppWithOneProductInTicket(routes) {
 // V1-RMD-253: dispatch feedback is a self-dismissing #toastRegion entry now,
 // not a native alert() the tests used to stub and assert on.
 function toastMessages() {
-  return [...document.querySelectorAll("#toastRegion .toast")].map((node) => node.textContent);
+  return [...document.querySelectorAll("#toastRegion .toast")].map((node) => node.firstChild.textContent);
 }
 
 describe("cashier-app.js", () => {

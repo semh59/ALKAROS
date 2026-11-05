@@ -100,6 +100,34 @@
     }
   }
 
+  // A round already sent whose answer was lost: kept across a reload so the same ids are resent and no second order opens.
+  function loadPendingDispatch() {
+    try {
+      return JSON.parse(localStorage.getItem('alkaros_cashier_pending_dispatch') || 'null');
+    } catch (parseError) {
+      return null;
+    }
+  }
+
+  // The saved round is the cashier's own and only good while the cart still holds exactly its lines.
+  function usablePendingDispatch() {
+    const saved = state.pendingDispatch;
+    if (!saved || state.pendingOwner !== state.userId) return null;
+    const lines = (items) => items.map(line => line.id + ':' + line.quantity).sort().join('|');
+    return lines(saved.items) === lines(state.ticketItems) ? saved : null;
+  }
+
+  function setPendingDispatch(payload) {
+    state.pendingDispatch = payload;
+    state.pendingOwner = state.userId;
+    try {
+      if (payload) localStorage.setItem('alkaros_cashier_pending_dispatch', JSON.stringify({ userId: state.userId, payload }));
+      else localStorage.removeItem('alkaros_cashier_pending_dispatch');
+    } catch (writeError) {
+      console.error('Bekleyen gönderim kaydedilemedi:', writeError);
+    }
+  }
+
   // State
   const state = {
     // Terminal identity is resolved from the authenticated cashier session
@@ -123,7 +151,9 @@
     products: [],
     dispatchInFlight: false,
     // The round whose outcome the server may not have told us yet; a retry resends it unchanged (same ids).
-    pendingDispatch: null,
+    pendingDispatch: (loadPendingDispatch() || {}).payload || null,
+    pendingOwner: (loadPendingDispatch() || {}).userId || null,
+    userId: null,
     isOnline: navigator.onLine,
 
     // V1-RMD-205: who runs this order to the customer. null (the default,
@@ -265,9 +295,28 @@
     const node = document.createElement('div');
     node.className = `toast toast--${tone}`;
     node.setAttribute('role', tone === 'error' ? 'alert' : 'status');
-    node.textContent = message;
+    const text = document.createElement('span');
+    text.textContent = message;
+    node.appendChild(text);
+    // The same sentence twice says nothing new, and a stack of them would cover the till.
+    if (tone === 'error') {
+      for (const open of el.toastRegion.querySelectorAll('.toast--error')) if (open.firstChild.textContent === message) open.remove();
+      const errors = el.toastRegion.querySelectorAll('.toast--error');
+      if (errors.length >= 3) errors[0].remove();
+    }
     el.toastRegion.appendChild(node);
-    window.setTimeout(() => node.remove(), tone === 'error' ? 6000 : 5000);
+    if (tone === 'error') {
+      // An error such as "the order may have gone through" must not vanish before it is read.
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'toast__close';
+      close.textContent = 'Kapat';
+      close.setAttribute('aria-label', 'Bildirimi kapat');
+      close.addEventListener('click', () => node.remove());
+      node.appendChild(close);
+    } else {
+      window.setTimeout(() => node.remove(), 5000);
+    }
   }
 
   // Found by an independent audit (2026-09-07): this badge was static
@@ -345,6 +394,7 @@
         throw new Error('session missing terminal');
       }
       state.terminalId = session.terminalId;
+      state.userId = typeof session.userId === 'string' ? session.userId : null;
       state.sessionStatus = 'ready';
       if (typeof session.displayName === 'string' && session.displayName.trim()) {
         state.cashierName = session.displayName.trim();
@@ -382,6 +432,20 @@
       if (!cursor) break;
     }
     return items;
+  }
+
+  // A cart restored from the previous session carries that session's prices; show today's, and drop what is no longer sold.
+  function refreshRestoredTicket() {
+    const byId = new Map(state.products.map(product => [product.id, product]));
+    const removed = state.ticketItems.filter(item => !byId.has(item.productId));
+    state.ticketItems = state.ticketItems.filter(item => byId.has(item.productId));
+    for (const item of state.ticketItems) {
+      const extra = (item.modifiers || []).reduce((sum, modifier) => sum + (modifier.priceDelta || 0), 0);
+      item.price = byId.get(item.productId).price + extra;
+    }
+    if (removed.length > 0) showToast('Bazı ürünler artık satışta değil, sepetten çıkarıldı.', 'error');
+    saveActiveTicket();
+    renderTicket();
   }
 
   async function loadCatalog() {
@@ -423,6 +487,7 @@
         if (!categoryMap.has(product.categoryId)) categoryMap.set(product.categoryId, product.categoryName);
       }
       state.products = products;
+      refreshRestoredTicket();
       state.categories = [{ id: 'all', name: 'Tüm Ürünler' }, ...[...categoryMap].map(([id, name]) => ({ id, name }))];
       state.catalogStatus = 'ready';
     } catch {
@@ -688,7 +753,7 @@
     // Order.ServingUserId, from the session this request already carries.
     // Removed rather than wired in; a free-text field the client could set
     // to anything would only be a weaker, spoofable duplicate of that.
-    const orderPayload = state.pendingDispatch || {
+    const orderPayload = usablePendingDispatch() || {
       id: crypto.randomUUID(),
       tableId: '00000000-0000-0000-0000-000000000001',
       tableNumber: 'KASA-1',
@@ -714,7 +779,7 @@
       }))
     };
 
-    state.pendingDispatch = orderPayload;
+    setPendingDispatch(orderPayload);
     // KASA-1 is a fixed, shared endpoint for unrelated walk-up customers, not a real table: the order is released
     // from it (send-to-cashier) only once the kitchen has taken it. Until then the same payload is resent on every
     // press, so a lost answer never opens a second order or a second kitchen ticket.
@@ -728,7 +793,7 @@
 
       if (!draftResponse.ok) {
         const failure = await readFailure(draftResponse);
-        if (isFinalRejection(draftResponse.status, failure.code)) state.pendingDispatch = null;
+        if (isFinalRejection(draftResponse.status, failure.code)) setPendingDispatch(null);
         showToast(failure.message, 'error');
         return;
       }
@@ -750,14 +815,14 @@
         const failure = await readFailure(submitResponse);
         if (isFinalRejection(submitResponse.status, failure.code)) {
           // The kitchen will never take this round as it is: free the shared table so the next customer is not merged into it.
-          state.pendingDispatch = null;
+          setPendingDispatch(null);
           await releaseSharedTable(draft.orderId, orderPayload.tableId);
         }
         showToast(failure.message, 'error');
         return;
       }
 
-      state.pendingDispatch = null;
+      setPendingDispatch(null);
       await releaseSharedTable(draft.orderId, orderPayload.tableId);
 
       // Lines added while the answer was on its way stay in the cart for the next round.
