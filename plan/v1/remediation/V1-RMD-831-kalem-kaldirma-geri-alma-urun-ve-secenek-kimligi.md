@@ -12,7 +12,7 @@ V1-RMD-826 satış ekranında "Kaldır" için iki adımlı onay getirdi, ama ger
 
 Davranış: kalem kaldırılınca bildirim satırında "Kalem kaldırıldı" ve "Geri al" görünür. Geri al, aynı ürünü aynı seçeneklerle yeniden ekler ve adedi kaldırılandaki değere getirir. Geri alınamayan durumlar açıkça işaretlenir (geri al görünmez): satırda satır indirimi varsa (indirim yeniden kurulamaz) ya da ürün katalogda artık yoksa. Başka bir eylem ya da sipariş değişince seçenek kapanır. Seçenek adedi birden büyük olan satırda seçenekler tek adetle eklenir; bu sınır RESULT.md'de yazılır ve ayrıca bir ürün kararı gerekirse bildirilir.
 
-Müşteri ekranı anlık görüntüsü aynı sözleşmeyi kullanır; yeni alanlar sonda ve isteğe bağlıdır (mevcut yapıcılar bozulmaz), müşteri ekranı bunları göstermez.
+Müşteri ekranı aynı sözleşmeyi kullanır ve izin listesi testi (`SnapshotSerializesOnlyTheCustomerAllowlist`) alan sızmasını yasaklar: yeni alanlar sonda ve isteğe bağlıdır, boşken JSON a yazılmaz, anlık görüntü yalnız kasa ucunda (`orders/active`) kimliklerle istenir; müşteri ekranı yolları kimlik görmez.
 
 ## Owned surface
 
@@ -22,6 +22,8 @@ Müşteri ekranı anlık görüntüsü aynı sözleşmeyi kullanır; yeni alanla
   - src/Host/DualScreen/DualScreenContracts.cs (V1-DSP-001) — satır sözleşmesi.
   - src/Host/DualScreen/DualScreenStore.Display.cs (V1-DSP-001) — satır sorgusu.
   - src/Host/DualScreen/CustomerDisplayPaymentProgress.cs (V1-DSP-001) — satır oluşturma.
+  - src/Host/DualScreen/DualScreenApplication.Endpoints.cs (V1-DSP-001) — yalnız kasa ucu kimlikleri ister.
+  - tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs (V1-RMD-802) — müşteri ekranı kimlik sızdırmaz.
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs (V1-DSP-001) — sözleşme testi.
   - src/Clients/PosTerminal/src/contracts.ts (V1-CUI-006) — `DisplayLine` alanları.
   - src/Clients/PosTerminal/src/routes/Cashier.tsx (V1-RMD-097) — Geri al.
