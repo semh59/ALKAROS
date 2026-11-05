@@ -11,12 +11,7 @@
 
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <!-- Inter is the one family (foundations.md §2). Same loader the PosTerminal
-       already uses; the fallback stack in waiter-app.css covers a service area
-       with no internet. -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <!-- No font is downloaded: the app must open with no internet and without telling a third party; waiter-app.css names a system stack. -->
   <link rel="stylesheet" href="./waiter-app.css">
 </head>
 <body>

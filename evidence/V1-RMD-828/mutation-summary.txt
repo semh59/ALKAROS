@@ -1,0 +1,6 @@
+killed no-fold
+killed query-unfolded
+killed name-unfolded
+killed font-back
+killed stack
+cache-version-bump killed

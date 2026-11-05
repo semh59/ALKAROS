@@ -28,10 +28,12 @@ export function renderProducts() {
     return;
   }
 
-  const query = state.search.trim().toLocaleLowerCase('tr-TR');
+  // A capital I turns into a dotless ı in Turkish, which an English keyboard's "i" would never match.
+  const fold = (text) => text.toLocaleLowerCase('tr-TR').replaceAll('ı', 'i');
+  const query = fold(state.search.trim());
   const visible = state.products.filter((product) => {
     const matchesCategory = state.activeCategory === 'all' || product.categoryCode === state.activeCategory;
-    const matchesQuery = !query || product.name.toLocaleLowerCase('tr-TR').includes(query);
+    const matchesQuery = !query || fold(product.name).includes(query);
     return matchesCategory && matchesQuery;
   });
 

@@ -4,7 +4,7 @@
 // V1-WTR-050, V1-WTR-051, V1-WTR-052, V1-WTR-053)
 // v20: the final waiter-app.js module split off — js/offline-queue.js.
 // This completes docs/engineering/garson-refactor-plan.md's Section 2.
-const CACHE_NAME = 'alkaros-waiter-v21';
+const CACHE_NAME = 'alkaros-waiter-v22';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

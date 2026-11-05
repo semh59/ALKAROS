@@ -1,7 +1,7 @@
 # V1-RMD-828 - Garson uygulaması: dış yazı tipi isteği kalkar, ürün aramasında "I" ve "ı" eşleşir
 
 - Task ID: V1-RMD-828
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
