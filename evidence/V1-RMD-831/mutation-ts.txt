@@ -1,0 +1,6 @@
+killed discount-cond
+killed catalog-cond
+killed quantity
+killed modifiers
+killed clear-on-action
+killed offer-cond

@@ -150,6 +150,9 @@ export interface DisplayLine {
   /** Before the line's own discount, so the lines add up to the subtotal. */
   lineTotal: number;
   discountAmount: number;
+  /** What the line was made from, so a removed line can be put back; absent on a line built from a bill. */
+  productId?: string;
+  modifierIds?: string[];
 }
 
 export interface DisplaySnapshot {

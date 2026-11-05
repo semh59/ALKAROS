@@ -212,12 +212,13 @@ export const api = {
     productId: string,
     expectedRevision: number,
     modifierIds: string[] = [],
+    quantity = 1,
   ) =>
     request<MutationResult>(`/api/v1/terminals/${terminalId}/orders/${orderId}/items`, {
       method: "POST",
       body: JSON.stringify({
         productId,
-        quantity: 1,
+        quantity,
         expectedRevision,
         ...(modifierIds.length > 0 ? { modifiers: modifierIds.map((modifierId) => ({ modifierId })) } : {}),
       }),

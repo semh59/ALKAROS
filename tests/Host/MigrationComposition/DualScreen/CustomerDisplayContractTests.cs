@@ -48,6 +48,17 @@ public sealed class CustomerDisplayContractTests
     }
 
     [Fact]
+    public void LineIdsReachOnlyASnapshotThatAskedForThem()
+    {
+        var withIds = new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 1, 100, 100, 0, Guid.NewGuid(), [Guid.NewGuid()]);
+
+        using var json = JsonDocument.Parse(JsonSerializer.Serialize(withIds, SerializerOptions));
+        var properties = json.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray();
+
+        Assert.Equal(["discountAmount", "itemId", "lineTotal", "modifierIds", "name", "productId", "quantity", "unitPrice"], properties);
+    }
+
+    [Fact]
     public void CatalogProductCarriesRealCategoryMetadata()
     {
         var product = new CatalogProductDto(

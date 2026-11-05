@@ -9,7 +9,7 @@ import {
 } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api, registerSessionExpiredHandler } from "../api";
-import type { CatalogProduct, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
+import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { navLabels, stateText } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
@@ -110,6 +110,7 @@ export function Cashier() {
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [removedLine, setRemovedLine] = useState<DisplayLine | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const compactHeader = useNarrowScreen();
   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
@@ -342,6 +343,7 @@ export function Cashier() {
 
   // A question about a line is only good for the order it was asked on; the safe answer takes the focus.
   useEffect(() => { setConfirmRemoveId(null); }, [order?.orderId, order?.revision]);
+  useEffect(() => { setRemovedLine(null); }, [order?.orderId]);
   useEffect(() => { if (confirmRemoveId) cancelRemoveButton.current?.focus(); }, [confirmRemoveId]);
 
   // The dialog shows whether a screen is paired and when that pairing ends, so a session that is about to
@@ -402,6 +404,7 @@ export function Cashier() {
   const execute = async (action: () => Promise<unknown>, success?: string) => {
     setBusy(true);
     setConfirmRemoveId(null);
+    setRemovedLine(null);
     setError("");
     setNotice("");
     try {
@@ -553,6 +556,19 @@ export function Cashier() {
       || product.sku.toLocaleLowerCase("tr-TR").includes(normalizedSearch)));
   const itemCount = activeOrder?.lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0;
 
+  // A line with its own discount cannot be rebuilt (the discount is not recreated), nor can one whose product left the catalog.
+  const canPutBack = (line: DisplayLine) =>
+    line.discountAmount === 0 && catalog.some((product) => product.productId === line.productId);
+
+  const putBack = async (line: DisplayLine) => {
+    const target = activeOrder;
+    if (!target?.orderId || !line.productId) return;
+    await execute(
+      () => api.addItem(terminalId, target.orderId!, line.productId!, target.revision, line.modifierIds ?? [], line.quantity),
+      "Kalem geri alındı.",
+    );
+  };
+
   const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
     if (addingProduct.current) return;
     addingProduct.current = true;
@@ -692,6 +708,9 @@ export function Cashier() {
           aria-live={error ? "assertive" : "polite"}
         >
           <span>{error || notice}</span>
+          {!error && removedLine && (
+            <button data-telemetry-id="b.routes.cashier.43" disabled={busy || !activeOrder?.editable} onClick={() => putBack(removedLine)}>Geri al</button>
+          )}
           <button data-telemetry-id="b.routes.cashier.8" onClick={() => { setError(""); setNotice(""); }} aria-label={stateText.dismissMessage}>×</button>
         </div>
       )}
@@ -821,9 +840,12 @@ export function Cashier() {
                         <button data-telemetry-id="b.routes.cashier.40"
                           className="danger-text"
                           disabled={busy || !activeOrder.editable}
-                          onClick={() => execute(() => api.removeItem(
-                            terminalId, activeOrder.orderId!, line.itemId, activeOrder.revision,
-                          ))}
+                          onClick={async () => {
+                            const removed = await execute(() => api.removeItem(
+                              terminalId, activeOrder.orderId!, line.itemId, activeOrder.revision,
+                            ), "Kalem kaldırıldı.");
+                            if (removed && canPutBack(line)) setRemovedLine(line);
+                          }}
                         >Evet, kaldır</button>
                         <button data-telemetry-id="b.routes.cashier.41" ref={cancelRemoveButton} onClick={() => setConfirmRemoveId(null)}>Vazgeç</button>
                       </div>

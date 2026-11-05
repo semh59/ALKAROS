@@ -443,6 +443,43 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ALineCarriesItsProductAndOptionIdsSoARemovedLineCanBeRebuilt()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None);
+        var groupId = Guid.NewGuid();
+        var modifierId = Guid.NewGuid();
+        var suffix = groupId.ToString("N")[..12];
+        await using (var seed = _dataSource!.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 1);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES (@modifier_id, @group_id, @code, 'Peynir', 2.50);
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
+            SELECT gen_random_uuid(), order_item_id, @modifier_id, 'Peynir', 2.50, 1 FROM orders.order_items WHERE order_id = @order_id;
+            """))
+        {
+            seed.Parameters.AddWithValue("group_id", groupId);
+            seed.Parameters.AddWithValue("modifier_id", modifierId);
+            seed.Parameters.AddWithValue("code", "MOD" + suffix);
+            seed.Parameters.AddWithValue("order_id", order.OrderId);
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        var forTheTill = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true);
+        var forTheCustomer = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        var line = Assert.Single(forTheTill.Lines);
+        Assert.Equal(_productId, line.ProductId);
+        Assert.Equal([modifierId], line.ModifierIds);
+        var shown = Assert.Single(forTheCustomer.Lines);
+        Assert.Equal(Guid.Empty, shown.ProductId);
+        Assert.Null(shown.ModifierIds);
+    }
+
+    [Fact]
     public async Task ADiscountedLineIsShownBeforeItsDiscountSoTheLinesAddUpToTheSubtotal()
     {
         var terminalId = Guid.NewGuid();

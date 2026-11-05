@@ -219,7 +219,8 @@ public sealed partial class DualScreenStore
     public async Task<CustomerDisplaySnapshotDto> GetSnapshotAsync(
         Guid displayId,
         Guid terminalId,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool includeLineIds = false)
     {
         // One snapshot for the terminal pointer, the order and its lines, so a write between the reads cannot show an
         // order's header from before it and its lines from after.
@@ -261,7 +262,11 @@ public sealed partial class DualScreenStore
             SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status, discount_amount,
                    COALESCE((SELECT sum(round(m.price_delta * m.quantity, 2))
                              FROM orders.order_item_modifiers m
-                             WHERE m.order_item_id = i.order_item_id), 0)
+                             WHERE m.order_item_id = i.order_item_id), 0),
+                   i.product_id,
+                   COALESCE((SELECT array_agg(m.modifier_id ORDER BY m.modifier_id)
+                             FROM orders.order_item_modifiers m
+                             WHERE m.order_item_id = i.order_item_id), ARRAY[]::uuid[])
             FROM orders.order_items i
             WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
             ORDER BY created_at, order_item_id;
@@ -286,7 +291,9 @@ public sealed partial class DualScreenStore
                     : storedGrossAmount + storedDiscount;
                 lines.Add(new CustomerDisplayLineDto(
                     reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal,
-                    complimentary ? lineTotal : storedDiscount));
+                    complimentary ? lineTotal : storedDiscount,
+                    includeLineIds ? reader.GetGuid(8) : default,
+                    includeLineIds ? reader.GetFieldValue<Guid[]>(9) : null));
             }
         }
 

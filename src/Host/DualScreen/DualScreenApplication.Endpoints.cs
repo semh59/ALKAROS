@@ -420,7 +420,7 @@ public static partial class DualScreenApplication
         {
             await RequireCashierAsync(context, terminalId, store, cancellationToken);
             var displayId = await store.GetActiveDisplayIdAsync(terminalId, cancellationToken) ?? Guid.Empty;
-            var snapshot = await store.GetSnapshotAsync(displayId, terminalId, cancellationToken);
+            var snapshot = await store.GetSnapshotAsync(displayId, terminalId, cancellationToken, includeLineIds: true);
             return Results.Ok(await CustomerDisplayPaymentProgress.AttachAsync(snapshot, bills, adjustments, payments, allocations, cancellationToken));
         }).RequireRateLimiting("terminal-read");
 
