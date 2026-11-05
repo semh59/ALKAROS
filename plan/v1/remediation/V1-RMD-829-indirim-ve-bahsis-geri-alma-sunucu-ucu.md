@@ -1,7 +1,7 @@
 # V1-RMD-829 - İndirim ve bahşiş geri alma: sunucu ucu
 
 - Task ID: V1-RMD-829
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
@@ -10,12 +10,12 @@
 
 Kasa incelemesi K18: tahsilat sayfasında yanlış girilen indirim ya da bahşiş geri alınamıyor (yalnız eklenir). PO kararı: en küçük hata kritik, açık bırakma yok. Bu görev sunucu tarafıdır, arayüz V1-RMD-830.
 
-Tasarım: `POST /api/v1/terminals/{terminalId}/bills/{billId}/adjustments/{adjustmentId}/undo`.
+Tasarım: `POST /api/v1/terminals/{terminalId}/billing/bills/{billId}/adjustments/{adjustmentId}/undo`.
 - Yetki: bahşiş girişi ile aynı (`RequireMutationAsync`, bills.split). Geri alma ödenecek tutarı yalnız ilk haline döndürür; kimseye ek yetki vermez.
 - Yalnız indirim (`DiscountPercentage`, `DiscountAmount`) ve bahşiş (`Tip`) geri alınır; hizmet bedeli, kuver ve özel ücret `ADJUSTMENT_NOT_UNDOABLE` (400).
-- Hesap durumu uygulama ucuyla aynı kuralı izler (`IsDiscountable`): ödenmiş, iptal edilmiş ya da ödeme alınmış hesapta `BillDiscountUnsupportedBillStateException`; hesap satırı ve ödeme tahsisi kilidi uygulama ucuyla aynıdır.
+- Hesap durumu uygulama ucuyla aynı kuralı izler (`IsDiscountable`): ödenmiş, iptal edilmiş ya da ödeme alınmış hesapta `AdjustmentUndoBillStateException` (409 `UNSUPPORTED_BILL_STATE`); hesap satırı ve ödeme tahsisi kilidi uygulama ucuyla aynıdır.
 - Kayıt silinir (migration yok: tüm okuyucular - fatura, rapor, vardiya özeti, bölüştürme - otomatik tutarlı kalır); iz kaybolmaz: `bill.adjustment.undone` denetim olayı silinen kaydın tam görüntüsünü (tür, tutar, gerekçe, kim ekledi) ve geri alan kullanıcıyı tutar.
-- Olmayan kalem `ADJUSTMENT_NOT_FOUND` (404); aynı geri alma tekrarı da 404 verir (istemci "zaten kaldırılmış" diye yeniler). Tekrar anahtarı alınmaz (uç doğal olarak idempotenttir: ikinci çağrı etkisizdir); `idempotency_allowlist.json` kaydı eklenir.
+- Olmayan kalem `NOT_FOUND` (404); aynı geri alma tekrarı da 404 verir (istemci "zaten kaldırılmış" diye yeniler). Tekrar anahtarı alınmaz (uç doğal olarak idempotenttir: ikinci çağrı etkisizdir); `idempotency_allowlist.json` kaydı eklenir.
 - Müşteri ekranı `PaymentChanged` ile bilgilendirilir; hesap satır sürümü artar.
 
 ## Owned surface

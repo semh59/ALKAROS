@@ -99,6 +99,23 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task<bool> DeleteAsync(
+        Guid billId,
+        Guid adjustmentId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = new NpgsqlCommand(
+            $"DELETE FROM {TableName} WHERE bill_adjustment_id = @id AND bill_id = @bill_id;", connection, transaction);
+        command.Parameters.AddWithValue("id", adjustmentId);
+        command.Parameters.AddWithValue("bill_id", billId);
+        return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
+    }
+
     private static NpgsqlCommand BuildInsertCommand(
         BillAdjustment adjustment, NpgsqlConnection connection, NpgsqlTransaction? transaction)
     {

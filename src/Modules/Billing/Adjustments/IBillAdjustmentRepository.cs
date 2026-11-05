@@ -32,6 +32,17 @@ public interface IBillAdjustmentRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Removes one adjustment of the given bill inside the caller's transaction (which already holds the bill
+    /// row lock). False when the bill has no such adjustment; an adjustment of another bill is never touched.
+    /// </summary>
+    Task<bool> DeleteAsync(
+        Guid billId,
+        Guid adjustmentId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Returns the sum of discount deductions for a Bill.
     /// </summary>
     Task<decimal> GetTotalDiscountAmountAsync(Guid billId, CancellationToken cancellationToken = default);

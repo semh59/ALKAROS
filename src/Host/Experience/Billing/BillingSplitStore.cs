@@ -385,6 +385,98 @@ public sealed class BillingSplitStore
         return (adjustment, summary);
     }
 
+    /// <summary>
+    /// Takes a wrongly entered discount or tip off the bill. The row is deleted (every reader of the adjustments
+    /// stays consistent without a filter), and the audit event keeps the removed record in full.
+    /// </summary>
+    public async Task<AdjustedBillSummary> UndoAdjustmentAsync(
+        Guid billId,
+        Guid adjustmentId,
+        Guid actorId,
+        IAuditEventStore auditEvents,
+        string correlationId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+        if (_dataSource == null)
+            throw new InvalidOperationException("Data source is not configured.");
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT bill_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, transaction))
+        {
+            lockCommand.Parameters.AddWithValue("bill_id", billId);
+            await lockCommand.ExecuteScalarAsync(cancellationToken);
+        }
+        // The per-bill lock a tender and an apply take: a payment cannot land between the collected-amount read and the delete.
+        await using (var allocationLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction))
+        {
+            allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
+            await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        var existing = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+        var target = existing.FirstOrDefault(a => a.Id == adjustmentId)
+            ?? throw new BillingSplitNotFoundException($"Adjustment {adjustmentId} was not found on bill {billId}.", "düzeltme");
+
+        if (!IsDiscountable(bill.Status))
+            throw new AdjustmentUndoBillStateException(billId, bill.Status.ToString());
+        if (target.AdjustmentType is not (AdjustmentType.DiscountPercentage or AdjustmentType.DiscountAmount or AdjustmentType.Tip))
+            throw new BillingValidationException(
+                "ADJUSTMENT_NOT_UNDOABLE", $"Adjustment type {target.AdjustmentType} cannot be undone.",
+                "Yalnızca indirim ve bahşiş geri alınabilir.");
+
+        var before = AdjustmentCalculator.Calculate(bill, existing);
+        var summary = AdjustmentCalculator.Calculate(bill, existing.Where(a => a.Id != adjustmentId).ToList());
+        decimal collected;
+        await using (var collectedCommand = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
+            connection, transaction))
+        {
+            collectedCommand.Parameters.AddWithValue("bill_id", billId);
+            collected = (decimal)(await collectedCommand.ExecuteScalarAsync(cancellationToken))!;
+        }
+        if (summary.AdjustedPayableAmount < collected)
+            throw new AdjustmentUndoBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
+
+        if (!await _adjustments.DeleteAsync(billId, adjustmentId, connection, transaction, cancellationToken))
+            throw new BillingSplitNotFoundException($"Adjustment {adjustmentId} was not found on bill {billId}.", "düzeltme");
+        await BumpBillRowVersionAsync(connection, transaction, billId, cancellationToken);
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "bill.adjustment.undone",
+                aggregateType: "Bill",
+                aggregateId: billId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: target.Reason,
+                beforeStateJson: JsonSerializer.Serialize(new
+                {
+                    payableAmount = before.AdjustedPayableAmount,
+                    adjustmentId = target.Id,
+                    adjustmentType = target.AdjustmentType.ToString(),
+                    calculationType = target.CalculationType.ToString(),
+                    amount = target.Amount,
+                    reason = target.Reason,
+                    notes = target.Notes,
+                    authorizedBy = target.AuthorizedBy,
+                    createdBy = target.CreatedBy,
+                    createdAt = target.CreatedAt,
+                }),
+                afterStateJson: JsonSerializer.Serialize(new { payableAmount = summary.AdjustedPayableAmount })),
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
+        return summary;
+    }
+
     public async Task<(IReadOnlyList<BillAdjustment> Adjustments, AdjustedBillSummary Summary)> GetAdjustmentsAsync(
         Guid billId,
         CancellationToken cancellationToken = default)
@@ -825,6 +917,14 @@ public sealed class BillDiscountBelowCollectedException : Exception
     public decimal AdjustedPayable { get; }
     public decimal Collected { get; }
 }
+
+/// <summary>Taking an adjustment off would leave the payable below what was already collected.</summary>
+public sealed class AdjustmentUndoBelowCollectedException(Guid billId, decimal adjustedPayable, decimal collected)
+    : Exception($"Bill {billId}: undoing the adjustment leaves {adjustedPayable} payable, below the {collected} already collected.");
+
+/// <summary>The bill is paid, cancelled or otherwise past the point where its adjustments may change.</summary>
+public sealed class AdjustmentUndoBillStateException(Guid billId, string status)
+    : Exception($"Bill {billId} is {status}; its adjustments can no longer be undone.");
 
 public sealed class BillDiscountUnsupportedBillStateException : Exception
 {

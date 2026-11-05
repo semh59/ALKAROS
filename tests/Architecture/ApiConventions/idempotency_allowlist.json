@@ -1,6 +1,10 @@
 {
   "_comment": "V1-RMD-430: bugün tekrar anahtarı almayan veri değiştiren uçlar. Anahtar \"METOD /rota\" biçimindedir; görev, ucu tanımlayan dosyanın plan sahibidir. Liste yalnız küçülebilir: anahtar eklenen ya da kaldırılan bir uç listede kalırsa MutatingEndpointIdempotencyTests kırılır.",
   "withoutIdempotencyKey": {
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/adjustments/{adjustmentId:guid}/undo": {
+      "reason": "Geri alma ucu doğal olarak idempotenttir: tekrar çağrıda kaldırılacak kayıt kalmadığı için 404 döner, ikinci kez uygulanamaz.",
+      "task": "V1-RMD-829"
+    },
     "DELETE /api/v1/management/business-identity/logo": {
       "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
       "task": "V1-RMD-246"

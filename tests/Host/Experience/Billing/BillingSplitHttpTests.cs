@@ -1203,6 +1203,233 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         => await client.SendAsync(JsonRequest(
             HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/discount", cookie, body));
 
+    private static readonly JsonSerializerOptions WebJson = new(JsonSerializerDefaults.Web);
+
+    private static HttpRequestMessage UndoRequest(Guid terminalId, Guid billId, Guid adjustmentId, string cookie)
+        => Request(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/adjustments/{adjustmentId:D}/undo", cookie);
+
+    private static async Task<AdjustedBillSummaryV1> AdjustedSummaryAsync(HttpClient client, Guid terminalId, Guid billId, string cookie)
+    {
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/adjustments", cookie));
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        return document.RootElement.GetProperty("summary").Deserialize<AdjustedBillSummaryV1>(WebJson)!;
+    }
+
+    [Fact]
+    public async Task UndoingADiscountRestoresThePayableAndTheAuditTrailKeepsTheRemovedRecord()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var applied = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie,
+            new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        var discountId = (await applied.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.AdjustmentId!.Value;
+        Assert.Equal(225m, (await AdjustedSummaryAsync(client, terminalId, seeded.BillId, cookie)).AdjustedPayableAmount);
+
+        using var undone = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, discountId, cookie));
+
+        Assert.Equal(HttpStatusCode.OK, undone.StatusCode);
+        var result = (await undone.Content.ReadFromJsonAsync<UndoBillAdjustmentResultV1>())!;
+        Assert.Equal(discountId, result.AdjustmentId);
+        Assert.Equal(250m, result.Summary.AdjustedPayableAmount);
+        Assert.Equal(0m, result.Summary.TotalDiscounts);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        var events = await new PostgresAuditEventStore(source).GetByAggregateAsync("Bill", seeded.BillId);
+        var audit = Assert.Single(events, e => e.EventName == "bill.adjustment.undone");
+        Assert.Equal(userId, audit.ActorId);
+        using var before = JsonDocument.Parse(audit.BeforeStateJson!);
+        Assert.Equal(discountId, before.RootElement.GetProperty("adjustmentId").GetGuid());
+        Assert.Equal("DiscountPercentage", before.RootElement.GetProperty("adjustmentType").GetString());
+        Assert.Equal(25m, before.RootElement.GetProperty("amount").GetDecimal());
+        Assert.Equal("PromotionalOffer", before.RootElement.GetProperty("reason").GetString());
+        using var after = JsonDocument.Parse(audit.AfterStateJson!);
+        Assert.Equal(250m, after.RootElement.GetProperty("payableAmount").GetDecimal());
+    }
+
+    [Fact]
+    public async Task UndoingATipLowersThePayableAndLeavesTheOtherAdjustmentAlone()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var tip = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+        var tipId = (await tip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+        using var discount = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie,
+            new(Guid.NewGuid().ToString(), "FixedAmount", 20m, "PromotionalOffer"));
+        Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+        Assert.Equal(240m, (await AdjustedSummaryAsync(client, terminalId, seeded.BillId, cookie)).AdjustedPayableAmount);
+
+        using var undone = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, tipId, cookie));
+
+        Assert.Equal(HttpStatusCode.OK, undone.StatusCode);
+        var summary = await AdjustedSummaryAsync(client, terminalId, seeded.BillId, cookie);
+        Assert.Equal(230m, summary.AdjustedPayableAmount);
+        Assert.Equal(0m, summary.TotalTips);
+        Assert.Equal(20m, summary.TotalDiscounts);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task UndoAnswersNotFoundForAMissingRepeatedOrForeignAdjustmentAndChangesNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var other = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var tip = await SendTipAsync(client, terminalId, other.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+        var otherTipId = (await tip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+
+        using var missing = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, Guid.NewGuid(), cookie));
+        using var foreign = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, otherTipId, cookie));
+        using var first = await client.SendAsync(UndoRequest(terminalId, other.BillId, otherTipId, cookie));
+        using var repeat = await client.SendAsync(UndoRequest(terminalId, other.BillId, otherTipId, cookie));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        foreach (var refused in new[] { missing, foreign, repeat })
+        {
+            Assert.Equal(HttpStatusCode.NotFound, refused.StatusCode);
+            Assert.Equal("NOT_FOUND", (await ErrorOf(refused)).Code);
+        }
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(other.BillId));
+    }
+
+    [Fact]
+    public async Task AnUndoMovesTheBillVersionSoASplitSavedAgainstTheOlderOneIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var tip = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+        var tipId = (await tip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+        async Task<long> VersionAsync()
+        {
+            using var get = await client.SendAsync(Request(HttpMethod.Get, Path(terminalId, seeded.BillId), cookie));
+            return (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!.BillRowVersion;
+        }
+        var before = await VersionAsync();
+
+        using var undone = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, tipId, cookie));
+
+        Assert.Equal(HttpStatusCode.OK, undone.StatusCode);
+        Assert.True(await VersionAsync() > before);
+    }
+
+    [Fact]
+    public async Task TheRepositoryNeverDeletesAnAdjustmentThatBelongsToAnotherBill()
+    {
+        var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "supervisor", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var other = await _database.SeedBillAsync();
+        var feeId = await _database.SeedServiceFeeAsync(seeded.BillId, userId);
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        await using var connection = await source.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var repository = new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(source);
+
+        Assert.False(await repository.DeleteAsync(other.BillId, feeId, connection, transaction));
+        Assert.True(await repository.DeleteAsync(seeded.BillId, feeId, connection, transaction));
+    }
+
+    [Fact]
+    public async Task OnlyDiscountsAndTipsCanBeUndone()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var feeId = await _database.SeedServiceFeeAsync(seeded.BillId, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, feeId, cookie));
+
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        Assert.Equal("ADJUSTMENT_NOT_UNDOABLE", (await ErrorOf(refused)).Code);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task UndoIsRefusedOnAPaidBillAndWhenItWouldDropThePayableBelowWhatWasCollected()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.split");
+        var paid = await _database.SeedBillAsync();
+        var collected = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var paidTip = await SendTipAsync(client, terminalId, paid.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+        var paidTipId = (await paidTip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+        using var collectedTip = await SendTipAsync(client, terminalId, collected.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+        var collectedTipId = (await collectedTip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+        await _database.SetBillStatusAsync(paid.BillId, "Paid");
+        await _database.SeedCollectedAsync(collected.BillId, 255m, userId);
+
+        using var onPaid = await client.SendAsync(UndoRequest(terminalId, paid.BillId, paidTipId, cookie));
+        using var belowCollected = await client.SendAsync(UndoRequest(terminalId, collected.BillId, collectedTipId, cookie));
+
+        Assert.Equal(HttpStatusCode.Conflict, onPaid.StatusCode);
+        Assert.Equal("UNSUPPORTED_BILL_STATE", (await ErrorOf(onPaid)).Code);
+        Assert.Equal(HttpStatusCode.Conflict, belowCollected.StatusCode);
+        Assert.Equal("ADJUSTMENT_UNDO_BELOW_COLLECTED", (await ErrorOf(belowCollected)).Code);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(paid.BillId));
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(collected.BillId));
+    }
+
+    [Fact]
+    public async Task UndoNeedsASessionAndTheMutationPermission()
+    {
+        var terminalId = Guid.NewGuid();
+        var mutable = await _database.SeedSessionAsync(terminalId, canMutate: true);
+        var readOnly = await _database.SeedSessionAsync(terminalId, canMutate: false);
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var tip = await SendTipAsync(client, terminalId, seeded.BillId, mutable, new(Guid.NewGuid().ToString(), 10m));
+        var tipId = (await tip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+
+        using var anonymous = new HttpRequestMessage(HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/adjustments/{tipId:D}/undo");
+        using var anonymousResponse = await client.SendAsync(anonymous);
+        using var forbidden = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, tipId, readOnly));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymousResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task AnUndoTellsTheCustomerDisplayAtOnceAndARefusedOneTellsNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var hub = new RecordingHub();
+        await using var app = await StartAsync(hub);
+        using var client = CreateClient(app);
+        using var tip = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+        var tipId = (await tip.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId;
+        var pushesBefore = hub.Pushes.Count;
+
+        using var refused = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, Guid.NewGuid(), cookie));
+        Assert.Equal(pushesBefore, hub.Pushes.Count);
+        using var undone = await client.SendAsync(UndoRequest(terminalId, seeded.BillId, tipId, cookie));
+
+        Assert.Equal(HttpStatusCode.OK, undone.StatusCode);
+        Assert.Equal(pushesBefore + 1, hub.Pushes.Count);
+        var push = hub.Pushes[^1];
+        Assert.Equal(DualScreenApplication.TerminalGroup(terminalId), push.Group);
+        Assert.Contains("PaymentChanged", push.Argument);
+    }
+
     private static async Task<HttpResponseMessage> SendTipAsync(
         HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillTipRequestV1 body)
         => await client.SendAsync(JsonRequest(
@@ -2116,6 +2343,23 @@ internal sealed class BillingSplitTestDatabase
             "SELECT count(*) FROM billing.bill_adjustments WHERE bill_id = @bill_id;");
         command.Parameters.AddWithValue("bill_id", billId);
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<Guid> SeedServiceFeeAsync(Guid billId, Guid userId)
+    {
+        var id = Guid.NewGuid();
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO billing.bill_adjustments
+                (bill_adjustment_id, bill_id, adjustment_type, calculation_type, amount, net_amount, gross_amount,
+                 is_deduction, reason, authorized_by, created_at, created_by)
+            VALUES (@id, @bill_id, 'ServiceFee', 'FixedAmount', 10, 10, 10, FALSE, 'SERVICE_FEE', @user, now(), @user);
+            """);
+        command.Parameters.AddWithValue("id", id);
+        command.Parameters.AddWithValue("bill_id", billId);
+        command.Parameters.AddWithValue("user", userId);
+        await command.ExecuteNonQueryAsync();
+        return id;
     }
 
     public async Task<long> GrantCountAsync()

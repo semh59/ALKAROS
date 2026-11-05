@@ -140,6 +140,11 @@ public sealed record ApplyBillTipResultV1(
     Guid AdjustmentId,
     AdjustedBillSummaryV1 Summary);
 
+public sealed record UndoBillAdjustmentResultV1(
+    Guid BillId,
+    Guid AdjustmentId,
+    AdjustedBillSummaryV1 Summary);
+
 public sealed record AdjustedBillSummaryV1(
     decimal OriginalPayableAmount,
     decimal TotalDiscounts,

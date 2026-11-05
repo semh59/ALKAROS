@@ -294,6 +294,37 @@ public static class BillingSplitApplication
                     summary.AdjustedPayableAmount)));
         });
 
+        // Takes a wrongly entered discount or tip back off. Needs no tender-style approval: it only returns the
+        // payable toward its original value, so the same bills.split check as entering a tip applies. No idempotency
+        // key: a repeat finds nothing left to remove and answers 404, so it can never apply twice.
+        billsGroup.MapPost("/{billId:guid}/adjustments/{adjustmentId:guid}/undo", async (
+            Guid terminalId,
+            Guid billId,
+            Guid adjustmentId,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            IAuditEventStore auditEvents,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var summary = await store.UndoAdjustmentAsync(
+                billId, adjustmentId, principal.UserId, auditEvents, context.TraceIdentifier, cancellationToken);
+            await DualScreenApplication.NotifyCustomerDisplayAsync(
+                customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
+            return Results.Ok(new UndoBillAdjustmentResultV1(
+                billId,
+                adjustmentId,
+                new AdjustedBillSummaryV1(
+                    summary.OriginalPayableAmount,
+                    summary.TotalDiscounts,
+                    summary.TotalFees,
+                    summary.TotalTips,
+                    summary.AdjustedPayableAmount)));
+        });
+
         billsGroup.MapGet("/{billId:guid}/adjustments", async (
             Guid terminalId,
             Guid billId,
@@ -662,6 +693,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         SplitDesignUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda bölme tasarımı değiştirilemez."),
         BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
         BillDiscountBelowCollectedException => (409, "DISCOUNT_BELOW_COLLECTED", "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz."),
+        AdjustmentUndoBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim ya da bahşiş geri alınamaz."),
+        AdjustmentUndoBelowCollectedException => (409, "ADJUSTMENT_UNDO_BELOW_COLLECTED", "Geri alınırsa ödenecek tutar, hesaptan şimdiye kadar alınan tutarın altına iniyor; geri alınamaz."),
         SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
         BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
         BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
