@@ -13,6 +13,7 @@ Sunucu iş günü 06:00 Europe/Istanbul - ertesi gün 06:00 (`BusinessDayWindow`
 ## Owned surface
 
 - `evidence/V1-RMD-827/**`
+- `src/Clients/PosTerminal/src/businessDayDefaults.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/format.ts (V1-RMD-784) — iş günü yardımcıları, `venueToday` yerine.
   - src/Clients/PosTerminal/src/format.test.ts (V1-RMD-784) — sınır testleri.
