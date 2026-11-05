@@ -180,6 +180,14 @@ describe("workspace route gating uses granular permission codes, not the removed
     },
   );
 
+  it("gives every left-menu entry its own icon", async () => {
+    await renderRoute("/", ["orders.create", "tables.status", "bills.split", "kitchen.advance", "catalog.manage", "reports.view"]);
+
+    const drawn = [...document.querySelectorAll(".production-shell__nav-symbol svg")].map((svg) => svg.innerHTML);
+    expect(drawn.length).toBeGreaterThan(8);
+    expect(new Set(drawn).size).toBe(drawn.length);
+  });
+
   it("closes the online food screen to a session that only holds tables.status", async () => {
     await renderRoute("/online", ["tables.status"]);
     expect(document.body.textContent).toContain(forbiddenText);
@@ -957,6 +965,34 @@ describe("workspace /tables route background refresh", () => {
 
     await act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Yenile")!.click());
     expect(planCalls).toBe(2);
+  });
+
+  it("asks for the floor plan once when a zone is picked, not twice", async () => {
+    const planPaths: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/floor-plans/")) {
+        planPaths.push(path);
+        return jsonResponse({ zoneId: "zone-2", zoneCode: "T", zoneName: "Teras", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1, tables: [] });
+      }
+      if (path.includes("/zones")) return jsonResponse([
+        { zoneId: "zone-1", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 },
+        { zoneId: "zone-2", code: "T", name: "Teras", sortOrder: 2, active: true, rowVersion: 1 },
+      ]);
+      return jsonResponse([{ ...tableJson, zoneId: "zone-1" }]);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    planPaths.length = 0;
+
+    const zoneSelect = [...document.querySelectorAll("select")].find((select) => [...select.options].some((option) => option.value === "zone-2"))!;
+    await act(async () => {
+      zoneSelect.value = "zone-2";
+      zoneSelect.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
+
+    expect(planPaths.filter((path) => path.includes("zone-2"))).toHaveLength(1);
   });
 
   it("recovers by itself after the first load failed", async () => {

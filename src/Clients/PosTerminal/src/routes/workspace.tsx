@@ -124,9 +124,9 @@ export function ExperiencePage({
     { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "orders.create" },
     { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
     { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split" },
-    { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "billing", requiredCapability: "orders.create" },
+    { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "clock", requiredCapability: "orders.create" },
     // V12-OUI-004: one entry for online food (orders, and for a manager its settings); same permission as accepting a QR order.
-    { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "billing", requiredCapability: "orders.create" },
+    { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "send", requiredCapability: "orders.create" },
     // V1-IAM-028: kitchen.advance is additive — every role that held
     // orders.send before still holds it, and the new kitchen-staff
     // ("Mutfak Personeli") role holds ONLY kitchen.advance. Gating the nav
@@ -135,8 +135,8 @@ export function ExperiencePage({
     { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "kitchen.advance" },
     { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
     { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
-    { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
-    { id: "management", label: navLabels.management, href: "/management", icon: "system", requiredCapability: "reports.view" },
+    { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "lock", requiredCapability: "reports.view" },
+    { id: "management", label: navLabels.management, href: "/management", icon: "brand", requiredCapability: "reports.view" },
   ];
   const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
   const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
@@ -269,7 +269,6 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
 
   const handleSelectZone = (zoneId: string) => {
     setSelectedZoneId(zoneId);
-    void loadFloorPlanForZone(zoneId, zones);
   };
 
   const mutate = async (action: () => Promise<unknown>) => { try { await action(); } finally { await load(true); } };

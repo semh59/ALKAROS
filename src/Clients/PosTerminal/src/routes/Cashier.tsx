@@ -60,6 +60,20 @@ export function customerDisplayHref(originUrl: string): string {
   return `${originUrl.replace(/\/+$/, "")}/display`;
 }
 
+function useNarrowScreen(): boolean {
+  const query = "(max-width: 600px)";
+  const [narrow, setNarrow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia(query).matches);
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const list = window.matchMedia(query);
+    const update = () => setNarrow(list.matches);
+    list.addEventListener("change", update);
+    update();
+    return () => list.removeEventListener("change", update);
+  }, []);
+  return narrow;
+}
+
 export function Cashier() {
   const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
@@ -95,6 +109,11 @@ export function Cashier() {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const compactHeader = useNarrowScreen();
+  const cancelRemoveButton = useRef<HTMLButtonElement>(null);
+  const headerMenu = useRef<HTMLElement>(null);
   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
@@ -302,8 +321,28 @@ export function Cashier() {
     const dialog = pairingDialog.current;
     const first = dialog?.querySelector<HTMLElement>(focusableSelector);
     first?.focus();
-    return () => pairingTrigger.current?.focus();
+    const trigger = pairingTrigger.current;
+    return () => trigger?.focus();
   }, [pairingOpen]);
+
+  useEffect(() => { if (!compactHeader) setMenuOpen(false); }, [compactHeader]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMenuOpen(false); };
+    const menu = headerMenu.current;
+    const closeOnChoice = (event: Event) => { if ((event.target as Element).closest("a, button")) setMenuOpen(false); };
+    window.addEventListener("keydown", closeOnEscape);
+    menu?.addEventListener("click", closeOnChoice);
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      menu?.removeEventListener("click", closeOnChoice);
+    };
+  }, [menuOpen]);
+
+  // A question about a line is only good for the order it was asked on; the safe answer takes the focus.
+  useEffect(() => { setConfirmRemoveId(null); }, [order?.orderId, order?.revision]);
+  useEffect(() => { if (confirmRemoveId) cancelRemoveButton.current?.focus(); }, [confirmRemoveId]);
 
   // The dialog shows whether a screen is paired and when that pairing ends, so a session that is about to
   // run out is not discovered in front of a customer.
@@ -362,6 +401,7 @@ export function Cashier() {
 
   const execute = async (action: () => Promise<unknown>, success?: string) => {
     setBusy(true);
+    setConfirmRemoveId(null);
     setError("");
     setNotice("");
     try {
@@ -544,6 +584,39 @@ export function Cashier() {
     />;
   }
 
+  const secondaryActions = (
+    <>
+      <button data-telemetry-id="b.routes.cashier.2"
+        className="header-action"
+        onClick={() => window.open(customerDisplayHref(customerDisplayUrl), "alkaros-customer-display")}
+      >
+        Müşteri ekranı
+      </button>
+      {reservationStationEnabled && (
+        <button data-telemetry-id="b.routes.cashier.3"
+          className="header-action"
+          onClick={() => window.open("/reservations", "alkaros-reservation-station")}
+        >
+          Rezervasyon istasyonu
+        </button>
+      )}
+      {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
+      <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
+      <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
+      {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Ürün menüsü</a>}
+      {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
+      <button data-telemetry-id="b.routes.cashier.4"
+        className="header-action"
+        ref={pairingTrigger}
+        aria-haspopup="dialog"
+        aria-expanded={pairingOpen}
+        onClick={() => setPairingOpen(true)}
+      >
+        Ekranı eşleştir
+      </button>
+    </>
+  );
+
   return (
     <main className="cashier-shell">
       <header className="pos-header">
@@ -556,42 +629,24 @@ export function Cashier() {
             <span />
             {backendStatus === "online" ? "Sunucu hazır" : "Bağlantı sorunu"}
           </div>
-          <button data-telemetry-id="b.routes.cashier.2"
-            className="header-action"
-            onClick={() => window.open(customerDisplayHref(customerDisplayUrl), "alkaros-customer-display")}
-          >
-            Müşteri ekranı
-          </button>
-          {reservationStationEnabled && (
-            <button data-telemetry-id="b.routes.cashier.3"
-              className="header-action"
-              onClick={() => window.open("/reservations", "alkaros-reservation-station")}
-            >
-              Rezervasyon istasyonu
-            </button>
-          )}
           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
           {cashSession && <CashSessionLink status={cashSession} />}
-          {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
-          <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
-          <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
-          {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Menü</a>}
-          {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
-          <button data-telemetry-id="b.routes.cashier.4"
-            className="header-action"
-            ref={pairingTrigger}
-            aria-haspopup="dialog"
-            aria-expanded={pairingOpen}
-            onClick={() => setPairingOpen(true)}
-          >
-            Ekranı eşleştir
-          </button>
+          {compactHeader ? (
+            <button data-telemetry-id="b.routes.cashier.42" className="header-action" aria-expanded={menuOpen} aria-controls="header-menu" onClick={() => setMenuOpen((open) => !open)}>Menü</button>
+          ) : (
+            <>
+              {secondaryActions}
+            </>
+          )}
           <div className="operator-card"><span>{displayName || username}</span><small>Kasiyer</small></div>
           <button data-telemetry-id="b.routes.cashier.5" className="icon-action" disabled={busy} onClick={() => void logout()} aria-label="Oturumu kapat">
             Çıkış
           </button>
         </div>
       </header>
+      {compactHeader && menuOpen && (
+        <nav id="header-menu" className="header-menu" aria-label="Diğer eylemler" ref={headerMenu}>{secondaryActions}</nav>
+      )}
 
       {cashSession && <CashSessionBand status={cashSession} />}
 
@@ -758,6 +813,19 @@ export function Cashier() {
                       <small>{formatMoney(line.lineTotal / line.quantity)} × {formatQuantity(line.quantity)} · KDV dahil</small>
                     </div>
                     <strong className="line-total">{formatMoney(line.lineTotal)}</strong>
+                    {confirmRemoveId === line.itemId ? (
+                      <div className="remove-confirm" role="group" aria-label={`${line.name} kaldırılsın mı?`}>
+                        <span>Kaldırılsın mı?</span>
+                        <button data-telemetry-id="b.routes.cashier.40"
+                          className="danger-text"
+                          disabled={busy || !activeOrder.editable}
+                          onClick={() => execute(() => api.removeItem(
+                            terminalId, activeOrder.orderId!, line.itemId, activeOrder.revision,
+                          ))}
+                        >Evet, kaldır</button>
+                        <button data-telemetry-id="b.routes.cashier.41" ref={cancelRemoveButton} onClick={() => setConfirmRemoveId(null)}>Vazgeç</button>
+                      </div>
+                    ) : (
                     <div className="quantity-controls">
                       <button data-telemetry-id="b.routes.cashier.16"
                         aria-label={`${line.name} azalt`}
@@ -777,11 +845,10 @@ export function Cashier() {
                       <button data-telemetry-id="b.routes.cashier.18"
                         className="remove"
                         disabled={busy || !activeOrder.editable}
-                        onClick={() => execute(() => api.removeItem(
-                          terminalId, activeOrder.orderId!, line.itemId, activeOrder.revision,
-                        ))}
+                        onClick={() => setConfirmRemoveId(line.itemId)}
                       >Kaldır</button>
                     </div>
+                    )}
                   </div>
                 ))}
               </div>

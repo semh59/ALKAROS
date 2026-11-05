@@ -1,0 +1,30 @@
+[global-setup] applied 215 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 22 tests using 1 worker
+
+  ok  1 [chromium] › specs\01-login-and-catalog.spec.js:5:3 › Kasiyer girişi ve katalog › kasiyer giriş yapar, Kasa ekranı açılır ve katalog yüklenir (2.1s)
+  ok  2 [chromium] › specs\02-stock-badge-and-kitchen-dispatch.spec.js:5:3 › Kalan stok rozeti ve mutfağa gönderim (vanilla Cashier - /cashier) › ürün sepete eklenir, kalan-stok rozeti doğru görünür, sipariş mutfağa gönderilir (2.5s)
+  ok  3 [chromium] › specs\04-complimentary-line.spec.js:5:3 › İkram sonrası hesap görünümü (PosTerminal Cashier.tsx) › ürün ikram edilir; gerçek fiyatıyla + ayrı bir indirim satırı olarak görünür (2.4s)
+  ok  4 [chromium] › specs\13-payment-surfaces-reachable.spec.js:10:3 › Ödeme yüzeylerine gerçek erişim (V1-RMD-265) › kasiyer ekranının başlığından Kasa Oturumu sayfasına gidilir (862ms)
+  ok  5 [chromium] › specs\13-payment-surfaces-reachable.spec.js:19:3 › Ödeme yüzeylerine gerçek erişim (V1-RMD-265) › PosTerminal hesap ekranından "Tahsilata geç" ile Tahsilat sayfası açılır (2.5s)
+  ok  6 [chromium] › specs\13-payment-surfaces-reachable.spec.js:32:3 › Ödeme yüzeylerine gerçek erişim (V1-RMD-265) › ödeme mutabakat taraması gerçek çözülmemiş ödemeden vaka açar; ödeme raporu okunur (766ms)
+  ok  7 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:21:3 › Kasa: canlı bekleyen hesap bildirimi (V1-RMD-287) › garson hesabı gönderince sayfa yenilenmeden kuyrukta belirir (1.5s)
+  ok  8 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:39:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › garsonun gönderdiği iki hesap ayırt edilir, biri tahsil edilince yalnız o kuyruktan çıkar (3.7s)
+  ok  9 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:90:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › yanlışlıkla gönderilen hesap kasadan masaya geri gönderilir; tahsilat başlamış hesapta seçenek yoktur (4.4s)
+  ok 10 [chromium] › specs\14-till-queue-of-sent-checks.spec.js:134:3 › Kasa: bekleyen hesaplar kuyruğu (V1-RMD-279/280) › kuyruk boşken bunu söyler (1.2s)
+  ok 11 [chromium] › specs\20-parked-ticket-recall-confirm.spec.js:11:3 › Bekletilen fiş geri yükleme onayı (vanilla Cashier - /cashier) › mevcut sepet doluyken geri yükleme, native confirm() değil uygulama içi modal ile onaylanır (1.9s)
+  ok 12 [chromium] › specs\22-category-tab-styling.spec.js:13:3 › Kategori sekmeleri gerçekten stillenmiş (vanilla Cashier - /cashier) › "Tüm Ürünler" sekmesi gerçek CSS alıyor, varsayılan tarayıcı butonu değil (1.1s)
+  ok 13 [chromium] › specs\27-barcode-scan-auto-add.spec.js:12:3 › Kasiyer - barkod taraması otomatik ekleme (V1-RMD-376) › tam SKU eşleşmesi ürünü otomatik ekler ve arama kutusunu temizler (1.3s)
+  ok 14 [chromium] › specs\27-barcode-scan-auto-add.spec.js:25:3 › Kasiyer - barkod taraması otomatik ekleme (V1-RMD-376) › modifikatörlü bir ürünün SKU taraması doğrudan eklemez, seçenek modalını açar (1.5s)
+  ok 15 [chromium] › specs\27-barcode-scan-auto-add.spec.js:38:3 › Kasiyer - barkod taraması otomatik ekleme (V1-RMD-376) › kısmi eşleşme (gerçek arama) hâlâ yalnızca filtreler, otomatik eklemez (1.2s)
+  ok 16 [chromium] › specs\27-barcode-scan-auto-add.spec.js:56:3 › Kasiyer - barkod taraması otomatik ekleme (V1-RMD-376) › küçük harfle yazılan SKU araması da eşleşir (kod karşılaştırması büyük/küçük harfe duyarsız) (1.3s)
+  ok 17 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 768 px genişlikte pencere içinde ve tıklanabilir (1.0s)
+  ok 18 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 929 px genişlikte pencere içinde ve tıklanabilir (1.1s)
+  ok 19 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1024 px genişlikte pencere içinde ve tıklanabilir (1.2s)
+  ok 20 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:7:5 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › üst çubuktaki her eylem 1440 px genişlikte pencere içinde ve tıklanabilir (1.3s)
+  ok 21 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:25:3 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › ödeme sayfasından "Kasaya dön" ana kasaya götürür (1.1s)
+  ok 22 [chromium] › specs\31-till-header-and-payment-back-links.spec.js:36:3 › Kasa üst çubuğu ve ödeme sayfalarından dönüş (V1-RMD-784) › kasa oturumu sayfasından "Kasaya dön" hızlı kasaya götürür (682ms)
+[global-teardown] Host stopped, database dropped
+
+  22 passed (54.1s)

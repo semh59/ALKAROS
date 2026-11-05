@@ -1,0 +1,11 @@
+      Tests  2 failed | 3 passed (5)
+      Tests  1 failed | 4 passed (5)
+      Tests  1 failed | 4 passed (5)
+M4-narrow: NOCHANGE
+      Tests  1 failed | 6 passed (7)
+      Tests  1 failed | 6 passed (7)
+      Tests  1 failed | 4 passed (5)
+      Tests  1 failed | 35 passed (36)
+      Tests  1 failed | 6 passed (7)
+      Tests  1 failed | 6 passed (7)
+      Tests  1 failed | 6 passed (7)
