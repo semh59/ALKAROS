@@ -34,6 +34,7 @@ Kapsam dışı: arayüz (V1-RMD-803).
   - src/Host/Experience/WaiterNotifications/SignalRCashierQueueAnnouncer.cs (V1-WTR-009) — yalnız kasa kuyruğu grubuna duyuru.
   - src/Host/Experience/WaiterNotifications/WaiterOrderStatusHub.cs (V1-WTR-009) — izinli oturumu kasa kuyruğu grubuna alma ve olay yükü.
   - src/Host/Experience/Billing/BillClosureSweeper.cs (V1-RMD-736) — Paid hesaba bağlı canlı siparişin onarımı.
+  - src/Host/Experience/Billing/BillCancellation.cs (V1-RMD-506) — iptal sonucu siparişin kimliğini taşır.
   - src/Host/Experience/Billing/BillingSplitApplication.cs (V1-IAM-024) — hesap iptalinde ekran bildirimi ve süpürücü kaydı.
   - src/Host/Experience/Billing/BillingSplitStore.cs (V1-RMD-057) — hesap ve masa işaretçisi tek işlemde.
   - src/Host/DualScreen/DualScreenApplication.Payments.cs (V13-PUI-001) — ortak bildirim yardımcısı, kapanış yorumu.
