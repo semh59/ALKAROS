@@ -1,0 +1,9 @@
+killed type-list
+killed address
+SURVIVED busy-guard
+SURVIVED amount-redraw
+killed state-sentence
+killed not-found
+killed network
+busy-guard removed (redundant with disabled attr): disabled-attr mutant killed
+amount-redraw: killed after assertion added

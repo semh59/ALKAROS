@@ -69,6 +69,8 @@
     tipNoteDraft: '',
     tipBusy: false,
     tipError: null,
+    undoBusy: false,
+    undoError: null,
     // V1-RMD-314 (finding K3): same retry-reuses-the-same-key fix as tenderIdempotencyKey above, for the
     // discount/tip apply requests. V1-RMD-756: each key is bound to the body it was minted for, so an edited
     // form after a network failure gets a new key instead of replaying the first attempt's server record.
@@ -1059,8 +1061,44 @@
     );
   }
 
+  // Only discounts and tips can be taken back; the server refuses the other kinds.
+  var UNDOABLE_ADJUSTMENT_TYPES = ['Tip', 'DiscountPercentage', 'DiscountAmount'];
+
+  function undoAdjustment(adjustmentId) {
+    state.undoBusy = true;
+    state.undoError = null;
+    render();
+    api(billBase() + '/adjustments/' + encodeURIComponent(adjustmentId) + '/undo', { method: 'POST' }).then(function (result) {
+      var code = result.body && result.body.error && result.body.error.code;
+      if (!result.ok) {
+        if (result.status === 404) state.undoError = 'Bu kalem zaten kaldırılmış; liste yenilendi.';
+        else if (code === 'UNSUPPORTED_BILL_STATE') state.undoError = 'Bu hesap durumunda indirim ya da bahşiş geri alınamaz.';
+        else state.undoError = describeHttpFailure(result.status, result.body);
+      }
+      // The undo itself is decided; a failed refresh afterwards must not read as a failed undo.
+      return refreshAdjustments().then(refreshSummary).then(function () {
+        if (result.ok) state.amountDraft = remainingAmount().toFixed(2);
+      }).catch(function () {
+        state.undoError = result.ok ? 'Geri alındı, ancak liste yenilenemedi. Sayfayı yenileyin.' : state.undoError;
+      });
+    }, function () {
+      state.undoError = 'Bağlantı kurulamadı. Tekrar deneyin.';
+    }).then(function () {
+      state.undoBusy = false;
+      render();
+      var error = document.querySelector('[data-undo-error]');
+      if (error) error.focus();
+    });
+  }
+
+  function renderUndoError() {
+    return state.undoError
+      ? '<div class="sp-alert-body" role="alert" data-undo-error tabindex="-1" style="color:var(--color-danger)">' + escapeHtml(state.undoError) + '</div>'
+      : '';
+  }
+
   function renderAdjustmentList() {
-    if (state.adjustmentItems.length === 0) return '';
+    if (state.adjustmentItems.length === 0) return renderUndoError();
     var adjustedTotal = state.adjustmentSummary ? state.adjustmentSummary.adjustedPayableAmount : null;
     return (
       '<div class="sp-field"><span class="sp-field-label">Uygulanan indirim, bahşiş ve ücretler</span>' +
@@ -1070,9 +1108,16 @@
         return (
           '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(label) +
           (item.reason ? ' · ' + escapeHtml(DISCOUNT_REASON_LABELS[item.reason] || item.reason) : '') + '</span>' +
-          '<span class="sp-line-status is-approved">' + sign + formatMoney(item.amount) + '</span></div>'
+          '<span class="sp-line-status is-approved">' + sign + formatMoney(item.amount) + '</span>' +
+          (UNDOABLE_ADJUSTMENT_TYPES.indexOf(item.adjustmentType) !== -1
+            ? '<button class="sp-btn sp-btn-secondary" type="button" data-undo-adjustment="' + escapeHtml(item.adjustmentId) + '"' +
+              ' aria-label="' + escapeHtml(label + ' ' + formatMoney(item.amount) + ' geri al') + '"' +
+              (state.undoBusy || state.busy || state.tipBusy || state.discountBusy ? ' disabled' : '') + '>Geri al</button>'
+            : '') +
+          '</div>'
         );
       }).join('') +
+      renderUndoError() +
       (adjustedTotal != null
         ? '<div class="sp-line"><span class="sp-line-method">Kaydedilen düzeltmelerle toplam</span>' +
           '<span class="sp-line-status is-approved">' + formatMoney(adjustedTotal) + '</span></div>'
@@ -1939,6 +1984,9 @@
     if (discountValueInput) discountValueInput.addEventListener('input', function () { state.discountValueDraft = this.value; state.discountConfirm = false; });
     var discountNoteInput = document.getElementById('discount-note');
     if (discountNoteInput) discountNoteInput.addEventListener('input', function () { state.discountNoteDraft = this.value; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-undo-adjustment]'), function (button) {
+      button.addEventListener('click', function () { undoAdjustment(button.getAttribute('data-undo-adjustment')); });
+    });
     var submitDiscountButton = document.getElementById('submit-discount');
     if (submitDiscountButton) submitDiscountButton.addEventListener('click', submitDiscount);
     var tipAmountInput = document.getElementById('tip-amount');

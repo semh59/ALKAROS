@@ -1,7 +1,7 @@
 # V1-RMD-830 - Tahsilat sayfası: indirim ve bahşiş geri alma
 
 - Task ID: V1-RMD-830
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
@@ -13,9 +13,9 @@ K18 arayüz tarafı (sunucu ucu V1-RMD-829'da Done). Tahsilat sayfasında "Uygul
 ## Owned surface
 
 - `evidence/V1-RMD-830/**`
-- `tests/Clients/StaticApps/split-payment-undo-adjustment.test.js`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — Geri al düğmesi ve işleyici.
+  - tests/Clients/StaticApps/split-payment-undo-adjustment.test.js (V1-RMD-109) — geri alma testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
