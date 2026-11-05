@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Button, TextField } from "../../design-system";
-import { businessDateRange, formatDate, formatMoney } from "../../format";
+import { venueDateRange, formatDate, formatMoney } from "../../format";
 import { managementText } from "../../strings";
 import { errorText } from "../management/panel";
 import { dayCount, formatDay, maxDays, providerLabel } from "../management-channel-report/models";
@@ -11,7 +11,7 @@ import "./management-order-invoices.css";
 
 const t = managementText.orderInvoices;
 
-const defaultRange = () => businessDateRange(7);
+const defaultRange = () => venueDateRange(7);
 
 export function OrderInvoicesSection({ client }: Partial<ManagementSectionProps> & { client?: OrderInvoicesClient }) {
   const api = useMemo(() => client ?? createOrderInvoicesClient(), [client]);

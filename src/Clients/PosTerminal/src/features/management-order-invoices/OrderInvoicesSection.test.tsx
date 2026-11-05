@@ -132,9 +132,10 @@ describe("online order invoices section", () => {
   });
 
   it.each([
-    ["2026-09-24T02:00:00Z", "2026-09-17", "2026-09-23"],
-    ["2026-09-24T03:00:00Z", "2026-09-18", "2026-09-24"],
-  ])("the default range at %s is the last seven Istanbul business days", async (instant, from, to) => {
+    ["2026-09-23T20:59:59Z", "2026-09-17", "2026-09-23"],
+    ["2026-09-23T21:00:00Z", "2026-09-18", "2026-09-24"],
+    ["2026-09-24T02:00:00Z", "2026-09-18", "2026-09-24"],
+  ])("the default range at %s is the last seven Istanbul calendar days (invoices carry the tax date, not the business day)", async (instant, from, to) => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(instant));
     const api = client();

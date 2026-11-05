@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { formatClockMinutes, formatClockTime, formatDate, formatDateTime, formatDayMonthTime, formatShortDateTime, businessDate, businessDateRange, businessDayStart, formatDecimal, formatGigabytes } from "./format";
+import { formatClockMinutes, formatClockTime, formatDate, formatDateTime, formatDayMonthTime, formatShortDateTime, businessDate, businessDateRange, businessDayStart, venueDateRange, formatDecimal, formatGigabytes } from "./format";
 
 describe("format helpers", () => {
   const deviceZone = process.env.TZ;
@@ -57,6 +57,17 @@ describe("format helpers", () => {
     expect(businessDateRange(30, new Date("2026-03-02T04:00:00Z"))).toEqual({ from: "2026-02-01", to: "2026-03-02" });
     expect(businessDateRange(7, new Date("2026-03-02T01:00:00Z"))).toEqual({ from: "2026-02-23", to: "2026-03-01" });
     expect(businessDateRange(7, new Date("2026-03-02T04:00:00Z"))).toEqual({ from: "2026-02-24", to: "2026-03-02" });
+  });
+
+  it("builds a calendar-day range in the venue zone whatever the device zone", () => {
+    for (const zone of ["UTC", "America/Los_Angeles"]) {
+      process.env.TZ = zone;
+      expect(venueDateRange(7, new Date("2026-09-23T20:59:59Z"))).toEqual({ from: "2026-09-17", to: "2026-09-23" });
+      expect(venueDateRange(7, new Date("2026-09-23T21:00:00Z"))).toEqual({ from: "2026-09-18", to: "2026-09-24" });
+      expect(venueDateRange(7, new Date("2026-09-24T02:00:00Z"))).toEqual({ from: "2026-09-18", to: "2026-09-24" });
+      expect(venueDateRange(7, new Date("2026-12-31T21:00:00Z"))).toEqual({ from: "2026-12-26", to: "2027-01-01" });
+      expect(venueDateRange(7, new Date("2028-03-01T10:00:00Z"))).toEqual({ from: "2028-02-24", to: "2028-03-01" });
+    }
   });
 
   it("reads the real clock by default", () => {

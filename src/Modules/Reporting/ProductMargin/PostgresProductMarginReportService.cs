@@ -1,3 +1,4 @@
+using ALKAROS.Reporting.BusinessDayTotals;
 using Npgsql;
 
 namespace ALKAROS.Reporting.ProductMargin;
@@ -11,7 +12,7 @@ public interface IProductMarginReportService
 /// Sold units, VAT-excluded revenue, stock-valued cost and gross margin per product, read-only from the ledgers.
 /// Revenue comes from the paid bills' sale lines; cost from the stock the line really consumed (consumption movements minus
 /// reversals, so a product mapping and its extras count once each) valued at the weighted average of the stock item's goods
-/// receipts up to the service day. A stock item without a receipt history has no cost: the line is flagged, never priced at zero.
+/// receipts up to the business day (06:00 Istanbul start, like every other report). A stock item without a receipt history has no cost: the line is flagged, never priced at zero.
 /// </summary>
 public sealed class PostgresProductMarginReportService : IProductMarginReportService
 {
@@ -20,14 +21,14 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
 
     private const int MaxRows = 1000;
 
-    private const string LinesCte =
-        """
+    private static readonly string LinesCte =
+        $"""
         WITH lines AS (
             SELECT bi.order_item_id, bi.product_id, bi.product_name_snapshot,
                    bi.quantity - COALESCE(rf.quantity, 0) AS quantity,
                    bi.net_amount - ROUND(bi.net_amount * COALESCE(rf.quantity, 0) / NULLIF(bi.quantity, 0), 2) AS net_amount,
                    bi.line_type,
-                   (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date AS business_date
+                   ((b.opened_at AT TIME ZONE '{TimeZoneId}') - interval '{BusinessDayWindow.StartHour} hours')::date AS business_date
             FROM billing.bill_items bi
             JOIN billing.bills b ON b.bill_id = bi.bill_id
             -- Units paid back by a completed item refund leave the line; a request still waiting does not.
@@ -40,7 +41,7 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
             ) rf ON rf.bill_item_id = bi.bill_item_id
             WHERE b.status = 'Paid'
               AND bi.line_type IN ('Sale', 'Complimentary')
-              AND (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date BETWEEN @from AND @to
+              AND ((b.opened_at AT TIME ZONE '{TimeZoneId}') - interval '{BusinessDayWindow.StartHour} hours')::date BETWEEN @from AND @to
         )
         """;
 
@@ -80,13 +81,13 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
     private async Task<decimal> ReadUnallocatedRefundsAsync(ProductMarginFilter filter, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
-            """
+            $"""
             SELECT COALESCE(SUM(rr.amount), 0)
             FROM payments.refund_requests rr
             JOIN billing.bills b ON b.bill_id = rr.bill_id
             WHERE rr.status = 'Completed'
               AND b.status = 'Paid'
-              AND (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date BETWEEN @from AND @to
+              AND ((b.opened_at AT TIME ZONE '{TimeZoneId}') - interval '{BusinessDayWindow.StartHour} hours')::date BETWEEN @from AND @to
               AND NOT EXISTS (SELECT 1 FROM payments.refund_request_items ri WHERE ri.refund_request_id = rr.refund_request_id);
             """);
         AddRange(command, filter);
@@ -96,7 +97,7 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
     private async Task<List<ProductMarginRow>> ReadRowsAsync(ProductMarginFilter filter, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
-            LinesCte + """
+            LinesCte + $"""
             , consumed AS (
                 SELECT g.order_item_id, g.stock_item_id,
                        g.quantity - COALESCE((
@@ -126,7 +127,7 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
                     JOIN purchasing.goods_receipts gr ON gr.receipt_id = gri.receipt_id
                     WHERE gri.stock_item_id = u.stock_item_id
                       AND gri.accepted_quantity > 0
-                      AND (gr.received_at AT TIME ZONE 'Europe/Istanbul')::date <= l.business_date
+                      AND ((gr.received_at AT TIME ZONE '{TimeZoneId}') - interval '{BusinessDayWindow.StartHour} hours')::date <= l.business_date
                 ) ac ON true
             ),
             line_cost AS (
@@ -173,11 +174,11 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
         ProductMarginFilter filter, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
-            LinesCte + """
+            LinesCte + $"""
             SELECT COALESCE((SELECT SUM(net_amount) FROM lines WHERE line_type = 'Sale'), 0),
                    COALESCE((SELECT SUM(b.discount_total) FROM billing.bills b
                              WHERE b.status = 'Paid'
-                               AND (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date BETWEEN @from AND @to), 0);
+                               AND ((b.opened_at AT TIME ZONE '{TimeZoneId}') - interval '{BusinessDayWindow.StartHour} hours')::date BETWEEN @from AND @to), 0);
             """);
         AddRange(command, filter);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);

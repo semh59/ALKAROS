@@ -268,18 +268,37 @@ public sealed class ProductMarginReportTests : IClassFixture<ProductMarginTestDa
     }
 
     [Fact]
-    public async Task TheServiceDayIsTheIstanbulCalendarDay()
+    public async Task TheServiceDayIsTheBusinessDayThatStartsAtSixInIstanbul()
     {
         var product = await _database.SeedProductAsync("Gece");
-        // 2026-03-17 23:59:59 local is 20:59:59 UTC; one second later it is 18 March locally.
-        await _database.SeedBillLineAsync(product, "Gece", 1m, 10m, new DateTimeOffset(2026, 3, 17, 20, 59, 59, TimeSpan.Zero));
-        await _database.SeedBillLineAsync(product, "Gece", 1m, 20m, new DateTimeOffset(2026, 3, 17, 21, 0, 0, TimeSpan.Zero));
+        // 2026-03-17 05:59:59 local is 02:59:59 UTC and still belongs to the 16th; one second later the 17th begins.
+        await _database.SeedBillLineAsync(product, "Gece", 1m, 10m, new DateTimeOffset(2026, 3, 17, 2, 59, 59, TimeSpan.Zero));
+        await _database.SeedBillLineAsync(product, "Gece", 1m, 20m, new DateTimeOffset(2026, 3, 17, 3, 0, 0, TimeSpan.Zero));
+        // The last second of the 17th business day is 05:59:59 local on the 18th.
+        await _database.SeedBillLineAsync(product, "Gece", 1m, 40m, new DateTimeOffset(2026, 3, 18, 2, 59, 59, TimeSpan.Zero));
 
+        var sixteenth = await _service.GetReportAsync(Day(16));
         var seventeenth = await _service.GetReportAsync(Day(17));
         var eighteenth = await _service.GetReportAsync(Day(18));
 
-        seventeenth.Rows.Single().NetRevenue.Should().Be(10m);
-        eighteenth.Rows.Single().NetRevenue.Should().Be(20m);
+        sixteenth.Rows.Single().NetRevenue.Should().Be(10m);
+        seventeenth.Rows.Single().NetRevenue.Should().Be(60m);
+        eighteenth.Rows.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task AReceiptAfterMidnightBeforeSixCountsForThePreviousBusinessDaysCost()
+    {
+        var product = await _database.SeedProductAsync("Gece");
+        var stock = await _database.SeedStockItemAsync("Gece unu");
+        var line = await _database.SeedBillLineAsync(product, "Gece", 1m, 100m, new DateTimeOffset(2026, 3, 28, 9, 0, 0, TimeSpan.Zero));
+        await _database.SeedConsumptionAsync(line, stock, 1m);
+        // 02:00 UTC on the 29th is 05:00 local, so the receipt still belongs to the 28th business day.
+        await _database.SeedReceiptAsync(stock, 10m, 7m, new DateTimeOffset(2026, 3, 29, 2, 0, 0, TimeSpan.Zero));
+
+        var report = await _service.GetReportAsync(Day(28));
+
+        report.Rows.Single().Cost.Should().Be(7m);
     }
 
     [Fact]

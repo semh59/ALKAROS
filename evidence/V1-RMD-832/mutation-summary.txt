@@ -1,0 +1,2 @@
+killed gr.received_at
+killed b.opened_at

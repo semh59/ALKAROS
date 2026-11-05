@@ -45,6 +45,12 @@ export const businessDateRange = (days: number, now: Date = new Date()) => {
   return { from: new Date(Date.parse(`${to}T00:00:00Z`) - (days - 1) * dayMs).toISOString().slice(0, 10), to };
 };
 
+/** The last `days` calendar days (inclusive) in the venue zone, for screens keyed by a tax date rather than the business day. */
+export const venueDateRange = (days: number, now: Date = new Date()) => {
+  const to = now.toLocaleDateString("sv-SE", { timeZone: venueTimeZone });
+  return { from: new Date(Date.parse(`${to}T00:00:00Z`) - (days - 1) * dayMs).toISOString().slice(0, 10), to };
+};
+
 export const formatDecimal = (value: number, digits = 1) =>
   new Intl.NumberFormat("tr-TR", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
 
