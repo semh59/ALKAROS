@@ -15,7 +15,6 @@ V1-RMD-828'de garson uygulamasında kapatılan hatanın kalanı: tr-TR küçült
 - `src/Clients/PosTerminal/src/search.ts`
 - `src/Clients/PosTerminal/src/search.test.ts`
 - `src/Clients/PosTerminal/src/routes/Cashier.search-fold.test.tsx`
-- `tests/Clients/StaticApps/cashier-search-fold.test.js`
 - `evidence/V1-RMD-835/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/Cashier.tsx (V1-RMD-097) — ürün araması.
@@ -26,6 +25,7 @@ V1-RMD-828'de garson uygulamasında kapatılan hatanın kalanı: tr-TR küçült
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx (V1-RMD-502) — masa araması.
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx (V1-RMD-502) — arama testi.
   - src/Clients/Cashier/wwwroot/cashier-app.js (V1-CUI-004) — ürün araması.
+  - tests/Clients/StaticApps/cashier-search-fold.test.js (V1-RMD-109) — kasa araması testi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
