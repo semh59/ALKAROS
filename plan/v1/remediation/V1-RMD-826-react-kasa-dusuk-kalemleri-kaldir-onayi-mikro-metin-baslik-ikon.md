@@ -1,8 +1,8 @@
 # V1-RMD-826 - React kasa düşük kalemleri: kalem Kaldır onayı, mikro metin ve kontrast, dar ekranda başlık menüsü, ayrı menü ikonları, bölge seçiminde çift istek
 
 - Task ID: V1-RMD-826
-- Status: Planned
-- Assignee: unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
