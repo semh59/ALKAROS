@@ -50,7 +50,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
   - src/Clients/WaiterPwa/wwwroot/js/sheets/product-sheet.js (V1-WTR-046) — 0,5 hızlı seçimi yalnız bayraklı üründe.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — iptal bölümü ve hata sözlüğü.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css (V1-RMD-443) — onay kutusu satırı.
-  - tests/Host/Experience/CashSession/ClientLimitLockTests.cs (V1-RMD-794) — uzunluk kilidi sunucudan kopyalanan hata cümlelerini saymaz (onları hata sözlüğü kilidi birebir denetler); iptal gerekçesi ekranları kilide girer.
+  - tests/Host/Experience/CashSession/ClientLimitLockTests.cs (V1-RMD-794) — uzunluk kilidi sunucudan kopyalanan hata cümlelerini saymaz (onları hata sözlüğü kilidi birebir denetler).
   - src/Clients/PosTerminal/src/features/management-security-system/HangingOrdersPanel.tsx (V1-RMD-450) — yeni dosya: asılı sipariş paneli.
   - src/Clients/PosTerminal/src/features/management-security-system/HangingOrdersPanel.test.tsx (V1-RMD-450) — yeni dosya: panel testleri.
   - src/Clients/PosTerminal/src/features/billing/RefundPanel.cancel-order.test.tsx (V1-RMD-366) — yeni dosya: iptal kutusu testleri.
@@ -58,6 +58,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
   - src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.half-portion.test.tsx (V1-RMD-784) — yeni dosya: yarım porsiyon kutusu testleri.
   - tests/Clients/StaticApps/split-payment-cancel-order.test.js (V1-RMD-109) — yeni dosya: kasa iptal bölümü testleri.
   - tests/Clients/StaticApps/waiter-half-portion.test.js (V1-WTR-055) — yeni dosya: garson menü ve ürün sayfası davranış testleri (gerçek modüller, jsdom).
+  - tests/Clients/StaticApps/waiter-half-portion-stepper.test.js (V1-WTR-055) — yeni dosya: taslak satırı adım davranışı (gerçek uygulama, jsdom).
   - tests/Clients/WaiterPwa/Frontend/test_waiter_half_portion.py (V1-WTR-055) — yeni dosya: garson yarım porsiyon testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
