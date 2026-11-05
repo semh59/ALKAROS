@@ -17,6 +17,8 @@
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/WaiterPwa/wwwroot/index.html (V1-WTR-001) — dış yazı tipi satırları kalkar.
   - src/Clients/WaiterPwa/wwwroot/js/screens/menu.js (V1-WTR-055) — arama katlaması.
+  - src/Clients/WaiterPwa/wwwroot/sw.js (V1-WTR-001) — önbellek sürümü artar, eski index.html (dış yazı tipi satırlı) kurulumlardan çıkar.
+  - src/Clients/WaiterPwa/wwwroot/waiter-app.css (V1-WTR-001) — yalnız yazı tipi yorumu.
   - tests/Clients/StaticApps/waiter-pwa-search-and-fonts.test.js (V1-RMD-109) — dış istek ve arama testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
