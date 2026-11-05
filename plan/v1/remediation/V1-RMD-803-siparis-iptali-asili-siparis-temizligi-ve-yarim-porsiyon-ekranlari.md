@@ -50,6 +50,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
   - src/Clients/WaiterPwa/wwwroot/js/sheets/product-sheet.js (V1-WTR-046) — 0,5 hızlı seçimi yalnız bayraklı üründe.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js (V1-RMD-264) — iptal bölümü ve hata sözlüğü.
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css (V1-RMD-443) — onay kutusu satırı.
+  - tests/Host/Experience/CashSession/ClientLimitLockTests.cs (V1-RMD-794) — uzunluk kilidi sunucudan kopyalanan hata cümlelerini saymaz (onları hata sözlüğü kilidi birebir denetler); iptal gerekçesi ekranları kilide girer.
   - src/Clients/PosTerminal/src/features/management-security-system/HangingOrdersPanel.tsx (V1-RMD-450) — yeni dosya: asılı sipariş paneli.
   - src/Clients/PosTerminal/src/features/management-security-system/HangingOrdersPanel.test.tsx (V1-RMD-450) — yeni dosya: panel testleri.
   - src/Clients/PosTerminal/src/features/billing/RefundPanel.cancel-order.test.tsx (V1-RMD-366) — yeni dosya: iptal kutusu testleri.
