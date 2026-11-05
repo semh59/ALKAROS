@@ -13,13 +13,39 @@ describe("billing refund client", () => {
   it("posts the cancel reason and the refund request to encoded bill routes", async () => {
     const fetcher = vi.fn().mockResolvedValue(response({}));
     const client = createBillingRefundClient("term/1", "bill/1", fetcher);
-    await client.cancelBill("Müşteri vazgeçti");
+    await client.cancelBill("Müşteri vazgeçti", false);
     await client.requestRefund("pay-1", "Fazla ödeme");
 
     expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/terminals/term%2F1/billing/bills/bill%2F1/cancel",
       expect.objectContaining({ method: "POST", body: JSON.stringify({ reason: "Müşteri vazgeçti" }) }));
     expect(fetcher).toHaveBeenNthCalledWith(2, "/api/v1/terminals/term%2F1/billing/bills/bill%2F1/refund-requests",
       expect.objectContaining({ method: "POST", body: JSON.stringify({ paymentId: "pay-1", reason: "Fazla ödeme" }) }));
+  });
+
+  it("adds the order flag to the cancel body only when asked and reports whether the order was cancelled", async () => {
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(response({ orderCancelled: true }))
+      .mockResolvedValueOnce(response({ orderCancelled: false }));
+    const client = createBillingRefundClient("t1", "b1", fetcher);
+
+    expect(await client.cancelBill("Müşteri vazgeçti", true)).toEqual({ orderCancelled: true });
+    expect(await client.cancelBill("Müşteri vazgeçti", false)).toEqual({ orderCancelled: false });
+
+    expect(fetcher.mock.calls[0][1].body).toBe(JSON.stringify({ reason: "Müşteri vazgeçti", cancelOrder: true }));
+    expect(fetcher.mock.calls[1][1].body).toBe(JSON.stringify({ reason: "Müşteri vazgeçti" }));
+  });
+
+  it.each([
+    [409, "ORDER_HAS_PAYMENT", "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli."],
+    [409, "ORDER_HAS_SERVED_ITEMS", "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın."],
+    [409, "ORDER_CANCEL_NOT_ALLOWED", "Sipariş bu durumda iptal edilemez."],
+    [409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."],
+    [409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin."],
+    [400, "REFUND_QUANTITY_NOT_WHOLE", "Bu ürün yalnız tam adet olarak iade edilebilir."],
+    [400, "ORDER_QUANTITY_NOT_ALLOWED", "Bu ürün için bu adet girilemez: tam adet girin. Yarım porsiyon yalnız ayarı açık ürünlerde, 0,5'in katı olarak girilebilir."],
+    [400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."],
+  ])("gives %i %s a fixed Turkish sentence", (status, code, sentence) => {
+    expect(describeRefundFailure(new RefundApiError(status, code, "raw server text"))).toBe(sentence);
   });
 
   it("reuses the idempotency key of a refund request retried after a lost response", async () => {

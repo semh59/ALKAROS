@@ -20,6 +20,7 @@ namespace ALKAROS.Host.Experience.CashSession.Tests;
 public sealed class ClientLimitLockTests
 {
     private static readonly string Root = FindRoot();
+    private static readonly Regex DictionaryEntry = new("^\\s+[A-Z][A-Z0-9_]+: '", RegexOptions.Compiled);
 
     public static TheoryData<string, string, long, long> SettingRanges()
     {
@@ -100,8 +101,9 @@ public sealed class ClientLimitLockTests
     public void TheRefundScreensTextAndSlipLimitsAreTheServerLimits(string screen)
     {
         // The card-charged claim slip of the payment screen has its own rule, locked next to the endpoint that enforces it.
+        // An error dictionary entry is a server sentence copied word for word (error-dictionary-lock.test.js compares it), so its numbers are the server's own.
         var source = string.Join(Environment.NewLine, File.ReadAllLines(Path.Combine(Root, screen.Replace('/', Path.DirectorySeparatorChar)))
-            .Where(line => !line.Contains("claim-slip", StringComparison.Ordinal)));
+            .Where(line => !line.Contains("claim-slip", StringComparison.Ordinal) && !DictionaryEntry.IsMatch(line)));
         var limits = Limits(source);
 
         Assert.Contains(PaymentRefundStore.MaxTextLength, limits);

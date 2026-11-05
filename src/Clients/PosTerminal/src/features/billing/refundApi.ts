@@ -57,7 +57,8 @@ export class RefundApiError extends Error {
 export interface BillingRefundClient {
   getTenders: () => Promise<BillTenderSummary>;
   listRequests: () => Promise<readonly RefundRequestRow[]>;
-  cancelBill: (reason: string) => Promise<void>;
+  /** With `cancelOrder` the order behind the bill is taken back too (stock, waste, table). */
+  cancelBill: (reason: string, cancelOrder: boolean) => Promise<{ orderCancelled: boolean }>;
   requestRefund: (paymentId: string, reason: string, items?: readonly RefundItemInput[]) => Promise<RefundRequestRow>;
   getItems: () => Promise<readonly BillReceiptItem[]>;
   approve: (requestId: string) => Promise<RefundRequestRow>;
@@ -76,12 +77,22 @@ export function describeRefundFailure(error: unknown): string {
   if (status === 403) return code === "SELF_DECISION"
     ? "Kendi açtığınız iade isteğini başka bir yetkili onaylamalı. Tek yöneticiyseniz Ayarlar'dan \"Yönetici kendi talebini onaylayabilir\" ayarını açın."
     : "Bu işlem için yetkiniz yok.";
-  if (status === 400) return "Gerekçe veya fiş numarası eksik ya da geçersiz.";
+  if (status === 400) {
+    if (code === "REFUND_QUANTITY_NOT_WHOLE") return "Bu ürün yalnız tam adet olarak iade edilebilir.";
+    if (code === "ORDER_QUANTITY_NOT_ALLOWED") return "Bu ürün için bu adet girilemez: tam adet girin. Yarım porsiyon yalnız ayarı açık ürünlerde, 0,5'in katı olarak girilebilir.";
+    if (code === "REASON_REQUIRED") return "İptal gerekçesi 1 ile 500 karakter arasında olmalı.";
+    return "Gerekçe veya fiş numarası eksik ya da geçersiz.";
+  }
   if (status === 409) {
     if (code === "NO_OPEN_CASH_SESSION") return "İadeyi isteyen kasiyerin, isteği yaptığı terminalde açık kasa oturumu yok. Önce o terminalde kasayı açın.";
     if (code === "REFUND_ITEM_QUANTITY") return "Seçilen adet iade edilebilir adedi aşıyor. Güncel veriyi alıp yeniden deneyin.";
     if (code === "REFUND_AMOUNT_EXCEEDS_PAYMENT") return "İade tutarı seçilen ödemenin kalan tutarını aşıyor. Başka ödeme seçin.";
     if (code === "ACCOUNT_REFUND_UNSUPPORTED") return "Cari hesaba yazılan ödeme buradan iade edilemez.";
+    if (code === "ORDER_HAS_PAYMENT") return "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli.";
+    if (code === "ORDER_HAS_SERVED_ITEMS") return "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın.";
+    if (code === "ORDER_CANCEL_NOT_ALLOWED") return "Sipariş bu durumda iptal edilemez.";
+    if (code === "STOCK_RESTORE_FAILED") return "Ürünün stoğu geri verilemedi; iptal yapılmadı.";
+    if (code === "CONCURRENCY_CONFLICT") return "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin.";
     return "Hesap veya iade isteği değişmiş. Güncel veriyi alıp yeniden deneyin.";
   }
   return "İşlem tamamlanamadı. Yeniden deneyin.";
@@ -130,7 +141,10 @@ export function createBillingRefundClient(terminalId: string, billId: string, fe
     getTenders: () => call<BillTenderSummary>(`${billBase}/tenders/`),
     listRequests: async () => (await call<readonly RefundRequestRow[]>(`${refundsBase}?billId=${encodeURIComponent(billId)}`))
       .filter((row) => row.billId === billId),
-    cancelBill: async (reason) => { await call(`${billBase}/cancel`, "POST", { reason }); },
+    cancelBill: async (reason, cancelOrder) => {
+      const result = await call<{ orderCancelled?: boolean } | undefined>(`${billBase}/cancel`, "POST", cancelOrder ? { reason, cancelOrder } : { reason });
+      return { orderCancelled: result?.orderCancelled === true };
+    },
     requestRefund: async (paymentId, reason, items) => {
       const body = { paymentId, reason, items };
       const signature = JSON.stringify(body);

@@ -1,7 +1,7 @@
 # V1-RMD-803 - Arayüz: hesap iptalinde "siparişi de iptal et", kasa kuyruğundan sipariş iptali, yönetici asılı sipariş temizliği, yarım porsiyon bayrağı
 
 - Task ID: V1-RMD-803
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

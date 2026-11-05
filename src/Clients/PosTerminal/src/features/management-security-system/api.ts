@@ -1,5 +1,5 @@
 import type {
-  Alert, AlertAction, CloseSettledResult, DiagnosticBundle, HealthCheck, MaintenanceJob, OrderBacklog, RestoreAttempt, RpoStatus, TerminalBinding, UserLookup,
+  Alert, AlertAction, CloseSettledResult, DiagnosticBundle, HealthCheck, MaintenanceJob, ClearHangingResult, HangingOrder, OrderBacklog, RestoreAttempt, RpoStatus, TerminalBinding, UserLookup,
 } from "./models";
 import { ManagementApiError, createRequester } from "../management/http";
 
@@ -16,6 +16,8 @@ export interface SecurityClient {
   diagnosticBundle: (input: { correlationIds: readonly string[]; windowStart: string; windowEnd: string; reason: string }) => Promise<DiagnosticBundle>;
   orderBacklog: () => Promise<OrderBacklog>;
   closeSettled: (dryRun: boolean) => Promise<CloseSettledResult>;
+  hangingOrders: () => Promise<readonly HangingOrder[]>;
+  clearHanging: (dryRun: boolean, reason: string, orderIds: readonly string[]) => Promise<ClearHangingResult>;
 }
 
 export function createSecurityClient(fetcher: typeof fetch = fetch): SecurityClient {
@@ -42,6 +44,8 @@ export function createSecurityClient(fetcher: typeof fetch = fetch): SecurityCli
     diagnosticBundle: (input) => post("/security/diagnostic-bundle", input),
     orderBacklog: () => json("/security/orders/backlog"),
     closeSettled: (dryRun) => post(`/security/orders/close-settled?dryRun=${dryRun}`),
+    hangingOrders: () => json("/security/orders/hanging"),
+    clearHanging: (dryRun, reason, orderIds) => post(`/security/orders/clear-hanging?dryRun=${dryRun}`, { reason, orderIds }),
   };
 }
 

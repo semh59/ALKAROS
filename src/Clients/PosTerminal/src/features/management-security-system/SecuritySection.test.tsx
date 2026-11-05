@@ -25,6 +25,8 @@ function fakeClient(overrides: Partial<SecurityClient> = {}): SecurityClient {
     restoreAttempts: vi.fn().mockResolvedValue([]),
     diagnosticBundle: vi.fn().mockResolvedValue({ bundleId: "b1", generatedAt: "2026-09-30T10:00:00Z", sizeBytes: 4096, logEntries: [{}, {}, {}], systemStatus: { unhealthyCheckCount: 1 } }),
     orderBacklog: vi.fn().mockResolvedValue({ liveOrders: 12, provablySettled: 5, withoutBill: 3, withOpenBill: 4, oldestSettledCreatedAt: null }),
+    hangingOrders: vi.fn().mockResolvedValue([]),
+    clearHanging: vi.fn(),
     closeSettled: vi.fn().mockImplementation(async (dryRun: boolean) => ({ dryRun, eligible: 5, closed: dryRun ? 0 : 5, failed: 0, sampleOrderNumbers: ["S-1", "S-2"] })),
     ...overrides,
   };

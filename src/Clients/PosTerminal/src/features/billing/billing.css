@@ -77,3 +77,8 @@
 .refund-panel__group { display: grid; gap: var(--ds-space-3); }
 .refund-panel__row { display: flex; flex-wrap: wrap; align-items: end; gap: var(--ds-space-3); }
 .refund-panel__status { font-weight: 700; }
+.refund-panel__check { display: flex; align-items: flex-start; gap: var(--ds-space-3); min-height: 48px; padding: var(--ds-space-2) 0; }
+.refund-panel__check label { cursor: pointer; font-weight: 700; }
+.refund-panel__check input { width: 24px; height: 24px; flex: none; margin: 0; }
+.refund-panel__check > div { display: grid; gap: var(--ds-space-1); }
+.refund-panel__check small { color: var(--ds-color-muted); }

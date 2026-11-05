@@ -293,6 +293,8 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       // such a product is excluded from the pre-send delay check, not
       // treated as zero.
       prepTimeMinutes: product.prepTimeMinutes != null ? product.prepTimeMinutes : null,
+      // Only a product the manager marked "half portion" may be ordered in 0.5 steps.
+      allowsHalfPortion: product.allowsHalfPortion === true,
       // V1-WTR-054/055: how many more units the mapped stock can still
       // cover, null when the product isn't stock-tracked (unlimited). A
       // product the server computed at 0 or less never appears in `list`
@@ -510,8 +512,12 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       if (step) {
         const line = state.draft.find((candidate) => candidate.id === step.dataset.line);
         if (!line) return;
-        const delta = step.dataset.step === '+' ? 0.5 : -0.5;
-        line.quantity = Math.round((line.quantity + delta) * 1000) / 1000;
+        const up = step.dataset.step === '+';
+        // A line without the half portion flag steps to the next whole number, so a leftover 0,5 from an older draft cannot be carried on.
+        const next = line.allowsHalfPortion
+          ? line.quantity + (up ? 0.5 : -0.5)
+          : (up ? Math.floor(line.quantity) + 1 : Math.ceil(line.quantity) - 1);
+        line.quantity = Math.round(next * 1000) / 1000;
         if (line.quantity <= 0) {
           const removed = line;
           const index = state.draft.indexOf(line);
@@ -541,7 +547,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
                 toast(`${removed.name} geri alınamadı, tur değişti.`, { warning: true });
                 return;
               }
-              removed.quantity = 0.5;
+              removed.quantity = removed.allowsHalfPortion ? 0.5 : 1;
               state.draft.splice(Math.min(index, state.draft.length), 0, removed);
               afterDraftChange();
             }

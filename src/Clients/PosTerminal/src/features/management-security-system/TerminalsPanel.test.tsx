@@ -76,7 +76,7 @@ describe("terminals panel", () => {
   it("is part of the security section", async () => {
     const client = fakeClient({
       lookupUser: vi.fn(), listJobs: vi.fn().mockResolvedValue([]), backupRpo: vi.fn().mockResolvedValue([]),
-      restoreAttempts: vi.fn().mockResolvedValue([]), orderBacklog: vi.fn().mockResolvedValue({ liveOrders: 0, provablySettled: 0, withoutBill: 0, withOpenBill: 0, oldestSettledCreatedAt: null }),
+      restoreAttempts: vi.fn().mockResolvedValue([]), hangingOrders: vi.fn().mockResolvedValue([]), orderBacklog: vi.fn().mockResolvedValue({ liveOrders: 0, provablySettled: 0, withoutBill: 0, withOpenBill: 0, oldestSettledCreatedAt: null }),
     });
     await render(<SecuritySection client={client} />);
     expect(client.listTerminals).toHaveBeenCalled();

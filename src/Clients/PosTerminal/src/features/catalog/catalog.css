@@ -77,3 +77,8 @@
   .catalog-row { padding: var(--ds-space-3); }
   .catalog-row__value { max-width: 6rem; overflow: hidden; text-overflow: ellipsis; }
 }
+
+.catalog-form__check { display: flex; align-items: flex-start; gap: var(--ds-space-3); min-height: 48px; }
+.catalog-form__check label { cursor: pointer; font-weight: 700; }
+.catalog-form__check input { width: 24px; height: 24px; flex: none; margin: 0; }
+.catalog-form__check > div { display: grid; gap: var(--ds-space-1); }

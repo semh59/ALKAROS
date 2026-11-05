@@ -1,0 +1,117 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx (8 tests | 8 failed) 129ms
+     × offers the cancel only on a check nothing was collected on 78ms
+     × needs a reason and a second tap, then cancels with the current row version and refreshes the list 9ms
+     × lets the cashier back out of the second tap 7ms
+     × answers ORDER_HAS_SERVED_ITEMS with a fixed sentence, never the server text, and reloads the list 7ms
+     × answers ORDER_HAS_PAYMENT with a fixed sentence, never the server text, and reloads the list 8ms
+     × answers CONCURRENCY_CONFLICT with a fixed sentence, never the server text, and reloads the list 6ms
+     × does not post a cancel when the order cannot be read 6ms
+     × blocks a second submit while the cancel is running 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > offers the cancel only on a check nothing was collected on
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:75:42
+     73|     await render();
+     74|
+     75|     expect(buttons("Siparişi iptal et")).toHaveLength(1);
+       |                                          ^
+     76|     expect(document.querySelectorAll("li")[1].textContent).not.toConta…
+     77|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > needs a reason and a second tap, then cancels with the current row version and refreshes the list
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:98
+     29|   const fetchMock = vi.fn();
+     30|   const buttons = (label: string) => [...document.querySelectorAll("bu…
+     31|   const click = async (label: string, index = 0) => { await act(async …
+       |                                                                                                  ^
+     32|   async function chooseReason(value: string) {
+     33|     const select = document.querySelector<HTMLSelectElement>('select[a…
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:61
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:83:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > lets the cashier back out of the second tap
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:98
+     29|   const fetchMock = vi.fn();
+     30|   const buttons = (label: string) => [...document.querySelectorAll("bu…
+     31|   const click = async (label: string, index = 0) => { await act(async …
+       |                                                                                                  ^
+     32|   async function chooseReason(value: string) {
+     33|     const select = document.querySelector<HTMLSelectElement>('select[a…
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:61
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:104:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > answers ORDER_HAS_SERVED_ITEMS with a fixed sentence, never the server text, and reloads the list
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > answers ORDER_HAS_PAYMENT with a fixed sentence, never the server text, and reloads the list
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > answers CONCURRENCY_CONFLICT with a fixed sentence, never the server text, and reloads the list
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:98
+     29|   const fetchMock = vi.fn();
+     30|   const buttons = (label: string) => [...document.querySelectorAll("bu…
+     31|   const click = async (label: string, index = 0) => { await act(async …
+       |                                                                                                  ^
+     32|   async function chooseReason(value: string) {
+     33|     const select = document.querySelector<HTMLSelectElement>('select[a…
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:61
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:122:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > does not post a cancel when the order cannot be read
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:98
+     29|   const fetchMock = vi.fn();
+     30|   const buttons = (label: string) => [...document.querySelectorAll("bu…
+     31|   const click = async (label: string, index = 0) => { await act(async …
+       |                                                                                                  ^
+     32|   async function chooseReason(value: string) {
+     33|     const select = document.querySelector<HTMLSelectElement>('select[a…
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:61
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:137:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx > cancelling an order from the till queue > blocks a second submit while the cancel is running
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:98
+     29|   const fetchMock = vi.fn();
+     30|   const buttons = (label: string) => [...document.querySelectorAll("bu…
+     31|   const click = async (label: string, index = 0) => { await act(async …
+       |                                                                                                  ^
+     32|   async function chooseReason(value: string) {
+     33|     const select = document.querySelector<HTMLSelectElement>('select[a…
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:31:61
+ ❯ src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx:151:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  10:14:55
+   Duration  1.67s (transform 234ms, setup 0ms, import 358ms, tests 129ms, environment 926ms)
+

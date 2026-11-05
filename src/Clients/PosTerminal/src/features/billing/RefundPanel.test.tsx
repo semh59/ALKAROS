@@ -118,7 +118,7 @@ describe("refund panel", () => {
     expect(client.cancelBill).not.toHaveBeenCalled();
     await click("Evet, hesabı iptal et");
 
-    expect(client.cancelBill).toHaveBeenCalledWith("Müşteri vazgeçti");
+    expect(client.cancelBill).toHaveBeenCalledWith("Müşteri vazgeçti", false);
     expect(document.body.textContent).toContain("Hesap iptal edildi.");
   });
 
@@ -268,7 +268,7 @@ describe("refund panel", () => {
     await click("Hesabı iptal et");
     await click("Evet, hesabı iptal et");
 
-    expect(client.cancelBill).toHaveBeenCalledWith("Masa değişti");
+    expect(client.cancelBill).toHaveBeenCalledWith("Masa değişti", false);
   });
 
   it("offers the same preset list everywhere", async () => {

@@ -577,6 +577,40 @@ export const managementText = {
       closed: "Kapatılan: {0}, kapatılamayan: {1}.",
       failed: "İşlem tamamlanamadı.",
     },
+    hanging: {
+      heading: "Asılı siparişler",
+      hint: "Hesabı olmayan ve uzun süredir açık duran masa siparişleri. Temizlenince kalemlerin stoğu geri gelir, hazırlanmış kalemler fire sayılır, masa boşalır.",
+      empty: "Temizlenecek asılı sipariş yok.",
+      preview: "Temizlenecekleri göster",
+      stock: "kalem stoğa dönecek",
+      waste: "kalem fire olacak",
+      served: "kalem servis edilmiş",
+      table: "Masa",
+      age: "{0} saattir açık",
+      ageUnderHour: "1 saatten kısa süredir açık",
+      statuses: {
+        Submitted: "Gönderildi",
+        Accepted: "Kabul edildi",
+        Preparing: "Hazırlanıyor",
+        Ready: "Hazır",
+      } as Record<string, string>,
+      unknownStatus: "Bilinmeyen durum",
+      reason: "Temizleme gerekçesi",
+      confirm: "{0} siparişi temizle",
+      done: "Temizleme bitti: {0} sipariş temizlendi, {1} sipariş temizlenemedi.",
+      outcomes: {
+        Cleared: "Temizlendi",
+        Changed: "Sipariş bu arada değişti; dokunulmadı",
+        HasPayment: "Ödeme var; önce ödeme iade edilmeli",
+        HasServedItems: "Servis edilmiş ürün var; hesabı kapatın",
+      } as Record<string, string>,
+      unknownOutcome: "Bilinmeyen sonuç",
+      failed: "İşlem tamamlanamadı; tekrar deneyin, sürerse sistem yöneticisine bildirin.",
+      confirmQuestion: "Emin misiniz? Bu işlem geri alınamaz.",
+      confirmYes: "Evet, {0} siparişi temizle",
+      dismiss: "Vazgeç",
+      doneHint: "Temizlenemeyenlerin nedeni aşağıda yazıyor; gerekirse önce hesabı kapatın ya da ödemeyi iade edin.",
+    },
     diagnostic: {
       heading: "Tanılama paketi",
       correlationIds: "Korelasyon kimlikleri",
@@ -1215,6 +1249,9 @@ export const refundText = {
   cancelLabel: "İptal gerekçesi",
   cancelAction: "Hesabı iptal et",
   cancelled: "Hesap iptal edildi.",
+  cancelledWithOrder: "Hesap ve sipariş iptal edildi; masa boşaldı.",
+  cancelOrderLabel: "Siparişi de iptal et",
+  cancelOrderHint: "Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.",
   refundHeading: "İade iste",
   refundReasonLabel: "İade gerekçesi",
   refundAction: "İade iste",
@@ -1235,6 +1272,7 @@ export const refundText = {
   unknown: "Bilinmiyor",
   confirmQuestion: "Emin misiniz? Bu işlem geri alınamaz.",
   cancelConfirm: "Evet, hesabı iptal et",
+  cancelConfirmWithOrder: "Evet, hesabı ve siparişi iptal et",
   approveConfirm: "Evet, iadeyi onayla",
   dismiss: "Vazgeç",
   reasonPlaceholder: "Gerekçe seçin",
@@ -1261,6 +1299,26 @@ export const refundText = {
   itemsStockNo: "Hayır, stoğa dönmesin",
   itemsAction: "Seçilen ürünleri iade et",
   itemsAmount: "İade tutarı",
+} as const;
+
+/** The buttons of the order cancellation in the cash queue. */
+export const cancelOrderText = {
+  open: "Siparişi iptal et",
+  action: "İptal et",
+  confirmYes: "Evet, siparişi iptal et",
+  running: "İptal ediliyor…",
+  failed: "Sipariş iptal edilemedi. Tekrar deneyin.",
+} as const;
+
+/** The reason picker of an order cancellation (cash queue, hanging orders); the same sentences as the bill cancellation. */
+export const cancelReasonText = {
+  label: refundText.cancelLabel,
+  placeholder: refundText.reasonPlaceholder,
+  presets: refundText.reasonPresets,
+  other: refundText.reasonOther,
+  write: refundText.reasonWrite,
+  confirmQuestion: refundText.confirmQuestion,
+  dismiss: refundText.dismiss,
 } as const;
 
 export const refundStatusLabels: Record<string, string> = {

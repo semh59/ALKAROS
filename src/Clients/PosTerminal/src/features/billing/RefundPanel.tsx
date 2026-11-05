@@ -33,7 +33,8 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   const [notice, setNotice] = useState<string>();
   const [allowance, setAllowance] = useState<RefundAllowance | null>(null);
   const [billItems, setBillItems] = useState<readonly BillReceiptItem[]>([]);
-  const [cancelled, setCancelled] = useState(false);
+  const [cancelled, setCancelled] = useState<"bill" | "billAndOrder" | null>(null);
+  const [cancelOrder, setCancelOrder] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [texts, setTexts] = useState<Record<string, string>>({});
   const [choices, setChoices] = useState<Record<string, string>>({});
@@ -105,7 +106,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
     try {
       const result = await call() as RefundRequestRow | void;
       if (action === "cancel" || (result && result.billCancelled)) {
-        setCancelled(true);
+        setCancelled((current) => current ?? "bill");
         return;
       }
       const fromAllowance = action === "request" && result && result.approvedFromAllowance
@@ -130,7 +131,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   }
 
   if (cancelled) {
-    return <section className="refund-panel"><StateMessage tone="success" title={refundText.cancelled} /></section>;
+    return <section className="refund-panel"><StateMessage tone="success" title={cancelled === "billAndOrder" ? refundText.cancelledWithOrder : refundText.cancelled} /></section>;
   }
   if (loadError) {
     return <section className="refund-panel">
@@ -277,7 +278,14 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
 
     {showCancel && <div className="refund-panel__group">
       {reasonField("cancel", refundText.cancelLabel)}
-      {guarded("cancel", refundText.cancelAction, refundText.cancelConfirm, "secondary", !filled(texts.cancel), "cancel", () => client.cancelBill(texts.cancel ?? ""))}
+      <div className="refund-panel__check">
+        <input type="checkbox" id="refund-cancel-order" checked={cancelOrder} disabled={busy} onChange={(event) => { setCancelOrder(event.target.checked); setConfirming(null); }} />
+        <div><label htmlFor="refund-cancel-order">{refundText.cancelOrderLabel}</label><small>{refundText.cancelOrderHint}</small></div>
+      </div>
+      {guarded("cancel", refundText.cancelAction, cancelOrder ? refundText.cancelConfirmWithOrder : refundText.cancelConfirm, "secondary", !filled(texts.cancel), "cancel", async () => {
+        const result = await client.cancelBill(texts.cancel ?? "", cancelOrder);
+        if (result?.orderCancelled) setCancelled("billAndOrder");
+      })}
     </div>}
   </section>;
 }

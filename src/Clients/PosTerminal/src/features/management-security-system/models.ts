@@ -14,6 +14,12 @@ export interface DiagnosticBundle {
   bundleId: string; generatedAt: string; sizeBytes: number; logEntries: readonly unknown[]; systemStatus: { unhealthyCheckCount: number };
 }
 export interface OrderBacklog { liveOrders: number; provablySettled: number; withoutBill: number; withOpenBill: number; oldestSettledCreatedAt: string | null }
+export interface HangingOrder {
+  orderId: string; orderNumber: string; status: string; createdAt: string; tableNumber: string | null;
+  stockLines: number; wasteLines: number; servedLines: number;
+}
+export interface HangingOrderResult { orderId: string; orderNumber: string | null; outcome: string }
+export interface ClearHangingResult { dryRun: boolean; orders: readonly HangingOrder[]; results: readonly HangingOrderResult[] }
 export interface CloseSettledResult { dryRun: boolean; eligible: number; closed: number; failed: number; sampleOrderNumbers: readonly string[] }
 
 export interface Alert {

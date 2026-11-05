@@ -15,3 +15,5 @@
 .msys__line { display: grid; gap: var(--ds-space-2); border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); }
 .msys__check { display: flex; align-items: center; gap: .5rem; }
 .msys__job { display: grid; gap: .2rem; border-bottom: 1px solid var(--ds-color-line); padding: var(--ds-space-2) 0; }
+
+.msys__hanging { margin: 0 0 var(--ds-space-3); padding-left: var(--ds-space-4); display: grid; gap: var(--ds-space-1); }

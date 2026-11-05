@@ -46,6 +46,8 @@ export interface CatalogProduct {
   // (1-180), null when never set. Lets the Garson client warn before
   // sending a round whose items' prep times are far apart.
   prepTimeMinutes: number | null;
+  /** Whether the waiter app may offer half portions (0.5 steps) for this product. */
+  allowsHalfPortion: boolean;
 }
 
 export interface CatalogModifierGroup {
@@ -99,7 +101,7 @@ export interface CatalogAssignment {
 export type CatalogCreateInput =
   | { kind: "categories"; value: Omit<CatalogCategory, "active" | "parentId"> & { parentId?: string | null; active?: boolean } }
   | { kind: "taxes"; value: Omit<CatalogTaxProfile, "active"> & { active?: boolean } }
-  | { kind: "products"; value: Omit<CatalogProduct, "active" | "isAvailable" | "prepTimeMinutes"> & { active?: boolean; isAvailable?: boolean; prepTimeMinutes?: number | null } }
+  | { kind: "products"; value: Omit<CatalogProduct, "active" | "isAvailable" | "prepTimeMinutes" | "allowsHalfPortion"> & { active?: boolean; isAvailable?: boolean; prepTimeMinutes?: number | null; allowsHalfPortion?: boolean } }
   | { kind: "modifierGroups"; value: Omit<CatalogModifierGroup, "active"> & { active?: boolean } }
   | { kind: "modifiers"; value: Omit<CatalogModifier, "active"> & { active?: boolean } }
   | { kind: "assignments"; value: CatalogAssignment }
@@ -112,6 +114,7 @@ export interface CatalogProductDetailsInput {
   taxProfileId: string | null;
   description: string | null;
   displayOrder: number;
+  allowsHalfPortion?: boolean;
 }
 
 export interface CatalogWorkspaceProps {

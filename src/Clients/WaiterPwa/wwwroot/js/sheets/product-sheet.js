@@ -33,11 +33,11 @@ export function openProductSheet(product, presetQuantity) {
 
 export function productSheetHtml() {
   const context = state.optionsContext;
-  const quantities = [0.5, 1, 1.5, 2, 3];
+  const quantities = context.product.allowsHalfPortion ? [0.5, 1, 1.5, 2, 3] : [1, 2, 3, 4, 5];
   let html = `
     <div class="optgroup">
       <div class="optgroup-head"><span class="optgroup-name">Miktar</span>
-        <span class="optgroup-rule">yarım porsiyon 0,5</span></div>
+        <span class="optgroup-rule">${context.product.allowsHalfPortion ? 'yarım porsiyon 0,5' : 'tam adet'}</span></div>
       <div class="qty-row">
         ${quantities.map((quantity) => `
           <button type="button" class="qty-quick" data-qty="${quantity}"

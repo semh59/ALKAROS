@@ -85,6 +85,8 @@
     selectedCustomerId: null,
     // İptal ve iade: kasiyerin gerekçeyle hesabı iptal etmesi, ödemeyi iade istemesi ve (yetkiliyse) isteği onaylaması.
     cancelReason: '',
+    cancelOrder: false,
+    orderCancelled: false,
     refundRequests: null,
     refundReasons: {},
     refundSlips: {},
@@ -161,6 +163,13 @@
     REFUND_ITEM_QUANTITY: 'Bu kalemden istenen adet iade edilebilir adedi aşıyor.',
     REFUND_QUANTITY_INVALID: 'İade adedi sıfırdan büyük olmalı ve en çok 3 ondalık içermeli.',
     STOCK_RESTORE_FAILED: 'Ürünün stoğu geri verilemedi; iptal yapılmadı.',
+    ORDER_QUANTITY_NOT_ALLOWED: 'Bu ürün için bu adet girilemez: tam adet girin. Yarım porsiyon yalnız ayarı açık ürünlerde, 0,5\'in katı olarak girilebilir.',
+    REFUND_QUANTITY_NOT_WHOLE: 'Bu ürün yalnız tam adet olarak iade edilebilir.',
+    ORDER_HAS_PAYMENT: 'Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli.',
+    ORDER_CANCEL_NOT_ALLOWED: 'Sipariş bu durumda iptal edilemez.',
+    ORDER_HAS_SERVED_ITEMS: 'Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın.',
+    CONCURRENCY_CONFLICT: 'Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin.',
+    ADJUSTMENT_UNDO_BELOW_COLLECTED: 'Geri alınırsa ödenecek tutar, hesaptan şimdiye kadar alınan tutarın altına iniyor; geri alınamaz.',
     REFUND_STATE: 'İade isteği bu durumda değil; sayfayı yenileyin.',
     REFUND_STOCK_UNAVAILABLE: 'Stoka geri alma bu işletmede kullanılamıyor.',
     RESOLUTION_REASON_INVALID: 'Gerekçe yazmalısınız (en fazla 500 karakter).',
@@ -1236,6 +1245,12 @@
 
   function onReasonChange(event) {
     var el = event.target;
+    if (el.getAttribute && el.getAttribute('data-cancel-order') !== null) {
+      state.cancelOrder = el.checked;
+      state.confirmKey = null;
+      render();
+      return;
+    }
     if (el.getAttribute && el.getAttribute('data-item-payment') !== null) {
       state.itemPayment = el.value;
       render();
@@ -1273,7 +1288,9 @@
     return (
       '<div class="sp-field" id="cancel-section"><span class="sp-field-label">Hesabı iptal et</span>' +
       renderReasonField('cancel', 'İptal gerekçesi') +
-      confirmButtons('cancel', '', 'Hesabı iptal et', 'Evet, hesabı iptal et', disabled || (state.cancelReason.trim() ? '' : ' disabled'), 'sp-btn-secondary') +
+      '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
+      '<span><strong>Siparişi de iptal et</strong><small>Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.</small></span></label>' +
+      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), disabled || (state.cancelReason.trim() ? '' : ' disabled'), 'sp-btn-secondary') +
       '</div>'
     );
   }
@@ -1460,7 +1477,7 @@
     state.confirmKey = null;
     var call;
     if (action === 'cancel') {
-      call = api(billBase() + '/cancel', { method: 'POST', body: { reason: state.cancelReason } });
+      call = api(billBase() + '/cancel', { method: 'POST', body: state.cancelOrder ? { reason: state.cancelReason, cancelOrder: true } : { reason: state.cancelReason } });
     } else if (action === 'request') {
       var paymentId = element.getAttribute('data-payment-id');
       call = requestRefundCall({ paymentId: paymentId, reason: state.refundReasons[paymentId] || '' });
@@ -1493,6 +1510,7 @@
         return;
       }
       if (action === 'cancel' || (result.body && result.body.billCancelled)) {
+        state.orderCancelled = !!(result.body && result.body.orderCancelled);
         state.phase = 'cancelled';
         render();
         return;
@@ -1746,7 +1764,9 @@
       '<div class="sp-card sp-center-text">' +
       '<span class="sp-icon-circle danger">!</span>' +
       '<h1 class="sp-title">Hesap İptal Edildi</h1>' +
-      '<p class="sp-subtitle">Bu hesap iptal edildi. Sipariş için gerekirse yeni hesap açılabilir.</p>' +
+      '<p class="sp-subtitle">' + (state.orderCancelled
+        ? 'Hesap ve sipariş iptal edildi; masa boşaldı.'
+        : 'Bu hesap iptal edildi. Sipariş için gerekirse yeni hesap açılabilir.') + '</p>' +
       BACK_LINK +
       '</div>';
   }

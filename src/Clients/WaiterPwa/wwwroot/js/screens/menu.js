@@ -69,8 +69,8 @@ export function renderProducts() {
           <span class="product-price">${formatMoney(product.price)}</span>
           ${inDraft > 0 ? `<span class="product-count">${escapeHtml(formatQuantity(inDraft))}</span>` : ''}
         </button>
-        <button type="button" class="product-half" data-half="${escapeHtml(product.id)}"
-                aria-label="${escapeHtml(product.name)} — miktar seç">½</button>
+        ${product.allowsHalfPortion ? `<button type="button" class="product-half" data-half="${escapeHtml(product.id)}"
+                aria-label="${escapeHtml(product.name)} — yarım porsiyon ve miktar seç">½</button>` : ''}
       </div>`;
   }
   el.productList.innerHTML = html;
@@ -99,6 +99,7 @@ export function addToDraft(product, quantity, modifiers, note, seatId, courseNum
     productId: product.id,
     name: product.name,
     price: product.price,
+    allowsHalfPortion: product.allowsHalfPortion === true,
     quantity,
     modifiers: modifiers || [],
     note: note || '',

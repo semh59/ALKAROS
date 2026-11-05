@@ -1,4 +1,5 @@
 import { notifySessionExpired } from "../../api";
+import { RefundApiError, describeRefundFailure } from "../billing";
 
 /** A check a waiter sent to the till (V1-ORD-006). It is tracked by its own number, never by the table. */
 export interface PendingCheck {
@@ -73,4 +74,32 @@ export async function recallPendingCheck(terminalId: string, orderId: string, ta
     const payload = await response.json().catch(() => undefined) as { error?: { code?: string } } | undefined;
     throw new PendingChecksApiError(response.status, recallFailureText[payload?.error?.code ?? ""] ?? "Hesap masaya geri gönderilemedi.");
   }
+}
+
+async function orderCall<T>(url: string, method: "GET" | "POST", body: unknown, fetcher: typeof fetch): Promise<T> {
+  let response: Response;
+  try {
+    response = await fetcher(url, {
+      method,
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: AbortSignal.timeout(8_000),
+    });
+  } catch {
+    throw new PendingChecksApiError(0, describeRefundFailure(new RefundApiError(0, "NETWORK_UNAVAILABLE", "network")));
+  }
+  if (!response.ok) {
+    if (response.status === 401) notifySessionExpired();
+    const payload = await response.json().catch(() => undefined) as { error?: { code?: string } } | undefined;
+    throw new PendingChecksApiError(response.status, describeRefundFailure(new RefundApiError(response.status, payload?.error?.code ?? "REQUEST_FAILED", "request failed")));
+  }
+  return response.json() as Promise<T>;
+}
+
+/** Takes back a whole order that never got paid (stock, waste, bills and table are settled by the server). The current row version is read first so a changed order is refused, not overwritten. */
+export async function cancelPendingCheckOrder(terminalId: string, orderId: string, reason: string, idempotencyKey: string, fetcher: typeof fetch = fetch): Promise<void> {
+  const base = `/api/v1/terminals/${encodeURIComponent(terminalId)}/orders/${encodeURIComponent(orderId)}`;
+  const order = await orderCall<{ rowVersion: number }>(base, "GET", undefined, fetcher);
+  await orderCall(`${base}/cancel`, "POST", { idempotencyKey, expectedRowVersion: order.rowVersion, reason }, fetcher);
 }

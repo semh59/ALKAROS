@@ -240,3 +240,7 @@ html { scroll-padding-bottom: 80px; }
 .sp-fold > summary::before { content: "▸"; }
 .sp-fold[open] > summary::before { content: "▾"; }
 .sp-fold > summary:focus-visible { outline: 3px solid var(--color-focus, #1F4E79); outline-offset: 2px; }
+.sp-check { display: flex; align-items: flex-start; gap: 12px; min-height: 48px; cursor: pointer; }
+.sp-check input { width: 24px; height: 24px; flex: none; margin: 0; }
+.sp-check span { display: flex; flex-direction: column; gap: 4px; }
+.sp-check small { color: var(--color-muted, #4d5c68); }

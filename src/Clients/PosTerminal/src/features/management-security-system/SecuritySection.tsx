@@ -1,5 +1,6 @@
 import type { ManagementSectionProps } from "../management/sections";
 import type { SecurityClient } from "./api";
+import { HangingOrdersPanel } from "./HangingOrdersPanel";
 import { BacklogPanel, DiagnosticPanel } from "./DiagnosticBacklogPanels";
 import { BackupPanel, MaintenancePanel } from "./MaintenanceBackupPanels";
 import { RecoveryPanel } from "./RecoveryPanel";
@@ -13,6 +14,7 @@ export function SecuritySection({ client }: Partial<ManagementSectionProps> & { 
     <MaintenancePanel client={client} />
     <BackupPanel client={client} />
     <BacklogPanel client={client} />
+    <HangingOrdersPanel client={client} />
     <DiagnosticPanel client={client} />
   </div>;
 }
