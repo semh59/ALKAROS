@@ -38,6 +38,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
   - src/Clients/PosTerminal/src/features/management-security-system/models.ts (V1-RMD-450) — tipler ve sonuç cümleleri.
   - src/Clients/PosTerminal/src/features/management-security-system/management-security-system.css (V1-RMD-450) — panel yerleşimi.
   - src/Clients/PosTerminal/src/features/management-security-system/SecuritySection.test.tsx (V1-RMD-450) — panel bağlantısı.
+  - src/Clients/PosTerminal/src/features/management-security-system/TerminalsPanel.test.tsx (V1-RMD-450) — güvenlik bölümü testinin sahte istemcisine asılı sipariş listesi.
   - src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx (V1-RMD-784) — yarım porsiyon kutusu.
   - src/Clients/PosTerminal/src/features/catalog/catalog.css (V1-RMD-076) — yarım porsiyon kutusu satırı (48 px dokunma hedefi).
   - src/Clients/PosTerminal/src/features/catalog/models.ts (V1-RMD-102) — ürün alanı.
