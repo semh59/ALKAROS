@@ -50,6 +50,7 @@ Kapsam dışı: arayüz (V1-RMD-803).
   - tests/Host/Experience/Billing/BillingSplitHttpTests.cs (V1-RMD-103) — hesap ve işaretçi tek işlemde testi.
   - tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs (V1-RMD-773) — duyuru sahte sınıfı yeni imzayı taşır.
   - tests/Host/Experience/WaiterNotifications/WaiterOrderStatusHubGroupTests.cs (V1-RMD-226) — kasa kuyruğu grubu testleri.
+  - tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj (V1-RMD-201) — rol tablolarının geçişi test veritabanına girer.
   - tests/Host/Experience/PaymentTender/BillClosureLoggingTests.cs (V1-RMD-785) — bildirim yardımcısı mesajı.
   - tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs (V1-RMD-008) — menü ürünü izin listesi.
   - tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs (V1-RMD-298) — sahte depo yeni yöntemleri taşır.
