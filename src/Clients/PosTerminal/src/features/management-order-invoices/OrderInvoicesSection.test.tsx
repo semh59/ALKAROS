@@ -42,6 +42,7 @@ describe("online order invoices section", () => {
   it("asks for nothing until requested, then lists the drafts and the waiting orders in Turkish without raw values", async () => {
     const api = client();
     await render(<OrderInvoicesSection client={api} />);
+    expect(document.body.textContent).toContain("takvim günüdür");
     expect(api.list).not.toHaveBeenCalled();
     await press("Listele");
     const rows = [...document.querySelectorAll("section[aria-label='Online sipariş fatura taslakları'] tbody tr")].map((row) => row.textContent);

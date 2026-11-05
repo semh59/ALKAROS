@@ -37,6 +37,7 @@ describe("product margin section", () => {
   it("asks for nothing until requested, then shows rows, totals and the unknown-cost warning in Turkish", async () => {
     const api = client();
     await render(<ProductMarginSection client={api} />);
+    expect(document.body.textContent).toContain("gün sabah 06:00'da başlar");
     expect(api.report).not.toHaveBeenCalled();
     await press("Raporu getir");
     const rows = [...document.querySelectorAll("tbody tr")].map((r) => r.textContent!);

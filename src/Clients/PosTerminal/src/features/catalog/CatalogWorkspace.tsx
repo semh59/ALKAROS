@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ApiError } from "../../api";
 import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary } from "../../design-system";
-import { formatClockTime, formatDate } from "../../format";
+import { formatClockTime, formatDate, venueDateTimeInput, venueInstant } from "../../format";
 import { commonActions, stateText } from "../../strings";
 import { CatalogApiError } from "./catalogApi";
 import {
@@ -45,12 +45,10 @@ type Draft = {
   allowsHalfPortion: boolean;
 };
 
-const localDateTimeInput = (date: Date) => new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
-
 const emptyDraft = (): Draft => ({
   code: "", name: "", description: "", sku: "", productType: "MenuItem", stockMode: "QuantityTracked",
   categoryId: "", taxProfileId: "", modifierGroupId: "", productId: "", priceType: "SalePrice",
-  price: "", vatRate: "10", sortOrder: "0", priceDelta: "0", effectiveFrom: localDateTimeInput(new Date()),
+  price: "", vatRate: "10", sortOrder: "0", priceDelta: "0", effectiveFrom: venueDateTimeInput(new Date()),
   selectionType: "SelectOne", minSelections: "0", maxSelections: "1", prepTimeMinutes: "", allowsHalfPortion: false,
 });
 
@@ -277,5 +275,5 @@ function toCreateInput(kind: CatalogEntityKind, draft: Draft, id: string): Catal
   if (kind === "products") return { kind, value: { id, sku: draft.sku.trim(), name: draft.name.trim(), productType: draft.productType, stockMode: draft.stockMode, categoryId: draft.categoryId || null, taxProfileId: draft.taxProfileId || null, description: draft.description || null, printerRoutePolicy: null, displayOrder: 0, currentPrice: Number(draft.price), prepTimeMinutes: draft.prepTimeMinutes.trim() ? Number(draft.prepTimeMinutes) : null, allowsHalfPortion: draft.allowsHalfPortion } };
   if (kind === "modifierGroups") return { kind, value: { id, code: draft.code.trim().toUpperCase(), name: draft.name.trim(), selectionType: draft.selectionType, minSelections: Number(draft.minSelections) || 0, maxSelections: Number(draft.maxSelections) || 1 } };
   if (kind === "modifiers") return { kind, value: { id, modifierGroupId: draft.modifierGroupId, code: draft.code.trim().toUpperCase(), name: draft.name.trim(), priceDelta: Number(draft.priceDelta) || 0, productId: draft.productId || null } };
-  return { kind, value: { id, productId: draft.productId, priceType: draft.priceType, price: Number(draft.price), currencyCode: "TRY", effectiveFrom: new Date(draft.effectiveFrom).toISOString() } };
+  return { kind, value: { id, productId: draft.productId, priceType: draft.priceType, price: Number(draft.price), currencyCode: "TRY", effectiveFrom: venueInstant(draft.effectiveFrom) } };
 }

@@ -1,7 +1,7 @@
 # V1-RMD-834 - Katalog fiyat başlangıcı işletme saatiyle; rapor ve fatura ekranlarında gün ipucu
 
 - Task ID: V1-RMD-834
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

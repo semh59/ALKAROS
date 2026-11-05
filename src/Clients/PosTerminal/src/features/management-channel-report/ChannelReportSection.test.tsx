@@ -38,6 +38,7 @@ describe("channel report section", () => {
     const api = client();
     await render(<ChannelReportSection client={api} />);
     expect(api.report).not.toHaveBeenCalled();
+    expect(document.body.textContent).toContain("gün sabah 06:00'da başlar");
     await press("Raporu getir");
     const rows = [...document.querySelectorAll("tbody tr")].map((row) => row.textContent);
     expect(rows).toHaveLength(3);

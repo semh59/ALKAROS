@@ -51,6 +51,12 @@ export const venueDateRange = (days: number, now: Date = new Date()) => {
   return { from: new Date(Date.parse(`${to}T00:00:00Z`) - (days - 1) * dayMs).toISOString().slice(0, 10), to };
 };
 
+/** An instant as the venue wall clock for a datetime-local field (yyyy-MM-ddTHH:mm), whatever the device zone. */
+export const venueDateTimeInput = (date: Date) => new Date(date.getTime() + istanbulOffsetHours * hourMs).toISOString().slice(0, 16);
+
+/** The instant a datetime-local value means when read as venue wall clock. */
+export const venueInstant = (input: string) => new Date(`${input.slice(0, 16)}:00+0${istanbulOffsetHours}:00`).toISOString();
+
 export const formatDecimal = (value: number, digits = 1) =>
   new Intl.NumberFormat("tr-TR", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
 

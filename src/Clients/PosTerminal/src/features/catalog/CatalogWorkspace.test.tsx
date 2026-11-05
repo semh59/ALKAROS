@@ -48,7 +48,8 @@ describe("catalog workspace", () => {
       select.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
-  afterEach(async () => { if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); });
+  const deviceZone = process.env.TZ;
+  afterEach(async () => { if (deviceZone === undefined) delete process.env.TZ; else process.env.TZ = deviceZone; if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); });
 
   it("renders searchable entity tabs with authoritative product detail", async () => {
     await render(<CatalogWorkspace {...baseProps()} />);
@@ -145,10 +146,10 @@ describe("catalog workspace", () => {
     expect(onCreate.mock.calls[0][0].value.id).toBe(onCreate.mock.calls[1][0].value.id);
   });
 
-  it("defaults the price start to the local clock, not UTC", async () => {
+  it("defaults the price start to the venue clock whatever the device zone is", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-01-01T10:00:00Z"));
-    vi.spyOn(Date.prototype, "getTimezoneOffset").mockReturnValue(-180);
+    process.env.TZ = "America/Los_Angeles";
     try {
       await render(<CatalogWorkspace {...baseProps()} />);
       await click([...document.querySelectorAll("nav button")].find((button) => button.textContent?.startsWith("Fiyat"))!);
@@ -157,6 +158,20 @@ describe("catalog workspace", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it("sends the price start typed in venue time as the matching instant whatever the device zone is", async () => {
+    process.env.TZ = "America/Los_Angeles";
+    const onCreate = vi.fn().mockResolvedValue(undefined);
+    await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    await click([...document.querySelectorAll("nav button")].find((button) => button.textContent?.startsWith("Fiyat"))!);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("ekle"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    await choose(dialog, "Ürün", "product-1");
+    await fill(dialog.querySelector<HTMLInputElement>('input[type="number"]')!, "100");
+    await fill(dialog.querySelector<HTMLInputElement>('input[type="datetime-local"]')!, "2026-01-01T13:00");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
+    expect(onCreate.mock.calls[0][0].value.effectiveFrom).toBe("2026-01-01T10:00:00.000Z");
   });
 
   it("does not offer the untracked stock mode the sale path ignores and shows older records in Turkish", async () => {
