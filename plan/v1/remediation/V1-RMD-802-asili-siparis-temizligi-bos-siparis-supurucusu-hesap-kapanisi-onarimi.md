@@ -53,6 +53,8 @@ Kapsam dışı: arayüz (V1-RMD-803).
   - tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj (V1-RMD-201) — rol tablolarının geçişi test veritabanına girer.
   - tests/Host/Experience/PaymentTender/BillClosureLoggingTests.cs (V1-RMD-785) — bildirim yardımcısı mesajı.
   - tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs (V13-PUI-001) — ödeme başlatıldı durumunun kalıcı olmadığı doğrulaması.
+  - tests/Host/Experience/CashSession/CashSessionHttpTests.cs (V13-CSH-004) — nakit tahsilatta başlatıldı durumunun kalıcı olmadığı doğrulaması.
+  - tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs (V1-RMD-442) — cariye yazmada başlatıldı durumunun kalıcı olmadığı doğrulaması.
   - tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs (V1-RMD-008) — menü ürünü izin listesi.
   - tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs (V1-RMD-298) — sahte depo yeni yöntemleri taşır.
   - tests/Modules/Tables/PaymentTopology/PaymentAwareTableTopologyPolicyTests.cs (V13-TBL-001) — durum kümesi testi.
