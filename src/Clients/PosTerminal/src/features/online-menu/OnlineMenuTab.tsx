@@ -14,6 +14,7 @@ import {
   type OnlineMenuProduct,
   type OnlinePlatform,
 } from "./onlineMenuApi";
+import { foldSearch } from "../../search";
 import "./online-menu.css";
 
 const when = (iso: string) =>
@@ -106,10 +107,10 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
   });
 
   const products = useMemo(() => {
-    const term = search.trim().toLocaleLowerCase("tr-TR");
+    const term = foldSearch(search.trim());
     return (menu?.products ?? []).filter((p) =>
       (!onlyUnmapped || p.externalSku === null)
-      && (term === "" || p.name.toLocaleLowerCase("tr-TR").includes(term) || p.catalogSku.toLocaleLowerCase("tr-TR").includes(term)));
+      && (term === "" || foldSearch(p.name).includes(term) || foldSearch(p.catalogSku).includes(term)));
   }, [menu, search, onlyUnmapped]);
 
   const platformNames = useMemo(() => new Map((menu?.platformProducts ?? []).map((p) => [p.id, p.name])), [menu]);

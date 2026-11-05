@@ -63,6 +63,14 @@ describe("catalog workspace", () => {
     expect(document.querySelectorAll(".catalog-row")).toHaveLength(1);
   });
 
+  it.each(["isparta", "ISPARTA", "ıspar"])("finds a record whose name has a capital I when the search is %s", async (query) => {
+    const product = data.products[0];
+    await render(<CatalogWorkspace {...baseProps({ data: { ...data, products: [{ ...product, name: "Isparta Gülü" }, { ...product, id: "product-2", sku: "CAY-1", name: "Çay" }] } })} />);
+    await fill(document.querySelector<HTMLInputElement>(".catalog-workspace__toolbar input")!, query);
+    expect(document.querySelectorAll(".catalog-row")).toHaveLength(1);
+    expect(document.body.textContent).toContain("Isparta Gülü");
+  });
+
   it("shows the last update as a Turkish clock time, never raw ISO text", async () => {
     await render(<CatalogWorkspace {...baseProps({ lastUpdated: "2026-11-01T08:02:49.436Z" })} />);
     const text = document.body.textContent ?? "";

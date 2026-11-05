@@ -25,6 +25,7 @@ import {
 } from "./models";
 import { FloorPlanWorkspace } from "./FloorPlanWorkspace";
 import { TableManagementApiError } from "./tableApi";
+import { foldSearch } from "../../search";
 import "./tables.css";
 
 type Feedback = { tone: "success" | "error" | "conflict"; message: string } | null;
@@ -166,11 +167,11 @@ export function TableWorkspace({
   const [participantTableIds, setParticipantTableIds] = useState<string[]>([]);
 
   const filteredTables = useMemo(() => {
-    const normalized = search.trim().toLocaleLowerCase("tr-TR");
+    const normalized = foldSearch(search.trim());
     return tables.filter((table) =>
       (zoneFilter === "all" || table.zoneId === zoneFilter)
       && (statusFilter === "all" || table.status === statusFilter)
-      && (!normalized || table.tableNumber.toLocaleLowerCase("tr-TR").includes(normalized)),
+      && (!normalized || foldSearch(table.tableNumber).includes(normalized)),
     );
   }, [search, statusFilter, tables, zoneFilter]);
 

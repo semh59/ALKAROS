@@ -19,6 +19,7 @@ import {
   type CatalogProduct,
   type CatalogWorkspaceProps,
 } from "./models";
+import { foldSearch } from "../../search";
 import "./catalog.css";
 
 type Draft = {
@@ -70,8 +71,8 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
 
   const rows = useMemo(() => catalogRows(kind, data), [data, kind]);
   const filteredRows = useMemo(() => {
-    const normalized = search.trim().toLocaleLowerCase("tr-TR");
-    return rows.filter((row) => !normalized || `${row.title} ${row.subtitle}`.toLocaleLowerCase("tr-TR").includes(normalized));
+    const normalized = foldSearch(search.trim());
+    return rows.filter((row) => !normalized || foldSearch(`${row.title} ${row.subtitle}`).includes(normalized));
   }, [rows, search]);
   const selected = rows.find((row) => row.id === selectedId) ?? filteredRows[0] ?? null;
   const selectedProduct = kind === "products" ? data.products.find((product) => product.id === selected?.id) : undefined;

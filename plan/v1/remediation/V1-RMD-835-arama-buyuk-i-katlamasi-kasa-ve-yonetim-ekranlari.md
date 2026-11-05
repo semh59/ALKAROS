@@ -1,7 +1,7 @@
 # V1-RMD-835 - Aramada büyük I / noktasız ı katlaması: kasa ve yönetim ekranları
 
 - Task ID: V1-RMD-835
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

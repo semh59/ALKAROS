@@ -21,6 +21,7 @@ import { usePendingChecksAlert } from "../features/pending-checks";
 import { CashSessionBand, CashSessionLink, useCashSessionState } from "../features/cash-session-status";
 import { CashierModifierPicker } from "./CashierModifierPicker";
 import { ExperiencePage, type BackendStatus } from "./workspace";
+import { foldSearch } from "../search";
 
 type CashierSession = "checking" | "anonymous" | "ready";
 type FeedbackKind = "error" | "success" | "conflict" | "unauthorized";
@@ -548,12 +549,12 @@ export function Cashier() {
   }
 
   const activeOrder = order?.orderId ? order : null;
-  const normalizedSearch = search.trim().toLocaleLowerCase("tr-TR");
+  const normalizedSearch = foldSearch(search.trim());
   const visibleProducts = catalog.filter((product) =>
     (activeCategory === "ALL" || product.categoryCode === activeCategory)
     && (!normalizedSearch
-      || product.name.toLocaleLowerCase("tr-TR").includes(normalizedSearch)
-      || product.sku.toLocaleLowerCase("tr-TR").includes(normalizedSearch)));
+      || foldSearch(product.name).includes(normalizedSearch)
+      || foldSearch(product.sku).includes(normalizedSearch)));
   const itemCount = activeOrder?.lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0;
 
   // A line with its own discount cannot be rebuilt (the discount is not recreated), nor can one whose product left the catalog.

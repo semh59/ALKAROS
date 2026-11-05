@@ -70,6 +70,13 @@ function baseProps(overrides: Partial<ComponentProps<typeof TableWorkspace>> = {
 }
 
 describe("table workspace", () => {
+  it.each(["izgara", "IZGARA", "ızgara"])("finds a table whose number has a capital I when the search is %s", async (query) => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [{ ...tables[0], tableNumber: "IZGARA-1" }, tables[1]] })} />);
+    await fillInput(document.querySelector<HTMLInputElement>('input[aria-label="Masa ara"]')!, query);
+    expect(document.body.textContent).toContain("IZGARA-1");
+    expect(document.body.textContent).not.toContain(tables[1].tableNumber);
+  });
+
   let root: Root | null = null;
 
   async function render(element: ReactElement) {

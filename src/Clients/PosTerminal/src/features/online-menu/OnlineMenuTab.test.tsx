@@ -131,6 +131,12 @@ describe("OnlineMenuTab", () => {
     expect(document.body.textContent).toContain("Gönderiliyor — 2 ürün. 1 ürün yayınlanamadı: Mercimek Çorbası: platform kodu yok veya platform menüsünde değil");
   });
 
+  it.each(["çorbasi", "ÇORBASI", "çorbası"])("finds a product whose name has a dotless i when the search is %s", async (query) => {
+    await render();
+    await choose(document.querySelector('input[type="search"]') as HTMLInputElement, query);
+    expect([...document.querySelectorAll("tbody tr td:first-child")].map((c) => c.textContent)).toEqual(["Mercimek Çorbası"]);
+  });
+
   it("finds products by name or code and can show only the unmapped ones", async () => {
     await render();
     await choose(document.querySelector('input[type="search"]') as HTMLInputElement, "çorba");

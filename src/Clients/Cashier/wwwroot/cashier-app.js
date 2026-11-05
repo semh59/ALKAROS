@@ -598,6 +598,9 @@
     }).join('');
   }
 
+  // A capital I turns into a dotless i in Turkish, which an English keyboard's "i" would never match.
+  const fold = (text) => text.toLocaleLowerCase('tr-TR').replaceAll('ı', 'i');
+
   function renderProducts(searchQuery = '') {
     if (!el.productMatrix) return;
     if (state.sessionStatus === 'unauthorized') {
@@ -612,7 +615,7 @@
       el.productMatrix.innerHTML = '<div class="pos-catalog-state pos-catalog-state--error">Katalog sunucudan alınamadı. Sipariş girişi kapalı; bağlantıyı kontrol edip sayfayı yenileyin.</div>';
       return;
     }
-    const query = searchQuery.trim().toLocaleLowerCase('tr-TR');
+    const query = fold(searchQuery.trim());
     const filtered = state.products.filter(p => {
       const matchCat = state.activeCategory === 'all' || p.categoryId === state.activeCategory;
       // V1-RMD-376 (module-by-module UI audit round 2, P2 - saha gerçekliği): `query` is already
@@ -620,7 +623,7 @@
       // uppercase ("E2E-KASA-DUSUK"), so a case-sensitive .includes() here never matched a
       // lowercase search at all, silently, for any code-based search (a cashier typing a SKU by
       // hand, or a scanner sending it in a different case than the catalog record).
-      const matchSearch = !query || p.name.toLocaleLowerCase('tr-TR').includes(query) || (p.code && p.code.toLocaleLowerCase('tr-TR').includes(query));
+      const matchSearch = !query || fold(p.name).includes(query) || (p.code && fold(p.code).includes(query));
       return matchCat && matchSearch;
     });
 
@@ -1075,7 +1078,7 @@
         // moment that already told a human search apart from a scan's own burst).
         searchDebounceTimer = window.setTimeout(() => {
           const trimmed = value.trim();
-          const exactMatch = trimmed && state.products.find(p => p.code && p.code.toLowerCase() === trimmed.toLowerCase());
+          const exactMatch = trimmed && state.products.find(p => p.code && fold(p.code) === fold(trimmed));
           if (exactMatch) {
             el.searchInput.value = '';
             renderProducts('');
