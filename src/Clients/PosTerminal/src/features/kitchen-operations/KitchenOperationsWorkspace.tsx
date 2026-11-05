@@ -87,13 +87,6 @@ function worstHealth(health: KitchenHealthSnapshot | null): KitchenHealthSnapsho
     healthRank[current] > healthRank[worst] ? current : worst);
 }
 
-function nextItemState(status: KitchenTicketItem["status"]): KitchenTicketItem["status"] | null {
-  if (status === "Queued") return "Preparing";
-  if (status === "Preparing") return "Ready";
-  if (status === "Ready") return "Served";
-  return null;
-}
-
 // V1-RMD-214: found by an independent audit (2026-09-16) to never actually
 // fire - it tested error.message against an English regex, but the
 // backend's message is always Turkish, and every call site's own

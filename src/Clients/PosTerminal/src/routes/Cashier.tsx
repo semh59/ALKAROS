@@ -516,6 +516,8 @@ export function Cashier() {
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               autoComplete="username"
+              // The sign-in screen has one purpose and this is its first field.
+              // oxlint-disable-next-line jsx-a11y/no-autofocus
               autoFocus
             />
           </label>
