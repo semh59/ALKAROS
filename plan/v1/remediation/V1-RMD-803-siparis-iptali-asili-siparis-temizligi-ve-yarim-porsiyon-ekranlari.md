@@ -59,7 +59,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
   - tests/Clients/StaticApps/split-payment-cancel-order.test.js (V1-RMD-109) — yeni dosya: kasa iptal bölümü testleri.
   - tests/Clients/StaticApps/waiter-half-portion.test.js (V1-WTR-055) — yeni dosya: garson menü ve ürün sayfası davranış testleri (gerçek modüller, jsdom).
   - tests/Clients/StaticApps/waiter-half-portion-stepper.test.js (V1-WTR-055) — yeni dosya: taslak satırı adım davranışı (gerçek uygulama, jsdom).
-  - tests/Clients/WaiterPwa/Frontend/test_waiter_half_portion.py (V1-WTR-055) — yeni dosya: garson yarım porsiyon testleri.
+  - `tests/Clients/WaiterPwa/Frontend/test_waiter_half_portion.py` (V1-WTR-055) — yeni dosya: garson yarım porsiyon testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
