@@ -1,8 +1,8 @@
 # V1-RMD-803 - Arayüz: hesap iptalinde "siparişi de iptal et", kasa kuyruğundan sipariş iptali, yönetici asılı sipariş temizliği, yarım porsiyon bayrağı
 
 - Task ID: V1-RMD-803
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
@@ -12,7 +12,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
 
 1. Hesap iptal akışı (kasa tahsilat sayfası `split-payment.js` ve React `RefundPanel`): "Siparişi de iptal et" kutusu (varsayılan kapalı) ve açıklama: hazırlanmış kalem fire sayılır, hazırlanmamış kalemin stoğu geri gelir, masa boşalır; kutu işaretliyse istek `cancelOrder: true` taşır ve sonuçta `orderCancelled` gösterilir.
 2. Kasa kuyruğundan sipariş iptali (`PendingChecksWorkspace`): her hesap kartında gerekçeli, iki adımlı onaylı "Siparişi iptal et"; sipariş okunup güncel sürümüyle `POST .../orders/{id}/cancel` çağrılır; liste yenilenir.
-3. Yönetici "asılı sipariş temizle" (yönetim, güvenlik ve sistem bölümü): `GET /security/orders/hanging` listesi (sipariş no, durum, yaş, masa, stoğa dönecek ve fire olacak kalem sayısı), listeden önce önizleme (`dryRun`), gerekçeyle temizleme ve siparişin tek tek sonucu (temizlendi, değişmiş, ödeme var, servis edilmiş ürün var, iptal edilemez).
+3. Yönetici "asılı sipariş temizle" (yönetim, güvenlik ve sistem bölümü): `GET /security/orders/hanging` listesi (sipariş no, durum, yaş, masa, stoğa dönecek ve fire olacak kalem sayısı), listeden önce önizleme (`dryRun`), gerekçeyle ve önizlemede görülen sipariş kimlikleriyle (`orderIds`, sunucuda zorunlu) temizleme ve siparişin tek tek sonucu (temizlendi, değişmiş, ödeme var, servis edilmiş ürün var).
 4. Yarım porsiyon: ürün formunda "Yarım porsiyon olur" kutusu (oluşturma ve düzenleme); WaiterPwa menüden gelen `allowsHalfPortion` bayrağını okur: bayraksız üründe "yarım" düğmesi görünmez, ürün sayfasında 0,5 hızlı seçimi yoktur ve taslak satırında yarımlık artırma/azaltma yerine tam adet adımı kullanılır; bayraklı üründe mevcut yarım adım korunur.
 5. İstemci hata sözlükleri: `ORDER_QUANTITY_NOT_ALLOWED`, `REFUND_QUANTITY_NOT_WHOLE` ve yeni iptal/temizleme kodları (`ORDER_HAS_PAYMENT`, `ORDER_CANCEL_NOT_ALLOWED`, `ORDER_HAS_SERVED_ITEMS`, `REASON_REQUIRED`, `STOCK_RESTORE_FAILED`, `CONCURRENCY_CONFLICT`) Türkçe sabit cümlelerle.
 
@@ -23,6 +23,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
 - `evidence/V1-RMD-803/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx (V1-RMD-366) — siparişi de iptal et kutusu.
+  - src/Clients/PosTerminal/src/features/billing/billing.css (V1-RMD-510) — iptal kutusu satırı (48 px dokunma hedefi).
   - src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx (V1-RMD-366) — iptal çağrısının yeni gövdesi.
   - src/Clients/PosTerminal/src/features/billing/refundApi.ts (V1-RMD-366) — iptal isteği bayrağı, hata cümleleri.
   - src/Clients/PosTerminal/src/features/billing/refundApi.test.ts (V1-RMD-366) — yeni hata kodları.
@@ -38,6 +39,7 @@ Kasa incelemesinin G5 grubunun ekran tarafı (`7-birlesik-dogrulama.md` satır 5
   - src/Clients/PosTerminal/src/features/management-security-system/management-security-system.css (V1-RMD-450) — panel yerleşimi.
   - src/Clients/PosTerminal/src/features/management-security-system/SecuritySection.test.tsx (V1-RMD-450) — panel bağlantısı.
   - src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx (V1-RMD-784) — yarım porsiyon kutusu.
+  - src/Clients/PosTerminal/src/features/catalog/catalog.css (V1-RMD-076) — yarım porsiyon kutusu satırı (48 px dokunma hedefi).
   - src/Clients/PosTerminal/src/features/catalog/models.ts (V1-RMD-102) — ürün alanı.
   - src/Clients/PosTerminal/src/features/catalog/catalogApi.ts (V1-RMD-102) — oluşturma ve ayrıntı güncelleme gövdesi.
   - src/Clients/PosTerminal/src/features/catalog/catalogApi.test.ts (V1-GOV-038) — yeni alanın gövdesi.
