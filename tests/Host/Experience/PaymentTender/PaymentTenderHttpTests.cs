@@ -69,6 +69,8 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(60m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
         Assert.Equal(40m, summaryBody.GetProperty("remainingAmount").GetDecimal());
         Assert.Single(summaryBody.GetProperty("allocations").EnumerateArray());
+        Assert.Equal(1L, await _database.PaymentCountAsync(billId));
+        Assert.Equal(0L, await _database.InitiatedPaymentCountAsync());
     }
 
     [Fact]
@@ -222,6 +224,8 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal(0m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
         Assert.Equal(100m, summaryBody.GetProperty("remainingAmount").GetDecimal());
+        Assert.Equal(1L, await _database.PaymentCountAsync(billId));
+        Assert.Equal(0L, await _database.InitiatedPaymentCountAsync());
     }
 
     [Fact]
@@ -1526,6 +1530,12 @@ internal sealed class PaymentTenderHttpTestDatabase
         await new ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository(
                 DataSource, new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(DataSource))
             .AllocateAsync(payment, bill, amount, "rmd412-" + Guid.NewGuid().ToString("N"));
+    }
+
+    public async Task<long> InitiatedPaymentCountAsync()
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE status = 'Initiated';");
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<long> PaymentCountAsync(Guid billId)

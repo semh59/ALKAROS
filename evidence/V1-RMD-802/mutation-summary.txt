@@ -1,0 +1,25 @@
+m1-recheck-skipped Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 36 s - ALKAROS. restored
+m2-items-ignored Başarısız! - Başarısız:     3, Başarılı:    10, Atlanan:     0, Toplam:    13, Süre: 37 s - ALKAROS. restored
+m3-age-ignored Başarısız! - Başarısız:     2, Başarılı:    11, Atlanan:     0, Toplam:    13, Süre: 37 s - ALKAROS. restored
+m4-user-actor Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 36 s - ALKAROS. restored
+m5-active-bill-listed Başarısız! - Başarısız:     3, Başarılı:     3, Atlanan:     0, Toplam:     6, Süre: 15 s - ALKAROS. restored
+m6-source-ignored Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 15 s - ALKAROS. restored
+m7-reason-not-required D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\OrderBacklogAdministration.cs(204,45): error CS8 restored
+m8-dryrun-off-by-default Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 15 s - ALKAROS. restored
+m9-payment-outcome-hidden Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 14 s - ALKAROS. restored
+m10-grace-ignored Başarısız! - Başarısız:     2, Başarılı:     2, Atlanan:     0, Toplam:     4, Süre: 8 s - ALKAROS.H restored
+m11-open-sibling-ignored Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 8 s - ALKAROS.H restored
+m12-closure-lock-skipped Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 448 ms - ALKARO restored
+m13-pointer-not-attached Başarısız! - Başarısız:     2, Başarılı:    52, Atlanan:     0, Toplam:    54, Süre: 2 m 44 s - ALKA restored
+m14-queue-group-for-all Başarısız! - Başarısız:     2, Başarılı:    12, Atlanan:     0, Toplam:    14, Süre: 1 s - ALKAROS.H restored
+m15-announce-to-all Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 1 s - ALKAROS.H restored
+m16-bill-cancel-silent Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 34 s - ALKAROS. restored
+m17-order-cancel-queue-silent Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 37 s - ALKAROS. restored
+m18-half-flag-dropped Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 34 s - ALKAROS. restored
+m19-second-lock-round-skipped Başarısız! - Başarısız:     1, Başarılı:    21, Atlanan:     0, Toplam:    22, Süre: 1 m 25 s - ALKA restored
+m7-reason-not-required Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 15 s - ALKAROS. restored
+m20-confirmed-ids-ignored Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 20 s - ALKAROS. restored
+m21-age-floor-dropped Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 20 s - ALKAROS. restored
+m20-confirmed-ids-ignored Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 29 s - ALKAROS. restored
+m22-ids-not-required Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 26 s - ALKAROS. restored
+m22-ids-not-required Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 26 s - ALKAROS. restored

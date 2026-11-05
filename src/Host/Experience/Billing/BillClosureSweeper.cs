@@ -29,6 +29,12 @@ public sealed class BillClosureSweeper : BackgroundService
             new EventId(5204, nameof(LogSweepFailed)),
             "The bill closure sweep failed; it is retried on the next sweep.");
 
+    private static readonly Action<ILogger, Guid, Exception?> LogRepairFailed =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(5205, nameof(LogRepairFailed)),
+            "The sweep could not complete the order {OrderId} of a paid bill; it is retried on the next sweep.");
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly IBillClosureService _closure;
     private readonly OrderSettlementService _orderSettlement;
@@ -98,6 +104,62 @@ public sealed class BillClosureSweeper : BackgroundService
         }
     }
 
+    /// <summary>
+    /// Closing a bill and completing its order (which frees the table) are two steps; when the second one failed the
+    /// bill is Paid, the closing sweep above no longer sees it, and the order stays live. This completes the live
+    /// orders whose bills are all settled, at least one of them Paid for longer than the grace period.
+    /// </summary>
+    /// <returns>How many orders were completed.</returns>
+    public async Task<int> RepairPaidBillOrdersAsync(TimeSpan gracePeriod, CancellationToken cancellationToken)
+    {
+        var completed = 0;
+        var after = Guid.Empty;
+        while (true)
+        {
+            var candidates = new List<(Guid OrderId, Guid PaidBillId)>();
+            await using (var command = _dataSource.CreateCommand(
+                $"""
+                SELECT o.order_id,
+                       (SELECT b.bill_id FROM billing.bills b WHERE b.order_id = o.order_id AND b.status = 'Paid'
+                        ORDER BY b.opened_at, b.bill_id LIMIT 1)
+                FROM orders.orders o
+                WHERE o.status IN ('Submitted', 'Accepted', 'Preparing', 'Ready', 'Served')
+                  AND o.order_id > @after
+                  AND EXISTS (SELECT 1 FROM billing.bills b
+                              WHERE b.order_id = o.order_id AND b.status = 'Paid'
+                                AND COALESCE(b.closed_at, b.updated_at) < now() - @grace)
+                  AND NOT EXISTS (SELECT 1 FROM billing.bills b
+                                  WHERE b.order_id = o.order_id AND b.status NOT IN ('Paid', 'Cancelled'))
+                ORDER BY o.order_id
+                LIMIT {BatchSize};
+                """))
+            {
+                command.Parameters.AddWithValue("grace", gracePeriod);
+                command.Parameters.AddWithValue("after", after);
+                await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+                while (await reader.ReadAsync(cancellationToken))
+                    candidates.Add((reader.GetGuid(0), reader.GetGuid(1)));
+            }
+
+            if (candidates.Count == 0)
+                return completed;
+            after = candidates[^1].OrderId;
+
+            foreach (var (orderId, paidBillId) in candidates)
+            {
+                try
+                {
+                    if (await _orderSettlement.CompleteForPaidBillAsync(paidBillId, cancellationToken))
+                        completed++;
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    LogRepairFailed(_logger, orderId, exception);
+                }
+            }
+        }
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var timer = new PeriodicTimer(Interval);
@@ -106,6 +168,7 @@ public sealed class BillClosureSweeper : BackgroundService
             try
             {
                 await SweepOnceAsync(Interval, stoppingToken);
+                await RepairPaidBillOrdersAsync(Interval, stoppingToken);
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
             {

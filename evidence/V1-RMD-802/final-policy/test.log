@@ -1,0 +1,13 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Tables.PaymentTopology.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables.PaymentTopology.Tests\debug\ALKAROS.Tables.PaymentTopology.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables.PaymentTopology.Tests\debug\ALKAROS.Tables.PaymentTopology.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-802\final-policy\semih_SEMH59_2026-11-05_08_34_05_net8.0.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 268 ms - ALKAROS.Tables.PaymentTopology.Tests.dll (net8.0)

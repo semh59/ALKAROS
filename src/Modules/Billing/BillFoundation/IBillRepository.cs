@@ -32,6 +32,19 @@ public interface IBillRepository
     /// </summary>
     Task AddAsync(Bill bill, CancellationToken cancellationToken = default);
 
+    /// <summary>The same insert inside the caller's transaction, so a change that spans modules commits as one.</summary>
+    Task AddAsync(
+        Bill bill,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Takes the <c>bill-settlement</c> lock every payment, refund and cancellation of the bill takes, on a connection
+    /// of its own; disposing the result releases it. Work done while it is held sees no payment change underneath it.
+    /// </summary>
+    Task<IAsyncDisposable> AcquireSettlementLockAsync(Guid billId, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Persists state changes or item modifications on an existing Bill aggregate.
     /// Guarded by optimistic concurrency: fails if current row version differs from <paramref name="expectedRowVersion"/>.

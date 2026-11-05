@@ -16,7 +16,7 @@ public sealed class CustomerDisplayContractTests
         // V1-WTR-017: prepTimeMinutes joins the allowlist here too — same
         // "asserted exactly" discipline as modifierGroups above.
         // V1-CUI-010: remainingCount (last-portion badge) joins the same way.
-        "categoryCode", "categoryName", "modifierGroups", "name", "prepTimeMinutes", "productId", "remainingCount", "sku", "taxRate", "unitPrice",
+        "allowsHalfPortion", "categoryCode", "categoryName", "modifierGroups", "name", "prepTimeMinutes", "productId", "remainingCount", "sku", "taxRate", "unitPrice",
     ];
     private static readonly string[] ExpectedProperties =
     [

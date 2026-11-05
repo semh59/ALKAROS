@@ -358,6 +358,121 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
         await AssertUntouchedAsync(seeded);
     }
 
+    [Fact]
+    public async Task CancellingTheOrderOfAMergedTableFreesTheMergeAndBothTables()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.cancel");
+        var seeded = await SeedAsync(KitchenState.Sent);
+        var participantId = Guid.NewGuid();
+        await Exec(
+            """
+            INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+            SELECT @participant, zone_id, 'P-' || substr(@participant::text, 1, 6), 2, 'Occupied' FROM table_mgmt.tables WHERE table_id = @table;
+            INSERT INTO table_mgmt.table_merges (
+                table_merge_id, merge_group_id, primary_table_id, merged_table_id, original_order_id, original_bill_id,
+                original_order_ids, original_bill_ids, status, reason, merged_by, merged_at, row_version)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @table, @participant, @order, @bill,
+                ARRAY[@order], ARRAY[@bill], 'Active', 'Joined', @user, now(), 1);
+            """,
+            ("participant", participantId), ("table", seeded.TableId), ("order", seeded.OrderId), ("bill", seeded.BillId), ("user", userId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(CancelOrder(terminalId, seeded.OrderId, cookie, "Birleşik masa", seeded.RowVersion));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Cancelled", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", seeded.OrderId));
+        Assert.Equal("Available", await Text("SELECT current_status FROM table_mgmt.tables WHERE table_id = @id;", seeded.TableId));
+        Assert.Equal("Available", await Text("SELECT current_status FROM table_mgmt.tables WHERE table_id = @id;", participantId));
+        Assert.Equal("Unmerged", await Text("SELECT status FROM table_mgmt.table_merges WHERE merged_table_id = @id;", participantId));
+    }
+
+    [Fact]
+    public async Task EveryOpenBillOfAnOrderWithSeveralBillsIsCancelledWithIt()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.cancel");
+        var seeded = await SeedAsync(KitchenState.Sent);
+        var secondBill = await AddBillWithoutItemsAsync(seeded.OrderId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(CancelOrder(terminalId, seeded.OrderId, cookie, "İki hesap", seeded.RowVersion));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal(2, body.RootElement.GetProperty("billsCancelled").GetInt32());
+        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", seeded.BillId));
+        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", secondBill));
+        Assert.Equal(0L, await Count("SELECT count(*) FROM table_mgmt.tables WHERE table_id = @id AND current_bill_id IS NOT NULL;", seeded.TableId));
+    }
+
+    [Fact]
+    public async Task ABillOpenedBetweenTheTwoLockRoundsIsFoundAndItsPaymentRefusesTheCancellation()
+    {
+        var seeded = await SeedAsync(KitchenState.Sent);
+        var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "cashier", "bills.cancel");
+        var store = OrderCancellationStores.Create(_source, new ALKAROS.Audit.EventStore.PostgresAuditEventStore(_source));
+
+        // Another payment path holds the first bill; the cancellation has read the order's bills and waits for it.
+        await using var firstConnection = await _source.OpenConnectionAsync();
+        await using var firstTransaction = await firstConnection.BeginTransactionAsync();
+        await TakeBillLockAsync(firstConnection, firstTransaction, seeded.BillId);
+        var cancelling = store.CancelAsync(seeded.OrderId, "Deneme", seeded.RowVersion, userId, "test", CancellationToken.None);
+        await WaitForBlockedLockAsync();
+
+        // The till opens a second bill and starts a payment on it before the cancellation looks again.
+        var secondBill = await AddBillWithoutItemsAsync(seeded.OrderId);
+        await using var secondConnection = await _source.OpenConnectionAsync();
+        await using var secondTransaction = await secondConnection.BeginTransactionAsync();
+        await TakeBillLockAsync(secondConnection, secondTransaction, secondBill);
+        await new ALKAROS.Payments.PaymentAggregate.PostgresPaymentRepository(_source).AddAsync(
+            new ALKAROS.Payments.PaymentAggregate.Payment(Guid.NewGuid(), secondBill, 50m).Tender(50m),
+            secondConnection, secondTransaction);
+
+        await firstTransaction.CommitAsync();
+        await WaitForBlockedLockAsync();
+        await secondTransaction.CommitAsync();
+
+        await Assert.ThrowsAsync<OrderCancelHasPaymentException>(() => cancelling.WaitAsync(TimeSpan.FromSeconds(20)));
+        await AssertUntouchedAsync(seeded);
+        Assert.NotEqual("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", secondBill));
+    }
+
+    private async Task<Guid> AddBillWithoutItemsAsync(Guid orderId)
+    {
+        var billId = Guid.NewGuid();
+        await Exec(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, order_id, status, currency_code, opened_at, created_at, updated_at)
+            VALUES (@bill, @number, @order, 'Open', 'TRY', now(), now(), now());
+            """,
+            ("bill", billId), ("number", "BIL-2-" + billId.ToString("N")), ("order", orderId));
+        return billId;
+    }
+
+    private static async Task TakeBillLockAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId)
+    {
+        await using var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+        command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task WaitForBlockedLockAsync()
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(15);
+        while (DateTime.UtcNow < deadline)
+        {
+            await using var command = _source.CreateCommand("SELECT count(*) FROM pg_locks WHERE locktype = 'advisory' AND NOT granted AND database = (SELECT oid FROM pg_database WHERE datname = current_database());");
+            if ((long)(await command.ExecuteScalarAsync())! > 0)
+                return;
+            await Task.Delay(50);
+        }
+
+        Assert.Fail("The cancellation never waited for a bill lock.");
+    }
+
     private const string CancelledTicketLines =
         "SELECT count(*) FROM kitchen.kitchen_ticket_items i JOIN kitchen.kitchen_tickets t ON t.id = i.ticket_id " +
         "WHERE t.order_id = @id AND i.status = 'Cancelled';";

@@ -62,14 +62,49 @@ public sealed class PostgresBillRepository : IBillRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
+        await AddAsync(bill, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(
+        Bill bill, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(bill);
+
         await InsertBillAsync(connection, transaction, bill, cancellationToken);
 
         foreach (var item in bill.Items)
         {
             await InsertBillItemAsync(connection, transaction, item, cancellationToken);
         }
+    }
 
-        await transaction.CommitAsync(cancellationToken);
+    public async Task<IAsyncDisposable> AcquireSettlementLockAsync(Guid billId, CancellationToken cancellationToken = default)
+    {
+        var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        try
+        {
+            var transaction = await connection.BeginTransactionAsync(cancellationToken);
+            await using var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+            command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+            await command.ExecuteNonQueryAsync(cancellationToken);
+            return new SettlementLock(connection, transaction);
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+    }
+
+    private sealed class SettlementLock(NpgsqlConnection connection, NpgsqlTransaction transaction) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
+        {
+            await transaction.DisposeAsync();
+            await connection.DisposeAsync();
+        }
     }
 
     public async Task<long> SaveAsync(Bill bill, long expectedRowVersion, CancellationToken cancellationToken = default)

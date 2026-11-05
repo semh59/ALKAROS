@@ -1,0 +1,19 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Secrets\debug\ALKAROS.Secrets.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.SensitiveData\debug\ALKAROS.SensitiveData.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Billing\debug\ALKAROS.Billing.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Payments\debug\ALKAROS.Payments.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Billing.PaymentClosure\debug\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Billing.PaymentClosure.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Billing.PaymentClosure.Tests\debug\ALKAROS.Billing.PaymentClosure.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Billing.PaymentClosure.Tests\debug\ALKAROS.Billing.PaymentClosure.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-802\final-closure\semih_SEMH59_2026-11-05_08_33_57_net8.0.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 793 ms - ALKAROS.Billing.PaymentClosure.Tests.dll (net8.0)

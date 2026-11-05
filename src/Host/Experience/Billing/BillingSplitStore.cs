@@ -7,7 +7,7 @@ using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
-using Microsoft.Extensions.Logging;
+using ALKAROS.Tables.TableRelease;
 using Npgsql;
 
 namespace ALKAROS.Host.Experience.Billing;
@@ -20,7 +20,7 @@ public sealed class BillingSplitStore
     private readonly NpgsqlDataSource? _dataSource;
     private readonly IBillAdjustmentRepository? _adjustments;
     private readonly ISettingsService? _settings;
-    private readonly ILogger<BillingSplitStore>? _logger;
+    private readonly ITableReleasePort? _tables;
 
     public BillingSplitStore(
         IBillRepository bills,
@@ -29,7 +29,7 @@ public sealed class BillingSplitStore
         NpgsqlDataSource? dataSource = null,
         IBillAdjustmentRepository? adjustments = null,
         ISettingsService? settings = null,
-        ILogger<BillingSplitStore>? logger = null)
+        ITableReleasePort? tables = null)
     {
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
@@ -37,14 +37,8 @@ public sealed class BillingSplitStore
         _dataSource = dataSource;
         _adjustments = adjustments;
         _settings = settings;
-        _logger = logger;
+        _tables = tables;
     }
-
-    private static readonly Action<ILogger, Guid, Guid, Exception?> LogTablePointerNotWritten =
-        LoggerMessage.Define<Guid, Guid>(
-            LogLevel.Warning,
-            new EventId(5201, nameof(LogTablePointerNotWritten)),
-            "The bill {BillId} was created but the pointer on table {TableId} was not written; the table repair will correct it.");
 
     /// <summary>
     /// V1-RMD-103 (B1): applies a bill-level discount. Domain-complete since
@@ -433,7 +427,20 @@ public sealed class BillingSplitStore
 
         try
         {
-            await _bills.AddAsync(bill, cancellationToken);
+            // The bill and the table's pointer to it commit together: a bill the table does not point at is invisible
+            // to the table screens, a pointer to a bill that was not saved is a ghost.
+            if (_dataSource is not null && _tables is not null && order.TableId is { } tableId && tableId != Guid.Empty)
+            {
+                await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+                await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+                await _bills.AddAsync(bill, connection, transaction, cancellationToken);
+                await _tables.AttachBillPointerAsync(tableId, billId, connection, transaction, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
+            else
+            {
+                await _bills.AddAsync(bill, cancellationToken);
+            }
         }
         // Narrowed from a bare catch (Exception) — found by an independent
         // audit (2026-09-05, H1): this used to swallow ANY exception
@@ -455,30 +462,6 @@ public sealed class BillingSplitStore
                 return Map(retryActive, retryAllocations, canMutate, adjustment: await LoadAdjustmentAsync(retryActive, cancellationToken));
             }
             throw;
-        }
-
-        if (_dataSource != null && order.TableId.HasValue && order.TableId.Value != Guid.Empty)
-        {
-            try
-            {
-                await using var cmd = _dataSource.CreateCommand(
-                    """
-                    UPDATE table_mgmt.tables
-                    SET current_bill_id = @bill_id,
-                        row_version = row_version + 1
-                    WHERE table_id = @table_id;
-                    """);
-                cmd.Parameters.AddWithValue("bill_id", billId);
-                cmd.Parameters.AddWithValue("table_id", order.TableId.Value);
-                await cmd.ExecuteNonQueryAsync(cancellationToken);
-            }
-            catch (Exception ex) when (ex is NpgsqlException or InvalidOperationException)
-            {
-                // table_mgmt.tables.current_bill_id is a soft cache; a failed write here does not fail the bill
-                // creation and is repaired by PostgresTablePointerProjector's drift detection. Logged, not hidden.
-                if (_logger is not null)
-                    LogTablePointerNotWritten(_logger, billId, order.TableId.Value, ex);
-            }
         }
 
         return Map(bill, [], canMutate);

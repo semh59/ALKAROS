@@ -828,14 +828,14 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
 internal sealed class RecordingCashierQueueAnnouncer : ICashierQueueAnnouncer
 {
     private readonly object _gate = new();
-    private readonly List<(string Change, Guid OrderId, Guid TableId)> _changes = [];
+    private readonly List<(string Change, Guid OrderId, Guid? TableId)> _changes = [];
 
-    public List<(string Change, Guid OrderId, Guid TableId)> Changes
+    public List<(string Change, Guid OrderId, Guid? TableId)> Changes
     {
         get { lock (_gate) return [.. _changes]; }
     }
 
-    public Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid tableId, CancellationToken cancellationToken = default)
+    public Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid? tableId, CancellationToken cancellationToken = default)
     {
         lock (_gate) _changes.Add((change, orderId, tableId));
         return Task.CompletedTask;

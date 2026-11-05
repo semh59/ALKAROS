@@ -8,6 +8,10 @@ namespace ALKAROS.Tables.TableRelease;
 /// </summary>
 public interface ITableReleasePort
 {
+    /// <summary>Points the table at the bill just opened for it.</summary>
+    Task AttachBillPointerAsync(
+        Guid tableId, Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default);
+
     /// <summary>Clears the table pointer of a bill that is no longer the table's current bill.</summary>
     Task ClearBillPointerAsync(
         Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default);

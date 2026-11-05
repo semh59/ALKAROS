@@ -48,7 +48,9 @@ public sealed record CatalogProductDto(
     // computed count would be zero or less never reaches this DTO at all —
     // GetCatalogAsync's query drops it, the same way an unavailable product
     // already is.
-    int? RemainingCount = null);
+    int? RemainingCount = null,
+    // Whether the product may be ordered in half-unit steps; clients offer fractional quantities only then.
+    bool AllowsHalfPortion = false);
 
 /// <summary>
 /// V1-RMD-148: one option group of a product. <paramref name="SelectionType"/>

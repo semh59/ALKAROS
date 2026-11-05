@@ -21,6 +21,11 @@ public sealed class WaiterOrderStatusHub : Hub
     /// <summary>V1-RMD-287: the till's queue of checks awaiting payment changed; the till reloads it.</summary>
     public const string PendingChecksChanged = "PendingChecksChanged";
 
+    /// <summary>The sessions allowed to read the till's queue of checks (<c>orders.create</c>) join this group on connect.</summary>
+    public const string CashierQueueGroup = "cashier-queue";
+
+    private const string OrdersCreatePermission = "orders.create";
+
     /// <summary>The SignalR group a given waiter's connections join.</summary>
     public static string GroupName(Guid userId) => $"waiter-user:{userId:D}";
 
@@ -65,6 +70,8 @@ public sealed class WaiterOrderStatusHub : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, GroupName(principal.UserId), Context.ConnectionAborted);
+        if (await _store.HasPermissionAsync(principal.UserId, OrdersCreatePermission, Context.ConnectionAborted))
+            await Groups.AddToGroupAsync(Context.ConnectionId, CashierQueueGroup, Context.ConnectionAborted);
         // V1-RMD-203: remembered here so OnDisconnectedAsync (which carries
         // no principal of its own) knows whose count to decrement.
         Context.Items[ConnectedUserIdItemKey] = principal.UserId;
@@ -86,5 +93,5 @@ public sealed class WaiterOrderStatusHub : Hub
 /// <summary>Payload for <see cref="WaiterOrderStatusHub.OrderItemReady"/>.</summary>
 public sealed record OrderItemReadyV1(Guid OrderId, Guid? TableId, Guid OrderItemId, string ProductName);
 
-/// <summary>Payload for <see cref="WaiterOrderStatusHub.PendingChecksChanged"/>; <c>Change</c> is <c>Sent</c> or <c>Recalled</c>.</summary>
-public sealed record PendingChecksChangedV1(string Change, Guid OrderId, Guid TableId);
+/// <summary>Payload for <see cref="WaiterOrderStatusHub.PendingChecksChanged"/>; <c>Change</c> is <c>Sent</c>, <c>Recalled</c> or <c>Cancelled</c>.</summary>
+public sealed record PendingChecksChangedV1(string Change, Guid OrderId, Guid? TableId);

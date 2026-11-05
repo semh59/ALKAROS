@@ -55,6 +55,22 @@ public sealed partial class DualScreenStore
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    /// <summary>Whether any role of the user grants the permission.</summary>
+    public async Task<bool> HasPermissionAsync(Guid userId, string permissionCode, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM identity.user_roles ur
+                JOIN identity.role_permissions rp ON rp.role_id = ur.role_id
+                JOIN identity.permissions p ON p.permission_id = rp.permission_id
+                WHERE ur.user_id = @user_id AND p.code = @code);
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("code", permissionCode);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
     public async Task<CashierPrincipal?> AuthenticateCashierAsync(
         string? rawToken,
         Guid terminalId,
@@ -205,7 +221,8 @@ public sealed partial class DualScreenStore
                    COALESCE(c.sort_order, 2147483647), p.display_order,
                    p.name COLLATE "tr-TR-x-icu", p.sku COLLATE "tr-TR-x-icu",
                    p.prep_time_minutes,
-                   remaining.remaining_count
+                   remaining.remaining_count,
+                   p.allows_half_portion
             FROM catalog.products p
             LEFT JOIN catalog.categories c ON c.category_id = p.category_id AND c.active
             LEFT JOIN catalog.tax_profiles t ON t.tax_profile_id = p.tax_profile_id AND t.active
@@ -272,7 +289,8 @@ public sealed partial class DualScreenStore
                     reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4),
                     reader.GetDecimal(5), reader.GetDecimal(6),
                     PrepTimeMinutes: reader.IsDBNull(11) ? null : reader.GetInt32(11),
-                    RemainingCount: reader.IsDBNull(12) ? null : reader.GetInt32(12)),
+                    RemainingCount: reader.IsDBNull(12) ? null : reader.GetInt32(12),
+                    AllowsHalfPortion: reader.GetBoolean(13)),
                 reader.GetInt32(7), reader.GetInt32(8), reader.GetString(9), reader.GetString(10)));
         }
 

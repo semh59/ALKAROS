@@ -12,7 +12,7 @@ namespace ALKAROS.Host.Experience.Billing;
 /// <param name="CancelOrder">Also cancels the order of the bill (and its stock, portions, kitchen lines, table) in the same transaction.</param>
 public sealed record CancelBillRequestV1(string? Reason, bool CancelOrder = false);
 
-public sealed record CancelBillResultV1(Guid BillId, string Status, string Reason, DateTimeOffset CancelledAt, bool OrderCancelled = false);
+public sealed record CancelBillResultV1(Guid BillId, string Status, string Reason, DateTimeOffset CancelledAt, bool OrderCancelled = false, Guid? OrderId = null);
 
 /// <summary>The bill is already paid or money has moved on it; the payment must be refunded first (PO 2026-10-13).</summary>
 public sealed class BillCancelHasPaymentException(Guid billId)
@@ -108,6 +108,6 @@ public sealed class BillCancellationStore(
             await transaction.CommitAsync(cancellationToken);
         }
 
-        return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled);
+        return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled, orderId);
     }
 }

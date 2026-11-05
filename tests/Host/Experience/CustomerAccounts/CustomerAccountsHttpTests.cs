@@ -71,6 +71,8 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
         Assert.True(result.BillClosed);
         Assert.Equal(120m, result.BalanceAfter);
         Assert.Equal("Paid", await _database.ScalarTextAsync("SELECT status FROM billing.bills WHERE bill_id = @id;", billId));
+        await using var initiated = _database.DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE status = 'Initiated';");
+        Assert.Equal(0L, (long)(await initiated.ExecuteScalarAsync())!);
     }
 
     [Fact]

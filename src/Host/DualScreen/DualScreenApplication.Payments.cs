@@ -62,7 +62,7 @@ public static partial class DualScreenApplication
     private static readonly Action<ILogger, Guid, Exception?> DisplayPushFailedLog =
         LoggerMessage.Define<Guid>(
             LogLevel.Warning, new EventId(6941, "BillClosedDisplayPushFailed"),
-            "Customer display push after closing bill {BillId} failed.");
+            "Customer display push for bill or order {SubjectId} failed.");
 
     private static readonly Action<ILogger, Guid, Exception?> RejectedTenderAuditFailedLog =
         LoggerMessage.Define<Guid>(
@@ -115,7 +115,7 @@ public static partial class DualScreenApplication
     /// push must never turn a successful payment, discount or tip into an error response.
     /// </summary>
     public static async Task NotifyCustomerDisplayAsync(
-        IHubContext<CustomerDisplayHub> hub, ILoggerFactory loggerFactory, Guid terminalId, Guid billId, string kind,
+        IHubContext<CustomerDisplayHub> hub, ILoggerFactory loggerFactory, Guid terminalId, Guid subjectId, string kind,
         CancellationToken cancellationToken)
     {
         try
@@ -125,7 +125,7 @@ public static partial class DualScreenApplication
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            DisplayPushFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure"), billId, exception);
+            DisplayPushFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure"), subjectId, exception);
         }
     }
 
@@ -155,7 +155,7 @@ public static partial class DualScreenApplication
                 catch (Exception exception) when (exception is not OperationCanceledException)
                 {
                     // The bill is closed and the money is recorded; only the order/table hand-over failed. The
-                    // answer stays "closed" and the order is completed by the manual close-settled action.
+                    // answer stays "closed" and the closure sweeper completes the order on its next pass.
                     OrderNotCompletedLog(logger, billId, exception);
                 }
             }

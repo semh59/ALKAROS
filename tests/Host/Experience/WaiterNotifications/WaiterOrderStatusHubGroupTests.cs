@@ -48,6 +48,51 @@ public sealed class WaiterOrderStatusHubGroupTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task OnlyASessionThatMayReadTheTillQueueJoinsTheQueueGroup()
+    {
+        var terminalId = Guid.NewGuid();
+        var (allowedUser, allowedCookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var (_, deniedCookie) = await _database.SeedCashierSessionAsync(terminalId);
+        await GrantOrdersCreateAsync(allowedUser);
+
+        var allowedGroups = await ConnectAsync(allowedCookie, terminalId);
+        var deniedGroups = await ConnectAsync(deniedCookie, terminalId);
+
+        Assert.Contains(allowedGroups.AddedGroups, joined => joined.GroupName == WaiterOrderStatusHub.CashierQueueGroup);
+        Assert.DoesNotContain(deniedGroups.AddedGroups, joined => joined.GroupName == WaiterOrderStatusHub.CashierQueueGroup);
+    }
+
+    private async Task<FakeGroupManager> ConnectAsync(string cookie, Guid terminalId)
+    {
+        var groups = new FakeGroupManager();
+        var hub = new WaiterOrderStatusHub(
+            new DualScreenStore(_database.DataSource), new WaiterPresenceTracker(),
+            new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance));
+        hub.Context = new FakeHubCallerContext(cookie, terminalId);
+        hub.Groups = groups;
+        await hub.OnConnectedAsync();
+        return groups;
+    }
+
+    private async Task GrantOrdersCreateAsync(Guid userId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO identity.permissions (permission_id, code, name) VALUES (gen_random_uuid(), 'orders.create', 'Create orders') ON CONFLICT (code) DO NOTHING;
+            INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'Hub Test Role');
+            INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+            SELECT @role_permission_id, @role_id, permission_id FROM identity.permissions WHERE code = 'orders.create';
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@user_role_id, @user_id, @role_id);
+            """);
+        command.Parameters.AddWithValue("role_id", Guid.NewGuid());
+        command.Parameters.AddWithValue("role_code", "hub-test-role-" + Guid.NewGuid().ToString("N"));
+        command.Parameters.AddWithValue("role_permission_id", Guid.NewGuid());
+        command.Parameters.AddWithValue("user_role_id", Guid.NewGuid());
+        command.Parameters.AddWithValue("user_id", userId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
     public async Task DisconnectingMarksTheUserNoLongerPresent()
     {
         var terminalId = Guid.NewGuid();
@@ -164,4 +209,60 @@ internal sealed class SimpleHttpContextFeature : IHttpContextFeature
     }
 
     public HttpContext? HttpContext { get; set; }
+}
+
+/// <summary>The till queue announcement reaches only the sessions that joined the queue group.</summary>
+public sealed class SignalRCashierQueueAnnouncerTests
+{
+    [Fact]
+    public async Task TheAnnouncementGoesToTheQueueGroupOnly()
+    {
+        var hub = new RecordingHub();
+        var orderId = Guid.NewGuid();
+
+        await new SignalRCashierQueueAnnouncer(hub).AnnouncePendingChecksChangedAsync("Cancelled", orderId, null);
+
+        var sent = Assert.Single(hub.Sent);
+        Assert.Equal((WaiterOrderStatusHub.CashierQueueGroup, WaiterOrderStatusHub.PendingChecksChanged), (sent.Group, sent.Method));
+        Assert.Equal(new PendingChecksChangedV1("Cancelled", orderId, null), sent.Payload);
+    }
+
+    private sealed class RecordingHub : IHubContext<WaiterOrderStatusHub>
+    {
+        public List<(string Group, string Method, object? Payload)> Sent { get; } = [];
+
+        public IHubClients Clients => new RecordingClients(Sent);
+
+        public IGroupManager Groups => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingClients(List<(string Group, string Method, object? Payload)> sent) : IHubClients
+    {
+        public IClientProxy All => throw new NotSupportedException();
+
+        public IClientProxy AllExcept(IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Client(string connectionId) => throw new NotSupportedException();
+
+        public IClientProxy Clients(IReadOnlyList<string> connectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Group(string groupName) => new RecordingProxy(groupName, sent);
+
+        public IClientProxy GroupExcept(string groupName, IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+        public IClientProxy Groups(IReadOnlyList<string> groupNames) => throw new NotSupportedException();
+
+        public IClientProxy User(string userId) => throw new NotSupportedException();
+
+        public IClientProxy Users(IReadOnlyList<string> userIds) => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingProxy(string group, List<(string Group, string Method, object? Payload)> sent) : IClientProxy
+    {
+        public Task SendCoreAsync(string method, object?[] args, CancellationToken cancellationToken = default)
+        {
+            sent.Add((group, method, args[0]));
+            return Task.CompletedTask;
+        }
+    }
 }

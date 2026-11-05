@@ -1,6 +1,9 @@
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Experience.Orders.OrderCancellation;
+using ALKAROS.Host.Experience.Orders.OrderCleanup;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -150,11 +153,107 @@ public static class OrderBacklogAdministration
             return Results.Ok(new CloseSettledOrdersResultV1(false, candidates.Count, closed.Count, failed, sample));
         });
 
+
+        group.MapGet("/orders/hanging", async (
+            int? olderThanHours, int? limit, OrderCleanupStore cleanup, CancellationToken cancellationToken) =>
+            Results.Ok(await cleanup.ListHangingAsync(HangingAge(olderThanHours), HangingLimit(limit), cancellationToken)));
+
+        // Cancels dine-in orders that stayed live without a bill, through the whole-order cancellation. Dry run by
+        // default; every order is answered on its own, so nothing is hidden behind a failure counter.
+        group.MapPost("/orders/clear-hanging", async (
+            ClearHangingOrdersRequestV1? request,
+            bool? dryRun,
+            int? olderThanHours,
+            int? limit,
+            OrderCleanupStore cleanup,
+            ICashierQueueAnnouncer queueAnnouncer,
+            IAuditEventStore auditEvents,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            var age = HangingAge(olderThanHours);
+            var listed = await cleanup.ListHangingAsync(age, HangingLimit(limit), cancellationToken);
+            if (dryRun ?? true)
+                return Results.Ok(new ClearHangingOrdersResultV1(true, listed, []));
+
+            // Only the orders the manager saw and confirmed are cancelled, never ones that aged in since.
+            if (request?.OrderIds is not { Count: > 0 } confirmed)
+                return Results.Json(
+                    new ApiErrorEnvelope(new ApiError(
+                        "ORDERS_NOT_CONFIRMED", "Temizlenecek siparişler seçilmedi.", StatusCodes.Status400BadRequest, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status400BadRequest);
+            var candidates = listed.Where(o => confirmed.Contains(o.OrderId)).ToList();
+
+            var reason = request?.Reason?.Trim();
+            if (string.IsNullOrEmpty(reason) || reason.Length > OrderCancellationStore.MaxReasonLength)
+                return Results.Json(
+                    new ApiErrorEnvelope(new ApiError(
+                        "REASON_REQUIRED", OrderCancellationMessages.Reason, StatusCodes.Status400BadRequest, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status400BadRequest);
+
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "orders.hanging.clear-started",
+                    aggregateType: "OrderBacklog",
+                    aggregateId: AuditAggregateId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: actorId,
+                    reason: reason,
+                    afterStateJson: JsonSerializer.Serialize(new { requested = candidates.Count })),
+                cancellationToken);
+
+            // An order confirmed on screen that is no longer in the list changed in the meantime; say so instead of skipping it.
+            var results = confirmed.Except(candidates.Select(o => o.OrderId))
+                .Select(id => new HangingOrderResultV1(id, null, nameof(HangingOrderOutcome.Changed))).ToList();
+            foreach (var candidate in candidates)
+            {
+                var outcome = await cleanup.ClearHangingAsync(
+                    candidate.OrderId, age, reason, actorId, context.TraceIdentifier, cancellationToken);
+                results.Add(new HangingOrderResultV1(candidate.OrderId, candidate.OrderNumber, outcome.ToString()));
+                if (outcome == HangingOrderOutcome.Cleared)
+                    await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", candidate.OrderId, null, cancellationToken);
+            }
+
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "orders.hanging.cleared",
+                    aggregateType: "OrderBacklog",
+                    aggregateId: AuditAggregateId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: actorId,
+                    reason: reason,
+                    afterStateJson: JsonSerializer.Serialize(new
+                    {
+                        requested = candidates.Count,
+                        cleared = results.Count(r => r.Outcome == nameof(HangingOrderOutcome.Cleared)),
+                        outcomes = results.Take(100).Select(r => new { r.OrderId, r.Outcome }),
+                    })),
+                cancellationToken);
+            return Results.Ok(new ClearHangingOrdersResultV1(false, candidates, results));
+        });
+
         return group;
     }
+
+    private static TimeSpan HangingAge(int? olderThanHours) => TimeSpan.FromHours(Math.Clamp(olderThanHours ?? 12, 6, 720));
+
+    private static int HangingLimit(int? limit) => Math.Clamp(limit ?? 100, 1, 500);
 }
 
 public sealed record OrderBacklogV1(
     long LiveOrders, long ProvablySettled, long WithoutBill, long WithOpenBill, DateTimeOffset? OldestSettledCreatedAt);
 
 public sealed record CloseSettledOrdersResultV1(bool DryRun, int Eligible, int Closed, int Failed, IReadOnlyList<string> SampleOrderNumbers);
+
+public sealed record ClearHangingOrdersRequestV1(string? Reason, IReadOnlyList<Guid>? OrderIds = null);
+
+public sealed record HangingOrderResultV1(Guid OrderId, string? OrderNumber, string Outcome);
+
+/// <param name="Orders">The candidates that were looked at (all of them, also on a real run).</param>
+/// <param name="Results">Empty on a dry run; otherwise one answer per candidate.</param>
+public sealed record ClearHangingOrdersResultV1(bool DryRun, IReadOnlyList<HangingOrderV1> Orders, IReadOnlyList<HangingOrderResultV1> Results);

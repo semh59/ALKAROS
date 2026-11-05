@@ -55,7 +55,8 @@ public sealed class OrderCancellationStore(
         string correlationId,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string actorType = "User")
     {
         var lockedBills = new HashSet<Guid>();
         await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBills, cancellationToken);
@@ -108,7 +109,7 @@ public sealed class OrderCancellationStore(
                 eventName: "order.cancelled",
                 aggregateType: "Order",
                 aggregateId: orderId,
-                actorType: "User",
+                actorType: actorType,
                 correlationId: correlationId,
                 actorId: actorId,
                 reason: reason,

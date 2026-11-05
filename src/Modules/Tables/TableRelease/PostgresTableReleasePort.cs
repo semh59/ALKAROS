@@ -5,6 +5,17 @@ namespace ALKAROS.Tables.TableRelease;
 
 public sealed class PostgresTableReleasePort : ITableReleasePort
 {
+    public async Task AttachBillPointerAsync(
+        Guid tableId, Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            "UPDATE table_mgmt.tables SET current_bill_id = @bill_id, row_version = row_version + 1 WHERE table_id = @table_id;",
+            connection, transaction);
+        command.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
+        command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task ClearBillPointerAsync(
         Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
     {

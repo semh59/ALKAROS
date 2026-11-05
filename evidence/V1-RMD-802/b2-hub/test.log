@@ -1,0 +1,130 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Secrets\debug\ALKAROS.Secrets.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.SensitiveData\debug\ALKAROS.SensitiveData.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Observability\debug\ALKAROS.Observability.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Measurements\debug\ALKAROS.Measurements.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Privacy.RetentionExecution\debug\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Reporting\debug\ALKAROS.Reporting.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Settings\debug\ALKAROS.Settings.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Menu\debug\ALKAROS.Menu.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Catalog\debug\ALKAROS.Catalog.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Audit\debug\ALKAROS.Audit.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Identity\debug\ALKAROS.Identity.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Reconciliation\debug\ALKAROS.Reconciliation.dll
+  ALKAROS.Privacy.Anonymization -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Privacy.Anonymization\debug\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Inventory\debug\ALKAROS.Inventory.dll
+  ALKAROS.QrOrdering -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.QrOrdering\debug\ALKAROS.QrOrdering.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Recipes\debug\ALKAROS.Recipes.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.QrRelay\debug\ALKAROS.QrRelay.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.CustomerData\debug\ALKAROS.CustomerData.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Support -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Support\debug\ALKAROS.Support.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Security\debug\ALKAROS.Security.dll
+  ALKAROS.Purchasing -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Purchasing\debug\ALKAROS.Purchasing.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.OnlineOrdering\debug\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Production -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Production\debug\ALKAROS.Production.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Billing\debug\ALKAROS.Billing.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Kitchen\debug\ALKAROS.Kitchen.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Invoicing\debug\ALKAROS.Invoicing.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Operations\debug\ALKAROS.Operations.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Payments\debug\ALKAROS.Payments.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Billing.PaymentClosure\debug\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Cash\debug\ALKAROS.Cash.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.CustomerAccounts\debug\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Payments.TenderComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Payments.TenderComposition\debug\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host\debug\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.WaiterNotifications.Tests -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.WaiterNotifications.Tests\debug\ALKAROS.Host.Experience.WaiterNotifications.Tests.dll
+D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Host.Experience.WaiterNotifications.Tests\debug\ALKAROS.Host.Experience.WaiterNotifications.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.86]     ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.AnAuthenticatedConnectionJoinsItsOwnUserGroupAndIsMarkedPresent [FAIL]
+[xUnit.net 00:00:02.20]     ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.OnlyASessionThatMayReadTheTillQueueJoinsTheQueueGroup [FAIL]
+[xUnit.net 00:00:02.38]     ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.ADeactivatedUserIsDroppedByTheSweep [FAIL]
+[xUnit.net 00:00:02.66]     ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.DisconnectingMarksTheUserNoLongerPresent [FAIL]
+  Başarısız ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.AnAuthenticatedConnectionJoinsItsOwnUserGroupAndIsMarkedPresent [174 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 42P01: relation "identity.user_roles" does not exist
+
+POSITION: 35
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteScalar(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Host.DualScreen.DualScreenStore.HasPermissionAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenStore.cs:line 71
+   at ALKAROS.Host.DualScreen.DualScreenStore.HasPermissionAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenStore.cs:line 71
+   at ALKAROS.Host.Experience.WaiterNotifications.WaiterOrderStatusHub.OnConnectedAsync() in D:\PROJECT\ALKAROS\src\Host\Experience\WaiterNotifications\WaiterOrderStatusHub.cs:line 73
+   at ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.AnAuthenticatedConnectionJoinsItsOwnUserGroupAndIsMarkedPresent() in D:\PROJECT\ALKAROS\tests\Host\Experience\WaiterNotifications\WaiterOrderStatusHubGroupTests.cs:line 41
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.OnlyASessionThatMayReadTheTillQueueJoinsTheQueueGroup [15 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 42P01: relation "identity.roles" does not exist
+
+POSITION: 13
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.GrantOrdersCreateAsync(Guid userId) in D:\PROJECT\ALKAROS\tests\Host\Experience\WaiterNotifications\WaiterOrderStatusHubGroupTests.cs:line 91
+   at ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.GrantOrdersCreateAsync(Guid userId) in D:\PROJECT\ALKAROS\tests\Host\Experience\WaiterNotifications\WaiterOrderStatusHubGroupTests.cs:line 91
+   at ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.OnlyASessionThatMayReadTheTillQueueJoinsTheQueueGroup() in D:\PROJECT\ALKAROS\tests\Host\Experience\WaiterNotifications\WaiterOrderStatusHubGroupTests.cs:line 56
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.ADeactivatedUserIsDroppedByTheSweep [10 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 42P01: relation "identity.user_roles" does not exist
+
+POSITION: 35
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteScalar(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Host.DualScreen.DualScreenStore.HasPermissionAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenStore.cs:line 71
+   at ALKAROS.Host.DualScreen.DualScreenStore.HasPermissionAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenStore.cs:line 71
+   at ALKAROS.Host.Experience.WaiterNotifications.WaiterOrderStatusHub.OnConnectedAsync() in D:\PROJECT\ALKAROS\src\Host\Experience\WaiterNotifications\WaiterOrderStatusHub.cs:line 73
+   at ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.ADeactivatedUserIsDroppedByTheSweep() in D:\PROJECT\ALKAROS\tests\Host\Experience\WaiterNotifications\WaiterOrderStatusHubGroupTests.cs:line 122
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.DisconnectingMarksTheUserNoLongerPresent [10 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 42P01: relation "identity.user_roles" does not exist
+
+POSITION: 35
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteScalar(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Host.DualScreen.DualScreenStore.HasPermissionAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenStore.cs:line 71
+   at ALKAROS.Host.DualScreen.DualScreenStore.HasPermissionAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\DualScreenStore.cs:line 71
+   at ALKAROS.Host.Experience.WaiterNotifications.WaiterOrderStatusHub.OnConnectedAsync() in D:\PROJECT\ALKAROS\src\Host\Experience\WaiterNotifications\WaiterOrderStatusHub.cs:line 73
+   at ALKAROS.Host.Experience.WaiterNotifications.Tests.WaiterOrderStatusHubGroupTests.DisconnectingMarksTheUserNoLongerPresent() in D:\PROJECT\ALKAROS\tests\Host\Experience\WaiterNotifications\WaiterOrderStatusHubGroupTests.cs:line 104
+--- End of stack trace from previous location ---
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-802\b2-hub\semih_SEMH59_2026-11-05_07_52_01_net8.0.trx
+
+Başarısız! - Başarısız:     4, Başarılı:    10, Atlanan:     0, Toplam:    14, Süre: 1 s - ALKAROS.Host.Experience.WaiterNotifications.Tests.dll (net8.0)

@@ -20,7 +20,6 @@ public static class HostForeignWriteLockTests
     private static readonly Dictionary<string, int> HostTableWriters = new()
     {
         ["src/Host/DualScreen/DualScreenStore.Orders.cs"] = 1,
-        ["src/Host/Experience/Billing/BillingSplitStore.cs"] = 1,
         ["src/Host/Experience/NfcOrdering/NfcOrderingStore.cs"] = 1,
         ["src/Host/Experience/Orders/CashierHandoffStore.cs"] = 4,
         ["src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs"] = 1,

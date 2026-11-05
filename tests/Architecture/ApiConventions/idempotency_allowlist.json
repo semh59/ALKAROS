@@ -401,6 +401,10 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-266"
     },
+    "POST /api/v1/management/security/orders/clear-hanging": {
+      "reason": "Gerekçeli temizleme komutu; anahtar yok ama tekrar güvenli: temizlenen sipariş aday olmaktan çıkar, ikinci istek yalnızca kalanları ele alır.",
+      "task": "V1-RMD-802"
+    },
     "POST /api/v1/management/security/orders/close-settled": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-266"

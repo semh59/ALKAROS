@@ -52,6 +52,8 @@ public sealed class PaymentAwareTableTopologyPolicyTests : IClassFixture<Payment
     [InlineData("Approved")]
     [InlineData("Declined")]
     [InlineData("Cancelled")]
+    [InlineData("Refunded")]
+    [InlineData("PartiallyRefunded")]
     public async Task BillWithSettledPaymentIsAllowed(string settledStatus)
     {
         var billId = await CreateBillAsync();

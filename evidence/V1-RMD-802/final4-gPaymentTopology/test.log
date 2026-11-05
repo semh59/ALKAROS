@@ -1,0 +1,8 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\artifacts\g5\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+D:\PROJECT\ALKAROS\tests\Modules\Tables\PaymentTopology\PaymentAwareTableTopologyPolicyTests.cs(77,31): error CS0234: 'Payments' tür veya ad alanı adı 'ALKAROS' ad alanında yok (bir derleme başvurunuz mu eksik?) [D:\PROJECT\ALKAROS\tests\Modules\Tables\PaymentTopology\ALKAROS.Tables.PaymentTopology.Tests.csproj]

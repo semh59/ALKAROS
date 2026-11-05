@@ -8,12 +8,12 @@ namespace ALKAROS.Host.Experience.Orders;
 /// </summary>
 public interface ICashierQueueAnnouncer
 {
-    /// <param name="change"><c>Sent</c> or <c>Recalled</c>.</param>
-    Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid tableId, CancellationToken cancellationToken = default);
+    /// <param name="change"><c>Sent</c>, <c>Recalled</c> or <c>Cancelled</c>.</param>
+    Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid? tableId, CancellationToken cancellationToken = default);
 }
 
 public sealed class NoOpCashierQueueAnnouncer : ICashierQueueAnnouncer
 {
-    public Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid tableId, CancellationToken cancellationToken = default)
+    public Task AnnouncePendingChecksChangedAsync(string change, Guid orderId, Guid? tableId, CancellationToken cancellationToken = default)
         => Task.CompletedTask;
 }

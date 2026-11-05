@@ -5,6 +5,7 @@ using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Host.Experience.Observability;
+using ALKAROS.Host.Experience.Orders.OrderCleanup;
 using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Operations.OffsiteBackup;
 using ALKAROS.Operations.RestoreVerification;
@@ -58,6 +59,8 @@ public static class SecurityAdministrationEndpoints
         services.TryAddScoped<MaintenanceRunContext>();
         services.TryAddSingleton<ALKAROS.Host.Experience.Orders.OrderSettlementService>();
         services.TryAddSingleton<ALKAROS.Tables.TableRelease.ITableReleasePort, ALKAROS.Tables.TableRelease.PostgresTableReleasePort>();
+        services.AddOrderCleanup();
+        services.TryAddSingleton<ALKAROS.Host.Experience.Orders.ICashierQueueAnnouncer, ALKAROS.Host.Experience.Orders.NoOpCashierQueueAnnouncer>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, OffsiteBackupMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RestoreVerificationMaintenanceJob>());

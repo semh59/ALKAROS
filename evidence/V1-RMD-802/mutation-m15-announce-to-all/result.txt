@@ -1,0 +1,1 @@
+Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 1 s - ALKAROS.Host.Experience.WaiterNotifications.Tests.dll (net8

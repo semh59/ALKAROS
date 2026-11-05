@@ -13,6 +13,7 @@ using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderCancellation;
+using ALKAROS.Host.Experience.Orders.OrderCleanup;
 using ALKAROS.Host.Experience.Orders.SentItemVoid;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -98,7 +99,8 @@ public static class BillingSplitApplication
         // real callers anywhere in the codebase — this is its first.
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddSingleton<BillingSplitStore>();
-        services.AddOrderCancellation();
+        services.AddOrderCleanup();
+        services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
         services.TryAddSingleton<BillCancellationStore>();
         services.TryAddSingleton<PaymentRefundStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
@@ -147,13 +149,21 @@ public static class BillingSplitApplication
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
             BillCancellationStore store,
+            ICashierQueueAnnouncer queueAnnouncer,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.BillsCancel, cancellationToken);
-            return Results.Ok(await store.CancelAsync(
-                billId, request.Reason, request.CancelOrder, principal.UserId, context.TraceIdentifier, cancellationToken));
+            var result = await store.CancelAsync(
+                billId, request.Reason, request.CancelOrder, principal.UserId, context.TraceIdentifier, cancellationToken);
+            if (result.OrderCancelled && result.OrderId is { } cancelledOrderId)
+                await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", cancelledOrderId, null, cancellationToken);
+            await DualScreenApplication.NotifyCustomerDisplayAsync(
+                customerDisplayHub, loggerFactory, terminalId, billId, "BillCancelled", cancellationToken);
+            return Results.Ok(result);
         });
 
         // V1-RMD-103 (B1): bills.discount is grant-class (model §3), same

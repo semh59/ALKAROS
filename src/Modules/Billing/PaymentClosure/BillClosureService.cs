@@ -20,6 +20,9 @@ public sealed class BillClosureService : IBillClosureService
         if (billId == Guid.Empty)
             throw new ArgumentException("Bill id cannot be empty.", nameof(billId));
 
+        // Payments and refunds of the bill wait on this lock, so the rebuild and the save below see one consistent
+        // state of the bill's payments instead of three reads spread over a refund.
+        await using var settlementLock = await _bills.AcquireSettlementLockAsync(billId, cancellationToken);
         for (var attempt = 1; ; attempt++)
         {
             var bill = await _bills.GetByIdAsync(billId, cancellationToken)

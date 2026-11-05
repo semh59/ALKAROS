@@ -22,6 +22,23 @@ public sealed class BillClosureServiceTests
     }
 
     [Fact]
+    public async Task TheBillIsReadRebuiltAndSavedUnderItsSettlementLockAndTheLockIsReleased()
+    {
+        var bill = MakeBill();
+        var repository = new FakeBills(bill);
+        var projector = new FakeProjector(bill, satisfied: true) { LockProbe = () => repository.LockHeld };
+        var service = new BillClosureService(repository, projector);
+
+        var result = await service.TryCloseAsync(bill.Id);
+
+        result.Outcome.Should().Be(BillClosureOutcome.Closed);
+        repository.LocksTaken.Should().Be(1);
+        repository.LockHeldAtAccess.Should().NotBeEmpty().And.OnlyContain(held => held);
+        projector.LockHeldAtRebuild.Should().Equal(true);
+        repository.LockHeld.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task ABillThatChangedUnderTheCloserIsRetriedAndThenClosed()
     {
         var bill = MakeBill();
@@ -72,9 +89,16 @@ public sealed class BillClosureServiceTests
 
     private sealed class FakeProjector(Bill bill, bool satisfied, params BillClosureBlocker[] blockers) : IBillPaymentClosureProjector
     {
+        public Func<bool>? LockProbe { get; init; }
+
+        public List<bool> LockHeldAtRebuild { get; } = [];
+
         public Task<BillPaymentClosureProjection> RebuildAsync(Guid billId, CancellationToken cancellationToken = default)
-            => Task.FromResult(new BillPaymentClosureProjection(
+        {
+            LockHeldAtRebuild.Add(LockProbe?.Invoke() ?? false);
+            return Task.FromResult(new BillPaymentClosureProjection(
                 bill.Id, "TRY", bill.PayableAmount, bill.PayableAmount, bill.PayableAmount, 0m, satisfied, blockers));
+        }
     }
 
     private sealed class FakeBills(Bill bill, int failedSaves = 0) : IBillRepository
@@ -83,11 +107,41 @@ public sealed class BillClosureServiceTests
 
         public Bill? Saved { get; private set; }
 
-        public Task<Bill?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Bill?>(bill);
+        public bool LockHeld { get; private set; }
+
+        public int LocksTaken { get; private set; }
+
+        public List<bool> LockHeldAtAccess { get; } = [];
+
+        public Task<IAsyncDisposable> AcquireSettlementLockAsync(Guid billId, CancellationToken cancellationToken = default)
+        {
+            LocksTaken++;
+            LockHeld = true;
+            return Task.FromResult<IAsyncDisposable>(new Release(this));
+        }
+
+        private sealed class Release(FakeBills owner) : IAsyncDisposable
+        {
+            public ValueTask DisposeAsync()
+            {
+                owner.LockHeld = false;
+                return ValueTask.CompletedTask;
+            }
+        }
+
+        public Task AddAsync(Bill added, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<Bill?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            LockHeldAtAccess.Add(LockHeld);
+            return Task.FromResult<Bill?>(bill);
+        }
 
         public Task<long> SaveAsync(Bill updated, long expectedRowVersion, CancellationToken cancellationToken = default)
         {
             SaveAttempts++;
+            LockHeldAtAccess.Add(LockHeld);
             if (SaveAttempts <= failedSaves)
                 throw new InvalidOperationException("row version changed");
             Saved = updated;

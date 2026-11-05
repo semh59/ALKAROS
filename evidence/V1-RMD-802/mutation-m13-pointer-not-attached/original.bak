@@ -1,0 +1,840 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.Adjustments;
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Billing.SplitDesign;
+using ALKAROS.Identity.Authorization.Grants;
+using ALKAROS.Orders.OrderAggregate;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.TypedSettings;
+using ALKAROS.Tables.TableRelease;
+using Npgsql;
+
+namespace ALKAROS.Host.Experience.Billing;
+
+public sealed class BillingSplitStore
+{
+    private readonly IBillRepository _bills;
+    private readonly ISplitDesignRepository _splitDesigns;
+    private readonly IOrderRepository? _orders;
+    private readonly NpgsqlDataSource? _dataSource;
+    private readonly IBillAdjustmentRepository? _adjustments;
+    private readonly ISettingsService? _settings;
+    private readonly ITableReleasePort? _tables;
+
+    public BillingSplitStore(
+        IBillRepository bills,
+        ISplitDesignRepository splitDesigns,
+        IOrderRepository? orders = null,
+        NpgsqlDataSource? dataSource = null,
+        IBillAdjustmentRepository? adjustments = null,
+        ISettingsService? settings = null,
+        ITableReleasePort? tables = null)
+    {
+        _bills = bills ?? throw new ArgumentNullException(nameof(bills));
+        _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
+        _orders = orders;
+        _dataSource = dataSource;
+        _adjustments = adjustments;
+        _settings = settings;
+        _tables = tables;
+    }
+
+    /// <summary>
+    /// V1-RMD-103 (B1): applies a bill-level discount. Domain-complete since
+    /// V1-BIL-003 (AdjustmentCalculator, BillAdjustment, migration 021) but
+    /// found by an independent audit (2026-09-05) to have zero DI
+    /// registration, zero callers, and no HTTP endpoint — a discount could
+    /// not be entered anywhere. Validated against
+    /// <see cref="AdjustmentCalculator"/> before persisting (check-before-
+    /// write), not after.
+    /// </summary>
+    public async Task<(BillAdjustment Adjustment, AdjustedBillSummary Summary)> ApplyDiscountAsync(
+        Guid billId,
+        ApplyBillDiscountRequestV1 request,
+        Guid actorId,
+        IAuditEventStore auditEvents,
+        string correlationId,
+        Guid? approverId = null,
+        Guid? grantId = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+        if (_dataSource == null)
+            throw new InvalidOperationException("Data source is not configured.");
+        ValidateDiscountRequest(request);
+
+        // Found by an independent audit (2026-09-06): a bare read-validate-
+        // write here let two concurrent discount requests both read the
+        // same (empty) adjustment set and both pass validation, letting
+        // total discounts exceed the payable amount. A FOR UPDATE lock on
+        // the bill row serializes the read-validate-write window across
+        // concurrent callers for the same bill; AddAsync still commits on
+        // its own connection, but by the time this lock releases that
+        // insert is already visible to the next caller's read.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var lockTransaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT bill_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, lockTransaction))
+        {
+            lockCommand.Parameters.AddWithValue("bill_id", billId);
+            await lockCommand.ExecuteScalarAsync(cancellationToken);
+        }
+
+        // Read only after the lock: a status or payable changed by a request that held it first must be seen.
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+
+        var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+
+        // V1-RMD-112: a retried request (network timeout, double-submit)
+        // with the same IdempotencyKey must not append a second discount
+        // line. Unlike Order items, an adjustment row has no natural
+        // row-version guard to fall back on — /comp and /void-sent are
+        // "accidentally" safe on retry only because their commands carry
+        // an ExpectedRowVersion, which this endpoint's request never did.
+        // The FOR UPDATE lock already held above serializes this check
+        // against a concurrent identical retry for the same bill.
+        var replay = existingAdjustments.FirstOrDefault(
+            a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal));
+        if (replay is not null)
+        {
+            if (!SameDiscount(replay, request))
+                throw new IdempotencyKeyReusedException(request.IdempotencyKey);
+            await lockTransaction.CommitAsync(cancellationToken);
+            return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
+        }
+
+        // A replay of an already-applied request is answered before the state check: the bill may have been paid since
+        // the first attempt succeeded, and a retry must still learn that it was applied (audit 2026-09-06: nothing
+        // else may be applied to a Paid/PartiallyPaid/Cancelled bill).
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+
+        // A bill's items can carry different tax rates; the discount is split net/tax in the bill's own
+        // proportion (its unrounded weighted-average rate), not an arbitrary single item's rate.
+        var effectiveTaxRate = bill.EffectiveTaxRatePercent;
+
+        var adjustmentId = Guid.NewGuid();
+        var adjustment = request.CalculationType switch
+        {
+            "Percentage" => BillAdjustment.CreateDiscountPercentage(
+                adjustmentId, billId, request.Value, bill.PayableAmount, effectiveTaxRate,
+                request.ReasonCode, approverId ?? actorId, notes: request.Notes, createdBy: actorId,
+                idempotencyKey: request.IdempotencyKey),
+            "FixedAmount" => BillAdjustment.CreateDiscountAmount(
+                adjustmentId, billId, request.Value, effectiveTaxRate,
+                request.ReasonCode, approverId ?? actorId, notes: request.Notes, createdBy: actorId,
+                idempotencyKey: request.IdempotencyKey),
+            _ => throw new ArgumentException(
+                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
+        };
+
+        // Validate against the full candidate set BEFORE writing anything —
+        // AdjustmentCalculator throws if the total discount would exceed the
+        // bill's payable amount.
+        var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
+
+        // V1-RMD-410 (V1-RMD-393 F-05): payments do not change the bill's status until it closes, so a partly paid
+        // bill still looks discountable — and a discount could push the payable below what was already collected
+        // (80 taken, 30 off -> 70 payable). The allocation path's own per-bill lock, taken here in this same
+        // transaction, serializes against a concurrent tender (which reads adjustments under that lock too).
+        await using (var allocationLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, lockTransaction))
+        {
+            allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
+            await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+        decimal collected;
+        await using (var collectedCommand = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
+            connection, lockTransaction))
+        {
+            collectedCommand.Parameters.AddWithValue("bill_id", billId);
+            collected = (decimal)(await collectedCommand.ExecuteScalarAsync(cancellationToken))!;
+        }
+        if (summary.AdjustedPayableAmount < collected)
+            throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
+
+        // Must use the lock's own connection/transaction: the insert's FK
+        // reference to billing.bills otherwise waits on the very lock this
+        // method holds, from a second, uncommitted connection — a
+        // self-deadlock (found while testing this fix).
+        await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await BumpBillRowVersionAsync(connection, lockTransaction, billId, cancellationToken);
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "bill.discount.applied",
+                aggregateType: "Bill",
+                aggregateId: billId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: request.ReasonCode,
+                beforeStateJson: JsonSerializer.Serialize(new { payableAmount = summary.OriginalPayableAmount }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    payableAmount = summary.AdjustedPayableAmount,
+                    discountId = adjustment.Id,
+                    discountValue = request.Value,
+                    approverUserId = approverId,
+                    grantId,
+                })),
+            connection, lockTransaction, cancellationToken);
+        await lockTransaction.CommitAsync(cancellationToken);
+
+        return (adjustment, summary);
+    }
+
+    private static bool IsDiscountable(BillState status) => status
+        is BillState.Open or BillState.PartiallyAllocated or BillState.Allocated or BillState.Reopened;
+
+    /// <summary>Above anything a bill can hold and well inside NUMERIC(18,2); keeps a typo from reaching the database.</summary>
+    public const decimal MaxAdjustmentAmount = 1_000_000m;
+
+    public const int MaxNotesLength = 500;
+
+    private const int MaxIdempotencyKeyLength = 128;
+
+    private static void ValidateKeyAndNotes(string? idempotencyKey, string? notes)
+    {
+        if (string.IsNullOrWhiteSpace(idempotencyKey) || idempotencyKey.Length > MaxIdempotencyKeyLength)
+            throw new BillingValidationException(
+                "IDEMPOTENCY_KEY_INVALID", "An idempotency key of at most 128 characters is required.",
+                "İşlem anahtarı boş olamaz ve 128 karakteri aşamaz.");
+        if (notes is { Length: > MaxNotesLength })
+            throw new BillingValidationException(
+                "NOTES_TOO_LONG", $"Notes may be at most {MaxNotesLength} characters.",
+                $"Not en çok {MaxNotesLength} karakter olabilir.");
+    }
+
+    /// <summary>Everything that can be judged from the request alone, shared by the grant request and the apply path.</summary>
+    public static void ValidateDiscountRequest(ApplyBillDiscountRequestV1 request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
+        if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
+            throw new BillingValidationException(
+                "DISCOUNT_REASON_INVALID", $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.",
+                "İndirim gerekçesi geçerli değil.");
+        var upper = request.CalculationType switch
+        {
+            "Percentage" => 100m,
+            "FixedAmount" => MaxAdjustmentAmount,
+            _ => throw new BillingValidationException(
+                "DISCOUNT_TYPE_INVALID", $"Unknown discount calculation type '{request.CalculationType}'.",
+                "İndirim türü yüzde ya da tutar olmalı."),
+        };
+        if (request.Value <= 0m || request.Value > upper)
+            throw new BillingValidationException(
+                "DISCOUNT_VALUE_INVALID", $"Discount value must be above 0 and at most {upper}.",
+                request.CalculationType == "Percentage"
+                    ? "İndirim yüzdesi 0'dan büyük, en çok 100 olmalı."
+                    : $"İndirim tutarı 0'dan büyük, en çok {MaxAdjustmentAmount:N0} olmalı.");
+    }
+
+    /// <summary>A discount request for a bill that exists and can still take one, before any grant is opened for it.</summary>
+    public async Task EnsureDiscountRequestableAsync(
+        Guid billId, ApplyBillDiscountRequestV1 request, CancellationToken cancellationToken = default)
+    {
+        ValidateDiscountRequest(request);
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        if (IsDiscountable(bill.Status))
+            return;
+
+        // A retry of a discount that was already applied is answered by ApplyDiscountAsync, even after the bill was paid.
+        var existing = await _adjustments!.GetByBillIdAsync(billId, cancellationToken);
+        if (!existing.Any(a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal)))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+    }
+
+    private static bool SameDiscount(BillAdjustment stored, ApplyBillDiscountRequestV1 request)
+        => request.CalculationType switch
+        {
+            "Percentage" => stored.AdjustmentType == AdjustmentType.DiscountPercentage && stored.Rate == request.Value,
+            _ => stored.AdjustmentType == AdjustmentType.DiscountAmount
+                 && stored.Amount == BillMath.RoundCurrency(request.Value),
+        } && stored.Reason == request.ReasonCode && stored.Notes == request.Notes;
+
+    /// <summary>A discount or tip changes what the bill is worth, so a split saved against the old version must be refused.</summary>
+    private static async Task BumpBillRowVersionAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "UPDATE billing.bills SET row_version = row_version + 1, updated_at = now() WHERE bill_id = @bill_id;",
+            connection, transaction);
+        command.Parameters.AddWithValue("bill_id", billId);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// V1-WTR-020: records a voluntary tip (<see cref="BillAdjustment.CreateTip"/>).
+    /// Same lock/idempotency/status-gate shape as <see cref="ApplyDiscountAsync"/>
+    /// above — deliberately reusing <see cref="IsDiscountable"/>'s status set
+    /// rather than a second copy of it, since "can this bill still take an
+    /// adjustment line" is the same question for a tip as for a discount.
+    /// No <see cref="AdjustmentCalculator"/> upper-bound check is needed here
+    /// (unlike a discount, a tip can never make the adjusted total negative).
+    /// </summary>
+    public async Task<(BillAdjustment Adjustment, AdjustedBillSummary Summary)> ApplyTipAsync(
+        Guid billId,
+        ApplyBillTipRequestV1 request,
+        Guid actorId,
+        IAuditEventStore auditEvents,
+        string correlationId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+        if (_dataSource == null)
+            throw new InvalidOperationException("Data source is not configured.");
+        ArgumentNullException.ThrowIfNull(request);
+        ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
+        if (request.Amount <= 0 || request.Amount > MaxAdjustmentAmount)
+            throw new BillingValidationException(
+                "TIP_AMOUNT_INVALID", $"Tip amount must be above 0 and at most {MaxAdjustmentAmount}.",
+                $"Bahşiş tutarı 0'dan büyük, en çok {MaxAdjustmentAmount:N0} olmalı.");
+        // V1-SET-004: this deployment turned the voluntary-tip line off.
+        // Refused outright, not silently zeroed — unlike the tolerant
+        // optional-field handling elsewhere, an explicit tip call when the
+        // feature is off can only mean a client still showing the old UI.
+        if (_settings is not null
+            && !await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.VoluntaryTip, cancellationToken))
+            throw new GarsonFeatureDisabledException(GarsonFeature.VoluntaryTip);
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var lockTransaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT bill_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, lockTransaction))
+        {
+            lockCommand.Parameters.AddWithValue("bill_id", billId);
+            await lockCommand.ExecuteScalarAsync(cancellationToken);
+        }
+        // Same per-bill lock a tender takes, so a payment cannot slip in between the read and the insert.
+        await using (var allocationLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, lockTransaction))
+        {
+            allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
+            await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+
+        var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+
+        var replay = existingAdjustments.FirstOrDefault(
+            a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal));
+        if (replay is not null)
+        {
+            if (replay.AdjustmentType != AdjustmentType.Tip
+                || replay.Amount != BillMath.RoundCurrency(request.Amount) || replay.Notes != request.Notes)
+                throw new IdempotencyKeyReusedException(request.IdempotencyKey);
+            await lockTransaction.CommitAsync(cancellationToken);
+            return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
+        }
+
+        // A replay of an already-applied request is answered before the state check: the bill may have been paid since
+        // the first attempt succeeded, and a retry must still learn that it was applied (audit 2026-09-06: nothing
+        // else may be applied to a Paid/PartiallyPaid/Cancelled bill).
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+
+        // A fixed code, not free text - matches how DiscountReasonCatalog's
+        // codes work: the server stores a code, a future client translates
+        // it (UI_STYLE_GUIDE's translation-dictionary rule). A tip needs no
+        // business-reason catalog since it is never discretionary, but the
+        // stored value still stays in the same "code, not prose" shape.
+        var adjustment = BillAdjustment.CreateTip(
+            Guid.NewGuid(),
+            billId,
+            request.Amount,
+            reason: "VOLUNTARY_TIP",
+            authorizedBy: actorId,
+            notes: request.Notes,
+            createdBy: actorId,
+            idempotencyKey: request.IdempotencyKey);
+
+        var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
+
+        await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await BumpBillRowVersionAsync(connection, lockTransaction, billId, cancellationToken);
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "bill.tip.applied",
+                aggregateType: "Bill",
+                aggregateId: billId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: "VOLUNTARY_TIP",
+                beforeStateJson: JsonSerializer.Serialize(new { payableAmount = summary.OriginalPayableAmount }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    payableAmount = summary.AdjustedPayableAmount,
+                    tipId = adjustment.Id,
+                    tipAmount = request.Amount,
+                })),
+            connection, lockTransaction, cancellationToken);
+        await lockTransaction.CommitAsync(cancellationToken);
+
+        return (adjustment, summary);
+    }
+
+    public async Task<(IReadOnlyList<BillAdjustment> Adjustments, AdjustedBillSummary Summary)> GetAdjustmentsAsync(
+        Guid billId,
+        CancellationToken cancellationToken = default)
+    {
+        if (_adjustments == null)
+            throw new InvalidOperationException("Bill adjustment repository is not configured.");
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        var adjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
+        var summary = AdjustmentCalculator.Calculate(bill, adjustments);
+        return (adjustments, summary);
+    }
+
+    public async Task<BillSplitDesignDto> CreateBillFromOrderAsync(
+        Guid orderId,
+        bool canMutate,
+        CancellationToken cancellationToken = default)
+    {
+        if (_orders == null)
+            throw new InvalidOperationException("Order repository is not configured.");
+
+        var existingBills = await _bills.GetByOrderIdAsync(orderId, cancellationToken);
+        var activeBill = existingBills.FirstOrDefault(b => b.Status != BillState.Cancelled);
+        if (activeBill != null)
+        {
+            var existingAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(activeBill.Id, cancellationToken);
+            return Map(activeBill, existingAllocations, canMutate, adjustment: await LoadAdjustmentAsync(activeBill, cancellationToken));
+        }
+
+        var order = await _orders.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.", "sipariş");
+
+        if (order.Status is OrderState.Cancelled or OrderState.Rejected or OrderState.Draft)
+            throw new UnsupportedOrderStateException($"Cannot create a bill from an order in '{order.Status}' state.");
+
+        var billId = Guid.NewGuid();
+        var billNumber = $"BILL-{order.OrderNumber}";
+        var bill = Bill.FromOrder(billId, billNumber, order);
+
+        try
+        {
+            // The bill and the table's pointer to it commit together: a bill the table does not point at is invisible
+            // to the table screens, a pointer to a bill that was not saved is a ghost.
+            if (_dataSource is not null && _tables is not null && order.TableId is { } tableId && tableId != Guid.Empty)
+            {
+                await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+                await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+                await _bills.AddAsync(bill, connection, transaction, cancellationToken);
+                await _tables.AttachBillPointerAsync(tableId, billId, connection, transaction, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
+            else
+            {
+                await _bills.AddAsync(bill, cancellationToken);
+            }
+        }
+        // Narrowed from a bare catch (Exception) — found by an independent
+        // audit (2026-09-05, H1): this used to swallow ANY exception
+        // (validation bugs, connection faults, a defect in AddAsync) on a
+        // financial write path and silently hand back whatever bill already
+        // existed for the order as if the request had succeeded. bill_number
+        // is deterministic per order ($"BILL-{order.OrderNumber}"), so the
+        // only expected concurrent failure here is two requests racing to
+        // insert the same bill_number for the same order.
+        catch (PostgresException ex)
+            when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "bills_bill_number_key")
+        {
+            // If another request concurrently inserted a bill for this order/number, recover gracefully
+            var retryBills = await _bills.GetByOrderIdAsync(orderId, cancellationToken);
+            var retryActive = retryBills.FirstOrDefault(b => b.Status != BillState.Cancelled);
+            if (retryActive != null)
+            {
+                var retryAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(retryActive.Id, cancellationToken);
+                return Map(retryActive, retryAllocations, canMutate, adjustment: await LoadAdjustmentAsync(retryActive, cancellationToken));
+            }
+            throw;
+        }
+
+        return Map(bill, [], canMutate);
+    }
+
+    public async Task<BillSplitDesignDto> GetAsync(
+        Guid billId,
+        bool canMutate,
+        CancellationToken cancellationToken = default)
+    {
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(billId, cancellationToken);
+        return Map(bill, allocations, canMutate, adjustment: await LoadAdjustmentAsync(bill, cancellationToken));
+    }
+
+    public async Task<BillSplitDesignDto> SaveEqualAsync(
+        Guid billId,
+        SaveEqualSplitRequest request,
+        Guid actorId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var owners = RequiredOwners(request.Owners, SplitMode.EqualByPerson, requireUnique: true);
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
+        var allocations = SplitEngine.CreateEqualSplit(bill, owners.Count, owners, actorId, adjustment);
+        return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
+    }
+
+    public async Task<BillSplitDesignDto> SaveAmountsAsync(
+        Guid billId,
+        SaveAmountSplitRequest request,
+        Guid actorId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var targets = request.Targets ?? throw new ArgumentException("Amount targets are required.", nameof(request));
+        var ownerReferences = targets
+            .Select(target => OwnerReference(target.Owner, SplitMode.ByAmount))
+            .ToList();
+        EnsureUnique(ownerReferences, nameof(request));
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
+        var allocations = SplitEngine.CreateAmountSplit(
+            bill,
+            targets.Select((target, index) => (ownerReferences[index], target.Amount)).ToList(),
+            actorId,
+            adjustment);
+        return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
+    }
+
+    public async Task<BillSplitDesignDto> SaveItemsAsync(
+        Guid billId,
+        SaveItemSplitRequest request,
+        Guid actorId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var targets = request.Targets ?? throw new ArgumentException("Item targets are required.", nameof(request));
+        // V1-RMD-413 (V1-RMD-393 F-11): an item split sums the items' own prices, which on a discounted (or
+        // fee/tip-adjusted) bill no longer add up to what is owed. Spreading an adjustment over items is a product
+        // decision not taken yet, so such a bill is split by amount, person or custom split instead.
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
+        if (adjustment is not null
+            && (adjustment.AdjustedPayableAmount != bill.PayableAmount || adjustment.AdjustedTaxTotal != bill.TaxTotal))
+            throw new SplitItemsOnAdjustedBillException(billId);
+        var allocations = SplitEngine.CreateItemSplit(
+            bill,
+            targets.Select(target => new ItemSplitTarget(
+                target.BillItemId,
+                OwnerReference(target.Owner, SplitMode.ByItem),
+                target.Quantity)).ToList(),
+            actorId);
+        return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
+    }
+
+    public async Task<BillSplitDesignDto> SaveCustomAsync(
+        Guid billId,
+        SaveCustomSplitRequest request,
+        Guid actorId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var targets = request.Targets ?? throw new ArgumentException("Custom targets are required.", nameof(request));
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
+        var allocations = SplitEngine.CreateCustomSplit(
+            bill,
+            targets.Select(target => new CustomSplitTarget(
+                OwnerReference(target.Owner, SplitMode.Custom),
+                target.Amount,
+                target.BillItemId,
+                target.Quantity)).ToList(),
+            actorId,
+            adjustment);
+        return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): loads the discount/tip-adjusted payable/tax
+    /// totals for a split calculation, or <c>null</c> when no adjustment repository is configured (this
+    /// store's own established optional-dependency pattern — see <see cref="_adjustments"/>) so the split
+    /// engine falls back to the Bill's own unadjusted totals rather than throwing.
+    /// </summary>
+    private async Task<AdjustedBillSummary?> LoadAdjustmentAsync(Bill bill, CancellationToken cancellationToken)
+    {
+        if (_adjustments is null)
+            return null;
+
+        var adjustments = await _adjustments.GetByBillIdAsync(bill.Id, cancellationToken);
+        return AdjustmentCalculator.Calculate(bill, adjustments);
+    }
+
+    public async Task<BillSplitDesignDto> ClearAsync(
+        Guid billId,
+        ClearSplitDesignRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var bill = await GetBillAsync(billId, cancellationToken);
+        return await ReplaceAsync(
+            bill,
+            request.ExpectedBillRowVersion,
+            request.ExpectedAllocations,
+            [],
+            cancellationToken);
+    }
+
+    private async Task<BillSplitDesignDto> ReplaceAsync(
+        Bill bill,
+        long? expectedBillRowVersion,
+        IReadOnlyList<AllocationVersionRequest>? expectedAllocations,
+        IReadOnlyList<BillAllocation> allocations,
+        CancellationToken cancellationToken)
+    {
+        var billVersion = RequiredVersion(expectedBillRowVersion, nameof(expectedBillRowVersion));
+        var versions = (expectedAllocations
+                ?? throw new ArgumentException("Expected allocation versions are required.", nameof(expectedAllocations)))
+            .Select(version => new AllocationVersion(
+                version.AllocationId,
+                RequiredVersion(version.RowVersion, nameof(version.RowVersion))))
+            .ToList();
+        var saved = await _splitDesigns.ReplaceOperationalSplitDesignAsync(
+            bill.Id,
+            billVersion,
+            versions,
+            allocations,
+            cancellationToken);
+        return Map(
+            bill,
+            saved.Allocations,
+            canMutate: true,
+            saved.BillRowVersion,
+            await LoadAdjustmentAsync(bill, cancellationToken));
+    }
+
+    /// <summary>
+    /// The owners a bill can be split between: the persistent seats of the
+    /// table behind the bill, plus any person owners that already hold an
+    /// allocation. The client used to synthesise placeholder GUIDs
+    /// (<c>00000000-0000-0000-0000-00000000000N</c>) for this list; those cannot
+    /// be reconciled with the seat-based allocation the server and V1-GOV-017
+    /// expect (deep-analysis finding F-2).
+    /// </summary>
+    public async Task<IReadOnlyList<BillSplitOwnerOptionDto>> GetOwnerOptionsAsync(
+        Guid billId,
+        CancellationToken cancellationToken = default)
+    {
+        var bill = await GetBillAsync(billId, cancellationToken);
+        var options = new List<BillSplitOwnerOptionDto>();
+
+        if (_dataSource is not null && bill.TableId.HasValue && bill.TableId.Value != Guid.Empty)
+        {
+            await using var command = _dataSource.CreateCommand(
+                """
+                SELECT seat_id, seat_number, label
+                FROM table_mgmt.table_seats
+                WHERE table_id = @table_id
+                ORDER BY seat_number;
+                """);
+            command.Parameters.AddWithValue("table_id", bill.TableId.Value);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                options.Add(new BillSplitOwnerOptionDto(
+                    "Seat",
+                    reader.GetGuid(0),
+                    $"Sandalye {reader.GetInt32(1)}",
+                    reader.GetString(2)));
+            }
+        }
+
+        var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(billId, cancellationToken);
+        var seenPersons = new HashSet<Guid>();
+        var personIndex = 0;
+        foreach (var allocation in allocations)
+        {
+            if (!OperationalOwnerReference.TryParse(allocation.OwnerReference, out var owner)
+                || owner!.Kind != AllocationOwnerKind.Person
+                || !seenPersons.Add(owner.Id))
+            {
+                continue;
+            }
+
+            personIndex++;
+            options.Add(new BillSplitOwnerOptionDto("Person", owner.Id, $"{personIndex}. Kişi", null));
+        }
+
+        return options;
+    }
+
+    private async Task<Bill> GetBillAsync(Guid billId, CancellationToken cancellationToken)
+    {
+        if (billId == Guid.Empty)
+            throw new ArgumentException("Bill ID cannot be empty.", nameof(billId));
+        return await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+    }
+
+    private static List<string> RequiredOwners(
+        IReadOnlyList<SplitOwnerRequest>? owners,
+        SplitMode mode,
+        bool requireUnique)
+    {
+        if (owners is null)
+            throw new ArgumentException("Owners are required.", nameof(owners));
+        var values = owners.Select(owner => OwnerReference(owner, mode)).ToList();
+        if (requireUnique)
+            EnsureUnique(values, nameof(owners));
+        return values;
+    }
+
+    private static string OwnerReference(SplitOwnerRequest owner, SplitMode mode)
+    {
+        ArgumentNullException.ThrowIfNull(owner);
+        if (!Enum.TryParse<AllocationOwnerKind>(owner.Kind, true, out var kind) || !Enum.IsDefined(kind))
+            throw new ArgumentException("Owner kind must be Person or Seat.", nameof(owner));
+        return OperationalOwnerReference.Format(mode, kind, owner.OwnerId);
+    }
+
+    private static void EnsureUnique(List<string> values, string parameterName)
+    {
+        if (values.Distinct(StringComparer.Ordinal).Count() != values.Count)
+            throw new ArgumentException("Owners must be unique for this split mode.", parameterName);
+    }
+
+    private static long RequiredVersion(long? value, string parameterName)
+    {
+        if (value is null or <= 0)
+            throw new ArgumentOutOfRangeException(parameterName, "Expected row version must be positive.");
+        return value.Value;
+    }
+
+    private static BillSplitDesignDto Map(
+        Bill bill,
+        IReadOnlyList<BillAllocation> allocations,
+        bool canMutate,
+        long? billRowVersion = null,
+        AdjustedBillSummary? adjustment = null)
+    {
+        var parsed = allocations.Select(allocation =>
+        {
+            var recognized = OperationalOwnerReference.TryParse(allocation.OwnerReference, out var owner);
+            return new BillSplitAllocationDto(
+                allocation.Id,
+                recognized ? owner!.Mode.ToString() : SplitMode.Custom.ToString(),
+                recognized ? owner!.Kind.ToString() : "Legacy",
+                recognized ? owner!.Id : null,
+                recognized ? null : allocation.OwnerReference,
+                allocation.BillItemId,
+                allocation.AllocatedQuantity,
+                allocation.AllocatedAmount,
+                allocation.TaxAmount,
+                allocation.RowVersion);
+        }).ToList();
+
+        var modes = parsed.Select(allocation => allocation.Mode).Distinct(StringComparer.Ordinal).ToList();
+        var mode = parsed.Count == 0 ? "None" : modes.Count == 1 ? modes[0] : SplitMode.Custom.ToString();
+        var mutable = bill.Status is BillState.Open
+            or BillState.PartiallyAllocated
+            or BillState.Allocated
+            or BillState.Reopened;
+
+        return new BillSplitDesignDto(
+            bill.Id,
+            bill.BillNumber,
+            bill.Status.ToString(),
+            bill.CurrencyCode,
+            // V1-RMD-413: the totals a design must add up to are the adjusted ones (see SplitEngine).
+            adjustment?.AdjustedPayableAmount ?? bill.PayableAmount,
+            adjustment?.AdjustedTaxTotal ?? bill.TaxTotal,
+            billRowVersion ?? bill.RowVersion,
+            mode,
+            "DesignOnly",
+            canMutate && mutable ? ["SaveEqual", "SaveItems", "SaveAmounts", "SaveCustom", "Clear"] : [],
+            bill.Items.Select(item => new BillSplitItemDto(
+                item.Id,
+                item.ProductNameSnapshot,
+                item.Quantity,
+                item.GrossAmount,
+                item.TaxAmount,
+                item.RowVersion)).ToList(),
+            parsed);
+    }
+}
+
+public sealed class BillingSplitNotFoundException : Exception
+{
+    public BillingSplitNotFoundException(string message, string resource = "hesap") : base(message)
+    {
+        Resource = resource;
+    }
+
+    /// <summary>What was not found, in the words the screen shows (bill, order, refund request).</summary>
+    public string Resource { get; }
+}
+
+/// <summary>The order is in a state that cannot be billed (cancelled, rejected): a conflict, not a malformed request.</summary>
+public sealed class UnsupportedOrderStateException(string message) : InvalidOperationException(message);
+
+/// <summary>A request the server refuses before doing anything; <see cref="Code"/> and <see cref="UserMessage"/> reach the screen.</summary>
+public sealed class BillingValidationException(string code, string message, string userMessage) : ArgumentException(message)
+{
+    public string Code { get; } = code;
+
+    public string UserMessage { get; } = userMessage;
+}
+
+/// <summary>A discount request the approval policy refused.</summary>
+public sealed class GrantDeniedException() : Exception("The discount request was denied.");
+
+/// <summary>
+/// V1-RMD-413: an item split was requested on a bill whose adjustments (discount, fee, tip) change what is owed.
+/// </summary>
+public sealed class SplitItemsOnAdjustedBillException : Exception
+{
+    public SplitItemsOnAdjustedBillException(Guid billId)
+        : base($"Bill {billId} carries adjustments; an item split cannot account for them.")
+    {
+        BillId = billId;
+    }
+
+    public Guid BillId { get; }
+}
+
+/// <summary>
+/// V1-RMD-410 (V1-RMD-393 F-05): the discount would leave the bill's payable below the amount already collected.
+/// </summary>
+public sealed class BillDiscountBelowCollectedException : Exception
+{
+    public BillDiscountBelowCollectedException(Guid billId, decimal adjustedPayable, decimal collected)
+        : base($"Bill {billId}: a discount leaving {adjustedPayable} payable is below the {collected} already collected.")
+    {
+        BillId = billId;
+        AdjustedPayable = adjustedPayable;
+        Collected = collected;
+    }
+
+    public Guid BillId { get; }
+    public decimal AdjustedPayable { get; }
+    public decimal Collected { get; }
+}
+
+public sealed class BillDiscountUnsupportedBillStateException : Exception
+{
+    public BillDiscountUnsupportedBillStateException(Guid billId, string state)
+        : base($"Bill {billId} is in state '{state}' and does not accept new discounts.")
+    {
+        BillId = billId;
+        State = state;
+    }
+
+    public Guid BillId { get; }
+    public string State { get; }
+}

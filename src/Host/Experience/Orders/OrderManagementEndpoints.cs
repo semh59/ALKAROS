@@ -871,6 +871,9 @@ public static class OrderManagementEndpoints
             OrderCommandReplayStore replays,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
+            ICashierQueueAnnouncer queueAnnouncer,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -883,6 +886,9 @@ public static class OrderManagementEndpoints
                 () => store.CancelAsync(
                     orderId, request.Reason, request.ExpectedRowVersion, userId, context.TraceIdentifier, cancellationToken),
                 cancellationToken);
+            await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", orderId, null, cancellationToken);
+            await DualScreenApplication.NotifyCustomerDisplayAsync(
+                customerDisplayHub, loggerFactory, terminalId, orderId, "OrderCancelled", cancellationToken);
             return Results.Ok(result);
         });
 

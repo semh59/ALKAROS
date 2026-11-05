@@ -228,6 +228,8 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         await using var statusCommand = _database.DataSource.CreateCommand("SELECT status FROM billing.bills WHERE bill_id = @id;");
         statusCommand.Parameters.AddWithValue("id", billId);
         Assert.Equal("Paid", (string)(await statusCommand.ExecuteScalarAsync())!);
+        await using var initiated = _database.DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE status = 'Initiated';");
+        Assert.Equal(0L, (long)(await initiated.ExecuteScalarAsync())!);
     }
 
     [Fact]
