@@ -1,8 +1,8 @@
 # V1-RMD-802 - Asılı sipariş temizliği, boş sipariş süpürücüsü, ödenmiş hesaba bağlı canlı siparişin onarımı ve G5 artıkları
 
 - Task ID: V1-RMD-802
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing
 
