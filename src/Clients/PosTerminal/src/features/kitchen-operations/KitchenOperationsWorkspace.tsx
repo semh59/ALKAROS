@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { playNewItemChime } from "../../audioAlerts";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
-import { formatClockTime, formatDecimal, formatGigabytes, formatClockMinutes, formatShortDateTime } from "../../format";
+import { businessDayStart, formatClockTime, formatDecimal, formatGigabytes, formatClockMinutes, formatShortDateTime } from "../../format";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
   healthSnapshotStaleMessage,
@@ -213,13 +213,13 @@ export function KitchenOperationsWorkspace({
   // V1-KIT-014/V1-KDS-009: fetched on demand, only when the report view is
   // actually opened — not part of the workspace's own polling load(), a
   // manager checking this a few times a shift does not need it refreshed
-  // every 8s like the board does. Window: today, UTC midnight to now.
+  // every 8s like the board does. Window: the Istanbul business day so far.
   useEffect(() => {
     if (viewMode !== "report" || !onLoadPerformanceReport) return;
     let cancelled = false;
     setReportState("loading");
     const nowDate = new Date();
-    const from = new Date(Date.UTC(nowDate.getUTCFullYear(), nowDate.getUTCMonth(), nowDate.getUTCDate())).toISOString();
+    const from = businessDayStart(nowDate);
     const to = nowDate.toISOString();
     onLoadPerformanceReport(from, to).then(
       (result) => { if (!cancelled) { setReport(result); setReportState("idle"); } },

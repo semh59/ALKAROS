@@ -1,21 +1,16 @@
 import { useMemo, useState } from "react";
 import { Button, SelectField, TextField } from "../../design-system";
-import { formatMoney } from "../../format";
+import { businessDateRange, formatMoney } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { errorText } from "../management/panel";
 import { createChannelReportClient, type ChannelReportClient } from "./api";
-import { dayCount, formatDay, isoDate, maxDays, providerLabel, sourceLabel, totalsOf, type ChannelFilter, type ChannelReport } from "./models";
+import { dayCount, formatDay, maxDays, providerLabel, sourceLabel, totalsOf, type ChannelFilter, type ChannelReport } from "./models";
 import "./management-channel-report.css";
 
 const t = managementText.channelReport;
 
-const defaultRange = () => {
-  const to = new Date();
-  const from = new Date(to);
-  from.setDate(from.getDate() - 6);
-  return { from: isoDate(from), to: isoDate(to) };
-};
+const defaultRange = () => businessDateRange(7);
 
 export function ChannelReportSection({ client }: Partial<ManagementSectionProps> & { client?: ChannelReportClient }) {
   const api = useMemo(() => client ?? createChannelReportClient(), [client]);

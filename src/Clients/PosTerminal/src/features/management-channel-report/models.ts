@@ -17,8 +17,6 @@ const providers: Record<string, string> = { yemeksepeti: "Yemeksepeti", "trendyo
 export const sourceLabel = (source: string) => sources[source] ?? "Diğer";
 export const providerLabel = (provider: string | null) => provider === null ? "—" : providers[provider] ?? "Diğer platform";
 
-export const isoDate = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-
 export function dayCount(from: string, to: string): number {
   return Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000) + 1;
 }

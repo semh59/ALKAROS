@@ -25,8 +25,25 @@ export const formatDayMonthTime = (value: string | Date) =>
 export const formatDate = (value: string | Date) =>
   new Date(value).toLocaleDateString("tr-TR", { timeZone: venueTimeZone });
 
-/** The venue's current calendar day as yyyy-mm-dd, for a business-day field's default. */
-export const venueToday = () => new Date().toLocaleDateString("sv-SE", { timeZone: venueTimeZone });
+// Mirrors the server's business day (BusinessDayWindow): 06:00 Istanbul to the next 06:00. Turkey has no daylight saving, so the offset is fixed.
+const istanbulOffsetHours = 3;
+const businessDayStartHour = 6;
+const hourMs = 3_600_000;
+const dayMs = 24 * hourMs;
+
+/** The business day an instant belongs to, as yyyy-mm-dd. */
+export const businessDate = (now: Date = new Date()) =>
+  new Date(now.getTime() - (businessDayStartHour - istanbulOffsetHours) * hourMs).toISOString().slice(0, 10);
+
+/** The UTC instant the current business day began. */
+export const businessDayStart = (now: Date = new Date()) =>
+  new Date(Date.parse(`${businessDate(now)}T00:00:00Z`) + (businessDayStartHour - istanbulOffsetHours) * hourMs).toISOString();
+
+/** The last `days` business days (inclusive), as yyyy-mm-dd bounds. */
+export const businessDateRange = (days: number, now: Date = new Date()) => {
+  const to = businessDate(now);
+  return { from: new Date(Date.parse(`${to}T00:00:00Z`) - (days - 1) * dayMs).toISOString().slice(0, 10), to };
+};
 
 export const formatDecimal = (value: number, digits = 1) =>
   new Intl.NumberFormat("tr-TR", { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);

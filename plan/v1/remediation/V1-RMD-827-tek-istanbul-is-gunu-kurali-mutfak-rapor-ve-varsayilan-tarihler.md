@@ -1,7 +1,7 @@
 # V1-RMD-827 - Tek İstanbul iş günü kuralı: mutfak raporu, kanal/fatura/marj raporları ve varsayılan iş günü tarihleri
 
 - Task ID: V1-RMD-827
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXjE3sM6VZKpRMj1L9
 - Work type: implementation
 - Surface state: Existing

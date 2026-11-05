@@ -30,7 +30,7 @@ const client = (over: Partial<OrderInvoicesClient> = {}): OrderInvoicesClient =>
 });
 
 describe("online order invoices section", () => {
-  afterEach(async () => { await unmount(); vi.restoreAllMocks(); });
+  afterEach(async () => { await unmount(); vi.restoreAllMocks(); vi.useRealTimers(); });
 
   it("the shell lists the tab for a session holding reports.view only", async () => {
     await render(<ManagementArea capabilities={new Set(["reports.view"])} />);
@@ -129,5 +129,25 @@ describe("online order invoices section", () => {
     await api.detail("o1");
     expect((fetcher.mock.calls[0] as unknown[])[0]).toBe("/api/v1/management/order-invoices?from=2026-09-01&to=2026-09-07");
     expect((fetcher.mock.calls[1] as unknown[])[0]).toBe("/api/v1/management/order-invoices/by-order/o1");
+  });
+
+  it.each([
+    ["2026-09-24T02:00:00Z", "2026-09-17", "2026-09-23"],
+    ["2026-09-24T03:00:00Z", "2026-09-18", "2026-09-24"],
+  ])("the default range at %s is the last seven Istanbul business days", async (instant, from, to) => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(instant));
+    const api = client();
+    await render(<OrderInvoicesSection client={api} />);
+    await press("Listele");
+    expect(api.list).toHaveBeenCalledWith(from, to);
+  });
+
+  it("shows a delivery just after Istanbul midnight on its Istanbul day, whatever the device zone", async () => {
+    process.env.TZ = "America/Los_Angeles";
+    const api = client({ list: vi.fn().mockResolvedValue(list({ missing: [{ orderId: "o4", orderNumber: "YS-4", provider: "yemeksepeti", total: 10, deliveredAt: "2026-10-03T21:30:00Z", daysLeft: 3 }] })) });
+    await render(<OrderInvoicesSection client={api} />);
+    await press("Listele");
+    expect(document.body.textContent).toContain("04.10.2026");
   });
 });

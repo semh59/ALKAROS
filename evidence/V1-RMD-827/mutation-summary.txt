@@ -1,0 +1,7 @@
+V1-RMD-827 mutations (all killed, files restored and cmp-verified)
+1 format.ts offset 3 -> 0: killed (format.test.ts)
+2 format.ts cutoff hour 6 -> 3: killed
+3 format.ts range days-1 -> days: killed
+4 kitchen window back to UTC midnight: killed (KitchenOperationsWorkspace.test.tsx)
+5-7 channel/invoice/margin default range back to device-local day: killed (3)
+8-11 closing/stock/menus/recipe-cost default back to calendar day: killed (businessDayDefaults.test.tsx, 4)

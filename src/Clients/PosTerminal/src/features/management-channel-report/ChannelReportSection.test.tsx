@@ -25,7 +25,7 @@ const report = (over: Partial<ChannelReport> = {}): ChannelReport => ({
 const client = (over: Partial<ChannelReportClient> = {}): ChannelReportClient => ({ report: vi.fn().mockResolvedValue(report()), ...over });
 
 describe("channel report section", () => {
-  afterEach(async () => { await unmount(); vi.restoreAllMocks(); });
+  afterEach(async () => { await unmount(); vi.restoreAllMocks(); vi.useRealTimers(); });
 
   it("the shell lists the channel report tab for a session holding reports.view", async () => {
     await render(<ManagementArea capabilities={new Set(["reports.view"])} />);
@@ -106,5 +106,17 @@ describe("channel report section", () => {
     const fetcher = vi.fn(() => Promise.resolve(new Response("{}", { status: 200 })));
     await createChannelReportClient(fetcher as unknown as typeof fetch).report("2026-09-01", "2026-09-07", "Qr");
     expect((fetcher.mock.calls[0] as unknown[])[0]).toBe("/api/v1/management/reports/channels?from=2026-09-01&to=2026-09-07&source=Qr");
+  });
+
+  it.each([
+    ["2026-09-24T02:00:00Z", "2026-09-17", "2026-09-23"],
+    ["2026-09-24T03:00:00Z", "2026-09-18", "2026-09-24"],
+  ])("the default range at %s is the last seven Istanbul business days", async (instant, from, to) => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date(instant));
+    const api = client();
+    await render(<ChannelReportSection client={api} />);
+    await press("Raporu getir");
+    expect(api.report).toHaveBeenCalledWith(from, to, expect.anything());
   });
 });

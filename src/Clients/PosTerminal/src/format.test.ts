@@ -1,7 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
-import { formatClockMinutes, formatClockTime, formatDate, formatDateTime, formatDayMonthTime, formatShortDateTime, venueToday, formatDecimal, formatGigabytes } from "./format";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { formatClockMinutes, formatClockTime, formatDate, formatDateTime, formatDayMonthTime, formatShortDateTime, businessDate, businessDateRange, businessDayStart, formatDecimal, formatGigabytes } from "./format";
 
 describe("format helpers", () => {
+  const deviceZone = process.env.TZ;
+  afterEach(() => { if (deviceZone === undefined) delete process.env.TZ; else process.env.TZ = deviceZone; });
+
   it("renders an ISO instant as a Turkish local clock time, never the raw ISO text", () => {
     const text = formatClockTime("2026-11-01T08:02:49.436Z");
     expect(text).toMatch(/^\d{2}:\d{2}:\d{2}$/);
@@ -23,15 +26,45 @@ describe("format helpers", () => {
   });
 
   it.each([
+    ["2026-09-24T02:59:59Z", "2026-09-23"],
+    ["2026-09-24T03:00:00Z", "2026-09-24"],
     ["2026-09-24T20:59:59Z", "2026-09-24"],
-    ["2026-09-24T21:00:00Z", "2026-09-25"],
-    ["2026-12-31T21:00:00Z", "2027-01-01"],
-  ])("the venue's today at %s is %s", (instant, day) => {
+    ["2026-09-24T21:00:00Z", "2026-09-24"],
+    ["2026-12-31T23:00:00Z", "2026-12-31"],
+    ["2027-01-01T02:59:59Z", "2026-12-31"],
+    ["2027-01-01T03:00:00Z", "2027-01-01"],
+  ])("the business day at %s is %s (06:00 Istanbul cutoff)", (instant, day) => {
+    process.env.TZ = "UTC";
+    expect(businessDate(new Date(instant))).toBe(day);
+  });
+
+  it("starts the business day at 06:00 Istanbul, whatever the device zone", () => {
+    for (const zone of ["UTC", "America/Los_Angeles", "Asia/Tokyo"]) {
+      process.env.TZ = zone;
+      expect(businessDayStart(new Date("2026-09-24T02:00:00Z"))).toBe("2026-09-23T03:00:00.000Z");
+      expect(businessDayStart(new Date("2026-09-24T12:00:00Z"))).toBe("2026-09-24T03:00:00.000Z");
+    }
+  });
+
+  it("builds an inclusive day range ending on the business day", () => {
+    for (const zone of ["UTC", "Asia/Tokyo"]) {
+      process.env.TZ = zone;
+      expect(businessDateRange(7, new Date("2028-03-02T04:00:00Z"))).toEqual({ from: "2028-02-25", to: "2028-03-02" });
+      expect(businessDateRange(7, new Date("2028-03-02T02:00:00Z"))).toEqual({ from: "2028-02-24", to: "2028-03-01" });
+    }
+    process.env.TZ = "UTC";
+    expect(businessDateRange(1, new Date("2026-03-02T04:00:00Z"))).toEqual({ from: "2026-03-02", to: "2026-03-02" });
+    expect(businessDateRange(30, new Date("2026-03-02T04:00:00Z"))).toEqual({ from: "2026-02-01", to: "2026-03-02" });
+    expect(businessDateRange(7, new Date("2026-03-02T01:00:00Z"))).toEqual({ from: "2026-02-23", to: "2026-03-01" });
+    expect(businessDateRange(7, new Date("2026-03-02T04:00:00Z"))).toEqual({ from: "2026-02-24", to: "2026-03-02" });
+  });
+
+  it("reads the real clock by default", () => {
     process.env.TZ = "UTC";
     vi.useFakeTimers({ toFake: ["Date"] });
     try {
-      vi.setSystemTime(new Date(instant));
-      expect(venueToday()).toBe(day);
+      vi.setSystemTime(new Date("2026-09-24T02:00:00Z"));
+      expect(businessDate()).toBe("2026-09-23");
     } finally {
       vi.useRealTimers();
     }

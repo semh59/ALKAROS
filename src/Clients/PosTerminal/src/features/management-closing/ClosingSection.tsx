@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button, SelectField, StateMessage, TextField } from "../../design-system";
-import { formatMoney, formatShortDateTime, venueToday } from "../../format";
+import { formatMoney, formatShortDateTime, businessDate } from "../../format";
 import { commonActions, managementText } from "../../strings";
 import { createClosingClient, type ClosingClient } from "./closingApi";
 import {
@@ -13,7 +13,7 @@ import "./management-closing.css";
 
 const t = managementText.closing;
 const stamp = (iso: string | null) => (iso ? formatShortDateTime(iso) : "—");
-const localToday = () => venueToday();
+const localToday = () => businessDate();
 
 type Panel<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };
 

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Button, SelectField, TextField } from "../../design-system";
-import { formatMoney, formatQuantity, venueToday } from "../../format";
+import { formatMoney, formatQuantity, businessDate } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createCostClient, type CostClient } from "./api";
@@ -9,7 +9,7 @@ import { recipeStatusLabel, type CostSnapshot, type RecipeVersionOption } from "
 import "./management-menus-recipe-cost.css";
 
 const t = managementText.recipeCost;
-const today = () => venueToday();
+const today = () => businessDate();
 
 export function RecipeCostSection({ client }: ManagementSectionProps & { client?: CostClient }) {
   const api = useMemo(() => client ?? createCostClient(), [client]);

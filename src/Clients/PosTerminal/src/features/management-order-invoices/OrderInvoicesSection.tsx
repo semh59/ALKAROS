@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { Button, TextField } from "../../design-system";
-import { formatMoney } from "../../format";
+import { businessDateRange, formatDate, formatMoney } from "../../format";
 import { managementText } from "../../strings";
 import { errorText } from "../management/panel";
-import { dayCount, formatDay, isoDate, maxDays, providerLabel } from "../management-channel-report/models";
+import { dayCount, formatDay, maxDays, providerLabel } from "../management-channel-report/models";
 import type { ManagementSectionProps } from "../management/sections";
 import { createOrderInvoicesClient, type OrderInvoicesClient } from "./api";
 import { statusLabel, type OrderInvoiceDetail, type OrderInvoiceList } from "./models";
@@ -11,12 +11,7 @@ import "./management-order-invoices.css";
 
 const t = managementText.orderInvoices;
 
-const defaultRange = () => {
-  const to = new Date();
-  const from = new Date(to);
-  from.setDate(from.getDate() - 6);
-  return { from: isoDate(from), to: isoDate(to) };
-};
+const defaultRange = () => businessDateRange(7);
 
 export function OrderInvoicesSection({ client }: Partial<ManagementSectionProps> & { client?: OrderInvoicesClient }) {
   const api = useMemo(() => client ?? createOrderInvoicesClient(), [client]);
@@ -67,7 +62,7 @@ export function OrderInvoicesSection({ client }: Partial<ManagementSectionProps>
         <table>
           <thead><tr><th>{t.order}</th><th>{t.platform}</th><th>{t.deliveredAt}</th><th className="moi__num">{t.gross}</th><th className="moi__num">{t.daysLeft}</th></tr></thead>
           <tbody>{list.missing.map((order) => <tr key={order.orderId}>
-            <td>{order.orderNumber}</td><td>{providerLabel(order.provider)}</td><td>{formatDay(order.deliveredAt.slice(0, 10))}</td>
+            <td>{order.orderNumber}</td><td>{providerLabel(order.provider)}</td><td>{formatDate(order.deliveredAt)}</td>
             <td className="moi__num">{formatMoney(order.total)}</td><td className="moi__num">{order.daysLeft}</td></tr>)}</tbody>
         </table>
       </section>}

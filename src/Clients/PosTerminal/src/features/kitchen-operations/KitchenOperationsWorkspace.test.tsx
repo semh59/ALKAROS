@@ -665,8 +665,17 @@ describe("kitchen operations workspace", () => {
     expect([...document.querySelectorAll(".kitchen-view-mode button")].some((button) => button.textContent === "Rapor")).toBe(false);
   });
 
+  it("the report window of a night shift still starts at the previous 06:00 Istanbul", async () => {
+    vi.setSystemTime(new Date("2026-09-14T01:30:00Z"));
+    const onLoadPerformanceReport = vi.fn().mockResolvedValue({ from: "", to: "", stations: [], hourlyVolume: [] });
+    await render(<KitchenOperationsWorkspace {...baseProps({ onLoadPerformanceReport })} />);
+    await click([...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Rapor")!);
+    await act(async () => { await Promise.resolve(); await Promise.resolve(); });
+    expect(onLoadPerformanceReport).toHaveBeenCalledWith("2026-09-13T03:00:00.000Z", "2026-09-14T01:30:00.000Z");
+  });
+
   it("loads and shows the performance report's mean, median and hourly volume when Rapor is opened", async () => {
-    // The workspace derives its report window ("today, UTC midnight to
+    // The workspace derives its report window ("today, the Istanbul business day from 06:00 to
     // now") from the real clock, so the expected `from` below has to move
     // with it - pin the clock instead of hardcoding a date that goes stale
     // every day CI runs.
@@ -683,7 +692,7 @@ describe("kitchen operations workspace", () => {
     // event handler (inside a useEffect), so it needs its own flush.
     await act(async () => { await Promise.resolve(); await Promise.resolve(); });
 
-    expect(onLoadPerformanceReport).toHaveBeenCalledWith("2026-09-14T00:00:00.000Z", expect.any(String));
+    expect(onLoadPerformanceReport).toHaveBeenCalledWith("2026-09-14T03:00:00.000Z", "2026-09-14T12:34:56.000Z");
     expect(document.body.textContent).toContain("hot-line");
     expect(document.body.textContent).toContain("15,0 dk");
     expect(document.body.textContent).toContain("10,0 dk");

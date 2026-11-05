@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { Button, SelectField, StateMessage, TextField } from "../../design-system";
-import { formatQuantity, formatDateTime, venueToday } from "../../format";
+import { formatQuantity, formatDateTime, businessDate } from "../../format";
 import { commonActions, managementText } from "../../strings";
 import { createStockClient, type StockClient } from "./stockApi";
 import {
@@ -11,7 +11,7 @@ import { errorText } from "../management/panel";
 import "./management-stock.css";
 
 const t = managementText.stock;
-const today = () => venueToday();
+const today = () => businessDate();
 
 type Panel<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };
 

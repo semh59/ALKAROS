@@ -1,22 +1,17 @@
 import { useMemo, useState } from "react";
 import { Button, TextField } from "../../design-system";
-import { formatMoney } from "../../format";
+import { businessDateRange, formatMoney } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { errorText } from "../management/panel";
-import { dayCount, isoDate, maxDays } from "../management-channel-report/models";
+import { dayCount, maxDays } from "../management-channel-report/models";
 import { createProductMarginClient, type ProductMarginClient } from "./api";
 import { formatPercent, formatQuantity, type ProductMarginReport } from "./models";
 import "./management-product-margin-report.css";
 
 const t = managementText.productMargin;
 
-const defaultRange = () => {
-  const to = new Date();
-  const from = new Date(to);
-  from.setDate(from.getDate() - 6);
-  return { from: isoDate(from), to: isoDate(to) };
-};
+const defaultRange = () => businessDateRange(7);
 
 export function ProductMarginSection({ client }: Partial<ManagementSectionProps> & { client?: ProductMarginClient }) {
   const api = useMemo(() => client ?? createProductMarginClient(), [client]);
