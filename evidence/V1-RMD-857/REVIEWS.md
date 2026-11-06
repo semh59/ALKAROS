@@ -1,0 +1,5 @@
+# V1-RMD-857 incelemeler
+
+1. qa-test-kalitesi: orta: Reporting kopya sayısı sınanmıyordu -> `billing.bill_items` geçiş sayısı 2 sabitlendi; hata kodu doğrulanmıyordu -> `UNSUPPORTED_ORDER_STATE`, `MERGE_ORDER_EMPTY`, `MERGE_DIFFERENT_TABLES` doğrulanıyor; sabit 1,5 sn bekleme -> yoklama; yeniden okuma mutantı yoktu -> kalem iptali testi + L3; başka masa dalı -> kuram + L4. Düşük: RESULT'taki "5/5" yalnız B1 içindi -> mutant başına düşen test sayıları yazıldı.
+2. qa-veritabani: orta: L1-L3 kanıtları eski test sürümünden -> güncel testlerle yeniden koşuldu (L1 3, L2 1, L3 1, L4 1 test düştü). Düşük: yoklama başka bir kilit bekleyen oturumu sayabilirdi -> `pg_blocking_pids(test bağlantısı)` ile bağlandı. Kalan düşükler kabul: birleştirme task'ı assert hatasında gözlenmiyor (kilit/havuz sızıntısı yok), kuramda kullanılmayan `@other` parametresi zararsız.
+Doğrulama turu: gerçek iptal akışının (`PostgresOrderRepository.SaveAsync` önce orders satırı, sonra kalemler) testin sırasıyla aynı olduğu ve `FOR UPDATE OF o` ile çakıştığı kodla teyit edildi; çürütülen bulgu yok.

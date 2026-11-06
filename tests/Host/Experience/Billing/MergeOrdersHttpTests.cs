@@ -239,6 +239,79 @@ public sealed class MergeOrdersHttpTests : IAsyncLifetime
         Assert.Equal(1L, await Count("SELECT count(*) FROM billing.bills WHERE order_id IS NULL;"));
     }
 
+    [Theory]
+    [InlineData("status = 'Cancelled'", "UNSUPPORTED_ORDER_STATE")]
+    [InlineData("table_id = @other", "MERGE_DIFFERENT_TABLES")]
+    public async Task AnOrderCancelledOrMovedWhileTheMergeWaitsForItsLockIsNotBilled(string change, string code)
+    {
+        var table = await SeedTableAsync();
+        var first = await SeedOrderAsync(table, 100m);
+        var second = await SeedOrderAsync(table, 50m);
+        var (terminalId, cookie) = await CashierAsync("bills.split");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        Assert.Equal(HttpStatusCode.OK, (await MergeAsync(client, terminalId, cookie, "key-warm-up", await SeedOrderAsync(table, 10m), await SeedOrderAsync(table, 20m))).Status);
+
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var cancelling = await connection.BeginTransactionAsync();
+        await using (var cancel = new NpgsqlCommand($"UPDATE orders.orders SET {change} WHERE order_id = @id;", connection, cancelling))
+        {
+            cancel.Parameters.AddWithValue("id", first.Id);
+            cancel.Parameters.AddWithValue("other", await SeedTableAsync());
+            await cancel.ExecuteNonQueryAsync();
+        }
+        var merge = MergeAsync(client, terminalId, cookie, "key-cancelled", first, second);
+        await WaitUntilARequestWaitsForAsync(connection);
+
+        await cancelling.CommitAsync();
+        var result = await merge;
+        Assert.Equal(code, result.Code);
+        Assert.True(result.Status is HttpStatusCode.Conflict or HttpStatusCode.BadRequest);
+        Assert.Equal(1L, await Count("SELECT count(*) FROM billing.bills WHERE order_id IS NULL;"));
+        Assert.Equal(0L, await Count("SELECT count(*) FROM billing.bill_items WHERE order_item_id IN (SELECT order_item_id FROM orders.order_items WHERE order_id IN (@a, @b));", ("a", first.Id), ("b", second.Id)));
+    }
+
+    [Fact]
+    public async Task AnItemCancelledWhileTheMergeWaitsForTheLockIsLeftOffTheBill()
+    {
+        var table = await SeedTableAsync();
+        var first = await SeedOrderAsync(table, 100m);
+        var second = await SeedOrderAsync(table, 50m);
+        var (terminalId, cookie) = await CashierAsync("bills.split");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        Assert.Equal(HttpStatusCode.OK, (await MergeAsync(client, terminalId, cookie, "key-warm-up", await SeedOrderAsync(table, 10m), await SeedOrderAsync(table, 20m))).Status);
+
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var cancelling = await connection.BeginTransactionAsync();
+        await using (var cancel = new NpgsqlCommand(
+            "UPDATE orders.orders SET updated_at = now() WHERE order_id = @id; UPDATE orders.order_items SET status = 'Cancelled' WHERE order_id = @id;",
+            connection, cancelling))
+        {
+            cancel.Parameters.AddWithValue("id", first.Id);
+            await cancel.ExecuteNonQueryAsync();
+        }
+        var merge = MergeAsync(client, terminalId, cookie, "key-item-cancelled", first, second);
+        await WaitUntilARequestWaitsForAsync(connection);
+
+        await cancelling.CommitAsync();
+        var result = await merge;
+        Assert.Equal((HttpStatusCode.Conflict, "MERGE_ORDER_EMPTY"), (result.Status, result.Code));
+        Assert.Equal(1L, await Count("SELECT count(*) FROM billing.bills WHERE order_id IS NULL;"));
+    }
+
+    private async Task WaitUntilARequestWaitsForAsync(NpgsqlConnection holder)
+    {
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            if (await Count("SELECT count(*) FROM pg_stat_activity WHERE @holder = ANY(pg_blocking_pids(pid));", ("holder", holder.ProcessID)) > 0)
+                return;
+            await Task.Delay(100);
+        }
+
+        Assert.Fail("The merge never waited for the order lock.");
+    }
+
     [Fact]
     public async Task APaidMergedBillCompletesBothOrdersAndFreesTheTable()
     {
