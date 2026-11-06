@@ -215,6 +215,76 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ParallelDecisionsOnOneRefundRequestApplyExactlyOnce()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+        var (_, secondManager) = await _database.SeedSessionWithPermissionsAsync(
+            _terminalId, "manager", "payments.refund.request", "payments.refund.approve");
+
+        // Holding the bill lock keeps the first decision inside its transaction (it already holds the request row) so the others pile up behind the request row lock and must see its outcome.
+        using (await client.SendAsync(Post($"refund-requests/{Guid.NewGuid():D}/approve", _managerCookie))) { }
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var holder = await connection.BeginTransactionAsync();
+        await using (var hold = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, holder))
+        {
+            hold.Parameters.AddWithValue($"bill-settlement:{seeded.BillId:N}");
+            await hold.ExecuteNonQueryAsync();
+        }
+        var decisions = Task.WhenAll(
+            client.SendAsync(Post($"refund-requests/{request.RequestId:D}/approve", _managerCookie)),
+            client.SendAsync(Post($"refund-requests/{request.RequestId:D}/approve", secondManager)),
+            client.SendAsync(Post($"refund-requests/{request.RequestId:D}/reject", secondManager, new RefundDecisionInputV1("Hayır"))));
+        await Task.Delay(1500);
+        await holder.CommitAsync();
+        var responses = await decisions;
+
+        Assert.Equal(1, responses.Count(r => r.StatusCode == HttpStatusCode.OK));
+        Assert.All(responses.Where(r => r.StatusCode != HttpStatusCode.OK), r => Assert.Equal(HttpStatusCode.Conflict, r.StatusCode));
+        var approvedWon = responses[0].StatusCode == HttpStatusCode.OK || responses[1].StatusCode == HttpStatusCode.OK;
+        Assert.Equal(approvedWon ? 1L : 0L, await Scalar<long>("SELECT count(*) FROM payments.payment_reversals WHERE payment_id = @p", paymentId));
+        Assert.Equal(approvedWon ? 1L : 0L, await Scalar<long>(
+            "SELECT count(*) FROM cash.cash_transactions WHERE related_payment_id = @p AND type = 'Refund'", paymentId));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ARefundDecisionWaitsForTheBillLockSoNoPaymentOrCancellationOfTheSameBillRunsBetweenItsChecks(bool manualCompletion)
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = manualCompletion ? await CardPaymentAsync(seeded.BillId, 100m) : await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+        if (manualCompletion)
+            await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+        using (await client.SendAsync(Post($"refund-requests/{Guid.NewGuid():D}/approve", _managerCookie))) { }
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var holder = await connection.BeginTransactionAsync();
+        await using (var hold = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, holder))
+        {
+            hold.Parameters.AddWithValue($"bill-settlement:{seeded.BillId:N}");
+            await hold.ExecuteNonQueryAsync();
+        }
+
+        var decision = manualCompletion
+            ? client.SendAsync(Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1("POS-1", null)))
+            : client.SendAsync(Post($"refund-requests/{request.RequestId:D}/approve", _managerCookie));
+        await Task.Delay(1500);
+        Assert.False(decision.IsCompleted);
+
+        await holder.CommitAsync();
+        using var response = await decision;
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
     public async Task ADecidedRequestCannotBeApprovedAgain()
     {
         var seeded = await _database.SeedBillAsync();

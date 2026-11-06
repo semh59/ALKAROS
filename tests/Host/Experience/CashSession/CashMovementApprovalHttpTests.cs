@@ -542,6 +542,32 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
         Assert.Equal(2000m - (approvedRows * 800m), await till.ExpectedCashAsync());
     }
 
+    [Theory]
+    [InlineData("In")]
+    [InlineData("Out")]
+    public async Task AMovementWaitsForACountThatIsStartingAndIsThenRefusedInsteadOfLandingBehindIt(string direction)
+    {
+        await using var till = await TillAsync(opening: 500m);
+        Assert.Equal(HttpStatusCode.Created, (await till.MoveAsync("Out", 10m, "ısınma")).StatusCode);
+
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var counting = await connection.BeginTransactionAsync();
+        await using (var start = new NpgsqlCommand(
+            "UPDATE cash.cash_sessions SET status = 'Counting' WHERE cash_session_id = @id;", connection, counting))
+        {
+            start.Parameters.AddWithValue("id", till.SessionId);
+            await start.ExecuteNonQueryAsync();
+        }
+        var movement = till.MoveAsync(direction, 50m, "gider");
+        await Task.Delay(1500);
+        Assert.False(movement.IsCompleted);
+
+        await counting.CommitAsync();
+        await AssertErrorAsync(await movement, HttpStatusCode.Conflict, "CLOSED_CASH_SESSION", "açık değil");
+        Assert.Equal(1L, await _database.CountLedgerRowsAsync(till.SessionId, "CashOut"));
+        Assert.Equal(0L, await _database.CountLedgerRowsAsync(till.SessionId, "CashIn"));
+    }
+
     [Fact]
     public async Task AnApprovalAndACashOutRunningTogetherNeverTakeMoreThanTheDrawerHolds()
     {

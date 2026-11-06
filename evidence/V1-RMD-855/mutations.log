@@ -1,0 +1,15 @@
+Her mutant cp+cmp ile geri alındı. ÖLDÜ = hedef test(ler) düştü; YAŞADI = geçti.
+M1a  iptalde para kontrolü kaldırıldı                          ÖLDÜ    mut-M1a.log
+M1b  iptalde bill-settlement kilidi kaldırıldı                 ÖLDÜ    mut-M1b.log (kilit testi)
+M2   bahşiş payment-allocation kilidi kaldırıldı               ÖLDÜ    mut-M2.log
+M3   iade onayında kilit sonrası durum kontrolü kaldırıldı     ÖLDÜ    mut-M3.log
+M4   iade onayında bill-settlement kilidi kaldırıldı           ÖLDÜ    mut-M4.log (AnApprovalWaits/ARefundDecisionWaits kilit testi; çift onay testinde YAŞADI)
+M5   manuel tamamlamada bill-settlement kilidi kaldırıldı      ÖLDÜ    mut-M5-final.log
+M8   Eft tahsilatında bill-settlement kilidi kaldırıldı         ÖLDÜ    mut-M8.log (tahsilat, kilit tutulurken ödeme satırı yazmamalı)
+M7   refund_requests satırı FOR UPDATE kaldırıldı              ÖLDÜ    mut-M7.log
+R4   ledger FOR SHARE kaldırıldı (modül testi)                 ÖLDÜ    mut-R4-module.log
+R4   ledger FOR SHARE kaldırıldı (host testi tek başına)       YAŞADI  mut-R4.log (host yolu FOR UPDATE ile de kilitler)
+R4b  ledger FOR UPDATE kaldırıldı (yeni testler)               YAŞADI  mut-R4b.log
+R4b  ledger FOR UPDATE kaldırıldı (mevcut eşzamanlı çıkış)     ÖLDÜ    mut-R4b-existing.log
+R4c  oturum deposu FOR UPDATE kaldırıldı (yeni testler)        YAŞADI  mut-R4c.log
+R4d  R4 + R4b birlikte                                         ÖLDÜ    mut-R4d.log

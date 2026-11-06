@@ -362,6 +362,111 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(60m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
     }
 
+    [Fact]
+    public async Task ACancelAndATenderOnTheSameBillNeverBothSucceed()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "race-cancel-tender", true, "bills.cancel", "bills.split");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        for (var round = 0; round < 8; round++)
+        {
+            var billId = await _database.SeedBillAsync(payable: 100m);
+            var responses = await Task.WhenAll(
+                PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/cancel", cookie, new { Reason = "yarış" }),
+                PostAsync(client, TendersPath(terminalId, billId), cookie,
+                    new { Method = "Eft", Amount = 60m, IdempotencyKey = "race-ct-" + round }));
+
+            if (responses[1].StatusCode == HttpStatusCode.OK)
+            {
+                Assert.Equal(HttpStatusCode.Conflict, responses[0].StatusCode);
+                Assert.Equal("BILL_HAS_PAYMENT", (await responses[0].Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+                Assert.Equal("Open", await _database.BillStatusAsync(billId));
+                Assert.Equal(1L, await _database.PaymentCountAsync(billId));
+            }
+            else
+            {
+                Assert.Equal(HttpStatusCode.OK, responses[0].StatusCode);
+                Assert.Equal(HttpStatusCode.Conflict, responses[1].StatusCode);
+                Assert.Equal("Cancelled", await _database.BillStatusAsync(billId));
+                Assert.Equal(0L, await _database.PaymentCountAsync(billId));
+            }
+        }
+    }
+
+    [Fact]
+    public async Task ATipAndATenderThatPaysTheBillInFullNeverLeaveAPaidBillWithATipUnpaid()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "race-tip-tender", true, "bills.split", "bills.discount");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        for (var round = 0; round < 8; round++)
+        {
+            var billId = await _database.SeedBillAsync(payable: 100m);
+            var responses = await Task.WhenAll(
+                PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tip", cookie,
+                    new { IdempotencyKey = "race-tip-" + round, Amount = 10m }),
+                PostAsync(client, TendersPath(terminalId, billId), cookie,
+                    new { Method = "Eft", Amount = 100m, IdempotencyKey = "race-tt-" + round }));
+
+            if (responses[0].StatusCode == HttpStatusCode.OK)
+            {
+                Assert.Equal("Open", await _database.BillStatusAsync(billId));
+                Assert.Equal(HttpStatusCode.OK, responses[1].StatusCode);
+                Assert.Equal(1L, await _database.PaymentCountAsync(billId));
+            }
+            else
+            {
+                Assert.Equal(HttpStatusCode.Conflict, responses[0].StatusCode);
+                Assert.Equal(HttpStatusCode.OK, responses[1].StatusCode);
+                Assert.Equal("Paid", await _database.BillStatusAsync(billId));
+                Assert.Equal(1L, await _database.PaymentCountAsync(billId));
+            }
+        }
+    }
+
+    [Theory]
+    [InlineData("bill-settlement", "cancel")]
+    [InlineData("payment-allocation", "tip")]
+    [InlineData("bill-settlement", "tenders")]
+    [InlineData("payment-allocation", "tenders")]
+    public async Task ACancelATipOrATenderWaitsForTheLockTheOthersHoldAndRunsOnceItIsReleased(string lockName, string action)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "lock-" + action, true, "bills.cancel", "bills.split", "bills.discount");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        string PathOf(Guid id) => action == "tenders" ? TendersPath(terminalId, id) : $"/api/v1/terminals/{terminalId:D}/billing/bills/{id:D}/{action}";
+        object BodyOf(string key) => action switch
+        {
+            "cancel" => new { Reason = "kilit" },
+            "tip" => new { IdempotencyKey = key, Amount = 10m },
+            _ => new { Method = "Eft", Amount = 10m, IdempotencyKey = key },
+        };
+        var body = BodyOf("lock-main");
+        var warmUp = BodyOf("lock-warm-up");
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, PathOf(await _database.SeedBillAsync(payable: 100m)), cookie, warmUp)).StatusCode);
+
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var holder = await connection.BeginTransactionAsync();
+        await using (var hold = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, holder))
+        {
+            hold.Parameters.AddWithValue($"{lockName}:{billId:N}");
+            await hold.ExecuteNonQueryAsync();
+        }
+        var request = PostAsync(client, PathOf(billId), cookie, body);
+        await Task.Delay(1500);
+        Assert.False(request.IsCompleted);
+        Assert.Equal(0L, await _database.PaymentCountAsync(billId));
+
+        await holder.CommitAsync();
+        Assert.Equal(HttpStatusCode.OK, (await request).StatusCode);
+    }
+
     [Theory]
     [MemberData(nameof(EveryPaymentStatus))]
     public void EveryPaymentStatusHasATurkishName(ALKAROS.Payments.PaymentAggregate.PaymentStatus status)
