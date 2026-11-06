@@ -1,7 +1,7 @@
 # V1-RMD-854 - Kasa sunucu testleri: faturalar arası bağ, kalem iadesinde yarım kuruş, garson yükü sıfırdan büyük
 
 - Task ID: V1-RMD-854
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
