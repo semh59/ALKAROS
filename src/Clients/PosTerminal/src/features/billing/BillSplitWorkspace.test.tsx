@@ -43,6 +43,15 @@ describe("bill split workspace", () => {
     expect(document.body.textContent).toContain("tahsilat veya ödeme yürütmez");
   });
 
+  it("switches the split mode with the right arrow on the mode tabs", async () => {
+    await render(<BillSplitWorkspace {...props()} />);
+    const first = document.querySelector('[role="tab"][aria-selected="true"]')!;
+    await act(async () => { first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true })); });
+    const selected = document.querySelector('[role="tab"][aria-selected="true"]')!;
+    expect(selected).not.toBe(first);
+    expect(document.activeElement).toBe(selected);
+  });
+
   it("supports a complete amount draft and submits authoritative design context", async () => {
     const onSave = vi.fn().mockResolvedValue({ ...design, mode: "ByAmount", billRowVersion: 8 });
     await render(<BillSplitWorkspace {...props({ onSave })} />);

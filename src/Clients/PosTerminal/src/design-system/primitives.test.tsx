@@ -4,7 +4,7 @@ import { act, createRef, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary } from "./index";
+import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary, moveBetweenTabs } from "./index";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -23,6 +23,29 @@ describe("design-system primitives", () => {
     if (root) await act(async () => root!.unmount());
     root = null;
     vi.restoreAllMocks();
+  });
+
+  it("moves focus and selection between enabled tabs with the arrow keys and wraps at the ends", async () => {
+    const picked: string[] = [];
+    await render(<div role="tablist" tabIndex={-1} onKeyDown={moveBetweenTabs}>
+      {["a", "b", "c", "d"].map((id) => <button key={id} id={id} role="tab" disabled={id === "c"} onClick={() => picked.push(id)}>{id}</button>)}
+    </div>);
+    const press = async (id: string, key: string) => {
+      document.getElementById(id)!.focus();
+      await act(async () => { document.getElementById(id)!.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true })); });
+    };
+
+    await press("a", "ArrowRight");
+    expect(document.activeElement?.id).toBe("b");
+    await press("b", "ArrowRight");
+    await press("d", "ArrowRight");
+    await press("a", "ArrowLeft");
+    await press("b", "ArrowUp");
+    await press("a", "Enter");
+    await act(async () => { document.getElementById("a")!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", altKey: true, bubbles: true, cancelable: true })); });
+
+    expect(picked).toEqual(["b", "d", "a", "d", "a"]);
+    expect(document.activeElement?.id).toBe("a");
   });
 
   it("links field hints and errors without color-only signaling", async () => {

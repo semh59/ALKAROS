@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Button, SelectField, TextField } from "../../design-system";
+import { Button, SelectField, TextField, moveBetweenTabs } from "../../design-system";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { PanelView, usePanel } from "../management/panel";
@@ -107,7 +107,7 @@ export function UserJourneysSection({ capabilities, client }: ManagementSectionP
   const names: Record<View, string> = { requests: t.tabRequests, actions: t.tabActions, staff: t.tabStaff };
   return <div className="mjny">
     <p className="mjny__help">{t.glossary}</p>
-    <div className="mjny__actions" role="tablist">
+    <div className="mjny__actions" role="tablist" tabIndex={-1} onKeyDown={moveBetweenTabs}>
       {views.map((name) => <Button key={name} data-telemetry-id="b.management-user-journeys.userjourneyssection.2" variant={name === view ? "primary" : "secondary"}
         role="tab" aria-selected={name === view} onClick={() => setView(name)}>{names[name]}</Button>)}
     </div>

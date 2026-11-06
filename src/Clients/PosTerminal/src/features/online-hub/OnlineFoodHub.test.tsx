@@ -63,6 +63,14 @@ describe("OnlineFoodHub", () => {
     expect(urls()).toContain("/api/v1/terminals/t-1/online-operations?source=all");
   });
 
+  it("selects the next tab when the right arrow is pressed on a tab", async () => {
+    const onSelectTab = vi.fn();
+    await render("orders", manager, onSelectTab);
+    const first = document.querySelector('[role="tab"]')!;
+    await act(async () => { first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true })); });
+    expect(onSelectTab).toHaveBeenLastCalledWith("menu");
+  });
+
   it("gives a manager the settings tab and a way from a missing connection to it", async () => {
     const onSelectTab = vi.fn();
     await render("orders", manager, onSelectTab);

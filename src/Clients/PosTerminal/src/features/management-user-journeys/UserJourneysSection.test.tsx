@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 
+import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementApiError } from "../management/http";
 import { buttons, press, render, type, unmount } from "../management/testKit";
@@ -71,6 +72,13 @@ describe("user journeys section", () => {
     await render(<UserJourneysSection capabilities={viewer} client={client} />);
     await press("Zaman çizelgesi");
     expect(document.body.textContent).toContain("Bilinmiyor");
+  });
+
+  it("the right arrow on a view tab opens the next view", async () => {
+    await render(<UserJourneysSection capabilities={viewer} client={fakeClient()} />);
+    const first = document.querySelector('[role="tab"]')!;
+    await act(async () => { first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true })); });
+    expect(document.querySelector('[role="tab"][aria-selected="true"]')).not.toBe(first);
   });
 
   it("the actions view passes the role and terminal filters and ignores a malformed terminal id", async () => {

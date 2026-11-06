@@ -171,3 +171,17 @@ export function ContextDrawer({ presentation, title, onClose, children }: { pres
     </aside>
   );
 }
+
+const ARROW_STEP: Readonly<Record<string, number>> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+
+/** Arrow keys on a tablist: focus and select the next or previous enabled tab, wrapping at the ends. */
+export function moveBetweenTabs(event: KeyboardEvent<HTMLElement>) {
+  const step = ARROW_STEP[event.key];
+  const tabs = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]:not(:disabled)'));
+  const index = tabs.indexOf(event.target as HTMLElement);
+  if (!step || index < 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+  event.preventDefault();
+  const next = tabs[(index + step + tabs.length) % tabs.length];
+  next.focus();
+  next.click();
+}

@@ -68,6 +68,10 @@ describe("Cashier category rail tabs (V1-RMD-364)", () => {
 
     expect(tabs[0].getAttribute("aria-selected")).toBe("false");
     expect(tabs[1].getAttribute("aria-selected")).toBe("true");
+
+    await act(async () => { tabs[1].dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowLeft", bubbles: true, cancelable: true })); });
+    expect(tabs[0].getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(tabs[0]);
   });
 
   it("shows a product at its menu price because that price already includes KDV", async () => {

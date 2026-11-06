@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ApiError } from "../../api";
 import { BillingSplitApiError, describeSplitFailure } from "./billingApi";
-import { Button, StateMessage, ValidationSummary } from "../../design-system";
+import { Button, StateMessage, ValidationSummary, moveBetweenTabs } from "../../design-system";
 import { commonActions, stateText } from "../../strings";
 import { formatClockMinutes } from "../../format";
 import {
@@ -130,7 +130,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   return <section className="bill-split" aria-label="Hesap bölme çalışma alanı">
     <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{billStatusLabels[design.billStatus] ?? "Bilinmiyor"} · {lastUpdated ? `Güncellendi ${formatClockMinutes(lastUpdated)}` : "Henüz güncellenmedi"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
     {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.message}{feedback.tone === "conflict" && <span className="bill-split__recovery"> <Button data-telemetry-id="b.billing.billsplitworkspace.5" variant="secondary" onClick={() => void onRefresh()}>Hesabı yenile</Button> <Button data-telemetry-id="b.billing.billsplitworkspace.6" variant="secondary" onClick={discardDraft}>Taslağı at</Button></span>}</div>}
-    <div className="bill-split__modes" role="tablist" aria-label="Dağıtım modu">{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
+    <div className="bill-split__modes" role="tablist" tabIndex={-1} aria-label="Dağıtım modu" onKeyDown={moveBetweenTabs}>{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">
       <main className="bill-split__editor">
         {mode === "EqualByPerson" && <OwnerPicker owners={owners} selected={equalOwners} onChange={(next) => { setEqualOwners(next); setDirty(true); }} />}

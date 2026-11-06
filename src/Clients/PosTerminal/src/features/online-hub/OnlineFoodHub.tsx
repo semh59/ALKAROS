@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useState } from "react";
+import { moveBetweenTabs } from "../../design-system";
 import { OnlineMenuTab } from "../online-menu";
 import { OnlineOperationsWorkspace } from "../online-operations";
 import { OnlinePlatformCredentialsWorkspace } from "../online-platform-credentials";
@@ -45,7 +46,7 @@ export function OnlineFoodHub({
   return (
     <div className="online-hub">
       <ChannelStatus terminalId={terminalId} canManage={canManage} onOpenSettings={() => onSelectTab("settings")} />
-      <div className="online-hub__tabs" role="tablist" aria-label="Online yemek bölümleri">
+      <div className="online-hub__tabs" role="tablist" aria-label="Online yemek bölümleri" tabIndex={-1} onKeyDown={moveBetweenTabs}>
         {tabs.map((option) => (
           <button data-telemetry-id="b.online-hub.onlinefoodhub.1"
             key={option}

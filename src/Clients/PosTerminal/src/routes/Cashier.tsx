@@ -22,6 +22,7 @@ import { CashSessionBand, CashSessionLink, useCashSessionState } from "../featur
 import { CashierModifierPicker } from "./CashierModifierPicker";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 import { foldSearch } from "../search";
+import { moveBetweenTabs } from "../design-system";
 
 type CashierSession = "checking" | "anonymous" | "ready";
 type FeedbackKind = "error" | "success" | "conflict" | "unauthorized";
@@ -739,7 +740,7 @@ export function Cashier() {
             view of the SAME product grid shows, so role="tab" + aria-selected
             is the right pair (not radiogroup/radio, which Module 3's
             split-payment fix used for a VALUE choice instead). */}
-        <div className="category-rail" aria-label="Ürün kategorileri" role="tablist">
+        <div className="category-rail" aria-label="Ürün kategorileri" role="tablist" tabIndex={-1} onKeyDown={moveBetweenTabs}>
           <button data-telemetry-id="b.routes.cashier.12"
             className={activeCategory === "ALL" ? "active" : ""}
             role="tab"

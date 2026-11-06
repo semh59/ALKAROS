@@ -580,6 +580,18 @@
     }
   }
 
+  // Arrow keys inside a tablist/radiogroup: focus and select the next or previous item, wrapping at the ends.
+  function moveWithinGroup(event, role) {
+    var step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+    var items = Array.prototype.slice.call(event.currentTarget.querySelectorAll('[role="' + role + '"]'));
+    var index = items.indexOf(event.target);
+    if (!step || index < 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    event.preventDefault();
+    var next = items[(index + step + items.length) % items.length];
+    next.focus();
+    next.click();
+  }
+
   function renderCategoryTabs() {
     // V1-RMD-360 (module-by-module UI audit, 2026-09-27): the nav wrapper already carried
     // aria-label="Ürün Kategorileri", but the buttons inside had no role/state at all - a screen
@@ -1047,7 +1059,10 @@
         state.activeCategory = btn.dataset.catId;
         renderCategoryTabs();
         renderProducts(el.searchInput ? el.searchInput.value : '');
+        const fresh = el.categoryTabs.querySelector('[data-cat-id="' + CSS.escape(btn.dataset.catId) + '"]');
+        if (fresh) fresh.focus();
       });
+      el.categoryTabs.addEventListener('keydown', (e) => moveWithinGroup(e, 'tab'));
     }
 
     // V1-RMD-205: waiter picker

@@ -956,6 +956,18 @@
       '</div>';
   }
 
+  // Arrow keys inside a tablist/radiogroup: focus and select the next or previous enabled item, wrapping at the ends.
+  function moveWithinGroup(event, role) {
+    var step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
+    var items = Array.prototype.slice.call(event.currentTarget.querySelectorAll('[role="' + role + '"]:not(:disabled)'));
+    var index = items.indexOf(event.target);
+    if (!step || index < 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    event.preventDefault();
+    var next = items[(index + step + items.length) % items.length];
+    next.focus();
+    next.click();
+  }
+
   // V1-RMD-362: three mutually-exclusive buttons that pick ONE value (which the rest of the form's
   // behavior then depends on) had only a visual .is-active class - no ARIA grouping or state at
   // all, unlike Module 1/2's category/direction tabs (a genuinely different pattern: those are
@@ -1891,6 +1903,10 @@
         var details = summary.parentElement;
         state.folds[details.getAttribute('data-fold')] = !details.open;
       });
+    });
+
+    document.querySelectorAll('[role="radiogroup"]').forEach(function (group) {
+      group.addEventListener('keydown', function (event) { moveWithinGroup(event, 'radio'); });
     });
 
     document.querySelectorAll('.sp-method-chip').forEach(function (button) {
