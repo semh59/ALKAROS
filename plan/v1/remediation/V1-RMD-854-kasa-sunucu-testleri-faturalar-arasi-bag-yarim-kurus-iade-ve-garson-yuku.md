@@ -16,6 +16,8 @@ G9 (F0048, F0437/H08, F0385, F0917): üç sunucu davranışı testsiz. (1) Migra
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs — başka faturanın kalemine dağılım -> 23503.
   - tests/Modules/Billing/Adjustments/PostgresAdjustmentsTests.cs — başka faturanın kalemine düzeltme -> 23503.
+  - tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj — test veritabanına bileşik bütünlük migration'ı (032) eklenir.
+  - tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj — test veritabanına bölme tasarımı (020) ve bileşik bütünlük (032) migration'ları eklenir.
   - tests/Host/Experience/Billing/RefundHalfPortionHttpTests.cs — kesin yarım kuruş iade yuvarlaması.
   - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftHttpTests.cs — garson yükü sıfırdan büyük.
   - tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs — kısmi iadeli nakit sonrası kapanış beklenen nakit.
@@ -23,8 +25,9 @@ G9 (F0048, F0437/H08, F0385, F0917): üç sunucu davranışı testsiz. (1) Migra
 
 ## In scope
 
-1. Önce kırmızı/yeşil keşif: her test yazılır; geçerse mutasyonla gücü kanıtlanır, düşerse kusur ayrı göreve devredilir.
-2. Mutasyon: bileşik yabancı anahtar düşürülür (test DB'de), yuvarlama yönü AwayFromZero -> ToEven, yük sorgusunun durum süzgeci, kapanışta iade düşümü kaldırılır (cp+cmp ile geri alınır).
+1. Modül test veritabanları migration 032'yi (bileşik yabancı anahtar) içermiyordu, bu yüzden garanti hiçbir testte görünmüyordu; iki test projesine 032 (ve ona gereken 020) eklenir.
+2. Önce kırmızı/yeşil keşif: her test yazılır; geçerse mutasyonla gücü kanıtlanır, düşerse kusur ayrı göreve devredilir.
+3. Mutasyon: bileşik yabancı anahtar düşürülür (test DB'de), yuvarlama yönü AwayFromZero -> ToEven, yük sorgusunun durum süzgeci, kapanışta iade düşümü kaldırılır (cp+cmp ile geri alınır).
 
 ## Out of scope
 
