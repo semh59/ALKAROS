@@ -1,7 +1,7 @@
 # V1-RMD-853 - Kasa istemcisi: dize arayan testler davranış testine çevrilir
 
 - Task ID: V1-RMD-853
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
