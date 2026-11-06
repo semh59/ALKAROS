@@ -356,6 +356,11 @@ export async function sendDraft() {
   }
 }
 
+// The sheet hands out the same key again for an item whose action is still waiting.
+export function isOfflineActionQueued(idempotencyKey) {
+  return state.offlineActions.some((action) => action.idempotencyKey === idempotencyKey);
+}
+
 // ══ Offline-authorized void/comp (V1-RMD-297) ══════════════════════
 // A void or comp the waiter authorized against the offline budget while the
 // server was unreachable. The idempotency key is the one the online request
@@ -363,9 +368,6 @@ export async function sendDraft() {
 // review is the same grant a later retry of that request resolves to.
 export function queueOfflineAuthorizedAction({ permissionCode, reasonCode, amount, itemId, idempotencyKey }) {
   const budget = state.offlineBudget;
-  // The sheet hands out the same key again for an item whose action is still waiting, so a second confirm must not
-  // queue or spend the budget twice.
-  if (state.offlineActions.some((action) => action.idempotencyKey === idempotencyKey)) return;
   state.offlineActions.push({
     idempotencyKey,
     permissionCode,

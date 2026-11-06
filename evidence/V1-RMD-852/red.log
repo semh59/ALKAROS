@@ -1,0 +1,16 @@
+.........F...                                                            [100%]
+================================== FAILURES ===================================
+_ test_a_second_confirm_of_a_waiting_action_says_it_is_queued_even_when_the_last_right_is_spent _
+
+confirmed = {'queued': [{'idempotencyKey': 'k-void', 'permissionCode': 'bills.void', 'amount': 80, 'reasonCode': 'CustomerChange',...omp'], 'used': {'bills.void': 1, 'bills.comp': 1}}, 'afterOverLimit': ['k-void', 'k-comp'], 'keptWhileOffline': 2, ...}
+
+    def test_a_second_confirm_of_a_waiting_action_says_it_is_queued_even_when_the_last_right_is_spent(confirmed):
+        assert confirmed["lastRight"]["keys"] == ["k-last"]
+>       assert "zaten" in confirmed["lastRight"]["lastToast"]
+E       assert 'zaten' in '\n    <span class="toast-mark is-warning">\n      <svg class="icon" aria-hidden="true"><use href="#ico-alert"/></svg>\n    </span>\n    <span class="toast-text">Çevrimdýþý iþlem hakkýnýz doldu. Baðlanýnca tekrar deneyin.</span>\n    '
+
+tests\Clients\WaiterPwa\Frontend\test_offline_authorized_void_comp.py:244: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_a_second_confirm_of_a_waiting_action_says_it_is_queued_even_when_the_last_right_is_spent
+1 failed, 12 passed in 0.51s
+exit 1

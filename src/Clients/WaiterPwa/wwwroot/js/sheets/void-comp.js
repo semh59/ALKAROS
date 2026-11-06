@@ -9,13 +9,18 @@ import { loadTables } from '../screens/tables.js';
 import { openOptions, closeOptions } from '../options-sheet.js';
 import { toast } from '../toast.js';
 import { apiUrl, api } from '../api.js';
-import { queueOfflineAuthorizedAction } from '../offline-queue.js';
+import { isOfflineActionQueued, queueOfflineAuthorizedAction } from '../offline-queue.js';
 
 // V1-RMD-297: the server cannot be reached. Within the offline budget the
 // action is authorized locally and queued for reconciliation under the same
 // idempotency key the online request used; outside it the waiter is told to
 // retry once connected. Nothing is ever shown as approved by a manager.
 function authorizeOffline(permissionCode, context, amount, pendingKeys, successText) {
+  if (isOfflineActionQueued(context.idempotencyKey)) {
+    closeOptions();
+    toast('Bu işlem zaten çevrimdışı kuyrukta; bağlanınca uzlaştırılacak.', { warning: true });
+    return;
+  }
   const authority = offlineAuthorityFor(permissionCode, amount);
   if (!authority.allowed) {
     toast(authority.message, { warning: true });

@@ -143,6 +143,21 @@ CONFIRM_HARNESS = textwrap.dedent(
     await reconcileOfflineActions();
     results.reconcile = { urls: requests.map((request) => request.url), sentKeys: requests.map((request) => (request.body.actions || []).map((action) => action.idempotencyKey)), left: state.offlineActions.length, stored: JSON.parse(localStorage.getItem('alkaros_waiter_offline_actions') || '[]').length, toasts: el.toasts.children.map((toast) => toast.innerHTML) };
 
+    serverReachable = false;
+    rememberOfflineBudget({
+      budgetId: 'b2', roleCode: 'waiter', expiresAt: '2999-01-01T00:00:00Z',
+      lines: [{ permissionCode: 'bills.void', limitAmount: null, maxCount: 1 }],
+    }, 'u1');
+    state.optionsContext = context('i1', 'k-last');
+    await confirmVoidSent();
+    state.optionsContext = context('i1', 'k-last');
+    await confirmVoidSent();
+    results.lastRight = {
+      keys: state.offlineActions.map((action) => action.idempotencyKey),
+      used: state.offlineBudget.used,
+      lastToast: el.toasts.children[el.toasts.children.length - 1].innerHTML,
+    };
+
     process.stdout.write(JSON.stringify(results), () => process.exit(0));
     """
 )
@@ -159,9 +174,9 @@ def run_harness(tmp_path_factory, script):
         capture_output=True,
         text=True,
         encoding="utf-8",
-        check=True,
         timeout=60,
     )
+    assert completed.returncode == 0, completed.stderr
     return json.loads(completed.stdout.strip().splitlines()[-1])
 
 
@@ -223,6 +238,13 @@ def test_void_and_comp_queue_with_the_line_amount_and_their_own_idempotency_key(
 def test_confirming_the_same_offline_action_again_queues_and_spends_it_once(confirmed):
     assert confirmed["afterRetry"]["keys"] == ["k-void", "k-comp"]
     assert confirmed["afterRetry"]["used"] == {"bills.void": 1, "bills.comp": 1}
+
+
+def test_a_second_confirm_of_a_waiting_action_says_it_is_queued_even_when_the_last_right_is_spent(confirmed):
+    assert confirmed["lastRight"]["keys"] == ["k-last"]
+    assert confirmed["lastRight"]["used"] == {"bills.void": 1}
+    assert "zaten" in confirmed["lastRight"]["lastToast"]
+    assert "hakkınız" not in confirmed["lastRight"]["lastToast"]
 
 
 def test_a_comp_above_the_budget_line_is_not_queued(confirmed):
