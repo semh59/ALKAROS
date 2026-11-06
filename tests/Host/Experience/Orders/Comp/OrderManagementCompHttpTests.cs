@@ -398,6 +398,72 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         Assert.Equal(0L, await _database.GrantCountForRequesterAsync(waiterId));
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AnApprovedCompResentUnderTheSameKeyAnswersWithTheFirstResult(bool orderClosedInBetween)
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction");
+
+        using var pending = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+        await _database.ApproveGrantAsync(
+            (await pending.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>())!.GrantId!.Value, Guid.NewGuid());
+        using var applied = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+        if (orderClosedInBetween)
+            await _database.SetOrderStatusAsync(orderId, "Completed");
+        using var resent = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+
+        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, resent.StatusCode);
+        var first = await applied.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        var again = await resent.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Equal("Applied", again!.Status);
+        Assert.Equal(first!.NewOrderRowVersion, again.NewOrderRowVersion);
+    }
+
+    [Fact]
+    public async Task APersonalBudgetCompResentUnderTheSameKeyAnswersWithTheFirstResultWithoutSpendingTheBudgetTwice()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(waiterId, unitPrice: 30m, taxRate: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction");
+
+        using var first = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+        using var resent = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, resent.StatusCode);
+        Assert.Equal(120m, (await resent.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>())!.PersonalBudgetRemaining);
+        Assert.Equal(1L, await _database.GrantCountForRequesterAsync(waiterId));
+    }
+
+    [Fact]
+    public async Task APendingCompResentAfterTheOrderClosedIsRefusedInsteadOfBeingApproved()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction");
+
+        using var pending = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+        await _database.SetOrderStatusAsync(orderId, "Completed");
+        using var resent = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+
+        Assert.Equal(HttpStatusCode.Accepted, pending.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, resent.StatusCode);
+        Assert.Contains("ORDER_CLOSED", await resent.Content.ReadAsStringAsync());
+    }
+
     [Fact]
     public async Task ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder()
     {

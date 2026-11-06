@@ -678,12 +678,19 @@ public static class OrderManagementEndpoints
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsComp, "Requester has no assigned role.");
 
-                // A grant for an item that can no longer change would be spent (personal budget) without a comp.
-                await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
                 var order = await orders.GetByIdAsync(orderId, cancellationToken)
                     ?? throw new OrderItemNotFoundException(orderId, itemId);
                 var item = order.Items.FirstOrDefault(i => i.Id == itemId)
                     ?? throw new OrderItemNotFoundException(orderId, itemId);
+
+                // A grant for an item that can no longer change would be spent (personal budget) without a comp.
+                // A resend of a comp that was already applied is answered from the stored grant and result instead;
+                // the applied comp has zeroed the item's price, so the grant is asked for the amount that was approved.
+                var storedGrant = await grantsRepository.FindByIdempotencyKeyAsync(request.IdempotencyKey, cancellationToken);
+                var alreadyApplied = storedGrant is not null && item.Status == OrderItemState.Complimentary;
+                if (!alreadyApplied)
+                    await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
+                var requestedAmount = alreadyApplied ? storedGrant!.Amount : item.GrossAmount;
 
                 var resolution = await grants.RequestAsync(
                     new GrantRequest(
@@ -692,7 +699,7 @@ public static class OrderManagementEndpoints
                         userId,
                         role.Code,
                         request.ReasonCode,
-                        item.GrossAmount,
+                        requestedAmount,
                         SubjectType: "OrderItem",
                         SubjectId: itemId,
                         SubjectServingUserId: order.ServingUserId),

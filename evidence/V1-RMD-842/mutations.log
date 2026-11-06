@@ -1,0 +1,32 @@
+m1-pre-check-also-when-comp-applied
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnApprovedCompResentUnderTheSameKeyAnswersWithTheFirstResult(orderClosedInBetween: True) [366 ms]
+Başarısız! - Başarısız:     1, Başarılı:    27, Atlanan:     0, Toplam:    28, Süre: 18 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+exit 1
+m1-pre-check-also-when-comp-applied restored (cmp exit 0)
+m2-resend-uses-current-item-amount
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnApprovedCompResentUnderTheSameKeyAnswersWithTheFirstResult(orderClosedInBetween: True) [352 ms]
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnApprovedCompResentUnderTheSameKeyAnswersWithTheFirstResult(orderClosedInBetween: False) [378 ms]
+Başarısız! - Başarısız:     2, Başarılı:    26, Atlanan:     0, Toplam:    28, Süre: 19 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+exit 1
+m2-resend-uses-current-item-amount restored (cmp exit 0)
+m3-skip-pre-check-for-any-stored-grant
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.APendingCompResentAfterTheOrderClosedIsRefusedInsteadOfBeingApproved [307 ms]
+Başarısız! - Başarısız:     1, Başarılı:    27, Atlanan:     0, Toplam:    28, Süre: 19 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+exit 1
+m3-skip-pre-check-for-any-stored-grant restored (cmp exit 0)
+m4-no-pre-check
+m4-no-pre-check-on-new-key
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnItemThatCanNoLongerChangeIsRefusedWithoutSpendingTheBudget(closedBy: "BillPaid", expectedCode: "BILL_NOT_MODIFIABLE") [377 ms]
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnItemThatCanNoLongerChangeIsRefusedWithoutSpendingTheBudget(closedBy: "OrderCompleted", expectedCode: "ORDER_CLOSED") [342 ms]
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnItemThatCanNoLongerChangeIsRefusedWithoutSpendingTheBudget(closedBy: "OrderCancelled", expectedCode: "ORDER_CLOSED") [375 ms]
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnItemThatCanNoLongerChangeIsRefusedWithoutSpendingTheBudget(closedBy: "OrderRejected", expectedCode: "ORDER_CLOSED") [392 ms]
+Başarısız! - Başarısız:     4, Başarılı:    24, Atlanan:     0, Toplam:    28, Süre: 19 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+exit 1
+m4 restored (cmp exit 0)
+m5-personal-budget-resend-uses-current-item-amount
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnApprovedCompResentUnderTheSameKeyAnswersWithTheFirstResult(orderClosedInBetween: True) [414 ms]
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnApprovedCompResentUnderTheSameKeyAnswersWithTheFirstResult(orderClosedInBetween: False) [370 ms]
+  Başarısız ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.APersonalBudgetCompResentUnderTheSameKeyAnswersWithTheFirstResultWithoutSpendingTheBudgetTwice [343 ms]
+Başarısız! - Başarısız:     3, Başarılı:    26, Atlanan:     0, Toplam:    29, Süre: 20 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+exit 1
+m5 restored (cmp exit 0)
