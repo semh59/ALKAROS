@@ -1,7 +1,7 @@
 # V1-RMD-842 - Uygulanmış ikramın tekrar gönderiminde kalem kontrolü 409 döndürüyor
 
 - Task ID: V1-RMD-842
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
