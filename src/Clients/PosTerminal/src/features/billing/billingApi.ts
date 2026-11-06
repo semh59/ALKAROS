@@ -7,6 +7,7 @@ import type {
   SplitOwnerOption,
   SplitOwnerRequest,
 } from "./models";
+import { mergeChecksText } from "../../strings";
 
 interface ServerOwnerOption {
   kind: string;
@@ -36,6 +37,15 @@ const splitFailureTexts: Record<string, string> = {
   IDEMPOTENCY_KEY_INVALID: "İşlem kimliği geçersiz. Sayfayı yenileyip yeniden deneyin.",
   NOTES_TOO_LONG: "Not çok uzun.",
   TIP_AMOUNT_INVALID: "Bahşiş tutarı geçersiz.",
+  MERGE_NEEDS_TWO_ORDERS: "Birleştirmek için en az iki sipariş seçin.",
+  MERGE_TOO_MANY_ORDERS: "Tek seferde en çok 20 sipariş birleştirilebilir.",
+  MERGE_DIFFERENT_TABLES: "Yalnız aynı masadaki siparişler birleştirilebilir.",
+  MERGE_ORDER_SOURCE: "QR ve çevrimiçi siparişler birleştirilemez.",
+  MERGE_ORDER_ALREADY_BILLED: "Seçilen siparişlerden birinin zaten açık bir hesabı var; önce o hesabı kapatın ya da iptal edin.",
+  MERGE_MIXED_SENT: "Seçilen siparişlerin bir kısmı kasaya gönderilmiş, bir kısmı masada; hepsi aynı yerde olmalı.",
+  MERGE_ORDER_EMPTY: "Seçilen siparişlerden birinde hesaplanacak ürün yok.",
+  IDEMPOTENCY_KEY_REQUIRED: "İşlem kimliği eksik. Sayfayı yenileyip yeniden deneyin.",
+  IDEMPOTENCY_KEY_REUSED: "Bu işlem kimliği başka bir seçim için kullanılmış. Seçimi yenileyip yeniden deneyin.",
 };
 
 /** Fixed Turkish sentence per server error code; the server body never reaches the screen. */
@@ -108,6 +118,33 @@ export function createBillingSplitClient(terminalId: string, billId: string, fet
     clear: (design) => call("/clear", "POST", { expectedBillRowVersion: design.billRowVersion, expectedAllocations: versions(design) }),
     createFromOrder: (orderId: string) => createBillFromOrder(terminalId, orderId, fetcher),
   };
+}
+
+/** Opens one bill from several open orders of one table. The same key replays the same bill, so a retry after a lost answer never opens a second one. */
+export async function mergeOrdersIntoBill(
+  terminalId: string,
+  orderIds: readonly string[],
+  idempotencyKey: string,
+  fetcher: typeof fetch = fetch
+): Promise<BillSplitDesign> {
+  let response: Response;
+  try {
+    response = await fetcher(`/api/v1/terminals/${encodeURIComponent(terminalId)}/billing/bills/merge`, {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
+      body: JSON.stringify({ orderIds, idempotencyKey }),
+      signal: AbortSignal.timeout(8_000),
+    });
+  } catch {
+    throw new BillingSplitApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Hesaplar birleştirilemedi.");
+  }
+  if (!response.ok) {
+    const payload = await response.json().catch(() => undefined) as { error?: { code?: string } } | undefined;
+    const code = payload?.error?.code ?? "REQUEST_FAILED";
+    throw new BillingSplitApiError(response.status, code, response.status >= 500 && !(code in splitFailureTexts) ? mergeChecksText.failed : describeSplitFailure(response.status, code));
+  }
+  return response.json() as Promise<BillSplitDesign>;
 }
 
 export async function createBillFromOrder(

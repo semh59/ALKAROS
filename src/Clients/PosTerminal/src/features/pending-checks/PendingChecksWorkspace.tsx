@@ -1,10 +1,10 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { notifySessionExpired } from "../../api";
-import { BillingSplitApiError, createBillFromOrder } from "../billing";
+import { BillingSplitApiError, createBillFromOrder, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
-import { cancelOrderText, cancelReasonText } from "../../strings";
+import { cancelOrderText, cancelReasonText, mergeChecksText } from "../../strings";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
 import "./pending-checks.css";
@@ -16,6 +16,9 @@ const HUB_RETRY_CAP_MS = 15_000;
 const hubRetryDelay = (attempt: number) => Math.min(HUB_RETRY_CAP_MS, 1_000 * 2 ** Math.min(attempt, 4));
 
 const sentAt = formatClockMinutes;
+
+// A check that already has a bill or money on it cannot join a merge; the server refuses it too.
+const canMerge = (check: PendingCheck) => check.paidAmount === 0 && check.billId === null && check.tableId !== null;
 
 // What a cashier tells a waiter apart by: where it came from and when it was sent, not the technical number.
 function checkTitle(check: PendingCheck): string {
@@ -40,6 +43,10 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
   const [loadedAt, setLoadedAt] = useState<Date>();
   const [cancelNotice, setCancelNotice] = useState<string>();
   const [cancelling, setCancelling] = useState<{ orderId: string; choice: string; reason: string; confirming: boolean; busy: boolean; key: string; error?: string }>();
+  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [merging, setMerging] = useState(false);
+  const [mergeError, setMergeError] = useState<string>();
+  const mergeKey = useRef({ signature: "", key: "" });
   const knownIds = useRef<ReadonlySet<string> | null>(null);
   const latestLoad = useRef(0);
 
@@ -52,9 +59,11 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
       if (hasNewCheck(knownIds.current, loaded)) playNewItemChime();
       knownIds.current = new Set(loaded.map((check) => check.orderId));
       setChecks(loaded);
+      setSelected((current) => current.filter((id) => loaded.some((row) => row.orderId === id && canMerge(row))));
       setCancelling((current) => current && loaded.some((row) => row.orderId === current.orderId && row.paidAmount === 0) ? current : undefined);
       setLoadedAt(new Date());
       setError(undefined);
+      setMergeError(undefined);
     } catch (reason) {
       if (ticket !== latestLoad.current) return;
       setError(reason instanceof PendingChecksApiError ? reason.message : "Bekleyen hesaplar okunamadı.");
@@ -120,6 +129,34 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
     }
   };
 
+  const mergeTable = checks?.find((row) => row.orderId === selected[0]);
+  const mergeTableId = mergeTable?.tableId;
+  const mergeOffered = (checks ?? []).some((row, _, all) => canMerge(row) && all.some((other) => other !== row && canMerge(other) && other.tableId === row.tableId));
+
+  const toggle = (orderId: string) => {
+    setMergeError(undefined);
+    setSelected((current) => current.includes(orderId) ? current.filter((id) => id !== orderId) : [...current, orderId]);
+  };
+
+  const merge = async () => {
+    const orderIds = [...selected].sort();
+    const signature = orderIds.join("|");
+    // The same selection retried after a failure reuses its key, so a lost answer replays the same bill; a changed selection is a new request.
+    if (mergeKey.current.signature !== signature) mergeKey.current = { signature, key: crypto.randomUUID() };
+    setMerging(true);
+    setMergeError(undefined);
+    try {
+      const bill = await mergeOrdersIntoBill(terminalId, orderIds, mergeKey.current.key);
+      navigateTo(collectionHref(bill.billId));
+    } catch (reason) {
+      setMerging(false);
+      if (reason instanceof BillingSplitApiError && reason.status === 401) notifySessionExpired();
+      // A refused request keeps its key on the server (a cancelled merged bill still owns it), so only a lost answer or a server failure may be retried with it.
+      if (reason instanceof BillingSplitApiError && reason.status >= 400 && reason.status < 500) mergeKey.current = { signature: "", key: "" };
+      setMergeError(reason instanceof BillingSplitApiError ? reason.message : mergeChecksText.failed);
+    }
+  };
+
   const recall = async (check: PendingCheck) => {
     if (!check.tableId) return;
     setOpeningOrderId(check.orderId);
@@ -152,20 +189,47 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
   return (
     <section className="pending-checks" aria-label="Bekleyen hesaplar">
       {error && <p className="pending-checks__error" role="alert">{error}</p>}
+      {mergeError && <p className="pending-checks__error" role="alert">{mergeError}</p>}
       {cancelNotice && !cancelling && <p className="pending-checks__error" role="alert">{cancelNotice}</p>}
       {!liveLinkUp && <p className="pending-checks__offline" role="status">Canlı güncelleme yok: liste en geç dakikada bir yenilenir, yeni hesap geldiğinde ses çalmayabilir.</p>}
       {error && checks !== null && loadedAt && <p className="pending-checks__stale" role="status">Aşağıdaki liste eski olabilir: son yenileme {sentAt(loadedAt.toISOString())}.</p>}
       {checks === null && !error && <p className="pending-checks__empty">Bekleyen hesaplar yükleniyor…</p>}
       {checks !== null && checks.length === 0 && <p className="pending-checks__empty">Ödeme bekleyen hesap yok.</p>}
+      {mergeOffered && (
+        <div className="pending-checks__merge-bar">
+          <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.8"
+            type="button"
+            className="pending-checks__merge"
+            disabled={selected.length < 2 || merging || openingOrderId !== undefined}
+            onClick={() => void merge()}
+          >
+            {merging ? mergeChecksText.running : mergeChecksText.action}
+          </button>
+          <span className="pending-checks__meta">
+            {mergeTable ? mergeChecksText.sameTable(mergeTable.tableNumber) : mergeChecksText.hint}
+          </span>
+        </div>
+      )}
       <ul className="pending-checks__list">
         {(checks ?? []).map((check) => {
           const remaining = Math.max(0, check.total - check.paidAmount);
           return (
             <li key={check.orderId} className="pending-checks__card">
+              {mergeOffered && canMerge(check) && (
+                <label className="pending-checks__select">
+                  <input
+                    type="checkbox"
+                    aria-label={mergeChecksText.select(checkTitle(check))}
+                    checked={selected.includes(check.orderId)}
+                    disabled={merging || (mergeTableId !== undefined && check.tableId !== mergeTableId)}
+                    onChange={() => toggle(check.orderId)}
+                  />
+                </label>
+              )}
               <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.1"
                 type="button"
                 className="pending-checks__row"
-                disabled={openingOrderId !== undefined}
+                disabled={openingOrderId !== undefined || merging}
                 onClick={() => void collect(check)}
                 aria-label={`${checkTitle(check)} hesabını tahsil et`}
               >
@@ -183,7 +247,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                 <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
                   type="button"
                   className="pending-checks__recall"
-                  disabled={openingOrderId !== undefined}
+                  disabled={openingOrderId !== undefined || merging}
                   onClick={() => void recall(check)}
                   aria-label={`Yanlışlıkla gönderildi: masaya geri gönder, ${checkTitle(check)}`}
                 >
@@ -233,7 +297,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                 <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.3"
                   type="button"
                   className="pending-checks__recall"
-                  disabled={openingOrderId !== undefined || cancelling !== undefined}
+                  disabled={openingOrderId !== undefined || cancelling !== undefined || merging}
                   onClick={() => { setCancelNotice(undefined); setCancelling({ orderId: check.orderId, choice: "", reason: "", confirming: false, busy: false, key: crypto.randomUUID() }); }}
                   aria-label={`${cancelOrderText.open}, ${checkTitle(check)}`}
                 >

@@ -1301,6 +1301,16 @@ export const refundText = {
   itemsAmount: "İade tutarı",
 } as const;
 
+/** The merge of several checks of one table into one bill in the cash queue. */
+export const mergeChecksText = {
+  select: (title: string) => `Birleştirmek için seç: ${title}`,
+  action: "Hesapları birleştir",
+  running: "Birleştiriliyor…",
+  hint: "Aynı masanın en az iki siparişini seçip tek hesapta toplayın.",
+  sameTable: (table: string) => `Yalnız Masa ${table} siparişleri seçilebilir; başka masanın siparişleri pasif.`,
+  failed: "Hesaplar birleştirilemedi. Tekrar deneyin.",
+} as const;
+
 /** The buttons of the order cancellation in the cash queue. */
 export const cancelOrderText = {
   open: "Siparişi iptal et",

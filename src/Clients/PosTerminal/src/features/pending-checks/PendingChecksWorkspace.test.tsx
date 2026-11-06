@@ -290,6 +290,130 @@ describe("PendingChecksWorkspace", () => {
     expect(document.body.textContent).toContain("S-001");
   });
 
+  describe("merging several checks of one table into one bill", () => {
+    const row = (orderId: string, tableId: string, createdAt: string, extra: object = {}) =>
+      ({ orderId, orderNumber: `S-${orderId}`, tableNumber: tableId.slice(-1), itemCount: 1, total: 100, createdAt, billId: null, paidAmount: 0, itemPreview: null, tableId, ...extra });
+    const merge = [
+      row("o-1", "tb-5", "2026-09-24T11:32:00Z"),
+      row("o-3", "tb-5", "2026-09-24T11:40:00Z"),
+      row("o-4", "tb-7", "2026-09-24T11:50:00Z"),
+      row("o-6", "tb-5", "2026-09-24T12:30:00Z"),
+      row("o-5", "tb-5", "2026-09-24T12:00:00Z", { billId: "b-5", paidAmount: 40 }),
+    ];
+    const pick = (label: string) => document.querySelector(`input[aria-label="${label}"]`) as HTMLInputElement;
+    const mergeButton = () => document.querySelector("button.pending-checks__merge") as HTMLButtonElement;
+    const click = async (element: HTMLElement) => { await act(async () => { element.click(); }); };
+    const mergeCalls = () => fetchMock.mock.calls.filter(([url]) => String(url).endsWith("/billing/bills/merge"));
+    const serve = (mergeAnswer: () => unknown) =>
+      fetchMock.mockImplementation(async (url: string) => (url.includes("awaiting-payment") ? ok(merge) : mergeAnswer()));
+    const failure = (status: number, code: string) => ({ ok: false, status, json: async () => ({ error: { code, message: "raw server text" } }) });
+
+    it("enables the merge only for two or more checks of the same table and offers it only on unbilled, unpaid checks", async () => {
+      fetchMock.mockResolvedValue(ok(merge));
+      await render();
+
+      expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).not.toBeNull();
+      expect(pick("Birleştirmek için seç: Masa 5 · 15:00")).toBeNull();
+      expect(mergeButton().disabled).toBe(true);
+
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+      expect(mergeButton().disabled).toBe(true);
+      expect(pick("Birleştirmek için seç: Masa 7 · 14:50").disabled).toBe(true);
+
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
+      expect(mergeButton().disabled).toBe(false);
+      expect(mergeButton().textContent).toBe("Hesapları birleştir");
+    });
+
+    it("sends the selected orders once, even on a double tap, and opens the merged bill for collection", async () => {
+      let finish: (value: unknown) => void = () => undefined;
+      serve(() => new Promise((resolve) => { finish = resolve; }));
+      const navigateTo = await render();
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
+
+      await click(mergeButton());
+      await click(mergeButton());
+      await act(async () => { finish(ok({ billId: "b-merged", allocations: [] })); });
+
+      expect(mergeCalls()).toHaveLength(1);
+      const body = JSON.parse(mergeCalls()[0][1].body as string) as { orderIds: string[]; idempotencyKey: string };
+      expect(body.orderIds).toEqual(["o-1", "o-3"]);
+      expect(body.idempotencyKey).toMatch(/\S{8,}/);
+      expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-merged");
+    });
+
+    it("retries with the same key while the selection is unchanged and with a new key once it changes", async () => {
+      serve(() => failure(503, "BILL_BUSY"));
+      await render();
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
+      await click(mergeButton());
+      await click(mergeButton());
+      await click(pick("Birleştirmek için seç: Masa 5 · 15:30"));
+      await click(mergeButton());
+
+      const keys = mergeCalls().map(([, init]) => (JSON.parse(init.body as string) as { idempotencyKey: string }).idempotencyKey);
+      expect(keys).toHaveLength(3);
+      expect(keys[0]).toBe(keys[1]);
+      expect(keys[2]).not.toBe(keys[0]);
+    });
+
+    it("starts a new key after the server refused the request, because a refused key stays reserved there", async () => {
+      serve(() => failure(409, "IDEMPOTENCY_KEY_REUSED"));
+      await render();
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
+      await click(mergeButton());
+      await click(mergeButton());
+
+      const keys = mergeCalls().map(([, init]) => (JSON.parse(init.body as string) as { idempotencyKey: string }).idempotencyKey);
+      expect(keys).toHaveLength(2);
+      expect(keys[1]).not.toBe(keys[0]);
+    });
+
+    it("drops a selected check that left the list on the next refresh and closes the merge again", async () => {
+      fetchMock.mockResolvedValue(ok(merge));
+      await render();
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
+      expect(mergeButton().disabled).toBe(false);
+
+      fetchMock.mockResolvedValue(ok(merge.filter((row) => row.orderId !== "o-3")));
+      await act(async () => { hubHandlers.PendingChecksChanged(); });
+
+      expect(mergeButton().disabled).toBe(true);
+      expect(pick("Birleştirmek için seç: Masa 5 · 14:32").checked).toBe(true);
+    });
+
+    it("tells why the checks of other tables are inactive once one is selected", async () => {
+      fetchMock.mockResolvedValue(ok(merge));
+      await render();
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+
+      expect(document.querySelector(".pending-checks__merge-bar")?.textContent).toContain("Yalnız Masa 5 siparişleri seçilebilir");
+    });
+
+    it.each([
+      [409, "MERGE_MIXED_SENT", "kasaya gönderilmiş"],
+      [409, "MERGE_ORDER_ALREADY_BILLED", "açık bir hesabı"],
+      [403, "FORBIDDEN", "yetkiniz yok"],
+    ])("shows a Turkish sentence for %s %s and never the raw code or server text", async (status, code, fragment) => {
+      serve(() => failure(status, code));
+      const navigateTo = await render();
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:32"));
+      await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
+
+      await click(mergeButton());
+
+      const alert = document.querySelector(".pending-checks__error")?.textContent ?? "";
+      expect(alert).toContain(fragment);
+      expect(alert).not.toContain(code);
+      expect(alert).not.toContain("raw server text");
+      expect(navigateTo).not.toHaveBeenCalled();
+    });
+  });
+
   // V1-RMD-370 (module-by-module UI audit, 2026-09-27): unlike ~13 other
   // feature workspaces (CatalogWorkspace, BillSplitWorkspace,
   // TableWorkspace, etc.), this file had no axe-core scan at all.

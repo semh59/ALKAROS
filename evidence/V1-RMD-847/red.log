@@ -1,0 +1,99 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/billingApi.test.ts (3 tests | 1 failed) 17ms
+     × gives every known split error code and every status a Turkish sentence of its own 7ms
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (26 tests | 6 failed) 535ms
+       × enables the merge only for two or more checks of the same table and offers it only on unbilled, unpaid checks 14ms
+       × sends the selected orders once, even on a double tap, and opens the merged bill for collection 9ms
+       × retries with the same key while the selection is unchanged and with a new key once it changes 8ms
+       × shows a Turkish sentence for 409 MERGE_MIXED_SENT and never the raw code or server text 9ms
+       × shows a Turkish sentence for 409 MERGE_ORDER_ALREADY_BILLED and never the raw code or server text 8ms
+       × shows a Turkish sentence for 403 FORBIDDEN and never the raw code or server text 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/billingApi.test.ts > billing split client > gives every known split error code and every status a Turkish sentence of its own
+AssertionError: expected 17 to be 25 // Object.is equality
+
+- Expected
++ Received
+
+- 25
++ 17
+
+ ❯ src/features/billing/billingApi.test.ts:47:37
+     45|     ];
+     46|     const sentences = codes.map((code) => describeSplitFailure(500, co…
+     47|     expect(new Set(sentences).size).toBe(codes.length);
+       |                                     ^
+     48|     for (const sentence of sentences) expect(sentence).toMatch(/[ıİşŞğ…
+     49|     expect(describeSplitFailure(0, "X")).toContain("Sunucuya ulaşılama…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > enables the merge only for two or more checks of the same table and offers it only on unbilled, unpaid checks
+AssertionError: expected null not to be null
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:314:65
+    312|       await render();
+    313|
+    314|       expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).not.toBeNu…
+       |                                                                 ^
+    315|       expect(pick("Birleştirmek için seç: Masa 5 · 15:00")).toBeNull();
+    316|       expect(mergeButton().disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > sends the selected orders once, even on a double tap, and opens the merged bill for collection
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:304:85
+    302|     const pick = (label: string) => document.querySelector(`input[aria…
+    303|     const mergeButton = () => document.querySelector("button.pending-c…
+    304|     const click = async (element: HTMLElement) => { await act(async ()…
+       |                                                                                     ^
+    305|     const mergeCalls = () => fetchMock.mock.calls.filter(([url]) => St…
+    306|     const serve = (mergeAnswer: () => unknown) =>
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.test.tsx:304:59
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:331:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > retries with the same key while the selection is unchanged and with a new key once it changes
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:304:85
+    302|     const pick = (label: string) => document.querySelector(`input[aria…
+    303|     const mergeButton = () => document.querySelector("button.pending-c…
+    304|     const click = async (element: HTMLElement) => { await act(async ()…
+       |                                                                                     ^
+    305|     const mergeCalls = () => fetchMock.mock.calls.filter(([url]) => St…
+    306|     const serve = (mergeAnswer: () => unknown) =>
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.test.tsx:304:59
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:348:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > shows a Turkish sentence for 409 MERGE_MIXED_SENT and never the raw code or server text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > shows a Turkish sentence for 409 MERGE_ORDER_ALREADY_BILLED and never the raw code or server text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > shows a Turkish sentence for 403 FORBIDDEN and never the raw code or server text
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:304:85
+    302|     const pick = (label: string) => document.querySelector(`input[aria…
+    303|     const mergeButton = () => document.querySelector("button.pending-c…
+    304|     const click = async (element: HTMLElement) => { await act(async ()…
+       |                                                                                     ^
+    305|     const mergeCalls = () => fetchMock.mock.calls.filter(([url]) => St…
+    306|     const serve = (mergeAnswer: () => unknown) =>
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/pending-checks/PendingChecksWorkspace.test.tsx:304:59
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:369:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  7 failed | 22 passed (29)
+   Start at  18:52:26
+   Duration  3.99s (transform 469ms, setup 0ms, import 794ms, tests 551ms, environment 4.46s)
+

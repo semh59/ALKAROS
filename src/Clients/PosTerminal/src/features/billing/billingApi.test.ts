@@ -39,10 +39,12 @@ describe("billing split client", () => {
       "UNAUTHORIZED", "FORBIDDEN", "NOT_FOUND", "GRANT_DENIED", "UNSUPPORTED_ORDER_STATE", "CONCURRENT_MODIFICATION",
       "UNSUPPORTED_BILL_STATE", "DISCOUNT_BELOW_COLLECTED", "ITEM_SPLIT_ON_ADJUSTED_BILL", "BILL_HAS_PAYMENT",
       "DISCOUNT_REASON_INVALID", "DISCOUNT_TYPE_INVALID", "DISCOUNT_VALUE_INVALID", "IDEMPOTENCY_KEY_INVALID",
-      "NOTES_TOO_LONG", "TIP_AMOUNT_INVALID",
+      "NOTES_TOO_LONG", "TIP_AMOUNT_INVALID", "MERGE_NEEDS_TWO_ORDERS", "MERGE_TOO_MANY_ORDERS", "MERGE_DIFFERENT_TABLES",
+      "MERGE_ORDER_SOURCE", "MERGE_ORDER_ALREADY_BILLED", "MERGE_MIXED_SENT", "MERGE_ORDER_EMPTY", "IDEMPOTENCY_KEY_REQUIRED",
+      "IDEMPOTENCY_KEY_REUSED",
     ];
     const sentences = codes.map((code) => describeSplitFailure(500, code));
-    expect(new Set(sentences).size).toBeGreaterThanOrEqual(15);
+    expect(new Set(sentences).size).toBe(codes.length);
     for (const sentence of sentences) expect(sentence).toMatch(/[ıİşŞğĞüÜöÖçÇ]/);
     expect(describeSplitFailure(0, "X")).toContain("Sunucuya ulaşılamadı");
     expect(describeSplitFailure(401, "X")).toContain("Oturum");

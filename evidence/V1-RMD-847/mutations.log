@@ -1,0 +1,20 @@
+same-table-lock:       Tests  1 failed | 28 passed (29)
+restored
+two-needed:       Tests  1 failed | 28 passed (29)
+restored
+unbilled-rule:       Tests  1 failed | 28 passed (29)
+restored
+key-reuse:       Tests  1 failed | 28 passed (29)
+restored
+double-send:       Tests  1 failed | 28 passed (29)
+restored
+error-text:       Tests  1 failed | 28 passed (29)
+restored
+raw-code:       Tests  3 failed | 26 passed (29)
+restored
+key-reset-after-refusal:       Tests  1 failed | 28 passed (29)
+restored
+selection-filter:       Tests  1 failed | 28 passed (29)
+restored
+same-table-hint:       Tests  1 failed | 28 passed (29)
+restored

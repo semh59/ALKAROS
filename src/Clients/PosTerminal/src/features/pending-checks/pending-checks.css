@@ -15,6 +15,12 @@
 .pending-checks__card { display: grid; gap: .25rem; border: 1px solid #bdc8cd; border-radius: var(--ds-radius-sm); background: #f7fbfd; }
 .pending-checks__recall { justify-self: start; min-height: 48px; margin: 0 var(--ds-space-3) var(--ds-space-3); border: 1px solid #4b5e68; border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-3); color: #3a4c55; background: #fff; font: inherit; cursor: pointer; }
 .pending-checks__recall:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }
+.pending-checks__merge-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ds-space-3); }
+.pending-checks__merge { min-height: 48px; border: 1px solid #142b35; border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-3); color: #fff; background: #142b35; font: inherit; font-weight: 700; cursor: pointer; }
+.pending-checks__merge:disabled { opacity: .5; cursor: not-allowed; }
+.pending-checks__merge:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }
+.pending-checks__select { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; margin: var(--ds-space-2) 0 0 var(--ds-space-2); }
+.pending-checks__select input { width: 28px; height: 28px; }
 .pending-checks__cancel { display: grid; gap: var(--ds-space-2); margin: 0 var(--ds-space-3) var(--ds-space-3); }
 .pending-checks__cancel label { display: grid; gap: .25rem; }
 .pending-checks__cancel select, .pending-checks__cancel input { min-height: 48px; font: inherit; }

@@ -1,0 +1,5 @@
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:10:import "./pending-checks.css";
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:181:    <section className="pending-checks" aria-label="Bekleyen hesaplar">
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:182:      {error && <p className="pending-checks__error" role="alert">{error}</p>}
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:183:      {cancelNotice && !cancelling && <p className="pending-checks__error" role="alert">{cancelNotice}</p>}
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:184:      {!liveLinkUp && <p className="pending-checks__offline" role="status">Canlı güncelleme yok: liste en geç dakikada bir yenilenir, yeni hesap geldiğinde ses çalmayabilir.</p>}
