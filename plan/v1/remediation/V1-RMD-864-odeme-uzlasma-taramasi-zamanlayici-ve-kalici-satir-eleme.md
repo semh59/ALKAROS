@@ -18,6 +18,8 @@ G10 (F0092, F0093, F0447, F0448): (1) Ödeme farkı taraması (PaymentReconcilia
   - src/Modules/Reconciliation/Payments/PaymentReconciliationScanner.cs — sabit hata nedeni.
   - src/Modules/Reconciliation/Payments/CashSessionDifferenceSourcePair.cs — vakası olan satırı ele.
   - src/Modules/Reconciliation/Payments/CardSettlementAllocationMismatchSourcePair.cs — vakası olan satırı ele.
+  - src/Modules/Reconciliation/Payments/PaymentUnknownSourcePair.cs — vakası olan ödemeyi ele (her turda Deduplicated eylem satırı birikmesin).
+  - src/Modules/Reconciliation/Payments/ApprovedWithoutAllocationSourcePair.cs — vakası olan ödemeyi ele (aynı gerekçe).
   - src/Host/Experience/Reconciliation/OnlineOrderReconciliationHostedService.cs — ReconciliationScanHostedService olarak yeniden adlandırılır, ödeme taramasını da çalıştırır.
   - src/Host/Experience/Reconciliation/OnlineOrderReconciliationEndpoints.cs — kayıt.
   - tests/Host/Experience/Reconciliation/OnlineOrderReconciliationHostedServiceTests.cs — eski ad.
