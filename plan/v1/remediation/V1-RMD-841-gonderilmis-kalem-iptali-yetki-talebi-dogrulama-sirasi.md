@@ -1,7 +1,7 @@
 # V1-RMD-841 - Gönderilmiş kalem iptalinde yetki talebi, kalem doğrulamasından önce açılıyor
 
 - Task ID: V1-RMD-841
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
