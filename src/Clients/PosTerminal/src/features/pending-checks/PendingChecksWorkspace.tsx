@@ -4,7 +4,7 @@ import { notifySessionExpired } from "../../api";
 import { BillingSplitApiError, createBillFromOrder, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
-import { cancelOrderText, cancelReasonText, mergeChecksText } from "../../strings";
+import { cancelOrderText, cancelReasonText, mergeChecksText, openBillDeniedText } from "../../strings";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
 import "./pending-checks.css";
@@ -32,8 +32,10 @@ function checkTitle(check: PendingCheck): string {
  * sit at the same table. Tapping a row opens (or creates) its bill and goes straight to collection.
  * Nothing here touches the table.
  */
-export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string) => window.location.assign(href) }: {
+export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, navigateTo = (href: string) => window.location.assign(href) }: {
   terminalId: string;
+  canCancel: boolean;
+  canMerge: boolean;
   navigateTo?: (href: string) => void;
 }) {
   const [checks, setChecks] = useState<readonly PendingCheck[] | null>(null);
@@ -131,7 +133,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
 
   const mergeTable = checks?.find((row) => row.orderId === selected[0]);
   const mergeTableId = mergeTable?.tableId;
-  const mergeOffered = (checks ?? []).some((row, _, all) => canMerge(row) && all.some((other) => other !== row && canMerge(other) && other.tableId === row.tableId));
+  const mergeOffered = mayMerge && (checks ?? []).some((row, _, all) => canMerge(row) && all.some((other) => other !== row && canMerge(other) && other.tableId === row.tableId));
 
   const toggle = (orderId: string) => {
     setMergeError(undefined);
@@ -229,7 +231,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
               <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.1"
                 type="button"
                 className="pending-checks__row"
-                disabled={openingOrderId !== undefined || merging}
+                disabled={openingOrderId !== undefined || merging || (check.billId === null && !mayMerge)}
                 onClick={() => void collect(check)}
                 aria-label={`${checkTitle(check)} hesabını tahsil et`}
               >
@@ -242,6 +244,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                     : formatMoney(check.total)}
                 </span>
                 {openingOrderId === check.orderId && <span className="pending-checks__opening">Açılıyor…</span>}
+                {check.billId === null && !mayMerge && <span className="pending-checks__meta">{openBillDeniedText}</span>}
               </button>
               {check.paidAmount === 0 && check.tableId && (
                 <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
@@ -254,7 +257,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                   Yanlışlıkla gönderildi: masaya geri gönder
                 </button>
               )}
-              {check.paidAmount === 0 && (cancelling?.orderId === check.orderId ? (
+              {canCancel && check.paidAmount === 0 && (cancelling?.orderId === check.orderId ? (
                 <div className="pending-checks__cancel">
                   <label>
                     <span>{cancelReasonText.label}</span>

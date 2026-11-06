@@ -1,0 +1,92 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (33 tests | 5 failed) 750ms
+     × reloads the list the moment the hub says the queue changed, and again after a reconnect 10ms
+     × stays quiet for checks already waiting and chimes once for a check it has not seen 5ms
+     × marks the list as possibly out of date when a refresh fails, with the time of the last good one 7ms
+       × shows the other check of a cancelled merged bill as unbilled after the hub announces only the cancelled one 7ms
+       × drops a selected check that left the list on the next refresh and closes the merge again 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > reloads the list the moment the hub says the queue changed, and again after a reconnect
+AssertionError: expected 2 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:245:29
+    243|     fetchMock.mockResolvedValue(ok(sample));
+    244|     await act(async () => { hubHandlers.PendingChecksChanged(); });
+    245|     expect(awaitingCalls()).toBe(before + 1);
+       |                             ^
+    246|     expect(document.querySelectorAll("button.pending-checks__row")).to…
+    247|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > stays quiet for checks already waiting and chimes once for a check it has not seen
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:262:19
+    260|     fetchMock.mockResolvedValue(ok(sample));
+    261|     await act(async () => { hubHandlers.PendingChecksChanged(); });
+    262|     expect(chime).toHaveBeenCalledTimes(1);
+       |                   ^
+    263|
+    264|     await act(async () => { hubHandlers.PendingChecksChanged(); });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > marks the list as possibly out of date when a refresh fails, with the time of the last good one
+TypeError: .toMatch() expects to receive a string, but got undefined
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:289:75
+    287|     await act(async () => { hubHandlers.PendingChecksChanged(); });
+    288|
+    289|     expect(document.querySelector(".pending-checks__stale")?.textConte…
+       |                                                                           ^
+    290|     expect(document.body.textContent).toContain("S-001");
+    291|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > shows the other check of a cancelled merged bill as unbilled after the hub announces only the cancelled one
+AssertionError: expected null not to be null
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:366:65
+    364|
+    365|       expect(document.querySelectorAll("button.pending-checks__row")).…
+    366|       expect(pick("Birleştirmek için seç: Masa 5 · 14:40")).not.toBeNu…
+       |                                                                 ^
+    367|     });
+    368|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > drops a selected check that left the list on the next refresh and closes the merge again
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:426:38
+    424|       await act(async () => { hubHandlers.PendingChecksChanged(); });
+    425|
+    426|       expect(mergeButton().disabled).toBe(true);
+       |                                      ^
+    427|       expect(pick("Birleştirmek için seç: Masa 5 · 14:32").checked).to…
+    428|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  5 failed | 42 passed (47)
+   Start at  01:04:32
+   Duration  2.57s (transform 692ms, setup 0ms, import 1.20s, tests 1.17s, environment 3.32s)
+

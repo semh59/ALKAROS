@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (32 tests | 1 failed) 777ms
+       × offers no merge checkbox or merge button to someone without the split permission, but keeps cancelling 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > offers no merge checkbox or merge button to someone without the split permission, but keeps cancelling
+AssertionError: expected <input …(2)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Birleştirmek için seç: Masa 5 · 14:32"
+  type="checkbox"
+/>
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:332:61
+    330|       await render(vi.fn(), { canCancel: true, canMerge: false });
+    331|
+    332|       expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).toBeNull();
+       |                                                             ^
+    333|       expect(mergeButton()).toBeNull();
+    334|       expect(document.body.textContent).toContain("Siparişi iptal et");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 45 passed (46)
+   Start at  00:58:54
+   Duration  2.88s (transform 626ms, setup 0ms, import 1.19s, tests 1.21s, environment 4.09s)
+

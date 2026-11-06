@@ -1303,6 +1303,9 @@ export const refundText = {
 } as const;
 
 /** The merge of several checks of one table into one bill in the cash queue. */
+/** Opening a bill for a check needs the same permission as splitting it. */
+export const openBillDeniedText = "Hesap açmak için bölme yetkisi gerekir.";
+
 export const mergeChecksText = {
   select: (title: string) => `Birleştirmek için seç: ${title}`,
   action: "Hesapları birleştir",

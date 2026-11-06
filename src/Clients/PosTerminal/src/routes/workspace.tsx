@@ -156,7 +156,7 @@ export function ExperiencePage({
     {cashSession && <CashSessionBand status={cashSession} />}
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
-    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} />}
+    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
       <OnlineFoodHub
         terminalId={terminalId}

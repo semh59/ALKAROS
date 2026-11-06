@@ -180,6 +180,19 @@ describe("workspace route gating uses granular permission codes, not the removed
     },
   );
 
+  it.each([
+    [["orders.create"], false, false],
+    [["orders.create", "bills.cancel"], true, false],
+    [["orders.create", "bills.split"], false, true],
+  ])("the till queue offers cancelling and merging only for the matching permissions (%j)", async (capabilities, cancelOffered, mergeOffered) => {
+    const check = (orderId: string) => ({ orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tb-5" });
+    await renderRoute("/pending-checks", capabilities, (url) => (url.includes("awaiting-payment") ? [check("o-1"), check("o-2")] : []));
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent?.includes("Siparişi iptal et")).toBe(cancelOffered);
+    expect(document.querySelector('input[type="checkbox"]') !== null).toBe(mergeOffered);
+  });
+
   it("gives every left-menu entry its own icon", async () => {
     await renderRoute("/", ["orders.create", "tables.status", "bills.split", "kitchen.advance", "catalog.manage", "reports.view"]);
 

@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (32 tests | 1 failed) 737ms
+       × offers no cancel button to someone without the cancel permission, but keeps merging 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > offers no cancel button to someone without the cancel permission, but keeps merging
+AssertionError: expected 'Hesapları birleştirAynı masanın en az…' not to contain 'Siparişi iptal et'
+
+Expected: "Siparişi iptal et"
+Received: "Hesapları birleştirAynı masanın en az iki siparişini seçip tek hesapta toplayın.Masa 5 · 14:321 kalem · S-o-1₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 5 · 14:401 kalem · S-o-3₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 7 · 14:501 kalem · S-o-4₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 5 · 15:301 kalem · S-o-6₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 5 · 15:001 kalem · S-o-5Kalan ₺60,00 (toplam ₺100,00)"
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:341:45
+    339|       await render(vi.fn(), { canCancel: false, canMerge: true });
+    340|
+    341|       expect(document.body.textContent).not.toContain("Siparişi iptal …
+       |                                             ^
+    342|       expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).not.toBeNu…
+    343|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 45 passed (46)
+   Start at  00:59:00
+   Duration  2.70s (transform 754ms, setup 0ms, import 1.27s, tests 1.15s, environment 3.70s)
+

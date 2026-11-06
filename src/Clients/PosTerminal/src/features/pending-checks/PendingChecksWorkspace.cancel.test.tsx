@@ -38,7 +38,7 @@ describe("cancelling an order from the till queue", () => {
   }
   async function render() {
     root = createRoot(document.getElementById("root")!);
-    await act(async () => { root!.render(<PendingChecksWorkspace terminalId="t-1" navigateTo={vi.fn()} />); });
+    await act(async () => { root!.render(<PendingChecksWorkspace terminalId="t-1" navigateTo={vi.fn()} canCancel canMerge />); });
   }
   const calls = (suffix: string) => fetchMock.mock.calls.filter(([url]) => String(url).endsWith(suffix));
 

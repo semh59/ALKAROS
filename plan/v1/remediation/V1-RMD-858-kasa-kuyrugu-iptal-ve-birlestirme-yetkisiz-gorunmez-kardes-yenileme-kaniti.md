@@ -1,7 +1,7 @@
 # V1-RMD-858 - Kasa kuyruğu: iptal ve birleştirme düğmeleri yetkisiz kullanıcıya gösterilmez; kardeş sipariş yenilemesi kanıtlanır
 
 - Task ID: V1-RMD-858
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

@@ -313,6 +313,46 @@ public sealed class MergeOrdersHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CancellingOneOrderOfAMergedBillLeavesTheOtherInTheQueueWithoutABill()
+    {
+        var table = await SeedTableAsync();
+        var first = await SeedOrderAsync(table, 100m);
+        var second = await SeedOrderAsync(table, 50m);
+        var (terminalId, cookie) = await CashierAsync("bills.split", "bills.cancel", "orders.create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var merged = await MergeAsync(client, terminalId, cookie, "key-queue", first, second);
+        var billId = merged.Json.GetProperty("billId").GetGuid();
+
+        async Task<Dictionary<Guid, Guid?>> QueueAsync()
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/awaiting-payment");
+            request.Headers.TryAddWithoutValidation("Cookie", cookie);
+            using var response = await client.SendAsync(request);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            return (await response.Content.ReadFromJsonAsync<List<JsonElement>>())!.ToDictionary(
+                row => row.GetProperty("orderId").GetGuid(),
+                row => row.GetProperty("billId").ValueKind == JsonValueKind.Null ? (Guid?)null : row.GetProperty("billId").GetGuid());
+        }
+
+        var before = await QueueAsync();
+        Assert.Equal(billId, before[first.Id]);
+        Assert.Equal(billId, before[second.Id]);
+
+        using var cancel = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/orders/{first.Id:D}/cancel")
+        {
+            Content = JsonContent.Create(new { IdempotencyKey = "key-cancel", ExpectedRowVersion = first.RowVersion, Reason = "Müşteri vazgeçti" }),
+        };
+        cancel.Headers.TryAddWithoutValidation("Cookie", cookie);
+        using var cancelled = await client.SendAsync(cancel);
+        Assert.Equal(HttpStatusCode.OK, cancelled.StatusCode);
+
+        var after = await QueueAsync();
+        Assert.False(after.ContainsKey(first.Id));
+        Assert.Null(after[second.Id]);
+    }
+
+    [Fact]
     public async Task APaidMergedBillCompletesBothOrdersAndFreesTheTable()
     {
         var table = await SeedTableAsync();
@@ -399,6 +439,7 @@ public sealed class MergeOrdersHttpTests : IAsyncLifetime
         builder.Services.AddOrderManagementExperience();
         var app = builder.Build();
         app.MapBillingSplitApi();
+        app.MapOrderManagementApi();
         await app.StartAsync();
         return app;
     }

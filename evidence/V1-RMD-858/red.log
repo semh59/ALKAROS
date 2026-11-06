@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (32 tests | 2 failed) 764ms
+       × offers no merge checkbox or merge button to someone without the split permission, but keeps cancelling 19ms
+       × offers no cancel button to someone without the cancel permission, but keeps merging 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > offers no merge checkbox or merge button to someone without the split permission, but keeps cancelling
+AssertionError: expected <input …(2)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Birleştirmek için seç: Masa 5 · 14:32"
+  type="checkbox"
+/>
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:332:61
+    330|       await render(vi.fn(), { canCancel: true, canMerge: false });
+    331|
+    332|       expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).toBeNull();
+       |                                                             ^
+    333|       expect(mergeButton()).toBeNull();
+    334|       expect(document.body.textContent).toContain("Siparişi iptal et");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > offers no cancel button to someone without the cancel permission, but keeps merging
+AssertionError: expected 'Hesapları birleştirAynı masanın en az…' not to contain 'Siparişi iptal et'
+
+Expected: "Siparişi iptal et"
+Received: "Hesapları birleştirAynı masanın en az iki siparişini seçip tek hesapta toplayın.Masa 5 · 14:321 kalem · S-o-1₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 5 · 14:401 kalem · S-o-3₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 7 · 14:501 kalem · S-o-4₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 5 · 15:301 kalem · S-o-6₺100,00Yanlışlıkla gönderildi: masaya geri gönderSiparişi iptal etMasa 5 · 15:001 kalem · S-o-5Kalan ₺60,00 (toplam ₺100,00)"
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:341:45
+    339|       await render(vi.fn(), { canCancel: false, canMerge: true });
+    340|
+    341|       expect(document.body.textContent).not.toContain("Siparişi iptal …
+       |                                             ^
+    342|       expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).not.toBeNu…
+    343|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 44 passed (46)
+   Start at  00:57:10
+   Duration  2.79s (transform 715ms, setup 0ms, import 1.26s, tests 1.21s, environment 3.81s)
+

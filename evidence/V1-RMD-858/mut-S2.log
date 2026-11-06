@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (33 tests | 1 failed) 852ms
+       × does not open a bill for someone without the split permission, but still lets them resume a check that has one 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > does not open a bill for someone without the split permission, but still lets them resume a check that has one
+AssertionError: expected 'Masa 5 · 14:321 kalem · S-o-1₺100,00' to contain 'Hesap açmak için bölme yetkisi gereki…'
+
+Expected: "Hesap açmak için bölme yetkisi gerekir."
+Received: "Masa 5 · 14:321 kalem · S-o-1₺100,00"
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:343:36
+    341|       const [unbilled, billed] = [...document.querySelectorAll<HTMLBut…
+    342|       expect(unbilled.disabled).toBe(true);
+    343|       expect(unbilled.textContent).toContain("Hesap açmak için bölme y…
+       |                                    ^
+    344|       expect(billed.disabled).toBe(false);
+    345|       expect(billed.textContent).not.toContain("Hesap açmak için bölme…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 46 passed (47)
+   Start at  01:04:26
+   Duration  2.75s (transform 694ms, setup 0ms, import 1.29s, tests 1.36s, environment 3.44s)
+

@@ -60,10 +60,10 @@ describe("PendingChecksWorkspace", () => {
     vi.unstubAllGlobals();
   });
 
-  async function render(navigateTo = vi.fn()) {
+  async function render(navigateTo = vi.fn(), permissions = { canCancel: true, canMerge: true }) {
     root = createRoot(document.getElementById("root")!);
     await act(async () => {
-      root!.render(<PendingChecksWorkspace terminalId="t-1" navigateTo={navigateTo} />);
+      root!.render(<PendingChecksWorkspace terminalId="t-1" navigateTo={navigateTo} {...permissions} />);
     });
     return navigateTo;
   }
@@ -323,6 +323,47 @@ describe("PendingChecksWorkspace", () => {
       await click(pick("Birleştirmek için seç: Masa 5 · 14:40"));
       expect(mergeButton().disabled).toBe(false);
       expect(mergeButton().textContent).toBe("Hesapları birleştir");
+    });
+
+    it("offers no merge checkbox or merge button to someone without the split permission, but keeps cancelling", async () => {
+      fetchMock.mockResolvedValue(ok(merge));
+      await render(vi.fn(), { canCancel: true, canMerge: false });
+
+      expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).toBeNull();
+      expect(mergeButton()).toBeNull();
+      expect(document.body.textContent).toContain("Siparişi iptal et");
+    });
+
+    it("does not open a bill for someone without the split permission, but still lets them resume a check that has one", async () => {
+      fetchMock.mockResolvedValue(ok([row("o-1", "tb-5", "2026-09-24T11:32:00Z"), row("o-2", "tb-5", "2026-09-24T11:40:00Z", { billId: "b-2" })]));
+      await render(vi.fn(), { canCancel: true, canMerge: false });
+
+      const [unbilled, billed] = [...document.querySelectorAll<HTMLButtonElement>("button.pending-checks__row")];
+      expect(unbilled.disabled).toBe(true);
+      expect(unbilled.textContent).toContain("Hesap açmak için bölme yetkisi gerekir.");
+      expect(billed.disabled).toBe(false);
+      expect(billed.textContent).not.toContain("Hesap açmak için bölme yetkisi gerekir.");
+    });
+
+    it("offers no cancel button to someone without the cancel permission, but keeps merging", async () => {
+      fetchMock.mockResolvedValue(ok(merge));
+      await render(vi.fn(), { canCancel: false, canMerge: true });
+
+      expect(document.body.textContent).not.toContain("Siparişi iptal et");
+      expect(pick("Birleştirmek için seç: Masa 5 · 14:32")).not.toBeNull();
+    });
+
+    it("shows the other check of a cancelled merged bill as unbilled after the hub announces only the cancelled one", async () => {
+      const merged = [row("o-1", "tb-5", "2026-09-24T11:32:00Z", { billId: "b-m" }), row("o-3", "tb-5", "2026-09-24T11:40:00Z", { billId: "b-m" })];
+      fetchMock.mockResolvedValue(ok(merged));
+      await render();
+      expect(pick("Birleştirmek için seç: Masa 5 · 14:40")).toBeNull();
+
+      fetchMock.mockResolvedValue(ok([row("o-3", "tb-5", "2026-09-24T11:40:00Z"), row("o-4", "tb-5", "2026-09-24T11:50:00Z")]));
+      await act(async () => { hubHandlers.PendingChecksChanged(); });
+
+      expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
+      expect(pick("Birleştirmek için seç: Masa 5 · 14:40")).not.toBeNull();
     });
 
     it("sends the selected orders once, even on a double tap, and opens the merged bill for collection", async () => {

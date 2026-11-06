@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (33 tests | 1 failed) 747ms
+       × does not open a bill for someone without the split permission, but still lets them resume a check that has one 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > merging several checks of one table into one bill > does not open a bill for someone without the split permission, but still lets them resume a check that has one
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:342:33
+    340|
+    341|       const [unbilled, billed] = [...document.querySelectorAll<HTMLBut…
+    342|       expect(unbilled.disabled).toBe(true);
+       |                                 ^
+    343|       expect(unbilled.textContent).toContain("Hesap açmak için bölme y…
+    344|       expect(billed.disabled).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 46 passed (47)
+   Start at  01:04:21
+   Duration  2.64s (transform 600ms, setup 0ms, import 1.14s, tests 1.15s, environment 3.48s)
+

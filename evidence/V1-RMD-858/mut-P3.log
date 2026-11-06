@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/workspace.test.tsx (39 tests | 2 failed) 1003ms
+     × the till queue offers cancelling and merging only for the matching permissions (["orders.create","bills.cancel"]) 32ms
+     × the till queue offers cancelling and merging only for the matching permissions (["orders.create","bills.split"]) 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > the till queue offers cancelling and merging only for the matching permissions (["orders.create","bills.cancel"])
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/routes/workspace.test.tsx:193:71
+    191|
+    192|     expect(document.body.textContent?.includes("Siparişi iptal et")).t…
+    193|     expect(document.querySelector('input[type="checkbox"]') !== null).…
+       |                                                                       ^
+    194|   });
+    195|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > the till queue offers cancelling and merging only for the matching permissions (["orders.create","bills.split"])
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/routes/workspace.test.tsx:193:71
+    191|
+    192|     expect(document.body.textContent?.includes("Siparişi iptal et")).t…
+    193|     expect(document.querySelector('input[type="checkbox"]') !== null).…
+       |                                                                       ^
+    194|   });
+    195|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 37 passed (39)
+   Start at  00:59:05
+   Duration  4.60s (transform 1.66s, setup 0ms, import 2.24s, tests 1.00s, environment 997ms)
+

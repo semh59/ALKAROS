@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/workspace.test.tsx (39 tests | 2 failed) 1014ms
+     × the till queue offers cancelling and merging only for the matching permissions (["orders.create"]) 36ms
+     × the till queue offers cancelling and merging only for the matching permissions (["orders.create","bills.split"]) 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > the till queue offers cancelling and merging only for the matching permissions (["orders.create"])
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > the till queue offers cancelling and merging only for the matching permissions (["orders.create","bills.split"])
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/routes/workspace.test.tsx:192:70
+    190|     await act(async () => Promise.resolve());
+    191|
+    192|     expect(document.body.textContent?.includes("Siparişi iptal et")).t…
+       |                                                                      ^
+    193|     expect(document.querySelector('input[type="checkbox"]') !== null).…
+    194|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 37 passed (39)
+   Start at  00:59:12
+   Duration  4.43s (transform 1.66s, setup 0ms, import 2.22s, tests 1.01s, environment 944ms)
+
