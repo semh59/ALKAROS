@@ -1,7 +1,7 @@
 # V1-RMD-859 - Kasa belge sapmaları kodla hizalanır: kapanış farkı, iade defteri, tahsilat değişmezleri, değer kataloğu, tablo adları, projeksiyon yazarları
 
 - Task ID: V1-RMD-859
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

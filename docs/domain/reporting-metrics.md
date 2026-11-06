@@ -24,7 +24,7 @@ apply to every report.
 
 | Metric | Granularity | Source of truth | Formula / reconciliation total |
 | --- | --- | --- | --- |
-| Daily sales | per business date, per bill closure | `billing.bill_closures` + `bill_items` | `SUM(net/gross per line_type Sale/Refund)`; reconciles to `SUM(bills.payable_amount)` for closed bills |
+| Daily sales | per business date, per bill closure | paid `billing.bills` (`closed_at`; there is no `bill_closures` table) + `bill_items` | `SUM(net/gross per line_type Sale/Refund)`; reconciles to `SUM(bills.payable_amount)` for closed bills |
 | Product sales | per product, per business date | `billing.bill_items` | `SUM(quantity)`, `SUM(gross_amount)` per `product_id` |
 | Product margin | per product, per business date range (31 days max) | paid `billing.bills` (service day = Europe/Istanbul date the bill opened) + `bill_items` (Sale, Complimentary) + `inventory.stock_movements` (consumption minus reversals) + `purchasing.goods_receipt_items` | revenue = `SUM(net_amount)` of Sale lines; cost = consumed quantity x weighted-average receipt price up to the service day; unknown cost is flagged, never zero; reconciles to the same lines summed independently (bill-level discounts shown apart) |
 | Category sales | per category, per business date | `bill_items` via product catalog | `SUM(gross_amount)` per category; category sums equal daily sales total |
@@ -32,15 +32,15 @@ apply to every report.
 | Table performance | per table, per business date | `billing.bills.table_id` (truth), `table_mgmt.tables` | `COUNT(bills)`, `SUM(payable)`, occupancy minutes per `table_transfers`/order timestamps |
 | Daily menu sell-through | per `daily_menu_item`, per business date | `menu.daily_menu_items` + `order_items` | sold `quantity / planned_quantity`; planned from daily menu |
 | Portion consumption | per recipe version, per business date | `production_consumptions` (III.13.3) | `SUM(consumed base-unit quantity)` per `recipe_version_id`; reconciles to production batches |
-| Waste report | per product, per business date | `inventory_movements` `Waste` type | `SUM(waste quantity)` at moving-average cost (V0-DOM-010) |
+| Waste report | per product, per business date | `inventory.stock_movements` `Waste` type and `inventory.waste_records` | `SUM(waste quantity)` at moving-average cost (V0-DOM-010) |
 | Cash report | per business date, per cash session | cash `payments` + `change_amount` | `SUM(tendered) - SUM(change) = SUM(allocated cash)`; open session flagged, not closed |
 | Payment mix | per method, per business date | `payments` + `payment_allocations` | `SUM(allocated_amount)` per method; methods sum to `paid_amount` |
-| Meal card settlement | per provider settlement period | `meal_card_settlements` | settlement `SUM(settled_amount)` per provider statement |
+| Meal card settlement | per provider settlement period | `meal_card_settlements` (not built: the meal card has no tender handler) | settlement `SUM(settled_amount)` per provider statement |
 | Customer account aging | per customer account, per `snapshot_date` | `customer_account.account_transactions` + snapshots (III.18.4) | age buckets from `invoice_balance`; balance formula from `V0-DOM-007` |
-| Invoice aging | per invoice, per business date | `invoices` | outstanding = `invoice total - SUM(payments)`; reconciles to account aging |
-| Reconciliation backlog | per day | `reconciliation_cases` | `COUNT(open cases)`; classified by divergence source |
+| Invoice aging | per invoice, per business date | `invoicing.invoices` | outstanding = `invoice total - SUM(payments)`; reconciles to account aging |
+| Reconciliation backlog | per day | `reconciliation.cases` | `COUNT(open cases)`; classified by divergence source |
 | Printer failures | per printer, per day | `kitchen.print_jobs` status | `COUNT(Failed/Retrying)`; `last_error` recorded |
-| Backup status | per backup job | `backup_jobs`/`backup_artifacts` | last success/failure per job; restore test result |
+| Backup status | per backup job | `operations.backups` and `operations.offsite_backup_receipts` | last success/failure per job; restore test result |
 
 ## Cross-cutting rules
 

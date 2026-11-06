@@ -14,12 +14,13 @@
 Immutable `payment_reversals` ledger. Existing payments and allocations are
 never mutated; every refund appends a ledger row:
 
-- `payment_reversals.id` surrogate key, immutable after insert.
+- `payment_reversals.reversal_id` surrogate key, immutable after insert.
 - `payment_reversals.payment_id` → the original Payment.
 - `reversal_type`: `FullRefund | PartialRefund`.
 - `amount` > 0 always; no negative allocation representation anywhere.
-- `reason`, `refunded_by`, `occurred_at`, fiscal linkage reference
-  (FiscalDocument `Refunded`/refund request id per PDF:I.28.1).
+- `reason`, `refunded_by`, `occurred_at`, `idempotency_key`. The fiscal linkage reference
+  (FiscalDocument `Refunded`/refund request id per PDF:I.28.1) is not stored yet: the fiscal
+  device integration is not built, so the table has no such column.
 - Provider idempotency: one `X-Idempotency-Key` per refund operation; a
   duplicate call returns the existing reversal row (PDF:II.2.6).
 

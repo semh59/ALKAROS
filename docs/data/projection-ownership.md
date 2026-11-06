@@ -23,6 +23,14 @@
 | AccountBalance | AccountTransaction | TransactionPosted event | Same tx | Nightly sum vs transactions | Full rebuild from transactions |
 | SettlementStatus | MealCardSettlement | SettlementStateChanged event | Same tx | N/A | Full rebuild from settlements |
 
+> **Güncel durum (kod doğrulaması):** Tablodaki olay adları (`PriceChanged`, `TicketStateChanged`, `MenuItemSold`,
+> `StockEntryPosted`, `PaymentStateChanged`, `TransactionPosted`, `SettlementStateChanged`) tasarım adlarıdır; kodda bu
+> adlı bir olay yoktur. Gerçek yazarlar: CurrentPrice `CatalogPriceRecomputeHostedService` (fiyat zaman çizelgesinden
+> periyodik yeniden hesap), MenuCounter `DailyMenuCounterEventConsumer` ve `PostgresDailyMenuCounterProjector` (olay türleri `DailyMenuCounterIntegrationEvents` içinde), AccountBalance
+> `PostgresAccountBalanceProjection` (tam yeniden kurma yolu ile), PaymentTotal `BillPaymentClosureProjection` toplamlarını `BillClosureService` hesaplayıp `Bill`'e işler.
+> KitchenStatus için ayrı bir projeksiyon yoktur; SettlementStatus yemek kartı tahsilat kolu kurulmadığı için
+> uygulanmadı.
+
 ## 2. Rules
 
 1. Every projection MUST have a single authoritative source.

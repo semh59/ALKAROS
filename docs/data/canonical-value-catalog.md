@@ -31,10 +31,10 @@ provider-scoped (section D).
 | KitchenTicketItem (`kitchen_ticket_items.status`, II.5.7A) | `Queued, Preparing, Ready, Served, Cancelled` |
 | PrintJob (`print_jobs.status`, II.5.8) | `Pending, Printing, Printed, Failed, Retrying, Cancelled` |
 | CashSession (`cash_sessions.status`, II.5.9) | `Open, Counting, Closing, Closed, Reconciled` |
-| MealCardSettlement (`meal_card_settlements.status`, II.5.10) | `Open, Prepared, Submitted, PartiallySettled, Settled, Disputed, Reconciled` |
+| MealCardSettlement (`meal_card_settlements.status`, II.5.10; table not built, the meal card has no tender handler) | `Open, Prepared, Submitted, PartiallySettled, Settled, Disputed, Reconciled` |
 | MealCardPayment.settlement_status (II.5.10A) | `Unsettled, IncludedInSettlement, Settled, Disputed` |
 | Invoice (`invoices.status`, II.5.11) | `Draft, Validating, PendingProvider, Issued, Rejected, Cancelled, ReconciliationRequired` |
-| ReconciliationCase (`reconciliation_cases.status`, II.5.12) | `Open, Investigating, WaitingProvider, Resolved, Dismissed, Escalated` |
+| ReconciliationCase (`reconciliation.cases.status`, II.5.12) | `Open, Investigating, WaitingProvider, Resolved, Dismissed, Escalated` |
 | Alert (`alerts.status`, II.5.13) | `Open, Acknowledged, Escalated, Suppressed, Resolved` |
 | Table (`tables.current_status`, II.5.15) | `Available, Occupied, Reserved, Cleaning, OutOfService` (application-layer invariant only; source of truth for order/bill ownership is `orders.table_id`/`bills.table_id`) |
 | InventoryMovement (II.5.14) | No lifecycle status — immutable ledger entry; corrections are new rows. `MovementType`: `PurchaseReceipt, ProductionOutput, Consumption, Reservation, Release, Waste, Adjustment, Return, Reversal` |
@@ -51,7 +51,7 @@ enumerated list (C7 closed):
 | --- | --- |
 | `inventory.stock_movements.source_type` | `Order, ProductionBatch, GoodsReceipt, ManualAdjustment, StockMovement` (the last for Reversal rows referencing another movement, III.14.4) |
 | `inventory.waste_records.source_type` | `PortionReservation, ProductionBatch, StockItem, ManualEntry` |
-| `reconciliation.reconciliation_cases.source_reference_type` | `Order, Bill, Payment, FiscalDocument, MealCardPayment, Invoice, PrintJob, OnlineExternalOrder` |
+| `reconciliation.cases.source_reference_type` | `Order, Bill, Payment, FiscalDocument, MealCardPayment, Invoice, PrintJob, OnlineExternalOrder` |
 | `observability.alerts.source_reference_type` | `Printer, BackupJob, ReconciliationCase, Payment, FiscalDocument, OnlineProvider, StockBalance` |
 | `invoicing.invoice_sources.source_type` | `AccountTransaction` (currently the only real source type; documented as extensible via plan change) |
 
@@ -64,7 +64,7 @@ enumerated list (C7 closed):
 | `order_items.kitchen_state` | `NotSent, Held, Sent, Preparing, Ready, Served, Cancelled` — `Held` added by V1-WTR-025 (migration 105): a later course fired with the round but not yet called in | III.6.2 |
 | `order_items.portion_reservation_status` | `NotApplicable, NotReserved, Reserved, Released, Consumed, Waste` | III.6.2 (CORR:C2) |
 | `bill_items.line_type` | `Sale, Discount, Complimentary, Refund, Waste, Adjustment` | III.7.2 |
-| `payments.payment_method` | `Cash, BankCard, MealCard, CustomerAccount` — `SplitPayment` is not a member (III.8.1, I.26, II.5.3) | III.8.1 |
+| tender method (`TenderMethod` enum; `payments.payments` has no `payment_method` column, the method is derived by `PaymentMethodLookup` as `Cash, Card, Eft, Account`) | `Cash, BankCard, MealCard, Eft` as tendered; the account charge is not a `TenderMethod` member and is derived as `Account`; `MealCard` has no tender handler yet. `SplitPayment` is not a member (III.8.1, I.26, II.5.3) | III.8.1 |
 | `cash_transactions.transaction_type` | `Opening, Sale, CashIn, CashOut, Refund, CountAdjustment, ClosingDifference` | III.9.2 |
 | `daily_menus.status` | `Draft, Open, PartiallyConsumed, Closed` | III.11.1 |
 | `recipes.status` / `recipe_versions.status` | `Draft, Active, Retired` | III.12.2 |
@@ -90,7 +90,7 @@ no provider value is forced into an internal enum (task out-of-scope rule):
   `online_webhook_events.event_type`, `licenses`/`installations` fields.
 - Operational statuses to be owned by their feature tasks
   (V12-PUR-*, V12-QR-*, V14-BKP-*, V14-OBS-*): `purchase_orders.status`,
-  `goods_receipts.status`, `backup_jobs.status`, `backup_artifacts.storage_type`,
+  `goods_receipts.status`, `operations.backups` status and storage type (the planned `backup_jobs`/`backup_artifacts` tables were built as `operations.backups`),
   `restore_tests.status`, `health_checks.status`.
 - Free text / extensible semantics: `alert_type`, `case_type`, `action_type`,
   `event_type`, `adjustment_type`, `price_type`, `selection_type`,
@@ -107,9 +107,9 @@ Positive 2: a `stock_movements` row with `movement_type = Reversal` must have
 `source_type = StockMovement` and `source_reference_id` pointing at the
 compensated movement (III.14.4).
 
-Negative 1: `payment_method = SplitPayment` is rejected at every layer
+Negative 1: a tender method `SplitPayment` is rejected at every layer
 (III.8.1, I.26, II.5.3); split payment is a composition of `Cash`, `BankCard`,
-`MealCard` and/or `CustomerAccount` tenders.
+`Eft` and/or account tenders (`MealCard` has no handler yet).
 
 Negative 2: any internal status column written with a value absent from
 sections A-C is a schema violation; provider-scoped columns (section D) never

@@ -23,7 +23,12 @@
 > **Güncel durum (tarihsel not):** Aşağıdaki Phase A listesi ve pozisyon numaraları bu kayıtlı kararın o günkü
 > hâlidir. Uygulanan sıra `database/MigrationComposition/order.json` dosyasındadır: 004 pozisyonu kullanılmaz
 > (001-003 sonrası 005 `users`, 006 katalog tabloları, 008 `roles` ve `permissions` gelir) ve Phase B 031 ile
-> `MigrationManifest.PhaseBMax` arasındadır (şu an 201). Numara için her zaman `order.json` esastır.
+> `MigrationManifest.PhaseBMax` arasındadır (şu an 219). Numara için her zaman `order.json` esastır.
+>
+> **Güncel durum (tablo adları):** Bu belgede geçen `refund_ledger_entries` uygulamada `payments.payment_reversals`
+> tablosudur (migration 182); `payment_providers` ve `meal_card_settlements` tabloları oluşturulmadı;
+> `reconciliation_cases` uygulamada `reconciliation.cases`, `backup_jobs`/`backup_artifacts` ise `operations.backups`tır.
+> Diyagramdaki ve sıra listesindeki adlar tarihsel tasarım adlarıdır.
 
 ## 1. Entity Dependency Graph
 

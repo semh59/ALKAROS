@@ -1,0 +1,5 @@
+# V1-RMD-859 incelemeler
+
+1. qa-dokuman-bagimlilik: orta: canonical-value-catalog.md'de eski tablo adları (`reconciliation_cases`, `backup_jobs`, `meal_card_settlements`) ve `payment_method = SplitPayment` -> düzeltildi; payment-allocation-integrity.md örnek 2 ve negatif 2 koda uydurulduğu şekilde yeniden yazıldı; migration grafiği notu tarihsel adları açıkladı. Düşük: RESULT.md yolları ve satır atıfları yanlıştı -> düzeltildi, projeksiyon taraması komutu yazıldı.
+2. qa-backend: kritik yok. Orta: MenuCounter yazarı sözleşme dosyası olarak gösterilmişti -> `DailyMenuCounterEventConsumer` ve `PostgresDailyMenuCounterProjector` yazıldı. Düşük: PaymentTotal ifadesi "hesaplayıp Bill'e işler" olarak yumuşatıldı; `CustomerAccount` enum üyesi değildir cümlesi netleştirildi; KitchenStatus "projeksiyon yok" iddiası tam tarama olmadığı için gözlem olarak bırakıldı (kodda ilgili sınıf bulunmadı).
+Doğrulama turu: iki incelemenin atıfları dosyada yeniden okundu (CashTenderHandler.cs:129-134, PaymentAllocationFactory.cs:47-48, EftTenderHandler.cs:133, migration 121:19-20); çürütülen bulgu yok.

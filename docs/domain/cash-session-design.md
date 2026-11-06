@@ -93,7 +93,7 @@ $$\text{Difference} = \text{ActualCash} - \text{ExpectedCash}$$
   never block: the cashier sees the counts and acknowledges them, and the audit event `cash.session.closed` records the
   counts the server saw and the acknowledgement.
 - **One transaction**: the close locks the session row, reads the expected cash and the latest count under that lock,
-  updates the session, posts the `ClosingDifference` ledger row and writes the audit event together; recording a count
+  updates the session, posts the `ClosingDifference` ledger row (only when the difference is not zero) and writes the audit event together; recording a count
   takes the same lock.
 - **Reconciliation** is a manager act (`cash.session.override`) and a four-eyes check: the session's cashier and the
   person who closed it do not reconcile it, unless the shared setting `approvals.manager_self_approval_enabled` is on;
