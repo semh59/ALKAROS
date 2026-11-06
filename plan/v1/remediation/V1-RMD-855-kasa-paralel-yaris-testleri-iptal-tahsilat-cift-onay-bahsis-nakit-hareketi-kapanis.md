@@ -1,7 +1,7 @@
 # V1-RMD-855 - Kasa paralel yarış testleri: iptal+tahsilat, iade çift onayı, bahşiş+tahsilat, nakit hareketi+oturum kapanışı
 
 - Task ID: V1-RMD-855
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
