@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace ALKAROS.Host.Experience.Billing;
 
+public sealed record MergeOrdersRequestV1(IReadOnlyList<Guid> OrderIds, string IdempotencyKey);
+
 public sealed record AllocationVersionRequest(Guid AllocationId, long? RowVersion);
 
 public sealed record SplitOwnerRequest(string Kind, Guid OwnerId);

@@ -14,6 +14,8 @@ namespace ALKAROS.Host.Experience.Billing;
 
 public sealed class BillingSplitStore
 {
+    private const int MaxMergedOrders = 20;
+
     private readonly IBillRepository _bills;
     private readonly ISplitDesignRepository _splitDesigns;
     private readonly IOrderRepository? _orders;
@@ -560,6 +562,155 @@ public sealed class BillingSplitStore
         return Map(bill, [], canMutate);
     }
 
+    /// <summary>
+    /// Bills several open orders of one table on one bill (the bill carries no order id; its orders are the ones its items come
+    /// from). The bill number is derived from the idempotency key, so the same key and orders return the same bill.
+    /// </summary>
+    public async Task<BillSplitDesignDto> CreateMergedBillAsync(
+        Guid terminalId,
+        IReadOnlyList<Guid> orderIds,
+        string? idempotencyKey,
+        bool canMutate,
+        CancellationToken cancellationToken = default)
+    {
+        if (_orders == null || _dataSource == null)
+            throw new InvalidOperationException("Order repository and data source are required to merge orders.");
+
+        var ids = (orderIds ?? []).Distinct().Order().ToList();
+        if (ids.Count < 2)
+            throw new BillingValidationException(
+                "MERGE_NEEDS_TWO_ORDERS", "A merge needs at least two distinct orders.", "Birleştirmek için en az iki farklı sipariş seçin.");
+        if (ids.Count > MaxMergedOrders)
+            throw new BillingValidationException(
+                "MERGE_TOO_MANY_ORDERS", $"At most {MaxMergedOrders} orders can be merged.", $"En fazla {MaxMergedOrders} sipariş birleştirilebilir.");
+        var key = idempotencyKey?.Trim();
+        if (string.IsNullOrEmpty(key) || key.Length > 200)
+            throw new BillingValidationException(
+                "IDEMPOTENCY_KEY_REQUIRED", "An idempotency key of 1 to 200 characters is required.", "İşlem anahtarı gerekli.");
+
+        var billNumber = "BILL-M-" + Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes($"{terminalId:N}:{key}")))[..24];
+        if (await _bills.GetByBillNumberAsync(billNumber, cancellationToken) is { } replay)
+            return await ReplayMergedBillAsync(replay, ids, canMutate, cancellationToken);
+
+        var orders = new List<Order>();
+        foreach (var id in ids)
+            orders.Add(await _orders.GetByIdAsync(id, cancellationToken)
+                ?? throw new BillingSplitNotFoundException($"Order {id} was not found.", "sipariş"));
+        foreach (var order in orders)
+        {
+            if (order.Status is not (OrderState.Submitted or OrderState.Accepted or OrderState.Preparing or OrderState.Ready or OrderState.Served))
+                throw new UnsupportedOrderStateException($"Cannot merge an order in '{order.Status}' state.");
+            if (order.Source is not (OrderSource.Cashier or OrderSource.Waiter))
+                throw new BillingValidationException(
+                    "MERGE_ORDER_SOURCE", $"Order {order.Id} comes from {order.Source}.", "Yalnız kasa veya garson siparişleri birleştirilebilir.");
+        }
+
+        if (orders[0].TableId is not { } tableId || tableId == Guid.Empty || orders.Any(o => o.TableId != tableId))
+            throw new BillingValidationException(
+                "MERGE_DIFFERENT_TABLES", "The orders are not on one table.", "Yalnız aynı masadaki siparişler birleştirilebilir.");
+
+        foreach (var id in ids)
+            if ((await _bills.GetByOrderIdAsync(id, cancellationToken)).Any(b => b.Status != BillState.Cancelled))
+                throw new BillMergeConflictException(
+                    "MERGE_ORDER_ALREADY_BILLED", $"Order {id} already has a bill.",
+                    "Seçilen siparişlerden birinin hesabı zaten açık; önce o hesabı iptal edin.");
+
+        Bill bill;
+        try
+        {
+            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+            await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+            await LockAndCheckOrdersAsync(ids, tableId, connection, transaction, cancellationToken);
+
+            // Read again under the lock: an item added or cancelled while the request was running must be on the bill or off it.
+            var locked = new List<Order>();
+            foreach (var id in ids)
+                locked.Add(await PostgresOrderRepository.GetByIdAsync(id, connection, transaction, cancellationToken)
+                    ?? throw new BillingSplitNotFoundException($"Order {id} was not found.", "sipariş"));
+            foreach (var order in locked)
+                if (!order.Items.Any(IsBillable))
+                    throw new BillMergeConflictException(
+                        "MERGE_ORDER_EMPTY", $"Order {order.Id} has no item to bill.",
+                        "Seçilen siparişlerden birinde hesaplanacak ürün yok.");
+
+            bill = BillSourceOperations.CreateMergedBill(
+                Guid.NewGuid(), billNumber, locked.SelectMany(o => o.Items).Where(IsBillable).ToList(), tableId);
+            await _bills.AddAsync(bill, connection, transaction, cancellationToken);
+            if (_tables is not null)
+                await _tables.AttachBillPointerAsync(tableId, bill.Id, connection, transaction, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+        }
+        catch (PostgresException ex)
+            when (ex.SqlState == PostgresErrorCodes.UniqueViolation
+                  && ex.ConstraintName is "bills_bill_number_key" or "bill_items_order_item_id_key")
+        {
+            // Another request took the key or the items first: a replay of the same merge gets its bill, anything else is a conflict.
+            if (await _bills.GetByBillNumberAsync(billNumber, cancellationToken) is { } raced)
+                return await ReplayMergedBillAsync(raced, ids, canMutate, cancellationToken);
+            throw new BillMergeConflictException(
+                "MERGE_ORDER_ALREADY_BILLED", "An order was billed by another request.",
+                "Seçilen siparişlerden birinin hesabı az önce açıldı; ekranı yenileyin.");
+        }
+
+        return Map(bill, [], canMutate);
+    }
+
+    /// <summary>The same lines a bill opened from one order takes: not cancelled, and not a round still waiting to be sent.</summary>
+    private static bool IsBillable(OrderItem item) => item.Status is not (OrderItemState.Cancelled or OrderItemState.Draft);
+
+    /// <summary>Locks the orders and checks them once more: one cancelled, moved or sent to the till after they were read must not be billed.</summary>
+    private static async Task LockAndCheckOrdersAsync(
+        List<Guid> ids, Guid tableId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT o.status, o.table_id, EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = o.order_id)
+            FROM orders.orders o WHERE o.order_id = ANY(@ids) ORDER BY o.order_id FOR UPDATE OF o;
+            """, connection, transaction);
+        command.Parameters.AddWithValue("ids", ids.ToArray());
+        var rows = 0;
+        var sent = 0;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            rows++;
+            if (reader.GetString(0) is not ("Submitted" or "Accepted" or "Preparing" or "Ready" or "Served"))
+                throw new UnsupportedOrderStateException("An order was closed while the merge was running.");
+            if (reader.IsDBNull(1) || reader.GetGuid(1) != tableId)
+                throw new BillingValidationException(
+                    "MERGE_DIFFERENT_TABLES", "The orders are not on one table.", "Yalnız aynı masadaki siparişler birleştirilebilir.");
+            if (reader.GetBoolean(2))
+                sent++;
+        }
+
+        if (rows != ids.Count)
+            throw new BillingSplitNotFoundException("An order disappeared while the merge was running.", "sipariş");
+        if (sent != 0 && sent != ids.Count)
+            throw new BillMergeConflictException(
+                "MERGE_MIXED_SENT", "Some of the orders went to the till and some did not.",
+                "Seçilen siparişlerin bir kısmı kasaya gönderilmiş, bir kısmı masada; hepsi aynı yerde olmalı.");
+    }
+
+    private async Task<BillSplitDesignDto> ReplayMergedBillAsync(
+        Bill existing, IReadOnlyList<Guid> orderIds, bool canMutate, CancellationToken cancellationToken)
+    {
+        var billed = new List<Guid>();
+        await using (var command = _dataSource!.CreateCommand(BillOrderLink.OrderIdsOfBill))
+        {
+            command.Parameters.AddWithValue("bill_id", existing.Id);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                billed.Add(reader.GetGuid(0));
+        }
+
+        if (existing.Status == BillState.Cancelled || !billed.ToHashSet().SetEquals(orderIds))
+            throw new BillMergeConflictException(
+                "IDEMPOTENCY_KEY_REUSED", "The idempotency key belongs to another or a cancelled merge.",
+                "Bu işlem anahtarı başka bir birleştirme için veya iptal edilmiş bir birleştirme için kullanılmış; yeni işlem anahtarıyla deneyin.");
+        var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(existing.Id, cancellationToken);
+        return Map(existing, allocations, canMutate, adjustment: await LoadAdjustmentAsync(existing, cancellationToken));
+    }
+
     public async Task<BillSplitDesignDto> GetAsync(
         Guid billId,
         bool canMutate,
@@ -875,6 +1026,14 @@ public sealed class BillingSplitNotFoundException : Exception
 
 /// <summary>The order is in a state that cannot be billed (cancelled, rejected): a conflict, not a malformed request.</summary>
 public sealed class UnsupportedOrderStateException(string message) : InvalidOperationException(message);
+
+/// <summary>A merge refused because of the current state of the orders or the key: a conflict the screen explains by <see cref="Code"/>.</summary>
+public sealed class BillMergeConflictException(string code, string message, string userMessage) : InvalidOperationException(message)
+{
+    public string Code { get; } = code;
+
+    public string UserMessage { get; } = userMessage;
+}
 
 /// <summary>A request the server refuses before doing anything; <see cref="Code"/> and <see cref="UserMessage"/> reach the screen.</summary>
 public sealed class BillingValidationException(string code, string message, string userMessage) : ArgumentException(message)

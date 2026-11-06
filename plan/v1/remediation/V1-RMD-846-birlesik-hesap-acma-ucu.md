@@ -1,7 +1,7 @@
 # V1-RMD-846 - Birleşik hesap açma ucu
 
 - Task ID: V1-RMD-846
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

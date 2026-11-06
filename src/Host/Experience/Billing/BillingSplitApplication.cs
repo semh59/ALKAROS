@@ -146,6 +146,21 @@ public static class BillingSplitApplication
             return Results.Ok(design);
         });
 
+        billsGroup.MapPost("/merge", async (
+            Guid terminalId,
+            MergeOrdersRequestV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillTerminalAccess access,
+            BillingSplitStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
+            var design = await store.CreateMergedBillAsync(terminalId, request.OrderIds, request.IdempotencyKey, principal.CanMutate, cancellationToken);
+            await access.RequireAsync(context, terminalId, design.BillId, cancellationToken);
+            return Results.Ok(design);
+        });
+
         // bills.cancel is checked directly (cashier tier and up); the reason is mandatory.
         billsGroup.MapPost("/{billId:guid}/cancel", async (
             Guid terminalId,
@@ -711,6 +726,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         GrantDeniedException => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
         BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
         UnsupportedOrderStateException => (409, "UNSUPPORTED_ORDER_STATE", "Bu sipariş durumunda hesap açılamaz."),
+        BillMergeConflictException conflict => (409, conflict.Code, conflict.UserMessage),
         BillingValidationException validation => (400, validation.Code, validation.UserMessage),
         SplitDesignConcurrencyException => (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),
         SplitDesignUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda bölme tasarımı değiştirilemez."),

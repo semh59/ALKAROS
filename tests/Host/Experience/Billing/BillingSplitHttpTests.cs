@@ -255,6 +255,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         var table = new (HttpMethod Method, string Path)[]
         {
             (HttpMethod.Post, $"{bills}/from-order/{id:D}"),
+            (HttpMethod.Post, $"{bills}/merge"),
             (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/cancel"),
             (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/discount"),
             (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/tip"),

@@ -1,0 +1,20 @@
+two-orders restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+replay-skipped restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+key-reuse-set restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+key-reuse-cancelled restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+different-tables restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+source-rule restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.
+state-rule restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+already-billed restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+race-recovery restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 19 s - ALKAROS.
+claim-terminal restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.
+permission restored | Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 20 s - ALKAROS.
+BATCH846DONE
+table-pointer restored | Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 16 s - ALKAROS.
+too-many restored | Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 26 s - ALKAROS.
+empty-order restored | Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 26 s - ALKAROS.
+key-has-terminal restored | Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 26 s - ALKAROS.
+mixed-sent-under-lock restored | Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 26 s - ALKAROS.
+empty-order-under-lock restored | Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 27 s - ALKAROS.
+lock-and-check-removed restored | Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 27 s - ALKAROS.
+draft-round-billed restored | Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 33 s - ALKAROS.
