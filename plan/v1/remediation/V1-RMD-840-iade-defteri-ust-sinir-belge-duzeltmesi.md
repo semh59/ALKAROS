@@ -1,7 +1,7 @@
 # V1-RMD-840 - İade defteri üst sınırı belgesi: ödeme tutarı değil onaylanan tutar
 
 - Task ID: V1-RMD-840
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: documentation
 - Surface state: Existing
