@@ -108,6 +108,27 @@ public sealed class OrderManagementVoidSentTestDatabase : PgTestDatabase
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
     }
 
+    /// <summary>Simulates a manager approving a pending grant out of band.</summary>
+    public async Task ApproveGrantAsync(Guid grantId, Guid approverUserId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            UPDATE identity.authorization_grants
+            SET status = 'granted', policy_path = 'manual', approver_user_id = @approver, resolved_at = now()
+            WHERE grant_id = @grant_id;
+            """);
+        command.Parameters.AddWithValue("grant_id", grantId);
+        command.Parameters.AddWithValue("approver", approverUserId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<long> GrantCountForRequesterAsync(Guid requesterUserId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM identity.authorization_grants WHERE requester_user_id = @id;");
+        command.Parameters.AddWithValue("id", requesterUserId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
     /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax-inclusive 10% -> gross 100) at the given kitchen state.</summary>
     public Task<(Guid OrderId, Guid ItemId, Guid ProductId, OrderItem Item)> SeedActiveOrderWithOneItemAsync(KitchenState kitchenState)
         => SeedActiveOrderWithOneItemAsync(kitchenState, servingUserId: null);

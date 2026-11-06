@@ -54,8 +54,12 @@ public sealed class SentItemVoidStore
         _auditEvents = auditEvents ?? throw new ArgumentNullException(nameof(auditEvents));
     }
 
-    public async Task<SentItemVoidResult> VoidAsync(
-        SentItemVoidCommand command, CancellationToken cancellationToken = default)
+    /// <summary>Throws the same errors <see cref="VoidAsync"/> would for a request that cannot be applied, without changing anything.</summary>
+    public async Task EnsureVoidableAsync(SentItemVoidCommand command, CancellationToken cancellationToken = default) =>
+        _ = await LoadVoidableAsync(command, cancellationToken).ConfigureAwait(false);
+
+    private async Task<(Order Order, OrderItem Item, (Bill Bill, BillItem BillItem)? BillContext)> LoadVoidableAsync(
+        SentItemVoidCommand command, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
         if (!VoidReasonCatalog.IsValid(command.ReasonCode))
@@ -99,6 +103,13 @@ public sealed class SentItemVoidStore
         // CONCURRENCY_CONFLICT, not a silent inconsistency.
         var billContext = await FindBillLineForWasteAsync(
             command.OrderId, command.OrderItemId, cancellationToken).ConfigureAwait(false);
+        return (order, item, billContext);
+    }
+
+    public async Task<SentItemVoidResult> VoidAsync(
+        SentItemVoidCommand command, CancellationToken cancellationToken = default)
+    {
+        var (order, item, billContext) = await LoadVoidableAsync(command, cancellationToken).ConfigureAwait(false);
 
         var now = DateTimeOffset.UtcNow;
         var historyReason = string.IsNullOrWhiteSpace(command.Notes)

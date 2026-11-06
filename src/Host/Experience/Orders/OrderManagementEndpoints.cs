@@ -773,6 +773,7 @@ public static class OrderManagementEndpoints
             IOrderRepository orders,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
+            IAuthorizationGrantRepository grantsRepository,
             DualScreenStore dualStore,
             IAuditEventStore auditEvents,
             HttpContext context,
@@ -784,12 +785,29 @@ public static class OrderManagementEndpoints
                 throw new InvalidItemReasonException(
                     $"Reason '{request.ReasonCode}' is not a valid void catalog reason.");
 
+            // See the matching note on the /void endpoint above —
+            // OrderManagementExceptionFilter already maps every one of these
+            // to the same status/error code with the correct Turkish text.
+            var command = new SentItemVoidCommand(
+                orderId,
+                itemId,
+                request.ExpectedRowVersion,
+                userId,
+                request.ReasonCode,
+                CorrelationId: context.TraceIdentifier,
+                request.Notes);
+
             var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsVoid, StringComparer.Ordinal))
             {
                 var role = await roles.GetGoverningRoleForUserAsync(userId, cancellationToken);
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsVoid, "Requester has no assigned role.");
+
+                // A new request that cannot be applied must not open a grant request (a pending approval and a spent limit);
+                // a resend under a key that already has a grant is answered from that grant and the stored result.
+                if (await grantsRepository.FindByIdempotencyKeyAsync(request.IdempotencyKey, cancellationToken) is null)
+                    await store.EnsureVoidableAsync(command, cancellationToken);
 
                 // Own-check (V1-RMD-111, garson-masa design): the guard reads
                 // the order's real server via ServingUserId, same as /comp.
@@ -828,17 +846,6 @@ public static class OrderManagementEndpoints
                 }
             }
 
-            // V1-RMD-127: see the matching note on the /void endpoint above —
-            // OrderManagementExceptionFilter already maps every one of these
-            // to the same status/error code with the correct Turkish text.
-            var command = new SentItemVoidCommand(
-                orderId,
-                itemId,
-                request.ExpectedRowVersion,
-                userId,
-                request.ReasonCode,
-                CorrelationId: context.TraceIdentifier,
-                request.Notes);
             var applied = await replays.ExecuteAsync(
                 $"orders:{terminalId:N}:{userId:N}:void-sent",
                 request.IdempotencyKey,

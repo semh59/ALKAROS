@@ -635,6 +635,59 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.NotNull(body.GrantId);
     }
 
+    [Theory]
+    [InlineData("NotSent", "NOT_YET_SENT")]
+    [InlineData("Served", "ALREADY_SERVED")]
+    [InlineData("StaleRowVersion", "CONCURRENCY_CONFLICT")]
+    [InlineData("BillClosed", "BILL_NOT_MODIFIABLE")]
+    public async Task AVoidThatCannotBeAppliedIsRefusedBeforeAnyGrantRequestIsOpened(string scenario, string expectedCode)
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterUserId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var kitchenState = scenario switch
+        {
+            "NotSent" => KitchenState.NotSent,
+            "Served" => KitchenState.Served,
+            _ => KitchenState.Preparing,
+        };
+        var (orderId, itemId, _, item) = await _database.SeedActiveOrderWithOneItemAsync(kitchenState, waiterUserId);
+        if (scenario == "BillClosed")
+            await _database.SeedOpenBillAsync(orderId, item, BillState.Allocated);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), scenario == "StaleRowVersion" ? 99 : 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains(expectedCode, await response.Content.ReadAsStringAsync());
+        Assert.Equal(0L, await _database.GrantCountForRequesterAsync(waiterUserId));
+    }
+
+    [Fact]
+    public async Task AnApprovedVoidResentUnderTheSameKeyKeepsAnsweringWithTheFirstResult()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterUserId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing, waiterUserId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange");
+
+        using var first = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, body));
+        Assert.Equal(HttpStatusCode.Accepted, first.StatusCode);
+        var pending = await first.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        await _database.ApproveGrantAsync(pending!.GrantId!.Value, Guid.NewGuid());
+
+        using var applied = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, body));
+        using var resent = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, body));
+
+        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, resent.StatusCode);
+        Assert.Equal("Applied", (await resent.Content.ReadFromJsonAsync<VoidSentItemResultV1>())!.Status);
+    }
+
     [Fact]
     public async Task APendingVoidRequestCarriesTheItemsRealAmount()
     {
