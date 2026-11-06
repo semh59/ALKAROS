@@ -1,0 +1,15 @@
+# V1-RMD-854 sonuç
+
+## Bulgular
+1. **Bileşik yabancı anahtar hiç sınanamıyordu (F0048).** Modül test veritabanları migration 032'yi (başka faturanın kalemine dağılım/düzeltme bağlanamaması) içermiyordu; bu yüzden "B faturasına A'nın kalemi" eklemesi hata vermeden geçiyordu (`red-split.log`: "No exception was thrown"). İki test projesine 032 (Adjustments'a ona gereken 020 ile) eklendi; iki yeni test 23503 bekler.
+2. **Kalem iadesinde kesin yarım kuruş (F0437/H08).** V1-RMD-737 "öldürülemedi" demişti; ondalık işlemle kesin yarım kuruş üretilebilir (2 adetlik 1,01 TL'lik satırın bir adedi = 0,505): yeni test iade tutarının 0,51 (sıfırdan uzağa; `ToEven` 0,50 verirdi) olduğunu doğrular. Satır doğrudan SQL ile kurulur; üretimde 1,01 TL'lik iki adetlik satır olağandır.
+3. **Garson yükü (F0385).** `waiter-load` yalnız `== 0` doğrulanıyordu; yeni test garsona atanmış 6 siparişten dördü İptal/Servis edildi/Tamamlandı/Reddedildi olunca `ActiveLoad == 2`, hiç siparişi olmayan garsonda 0 bekler; dört durum listesi de tek tek mutasyonla sınandı.
+4. **Kısmi iadenin kasa kapanışına etkisi (F0917): zaten kapalı.** `RefundTerminalSessionHttpTests.APartialCashRefundLowersTheCashTheTillIsExpectedToHold` (V1-RMD-524) gerçek iade onayından sonra oturumun beklenen nakdini `250 - iade` olarak okur; kapanış beklenen nakdi aynı defterden okur (`CashSessionLifecycleServiceTests.TheCloseReadsTheExpectedCashFromTheLedger...`) ve defter toplamı iadeyi düşer (`PostgresCashTransactionLedgerRepositoryTests` 600 örneği). Yeni test eklenmedi. Not: bu kanıt kapanış uç noktasından değil, aynı defter okumalarının birleşiminden (iade onayı -> beklenen nakit; kapanış -> aynı defter) gelir; kapanış yolunda iadeyi düşüren sıkı bir mutasyon testi yoktur ve eklenmedi (defter toplamı `LockOpenSessionAndReadExpectedCashAsync` kapanışla aynı okumadır).
+5. **H18 (etkin vergi oranı yuvarlaması):** vergi paylaşımı V1-RMD-730'da `BillMath.Apportion`'a taşındı; `SplitEngine.ApportionTax` (`SplitEngine.cs:321`) yalnız ona devreder, ayrı bir yuvarlama yüzeyi yoktur (V1-RMD-737 README'sinde de "mutantlar geçersiz").
+
+Üretim koduna dokunulmadı.
+
+## Kanıt
+- Kırmızı: `red-split.log` (032 olmadan). Yeşil: `green-SplitDesign.log` (41/41), `green-Adjustments.log` (22/22), `green-host-billing.log` (259/259; yarım kuruş testi sonradan 1,01 TL ile değiştirildi, tek test yeniden koşuldu: `halfcent.log` ilk sürüm, `green-final.log`), `green-host-tabledraft.log` (127/127).
+- Mutasyon `mutations.log` (cp+cmp ile geri alındı): iki test veritabanından 032 çıkarılırsa ilgili test düşer; iade payı `AwayFromZero` -> `ToEven` olunca düşer; garson yükü İptal/Servis/Tamamlandı/Reddedildi durumlarından birini saymaya başlayınca düşer (dördü ayrı ayrı).
+- `CashCloseSafetyHttpTests.cs` planın yüzeyinde olduğu hâlde değiştirilmedi: F0917 yukarıdaki dolaylı kanıtla kapalı sayıldı (kapanış uç noktasından iade düşümünü doğrudan sınayan test yok; defter okuması ortak). Kısıt adı (`fk_bill_allocations_item`, `fk_bill_adjustments_item`) ayrıca doğrulanır.

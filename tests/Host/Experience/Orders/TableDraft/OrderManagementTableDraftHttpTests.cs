@@ -2213,6 +2213,45 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WaiterLoadCountsOpenOrdersAssignedToTheWaiterAndSkipsFinishedOnes()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send");
+        var (idleWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.send");
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var orderIds = new List<Guid>();
+        foreach (var number in new[] { "M-31", "M-32", "M-33", "M-34", "M-35", "M-36" })
+        {
+            using var draft = await client.SendAsync(JsonRequest(
+                DraftPath(terminalId), cookie,
+                new CreateTableDraftRequest(await _database.SeedTableAsync(), number,
+                    [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)],
+                    AssignedWaiterUserId: waiterId)));
+            Assert.Equal(HttpStatusCode.OK, draft.StatusCode);
+            orderIds.Add((await draft.Content.ReadFromJsonAsync<OrderDto>())!.OrderId);
+        }
+        string[] finishedStatuses = ["Cancelled", "Served", "Completed", "Rejected"];
+        foreach (var (orderId, status) in orderIds.Zip(finishedStatuses))
+        {
+            await using var finish = _database.DataSource.CreateCommand("UPDATE orders.orders SET status = @status WHERE order_id = @order_id;");
+            finish.Parameters.AddWithValue("status", status);
+            finish.Parameters.Add("order_id", NpgsqlTypes.NpgsqlDbType.Uuid).Value = orderId;
+            await finish.ExecuteNonQueryAsync();
+        }
+
+        using var response = await client.SendAsync(GetRequest(WaiterLoadPath(terminalId), cookie));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var loads = await response.Content.ReadFromJsonAsync<List<WaiterLoadV1>>();
+        Assert.Equal(2, loads!.Single(w => w.UserId == waiterId).ActiveLoad);
+        Assert.Equal(0, loads!.Single(w => w.UserId == idleWaiterId).ActiveLoad);
+    }
+
+    [Fact]
     public async Task ReadingATablesOrderRequiresOrdersCreate()
     {
         // V1-RMD-216: found by an independent audit (2026-09-16) - this

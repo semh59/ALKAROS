@@ -175,6 +175,26 @@ public sealed class PostgresSplitDesignTests : IClassFixture<SplitDesignTestData
     }
 
     [Fact]
+    public async Task AnAllocationCannotPointAtAnItemOfAnotherBill()
+    {
+        var (_, itemOfFirstBill) = await CreateAndSaveBillWithItem("Salata", 40m);
+        var (secondBill, _) = await CreateAndSaveBillWithItem("Pide", 90m);
+        var crossBill = new BillAllocation(
+            id: Guid.NewGuid(),
+            billId: secondBill.Id,
+            ownerType: AllocationOwnerType.Item,
+            ownerReference: "Cross",
+            allocatedAmount: 20m,
+            billItemId: itemOfFirstBill.Id);
+
+        var exception = await Assert.ThrowsAsync<PostgresException>(() =>
+            _splitRepo.SaveSplitDesignAsync(secondBill.Id, new[] { crossBill }));
+
+        Assert.Equal(ForeignKeyViolation, exception.SqlState);
+        Assert.Equal("fk_bill_allocations_item", exception.ConstraintName);
+    }
+
+    [Fact]
     public async Task ForeignKeyConstraintsEnforced()
     {
         // Unknown Bill ID

@@ -89,6 +89,21 @@ public sealed partial class PaymentRefundHttpTests
         Assert.Equal("REFUND_QUANTITY_NOT_WHOLE", await ErrorCode(response));
     }
 
+    [Fact]
+    public async Task ARefundShareThatLandsOnAHalfCentRoundsAwayFromZero()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await Execute("UPDATE billing.bill_items SET quantity = 2, net_amount = 1.01, tax_amount = 0, gross_amount = 1.01 WHERE bill_item_id = @p", seeded.FirstItemId);
+        var paymentId = await CashPaymentAsync(seeded.BillId, 51.01m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var refund = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+
+        Assert.Equal(0.51m, refund.Amount);
+    }
+
     private Task AllowHalfPortionAsync(Guid billItemId, bool allow)
         => Execute(
             "UPDATE catalog.products SET allows_half_portion = @f WHERE product_id = (SELECT product_id FROM billing.bill_items WHERE bill_item_id = @p)",

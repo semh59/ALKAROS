@@ -1,0 +1,11 @@
+M2 refund rounding AwayFromZero->ToEven: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.H
+  restored (cp+cmp)
+  restored (cp+cmp)
+M1a 032 removed from Adjustments test DB: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 94 ms - ALKAROS
+M1b 032 removed from SplitDesign test DB: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 105 ms - ALKARO
+  restored (cp+cmp)
+M3 waiter load no longer skips Served: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 2 s - ALKAROS.H
+M3 waiter load no longer skips Completed: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 2 s - ALKAROS.H
+M3 waiter load no longer skips Rejected: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 2 s - ALKAROS.H
+M3 waiter load no longer skips Cancelled: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 2 s - ALKAROS.H
+  restored M3 (cp+cmp)

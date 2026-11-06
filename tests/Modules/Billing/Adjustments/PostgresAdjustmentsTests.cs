@@ -144,6 +144,20 @@ public sealed class PostgresAdjustmentsTests : IClassFixture<AdjustmentsTestData
     }
 
     [Fact]
+    public async Task AnAdjustmentCannotPointAtAnItemOfAnotherBill()
+    {
+        var (_, itemOfFirstBill) = await CreateAndSaveBillWithItem("Salata", 50m);
+        var (secondBill, _) = await CreateAndSaveBillWithItem("Pide", 90m);
+        var crossBill = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), secondBill.Id, 10m, 10m, "Discount", Guid.NewGuid(), billItemId: itemOfFirstBill.Id);
+
+        var exception = await Assert.ThrowsAsync<PostgresException>(() => _adjRepo.AddAsync(crossBill));
+
+        Assert.Equal(ForeignKeyViolation, exception.SqlState);
+        Assert.Equal("fk_bill_adjustments_item", exception.ConstraintName);
+    }
+
+    [Fact]
     public async Task ForeignKeyConstraintsEnforced()
     {
         // Unknown Bill ID
