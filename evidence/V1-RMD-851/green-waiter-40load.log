@@ -1,0 +1,63 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | waiter-app.test.js > waiter-app.js > sends the cart to the kitchen via table-draft then submit-draft, in that order
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > sends the cart to the kitchen via table-draft then submit-draft, in that order 2456ms
+stderr | waiter-app.test.js > waiter-app.js > does not send a second request while the first dispatch is still in flight
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > does not send a second request while the first dispatch is still in flight 298ms
+stderr | waiter-app.test.js > waiter-app.js > never shows the raw HTTP status code when the server rejects the draft
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > never shows the raw HTTP status code when the server rejects the draft 504ms
+stderr | waiter-app.test.js > waiter-app.js > V1-RMD-213: keeps an item added while a send is still in flight instead of losing it silently
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > V1-RMD-213: keeps an item added while a send is still in flight instead of losing it silently 498ms
+ ✓ waiter-app.test.js > waiter-app.js > shows a Turkish message, not the browser's own error, when the login request itself fails 517ms
+stderr | waiter-app.test.js > waiter-app.js > V1-RMD-330: offline mode survives a failed set-up and a busy flush > retries a failed service worker registration when the connection returns and clears the warning
+Service worker registration failed; offline mode is disabled: TypeError: Failed to fetch sw.js
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/waiter-app.test.js:234:38
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64
+
+ ✓ waiter-app.test.js > waiter-app.js > V1-RMD-330: offline mode survives a failed set-up and a busy flush > retries a failed service worker registration when the connection returns and clears the warning 453ms
+ ✓ waiter-app.test.js > waiter-app.js > V1-RMD-330: offline mode survives a failed set-up and a busy flush > runs the queue again at once when a trigger arrives during a flush that fails 708ms
+stderr | waiter-app.test.js > offline authority budget and queued actions > keeps the budget the server issues at sign-in
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > offline authority budget and queued actions > keeps the budget the server issues at sign-in 401ms
+stderr | waiter-app.test.js > offline authority budget and queued actions > sends the queued offline actions once when the browser comes back online
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+stderr | waiter-app.test.js > offline authority budget and queued actions > sends the queued offline actions once when the app becomes visible again
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > offline authority budget and queued actions > sends the queued offline actions once when the browser comes back online 461ms
+ ✓ waiter-app.test.js > offline authority budget and queued actions > sends the queued offline actions once when the app becomes visible again 219ms
+stderr | waiter-app.test.js > offline authority budget and queued actions > does not reconcile when the app goes to the background
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > offline authority budget and queued actions > does not reconcile when the app goes to the background 451ms
+stderr | waiter-app.test.js > offline authority budget and queued actions > sends the queued offline actions when the live connection to the server is up
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > offline authority budget and queued actions > sends the queued offline actions when the live connection to the server is up 337ms
+ ✓ waiter-app.test.js > product sheet modifier ceiling > refuses an extra from a group that allows none 7ms
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  20:12:21
+   Duration  67.28s (transform 5.23s, setup 27ms, import 293ms, tests 7.31s, environment 54.25s)
+
+exit 0

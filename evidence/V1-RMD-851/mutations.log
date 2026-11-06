@@ -1,0 +1,3 @@
+M1 varsayilan 5 sn (yapilandirma geri alindi) + 40 yuk islemi, tam kosu: waiter-app ilk uc testi 5026/5008/5215 ms ile zaman asimina dustu (red-default-5s-40load.json); 3 test dustu (+ iki dosya isci baslatma hatasi)
+  duzeltilmis yapilandirma ayni yukte waiter-app.test.js: 13/13 gecti (green-waiter-40load.log)
+  yapilandirma geri alma: cp /tmp/vc851.fixed ... ; cmp -> fark yok

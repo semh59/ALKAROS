@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | waiter-app.test.js > waiter-app.js > sends the cart to the kitchen via table-draft then submit-draft, in that order
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+stderr | waiter-app.test.js > waiter-app.js > does not send a second request while the first dispatch is still in flight
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > sends the cart to the kitchen via table-draft then submit-draft, in that order 506ms
+stderr | waiter-app.test.js > waiter-app.js > never shows the raw HTTP status code when the server rejects the draft
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > does not send a second request while the first dispatch is still in flight 214ms
+stderr | waiter-app.test.js > waiter-app.js > V1-RMD-213: keeps an item added while a send is still in flight instead of losing it silently
+Offline mode disabled: a secure context (HTTPS or localhost) is required.
+
+ ✓ waiter-app.test.js > waiter-app.js > never shows the raw HTTP status code when the server rejects the draft 174ms
+ ✓ waiter-app.test.js > waiter-app.js > V1-RMD-213: keeps an item added while a send is still in flight instead of losing it silently 173ms
+stderr | waiter-app.test.js > waiter-app.js > V1-RMD-330: offline mode survives a failed set-up and a busy flush > retries a failed service worker registration when the connection returns and clears the warning
+Service worker registration failed; offline mode is disabled: TypeError: Failed to fetch sw.js
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/waiter-app.test.js:234:38
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64
+
+ ✓ waiter-app.test.js > waiter-app.js > shows a Turkish message, not the browser's own error, when the login request itself fails 109ms
+ ✓ waiter-app.test.js > waiter-app.js > V1-RMD-330: offline mode survives a failed set-up and a busy flush > retries a failed service worker registration when the connection returns and clears the warning 124ms
+ ✓ waiter-app.test.js > waiter-app.js > V1-RMD-330: offline mode survives a failed set-up and a busy flush > runs the queue again at once when a trigger arrives during a flush that fails 503ms
+ ✓ waiter-app.test.js > product sheet modifier ceiling > refuses an extra from a group that allows none 8ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  19:08:18
+   Duration  3.31s (transform 434ms, setup 30ms, import 62ms, tests 1.81s, environment 1.07s)
+

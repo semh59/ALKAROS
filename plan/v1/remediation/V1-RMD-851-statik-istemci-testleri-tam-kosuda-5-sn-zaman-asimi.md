@@ -1,7 +1,7 @@
 # V1-RMD-851 - Statik istemci testleri: tam koşuda 5 sn zaman aşımı (kök neden: soğuk modül yükü)
 
 - Task ID: V1-RMD-851
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
