@@ -1,7 +1,7 @@
 # V1-RMD-838 - Hesap ve kasa defteri bütünlük düzeltmesi: kalem silme koruması, doğrulanmamış kısıtlar, defter değiştirilemezliği
 
 - Task ID: V1-RMD-838
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
