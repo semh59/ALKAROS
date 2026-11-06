@@ -31,12 +31,12 @@ Payment state:
   refund (approved 2026-08-03). `PartiallyRefunded` is part of the canonical
   Payment state set (V0-DOM-001).
 - Subsequent partial refunds keep `PartiallyRefunded`; the final refund that
-  brings cumulative refunded amount to the payment amount transitions
+  brings cumulative refunded amount to the payment approved amount transitions
   `PartiallyRefunded → Refunded`.
 
 Cumulative limits (invariants):
 
-- `sum(payment_reversals.amount for payment) <= payment.amount` — over-refund
+- `sum(payment_reversals.amount for payment) <= payments.approved_amount` — over-refund
   is forbidden.
 - Bill net paid = `sum(payments) - sum(reversals)`; never negative.
 - A reversal row is immutable and cannot be reversed — double refund is
@@ -70,7 +70,7 @@ returns the existing row via idempotency key.
 ## Invariants for consumers
 
 - Existing payments/allocations are immutable; refunds are append-only rows.
-- `amount` > 0; cumulative sum per payment ≤ payment amount; Bill net paid ≥ 0.
+- `amount` > 0; cumulative sum per payment ≤ payment approved amount; Bill net paid ≥ 0.
 - Full refund → `Refunded`; partial → `PartiallyRefunded` (never stays
   `Approved`); no refund on `Unknown`/`ReconciliationRequired`.
 - One idempotency key per refund operation.

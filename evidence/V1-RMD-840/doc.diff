@@ -1,0 +1,13 @@
+diff --git a/docs/domain/refund-ledger.md b/docs/domain/refund-ledger.md
+index c84842ae..38009841 100644
+--- a/docs/domain/refund-ledger.md
++++ b/docs/domain/refund-ledger.md
+@@ -34 +34 @@ Payment state:
+-  brings cumulative refunded amount to the payment amount transitions
++  brings cumulative refunded amount to the payment approved amount transitions
+@@ -39 +39 @@ Cumulative limits (invariants):
+-- `sum(payment_reversals.amount for payment) <= payment.amount` — over-refund
++- `sum(payment_reversals.amount for payment) <= payments.approved_amount` — over-refund
+@@ -73 +73 @@ returns the existing row via idempotency key.
+-- `amount` > 0; cumulative sum per payment ≤ payment amount; Bill net paid ≥ 0.
++- `amount` > 0; cumulative sum per payment ≤ payment approved amount; Bill net paid ≥ 0.
