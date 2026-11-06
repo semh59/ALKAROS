@@ -1,7 +1,7 @@
 # V1-RMD-863 - Ödeme uzlaşma raporu: yöntem ayrımı (cari hesap, elle kart onayı, reddedilen kart denemesi) ve çoklu denemede katlanan toplam
 
 - Task ID: V1-RMD-863
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
