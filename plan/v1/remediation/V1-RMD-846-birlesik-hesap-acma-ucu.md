@@ -1,14 +1,16 @@
 # V1-RMD-846 - Birleşik hesap açma ucu
 
 - Task ID: V1-RMD-846
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
 ## Goal
 
-F0046 (PO:2026-11-06) ikinci adım: birden çok siparişi tek hesapta toplayan gerçek sunucu akışı. `POST /api/v1/terminals/{terminalId}/billing/bills/merge` gövdesindeki en az iki siparişin aktif kalemlerini `BillSourceOperations.CreateMergedBill` ile tek hesapta toplar, hesabı çağıran terminale sahiplendirir (V1-RMD-843) ve masa işaretçisini bağlar. Yetki `bills.split`; aynı `IdempotencyKey` ile tekrar gönderim aynı hesabı döndürür. Reddedilen durumlar Türkçe hata kodlarıyla döner: tek sipariş/yinelenen sipariş, bulunamayan sipariş, kapanmış/iptal/taslak sipariş, zaten hesabı olan sipariş, farklı masalar (yalnız aynı masadaki veya birleştirilmiş masa grubundaki siparişler birleştirilir).
+F0046 (PO:2026-11-06) ikinci adım: birden çok siparişi tek hesapta toplayan gerçek sunucu akışı. `POST /api/v1/terminals/{terminalId}/billing/bills/merge` gövdesindeki en az iki siparişin aktif kalemlerini `BillSourceOperations.CreateMergedBill` ile tek hesapta toplar, hesabı çağıran terminale sahiplendirir (V1-RMD-843) ve masa işaretçisini bağlar. Yetki `bills.split`; aynı `IdempotencyKey` ile tekrar gönderim aynı hesabı döndürür. Reddedilen durumlar Türkçe hata kodlarıyla döner: tek sipariş/yinelenen sipariş (MERGE_NEEDS_TWO_ORDERS), farklı masalar (MERGE_DIFFERENT_TABLES; PO 2026-11-06: yalnız aynı masadaki veya birleştirilmiş masa grubundaki açık siparişler, birleştirilmiş masa grubunun siparişleri masa birleştirmesi sırasında birincil masaya taşındığı için aynı masa kimliğini taşır), QR/çevrimiçi kaynaklı sipariş (MERGE_ORDER_SOURCE; yalnız kasa ve garson siparişleri; QR iadesi kanal raporunda sipariş bazlı olduğundan), bulunamayan sipariş (404), kapanmış/iptal/taslak/onay bekleyen sipariş (UNSUPPORTED_ORDER_STATE), zaten hesabı olan sipariş (MERGE_ORDER_ALREADY_BILLED, 409), bir kısmı kasaya gönderilmiş bir kısmı masada (MERGE_MIXED_SENT, 409), işlem anahtarı başka bir birleştirme için kullanılmış (MERGE_KEY_REUSED, 409).
+
+İdempotency: hesap numarası işlem anahtarından türetilir (`BILL-M-<anahtar özeti>`); aynı anahtar ve aynı sipariş kümesi aynı hesabı döndürür, aynı anahtar başka küme MERGE_KEY_REUSED; iki terminal aynı siparişleri yarıştırırsa kalem kısıtı tek hesabı bırakır, kaybeden mevcut hesabı görür.
 
 Eşit bölmede kuruş kalıntısı son kişide kalır (`SplitEngine`, F0349 kararı); bu görev bölme kodunu değiştirmez, birleşik hesap mevcut bölme tasarımı uçlarıyla bölünür.
 
