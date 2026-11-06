@@ -1,0 +1,8 @@
+M1-approved-outcome: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:    15, Süre: 3 s - ALKAROS.Reporting.P
+M2-manual-approved: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:    15, Süre: 3 s - ALKAROS.Reporting.P
+M3-account-branch: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:    15, Süre: 3 s - ALKAROS.Reporting.P
+M4-cash-branch: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:    15, Süre: 3 s - ALKAROS.Reporting.P
+M5-pending-manual: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    15, Atlanan:     0, Toplam:    16, Süre: 4 s - ALKAROS.Reporting.P
+M6-reconciliation-outcome: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    15, Atlanan:     0, Toplam:    16, Süre: 4 s - ALKAROS.Reporting.P
+M7-cash-before-account: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    15, Atlanan:     0, Toplam:    16, Süre: 4 s - ALKAROS.Reporting.P
+M8-card-before-cash: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    15, Atlanan:     0, Toplam:    16, Süre: 4 s - ALKAROS.Reporting.P

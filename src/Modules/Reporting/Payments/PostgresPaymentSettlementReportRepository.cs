@@ -5,12 +5,34 @@ namespace ALKAROS.Reporting.Payments;
 /// <summary>Postgres-backed <see cref="IPaymentSettlementReportRepository"/> (V13-RPT-001). Read-only.</summary>
 public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettlementReportRepository
 {
-    // A business date's payment-mix/cash-session/reconciliation rows are
+    // A business date's cash-session and reconciliation rows are
     // bounded by real-world daily volume (see V13-RMD-087's own load-test
     // baseline). A single-day report outgrowing this is itself a signal
     // something is wrong (a stuck window, a filter bug) — fail loud rather
     // than silently truncate.
     private const int MaxScanRows = 20_000;
+
+    // MethodSql has exactly four possible results, so a method grouping can never return more rows than this.
+    private const int MethodCount = 4;
+
+    // The payments table stores no method, so it is read from the records each way leaves behind. Same rule as
+    // Host PaymentMethodLookup (modules cannot reference the Host): an account charge, a cash sale, an approved card
+    // attempt or an approved manual card confirmation; transfer is what is left because the producers of approved
+    // payments are a closed set. EXISTS keeps one row per payment however many attempts it has, and a declined or
+    // pending attempt does not make a card payment.
+    private const string MethodSql = """
+        CASE
+            WHEN EXISTS (SELECT 1 FROM customer_account.account_transactions a
+                         WHERE a.source_reference_type = 'Payment' AND a.source_reference_id = p.payment_id
+                           AND a.transaction_type = 'Charge') THEN 'CustomerAccount'
+            WHEN EXISTS (SELECT 1 FROM cash.cash_transactions c
+                         WHERE c.related_payment_id = p.payment_id AND c.type = 'Sale') THEN 'Cash'
+            WHEN EXISTS (SELECT 1 FROM payments.card_settlement_attempts s
+                         WHERE s.payment_id = p.payment_id AND s.outcome = 'Approved')
+              OR EXISTS (SELECT 1 FROM payments.manual_card_confirmations m
+                         WHERE m.payment_id = p.payment_id AND m.status = 'Approved') THEN 'BankCard'
+            ELSE 'Eft' END
+        """;
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -24,36 +46,14 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
     {
         var results = new List<PaymentMixEntry>();
 
-        // Method inference by elimination (see PaymentMixEntry's own doc
-        // comment for why no column directly stores it): a Sale-typed cash
-        // transaction linked to the payment means Cash; a
-        // card_settlement_attempts row means BankCard; neither means Eft —
-        // the only other method V13-PAY-003's registry actually enables
-        // today.
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT
-                CASE
-                    WHEN cash_tx.related_payment_id IS NOT NULL THEN 'Cash'
-                    WHEN csa.payment_id IS NOT NULL THEN 'BankCard'
-                    ELSE 'Eft'
-                END AS method,
-                COUNT(*) AS approved_count,
-                COALESCE(SUM(p.approved_amount), 0) AS approved_amount
+            SELECT {MethodSql} AS method, COUNT(*) AS approved_count, COALESCE(SUM(p.approved_amount), 0) AS approved_amount
             FROM payments.payments p
-            LEFT JOIN cash.cash_transactions cash_tx
-                ON cash_tx.related_payment_id = p.payment_id AND cash_tx.type = 'Sale'
-            LEFT JOIN payments.card_settlement_attempts csa
-                ON csa.payment_id = p.payment_id
             WHERE p.status IN ('Approved', 'Refunded', 'PartiallyRefunded')
               AND p.approved_at >= $1 AND p.approved_at < $2
-            GROUP BY
-                CASE
-                    WHEN cash_tx.related_payment_id IS NOT NULL THEN 'Cash'
-                    WHEN csa.payment_id IS NOT NULL THEN 'BankCard'
-                    ELSE 'Eft'
-                END
-            LIMIT {MaxScanRows + 1};
+            GROUP BY 1
+            LIMIT {MethodCount};
             """);
         command.Parameters.AddWithValue(windowStart.UtcDateTime);
         command.Parameters.AddWithValue(windowEnd.UtcDateTime);
@@ -67,28 +67,15 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
                 reader.GetDecimal(2)));
         }
 
-        if (results.Count > MaxScanRows)
-            throw new InvalidOperationException(
-                $"Payment mix report returned more than {MaxScanRows} groups; narrow the filter.");
-
         // A refund lowers the method's amount on the day it was paid back, not on the day of the original payment.
         await using var refunds = _dataSource.CreateCommand(
-            """
-            SELECT
-                CASE
-                    WHEN cash_tx.related_payment_id IS NOT NULL THEN 'Cash'
-                    WHEN csa.payment_id IS NOT NULL THEN 'BankCard'
-                    ELSE 'Eft'
-                END AS method,
-                COALESCE(SUM(r.amount), 0) AS refunded_amount
+            $"""
+            SELECT {MethodSql} AS method, COALESCE(SUM(r.amount), 0) AS refunded_amount
             FROM payments.payment_reversals r
             JOIN payments.payments p ON p.payment_id = r.payment_id
-            LEFT JOIN cash.cash_transactions cash_tx
-                ON cash_tx.related_payment_id = p.payment_id AND cash_tx.type = 'Sale'
-            LEFT JOIN payments.card_settlement_attempts csa
-                ON csa.payment_id = p.payment_id
             WHERE r.occurred_at >= $1 AND r.occurred_at < $2
-            GROUP BY 1;
+            GROUP BY 1
+            LIMIT {MethodCount};
             """);
         refunds.Parameters.AddWithValue(windowStart.UtcDateTime);
         refunds.Parameters.AddWithValue(windowEnd.UtcDateTime);

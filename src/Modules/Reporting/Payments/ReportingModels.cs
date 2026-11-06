@@ -39,23 +39,16 @@ public sealed record PaymentSettlementReportFilter(
 }
 
 /// <summary>
-/// One tender method's real totals for the reporting window (V0-DOM-008:
-/// "SUM(allocated_amount) per method; methods sum to paid_amount"). The
-/// method itself is not a stored column on <c>payments.payments</c> (no
-/// schema in this codebase records it directly) — it is inferred from which
-/// side-table a real handler wrote alongside the Payment: a matching
-/// <c>cash.cash_transactions</c> Sale row means Cash (V13-CSH-002); a
-/// matching <c>payments.card_settlement_attempts</c> row means BankCard
-/// (V13-PAY-004); an Approved payment with an allocation but neither side
-/// row means Eft (V13-PAY-005, which — like Cash and BankCard — has no
-/// dedicated per-payment table of its own, so it is the only remaining
-/// registered method by elimination; see <c>PaymentSettlementReportRepository
-/// .PaymentMixSql</c>'s own comment for the exact join). This inference is
-/// only correct as long as exactly Cash/BankCard/Eft are the registered
-/// methods (V13-PAY-003) — MealCard has no handler registered today, so it
-/// can never appear here; if MealCard is registered in the future, this
-/// method-inference query needs a fourth real discriminator, not another
-/// "by elimination" guess.
+/// One tender method's real totals for the reporting window (the sum of
+/// the allocated amounts per method; methods sum to the paid amount). The
+/// method is not a stored column on <c>payments.payments</c>; it is read from
+/// the records each way leaves behind: <c>CustomerAccount</c> (an account
+/// charge), <c>Cash</c> (a cash sale), <c>BankCard</c> (an approved card
+/// attempt or an approved manual card confirmation) and <c>Eft</c> (what is
+/// left, because the producers of approved payments are a closed set; see
+/// <c>PostgresPaymentSettlementReportRepository.MethodSql</c>). A meal card
+/// has no handler today; registering one needs a fifth real discriminator,
+/// not another "by elimination" guess.
 /// </summary>
 public sealed record PaymentMixEntry(
     string Method,

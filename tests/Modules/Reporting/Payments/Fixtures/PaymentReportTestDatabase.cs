@@ -152,6 +152,60 @@ public sealed class PaymentReportTestDatabase : PgTestDatabase
             ("allocation_id", allocationId));
     }
 
+    public async Task SeedUnapprovedCardSettlementAttemptAsync(Guid paymentId, Guid billId, string outcome)
+    {
+        await ExecuteAsync(
+            """
+            INSERT INTO payments.card_settlement_attempts
+                (card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id, outcome,
+                 approved_amount, allocation_id, fiscal_handoff_queued, created_at)
+            VALUES
+                (@id, @bill, @idempotency, @correlation, @payment, @outcome, NULL, NULL, false, now());
+            """,
+            ("id", Guid.NewGuid()),
+            ("bill", billId),
+            ("idempotency", $"rpt-test-{Guid.NewGuid():N}"),
+            ("correlation", $"corr-{Guid.NewGuid():N}"),
+            ("payment", paymentId),
+            ("outcome", outcome));
+    }
+
+    public async Task SeedAccountChargeAsync(Guid paymentId, decimal amount)
+    {
+        await ExecuteAsync(
+            """
+            INSERT INTO customer_account.account_transactions
+                (id, customer_id, transaction_type, amount, source_reference_type, source_reference_id, occurred_at)
+            VALUES
+                (@id, @customer, 'Charge', @amount, 'Payment', @payment, now());
+            """,
+            ("id", Guid.NewGuid()),
+            ("customer", Guid.NewGuid()),
+            ("amount", amount),
+            ("payment", paymentId));
+    }
+
+    public async Task SeedManualCardConfirmationAsync(Guid paymentId, Guid billId, decimal amount, string status)
+    {
+        var requestedBy = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO payments.manual_card_confirmations
+                (confirmation_id, payment_id, bill_id, slip_number, amount, status, requested_by, requested_at, decided_by, decided_at)
+            VALUES
+                (@id, @payment, @bill, @slip, @amount, @status, @requested_by, now(),
+                 CASE WHEN @status = 'Pending' THEN NULL ELSE gen_random_uuid() END,
+                 CASE WHEN @status = 'Pending' THEN NULL ELSE now() END);
+            """,
+            ("id", Guid.NewGuid()),
+            ("payment", paymentId),
+            ("bill", billId),
+            ("slip", $"SLIP-{Guid.NewGuid():N}"),
+            ("amount", amount),
+            ("status", status),
+            ("requested_by", requestedBy));
+    }
+
     public async Task SeedReconciliationCaseAsync(
         string caseType, string status, decimal discrepancyAmount, DateTimeOffset openedAt)
     {

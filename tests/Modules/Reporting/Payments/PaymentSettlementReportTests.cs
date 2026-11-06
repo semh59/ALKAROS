@@ -46,6 +46,74 @@ public sealed class PaymentSettlementReportTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APaymentWithSeveralCardAttemptsIsCountedOnceAndADeclinedAttemptAloneDoesNotMakeItACardPayment()
+    {
+        var bill = await _database.SeedBillAsync(300m);
+
+        var retried = await _database.SeedPaymentAsync(bill, "Approved", 75m, InWindow);
+        await _database.SeedUnapprovedCardSettlementAttemptAsync(retried, bill, "Declined");
+        await _database.SeedCardSettlementAttemptAsync(retried, bill, 75m);
+
+        var transferAfterDecline = await _database.SeedPaymentAsync(bill, "Approved", 40m, InWindow);
+        await _database.SeedUnapprovedCardSettlementAttemptAsync(transferAfterDecline, bill, "Declined");
+
+        var needsReconciliation = await _database.SeedPaymentAsync(bill, "Approved", 15m, InWindow);
+        await _database.SeedUnapprovedCardSettlementAttemptAsync(needsReconciliation, bill, "RequiresReconciliation");
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().HaveCount(2);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "BankCard" && e.ApprovedAmount == 75m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 55m && e.ApprovedCount == 2);
+    }
+
+    [Fact]
+    public async Task AccountChargedAndManuallyConfirmedCardPaymentsAreNotReportedAsEft()
+    {
+        var bill = await _database.SeedBillAsync(300m);
+
+        var charged = await _database.SeedPaymentAsync(bill, "Approved", 60m, InWindow);
+        await _database.SeedAccountChargeAsync(charged, 60m);
+
+        var manual = await _database.SeedPaymentAsync(bill, "Approved", 25m, InWindow);
+        await _database.SeedManualCardConfirmationAsync(manual, bill, 25m, "Approved");
+
+        var rejectedManual = await _database.SeedPaymentAsync(bill, "Approved", 10m, InWindow);
+        await _database.SeedManualCardConfirmationAsync(rejectedManual, bill, 10m, "Rejected");
+
+        var pendingManual = await _database.SeedPaymentAsync(bill, "Approved", 5m, InWindow);
+        await _database.SeedManualCardConfirmationAsync(pendingManual, bill, 5m, "Pending");
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().HaveCount(3);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "CustomerAccount" && e.ApprovedAmount == 60m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "BankCard" && e.ApprovedAmount == 25m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == 15m && e.ApprovedCount == 2);
+    }
+
+    [Fact]
+    public async Task WhenSeveralRecordsExistTheAccountChargeWinsOverCashAndCashOverCard()
+    {
+        var bill = await _database.SeedBillAsync(300m);
+        var session = await _database.SeedCashSessionAsync(Guid.NewGuid(), "Open", 0, 0, InWindow);
+
+        var chargedAndCash = await _database.SeedPaymentAsync(bill, "Approved", 30m, InWindow);
+        await _database.SeedAccountChargeAsync(chargedAndCash, 30m);
+        await _database.SeedCashSaleTransactionAsync(session, chargedAndCash, 30m);
+
+        var cashAndCard = await _database.SeedPaymentAsync(bill, "Approved", 20m, InWindow);
+        await _database.SeedCashSaleTransactionAsync(session, cashAndCard, 20m);
+        await _database.SeedCardSettlementAttemptAsync(cashAndCard, bill, 20m);
+
+        var result = await _service.GetReportAsync(new PaymentSettlementReportFilter(BusinessDate));
+
+        result.PaymentMix.Should().HaveCount(2);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "CustomerAccount" && e.ApprovedAmount == 30m && e.ApprovedCount == 1);
+        result.PaymentMix.Should().ContainSingle(e => e.Method == "Cash" && e.ApprovedAmount == 20m && e.ApprovedCount == 1);
+    }
+
+    [Fact]
     public async Task PaymentMixExcludesApprovedPaymentsOutsideTheBusinessDateWindow()
     {
         var bill = await _database.SeedBillAsync(50m);

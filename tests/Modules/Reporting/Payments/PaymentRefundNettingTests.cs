@@ -49,6 +49,20 @@ public sealed class PaymentRefundNettingTests : IAsyncLifetime
         refundDay.Should().ContainSingle(e => e.Method == "Eft" && e.ApprovedAmount == -100m && e.ApprovedCount == 0);
     }
 
+    [Fact]
+    public async Task ARefundOfAPaymentWithSeveralCardAttemptsIsSubtractedOnce()
+    {
+        var bill = await _database.SeedBillAsync(100m);
+        var payment = await _database.SeedPaymentAsync(bill, "Approved", 100m, PaidAt);
+        await _database.SeedUnapprovedCardSettlementAttemptAsync(payment, bill, "Declined");
+        await _database.SeedCardSettlementAttemptAsync(payment, bill, 100m);
+        await RefundAsync(payment, 30m, "PartiallyRefunded", PaidAt.AddHours(1));
+
+        var mix = (await _service.GetReportAsync(new PaymentSettlementReportFilter(PaidDay))).PaymentMix;
+
+        mix.Should().ContainSingle(e => e.Method == "BankCard" && e.ApprovedAmount == 70m && e.ApprovedCount == 1);
+    }
+
     private async Task RefundAsync(Guid paymentId, decimal amount, string status, DateTimeOffset at)
     {
         await using var command = _database.DataSource.CreateCommand(
