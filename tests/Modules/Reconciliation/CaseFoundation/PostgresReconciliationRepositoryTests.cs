@@ -243,6 +243,24 @@ public sealed class PostgresReconciliationRepositoryTests : IClassFixture<Reconc
         actions.Should().Contain(a => a.ActionType == ActionType.NoteAdded);
         actions[^1].DetailsJson.Should().Contain("Called delivery aggregator support");
     }
+    [Fact]
+    public async Task TheListLimitIsKeptBetweenOneAndFiveHundred()
+    {
+        await using (var seed = _db.DataSource.CreateCommand(
+            """
+            INSERT INTO reconciliation.cases (case_id, deduplication_key, case_type, source_a_ref, source_b_ref, severity, status)
+            SELECT gen_random_uuid(), 'limit-' || gen_random_uuid()::text, 'PaymentMismatch', 'a', 'b', 'Low', 'Dismissed'
+            FROM generate_series(1, 510);
+            """))
+        {
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        (await _service.GetCasesByStatusAsync(CaseStatus.Dismissed, 10)).Should().HaveCount(10);
+        (await _service.GetCasesByStatusAsync(CaseStatus.Dismissed, 100_000)).Should().HaveCount(500);
+        (await _service.GetCasesByStatusAsync(CaseStatus.Dismissed, -5)).Should().ContainSingle();
+        (await _service.GetCasesByStatusAsync(CaseStatus.Dismissed, 0)).Should().ContainSingle();
+    }
 }
 
 public sealed class PostgresReconciliationMigrationTests : IClassFixture<ReconciliationTestDatabase>
@@ -297,6 +315,7 @@ public sealed class PostgresReconciliationMigrationTests : IClassFixture<Reconci
             }
         }
     }
+
 }
 
 [CollectionDefinition(nameof(ReconciliationTestFixtureDefinition), DisableParallelization = true)]

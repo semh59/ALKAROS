@@ -51,6 +51,9 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
     // relation outgrew its assumption — fail loud, do not load unboundedly.
     private const int MaxUnpagedRows = 5000;
 
+    // A list read is a screen page: a negative limit would be a database error and a huge one an unbounded read.
+    private const int MaxListLimit = 500;
+
     private readonly DbDataSource _dataSource;
 
     public PostgresReconciliationRepository(DbDataSource dataSource)
@@ -407,7 +410,7 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
         await using var cmd = connection.CreateCommand();
         cmd.CommandText = sql;
         AddParameter(cmd, "status", status.ToString());
-        AddParameter(cmd, "limit", limit);
+        AddParameter(cmd, "limit", Math.Clamp(limit, 1, MaxListLimit));
 
         var list = new List<ReconciliationCaseRecord>();
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);

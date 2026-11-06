@@ -379,6 +379,45 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCaseHistoryRefusesChangesDeletesAndBulkClearsAndRollingBackLiftsTheGuardAndItAppliesOnceMore()
+    {
+        const string guard = "SELECT count(*) FROM pg_trigger WHERE tgname IN ('trg_case_actions_guard', 'trg_case_actions_clear_guard');";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        var (caseId, actionId) = (Guid.NewGuid(), Guid.NewGuid());
+        await source.CreateCommand(
+            $"""
+            INSERT INTO reconciliation.cases (case_id, deduplication_key, case_type, source_a_ref, source_b_ref, severity, status)
+            VALUES ('{caseId}', 'guard-{caseId:N}', 'PaymentMismatch', 'a', 'b', 'Low', 'Open');
+            INSERT INTO reconciliation.case_actions (action_id, case_id, action_type, performed_by)
+            VALUES ('{actionId}', '{caseId}', 'Created', gen_random_uuid());
+            """).ExecuteNonQueryAsync();
+
+        foreach (var statement in new[]
+        {
+            $"UPDATE reconciliation.case_actions SET action_type = 'Resolved' WHERE action_id = '{actionId}';",
+            $"DELETE FROM reconciliation.case_actions WHERE action_id = '{actionId}';",
+            "TRUNCATE reconciliation.case_actions;",
+        })
+        {
+            var failure = await Assert.ThrowsAsync<PostgresException>(() => source.CreateCommand(statement).ExecuteNonQueryAsync());
+            Assert.Equal(PostgresErrorCodes.IntegrityConstraintViolation, failure.SqlState);
+            Assert.Contains("case_actions is append-only", failure.MessageText);
+        }
+
+        Assert.Equal(1L, await ScalarAsync<long>(source,
+            $"SELECT count(*) FROM reconciliation.case_actions WHERE action_id = '{actionId}' AND action_type = 'Created';"));
+        Assert.Equal(2L, await ScalarAsync<long>(source, guard));
+
+        RollBackDownTo("220");
+        Assert.Equal(0L, await ScalarAsync<long>(source, guard));
+        Assert.Equal(0L, await ScalarAsync<long>(source, "SELECT count(*) FROM pg_proc WHERE proname = 'case_actions_guard';"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(2L, await ScalarAsync<long>(source, guard));
+    }
+
+    [Fact]
     public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";

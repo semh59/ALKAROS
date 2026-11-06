@@ -1,0 +1,5 @@
+M1-clamp-lower: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 1 s - ALKAROS.Reconciliat
+M2-clamp-upper: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 2 s - ALKAROS.Reconciliat
+M3-update-allowed: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 13 s - ALKAROS.Host.Tests
+M4-delete-allowed: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 12 s - ALKAROS.Host.Tests
+M5-clear-on-wrong-table: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:
