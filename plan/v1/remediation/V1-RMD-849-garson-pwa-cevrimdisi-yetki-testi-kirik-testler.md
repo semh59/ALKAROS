@@ -1,7 +1,7 @@
 # V1-RMD-849 - Garson PWA çevrimdışı yetki testi: kırık üç test
 
 - Task ID: V1-RMD-849
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
