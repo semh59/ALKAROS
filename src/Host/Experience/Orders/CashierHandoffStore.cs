@@ -204,10 +204,10 @@ public sealed class CashierHandoffStore
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {
         await using var money = new NpgsqlCommand(
-            """
+            $"""
             SELECT EXISTS (
                 SELECT 1 FROM billing.bills b
-                WHERE b.order_id = @order_id
+                WHERE {BillOrderLink.Matches("b", "@order_id")}
                   AND (b.status = 'Paid'
                        OR EXISTS (SELECT 1 FROM payments.payment_allocations a WHERE a.bill_id = b.bill_id)
                        OR EXISTS (SELECT 1 FROM payments.payments p
@@ -221,7 +221,7 @@ public sealed class CashierHandoffStore
         CancellationToken cancellationToken = default)
     {
         await using var cmd = _dataSource.CreateCommand(
-            """
+            $"""
             SELECT o.order_id,
                    o.order_number,
                    COALESCE(t.table_number, '—') AS table_number,
@@ -244,7 +244,7 @@ public sealed class CashierHandoffStore
                 SELECT b.bill_id,
                        (SELECT SUM(pa.amount) FROM payments.payment_allocations pa WHERE pa.bill_id = b.bill_id) AS paid_amount
                 FROM billing.bills b
-                WHERE b.order_id = o.order_id AND b.status <> 'Cancelled'
+                WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status <> 'Cancelled'
                 ORDER BY b.opened_at DESC
                 LIMIT 1
             ) ob ON TRUE
@@ -257,7 +257,7 @@ public sealed class CashierHandoffStore
               -- queue must look at the bill, not the order.
               AND NOT EXISTS (
                     SELECT 1 FROM billing.bills pb
-                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid')
+                    WHERE {BillOrderLink.Matches("pb", "o.order_id")} AND pb.status = 'Paid')
             GROUP BY o.order_id, o.order_number, t.table_number, o.total, o.created_at, o.table_id, ob.bill_id, ob.paid_amount
             ORDER BY o.created_at;
             """);

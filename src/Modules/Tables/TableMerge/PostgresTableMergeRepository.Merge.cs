@@ -146,7 +146,7 @@ public sealed partial class PostgresTableMergeRepository
         // changes, so its allocations never move to the wrong Bill (see
         // PaymentAwareTableTopologyPolicy's own doc comment).
         var participantBillIdsForPolicy = new List<Guid>();
-        const string checkBillsSql = $"""
+        var checkBillsSql = $"""
             SELECT bill_id
             FROM {BillsTable}
             WHERE table_id = ANY(@table_ids) AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
@@ -186,7 +186,7 @@ public sealed partial class PostgresTableMergeRepository
             }
         }
 
-        const string selectPrimaryBillsSql = $"""
+        var selectPrimaryBillsSql = $"""
             SELECT bill_id FROM {BillsTable}
             WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
             """;
@@ -222,7 +222,7 @@ public sealed partial class PostgresTableMergeRepository
 
             // Discover participant bills
             var participantBillIds = new List<Guid>();
-            const string selectPartBillsSql = $"""
+            var selectPartBillsSql = $"""
                 SELECT bill_id FROM {BillsTable}
                 WHERE table_id = @part_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
                 """;

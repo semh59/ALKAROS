@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -19,19 +20,34 @@ internal static class BillMoneyGuard
         await lockCommand.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    /// <summary>Locks every bill of the order not locked yet, in id order (the order every caller takes).</summary>
-    public static async Task LockOrderBillsAsync(
+    public static Task LockOrderBillsAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid orderId,
+        HashSet<Guid> lockedBillIds,
+        CancellationToken cancellationToken) =>
+        LockBillsOfOrdersAsync(connection, transaction, [orderId], lockedBillIds, cancellationToken);
+
+    /// <summary>
+    /// Locks every bill of the orders not locked yet, all of them in one id order (the order every caller takes), so a bill
+    /// merged from several orders cannot be locked crosswise by two callers that start from different orders.
+    /// </summary>
+    public static async Task LockBillsOfOrdersAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid[] orderIds,
         HashSet<Guid> lockedBillIds,
         CancellationToken cancellationToken)
     {
         var billIds = new List<Guid>();
         await using (var read = new NpgsqlCommand(
-            "SELECT bill_id FROM billing.bills WHERE order_id = @order_id ORDER BY bill_id;", connection, transaction))
+            $"""
+            SELECT DISTINCT b.bill_id FROM billing.bills b
+            JOIN unnest(@order_ids) AS u(order_id) ON {BillOrderLink.Matches("b", "u.order_id")}
+            ORDER BY b.bill_id;
+            """, connection, transaction))
         {
-            read.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+            read.Parameters.Add("order_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderIds;
             await using var reader = await read.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
                 billIds.Add(reader.GetGuid(0));
@@ -61,7 +77,7 @@ internal static class BillMoneyGuard
             $"""
             SELECT EXISTS (
                 SELECT 1 FROM billing.bills ob
-                WHERE ob.order_id = @order_id
+                WHERE {BillOrderLink.Matches("ob", "@order_id")}
                   AND (ob.status = 'Paid' OR ({BillMoneyPredicate("ob.bill_id")})));
             """, connection, transaction);
         money.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;

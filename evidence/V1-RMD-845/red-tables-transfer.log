@@ -1,0 +1,30 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Tables.TableTransfer.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Tables\TableTransfer\bin\Debug\net8.0\ALKAROS.Tables.TableTransfer.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Tables\TableTransfer\bin\Debug\net8.0\ALKAROS.Tables.TableTransfer.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:03.19]     ALKAROS.Tables.TableTransfer.Tests.PostgresTableTransferTests.AMergedCheckSentToTheTillStaysBehindWhenTheTableMoves [FAIL]
+  Başarısız ALKAROS.Tables.TableTransfer.Tests.PostgresTableTransferTests.AMergedCheckSentToTheTillStaysBehindWhenTheTableMoves [1 s]
+  Hata İletisi:
+   Expected (GetBillAsync(mergedBill)).TableId to be {fc007f5f-6839-4c55-a5d1-8cce5cba747c}, but found {ef723289-9f3d-4137-9af9-07676b0d7634}.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.NullableGuidAssertions`1.Be(Nullable`1 expected, String because, Object[] becauseArgs)
+   at ALKAROS.Tables.TableTransfer.Tests.PostgresTableTransferTests.AMergedCheckSentToTheTillStaysBehindWhenTheTableMoves() in D:\PROJECT\ALKAROS\tests\Modules\Tables\TableTransfer\PostgresTableTransferTests.cs:line 575
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Tables.TableTransfer.Tests.dll (net8.0)
+exit 1

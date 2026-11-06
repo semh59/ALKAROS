@@ -1,0 +1,18 @@
+billfoundation: Başarılı!  - Başarısız:     0, Başarılı:    51, Atlanan:     0, Toplam:    51, Süre: 1 s - ALKAROS.Billing.Bil
+tables-transfer: Başarılı!  - Başarısız:     0, Başarılı:    42, Atlanan:     0, Toplam:    42, Süre: 2 s - ALKAROS.Tables.Tabl
+tables-merge: Başarılı!  - Başarısız:     0, Başarılı:    46, Atlanan:     0, Toplam:    46, Süre: 2 s - ALKAROS.Tables.Tabl
+tables-pointers: Başarılı!  - Başarısız:     0, Başarılı:    23, Atlanan:     0, Toplam:    23, Süre: 1 s - ALKAROS.Tables.Curr
+tables-lifecycle: Başarılı!  - Başarısız:     0, Başarılı:    62, Atlanan:     0, Toplam:    62, Süre: 526 ms - ALKAROS.Tables.T
+tables-topology: Başarılı!  - Başarısız:     0, Başarılı:    13, Atlanan:     0, Toplam:    13, Süre: 279 ms - ALKAROS.Tables.P
+tables-reservations: Başarılı!  - Başarısız:     0, Başarılı:    34, Atlanan:     0, Toplam:    34, Süre: 1 s - ALKAROS.Tables.Rese
+security: Başarılı!  - Başarısız:     0, Başarılı:    44, Atlanan:     0, Toplam:    44, Süre: 2 m 2 s - ALKAROS.Host.Ex
+reporting: Başarılı!  - Başarısız:     0, Başarılı:    31, Atlanan:     0, Toplam:    31, Süre: 1 m 29 s - ALKAROS.Host.E
+tables-host: Başarılı!  - Başarısız:     0, Başarılı:    40, Atlanan:     0, Toplam:    40, Süre: 1 m 56 s - ALKAROS.Host.E
+orders-host: 
+billing-host: Başarılı!  - Başarısız:     0, Başarılı:   245, Atlanan:     0, Toplam:   245, Süre: 11 m 31 s - ALKAROS.Host.
+customeraccounts: Başarılı!  - Başarısız:     0, Başarılı:    22, Atlanan:     0, Toplam:    22, Süre: 2 m 14 s - ALKAROS.Host.E
+cashsession: Başarılı!  - Başarısız:     0, Başarılı:   106, Atlanan:     0, Toplam:   106, Süre: 12 m 5 s - ALKAROS.Host.E
+paymenttender: Başarılı!  - Başarısız:     0, Başarılı:    92, Atlanan:     0, Toplam:    92, Süre: 9 m 30 s - ALKAROS.Host.E
+arch-boundaries: Başarılı!  - Başarısız:     0, Başarılı:    31, Atlanan:     0, Toplam:    31, Süre: 11 s - ALKAROS.Architectu
+arch-api: Başarılı!  - Başarısız:     0, Başarılı:    17, Atlanan:     0, Toplam:    17, Süre: 48 s - ALKAROS.Architectu
+ALL845DONE

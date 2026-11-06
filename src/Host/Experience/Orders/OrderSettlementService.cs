@@ -35,13 +35,30 @@ public sealed class OrderSettlementService
         _tables = tables ?? throw new ArgumentNullException(nameof(tables));
     }
 
-    /// <returns>True when the order is Completed afterwards (now or already).</returns>
+    /// <returns>True when every order of the bill is Completed afterwards (now or already).</returns>
     public async Task<bool> CompleteForPaidBillAsync(Guid billId, CancellationToken cancellationToken = default)
     {
-        var bill = await _bills.GetByIdAsync(billId, cancellationToken);
-        if (bill?.OrderId is not { } orderId)
-            return false;
+        var orderIds = await OrderIdsOfBillAsync(billId, cancellationToken);
+        var completed = orderIds.Count > 0;
+        foreach (var orderId in orderIds)
+            completed &= await CompleteOrderWhenSettledAsync(orderId, cancellationToken);
+        return completed;
+    }
 
+    private async Task<List<Guid>> OrderIdsOfBillAsync(Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(BillOrderLink.OrderIdsOfBill);
+        command.Parameters.AddWithValue("bill_id", billId);
+        var orderIds = new List<Guid>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            orderIds.Add(reader.GetGuid(0));
+        return orderIds;
+    }
+
+    /// <returns>True when the order is Completed afterwards (now or already).</returns>
+    public async Task<bool> CompleteOrderWhenSettledAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
         var siblings = await _bills.GetByOrderIdAsync(orderId, cancellationToken);
         var allSettled = siblings.All(b => b.Status is BillState.Paid or BillState.Cancelled)
             && siblings.Any(b => b.Status == BillState.Paid);

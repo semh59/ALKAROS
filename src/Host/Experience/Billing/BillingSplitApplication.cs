@@ -164,7 +164,7 @@ public static class BillingSplitApplication
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.BillsCancel, cancellationToken);
             var result = await store.CancelAsync(
                 billId, request.Reason, request.CancelOrder, principal.UserId, context.TraceIdentifier, cancellationToken);
-            if (result.OrderCancelled && result.OrderId is { } cancelledOrderId)
+            foreach (var cancelledOrderId in result.CancelledOrderIds ?? [])
                 await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", cancelledOrderId, null, cancellationToken);
             await DualScreenApplication.NotifyCustomerDisplayAsync(
                 customerDisplayHub, loggerFactory, terminalId, billId, "BillCancelled", cancellationToken);

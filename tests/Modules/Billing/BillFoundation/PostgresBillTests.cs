@@ -110,6 +110,31 @@ public sealed class PostgresBillTests : IClassFixture<BillingTestDatabase>
     }
 
     [Fact]
+    public async Task AMergedBillIsFoundThroughEveryOrderItIsMadeOfAndCancellingThroughOneFreesAllItsItems()
+    {
+        var product1 = await SeedProduct("Pide", 150m);
+        var product2 = await SeedProduct("Kola", 40m);
+        var table = await SeedTable("Masa 7");
+        var order1 = await CreateAndSaveOrder(product1, "Pide", 150m, table);
+        var order2 = await CreateAndSaveOrder(product2, "Kola", 40m, table);
+        var merged = BillSourceOperations.CreateMergedBill(
+            Guid.NewGuid(), UniqueBillNumber(), [order1.Items[0], order2.Items[0]], table);
+        await _bills.AddAsync(merged);
+
+        Assert.Equal(merged.Id, Assert.Single(await _bills.GetByOrderIdAsync(order1.Id)).Id);
+        Assert.Equal(merged.Id, Assert.Single(await _bills.GetByOrderIdAsync(order2.Id)).Id);
+
+        await using var connection = await _dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var cancelled = await _bills.CancelActiveBillsForOrderAsync(order2.Id, DateTimeOffset.UtcNow, connection, transaction);
+        await transaction.CommitAsync();
+
+        Assert.Equal(1, cancelled);
+        Assert.Equal(BillState.Cancelled, (await _bills.GetByIdAsync(merged.Id))!.Status);
+        await _bills.AddAsync(Bill.FromOrder(Guid.NewGuid(), UniqueBillNumber(), order1));
+    }
+
+    [Fact]
     public async Task SplitOrderPartitionAcrossBillsPersistsLosslessly()
     {
         // Positive 2 (V0-DOM-002): Split one Order across 2 Bills

@@ -76,11 +76,15 @@ public sealed class PostgresBusinessDayTotalsReader : IBusinessDayTotalsReader
               AND o.source <> 'Online'
               AND NOT (
                EXISTS (SELECT 1 FROM billing.bills rb
-                       WHERE rb.order_id = o.order_id AND rb.status = 'Cancelled'
+                       WHERE (rb.order_id = o.order_id OR EXISTS (SELECT 1 FROM billing.bill_items rbi
+                                          JOIN orders.order_items rbo ON rbo.order_item_id = rbi.order_item_id
+                                          WHERE rbi.bill_id = rb.bill_id AND rbo.order_id = o.order_id)) AND rb.status = 'Cancelled'
                          AND EXISTS (SELECT 1 FROM payments.payments rp
                                      WHERE rp.bill_id = rb.bill_id AND rp.status = 'Refunded'))
                AND NOT EXISTS (SELECT 1 FROM billing.bills pb
-                               WHERE pb.order_id = o.order_id AND pb.status = 'Paid'))),
+                               WHERE (pb.order_id = o.order_id OR EXISTS (SELECT 1 FROM billing.bill_items pbi
+                                          JOIN orders.order_items pbo ON pbo.order_item_id = pbi.order_item_id
+                                          WHERE pbi.bill_id = pb.bill_id AND pbo.order_id = o.order_id)) AND pb.status = 'Paid'))),
         voids AS (
             SELECT o.serving_user_id
             FROM audit.audit_events a

@@ -55,6 +55,20 @@ public sealed class BusinessDayOrderCountRefundTests : IAsyncLifetime
         Assert.Equal(1, totals.OrderCount);
     }
 
+    [Fact]
+    public async Task AMergedBillWhoseEveryPaymentWasRefundedKeepsBothOfItsOrdersOutOfTheCount()
+    {
+        await _database.SeedOrderAsync(At, "Completed");
+        await _database.SeedOrderAsync(At, "Completed");
+        var orders = await OrderIdsAsync();
+
+        await LinkMergedBillAsync(orders[0], orders[1], "Cancelled", "Refunded");
+
+        var totals = await new PostgresBusinessDayTotalsReader(_database.DataSource).ReadAsync(Day);
+
+        Assert.Equal(0, totals.OrderCount);
+    }
+
     private async Task<List<Guid>> OrderIdsAsync()
     {
         await using var command = _database.DataSource.CreateCommand(
@@ -80,6 +94,44 @@ public sealed class BusinessDayOrderCountRefundTests : IAsyncLifetime
         command.Parameters.AddWithValue("bill", billId);
         command.Parameters.AddWithValue("number", "RF-" + billId.ToString("N")[..12]);
         command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("status", billStatus);
+        command.Parameters.AddWithValue("payment_status", paymentStatus);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>One bill with no order id that holds one item of each of the two orders.</summary>
+    private async Task LinkMergedBillAsync(Guid firstOrderId, Guid secondOrderId, string billStatus, string paymentStatus)
+    {
+        var billId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product, @sku, 'Dish', 1, 1, 100);
+            INSERT INTO orders.order_items (
+                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, tax_amount, net_amount, gross_amount,
+                status, kitchen_state, portion_reservation_status, created_at, updated_at)
+            VALUES (@first_item, @first_order, @product, 'Dish', 1, 100, 10, 10, 100, 110, 'Active', 'Sent', 'NotApplicable', now(), now()),
+                   (@second_item, @second_order, @product, 'Dish', 1, 100, 10, 10, 100, 110, 'Active', 'Sent', 'NotApplicable', now(), now());
+            INSERT INTO billing.bills (bill_id, bill_number, order_id, status, payable_amount, opened_at, created_at, updated_at)
+            VALUES (@bill, @number, NULL, @status, 100, now(), now(), now());
+            INSERT INTO billing.bill_items (
+                bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, tax_amount, net_amount,
+                gross_amount, line_type, created_at, updated_at)
+            VALUES (gen_random_uuid(), @bill, @first_item, @product, 'Dish', 1, 100, 10, 10, 100, 110, 'Sale', now(), now()),
+                   (gen_random_uuid(), @bill, @second_item, @product, 'Dish', 1, 100, 10, 10, 100, 110, 'Sale', now(), now());
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount,
+                                           initiated_at, tendered_at, approved_at, created_at, updated_at)
+            VALUES (gen_random_uuid(), @bill, @payment_status, 100, 100, 100, now(), now(), now(), now(), now());
+            """);
+        command.Parameters.AddWithValue("product", productId);
+        command.Parameters.AddWithValue("sku", "SKU-" + productId.ToString("N")[..8]);
+        command.Parameters.AddWithValue("first_order", firstOrderId);
+        command.Parameters.AddWithValue("second_order", secondOrderId);
+        command.Parameters.AddWithValue("first_item", Guid.NewGuid());
+        command.Parameters.AddWithValue("second_item", Guid.NewGuid());
+        command.Parameters.AddWithValue("bill", billId);
+        command.Parameters.AddWithValue("number", "RF-M-" + billId.ToString("N")[..10]);
         command.Parameters.AddWithValue("status", billStatus);
         command.Parameters.AddWithValue("payment_status", paymentStatus);
         await command.ExecuteNonQueryAsync();

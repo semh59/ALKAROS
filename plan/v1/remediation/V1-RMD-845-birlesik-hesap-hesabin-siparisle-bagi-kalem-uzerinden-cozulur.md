@@ -1,7 +1,7 @@
 # V1-RMD-845 - Birleşik hesap: hesabın siparişle bağı kalem üzerinden çözülür
 
 - Task ID: V1-RMD-845
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
@@ -15,6 +15,8 @@ Bu görev uç nokta eklemeden önce tek ilişkiyi kurar: bir hesap bir siparişe
 ## Owned surface
 
 - `evidence/V1-RMD-845/**`
+- `src/Modules/Billing/BillFoundation/BillOrderLink.cs`
+- `src/Modules/Tables/TableBillOrderLink.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Billing/BillFoundation/IBillRepository.cs — kalem yolu ve kaynak sipariş sorgusu.
   - src/Modules/Billing/BillFoundation/PostgresBillRepository.cs — kalem yolu, kaynak sipariş sorgusu, siparişe bağlı iptalde kalem serbest bırakma.
@@ -22,6 +24,7 @@ Bu görev uç nokta eklemeden önce tek ilişkiyi kurar: bir hesap bir siparişe
   - src/Host/Experience/Billing/BillClosureSweeper.cs — onarım sorgusu.
   - src/Host/Experience/SecurityAdministration/OrderBacklogAdministration.cs — bekleyen sipariş sayımı ve toplu kapatma.
   - src/Host/Experience/Billing/BillCancellation.cs — birleşik hesapta `cancelOrder` davranışı.
+  - src/Host/Experience/Billing/BillingSplitApplication.cs — iptalde her kaynak sipariş için kasa kuyruğu duyurusu.
   - src/Host/Experience/Billing/BillMoneyGuard.cs — siparişin hesapları ve para denetimi.
   - src/Host/Experience/Orders/OrderCancellation/OrderCancellationStore.cs — sipariş iptalinde birleşik hesap.
   - src/Modules/Tables/TableRelease/PostgresTableReleasePort.cs — masa işaretçisi ve masayı bırakma.
@@ -31,14 +34,16 @@ Bu görev uç nokta eklemeden önce tek ilişkiyi kurar: bir hesap bir siparişe
   - src/Host/Experience/Orders/CashierHandoffStore.cs — kasaya gönderme/geri alma ve kuyruk.
   - src/Host/Experience/Orders/OrderCleanup/OrderCleanupStore.cs — askıda sipariş ölçütü.
   - src/Host/Experience/Billing/BillingSplitStore.cs — kalem kısıtı ihlalinin yarış kurtarması.
-  - src/Modules/Billing/BillFoundation/BillOrderLink.cs — hesap-sipariş ilişkisinin tek SQL tanımı (Billing ve Host kullanır).
-  - src/Modules/Tables/TableRelease/TableBillOrderLink.cs — aynı ilişkinin Tables modülü içi tanımı.
+  - src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Merge.cs — kasaya gönderilmiş hesap ayrımı (yerel SQL değişkenleri).
+  - src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Unmerge.cs — kasaya gönderilmiş hesap ayrımı (yerel SQL değişkenleri).
+  - src/Modules/Reporting/BusinessDayTotals/BusinessDayTotalsReader.cs — gün toplamında iade edilmiş iptal ve ödenmiş hesap ölçütü.
   - src/Host/Experience/Orders/ShiftSummaryStore.cs — iade edilmiş iptal hesap ve ödenmiş hesap ölçütü.
   - src/Host/Experience/Orders/TableDraft/TableDraftService.cs — taslak tüketicisi (gerekirse).
   - tests/Modules/Billing/BillFoundation/ — ilişki ve iptal testleri.
   - tests/Modules/Tables/ — masa bırakma, devir, birleştirme ve işaretçi testleri.
   - tests/Host/Experience/SecurityAdministration/ — bekleyen sipariş sayımı ve toplu kapatma testleri.
   - tests/Host/Experience/Tables/ — masa tüketici testleri.
+  - tests/Host/Experience/Reporting/ — gün toplamı testi.
   - tests/Host/Experience/Billing/ — tüketici testleri.
   - tests/Host/Experience/Orders/ — kalem koruması ve temizlik testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.

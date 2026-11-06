@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using System.Data;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Orders.OrderCancellation;
@@ -33,18 +34,18 @@ public sealed class OrderCleanupStore(NpgsqlDataSource dataSource, OrderCancella
 
     public const string EmptyOrderReason = "Ürünsüz açık sipariş zaman aşımına uğradı.";
 
-    private const string EmptyDraft =
-        """
+    private static readonly string EmptyDraft =
+        $"""
         o.status = 'Draft' AND o.source IN ('Cashier', 'Waiter') AND o.updated_at < now() - @age
         AND NOT EXISTS (SELECT 1 FROM orders.order_items i WHERE i.order_id = o.order_id AND i.status IN ('Draft', 'Active'))
-        AND NOT EXISTS (SELECT 1 FROM billing.bills b WHERE b.order_id = o.order_id)
+        AND NOT EXISTS (SELECT 1 FROM billing.bills b WHERE {BillOrderLink.Matches("b", "o.order_id")})
         """;
 
-    private const string Hanging =
-        """
+    private static readonly string Hanging =
+        $"""
         o.status IN ('Submitted', 'Accepted', 'Preparing', 'Ready') AND o.source IN ('Cashier', 'Waiter')
         AND o.created_at < now() - @age
-        AND NOT EXISTS (SELECT 1 FROM billing.bills b WHERE b.order_id = o.order_id AND b.status <> 'Cancelled')
+        AND NOT EXISTS (SELECT 1 FROM billing.bills b WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status <> 'Cancelled')
         """;
 
     public async Task<IReadOnlyList<Guid>> FindEmptyDraftsAsync(TimeSpan idleFor, int limit, CancellationToken cancellationToken)

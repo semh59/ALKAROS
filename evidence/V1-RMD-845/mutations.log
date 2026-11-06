@@ -1,0 +1,21 @@
+repo-getbyorder restored | Başarısız! - Başarısız:     3, Başarılı:    11, Atlanan:     0, Toplam:    14, Süre: 47 s - ALKAROS.
+repo-cancelopen restored | Başarısız! - Başarısız:     2, Başarılı:    12, Atlanan:     0, Toplam:    14, Süre: 46 s - ALKAROS.
+repo-cancelactive restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 58 s - ALKAROS.
+settlement-first-order-only restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 53 s - ALKAROS.
+sweeper-paid-exists restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 47 s - ALKAROS.
+sweeper-open-notexists restored | Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 46 s - ALKAROS.
+money-order restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 44 s - ALKAROS.
+cleanup-hanging restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 46 s - ALKAROS.
+handoff-money restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 45 s - ALKAROS.
+handoff-queue-lateral restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 45 s - ALKAROS.
+handoff-queue-paid restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 44 s - ALKAROS.
+shift-refunded restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 42 s - ALKAROS.
+cancel-bill-all-orders restored | Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 47 s - ALKAROS.
+release-pointer restored | Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 49 s - ALKAROS.
+BATCH1DONE
+release-order-by-null-sorting (COALESCE removed) | Başarısız: 1 (red-release-order.log) restored
+tables-transfer restored | Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 581 ms - ALKARO
+tables-merge restored | Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 654 ms - ALKARO
+tables-projector restored | Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 178 ms - ALKARO
+reporting-refunded restored | Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 9 s - ALKAROS.H
+backlog-all restored | Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 600 ms - ALKARO

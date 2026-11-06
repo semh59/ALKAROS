@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
@@ -48,10 +49,10 @@ public static class OrderBacklogAdministration
                        min(created_at) FILTER (WHERE settled) AS oldest_settled
                 FROM (
                     SELECT o.created_at,
-                           EXISTS (SELECT 1 FROM billing.bills b WHERE b.order_id = o.order_id) AS has_bill,
-                           (EXISTS (SELECT 1 FROM billing.bills b WHERE b.order_id = o.order_id AND b.status = 'Paid')
+                           EXISTS (SELECT 1 FROM billing.bills b WHERE {BillOrderLink.Matches("b", "o.order_id")}) AS has_bill,
+                           (EXISTS (SELECT 1 FROM billing.bills b WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status = 'Paid')
                             AND NOT EXISTS (SELECT 1 FROM billing.bills b
-                                            WHERE b.order_id = o.order_id AND b.status NOT IN ('Paid', 'Cancelled'))) AS settled
+                                            WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status NOT IN ('Paid', 'Cancelled'))) AS settled
                     FROM orders.orders o
                     WHERE o.status IN {LiveStatuses}
                 ) live_orders;
@@ -76,17 +77,15 @@ public static class OrderBacklogAdministration
             var isDryRun = dryRun ?? true;
             var batch = Math.Clamp(limit ?? DefaultBatch, 1, MaxBatch);
 
-            var candidates = new List<(Guid OrderId, string OrderNumber, Guid PaidBillId)>();
+            var candidates = new List<(Guid OrderId, string OrderNumber)>();
             await using (var command = dataSource.CreateCommand(
                 $"""
-                SELECT o.order_id, o.order_number,
-                       (SELECT b.bill_id FROM billing.bills b
-                        WHERE b.order_id = o.order_id AND b.status = 'Paid' ORDER BY b.opened_at LIMIT 1)
+                SELECT o.order_id, o.order_number
                 FROM orders.orders o
                 WHERE o.status IN {LiveStatuses}
-                  AND EXISTS (SELECT 1 FROM billing.bills b WHERE b.order_id = o.order_id AND b.status = 'Paid')
+                  AND EXISTS (SELECT 1 FROM billing.bills b WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status = 'Paid')
                   AND NOT EXISTS (SELECT 1 FROM billing.bills b
-                                  WHERE b.order_id = o.order_id AND b.status NOT IN ('Paid', 'Cancelled'))
+                                  WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status NOT IN ('Paid', 'Cancelled'))
                 ORDER BY o.created_at
                 LIMIT @batch;
                 """))
@@ -94,7 +93,7 @@ public static class OrderBacklogAdministration
                 command.Parameters.AddWithValue("batch", batch);
                 await using var reader = await command.ExecuteReaderAsync(cancellationToken);
                 while (await reader.ReadAsync(cancellationToken))
-                    candidates.Add((reader.GetGuid(0), reader.GetString(1), reader.GetGuid(2)));
+                    candidates.Add((reader.GetGuid(0), reader.GetString(1)));
             }
 
             var sample = candidates.Take(20).Select(c => c.OrderNumber).ToArray();
@@ -121,7 +120,7 @@ public static class OrderBacklogAdministration
             {
                 try
                 {
-                    if (await settlement.CompleteForPaidBillAsync(candidate.PaidBillId, cancellationToken))
+                    if (await settlement.CompleteOrderWhenSettledAsync(candidate.OrderId, cancellationToken))
                         closed.Add(candidate.OrderId);
                     else
                         failed++;

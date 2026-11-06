@@ -180,6 +180,21 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
         return (orderId, billId);
     }
 
+    /// <summary>Seeds two orders of one table and one bill merged from both (the bill carries no order id).</summary>
+    public async Task<(Guid FirstOrderId, Guid SecondOrderId)> SeedMergedOrdersAsync(BillState billStatus)
+    {
+        var (first, _) = await SeedOrderAsync(OrderState.Submitted, null);
+        var (second, _) = await SeedOrderAsync(OrderState.Submitted, null);
+        var orders = new PostgresOrderRepository(DataSource);
+        var firstOrder = (await orders.GetByIdAsync(first))!;
+        var secondOrder = (await orders.GetByIdAsync(second))!;
+        var merged = BillSourceOperations.CreateMergedBill(
+            Guid.NewGuid(), "BILL-M-" + Guid.NewGuid().ToString("N")[..8], [firstOrder.Items[0], secondOrder.Items[0]], firstOrder.TableId);
+        await new PostgresBillRepository(DataSource).AddAsync(merged);
+        await ExecuteAsync("UPDATE billing.bills SET status = @status WHERE bill_id = @id;", ("status", billStatus.ToString()), ("id", merged.Id));
+        return (first, second);
+    }
+
     public Task<string> OrderStatusOfAsync(Guid orderId)
         => ScalarAsync<string>($"SELECT status FROM orders.orders WHERE order_id = '{orderId:D}';");
 

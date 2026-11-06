@@ -548,6 +548,34 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
     }
 
     [Fact]
+    public async Task AMergedCheckSentToTheTillStaysBehindWhenTheTableMoves()
+    {
+        var sourceTableId = await CreateTableAsync("TR-311", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("TR-312", "Available", 1);
+        var firstSent = await CreateOrderAsync(sourceTableId, "ORD-TR33", 90m);
+        var secondSent = await CreateOrderAsync(sourceTableId, "ORD-TR34", 40m);
+        var mergedBill = await CreateMergedBillAsync(sourceTableId, "BIL-TR33", firstSent, secondSent);
+        var currentOrder = await CreateOrderAsync(sourceTableId, "ORD-TR35", 60m);
+        await SetTablePointersAsync(sourceTableId, currentOrder, null);
+        foreach (var sent in new[] { firstSent, secondSent })
+        {
+            await using var connection = await _db.DataSource.OpenConnectionAsync();
+            await using var mark = new NpgsqlCommand(
+                "INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order_id, @table_id);", connection);
+            mark.Parameters.AddWithValue("order_id", sent);
+            mark.Parameters.AddWithValue("table_id", sourceTableId);
+            await mark.ExecuteNonQueryAsync();
+        }
+
+        await _service.TransferTableAsync(new TableTransferRequest(
+            sourceTableId, 1, targetTableId, 1, "Guest moved", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetOrderAsync(currentOrder)).TableId.Should().Be(targetTableId);
+        (await GetBillAsync(mergedBill)).TableId.Should().Be(sourceTableId);
+    }
+
+    [Fact]
     public async Task WithoutASourcePointerTheNewestOrderAndBillBecomeTheTargetPointers()
     {
         var sourceTableId = await CreateTableAsync("TR-501", "Occupied", 1);
@@ -681,6 +709,44 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
         cmd.Parameters.AddWithValue("paid", paidAmount);
         await cmd.ExecuteNonQueryAsync();
         return id;
+    }
+
+    /// <summary>An open bill that belongs to no single order: it holds one item of each of the two given orders.</summary>
+    private async Task<Guid> CreateMergedBillAsync(Guid tableId, string billNumber, Guid firstOrderId, Guid secondOrderId)
+    {
+        var billId = Guid.NewGuid();
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product, @sku, 'Dish', 1, 1, 100);
+            INSERT INTO billing.bills (
+                bill_id, bill_number, table_id, order_id, status, subtotal, discount_total, tax_total, payable_amount,
+                allocated_amount, paid_amount, change_amount, currency_code, opened_at, created_at, updated_at, row_version
+            ) VALUES (@bill, @number, @table, NULL, 'Open', 0, 0, 0, 0, 0, 0, 0, 'TRY', now(), now(), now(), 1);
+            INSERT INTO orders.order_items (
+                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, net_amount, gross_amount,
+                status, kitchen_state, portion_reservation_status, created_at, updated_at)
+            VALUES (@first_item, @first_order, @product, 'Dish', 1, 100, 10, 100, 110, 'Active', 'Sent', 'NotApplicable', now(), now()),
+                   (@second_item, @second_order, @product, 'Dish', 1, 100, 10, 100, 110, 'Active', 'Sent', 'NotApplicable', now(), now());
+            INSERT INTO billing.bill_items (
+                bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, net_amount,
+                gross_amount, line_type, created_at, updated_at)
+            VALUES (gen_random_uuid(), @bill, @first_item, @product, 'Dish', 1, 100, 10, 100, 110, 'Sale', now(), now()),
+                   (gen_random_uuid(), @bill, @second_item, @product, 'Dish', 1, 100, 10, 100, 110, 'Sale', now(), now());
+            """, connection);
+        var productId = Guid.NewGuid();
+        cmd.Parameters.AddWithValue("product", productId);
+        cmd.Parameters.AddWithValue("sku", "SKU-" + productId.ToString("N")[..8]);
+        cmd.Parameters.AddWithValue("bill", billId);
+        cmd.Parameters.AddWithValue("number", billNumber);
+        cmd.Parameters.AddWithValue("table", tableId);
+        cmd.Parameters.AddWithValue("first_order", firstOrderId);
+        cmd.Parameters.AddWithValue("second_order", secondOrderId);
+        cmd.Parameters.AddWithValue("first_item", Guid.NewGuid());
+        cmd.Parameters.AddWithValue("second_item", Guid.NewGuid());
+        await cmd.ExecuteNonQueryAsync();
+        return billId;
     }
 
     private async Task<decimal> GetBillAllocatedAmountAsync(Guid billId)

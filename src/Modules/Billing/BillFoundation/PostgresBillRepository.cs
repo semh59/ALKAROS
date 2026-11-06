@@ -43,7 +43,7 @@ public sealed class PostgresBillRepository : IBillRepository
             throw new ArgumentException("Order id cannot be empty.", nameof(orderId));
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        return await ReadBillsAsync(connection, null, "order_id = @order_id", [new NpgsqlParameter("order_id", orderId)], cancellationToken);
+        return await ReadBillsAsync(connection, null, BillOrderLink.Matches(BillsTable, "@order_id"), [new NpgsqlParameter("order_id", orderId)], cancellationToken);
     }
 
     public async Task<IReadOnlyList<Bill>> GetByTableIdAsync(Guid tableId, CancellationToken cancellationToken = default)
@@ -192,7 +192,7 @@ public sealed class PostgresBillRepository : IBillRepository
 
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
-        command.CommandText = CancelStatement("order_id = @order_id AND status NOT IN ('Paid', 'Cancelled')");
+        command.CommandText = CancelStatement(BillOrderLink.Matches(BillsTable, "@order_id") + " AND status NOT IN ('Paid', 'Cancelled')");
         command.Parameters.AddWithValue("order_id", orderId);
         command.Parameters.AddWithValue("timestamp", timestamp);
         command.Parameters.AddWithValue("reason", DBNull.Value);
@@ -215,7 +215,7 @@ public sealed class PostgresBillRepository : IBillRepository
 
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
-        command.CommandText = CancelStatement("order_id = @order_id AND status NOT IN ('Paid', 'Cancelled')");
+        command.CommandText = CancelStatement(BillOrderLink.Matches(BillsTable, "@order_id") + " AND status NOT IN ('Paid', 'Cancelled')");
         command.Parameters.AddWithValue("order_id", orderId);
         command.Parameters.AddWithValue("timestamp", timestamp);
         command.Parameters.AddWithValue("reason", reason);

@@ -30,9 +30,9 @@ public sealed class PostgresTableReleasePort : ITableReleasePort
         Guid orderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
     {
         await using var command = new NpgsqlCommand(
-            """
+            $"""
             UPDATE table_mgmt.tables SET current_bill_id = NULL, row_version = row_version + 1
-            WHERE current_bill_id IN (SELECT bill_id FROM billing.bills WHERE order_id = @order_id);
+            WHERE current_bill_id IN (SELECT bill_id FROM billing.bills WHERE {TableBillOrderLink.Matches("billing.bills", "@order_id")});
             """, connection, transaction);
         command.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
         await command.ExecuteNonQueryAsync(cancellationToken);
@@ -78,13 +78,13 @@ public sealed class PostgresTableReleasePort : ITableReleasePort
             if (nextOrderId is { } followingOrderId)
             {
                 await using var advance = new NpgsqlCommand(
-                    """
+                    $"""
                     UPDATE table_mgmt.tables
                     SET current_order_id = @next_order_id,
                         current_bill_id = (
                             SELECT bill_id FROM billing.bills
                             WHERE table_id = @table_id AND status NOT IN ('Paid', 'Cancelled')
-                            ORDER BY (order_id = @next_order_id) DESC, opened_at, created_at, bill_id
+                            ORDER BY COALESCE({TableBillOrderLink.Matches("billing.bills", "@next_order_id")}, false) DESC, opened_at, created_at, bill_id
                             LIMIT 1),
                         row_version = row_version + 1
                     WHERE table_id = @table_id;

@@ -100,6 +100,39 @@ public sealed class ShiftSummaryRefundTests : IAsyncLifetime
         Assert.True(summary.SalesTotal > 0m);
     }
 
+    [Fact]
+    public async Task AMergedBillThatWasRefundedTakesTheSalesOfBothItsOrdersOutOfTheWaitersTotal()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var first = await _database.SeedBillAsync();
+        var second = await _database.SeedBillAsync();
+        await _database.SetOrderServingUserAsync(first.BillId, waiterId);
+        await _database.SetOrderServingUserAsync(second.BillId, waiterId);
+        var mergedBillId = Guid.NewGuid();
+        await using (var source = NpgsqlDataSource.Create(_database.ConnectionString))
+        await using (var merge = source.CreateCommand(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, order_id, status, currency_code, opened_at, created_at, updated_at)
+            VALUES (@merged, 'BIL-M-' || @merged, NULL, 'Open', 'TRY', now(), now(), now());
+            UPDATE billing.bill_items SET bill_id = @merged WHERE bill_id IN (@first, @second);
+            DELETE FROM billing.bills WHERE bill_id IN (@first, @second);
+            """))
+        {
+            merge.Parameters.AddWithValue("merged", mergedBillId);
+            merge.Parameters.AddWithValue("first", first.BillId);
+            merge.Parameters.AddWithValue("second", second.BillId);
+            await merge.ExecuteNonQueryAsync();
+        }
+        await RefundAwayAsync(mergedBillId, waiterId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var summary = await SummaryAsync(client, terminalId, cookie);
+
+        Assert.Equal(0m, summary.SalesTotal);
+    }
+
     private async Task RefundAwayAsync(Guid billId, Guid userId)
     {
         await _database.SeedCollectedAsync(billId, 100m, userId);

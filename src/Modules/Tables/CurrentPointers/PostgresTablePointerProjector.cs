@@ -1,3 +1,4 @@
+using ALKAROS.Tables.TableRelease;
 using System.Data;
 using System.Text.Json;
 using Npgsql;
@@ -17,7 +18,8 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
 
     // A check sent to the till stays off the table (same rule as transfer and merge).
     private const string NotSentOrder = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = orders.orders.order_id)";
-    private const string NotSentBill = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = billing.bills.order_id)";
+    private static readonly string NotSentBill =
+        $"AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE {TableBillOrderLink.Matches("billing.bills", "sc.order_id")})";
 
     // Defensive ceiling for an unpaged read: a full-table drift scan must page
     // once the table catalog outgrows this. Hitting it is a signal to scan in
@@ -358,7 +360,7 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
 
         // 3. Discover authoritative open bills (Multi-Open Source policy: most recent by opened_at DESC)
         var openBillIds = new List<Guid>();
-        const string selectBillsSql = $"""
+        var selectBillsSql = $"""
             SELECT bill_id
             FROM {BillsTable}
             WHERE table_id = @table_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill}

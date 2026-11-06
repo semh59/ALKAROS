@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using Npgsql;
@@ -44,7 +45,7 @@ public sealed class ShiftSummaryStore
 
         decimal salesTotal;
         await using (var salesCommand = _dataSource.CreateCommand(
-            """
+            $"""
             SELECT COALESCE(SUM(o.total), 0)
             FROM orders.orders o
             WHERE o.serving_user_id = @waiter_user_id
@@ -52,11 +53,11 @@ public sealed class ShiftSummaryStore
               AND o.created_at >= @since
               AND NOT (
                     EXISTS (SELECT 1 FROM billing.bills rb
-                            WHERE rb.order_id = o.order_id AND rb.status = 'Cancelled'
+                            WHERE {BillOrderLink.Matches("rb", "o.order_id")} AND rb.status = 'Cancelled'
                               AND EXISTS (SELECT 1 FROM payments.payments rp
                                           WHERE rp.bill_id = rb.bill_id AND rp.status = 'Refunded'))
                     AND NOT EXISTS (SELECT 1 FROM billing.bills pb
-                                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid'));
+                                    WHERE {BillOrderLink.Matches("pb", "o.order_id")} AND pb.status = 'Paid'));
             """))
         {
             salesCommand.Parameters.AddWithValue("waiter_user_id", waiterUserId);
@@ -89,7 +90,7 @@ public sealed class ShiftSummaryStore
         decimal tipPoolTotal;
         long waiterCount;
         await using (var tipCommand = _dataSource.CreateCommand(
-            """
+            $"""
             SELECT
                 COALESCE((SELECT SUM(a.amount) FROM billing.bill_adjustments a
                           JOIN billing.bills tb ON tb.bill_id = a.bill_id
@@ -99,11 +100,11 @@ public sealed class ShiftSummaryStore
                  WHERE o.serving_user_id IS NOT NULL AND o.status <> 'Cancelled' AND o.created_at >= @since
                    AND NOT (
                     EXISTS (SELECT 1 FROM billing.bills rb
-                            WHERE rb.order_id = o.order_id AND rb.status = 'Cancelled'
+                            WHERE {BillOrderLink.Matches("rb", "o.order_id")} AND rb.status = 'Cancelled'
                               AND EXISTS (SELECT 1 FROM payments.payments rp
                                           WHERE rp.bill_id = rb.bill_id AND rp.status = 'Refunded'))
                     AND NOT EXISTS (SELECT 1 FROM billing.bills pb
-                                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid')));
+                                    WHERE {BillOrderLink.Matches("pb", "o.order_id")} AND pb.status = 'Paid')));
             """))
         {
             tipCommand.Parameters.AddWithValue("since", startOfUtcDay);

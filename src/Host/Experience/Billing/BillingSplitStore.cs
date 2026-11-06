@@ -540,12 +540,13 @@ public sealed class BillingSplitStore
         // financial write path and silently hand back whatever bill already
         // existed for the order as if the request had succeeded. bill_number
         // is deterministic per order ($"BILL-{order.OrderNumber}"), so the
-        // only expected concurrent failure here is two requests racing to
-        // insert the same bill_number for the same order.
+        // expected concurrent failures here are two requests racing to
+        // insert the same bill_number for the same order, or a merged bill taking the order items first.
         catch (PostgresException ex)
-            when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "bills_bill_number_key")
+            when (ex.SqlState == PostgresErrorCodes.UniqueViolation
+                  && ex.ConstraintName is "bills_bill_number_key" or "bill_items_order_item_id_key")
         {
-            // If another request concurrently inserted a bill for this order/number, recover gracefully
+            // If another request concurrently inserted a bill for this order/number, or a merged bill took its items, recover gracefully
             var retryBills = await _bills.GetByOrderIdAsync(orderId, cancellationToken);
             var retryActive = retryBills.FirstOrDefault(b => b.Status != BillState.Cancelled);
             if (retryActive != null)

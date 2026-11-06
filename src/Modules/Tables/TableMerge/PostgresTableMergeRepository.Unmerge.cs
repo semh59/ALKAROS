@@ -104,7 +104,7 @@ public sealed partial class PostgresTableMergeRepository
         // unsettled (Pending/Unknown/ReconciliationRequired) Payment blocks
         // an unmerge; a merely partially allocated/paid bill is safe.
         var primaryBillIdsForPolicy = new List<Guid>();
-        const string checkBillsSql = $"""
+        var checkBillsSql = $"""
             SELECT bill_id
             FROM {BillsTable}
             WHERE table_id = @primary_id AND status NOT IN ('Cancelled');
@@ -241,7 +241,7 @@ public sealed partial class PostgresTableMergeRepository
                 remainingOrderId = (Guid)res;
         }
 
-        const string selectRemainingBillSql = $"""
+        var selectRemainingBillSql = $"""
             SELECT bill_id FROM {BillsTable}
             WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill}
               AND NOT (bill_id = ANY(@restored_ids))

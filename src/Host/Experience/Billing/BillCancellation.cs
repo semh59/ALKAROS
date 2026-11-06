@@ -9,10 +9,12 @@ using System.Text.Json;
 
 namespace ALKAROS.Host.Experience.Billing;
 
-/// <param name="CancelOrder">Also cancels the order of the bill (and its stock, portions, kitchen lines, table) in the same transaction.</param>
+/// <param name="CancelOrder">Also cancels the order of the bill (every order of a merged bill) (and its stock, portions, kitchen lines, table) in the same transaction.</param>
 public sealed record CancelBillRequestV1(string? Reason, bool CancelOrder = false);
 
-public sealed record CancelBillResultV1(Guid BillId, string Status, string Reason, DateTimeOffset CancelledAt, bool OrderCancelled = false, Guid? OrderId = null);
+public sealed record CancelBillResultV1(
+    Guid BillId, string Status, string Reason, DateTimeOffset CancelledAt, bool OrderCancelled = false, Guid? OrderId = null,
+    IReadOnlyList<Guid>? CancelledOrderIds = null);
 
 /// <summary>The bill is already paid or money has moved on it; the payment must be refunded first (PO 2026-10-13).</summary>
 public sealed class BillCancelHasPaymentException(Guid billId)
@@ -48,19 +50,21 @@ public sealed class BillCancellationStore(
         string previousStatus;
         var orderCancelled = false;
         Guid? orderId;
+        var ordersToCancel = new List<Guid>();
         await using (var connection = await dataSource.OpenConnectionAsync(cancellationToken))
         await using (var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken))
         {
-            // With the order flag every bill of the order is locked, in id order like every other caller, so two
-            // cancellations or a hand-off on the same order cannot lock them crosswise.
-            Guid? lockOrderId;
-            await using (var find = new NpgsqlCommand("SELECT order_id FROM billing.bills WHERE bill_id = @bill_id;", connection, transaction))
+            // With the order flag every bill of every order of the bill is locked, in id order like every other caller, so two
+            // cancellations or a hand-off on the same order cannot lock them crosswise. A merged bill has several orders.
+            if (cancelOrder)
             {
+                await using var find = new NpgsqlCommand(BillOrderLink.OrderIdsOfBill, connection, transaction);
                 find.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
-                lockOrderId = await find.ExecuteScalarAsync(cancellationToken) as Guid?;
+                await using var found = await find.ExecuteReaderAsync(cancellationToken);
+                while (await found.ReadAsync(cancellationToken))
+                    ordersToCancel.Add(found.GetGuid(0));
             }
-            if (cancelOrder && lockOrderId is { } orderToLock)
-                await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderToLock, [], cancellationToken);
+            await BillMoneyGuard.LockBillsOfOrdersAsync(connection, transaction, [.. ordersToCancel], [], cancellationToken);
             await BillMoneyGuard.LockBillAsync(connection, transaction, billId, cancellationToken);
 
             await using (var read = new NpgsqlCommand(
@@ -79,10 +83,11 @@ public sealed class BillCancellationStore(
             if (previousStatus == "Paid" || await BillMoneyGuard.BillHasMoneyAsync(connection, transaction, billId, cancellationToken))
                 throw new BillCancelHasPaymentException(billId);
 
-            if (cancelOrder && orderId is { } ownOrderId)
+            if (ordersToCancel.Count > 0)
             {
-                await orderCancellation.CancelInTransactionAsync(
-                    ownOrderId, trimmed, expectedRowVersion: null, actorId, correlationId, connection, transaction, cancellationToken);
+                foreach (var orderToCancel in ordersToCancel)
+                    await orderCancellation.CancelInTransactionAsync(
+                        orderToCancel, trimmed, expectedRowVersion: null, actorId, correlationId, connection, transaction, cancellationToken);
                 orderCancelled = true;
             }
             else
@@ -108,6 +113,6 @@ public sealed class BillCancellationStore(
             await transaction.CommitAsync(cancellationToken);
         }
 
-        return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled, orderId);
+        return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled, orderId, orderCancelled ? ordersToCancel : null);
     }
 }

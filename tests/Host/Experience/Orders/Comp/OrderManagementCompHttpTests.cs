@@ -178,6 +178,23 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACompOnAnItemWhoseMergedBillIsAlreadyPaidIsRefusedAndTheItemStaysActive()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await _database.SeedBillForItemAsync(orderId, itemId, ALKAROS.Billing.BillFoundation.BillState.Paid, merged: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CompPath(terminalId, orderId, itemId), cookie, new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "VIPGuest")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("BILL_NOT_MODIFIABLE", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
     public async Task ARoleWithoutBillsCompAndNoPolicyOrDelegationEscalatesToPending()
     {
         var terminalId = Guid.NewGuid();

@@ -657,6 +657,27 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(0, again.GetProperty("eligible").GetInt32());
     }
 
+    [Fact]
+    public async Task AMergedBillCountsAsTheBillOfEveryOrderItIsMadeOfInTheBacklogAndTheCloseTool()
+    {
+        var (first, second) = await _database.SeedMergedOrdersAsync(ALKAROS.Billing.BillFoundation.BillState.Paid);
+        var (openFirst, openSecond) = await _database.SeedMergedOrdersAsync(ALKAROS.Billing.BillFoundation.BillState.Open);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        var report = await manager.GetFromJsonAsync<JsonElement>($"{OrdersPath}/backlog");
+        var closed = await (await manager.PostAsync($"{OrdersPath}/close-settled?dryRun=false", null)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(4, report.GetProperty("liveOrders").GetInt64());
+        Assert.Equal(2, report.GetProperty("provablySettled").GetInt64());
+        Assert.Equal(0, report.GetProperty("withoutBill").GetInt64());
+        Assert.Equal(2, report.GetProperty("withOpenBill").GetInt64());
+        Assert.Equal(2, closed.GetProperty("closed").GetInt32());
+        Assert.Equal("Completed", await _database.OrderStatusOfAsync(first));
+        Assert.Equal("Completed", await _database.OrderStatusOfAsync(second));
+        Assert.Equal("Submitted", await _database.OrderStatusOfAsync(openFirst));
+        Assert.Equal("Submitted", await _database.OrderStatusOfAsync(openSecond));
+    }
+
     private const string OutboxPath = "/api/v1/management/security/outbox";
 
     [Fact]

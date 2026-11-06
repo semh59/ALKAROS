@@ -1,3 +1,4 @@
+using ALKAROS.Tables.TableRelease;
 using System.Data;
 using System.Text.Json;
 using ALKAROS.IntegrationContracts;
@@ -22,7 +23,8 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     private const string BillsTable = "billing.bills";
     // A check sent to the till no longer belongs to its table: a transfer neither moves nor counts it.
     private const string NotSentOrder = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = orders.orders.order_id)";
-    private const string NotSentBill = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = billing.bills.order_id)";
+    private static readonly string NotSentBill =
+        $"AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE {TableBillOrderLink.Matches("billing.bills", "sc.order_id")})";
 
     // Defensive ceiling for a filtered list read: a real filter returns
     // far fewer rows. Hitting this means the filter is too broad, or the
@@ -258,7 +260,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         // the wrong Bill (see PaymentAwareTableTopologyPolicy's own doc
         // comment for the full reasoning).
         var activeBillIds = new List<Guid>();
-        const string selectBillsSql = $"""
+        var selectBillsSql = $"""
             SELECT bill_id, status
             FROM {BillsTable}
             WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill}
