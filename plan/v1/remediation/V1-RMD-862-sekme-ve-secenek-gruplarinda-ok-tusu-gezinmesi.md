@@ -1,7 +1,7 @@
 # V1-RMD-862 - Sekme ve seçenek gruplarında ok tuşu gezinmesi (kategori sekmeleri, ödeme yöntemi, müşteri seçimi, dört React sekme grubu)
 
 - Task ID: V1-RMD-862
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
