@@ -19,6 +19,8 @@ G9/G11 artığı: (1) Bekleyen hesaplar ekranı (PendingChecksWorkspace) her sat
   - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx — iptal testlerinin yeni özelliğe uyarlanması.
   - src/Clients/PosTerminal/src/routes/workspace.tsx — oturum yetkilerinden bills.cancel ve bills.split aktarımı.
   - src/Clients/PosTerminal/src/routes/workspace.test.tsx — yetkilerin kuyruk ekranına aktarımı davranış testi.
+  - tests/Host/Experience/Billing/MergeOrdersHttpTests.cs — birleştirilmiş faturanın bir siparişi iptal edilince kardeşin kuyrukta faturasız kalması sunucu testi.
+  - src/Clients/PosTerminal/src/strings.ts — bölme yetkisi olmayana hesap açma notu.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
