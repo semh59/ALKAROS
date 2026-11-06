@@ -378,6 +378,21 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(2L, await ScalarAsync<long>(source, guard));
     }
 
+    [Fact]
+    public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(1L, await ScalarAsync<long>(source, column));
+
+        RollBackDownTo("219");
+        Assert.Equal(0L, await ScalarAsync<long>(source, column));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(1L, await ScalarAsync<long>(source, column));
+    }
+
     [Theory]
     [InlineData("payments.payment_status_history", "changed_by", "fk_payment_status_history_changed_by",
         "INSERT INTO payments.payment_status_history (payment_status_history_id, payment_id, old_status, new_status, changed_at) " +

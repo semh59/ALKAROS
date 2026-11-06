@@ -6,6 +6,7 @@ using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Authorization;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.CustomerCredit;
 using ALKAROS.Host.Experience.Menu;
@@ -680,6 +681,7 @@ public static class ApiErrorCatalog
             DualScreenUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
             DualScreenForbiddenException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
             AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
+            BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
             DualScreenNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
             DualScreenConflictException => (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),

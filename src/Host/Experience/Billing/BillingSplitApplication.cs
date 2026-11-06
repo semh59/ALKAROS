@@ -103,6 +103,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
         services.TryAddSingleton<BillCancellationStore>();
         services.TryAddSingleton<PaymentRefundStore>();
+        services.AddBillTerminalAccess();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
         return services;
@@ -127,18 +128,22 @@ public static class BillingSplitApplication
         var billsGroup = endpoints.MapGroup(BillsRoutePrefix)
             .WithTags("Billing")
             .AddEndpointFilter<BillingSplitExceptionFilter>()
+            .AddEndpointFilter<BillTerminalAccessFilter>()
             .WithTerminalRateLimits();
 
         billsGroup.MapPost("/from-order/{orderId:guid}", async (
             Guid terminalId,
             Guid orderId,
             IBillingSplitSessionAuthorizer authorizer,
+            BillTerminalAccess access,
             BillingSplitStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
-            return Results.Ok(await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken));
+            var design = await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken);
+            await access.RequireAsync(context, terminalId, design.BillId, cancellationToken);
+            return Results.Ok(design);
         });
 
         // bills.cancel is checked directly (cashier tier and up); the reason is mandatory.
@@ -359,6 +364,7 @@ public static class BillingSplitApplication
         var refundsGroup = endpoints.MapGroup("/api/v1/terminals/{terminalId:guid}/billing")
             .WithTags("BillingRefunds")
             .AddEndpointFilter<BillingSplitExceptionFilter>()
+            .AddEndpointFilter<BillTerminalAccessFilter>()
             .WithTerminalRateLimits();
 
         refundsGroup.MapPost("/bills/{billId:guid}/refund-requests", async (
@@ -388,14 +394,24 @@ public static class BillingSplitApplication
             int? limit,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            BillTerminalAccess access,
             PaymentRefundStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
-            return Results.Ok(await store.ListAsync(
-                status, billId, before, selfApproved, limit ?? PostgresRefundRequestRepository.MaxListLimit, cancellationToken));
+            if (billId is { } listedBill)
+                await access.RequireAsync(context, terminalId, listedBill, cancellationToken);
+            var requests = await store.ListAsync(
+                status, billId, before, selfApproved, limit ?? PostgresRefundRequestRepository.MaxListLimit, cancellationToken);
+            if (billId is null && !await access.SeesAllBillsAsync(principal.UserId, cancellationToken))
+            {
+                var visible = await access.VisibleBillIdsAsync(requests.Select(request => request.BillId), terminalId, cancellationToken);
+                requests = requests.Where(request => visible.Contains(request.BillId)).ToList();
+            }
+
+            return Results.Ok(requests);
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (
@@ -439,12 +455,14 @@ public static class BillingSplitApplication
             RefundCompleteInputV1 request,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            BillTerminalAccess access,
             PaymentRefundStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+            await access.RequireForRefundRequestAsync(context, terminalId, requestId, cancellationToken);
             return Results.Ok(await store.CompleteManualAsync(
                 requestId, request.SlipNumber, request.Note, principal.UserId, cancellationToken));
         });
@@ -482,6 +500,7 @@ public static class BillingSplitApplication
         var group = endpoints.MapGroup(RoutePrefix)
             .WithTags("BillingSplitDesign")
             .AddEndpointFilter<BillingSplitExceptionFilter>()
+            .AddEndpointFilter<BillTerminalAccessFilter>()
             .WithTerminalRateLimits();
 
         group.MapGet("", async (
@@ -687,6 +706,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
         KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
         GrantDeniedException => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
+        BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
         UnsupportedOrderStateException => (409, "UNSUPPORTED_ORDER_STATE", "Bu sipariş durumunda hesap açılamaz."),
         BillingValidationException validation => (400, validation.Code, validation.UserMessage),
         SplitDesignConcurrencyException => (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),

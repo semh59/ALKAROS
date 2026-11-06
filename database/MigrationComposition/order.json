@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "218"
+    "max": "219"
   },
   "migrations": [
     {
@@ -1878,6 +1878,14 @@
         "bill_allocations",
         "bills",
         "cash_transactions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "219",
+      "phase": "B",
+      "tables": [
+        "bills"
       ],
       "deferredConstraints": []
     }

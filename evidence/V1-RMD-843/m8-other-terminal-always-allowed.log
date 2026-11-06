@@ -1,0 +1,186 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Privacy.Anonymization -> D:\PROJECT\ALKAROS\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Support -> D:\PROJECT\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.QrOrdering -> D:\PROJECT\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Purchasing -> D:\PROJECT\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Production -> D:\PROJECT\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Payments.TenderComposition -> D:\PROJECT\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Billing.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:10.61]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.ANewBillBelongsToTheTerminalThatOpenedItAndAnotherTerminalCannotOpenItAgain [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.ANewBillBelongsToTheTerminalThatOpenedItAndAnotherTerminalCannotOpenItAgain [474 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   OK
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.ANewBillBelongsToTheTerminalThatOpenedItAndAnotherTerminalCannotOpenItAgain() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 103
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.ANewBillBelongsToTheTerminalThatOpenedItAndAnotherTerminalCannotOpenItAgain() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 104
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:14.69]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.CompletingARefundOfAnotherTerminalsBillIsRefusedAndTheRefundListShowsOnlyTheTerminalsOwnRequests [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.CompletingARefundOfAnotherTerminalsBillIsRefusedAndTheRefundListShowsOnlyTheTerminalsOwnRequests [607 ms]
+  Hata İletisi:
+   {"requestId":"61fa5604-f6e5-418f-88e2-d48419b88297","billId":"d892aa09-a6ef-494a-b129-1c75e1b6ece9","paymentId":"2abcf019-a556-4b6f-8c96-4b1291b1e3e9","amount":5.00,"method":"Eft","reason":"test","status":"Completed","requestedBy":"cd85982a-6464-4f63-b37b-bb67119fcd2f","requestedAt":"2026-11-06T09:58:02.860849+00:00","decidedBy":null,"decidedAt":null,"slipNumber":null,"billCancelled":false,"approvedFromAllowance":false,"items":null,"terminalId":"99ca8df1-b76c-45bb-a958-17f6f4243db7","selfApproved":false}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.CompletingARefundOfAnotherTerminalsBillIsRefusedAndTheRefundListShowsOnlyTheTerminalsOwnRequests() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 178
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.CompletingARefundOfAnotherTerminalsBillIsRefusedAndTheRefundListShowsOnlyTheTerminalsOwnRequests() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 181
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:18.22]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "cancel", route: "billing/bills/{b}/cancel", body: { reason = "test" }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "cancel", route: "billing/bills/{b}/cancel", body: { reason = "test" }) [376 ms]
+  Hata İletisi:
+   cancel: OK {"billId":"08cedc04-f98d-42ae-9bf3-e9e8f3a6ee6e","status":"Cancelled","reason":"test","cancelledAt":"2026-11-06T09:58:06.8055273+00:00","orderCancelled":false,"orderId":"2bb4d191-eb20-46d3-ab7e-7aae1b868211"}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:21.44]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "discount", route: "billing/bills/{b}/discount", body: { calculationType = "Percentage", idempotencyKey = "k", reasonCode = "Other", value = 5 }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "discount", route: "billing/bills/{b}/discount", body: { calculationType = "Percentage", idempotencyKey = "k", reasonCode = "Other", value = 5 }) [428 ms]
+  Hata İletisi:
+   discount: BadRequest {"error":{"code":"DISCOUNT_REASON_INVALID","message":"İndirim gerekçesi geçerli değil.","status":400,"traceId":"0HNPRTHN50F7D:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:24.84]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "tip", route: "billing/bills/{b}/tip", body: { amount = 5, idempotencyKey = "k" }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "tip", route: "billing/bills/{b}/tip", body: { amount = 5, idempotencyKey = "k" }) [467 ms]
+  Hata İletisi:
+   tip: OK {"billId":"776ade94-25a5-49c6-ab73-b8c18f33e471","adjustmentId":"1957fd60-7d74-47c6-a17d-d1dadf6fb6b7","summary":{"originalPayableAmount":250.00,"totalDiscounts":0,"totalFees":0,"totalTips":5,"adjustedPayableAmount":255.00}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:27.92]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "undo", route: "billing/bills/{b}/adjustments/{a}/undo", body: { }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "undo", route: "billing/bills/{b}/adjustments/{a}/undo", body: { }) [362 ms]
+  Hata İletisi:
+   undo: NotFound {"error":{"code":"NOT_FOUND","message":"İstenen düzeltme bulunamadı.","status":404,"traceId":"0HNPRTHN50F7F:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:31.29]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "adjustments", route: "billing/bills/{b}/adjustments", body: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "adjustments", route: "billing/bills/{b}/adjustments", body: null) [435 ms]
+  Hata İletisi:
+   adjustments: OK {"adjustments":[],"summary":{"originalPayableAmount":250.00,"totalDiscounts":0,"totalFees":0,"totalTips":0,"adjustedPayableAmount":250.00}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:34.50]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "refund-request", route: "billing/bills/{b}/refund-requests", body: { paymentId = 03b092d7-48aa-493b-81d2-164d95bd33cb }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "refund-request", route: "billing/bills/{b}/refund-requests", body: { paymentId = 03b092d7-48aa-493b-81d2-164d95bd33cb }) [320 ms]
+  Hata İletisi:
+   refund-request: BadRequest {"error":{"code":"REFUND_TEXT_INVALID","message":"İade gerekçesi 1 ile 500 karakter arasında olmalı.","status":400,"traceId":"0HNPRTHN50F7H:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:37.65]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "refund-list-for-bill", route: "billing/refund-requests?billId={b}", body: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "refund-list-for-bill", route: "billing/refund-requests?billId={b}", body: null) [330 ms]
+  Hata İletisi:
+   refund-list-for-bill: OK []
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:40.73]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "split-read", route: "billing/bills/{b}/split-design", body: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "split-read", route: "billing/bills/{b}/split-design", body: null) [386 ms]
+  Hata İletisi:
+   split-read: OK {"billId":"bc6b3882-ee6c-42c3-b1e5-c0e194ade09c","billNumber":"BIL-23140d9c9c2e4773823cbbcb2d0c03af","billStatus":"Open","currencyCode":"TRY","payableAmount":250.00,"taxTotal":22.73,"billRowVersion":1,"mode":"None","executionState":"DesignOnly","allowedCommands":["SaveEqual","SaveItems","SaveAmounts","SaveCustom","Clear"],"items":[{"billItemId":"05ae1562-3925-47d6-a3ff-b336eebfb760","productName":"Main course","quantity":2.000,"grossAmount":200.00,"taxAmount":18.18,"rowVersion":1},{"billItemId":"9fb15335-55b7-4c5e-a50c-63cc2cf72fa8","productName":"Drink","quantity":1.000,"grossAmount":50.00,"taxAmount":4.55,"rowVersion":1}],"allocations":[]}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:43.96]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "split-owners", route: "billing/bills/{b}/split-design/owners", body: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "GET", name: "split-owners", route: "billing/bills/{b}/split-design/owners", body: null) [329 ms]
+  Hata İletisi:
+   split-owners: OK [{"kind":"Seat","id":"1baf1e52-e43a-4268-8cc0-9039e943e492","label":"Sandalye 1","secondaryLabel":"Seat 1"}]
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:47.45]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-equal", route: "billing/bills/{b}/split-design/equal", body: { expectedAllocations = [], expectedBillRowVersion = 1, owners = [] }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-equal", route: "billing/bills/{b}/split-design/equal", body: { expectedAllocations = [], expectedBillRowVersion = 1, owners = [] }) [348 ms]
+  Hata İletisi:
+   split-equal: BadRequest {"error":{"code":"VALIDATION_FAILED","message":"Kişi sayısı geçersiz veya eksik.","status":400,"traceId":"0HNPRTHN50F7L:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:50.80]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-items", route: "billing/bills/{b}/split-design/items", body: { expectedAllocations = [], expectedBillRowVersion = 1, targets = [] }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-items", route: "billing/bills/{b}/split-design/items", body: { expectedAllocations = [], expectedBillRowVersion = 1, targets = [] }) [408 ms]
+  Hata İletisi:
+   split-items: BadRequest {"error":{"code":"VALIDATION_FAILED","message":"Bölme hedefleri geçersiz veya eksik.","status":400,"traceId":"0HNPRTHN50F7M:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:54.06]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-amounts", route: "billing/bills/{b}/split-design/amounts", body: { expectedAllocations = [], expectedBillRowVersion = 1, targets = [] }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-amounts", route: "billing/bills/{b}/split-design/amounts", body: { expectedAllocations = [], expectedBillRowVersion = 1, targets = [] }) [341 ms]
+  Hata İletisi:
+   split-amounts: BadRequest {"error":{"code":"VALIDATION_FAILED","message":"Bölme hedefleri geçersiz veya eksik.","status":400,"traceId":"0HNPRTHN50F7N:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:57.21]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-custom", route: "billing/bills/{b}/split-design/custom", body: { expectedAllocations = [], expectedBillRowVersion = 1, targets = [] }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "PUT", name: "split-custom", route: "billing/bills/{b}/split-design/custom", body: { expectedAllocations = [], expectedBillRowVersion = 1, targets = [] }) [369 ms]
+  Hata İletisi:
+   split-custom: BadRequest {"error":{"code":"VALIDATION_FAILED","message":"Bölme hedefleri geçersiz veya eksik.","status":400,"traceId":"0HNPRTHN50F7O:00000001","conflict":null}}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:00.28]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "split-clear", route: "billing/bills/{b}/split-design/clear", body: { expectedAllocations = [], expectedBillRowVersion = 1 }) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(method: "POST", name: "split-clear", route: "billing/bills/{b}/split-design/clear", body: { expectedAllocations = [], expectedBillRowVersion = 1 }) [359 ms]
+  Hata İletisi:
+   split-clear: OK {"billId":"ea59be21-442b-4984-a4bf-4a11e38a3af5","billNumber":"BIL-0186b61490cb4f959be3d6ca28a737ff","billStatus":"Open","currencyCode":"TRY","payableAmount":250.00,"taxTotal":22.73,"billRowVersion":2,"mode":"None","executionState":"DesignOnly","allowedCommands":["SaveEqual","SaveItems","SaveAmounts","SaveCustom","Clear"],"items":[{"billItemId":"26adb48f-4993-40c5-b560-1d324ded6909","productName":"Main course","quantity":2.000,"grossAmount":200.00,"taxAmount":18.18,"rowVersion":1},{"billItemId":"ff7a4647-791e-4316-a1ca-baf2d1b2abdc","productName":"Drink","quantity":1.000,"grossAmount":50.00,"taxAmount":4.55,"rowVersion":1}],"allocations":[]}
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 64
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.AnotherTerminalIsRefusedAndTheOwnerAndAnOverrideHolderPass(String method, String name, String route, Object body) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 66
+--- End of stack trace from previous location ---
+[xUnit.net 00:01:06.44]     ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.OpeningTheBillOfAnOrderAnotherTerminalHoldsIsRefusedWithoutReturningTheBill [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.OpeningTheBillOfAnOrderAnotherTerminalHoldsIsRefusedWithoutReturningTheBill [328 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   OK
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.OpeningTheBillOfAnOrderAnotherTerminalHoldsIsRefusedWithoutReturningTheBill() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 81
+   at ALKAROS.Host.Experience.Billing.Tests.BillTerminalAccessHttpTests.OpeningTheBillOfAnOrderAnotherTerminalHoldsIsRefusedWithoutReturningTheBill() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillTerminalAccessHttpTests.cs:line 85
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:    17, Başarılı:     3, Atlanan:     0, Toplam:    20, Süre: 1 m 2 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1

@@ -1,0 +1,49 @@
+red-all-checks-off (see red.log): 17 of 20 fail with every ownership check removed
+m1-refunds-group-unfiltered
+Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 1 m 3 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m1-refunds-group-unfiltered restored (cmp exit 0)
+m2-bills-group-unfiltered
+Başarısız! - Başarısız:     5, Başarılı:    15, Atlanan:     0, Toplam:    20, Süre: 1 m 5 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m2-bills-group-unfiltered restored (cmp exit 0)
+m3-split-design-group-unfiltered
+Başarısız! - Başarısız:     7, Başarılı:    13, Atlanan:     0, Toplam:    20, Süre: 1 m 7 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m3-split-design-group-unfiltered restored (cmp exit 0)
+m4-from-order-returns-foreign-bill
+Başarısız! - Başarısız:     2, Başarılı:    18, Atlanan:     0, Toplam:    20, Süre: 1 m 8 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m4-from-order-returns-foreign-bill restored (cmp exit 0)
+m5-refund-complete-unchecked
+Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 1 m 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m5-refund-complete-unchecked restored (cmp exit 0)
+m6-refund-list-by-bill-unchecked
+Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 1 m 7 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m6-refund-list-by-bill-unchecked restored (cmp exit 0)
+m8-other-terminal-always-allowed
+Başarısız! - Başarısız:    17, Başarılı:     3, Atlanan:     0, Toplam:    20, Süre: 1 m 2 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m8-other-terminal-always-allowed restored (cmp exit 0)
+m9-override-not-honoured
+Başarısız! - Başarısız:    15, Başarılı:     5, Atlanan:     0, Toplam:    20, Süre: 1 m 3 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m9-override-not-honoured restored (cmp exit 0)
+m10-claim-steals-owned-bill
+Başarısız! - Başarısız:    19, Başarılı:     1, Atlanan:     0, Toplam:    20, Süre: 1 m 8 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m10-claim-steals-owned-bill restored (cmp exit 0)
+m11-override-holder-claims-unowned-bill
+Başarısız! - Başarısız:    16, Başarılı:     6, Atlanan:     0, Toplam:    22, Süre: 1 m 15 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m11-override-holder-claims-unowned-bill restored (cmp exit 0)
+m7-refund-list-filter-inverted
+Başarısız! - Başarısız:     1, Başarılı:    22, Atlanan:     0, Toplam:    23, Süre: 1 m 28 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m7-refund-list-filter-inverted restored (cmp exit 0)
+m12-read-claims-unowned-bill
+Başarısız! - Başarısız:     1, Başarılı:    22, Atlanan:     0, Toplam:    23, Süre: 1 m 15 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+exit 1
+m12-read-claims-unowned-bill restored (cmp exit 0)
