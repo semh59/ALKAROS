@@ -1,7 +1,7 @@
 # V1-RMD-839 - Ödeme ve kasa kullanıcı yabancı anahtarları: ret ve geri alma kanıtı
 
 - Task ID: V1-RMD-839
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
