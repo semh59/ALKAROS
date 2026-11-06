@@ -1,7 +1,7 @@
 # V1-RMD-847 - Kasa ekranı: siparişleri tek hesapta birleştir
 
 - Task ID: V1-RMD-847
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
@@ -25,7 +25,7 @@ F0046 (PO:2026-11-06) üçüncü adım: kasa ekranında (PosTerminal "Bekleyen h
 
 ## In scope
 
-1. Önce kırmızı ekran testleri: yalnız aynı masanın iki+ siparişi seçilince "Hesapları birleştir" etkin olur; başarıda ödeme sayfası birleşik hesapla açılır; her sunucu hata kodu Türkçe mesaj gösterir; çift tıklama tek istek gönderir (aynı anahtar); yetkisiz kullanıcıda eylem gizli.
+1. Önce kırmızı ekran testleri: yalnız aynı masanın iki+ siparişi seçilince "Hesapları birleştir" etkin olur; başarıda ödeme sayfası birleşik hesapla açılır; her sunucu hata kodu Türkçe mesaj gösterir; çift tıklama tek istek gönderir; aynı seçimin yeniden denemesi aynı anahtarı taşır, seçim değişince yeni anahtar; yetki yanıtı (FORBIDDEN) Türkçe gösterilir (kuyruk uç noktası yetki bilgisi taşımadığından eylem gizlenemez, V1-RMD-846 notu).
 2. Uygulama, yeşil, mutasyon turu; İngilizce sızıntı taraması (`docs/UI_STYLE_GUIDE.md` §4) temiz.
 
 ## Out of scope
