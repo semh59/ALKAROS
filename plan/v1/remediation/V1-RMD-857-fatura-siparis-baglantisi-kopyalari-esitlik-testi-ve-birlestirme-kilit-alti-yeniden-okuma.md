@@ -1,7 +1,7 @@
 # V1-RMD-857 - Fatura-sipariş bağlantısının üç SQL kopyası eşit kalır; birleştirmede kilit altı yeniden okuma yarışı sınanır
 
 - Task ID: V1-RMD-857
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
