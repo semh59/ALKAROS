@@ -31,7 +31,14 @@ Bu görev uç nokta eklemeden önce tek ilişkiyi kurar: bir hesap bir siparişe
   - src/Host/Experience/Orders/CashierHandoffStore.cs — kasaya gönderme/geri alma ve kuyruk.
   - src/Host/Experience/Orders/OrderCleanup/OrderCleanupStore.cs — askıda sipariş ölçütü.
   - src/Host/Experience/Billing/BillingSplitStore.cs — kalem kısıtı ihlalinin yarış kurtarması.
+  - src/Modules/Billing/BillFoundation/BillOrderLink.cs — hesap-sipariş ilişkisinin tek SQL tanımı (Billing ve Host kullanır).
+  - src/Modules/Tables/TableRelease/TableBillOrderLink.cs — aynı ilişkinin Tables modülü içi tanımı.
+  - src/Host/Experience/Orders/ShiftSummaryStore.cs — iade edilmiş iptal hesap ve ödenmiş hesap ölçütü.
+  - src/Host/Experience/Orders/TableDraft/TableDraftService.cs — taslak tüketicisi (gerekirse).
   - tests/Modules/Billing/BillFoundation/ — ilişki ve iptal testleri.
+  - tests/Modules/Tables/ — masa bırakma, devir, birleştirme ve işaretçi testleri.
+  - tests/Host/Experience/SecurityAdministration/ — bekleyen sipariş sayımı ve toplu kapatma testleri.
+  - tests/Host/Experience/Tables/ — masa tüketici testleri.
   - tests/Host/Experience/Billing/ — tüketici testleri.
   - tests/Host/Experience/Orders/ — kalem koruması ve temizlik testleri.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
@@ -39,7 +46,8 @@ Bu görev uç nokta eklemeden önce tek ilişkiyi kurar: bir hesap bir siparişe
 ## In scope
 
 1. Önce kırmızı testler (gerçek Postgres): birleşik hesap ödenince kaynak siparişlerin hepsi tamamlanır ve masa bırakılır; kalemleri açık birleşik hesapta olan sipariş askıda-temizlikle iptal edilmez; ödenmiş birleşik hesaptaki kalem iptal/ikram edilemez; sipariş iptali birleşik hesabı ve kalem kilitlerini serbest bırakır; kasaya gönderilmiş birleşik hesap masadan ayrılır; `from-order` birleşik hesabı olan siparişe ikinci hesap açmaz.
-2. Düzeltme, yeşil, mutasyon turu (`cp` + `cmp` ile geri alınır).
+   PO kararı (2026-11-06): birleşik hesapta "siparişi de iptal et" hesabın bütün kaynak siparişlerini iptal eder (hazırlanmış kalem fire, hazırlanmamış stoğa döner); tek siparişin iptali o siparişi içeren birleşik hesabı bütünüyle iptal eder (diğer siparişler açık kalır, kalemleri serbest kalır). Bunun için de kırmızı test yazılır.
+2. Düzeltme, yeşil, mutasyon turu (`cp` + `cmp` ile geri alınır). Regresyon koşusuna CustomerAccounts, CashSession ve PaymentTender projeleri de girer.
 3. `[C]` sınıfı rapor ve gösterim tüketicileri (kanal raporu, müşteri ekranı ödeme ilerlemesi, kasa kuyruğu satırı) için bu görevde yapılan veya sonraya bırakılan her karar `evidence/V1-RMD-845/` altında gerekçesiyle listelenir.
 
 ## Out of scope
