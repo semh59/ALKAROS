@@ -1,0 +1,235 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 11.07kB 0.0s done
+#1 DONE 0.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#4 DONE 0.8s
+
+#5 [internal] load .dockerignore
+#5 transferring context: 901B done
+#5 DONE 0.0s
+
+#6 [frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#6 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.0s done
+#6 DONE 0.1s
+
+#7 [internal] load build context
+#7 transferring context: 532.32kB 1.6s done
+#7 DONE 1.6s
+
+#8 [frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#8 CACHED
+
+#9 [frontend-build  2/10] WORKDIR /src
+#9 CACHED
+
+#10 [frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#10 CACHED
+
+#11 [frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#11 DONE 0.5s
+
+#12 [frontend-build  6/10] RUN pnpm build
+#12 4.694 ? Verifying lockfile against supply-chain policies (176 entries)...
+#12 4.754 Lockfile is up to date, resolution step is skipped
+#12 5.116 Already up to date
+#12 9.017 
+#12 9.017    ╭───────────────────────────────────────────────╮
+#12 9.017    │                                               │
+#12 9.017    │     Update available! 11.19.0 → 12.18.0.      │
+#12 9.017    │     Changelog: https://pnpm.io/v/12.18.0      │
+#12 9.017    │   To update, run: corepack use pnpm@12.18.0   │
+#12 9.017    │                                               │
+#12 9.017    ╰───────────────────────────────────────────────╯
+#12 9.017 
+#12 11.75 ✓ Lockfile passes supply-chain policies (176 entries in 7s)
+#12 11.90 
+#12 11.96 Done in 8.9s using pnpm v11.19.0
+#12 12.02 $ pnpm run lint && tsc --noEmit && vite build
+#12 12.77 $ oxlint -c .oxlintrc.json --max-warnings=20 src
+#12 13.12 
+#12 13.12   ! react(globals): Cannot reassign variables declared outside of the component/hook
+#12 13.12     ,-[src/router.test.tsx:14:3]
+#12 13.12  13 | function Probe() {
+#12 13.12  14 |   seen = useRouter();
+#12 13.12     :   ^^|^
+#12 13.12     :     `-- `seen` cannot be reassigned
+#12 13.12  15 |   return <span>{seen.path}</span>;
+#12 13.12     `----
+#12 13.12   help: Variable `seen` is declared outside of the component/hook. Reassigning this value during render is a side effect which can cause unpredictable behavior. If this variable is used in rendering, use useState instead. Otherwise, update it in an effect
+#12 13.12   note: React Compiler skipped optimizing this component or hook. Additional guidance: https://react.dev/reference/eslint-plugin-react-hooks/lints/globals
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12      ,-[src/routes/CustomerDisplayScreensaverSettings.tsx:189:115]
+#12 13.12  188 |             Kullanıcı adı
+#12 13.12  189 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12      :                                                                                                                   ^^^^^^^^^
+#12 13.12  190 |           </label>
+#12 13.12      `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12      ,-[src/routes/TokenTerminalSettings.tsx:175:115]
+#12 13.12  174 |             Kullanıcı adı
+#12 13.12  175 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12      :                                                                                                                   ^^^^^^^^^
+#12 13.12  176 |           </label>
+#12 13.12      `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12      ,-[src/routes/QnbCredentialSettings.tsx:159:115]
+#12 13.12  158 |             Kullanıcı adı
+#12 13.12  159 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12      :                                                                                                                   ^^^^^^^^^
+#12 13.12  160 |           </label>
+#12 13.12      `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12      ,-[src/routes/BusinessIdentitySettings.tsx:271:115]
+#12 13.12  270 |             Kullanıcı adı
+#12 13.12  271 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12      :                                                                                                                   ^^^^^^^^^
+#12 13.12  272 |           </label>
+#12 13.12      `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12   ! eslint(no-unused-vars): Parameter 'init' is declared but never used. Unused parameters should start with a '_'.
+#12 13.12     ,-[src/routes/Cashier.logout-clears-storage.test.tsx:52:67]
+#12 13.12  51 | 
+#12 13.12  52 |     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+#12 13.12     :                                                                   ^^|^
+#12 13.12     :                                                                     `-- 'init' is declared here
+#12 13.12  53 |       const path = String(input);
+#12 13.12     `----
+#12 13.12   help: Consider removing this parameter.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#12 13.12      ,-[src/design-system/primitives.tsx:139:8]
+#12 13.12  138 |     <div className="ds-dialog-backdrop">
+#12 13.12  139 |       <div ref={dialogRef} className="ds-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={(event) => {
+#12 13.12      :        ^^^
+#12 13.12  140 |         if (event.key === "Escape") { event.preventDefault(); onClose(); return; }
+#12 13.12      `----
+#12 13.12   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#12 13.12      ,-[src/design-system/primitives.tsx:162:6]
+#12 13.12  161 |   return (
+#12 13.12  162 |     <aside ref={drawerRef} className={`ds-drawer ds-drawer--${presentation}`} aria-labelledby={titleId} aria-modal={presentation === "sheet" ? true : undefined} role={presentation === "sheet" ? "dialog" : undefined} onKeyDown={presentation === "sheet" ? (event) => {
+#12 13.12      :      ^^^^^
+#12 13.12  163 |       if (event.key === "Escape" && onClose) { event.preventDefault(); onClose(); return; }
+#12 13.12      `----
+#12 13.12   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12      ,-[src/routes/ReservationStation.tsx:126:115]
+#12 13.12  125 |             Kullanıcı adı
+#12 13.12  126 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12      :                                                                                                                   ^^^^^^^^^
+#12 13.12  127 |           </label>
+#12 13.12      `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12     ,-[src/routes/SecurityAdministration.tsx:98:115]
+#12 13.12  97 |             Kullanıcı adı
+#12 13.12  98 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12     :                                                                                                                   ^^^^^^^^^
+#12 13.12  99 |           </label>
+#12 13.12     `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#12 13.12      ,-[src/routes/RelaySettings.tsx:179:115]
+#12 13.12  178 |             Kullanıcı adı
+#12 13.12  179 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#12 13.12      :                                                                                                                   ^^^^^^^^^
+#12 13.12  180 |           </label>
+#12 13.12      `----
+#12 13.12   help: Remove the `autoFocus` attribute.
+#12 13.12 
+#12 13.12 Found 11 warnings and 0 errors.
+#12 13.12 Finished in 238ms on 278 files with 134 rules using 8 threads.
+#12 16.67 vite v8.2.2 building client environment for production...
+#12 16.71 transforming...
+#12 16.90 ✓ 253 modules transformed.
+#12 17.13 rendering chunks...
+#12 17.24 computing gzip size...
+#12 17.25 dist/index.html                                                0.55 kB │ gzip:  0.33 kB
+#12 17.25 dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+#12 17.25 dist/assets/Cashier-C2XeD3Fd.css                               0.24 kB │ gzip:  0.18 kB
+#12 17.25 dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+#12 17.25 dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+#12 17.25 dist/assets/management-security-system-Cqi3Xt8E.css            2.44 kB │ gzip:  0.72 kB
+#12 17.25 dist/assets/NfcOrder-KNdAOhPu.css                              4.71 kB │ gzip:  1.35 kB
+#12 17.25 dist/assets/design-system-CFu97vtJ.css                         6.32 kB │ gzip:  1.88 kB
+#12 17.25 dist/assets/index-CvCRPOfY.css                                29.80 kB │ gzip:  7.27 kB
+#12 17.25 dist/assets/workspace-D_aNQhF9.css                            93.38 kB │ gzip: 13.96 kB
+#12 17.25 dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+#12 17.25 dist/assets/rolldown-runtime-EyZ2wyi3.js                       0.61 kB │ gzip:  0.39 kB
+#12 17.25 dist/assets/format-Bh78ZGbj.js                                 1.50 kB │ gzip:  0.53 kB
+#12 17.25 dist/assets/SecurityAdministration-BDo3fnOH.js                 2.42 kB │ gzip:  1.03 kB
+#12 17.25 dist/assets/ReservationStation-BUOEK6fj.js                     3.93 kB │ gzip:  1.39 kB
+#12 17.25 dist/assets/TokenTerminalSettings-BRkJVOnw.js                  5.56 kB │ gzip:  1.95 kB
+#12 17.25 dist/assets/RelaySettings-CRMT16Ck.js                          6.12 kB │ gzip:  1.91 kB
+#12 17.25 dist/assets/CustomerDisplayScreensaverSettings-DSZFzsU8.js     6.16 kB │ gzip:  2.11 kB
+#12 17.25 dist/assets/design-system-D4agSz7B.js                          6.76 kB │ gzip:  2.51 kB
+#12 17.25 dist/assets/api-Cspe0gsw.js                                    6.97 kB │ gzip:  2.27 kB
+#12 17.25 dist/assets/QnbCredentialSettings-CXax6w7F.js                  8.67 kB │ gzip:  2.83 kB
+#12 17.25 dist/assets/BusinessIdentitySettings-BhhUkvvQ.js               9.33 kB │ gzip:  2.82 kB
+#12 17.25 dist/assets/NfcOrder-Cl3JU35h.js                               9.62 kB │ gzip:  3.16 kB
+#12 17.25 dist/assets/CustomerDisplay-B2GV7ohK.js                       13.99 kB │ gzip:  4.60 kB
+#12 17.25 dist/assets/management-security-system-BNPwC5R4.js            20.92 kB │ gzip:  5.92 kB
+#12 17.25 dist/assets/Cashier-CiPGNoLk.js                               25.98 kB │ gzip:  7.73 kB
+#12 17.25 dist/assets/HubConnectionBuilder-BSoreM0u.js                  54.78 kB │ gzip: 14.03 kB
+#12 17.25 dist/assets/index-zQZ78XkK.js                                241.19 kB │ gzip: 77.85 kB
+#12 17.25 dist/assets/workspace-Chzu1NAj.js                            382.47 kB │ gzip: 91.85 kB
+#12 17.25 
+#12 17.25 ✓ built in 577ms
+#12 DONE 17.4s
+
+#13 [frontend-build  7/10] RUN pnpm build:nfc-standalone
+#13 0.959 $ vite build --config vite.nfc.config.ts && node -e "require('fs').renameSync('dist-nfc/nfc.html','dist-nfc/index.html')"
+#13 1.227 vite v8.2.2 building client environment for production...
+#13 1.240 transforming...
+#13 1.317 ✓ 24 modules transformed.
+#13 1.365 rendering chunks...
+#13 1.427 computing gzip size...
+#13 1.431 dist-nfc/nfc.html                   1.03 kB │ gzip:  0.62 kB
+#13 1.431 dist-nfc/assets/nfc-BLOZWIM0.css   11.04 kB │ gzip:  2.85 kB
+#13 1.431 dist-nfc/assets/nfc-WWBorUa-.js   209.33 kB │ gzip: 66.09 kB
+#13 1.431 
+#13 1.432 ✓ built in 203ms
+#13 DONE 1.5s
+
+#14 [frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#14 DONE 0.4s
+
+#15 [frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#15 DONE 0.1s
+
+#16 [frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#16 DONE 0.1s
+
+#17 exporting to image
+#17 exporting layers
+#17 exporting layers 11.6s done
+#17 exporting manifest sha256:e1e0f2763eda9d5c188845f32a21321c3be7fcf2aef82ea3c2db414671b10c27 0.0s done
+#17 exporting config sha256:81926cded6099396eca327492c291f898c5432e7781bd36199ee6821ebf1838c 0.0s done
+#17 exporting attestation manifest sha256:f310236fd21f0f8c5b6331eb12f367a18a890d10281fd5be9bd6c96a001041ef 0.0s done
+#17 exporting manifest list sha256:ec1b12066d16158d7246bf2449ed8c436eb4943fec74ff11726921cbca218b3b 0.0s done
+#17 naming to docker.io/library/alkaros-fe-verify:latest 0.0s done
+#17 unpacking to docker.io/library/alkaros-fe-verify:latest
+#17 unpacking to docker.io/library/alkaros-fe-verify:latest 4.5s done
+#17 DONE 16.3s

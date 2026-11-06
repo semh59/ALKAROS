@@ -1,0 +1,10 @@
+docker build exit=0
+/out/app:
+assets
+cashier
+index.html
+waiter
+/src/dist-nfc:
+assets
+index.html
+docker rmi exit=0
