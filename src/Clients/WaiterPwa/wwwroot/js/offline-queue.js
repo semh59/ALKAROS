@@ -363,6 +363,9 @@ export async function sendDraft() {
 // review is the same grant a later retry of that request resolves to.
 export function queueOfflineAuthorizedAction({ permissionCode, reasonCode, amount, itemId, idempotencyKey }) {
   const budget = state.offlineBudget;
+  // The sheet hands out the same key again for an item whose action is still waiting, so a second confirm must not
+  // queue or spend the budget twice.
+  if (state.offlineActions.some((action) => action.idempotencyKey === idempotencyKey)) return;
   state.offlineActions.push({
     idempotencyKey,
     permissionCode,

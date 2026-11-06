@@ -272,6 +272,101 @@ describe("waiter-app.js", () => {
   });
 });
 
+const OFFLINE_ACTION = {
+  idempotencyKey: "k-1", permissionCode: "bills.void", requesterUserId: "u1", requesterRoleCode: "waiter", reasonCode: "CustomerChange",
+  amount: 45, offlineAuthorizedAt: "2026-11-06T10:00:00.000Z", subjectType: "OrderItem", subjectId: "i1",
+};
+const OFFLINE_BUDGET = { budgetId: "b1", roleCode: "waiter", userId: "u1", expiresAt: "2999-01-01T00:00:00Z", lines: [], used: {} };
+
+describe("offline authority budget and queued actions", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    localStorage.clear();
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    delete globalThis.signalR;
+    delete document.visibilityState;
+    document.body.innerHTML = "";
+  });
+
+  const reconcileRoute = { test: (url, init) => url.includes("/offline-reconciliation") && init?.method === "POST", body: { summary: { brief: "Uzlaştırma tamam." } } };
+  const reconcileCalls = (fetchMock) => fetchMock.mock.calls.filter(([url]) => url.includes("/offline-reconciliation"));
+
+  function withQueuedAction() {
+    localStorage.setItem("alkaros_waiter_offline_budget", JSON.stringify(OFFLINE_BUDGET));
+    localStorage.setItem("alkaros_waiter_offline_actions", JSON.stringify([OFFLINE_ACTION]));
+  }
+
+  async function startSignedIn() {
+    const fetchMock = installFetchRouter([reconcileRoute, ...standardRoutes()]);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => {
+      if (!document.querySelector(".table[data-table]")) throw new Error("tables not rendered yet");
+    });
+    return fetchMock;
+  }
+
+  it("keeps the budget the server issues at sign-in", async () => {
+    const routes = [
+      { test: (url) => url.includes("/api/v1/auth/session?"), status: 401, body: {} },
+      {
+        test: (url, init) => url.includes("/api/v1/auth/login") && init?.method === "POST",
+        body: { userId: "u1", name: "Garson Ahmet", pinSet: false, offlineBudget: { budgetId: "b1", roleCode: "waiter", expiresAt: "2999-01-01T00:00:00Z", lines: [] } },
+      },
+      ...standardRoutes().slice(1),
+    ];
+    installFetchRouter(routes);
+    await loadApp(htmlPath, scriptPath);
+    document.getElementById("loginUsername").value = "ahmet";
+    document.getElementById("loginPassword").value = "secret";
+
+    document.getElementById("loginForm").dispatchEvent(new Event("submit", { cancelable: true }));
+
+    await vi.waitFor(() => expect(JSON.parse(localStorage.getItem("alkaros_waiter_offline_budget"))).toMatchObject({ budgetId: "b1", userId: "u1", roleCode: "waiter" }));
+  });
+
+  it.each([
+    ["the browser comes back online", () => window.dispatchEvent(new Event("online"))],
+    ["the app becomes visible again", () => {
+      Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    }],
+  ])("sends the queued offline actions once when %s", async (_name, trigger) => {
+    withQueuedAction();
+    const fetchMock = await startSignedIn();
+    expect(reconcileCalls(fetchMock)).toHaveLength(0);
+
+    trigger();
+
+    await vi.waitFor(() => expect(reconcileCalls(fetchMock)).toHaveLength(1));
+    expect(JSON.parse(reconcileCalls(fetchMock)[0][1].body).actions.map((action) => action.idempotencyKey)).toEqual(["k-1"]);
+    await vi.waitFor(() => expect(JSON.parse(localStorage.getItem("alkaros_waiter_offline_actions"))).toEqual([]));
+  });
+
+  it("does not reconcile when the app goes to the background", async () => {
+    withQueuedAction();
+    const fetchMock = await startSignedIn();
+
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(reconcileCalls(fetchMock)).toHaveLength(0);
+  });
+
+  it("sends the queued offline actions when the live connection to the server is up", async () => {
+    const hub = { start: () => Promise.resolve(), on() {}, onreconnecting() {}, onreconnected() {}, onclose() {}, stop: () => Promise.resolve() };
+    const builder = { withUrl: () => builder, withAutomaticReconnect: () => builder, configureLogging: () => builder, build: () => hub };
+    globalThis.signalR = { HubConnectionBuilder: function () { return builder; }, LogLevel: { Warning: 3 } };
+    withQueuedAction();
+
+    const fetchMock = await startSignedIn();
+
+    await vi.waitFor(() => expect(reconcileCalls(fetchMock)).toHaveLength(1));
+  });
+});
+
 // A modifier group whose ceiling is 0 allows no extras (the Host refuses them), so the picker must not offer them.
 describe("product sheet modifier ceiling", () => {
   it("refuses an extra from a group that allows none", async () => {

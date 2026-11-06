@@ -127,6 +127,10 @@ CONFIRM_HARNESS = textwrap.dedent(
     await confirmComp();
     results.queued = state.offlineActions.map(({ idempotencyKey, permissionCode, amount, reasonCode, subjectId }) => ({ idempotencyKey, permissionCode, amount, reasonCode, subjectId }));
 
+    state.optionsContext = context('i1', 'k-void');
+    await confirmVoidSent();
+    results.afterRetry = { keys: state.offlineActions.map((action) => action.idempotencyKey), used: state.offlineBudget.used };
+
     state.optionsContext = context('i3', 'k-over');
     await confirmComp();
     results.afterOverLimit = state.offlineActions.map((action) => action.idempotencyKey);
@@ -216,6 +220,11 @@ def test_void_and_comp_queue_with_the_line_amount_and_their_own_idempotency_key(
     ]
 
 
+def test_confirming_the_same_offline_action_again_queues_and_spends_it_once(confirmed):
+    assert confirmed["afterRetry"]["keys"] == ["k-void", "k-comp"]
+    assert confirmed["afterRetry"]["used"] == {"bills.void": 1, "bills.comp": 1}
+
+
 def test_a_comp_above_the_budget_line_is_not_queued(confirmed):
     assert confirmed["afterOverLimit"] == ["k-void", "k-comp"]
 
@@ -231,10 +240,3 @@ def test_reconnect_sends_the_queued_actions_once_and_empties_the_queue(confirmed
     assert reconcile["left"] == 0
     assert reconcile["stored"] == 0
     assert any("Uzlaştırma tamam." in toast for toast in reconcile["toasts"])
-
-
-def test_login_and_reconnect_wiring_is_still_present():
-    app = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
-
-    assert "rememberOfflineBudget(result.data.offlineBudget, result.data.userId)" in app
-    assert app.count("void reconcileOfflineActions()") == 3

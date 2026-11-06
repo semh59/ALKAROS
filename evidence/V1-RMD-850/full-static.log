@@ -1,0 +1,10 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+
+ Test Files  33 passed (33)
+      Tests  370 passed (370)
+   Start at  19:45:17
+   Duration  20.05s (transform 50.68s, setup 920ms, import 4.69s, tests 103.29s, environment 66.70s)
+
+exit 0

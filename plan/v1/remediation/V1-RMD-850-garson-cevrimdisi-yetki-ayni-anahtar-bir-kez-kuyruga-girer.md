@@ -1,7 +1,7 @@
 # V1-RMD-850 - Garson çevrimdışı iptal/ikram: aynı anahtar bir kez kuyruğa girer, giriş ve bağlantı davranış testleri
 
 - Task ID: V1-RMD-850
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
