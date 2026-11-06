@@ -121,6 +121,6 @@ Mutfak) izlenen "tek palet" pratiğine aykırı olurdu.
 ## 7. Etkilenen görev kimlikleri
 
 - V1-CUI-007 (bu karar)
-- V1-CUI-008 (Planned) — `src/Clients/Cashier` token migrasyonu
-- V1-CUI-009 (Planned) — `src/Clients/PosTerminal/src/design-system/tokens.css`
+- V1-CUI-008 (Done) — `src/Clients/Cashier` token migrasyonu
+- V1-CUI-009 (Done) — `src/Clients/PosTerminal/src/design-system/tokens.css`
   Faz 0'a geçiş + Cashier route görsel doğrulama

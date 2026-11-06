@@ -74,7 +74,8 @@ normal one (500), both mapped to stock.
 
 ## Scope (V1-CUI-011's own In scope / Out of scope)
 
-Covers the four scenarios the task requires:
+Started with the four scenarios below; the directory now holds 32 specs
+(`01`..`32`), the first four being:
 
 1. `01-login-and-catalog.spec.js` — cashier login (PosTerminal's real
    `Cashier.tsx` form) → Kasa screen opens, catalog loads.

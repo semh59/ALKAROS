@@ -13,11 +13,10 @@
 
 Bill-to-OrderItem junction entity `bill_items`:
 
-- `bill_items.id` surrogate key; `bill_items.bill_id` and
-  `bill_items.order_item_id` with a composite unique constraint
-  `(bill_id, order_item_id)`.
-- Each `order_item` appears in exactly one `bill_items` row: a global unique
-  constraint on `bill_items.order_item_id`. An order item is never billed
+- `bill_items.bill_item_id` surrogate key; composite unique constraint
+  `(bill_id, bill_item_id)` (the foreign-key target).
+- Each `order_item` appears in exactly one active `bill_items` row: a partial
+  unique index on `bill_items.order_item_id` where `superseded_at IS NULL`. An order item is never billed
   twice and never moves bills without an audited reparent action.
 - `bills.order_id` is kept as nullable origin metadata (the first order that
   created the Bill) and carries no cardinality constraint. The single-FK
@@ -58,8 +57,9 @@ uniqueness, double-billing risk; rejected.
 ## Invariants for consumers
 
 - `bill_items` is the only cardinality carrier between Bill and Order.
-- `order_item_id` globally unique in `bill_items` (no double billing).
-- `(bill_id, order_item_id)` unique.
+- `order_item_id` unique among active (`superseded_at IS NULL`) `bill_items`
+  rows (no double billing; a cancelled bill's rows are superseded).
+- `(bill_id, bill_item_id)` unique.
 - Bill payable = sum over its `bill_items` rows at the snapshot rules of the
   pricing decision (V0-DOM-005/V1-BIL-*).
 - Table transfer and merge create/delete junction rows transactionally with

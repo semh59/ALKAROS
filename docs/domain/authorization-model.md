@@ -94,8 +94,10 @@ authorization request resolved by §4.
    grant on another server's check is auto-denied before it reaches a manager).
    An unassigned check (no serving user) is not the waiter's own check either and is auto-denied the same way
    (Semih, 2026-09-28, V1-RMD-402).
-2. There is **no standing discount ladder** — every `bills.discount`, including
-   from a `cashier`, is a grant. Only `supervisor` / `manager` hold it outright.
+2. A waiter or cashier discount is auto-approved only inside the self-approval
+   limit set on the limits screen (the waiter starts with up to ₺100, at most 10
+   in an 8 hour window; the cashier has none until one is set); above it, or with no limit set, every `bills.discount` is a
+   grant that a manager answers. Only `supervisor` / `manager` hold it outright.
 3. `supervisor` is the **floor role (şef garson)**: a senior waiter who holds
    `bills.void` / `bills.comp` / `bills.discount` / `floorplan.manage` /
    `reports.view` outright so the rush keeps moving without a manager, but never

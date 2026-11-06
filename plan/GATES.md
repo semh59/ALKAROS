@@ -270,7 +270,7 @@ Bu tablo `tools/plan-audit/plan_audit_tool.py`'nin
 `tools/task-scope/task_scope_tool.py`'nin
 `_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER` sabitiyle tam eşleşmelidir
 (V0 deferral ve V13 exit-waiver tablolarıyla birebir aynı fail-closed
-desen). Yeni product behavior başlatmaz; yalnızca bu 8 görevin
+desen). Yeni product behavior başlatmaz; yalnızca bu tablodaki 4 tüketici görevin
 gerçek Owned surface'ta InProgress'e alınmasına ve kendi gerçek
 kapsamlarıyla `Done` olmasına izin verir.
 

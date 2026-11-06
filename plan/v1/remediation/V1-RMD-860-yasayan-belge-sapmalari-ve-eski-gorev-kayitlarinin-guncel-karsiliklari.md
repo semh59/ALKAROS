@@ -1,7 +1,7 @@
 # V1-RMD-860 - Yaşayan belge sapmaları kodla hizalanır ve eski Done görev kayıtlarının güncel karşılıkları tek kayıtta toplanır
 
 - Task ID: V1-RMD-860
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
