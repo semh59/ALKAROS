@@ -1,0 +1,31 @@
+M1 recall replaces a filled cart without asking: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M1 recall replaces a filled cart without asking)
+M2 low-stock threshold 5 -> 4: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M2 low-stock threshold 5 -> 4)
+M3 price read from the wrong field: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M3 price read from the wrong field)
+M4 ordering stays open without a catalog: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M4 ordering stays open without a catalog)
+M5 category read from the wrong field: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M5 category read from the wrong field)
+M6 cashier name fixed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M6 cashier name fixed)
+M7 empty search message removed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M7 empty search message removed)
+M8 waiter retry button does nothing: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 22 passed (23)
+  restored (M8 waiter retry button does nothing)
+baseline:  Tests 34 passed (34)
+M9 Turkish lowercase search rule dropped: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 33 passed (34)
+  restored (M9 Turkish lowercase search rule dropped)
+M10 empty menu message changed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 33 passed (34)
+  restored (M10 empty menu message changed)

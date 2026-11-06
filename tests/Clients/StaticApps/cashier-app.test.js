@@ -29,8 +29,8 @@ function standardRoutes({
         {
           productId: PRODUCT_ID,
           name: "Kola",
-          currentPrice: 45,
-          categoryId: "c1",
+          unitPrice: 45,
+          categoryCode: "c1",
           categoryName: "İçecek",
           sku: "K1",
         },

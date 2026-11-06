@@ -272,6 +272,51 @@ describe("waiter-app.js", () => {
   });
 });
 
+describe("waiter menu when the catalog cannot be read", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    localStorage.clear();
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+  });
+
+  it("says the menu is empty, without a retry, when the server sends no product", async () => {
+    const routes = standardRoutes();
+    routes.find((route) => route.test("http://test/catalog")).body = [];
+    installFetchRouter(routes);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => {
+      if (!document.querySelector(".table[data-table]")) throw new Error("tables not rendered yet");
+    });
+
+    document.querySelector(".table[data-table]").click();
+
+    await vi.waitFor(() => expect(document.getElementById("productList").textContent).toContain("Menüde ürün yok."));
+    expect(document.querySelector("[data-retry-catalog]")).toBeNull();
+  });
+
+  it("says the menu could not be fetched, offers a retry and shows the menu once it loads", async () => {
+    let catalogCalls = 0;
+    const routes = standardRoutes();
+    const catalogRoute = routes.find((route) => route.test("http://test/catalog"));
+    Object.defineProperty(catalogRoute, "status", { get: () => (catalogCalls++ === 0 ? 500 : 200), configurable: true });
+    installFetchRouter(routes);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => {
+      if (!document.querySelector(".table[data-table]")) throw new Error("tables not rendered yet");
+    });
+
+    document.querySelector(".table[data-table]").click();
+    await vi.waitFor(() => expect(document.getElementById("productList").textContent).toContain("Menü alınamadı."));
+
+    document.querySelector("[data-retry-catalog]").click();
+
+    await vi.waitFor(() => expect(document.querySelector(".product[data-product]")).not.toBeNull());
+  });
+});
+
 const OFFLINE_ACTION = {
   idempotencyKey: "k-1", permissionCode: "bills.void", requesterUserId: "u1", requesterRoleCode: "waiter", reasonCode: "CustomerChange",
   amount: 45, offlineAuthorizedAt: "2026-11-06T10:00:00.000Z", subjectType: "OrderItem", subjectId: "i1",
