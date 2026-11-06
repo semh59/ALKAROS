@@ -31,8 +31,8 @@ function stubApi(routes: Route[]): void {
 async function loadPage(page: string, script: string): Promise<void> {
   const html = readFileSync(resolve(wwwroot, page, "index.html"), "utf8");
   document.body.innerHTML = /<body>([\s\S]*)<\/body>/.exec(html)![1].replace(/<script[\s\S]*?<\/script>/g, "");
-  // The page scripts are plain browser IIFEs: evaluating them in the jsdom global gives each test a fresh closure.
-  (0, eval)(readFileSync(resolve(wwwroot, page, script), "utf8"));
+  // The page scripts are plain browser IIFEs: running them as a function body in the jsdom global gives each test a fresh closure (no eval needed).
+  new Function(readFileSync(resolve(wwwroot, page, script), "utf8"))();
 }
 
 async function violations(): Promise<string[]> {

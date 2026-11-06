@@ -1,0 +1,2 @@
+M1 betik hic calistirilmaz (satir 35 -> void readFileSync(...)): 8 test dustu, 26 gecti, exit 1 (mutation-1.log)
+geri alma: cp /tmp/dyn.bak src/Clients/PosTerminal/src/dynamic-a11y.test.ts; cmp /tmp/dyn.bak <dosya> -> fark yok (exit 0)

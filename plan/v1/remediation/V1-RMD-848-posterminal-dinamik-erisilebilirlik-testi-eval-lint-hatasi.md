@@ -1,7 +1,7 @@
 # V1-RMD-848 - PosTerminal erişilebilirlik testi: eval lint hatası
 
 - Task ID: V1-RMD-848
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

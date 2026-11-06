@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/dynamic-a11y.test.ts (34 tests | 8 failed) 8148ms
+     × payment page with the drawer open 1031ms
+     × payment page with the drawer closed (notice with the way to open it, no method chosen) 1010ms
+     × payment page when the drawer state could not be read 1015ms
+     × payment page with the card reconciliation lock 1017ms
+     × payment page with the bank transfer confirmation and a discount error showing 1016ms
+     × payment page with the refund and cancel section open 1016ms
+     × cash session page when the active session cannot be read 1015ms
+     × customer accounts page with a failed receipt showing its error 1016ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > payment page with the drawer open
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > payment page with the drawer closed (notice with the way to open it, no method chosen)
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > payment page when the drawer state could not be read
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > payment page with the card reconciliation lock
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > payment page with the bank transfer confirmation and a discount error showing
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > payment page with the refund and cancel section open
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > cash session page when the active session cannot be read
+ FAIL  src/dynamic-a11y.test.ts > till pages in their dynamic states > customer accounts page with a failed receipt showing its error
+AssertionError: expected null to be truthy
+
+- Expected:
+true
+
++ Received:
+null
+
+ ❯ src/dynamic-a11y.test.ts:46:76
+     44| }
+     45|
+     46| const waitFor = (check: () => unknown) => vi.waitFor(() => expect(chec…
+       |                                                                            ^
+     47| const unpaid = { billId: BILL, payableAmount: 100, allocatedTotal: 30,…
+     48| const locked = { ...unpaid, unsettledPayment: { paymentId: "p1", statu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed | 26 passed (34)
+   Start at  19:13:25
+   Duration  9.65s (transform 58ms, setup 0ms, import 161ms, tests 8.15s, environment 1.07s)
+
+exit 1
