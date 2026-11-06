@@ -1,0 +1,44 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > offers approve and reject only on the requests the server says the caller may decide
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794000111496-0.09124525142798745:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794000111496-0.09124525142798745:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794000111496-0.09124525142798745:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (17 tests | 1 failed) 2409ms
+     × offers approve and reject only on the requests the server says the caller may decide 166ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > offers approve and reject only on the requests the server says the caller may decide
+AssertionError: expected [ 'own', 'other' ] to deeply equal [ 'other' ]
+
+- Expected
++ Received
+
+  [
++   "own",
+    "other",
+  ]
+
+ ❯ split-payment-refunds.test.js:104:130
+    102|     await vi.waitFor(() => expect(document.querySelector('[data-refund…
+    103|
+    104|     expect([...document.querySelectorAll('[data-refund-action="approve…
+       |                                                                                                                                  ^
+    105|     expect([...document.querySelectorAll('[data-refund-action="reject"…
+    106|     expect(app().textContent).toContain("Başka bir yetkili onaylamalı.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed (17)
+   Start at  00:21:50
+   Duration  3.66s (transform 680ms, setup 25ms, import 63ms, tests 2.41s, environment 913ms)
+

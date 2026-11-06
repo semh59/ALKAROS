@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true)
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794000118431-0.10820329866971168:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794000118431-0.10820329866971168:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794000118431-0.10820329866971168:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (17 tests | 1 failed) 2399ms
+     × shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true) 113ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-refunds.test.js:119:70
+    117|     await vi.waitFor(() => expect(document.getElementById("pending-con…
+    118|
+    119|     expect(document.getElementById("approve-confirmation") !== null).t…
+       |                                                                      ^
+    120|   });
+    121|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed (17)
+   Start at  00:21:56
+   Duration  3.72s (transform 680ms, setup 23ms, import 57ms, tests 2.40s, environment 934ms)
+

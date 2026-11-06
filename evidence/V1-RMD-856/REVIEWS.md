@@ -1,0 +1,5 @@
+# V1-RMD-856 incelemeler
+
+1. qa-frontend: orta: kart onayında Reddet etiketi `mine`'a bağlıydı, oturum kimliği boşken "siz yaptınız" metni ile "Reddet" etiketi çelişirdi -> etiket `mine || mayDecide === false` oldu, testte etiket doğrulanıyor. Düşük: mayDecide true/undefined ve yetkisiz görünüm testsizdi -> iki test eklendi. "Onayla ile Bildirimi geri çek yan yana çelişki" iddiası REDDEDİLDİ: ayar açıkken kendi bildirimini onaylamak da geri çekmek de geçerli, sunucu reddi kısıtlamıyor (ManualCardConfirmationService.cs:174-205).
+2. qa-guvenlik-yetki: kritik/orta yok. Kural birebir (EnsureMayDecide, SAME_ACTOR); bilgi sızıntısı yok; yetki farkı yalnız UX; karar uç noktaları mayDecide'a bakmıyor. Düşük: kart reddi için kural farkı ve yetki notu -> RESULT "Sınırlar"a yazıldı; ayar okuma maliyeti kabul (istek başına bir okuma).
+Doğrulama turu: iki incelemenin kod atıfları (PaymentRefunds.cs:590, ManualCardConfirmationService.cs:123-125,174-205, BillingSplitApplication.cs:431) yeniden okundu; çürütülen bulgu yalnız yukarıdaki çelişki iddiası.

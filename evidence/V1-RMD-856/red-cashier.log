@@ -1,0 +1,73 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > offers approve and reject only on the requests the server says the caller may decide
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793999957323-0.6870754554723162:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793999957323-0.6870754554723162:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793999957323-0.6870754554723162:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true)
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793999957567-0.8151694850500275:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793999957567-0.8151694850500275:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1793999957567-0.8151694850500275:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (17 tests | 2 failed) 2392ms
+     × offers approve and reject only on the requests the server says the caller may decide 159ms
+     × shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true) 109ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > offers approve and reject only on the requests the server says the caller may decide
+AssertionError: expected [ 'own', 'other' ] to deeply equal [ 'other' ]
+
+- Expected
++ Received
+
+  [
++   "own",
+    "other",
+  ]
+
+ ❯ split-payment-refunds.test.js:104:130
+    102|     await vi.waitFor(() => expect(document.querySelector('[data-refund…
+    103|
+    104|     expect([...document.querySelectorAll('[data-refund-action="approve…
+       |                                                                                                                                  ^
+    105|     expect([...document.querySelectorAll('[data-refund-action="reject"…
+    106|     expect(app().textContent).toContain("Başka bir yetkili onaylamalı.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-refunds.test.js:119:70
+    117|     await vi.waitFor(() => expect(document.getElementById("pending-con…
+    118|
+    119|     expect(document.getElementById("approve-confirmation") !== null).t…
+       |                                                                      ^
+    120|   });
+    121|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 15 passed (17)
+   Start at  00:19:15
+   Duration  3.84s (transform 679ms, setup 24ms, import 58ms, tests 2.39s, environment 1.11s)
+

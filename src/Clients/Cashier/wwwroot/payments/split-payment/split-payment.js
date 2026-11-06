@@ -1040,13 +1040,13 @@
       return (
         '<div class="sp-field" id="pending-confirmation"><span class="sp-field-label">Onay bekliyor: fiş ' +
         escapeHtml(pending.slipNumber) + ' · ' + formatMoney(pending.amount) + '</span>' +
-        (mine
+        (pending.mayDecide === false
           ? '<div class="sp-alert-body">Kart çekildi bildirimini siz yaptınız; ikinci bir yetkilinin onaylaması gerekir.</div>'
           : '<input class="sp-input" type="text" id="decision-note" maxlength="500" placeholder="Not (isteğe bağlı)" aria-label="Onay notu (isteğe bağlı)" value="' +
             escapeHtml(state.decisionNote) + '">' +
             '<button class="sp-btn sp-btn-primary" id="approve-confirmation" type="button"' + disabled + '>Onayla: kart çekildi</button>') +
         '<button class="sp-btn sp-btn-secondary" id="reject-confirmation" type="button"' + disabled + '>' +
-        (mine ? 'Bildirimi geri çek' : 'Reddet') + '</button></div>'
+        (mine || pending.mayDecide === false ? 'Bildirimi geri çek' : 'Reddet') + '</button></div>'
       );
     }
     return (
@@ -1445,7 +1445,9 @@
       rows.map(function (row) {
         var id = escapeHtml(row.requestId);
         var actions = '';
-        if (row.status === 'Requested') {
+        if (row.status === 'Requested' && row.mayDecide === false) {
+          actions = '<span class="sp-alert-body">Başka bir yetkili onaylamalı.</span>';
+        } else if (row.status === 'Requested') {
           actions =
             renderReasonField('note:' + row.requestId, 'Ret gerekçesi') +
             confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary') +

@@ -1,7 +1,7 @@
 # V1-RMD-856 - Kendi onayı ekran süzgeci: iade istekleri ve kart çekildi onayı yetkisiz düğmeyi göstermez
 
 - Task ID: V1-RMD-856
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

@@ -94,6 +94,32 @@ describe("split-payment.js cancel and refund", () => {
     document.body.innerHTML = "";
   });
 
+  it("offers approve and reject only on the requests the server says the caller may decide", async () => {
+    await open(routes({
+      summary: paidSummary,
+      requests: [request("Requested", { requestId: "own", mayDecide: false }), request("Requested", { requestId: "other", mayDecide: true })],
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+
+    expect([...document.querySelectorAll('[data-refund-action="approve"]')].map((node) => node.getAttribute("data-request-id"))).toEqual(["other"]);
+    expect([...document.querySelectorAll('[data-refund-action="reject"]')].map((node) => node.getAttribute("data-request-id"))).toEqual(["other"]);
+    expect(app().textContent).toContain("Başka bir yetkili onaylamalı.");
+  });
+
+  it.each([
+    [false, false, "Kart çekildi bildirimini siz yaptınız"],
+    [true, true, "Onayla: kart çekildi"],
+  ])("shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide %s)", async (mayDecide, approvable) => {
+    const pending = { confirmationId: "c1", slipNumber: "FIS-1", amount: 100, requestedBy: "u2", requestedAt: "2026-10-13T10:00:00Z", mayDecide };
+    await open(routes({
+      summary: { ...unpaidSummary, unsettledPayment: { paymentId: PAYMENT_ID, status: "Unknown", reason: "x", pendingConfirmation: pending } },
+    }));
+    await vi.waitFor(() => expect(document.getElementById("pending-confirmation")).not.toBeNull());
+
+    expect(document.getElementById("approve-confirmation") !== null).toBe(approvable);
+    expect(document.getElementById("reject-confirmation").textContent).toBe("Bildirimi geri çek");
+  });
+
   it("asks for a refund of an approved payment with the typed reason", async () => {
     const fetchMock = await open(routes({ summary: paidSummary }));
     await vi.waitFor(() => expect(app().textContent).toContain("Hesap Ödendi"));

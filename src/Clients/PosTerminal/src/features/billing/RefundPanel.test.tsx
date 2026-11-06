@@ -157,6 +157,32 @@ describe("refund panel", () => {
     expect(document.body.textContent).not.toContain("Reddet");
   });
 
+  it("offers a request the server says the caller may not decide only the note that another approver must", async () => {
+    const client = makeClient({ listRequests: vi.fn().mockResolvedValue([request("Requested", { requestedBy: "u1", terminalId: "t1", mayDecide: false })]) });
+    await render({ client });
+
+    expect(document.body.textContent).toContain("Başka bir yetkili onaylamalı.");
+    expect(document.body.textContent).not.toContain("Onayla");
+    expect(document.body.textContent).not.toContain("Reddet");
+    expect(document.body.textContent).not.toContain("Bütçe ver");
+  });
+
+  it.each([[true], [undefined]])("keeps approve and reject for a request whose mayDecide is %s", async (mayDecide) => {
+    const client = makeClient({ listRequests: vi.fn().mockResolvedValue([request("Requested", { mayDecide })]) });
+    await render({ client });
+
+    expect(document.body.textContent).toContain("Onayla");
+    expect(document.body.textContent).toContain("Reddet");
+    expect(document.body.textContent).not.toContain("Başka bir yetkili onaylamalı.");
+  });
+
+  it("shows no approval note to someone without the approve permission", async () => {
+    const client = makeClient({ listRequests: vi.fn().mockResolvedValue([request("Requested", { mayDecide: false })]) });
+    await render({ client, canApproveRefund: false });
+
+    expect(document.body.textContent).not.toContain("Başka bir yetkili onaylamalı.");
+  });
+
   it("completes a card refund with the slip number", async () => {
     const client = makeClient({
       listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]),

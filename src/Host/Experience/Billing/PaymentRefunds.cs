@@ -44,7 +44,8 @@ public sealed record RefundRequestV1(
     bool ApprovedFromAllowance = false,
     IReadOnlyList<RefundItemV1>? Items = null,
     Guid? TerminalId = null,
-    bool SelfApproved = false);
+    bool SelfApproved = false,
+    bool MayDecide = true);
 
 public sealed record RefundAllowanceInputV1(Guid CashierUserId, Guid CashierTerminalId, decimal Amount);
 

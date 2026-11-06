@@ -44,6 +44,34 @@ public sealed partial class PaymentRefundHttpTests
     }
 
     [Fact]
+    public async Task TheListSaysWhetherTheCallerMayDecideEachRequestFromTheSharedSetting()
+    {
+        var (selfId, selfCookie) = await _database.SeedSessionWithPermissionsAsync(
+            _terminalId, "supervisor", "payments.refund.request", "payments.refund.approve");
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(selfId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await RequestAsync(client, seeded.BillId, paymentId, "Kendi iadem", selfCookie);
+
+        async Task<bool> MayDecideAsync(string cookie)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{_terminalId:D}/billing/refund-requests");
+            request.Headers.TryAddWithoutValidation("Cookie", cookie);
+            using var response = await client.SendAsync(request);
+            return Assert.Single((await response.Content.ReadFromJsonAsync<List<RefundRequestV1>>())!).MayDecide;
+        }
+
+        await SetSelfApprovalAsync(false);
+        Assert.False(await MayDecideAsync(selfCookie));
+        Assert.True(await MayDecideAsync(_managerCookie));
+
+        await SetSelfApprovalAsync(true);
+        Assert.True(await MayDecideAsync(selfCookie));
+    }
+
+    [Fact]
     public async Task ADecisionByAnotherPersonIsNeverMarkedAsSelfApprovedEvenWhenTheSettingIsOn()
     {
         var seeded = await _database.SeedBillAsync();

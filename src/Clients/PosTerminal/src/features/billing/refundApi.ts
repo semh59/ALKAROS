@@ -25,6 +25,7 @@ export interface RefundRequestRow {
   approvedFromAllowance?: boolean;
   terminalId?: string;
   selfApproved?: boolean;
+  mayDecide?: boolean;
   items?: readonly RefundItemInput[];
 }
 

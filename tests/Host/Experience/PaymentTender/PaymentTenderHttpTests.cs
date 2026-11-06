@@ -1057,6 +1057,39 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ThePendingCardConfirmationSaysWhetherTheCallerMayDecideItFromTheSharedSetting()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "mayDecide-cashier");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "mayDecide-1");
+        var claimer = await _database.SeedManagerSessionAsync(terminalId, "mayDecide-claimer");
+        var other = await _database.SeedManagerSessionAsync(terminalId, "mayDecide-other");
+        await PostAsync(client, ClaimPath(terminalId, billId, paymentId), claimer, new { SlipNumber = "FIS-1" });
+
+        async Task<bool> MayDecideAsync(string cookie)
+        {
+            var summary = await (await GetAsync(client, TendersPath(terminalId, billId), cookie)).Content.ReadFromJsonAsync<JsonElement>();
+            return summary.GetProperty("unsettledPayment").GetProperty("pendingConfirmation").GetProperty("mayDecide").GetBoolean();
+        }
+
+        Assert.False(await MayDecideAsync(claimer));
+        Assert.True(await MayDecideAsync(other));
+        await using (var enable = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner)
+            VALUES (gen_random_uuid(), 'approvals.manager_self_approval_enabled', 'true', 'Boolean', 'Global', 'cash')
+            ON CONFLICT (setting_key) DO UPDATE SET setting_value = 'true';
+            """))
+        {
+            await enable.ExecuteNonQueryAsync();
+        }
+        Assert.True(await MayDecideAsync(claimer));
+    }
+
+    [Fact]
     public async Task ACardChargeClaimedByOneManagerAndApprovedByAnotherSettlesThePaymentClosesTheBillAndIsAudited()
     {
         var terminalId = Guid.NewGuid();

@@ -210,10 +210,11 @@ public static partial class DualScreenApplication
             IBillAdjustmentRepository adjustmentRepository,
             DualScreenStore store,
             IAuthorizationService authorization,
+            ISettingsService settings,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(
+            var principal = await RequireCashierPermissionAsync(
                 context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
 
             var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
@@ -260,7 +261,9 @@ public static partial class DualScreenApplication
                     unsettled.History.Count > 0 ? unsettled.History[^1].Reason : null,
                     pending is null
                         ? null
-                        : new PendingCardConfirmationV1(pending.Id, pending.SlipNumber, pending.Amount, pending.RequestedBy, pending.RequestedAt));
+                        : new PendingCardConfirmationV1(
+                            pending.Id, pending.SlipNumber, pending.Amount, pending.RequestedBy, pending.RequestedAt,
+                            pending.RequestedBy != principal.UserId || await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken)));
 
             return Results.Ok(new BillTenderSummaryV1(
                 billId, adjustedPayableAmount, allocatedTotal, remaining, lines, unsettledDto));
@@ -769,7 +772,8 @@ public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, 
 public sealed record UnsettledPaymentV1(Guid PaymentId, string Status, string? Reason, PendingCardConfirmationV1? PendingConfirmation = null);
 
 /// <summary>V1-RMD-283: a claim "the card WAS charged" waiting for a second authorized person.</summary>
-public sealed record PendingCardConfirmationV1(Guid ConfirmationId, string SlipNumber, decimal Amount, Guid RequestedBy, DateTimeOffset RequestedAt);
+public sealed record PendingCardConfirmationV1(
+    Guid ConfirmationId, string SlipNumber, decimal Amount, Guid RequestedBy, DateTimeOffset RequestedAt, bool MayDecide = true);
 
 public sealed record ClaimCardChargedRequestV1(string? SlipNumber, string? Note);
 

@@ -1263,6 +1263,7 @@ export const refundText = {
   complete: "İadeyi tamamla",
   completeSent: "Havale gönderildi",
   selfApproved: "Kendi onayı",
+  mustBeDecidedByAnother: "Başka bir yetkili onaylamalı.",
   transferHint: "Havale / EFT iadesi için fiş numarası gerekmez; parayı gönderince onaylayın.",
   requested: "İade isteği gönderildi; onay bekliyor.",
   approved: "İade isteği onaylandı.",

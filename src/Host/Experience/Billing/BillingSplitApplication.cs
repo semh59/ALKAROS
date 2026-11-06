@@ -409,6 +409,7 @@ public static class BillingSplitApplication
             int? limit,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            ISettingsService settings,
             BillTerminalAccess access,
             PaymentRefundStore store,
             HttpContext context,
@@ -426,7 +427,8 @@ public static class BillingSplitApplication
                 requests = requests.Where(request => visible.Contains(request.BillId)).ToList();
             }
 
-            return Results.Ok(requests);
+            var selfApprovalAllowed = await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken);
+            return Results.Ok(requests.Select(request => request with { MayDecide = selfApprovalAllowed || request.RequestedBy != principal.UserId }));
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (

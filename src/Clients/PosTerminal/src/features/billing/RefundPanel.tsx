@@ -230,7 +230,8 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
         <span className="refund-panel__status">{refundStatusLabels[row.status] ?? refundText.unknown}</span>
         {row.selfApproved && <span className="refund-panel__status">{refundText.selfApproved}</span>}
         <span>{row.reason}</span>
-        {row.status === "Requested" && canApproveRefund && <>
+        {row.status === "Requested" && canApproveRefund && row.mayDecide === false && <span>{refundText.mustBeDecidedByAnother}</span>}
+        {row.status === "Requested" && canApproveRefund && row.mayDecide !== false && <>
           {row.requestedBy && row.terminalId && <>
             <TextField
               label={refundText.allowanceLabel}
