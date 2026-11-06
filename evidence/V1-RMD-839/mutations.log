@@ -1,0 +1,44 @@
+m1-no-counted-by-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 1 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m1-no-counted-by-fk restored (cmp exit 0)
+m2-no-cashier-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 2 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m2-no-cashier-fk restored (cmp exit 0)
+m3-no-requested-by-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 3 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m3-no-requested-by-fk restored (cmp exit 0)
+m4-no-recorded-by-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 12 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m4-no-recorded-by-fk restored (cmp exit 0)
+m5-no-changed-by-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 17 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m5-no-changed-by-fk restored (cmp exit 0)
+m6-no-closed-by-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 4 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m6-no-closed-by-fk restored (cmp exit 0)
+m7-no-reconciled-by-fk
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 3 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m7-no-reconciled-by-fk restored (cmp exit 0)
+m8-down-keeps-a-constraint
+Başarısız! - Başarısız:     1, Başarılı:    18, Atlanan:     0, Toplam:    19, Süre: 3 m 14 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m8-down-keeps-a-constraint restored (cmp exit 0)
+m9-set-null-dropped
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 12 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m9-set-null-dropped restored (cmp exit 0)
+m10-restrict-became-set-null
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 12 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m10-restrict-became-set-null restored (cmp exit 0)
+m11-index-dropped
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 12 s - ALKAROS.Host.Tests.dll (net8.0)
+exit 1
+m11-index-dropped restored (cmp exit 0)

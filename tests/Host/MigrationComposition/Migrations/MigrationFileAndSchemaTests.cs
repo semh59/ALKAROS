@@ -379,6 +379,62 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Theory]
+    [InlineData("payments.payment_status_history", "changed_by", "fk_payment_status_history_changed_by",
+        "INSERT INTO payments.payment_status_history (payment_status_history_id, payment_id, old_status, new_status, changed_at) " +
+        "VALUES (gen_random_uuid(), gen_random_uuid(), 'Approved', 'Refunded', now());")]
+    [InlineData("cash.cash_sessions", "cashier_user_id", "fk_cash_sessions_cashier_user", CashSessionRow)]
+    [InlineData("cash.cash_sessions", "closed_by", "fk_cash_sessions_closed_by", CashSessionRow)]
+    [InlineData("cash.cash_sessions", "reconciled_by", "fk_cash_sessions_reconciled_by", CashSessionRow)]
+    [InlineData("cash.cash_counts", "counted_by", "fk_cash_counts_counted_by",
+        "INSERT INTO cash.cash_counts (cash_count_id, cash_session_id, counted_amount, counted_by, counted_at) " +
+        "VALUES (gen_random_uuid(), gen_random_uuid(), 1, gen_random_uuid(), now());")]
+    [InlineData("cash.cash_transactions", "recorded_by", "fk_cash_transactions_recorded_by",
+        "INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, recorded_by, occurred_at) " +
+        "VALUES (gen_random_uuid(), gen_random_uuid(), 'Opening', 'In', 1, gen_random_uuid(), now());")]
+    [InlineData("payments.refund_intents", "requested_by", "fk_refund_intents_requested_by",
+        "INSERT INTO payments.refund_intents (refund_intent_id, payment_id, payment_allocation_id, requested_amount, status, idempotency_key, requested_by, requested_at) " +
+        "VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), 1, 'Pending', gen_random_uuid()::text, gen_random_uuid(), now());")]
+    public async Task APaymentOrCashColumnThatNamesAUserRejectsAUserWhoDoesNotExist(string table, string column, string constraint, string insertRow)
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        await ExecuteWithoutForeignKeysAsync(source, insertRow);
+        await source.CreateCommand($"ALTER TABLE {table} DISABLE TRIGGER USER;").ExecuteNonQueryAsync();
+
+        var failure = await Assert.ThrowsAsync<PostgresException>(() =>
+            source.CreateCommand($"UPDATE {table} SET {column} = gen_random_uuid();").ExecuteNonQueryAsync());
+
+        Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, failure.SqlState);
+        Assert.Equal(constraint, failure.ConstraintName);
+    }
+
+    [Fact]
+    public async Task TheUserForeignKeysClearTheirNullableColumnsOnUserDeleteAndRefuseTheDeleteForTheRequiredOnes()
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+
+        Assert.Equal(
+            "fk_cash_counts_counted_by:a,fk_cash_sessions_cashier_user:a,fk_cash_sessions_closed_by:n,fk_cash_sessions_reconciled_by:n," +
+            "fk_cash_transactions_recorded_by:n,fk_payment_status_history_changed_by:n,fk_refund_intents_requested_by:n",
+            await ScalarAsync<string>(source,
+                "SELECT string_agg(conname || ':' || confdeltype::text, ',' ORDER BY conname) FROM pg_constraint " +
+                "WHERE contype = 'f' AND confrelid = 'identity.users'::regclass AND conname IN " +
+                "('fk_cash_counts_counted_by', 'fk_cash_sessions_cashier_user', 'fk_cash_sessions_closed_by', 'fk_cash_sessions_reconciled_by', " +
+                "'fk_cash_transactions_recorded_by', 'fk_payment_status_history_changed_by', 'fk_refund_intents_requested_by');"));
+        Assert.Equal(1L, await ScalarAsync<long>(source,
+            "SELECT count(*) FROM pg_indexes WHERE schemaname = 'cash' AND indexname = 'ix_cash_transactions_recorded_by';"));
+        Assert.Equal(5L, await ScalarAsync<long>(source,
+            "SELECT count(*) FROM information_schema.columns WHERE is_nullable = 'YES' AND (table_schema, table_name, column_name) IN " +
+            "(('payments', 'payment_status_history', 'changed_by'), ('cash', 'cash_sessions', 'closed_by'), ('cash', 'cash_sessions', 'reconciled_by'), " +
+            "('cash', 'cash_transactions', 'recorded_by'), ('payments', 'refund_intents', 'requested_by'));"));
+    }
+
+    private const string CashSessionRow =
+        "INSERT INTO cash.cash_sessions (cash_session_id, cashier_user_id, terminal_id, status, opening_balance, opened_at, closed_by, reconciled_by, created_at, updated_at) " +
+        "VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), 'Closed', 0, now(), gen_random_uuid(), gen_random_uuid(), now(), now());";
+
+    [Theory]
     [InlineData("032")]
     [InlineData("075")]
     [InlineData("096")]
@@ -387,6 +443,7 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     [InlineData("108")]
     [InlineData("119")]
     [InlineData("123")]
+    [InlineData("131")]
     [InlineData("180")]
     [InlineData("209")]
     [InlineData("210")]
