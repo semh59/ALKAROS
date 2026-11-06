@@ -23,6 +23,10 @@ G9 (F0915): role=tablist ve role=radiogroup gruplarında yalnız Tab ile gezileb
   - src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.tsx — görünüm sekmeleri.
   - tests/Clients/StaticApps/arrow-key-groups.test.js — vanilla testler.
   - src/Clients/PosTerminal/src/design-system/primitives.test.tsx — yardımcı testi.
+  - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx — sekme bağlantısı testi.
+  - src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.test.tsx — sekme bağlantısı testi.
+  - src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.test.tsx — sekme bağlantısı testi.
+  - src/Clients/PosTerminal/src/routes/Cashier.category-tabs.test.tsx — sekme bağlantısı testi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
