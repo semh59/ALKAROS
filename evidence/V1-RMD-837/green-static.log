@@ -1,0 +1,28 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ waiter-app.test.js (8 tests | 1 failed) 9255ms
+     × sends the cart to the kitchen via table-draft then submit-draft, in that order 5030ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  waiter-app.test.js > waiter-app.js > sends the cart to the kitchen via table-draft then submit-draft, in that order
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ waiter-app.test.js:85:3
+     83|   });
+     84|
+     85|   it("sends the cart to the kitchen via table-draft then submit-draft,…
+       |   ^
+     86|     // Regression coverage for a Critical finding (2026-09-06, V1-RMD-…
+     87|     // neither production client ever called submit-draft, so an order
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 32 passed (33)
+      Tests  1 failed | 364 passed (365)
+   Start at  07:40:46
+   Duration  28.83s (transform 70.46s, setup 1.67s, import 7.02s, tests 133.03s, environment 130.70s)
+
+exit 1

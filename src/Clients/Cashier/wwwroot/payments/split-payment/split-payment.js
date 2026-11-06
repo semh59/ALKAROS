@@ -259,7 +259,6 @@
     ServiceFee: 'Ücret',
     Kuver: 'Kuver',
     Tip: 'Bahşiş',
-    CustomFee: 'Özel ücret',
   };
 
   function setBusy(value) { state.busy = value; render(); }
@@ -1687,7 +1686,7 @@
   var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Card: 'Banka kartı', Eft: 'Havale / EFT' };
   var RECEIPT_ADJUSTMENTS = {
     DiscountPercentage: 'İndirim', DiscountAmount: 'İndirim', ServiceFee: 'Hizmet bedeli',
-    Kuver: 'Kuver', Tip: 'Bahşiş', CustomFee: 'Ek ücret',
+    Kuver: 'Kuver', Tip: 'Bahşiş',
   };
   var RECEIPT_PAYMENT_STATUS = { Refunded: 'İade edildi', PartiallyRefunded: 'Kısmen iade edildi' };
 

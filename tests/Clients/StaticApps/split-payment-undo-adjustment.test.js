@@ -48,7 +48,7 @@ describe("taking a wrongly entered discount or tip back off on the payment page"
   it("offers Geri al on discounts and tips only, never on fees", async () => {
     await open({ items: [
       adjustment("a1", "Tip", 10, false), adjustment("a2", "DiscountPercentage", 5, true), adjustment("a3", "DiscountAmount", 5, true),
-      adjustment("a4", "ServiceFee", 5, false), adjustment("a5", "Kuver", 5, false), adjustment("a6", "CustomFee", 5, false),
+      adjustment("a4", "ServiceFee", 5, false), adjustment("a5", "Kuver", 5, false),
     ] });
 
     expect(undoButtons().map((button) => button.dataset.undoAdjustment)).toEqual(["a1", "a2", "a3"]);

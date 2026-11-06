@@ -1,4 +1,6 @@
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Tests.Fixtures;
 using Npgsql;
@@ -209,12 +211,59 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Migrate(OrderPath(), MigrationsPath());
         Assert.Equal("S1=true S2=false", await ScalarAsync<string>(source, flags));
 
-        Rollback(OrderPath(), MigrationsPath(), "216");
+        RollBackDownTo("216");
         Assert.Equal(0L, await ScalarAsync<long>(source,
             "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'catalog' AND table_name = 'products' AND column_name = 'allows_half_portion';"));
 
         Migrate(OrderPath(), MigrationsPath());
         Assert.Equal("S1=true S2=false", await ScalarAsync<string>(source, flags));
+    }
+
+    [Fact]
+    public async Task TheAdjustmentTypeCheckListsExactlyTheTypesTheDomainCanCreate()
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+
+        var definition = await ScalarAsync<string>(source,
+            "SELECT string_agg(pg_get_constraintdef(oid), ' ') FROM pg_constraint " +
+            "WHERE conrelid = 'billing.bill_adjustments'::regclass AND contype = 'c' AND pg_get_constraintdef(oid) LIKE '%adjustment_type%';");
+        var listed = Regex.Matches(definition, "'([A-Za-z]+)'").Select(match => match.Groups[1].Value).Order().ToArray();
+
+        Assert.Equal(Enum.GetNames<AdjustmentType>().Order().ToArray(), listed);
+    }
+
+    [Fact]
+    public async Task AStoredCustomFeeRowStopsTheAdjustmentTypeMigrationInsteadOfBeingRewritten()
+    {
+        var (order, migrations) = CopyUpTo("216");
+        Migrate(order, migrations);
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        await InsertAdjustmentAsync(source, "CustomFee");
+
+        using var output = new StringWriter();
+        var exit = HostComposition.Run(new HostCompositionOptions(OrderPath(), MigrationsPath(), _database.PsqlOptions, null), output);
+
+        Assert.NotEqual(HostExitCode.Success, exit);
+        Assert.Contains("CustomFee", output.ToString());
+        Assert.Equal(1L, await ScalarAsync<long>(source, "SELECT count(*) FROM billing.bill_adjustments WHERE adjustment_type = 'CustomFee';"));
+    }
+
+    [Fact]
+    public async Task RollingBackTheAdjustmentTypeMigrationAcceptsCustomFeeAgainAndItAppliesOnceMore()
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        var failure = await Assert.ThrowsAsync<PostgresException>(() => InsertAdjustmentAsync(source, "CustomFee"));
+        Assert.Equal(PostgresErrorCodes.CheckViolation, failure.SqlState);
+
+        RollBackDownTo("217");
+        await InsertAdjustmentAsync(source, "CustomFee");
+        await source.CreateCommand("DELETE FROM billing.bill_adjustments;").ExecuteNonQueryAsync();
+
+        Migrate(OrderPath(), MigrationsPath());
+        failure = await Assert.ThrowsAsync<PostgresException>(() => InsertAdjustmentAsync(source, "CustomFee"));
+        Assert.Equal(PostgresErrorCodes.CheckViolation, failure.SqlState);
     }
 
     [Theory]
@@ -309,6 +358,24 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         command.Parameters.AddWithValue("content", content);
         command.Parameters.AddWithValue("type", contentType);
         await command.ExecuteNonQueryAsync();
+    }
+
+    // Foreign keys are skipped for the insert only: the test needs one adjustment row, not a whole bill graph.
+    private static async Task InsertAdjustmentAsync(NpgsqlDataSource source, string adjustmentType)
+    {
+        await using var connection = await source.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO billing.bill_adjustments
+                (bill_adjustment_id, bill_id, adjustment_type, calculation_type, amount, net_amount, gross_amount,
+                 is_deduction, reason, authorized_by, created_at)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @type, 'FixedAmount', 5, 5, 5, false, 'test', gen_random_uuid(), now());
+            """, connection, transaction);
+        command.Parameters.AddWithValue("type", adjustmentType);
+        await command.ExecuteNonQueryAsync();
+        await transaction.CommitAsync();
     }
 
     private static async Task AssertCheckViolationAsync(NpgsqlDataSource source, string contentType, byte[] content)

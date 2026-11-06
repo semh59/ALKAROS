@@ -10,7 +10,6 @@ public enum AdjustmentType
     ServiceFee,
     Kuver,
     Tip,
-    CustomFee,
 }
 
 /// <summary>
