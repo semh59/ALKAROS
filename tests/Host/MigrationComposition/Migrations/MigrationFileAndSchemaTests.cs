@@ -266,6 +266,118 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(PostgresErrorCodes.CheckViolation, failure.SqlState);
     }
 
+    [Fact]
+    public async Task ABillItemThatHoldsAnAdjustmentOrAllocationCannotBeDeletedOnItsOwnButTheWholeBillCanBe()
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        var (billId, adjustedItemId, allocatedItemId) = (Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+        await ExecuteWithoutForeignKeysAsync(source, $"""
+            INSERT INTO billing.bills (bill_id, bill_number, status, opened_at, created_at, updated_at)
+            VALUES ('{billId}', 'B-{billId:N}', 'Open', now(), now(), now());
+            INSERT INTO billing.bill_items (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity,
+                unit_price, tax_rate, net_amount, gross_amount, line_type, created_at, updated_at)
+            VALUES ('{adjustedItemId}', '{billId}', gen_random_uuid(), gen_random_uuid(), 'a', 1, 5, 0, 5, 5, 'Sale', now(), now()),
+                   ('{allocatedItemId}', '{billId}', gen_random_uuid(), gen_random_uuid(), 'b', 1, 5, 0, 5, 5, 'Sale', now(), now());
+            INSERT INTO billing.bill_adjustments (bill_adjustment_id, bill_id, bill_item_id, adjustment_type, calculation_type,
+                amount, net_amount, gross_amount, is_deduction, reason, authorized_by, created_at)
+            VALUES (gen_random_uuid(), '{billId}', '{adjustedItemId}', 'DiscountAmount', 'FixedAmount', 1, 1, 1, true, 'test', gen_random_uuid(), now());
+            INSERT INTO billing.bill_allocations (bill_allocation_id, bill_id, bill_item_id, owner_type, owner_reference, allocated_amount, created_at)
+            VALUES (gen_random_uuid(), '{billId}', '{allocatedItemId}', 'Item', 'x', 5, now());
+            """);
+
+        foreach (var itemId in new[] { adjustedItemId, allocatedItemId })
+        {
+            var failure = await Assert.ThrowsAsync<PostgresException>(() =>
+                source.CreateCommand($"DELETE FROM billing.bill_items WHERE bill_item_id = '{itemId}';").ExecuteNonQueryAsync());
+            Assert.Equal(PostgresErrorCodes.ForeignKeyViolation, failure.SqlState);
+        }
+
+        await source.CreateCommand($"DELETE FROM billing.bills WHERE bill_id = '{billId}';").ExecuteNonQueryAsync();
+        Assert.Equal(0L, await ScalarAsync<long>(source,
+            "SELECT (SELECT count(*) FROM billing.bill_items) + (SELECT count(*) FROM billing.bill_adjustments) + (SELECT count(*) FROM billing.bill_allocations);"));
+    }
+
+    [Fact]
+    public async Task TheBillRulesAddedUnvalidatedAreValidatedAndAViolatingOldRowStopsTheMigration()
+    {
+        const string unvalidated =
+            "SELECT count(*) FROM pg_constraint WHERE conname IN ('ck_bills_nonnegative_amounts', 'fk_bills_cancelled_by') AND NOT convalidated;";
+        var (order, migrations) = CopyUpTo("208");
+        Migrate(order, migrations);
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        await source.CreateCommand(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, status, subtotal, opened_at, created_at, updated_at)
+            VALUES (gen_random_uuid(), 'B-OLD', 'Open', -1, now(), now(), now());
+            """).ExecuteNonQueryAsync();
+
+        using var output = new StringWriter();
+        var exit = HostComposition.Run(new HostCompositionOptions(OrderPath(), MigrationsPath(), _database.PsqlOptions, null), output);
+        Assert.NotEqual(HostExitCode.Success, exit);
+        Assert.Contains("ck_bills_nonnegative_amounts", output.ToString());
+
+        await source.CreateCommand("DELETE FROM billing.bills;").ExecuteNonQueryAsync();
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(0L, await ScalarAsync<long>(source, unvalidated));
+    }
+
+    [Fact]
+    public async Task TheCashLedgerRefusesChangesAndDeletesButADeletedUserStillLosesOnlyTheirRecordedByLink()
+    {
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        var (userId, transactionId) = (Guid.NewGuid(), Guid.NewGuid());
+        await source.CreateCommand(
+            $"""
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES ('{userId}', 'ledger-{userId:N}', 'not-used', 'Ledger Test', true);
+            """).ExecuteNonQueryAsync();
+        await ExecuteWithoutForeignKeysAsync(source, $"""
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, recorded_by, occurred_at)
+            VALUES ('{transactionId}', gen_random_uuid(), 'Opening', 'In', 5, '{userId}', now());
+            """);
+
+        foreach (var statement in new[]
+        {
+            $"UPDATE cash.cash_transactions SET amount = 9 WHERE cash_transaction_id = '{transactionId}';",
+            $"UPDATE cash.cash_transactions SET recorded_by = NULL WHERE cash_transaction_id = '{transactionId}';",
+            $"DELETE FROM cash.cash_transactions WHERE cash_transaction_id = '{transactionId}';",
+            "TRUNCATE cash.cash_transactions CASCADE;",
+        })
+        {
+            var failure = await Assert.ThrowsAsync<PostgresException>(() => source.CreateCommand(statement).ExecuteNonQueryAsync());
+            Assert.Equal(PostgresErrorCodes.IntegrityConstraintViolation, failure.SqlState);
+        }
+
+        await source.CreateCommand($"DELETE FROM identity.users WHERE user_id = '{userId}';").ExecuteNonQueryAsync();
+        Assert.Equal(1L, await ScalarAsync<long>(source,
+            $"SELECT count(*) FROM cash.cash_transactions WHERE cash_transaction_id = '{transactionId}' AND recorded_by IS NULL AND amount = 5;"));
+
+        var unattributed = await Assert.ThrowsAsync<PostgresException>(() =>
+            source.CreateCommand($"UPDATE cash.cash_transactions SET amount = 9 WHERE cash_transaction_id = '{transactionId}';").ExecuteNonQueryAsync());
+        Assert.Equal(PostgresErrorCodes.IntegrityConstraintViolation, unattributed.SqlState);
+    }
+
+    [Fact]
+    public async Task RollingBackTheIntegrityMigrationRestoresTheCascadesAndLiftsTheLedgerGuardAndItAppliesOnceMore()
+    {
+        static string Cascades(char action) => "SELECT count(*) FROM pg_constraint WHERE conname IN ('fk_bill_adjustments_item', 'fk_bill_allocations_item') AND confdeltype = '" + action + "';";
+        const string guard = "SELECT count(*) FROM pg_trigger WHERE tgname IN ('trg_cash_transactions_guard', 'trg_cash_transactions_clear_guard');";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(2L, await ScalarAsync<long>(source, Cascades('a')));
+        Assert.Equal(2L, await ScalarAsync<long>(source, guard));
+
+        RollBackDownTo("218");
+        Assert.Equal(2L, await ScalarAsync<long>(source, Cascades('c')));
+        Assert.Equal(0L, await ScalarAsync<long>(source, guard));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(2L, await ScalarAsync<long>(source, Cascades('a')));
+        Assert.Equal(2L, await ScalarAsync<long>(source, guard));
+    }
+
     [Theory]
     [InlineData("032")]
     [InlineData("075")]
@@ -361,19 +473,19 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     // Foreign keys are skipped for the insert only: the test needs one adjustment row, not a whole bill graph.
-    private static async Task InsertAdjustmentAsync(NpgsqlDataSource source, string adjustmentType)
-    {
-        await using var connection = await source.OpenConnectionAsync();
-        await using var transaction = await connection.BeginTransactionAsync();
-        await using var command = new NpgsqlCommand(
-            """
-            SET LOCAL session_replication_role = replica;
+    private static Task InsertAdjustmentAsync(NpgsqlDataSource source, string adjustmentType) =>
+        ExecuteWithoutForeignKeysAsync(source, $"""
             INSERT INTO billing.bill_adjustments
                 (bill_adjustment_id, bill_id, adjustment_type, calculation_type, amount, net_amount, gross_amount,
                  is_deduction, reason, authorized_by, created_at)
-            VALUES (gen_random_uuid(), gen_random_uuid(), @type, 'FixedAmount', 5, 5, 5, false, 'test', gen_random_uuid(), now());
-            """, connection, transaction);
-        command.Parameters.AddWithValue("type", adjustmentType);
+            VALUES (gen_random_uuid(), gen_random_uuid(), '{adjustmentType}', 'FixedAmount', 5, 5, 5, false, 'test', gen_random_uuid(), now());
+            """);
+
+    private static async Task ExecuteWithoutForeignKeysAsync(NpgsqlDataSource source, string sql)
+    {
+        await using var connection = await source.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand("SET LOCAL session_replication_role = replica;\n" + sql, connection, transaction);
         await command.ExecuteNonQueryAsync();
         await transaction.CommitAsync();
     }
