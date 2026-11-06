@@ -29,7 +29,7 @@ HARNESS = textwrap.dedent(
     globalThis.window = globalThis;
     Object.defineProperty(globalThis, 'navigator', { value: { onLine: true }, configurable: true });
 
-    const stateModule = await import(process.argv[2]);
+    const stateModule = await import(`${process.argv[2]}/state.js`);
     const { state, rememberOfflineBudget, forgetOfflineBudget, offlineAuthorityFor, persistOfflineActions } = stateModule;
     const now = Date.parse('2026-09-29T10:00:00Z');
     const results = {};
@@ -69,20 +69,106 @@ HARNESS = textwrap.dedent(
 )
 
 
-@pytest.fixture(scope="module")
-def results(tmp_path_factory):
+CONFIRM_HARNESS = textwrap.dedent(
+    """
+    const storage = new Map();
+    globalThis.localStorage = {
+      getItem: (key) => (storage.has(key) ? storage.get(key) : null),
+      setItem: (key, value) => storage.set(key, String(value)),
+      removeItem: (key) => storage.delete(key),
+    };
+    const fakeElement = () => {
+      const element = {
+        children: [], dataset: {}, style: {}, disabled: false, innerHTML: '', textContent: '',
+        classList: { add() {}, remove() {}, toggle() {}, contains: () => false },
+        appendChild: (child) => {
+          child.remove = () => { const index = element.children.indexOf(child); if (index >= 0) element.children.splice(index, 1); };
+          element.children.push(child);
+        },
+        append() {}, setAttribute() {}, removeAttribute() {}, addEventListener() {}, focus() {}, remove() {},
+        querySelector: () => null, querySelectorAll: () => [],
+      };
+      return element;
+    };
+    globalThis.document = { getElementById: () => fakeElement(), createElement: fakeElement, addEventListener() {} };
+    globalThis.window = globalThis;
+    Object.defineProperty(globalThis, 'navigator', { value: { onLine: true }, configurable: true });
+
+    const requests = [];
+    let serverReachable = false;
+    globalThis.fetch = async (url, init) => {
+      requests.push({ url: String(url), body: init && init.body ? JSON.parse(init.body) : null });
+      if (!serverReachable) throw new TypeError('Failed to fetch');
+      return { ok: true, status: 200, json: async () => ({ summary: { brief: 'Uzlaştırma tamam.' } }) };
+    };
+
+    const base = process.argv[2];
+    const { state, el, rememberOfflineBudget } = await import(`${base}/state.js`);
+    const { confirmVoidSent, confirmComp } = await import(`${base}/sheets/void-comp.js`);
+    const { reconcileOfflineActions } = await import(`${base}/offline-queue.js`);
+    const results = {};
+
+    rememberOfflineBudget({
+      budgetId: 'b1', roleCode: 'waiter', expiresAt: '2999-01-01T00:00:00Z',
+      lines: [
+        { permissionCode: 'bills.comp', limitAmount: 100, maxCount: 5 },
+        { permissionCode: 'bills.void', limitAmount: null, maxCount: 5 },
+      ],
+    }, 'u1');
+    state.order = {
+      orderId: 'o1', rowVersion: 7,
+      items: [{ itemId: 'i1', totalPrice: 80, status: 'Sent' }, { itemId: 'i2', totalPrice: 60, status: 'Sent' }, { itemId: 'i3', totalPrice: 150, status: 'Sent' }],
+    };
+    const context = (itemId, key) => ({ itemId, reason: 'CustomerChange', idempotencyKey: key });
+
+    state.optionsContext = context('i1', 'k-void');
+    await confirmVoidSent();
+    state.optionsContext = context('i2', 'k-comp');
+    await confirmComp();
+    results.queued = state.offlineActions.map(({ idempotencyKey, permissionCode, amount, reasonCode, subjectId }) => ({ idempotencyKey, permissionCode, amount, reasonCode, subjectId }));
+
+    state.optionsContext = context('i3', 'k-over');
+    await confirmComp();
+    results.afterOverLimit = state.offlineActions.map((action) => action.idempotencyKey);
+
+    await reconcileOfflineActions();
+    results.keptWhileOffline = state.offlineActions.length;
+
+    serverReachable = true;
+    requests.length = 0;
+    await reconcileOfflineActions();
+    results.reconcile = { urls: requests.map((request) => request.url), sentKeys: requests.map((request) => (request.body.actions || []).map((action) => action.idempotencyKey)), left: state.offlineActions.length, stored: JSON.parse(localStorage.getItem('alkaros_waiter_offline_actions') || '[]').length, toasts: el.toasts.children.map((toast) => toast.innerHTML) };
+
+    process.stdout.write(JSON.stringify(results), () => process.exit(0));
+    """
+)
+
+
+def run_harness(tmp_path_factory, script):
     node = shutil.which("node")
     if node is None:
         pytest.skip("node is not installed")
-    harness = tmp_path_factory.mktemp("rmd297") / "harness.mjs"
-    harness.write_text(HARNESS, encoding="utf-8")
+    harness = tmp_path_factory.mktemp("offline_authority") / "harness.mjs"
+    harness.write_text(script, encoding="utf-8")
     completed = subprocess.run(
-        [node, str(harness), (WWWROOT / "js" / "state.js").as_uri()],
+        [node, str(harness), (WWWROOT / "js").as_uri()],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=True,
+        timeout=60,
     )
     return json.loads(completed.stdout.strip().splitlines()[-1])
+
+
+@pytest.fixture(scope="module")
+def results(tmp_path_factory):
+    return run_harness(tmp_path_factory, HARNESS)
+
+
+@pytest.fixture(scope="module")
+def confirmed(tmp_path_factory):
+    return run_harness(tmp_path_factory, CONFIRM_HARNESS)
 
 
 def test_nothing_is_authorized_without_a_budget(results):
@@ -123,14 +209,32 @@ def test_signing_out_forgets_the_budget(results):
     assert results["forgotten"]["stored"] is None
 
 
-def test_confirm_paths_queue_offline_and_reconnect_reconciles():
-    void_comp = (WWWROOT / "js" / "sheets" / "void-comp.js").read_text(encoding="utf-8")
-    queue = (WWWROOT / "js" / "offline-queue.js").read_text(encoding="utf-8")
+def test_void_and_comp_queue_with_the_line_amount_and_their_own_idempotency_key(confirmed):
+    assert confirmed["queued"] == [
+        {"idempotencyKey": "k-void", "permissionCode": "bills.void", "amount": 80, "reasonCode": "CustomerChange", "subjectId": "i1"},
+        {"idempotencyKey": "k-comp", "permissionCode": "bills.comp", "amount": 60, "reasonCode": "CustomerChange", "subjectId": "i2"},
+    ]
+
+
+def test_a_comp_above_the_budget_line_is_not_queued(confirmed):
+    assert confirmed["afterOverLimit"] == ["k-void", "k-comp"]
+
+
+def test_actions_stay_queued_while_the_server_is_unreachable(confirmed):
+    assert confirmed["keptWhileOffline"] == 2
+
+
+def test_reconnect_sends_the_queued_actions_once_and_empties_the_queue(confirmed):
+    reconcile = confirmed["reconcile"]
+    assert len(reconcile["urls"]) == 1 and reconcile["urls"][0].endswith("/offline-reconciliation")
+    assert reconcile["sentKeys"] == [["k-void", "k-comp"]]
+    assert reconcile["left"] == 0
+    assert reconcile["stored"] == 0
+    assert any("Uzlaştırma tamam." in toast for toast in reconcile["toasts"])
+
+
+def test_login_and_reconnect_wiring_is_still_present():
     app = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
 
-    assert "authorizeOffline('bills.void', context, 0," in void_comp
-    assert "authorizeOffline('bills.comp', context, item ? item.totalPrice : 0," in void_comp
-    assert "apiUrl('/offline-reconciliation')" in queue
-    assert "result.data.summary.brief" in queue
     assert "rememberOfflineBudget(result.data.offlineBudget, result.data.userId)" in app
     assert app.count("void reconcileOfflineActions()") == 3

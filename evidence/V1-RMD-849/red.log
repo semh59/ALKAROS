@@ -1,0 +1,41 @@
+F..F...F                                                                 [100%]
+================================== FAILURES ===================================
+_________________ test_nothing_is_authorized_without_a_budget _________________
+
+results = {'noBudget': {'allowed': False, 'message': 'Çevrimdışı yetki bütçeniz yok. Bağlanınca tekrar deneyin.'}, 'stor...: {'allowed': False, 'message': 'Tutar çevrimdışı yetki sınırını aşıyor. Bağlanınca tekrar deneyin.'}, ...}
+
+    def test_nothing_is_authorized_without_a_budget(results):
+        assert results["noBudget"]["allowed"] is False
+>       assert "Ba�lan�nca tekrar deneyin" in results["noBudget"]["message"]
+E       AssertionError: assert 'Ba�lan�nca tekrar deneyin' in 'Çevrimdışı yetki bütçeniz yok. Bağlanınca tekrar deneyin.'
+
+tests\Clients\WaiterPwa\Frontend\test_offline_authorized_void_comp.py:90: AssertionError
+__________ test_anything_outside_the_budget_is_refused_not_approved ___________
+
+results = {'noBudget': {'allowed': False, 'message': 'Çevrimdışı yetki bütçeniz yok. Bağlanınca tekrar deneyin.'}, 'stor...: {'allowed': False, 'message': 'Tutar çevrimdışı yetki sınırını aşıyor. Bağlanınca tekrar deneyin.'}, ...}
+
+    def test_anything_outside_the_budget_is_refused_not_approved(results):
+        for key in ("overLimit", "negative", "notInBudget", "expired", "countSpent"):
+            assert results[key]["allowed"] is False, key
+>           assert "Ba�lan�nca tekrar deneyin" in results[key]["message"], key
+E           AssertionError: overLimit
+E           assert 'Ba�lan�nca tekrar deneyin' in 'Tutar çevrimdışı yetki sınırını aşıyor. Bağlanınca tekrar deneyin.'
+
+tests\Clients\WaiterPwa\Frontend\test_offline_authorized_void_comp.py:109: AssertionError
+__________ test_confirm_paths_queue_offline_and_reconnect_reconciles __________
+
+    def test_confirm_paths_queue_offline_and_reconnect_reconciles():
+        void_comp = (WWWROOT / "js" / "sheets" / "void-comp.js").read_text(encoding="utf-8")
+        queue = (WWWROOT / "js" / "offline-queue.js").read_text(encoding="utf-8")
+        app = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+    
+>       assert "authorizeOffline('bills.void', context, 0," in void_comp
+E       assert "authorizeOffline('bills.void', context, 0," in "// ALKAROS Waiter PWA � void (free and grant-gated) and complimentary\n// item sheets (V1-WTR-047, step 11/? of\n// d...  ? `�r�n ikram edildi. Bug�nk� ikram hakk�n�zdan ${formatMoney(remaining)} kald�.`\n    : '�r�n ikram edildi.');\n}\n"
+
+tests\Clients\WaiterPwa\Frontend\test_offline_authorized_void_comp.py:131: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_nothing_is_authorized_without_a_budget
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_anything_outside_the_budget_is_refused_not_approved
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_confirm_paths_queue_offline_and_reconnect_reconciles
+3 failed, 5 passed in 0.46s
+exit 1
