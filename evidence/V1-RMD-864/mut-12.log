@@ -1,0 +1,5 @@
+D:\PROJECT\ALKAROS\tests\Modules\Reconciliation\Payments\bin\Debug\net8.0\ALKAROS.Reconciliation.Payments.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.30]     ALKAROS.Reconciliation.Payments.Tests.PaymentReconciliationScannerTests.AFailingSourceIsLoggedWithItsNameAndTheOriginalException [FAIL]
+
+Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 593 ms - ALKAROS.Reconciliation.Payments.Tests.dll (net8.0)

@@ -34,12 +34,15 @@ public sealed class CashSessionDifferenceSourcePair : IReconciliationSourcePair
     {
         var results = new List<DetectedDiscrepancy>();
 
+        // A closed session's difference never changes and a case key never opens a second case, so a session that
+        // already has its case is left out instead of being read again by every scan.
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT cash_session_id, terminal_id, expected_cash, actual_cash, difference
             FROM cash.cash_sessions
             WHERE status IN ('Closed', 'Reconciled')
               AND difference <> 0
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases c WHERE c.deduplication_key = 'cash-difference:' || cash_session_id::text)
             LIMIT {MaxScanRows + 1};
             """);
 

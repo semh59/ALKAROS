@@ -1,0 +1,12 @@
+M1-cash-not-exists: testexit=1 Başarısız! - Başarısız:     2, Başarılı:    10, Atlanan:     0, Toplam:    12, Süre: 698 ms - ALKAROS.Reconcil
+M2-allocation-not-exists: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 720 ms - ALKAROS.Reconcil
+M3-raw-message: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 575 ms - ALKAROS.Reconcil
+M4-severity-threshold: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 595 ms - ALKAROS.Reconcil
+M5-no-payment-scan: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 21 s - ALKAROS.Host.Exper
+M6-one-try-block: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 21 s - ALKAROS.Host.Exper
+M7-unknown-not-exists: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 570 ms - ALKAROS.Reconcil
+M8-approved-not-exists: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 582 ms - ALKAROS.Reconcil
+M9-no-log: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 570 ms - ALKAROS.Reconcil
+M10-cancellation-escapes: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 25 s - ALKAROS.Host.Exper
+M11-active-cases-only: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 585 ms - ALKAROS.Reconcil
+M12-log-level: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 593 ms - ALKAROS.Reconcil

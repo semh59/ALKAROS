@@ -1,5 +1,7 @@
 using ALKAROS.Reconciliation.CaseFoundation;
 
+using Microsoft.Extensions.Logging;
+
 namespace ALKAROS.Reconciliation.Payments;
 
 /// <summary>
@@ -37,15 +39,27 @@ public sealed record SourceScanResult(
 /// </summary>
 public sealed class PaymentReconciliationScanner
 {
+    /// <summary>Shown instead of an infrastructure message, which may be English and technical.</summary>
+    public const string SourceUnreadableReason = "Kaynak okunamadı.";
+
     private static readonly Guid SystemScanActorId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
+    private static readonly Action<ILogger, string, Exception?> LogSourceFault =
+        LoggerMessage.Define<string>(
+            LogLevel.Error,
+            new EventId(5562, nameof(LogSourceFault)),
+            "Payment reconciliation source {SourceName} could not be scanned.");
+
     private readonly IReadOnlyList<IReconciliationSourcePair> _sourcePairs;
+    private readonly ILogger<PaymentReconciliationScanner> _logger;
     private readonly IReconciliationService _reconciliationService;
 
     public PaymentReconciliationScanner(
         IReadOnlyList<IReconciliationSourcePair> sourcePairs,
-        IReconciliationService reconciliationService)
+        IReconciliationService reconciliationService,
+        ILogger<PaymentReconciliationScanner> logger)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _sourcePairs = sourcePairs ?? throw new ArgumentNullException(nameof(sourcePairs));
         _reconciliationService = reconciliationService ?? throw new ArgumentNullException(nameof(reconciliationService));
     }
@@ -86,7 +100,8 @@ public sealed class PaymentReconciliationScanner
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                results.Add(new SourceScanResult(source.Name, WasEnabled: true, null, 0, ex.Message));
+                LogSourceFault(_logger, source.Name, ex);
+                results.Add(new SourceScanResult(source.Name, WasEnabled: true, null, 0, SourceUnreadableReason));
             }
         }
 

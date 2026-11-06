@@ -37,6 +37,7 @@ public sealed class CardSettlementAllocationMismatchSourcePair : IReconciliation
     {
         var results = new List<DetectedDiscrepancy>();
 
+        // An attempt that already has its case is left out: a case key never opens a second case.
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT csa.card_settlement_attempt_id, csa.approved_amount, pa.payment_allocation_id, pa.amount
@@ -44,6 +45,8 @@ public sealed class CardSettlementAllocationMismatchSourcePair : IReconciliation
             JOIN payments.payment_allocations pa ON pa.payment_allocation_id = csa.allocation_id
             WHERE csa.outcome = 'Approved'
               AND csa.approved_amount IS DISTINCT FROM pa.amount
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases c
+                              WHERE c.deduplication_key = 'allocation-provider-mismatch:' || csa.card_settlement_attempt_id::text)
             LIMIT {MaxScanRows + 1};
             """);
 

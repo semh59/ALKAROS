@@ -40,11 +40,14 @@ public sealed class PaymentUnknownSourcePair : IReconciliationSourcePair
     {
         var results = new List<DetectedDiscrepancy>();
 
+        // A payment that already has its case is left out: a case key never opens a second case, and every scan
+        // would otherwise append another Deduplicated action to it for as long as the payment stays unresolved.
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT p.payment_id, p.bill_id, p.tendered_amount
             FROM payments.payments p
             WHERE p.status IN ('Unknown', 'ReconciliationRequired')
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases c WHERE c.deduplication_key = 'hugin-unknown:' || p.payment_id::text)
             LIMIT {MaxScanRows + 1};
             """);
 

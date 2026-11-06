@@ -1,0 +1,8 @@
+D:\PROJECT\ALKAROS\tests\Modules\Reconciliation\Payments\bin\Debug\net8.0\ALKAROS.Reconciliation.Payments.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:02.59]     ALKAROS.Reconciliation.Payments.Tests.PaymentReconciliationScannerTests.ACashDifferenceThatAlreadyHasACaseIsNotReadAgain [FAIL]
+[xUnit.net 00:00:02.65]     ALKAROS.Reconciliation.Payments.Tests.PaymentReconciliationScannerTests.CashSessionDifferenceSourceDetectsANonZeroClosedSessionDifference [FAIL]
+[xUnit.net 00:00:02.67]     ALKAROS.Reconciliation.Payments.Tests.PaymentReconciliationScannerTests.AFailingSourceReportsAFixedReasonNeverTheRawExceptionText [FAIL]
+[xUnit.net 00:00:02.72]     ALKAROS.Reconciliation.Payments.Tests.PaymentReconciliationScannerTests.ADriftedCardAttemptThatAlreadyHasACaseIsNotReadAgain [FAIL]
+
+Başarısız! - Başarısız:     4, Başarılı:     8, Atlanan:     0, Toplam:    12, Süre: 1 s - ALKAROS.Reconciliation.Payments.Tests.dll (net8.0)

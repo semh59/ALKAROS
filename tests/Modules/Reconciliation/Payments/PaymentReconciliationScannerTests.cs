@@ -6,6 +6,8 @@ using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Reconciliation.CaseFoundation;
 using ALKAROS.Reconciliation.Payments.Tests.Fixtures;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using Xunit;
 
@@ -39,31 +41,31 @@ public sealed class PaymentReconciliationScannerTests : IClassFixture<PaymentRec
     }
 
     private PaymentReconciliationScanner BuildScanner(params IReconciliationSourcePair[] sources)
-        => new(sources, _reconciliationService);
+        => new(sources, _reconciliationService, NullLogger<PaymentReconciliationScanner>.Instance);
 
     [Fact]
-    public async Task ApprovedWithoutAllocationSourceDetectsAndDeduplicates()
+    public async Task ApprovedWithoutAllocationSourceDetectsOnceAndIsNotReadAgainOnceItHasACase()
     {
         var billId = await SeedBillAsync(payable: 40m);
         var paymentId = await SeedApprovedPaymentWithoutAllocationAsync(billId, 40m);
 
         var scanner = BuildScanner(new ApprovedWithoutAllocationSourcePair(_dataSource));
 
+        // The shared class-fixture database may carry approved-without-allocation payments of other tests.
+        var expected = await CountApprovedWithoutAllocationAndCaseAsync();
         var firstScan = await scanner.ScanAllAsync();
         firstScan.Should().ContainSingle();
         firstScan[0].WasEnabled.Should().BeTrue();
-        // >= 1, not == 1: the shared class-fixture database may already carry an
-        // approved-without-allocation payment from another test method in this class.
-        firstScan[0].CasesCreatedOrDeduplicated.Should().BeGreaterThanOrEqualTo(1);
+        firstScan[0].CasesCreatedOrDeduplicated.Should().Be(expected);
 
         var caseRecord = await _reconciliationService.GetActiveCaseByDedupKeyAsync($"approved-without-allocation:{paymentId}");
         caseRecord.Should().NotBeNull();
         caseRecord!.CaseType.Should().Be(CaseType.PaymentMismatch);
 
-        // Re-scan: the same discrepancy still exists, but must not create a second case.
-        await scanner.ScanAllAsync();
+        // Re-scan: the payment still has no allocation, but its case already exists, so it is not read again.
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().Be(0);
         var actions = await _reconciliationService.GetCaseActionsAsync(caseRecord.CaseId);
-        actions.Should().HaveCount(2); // Created + Deduplicated, never a second Created.
+        actions.Should().ContainSingle(); // Created only: no Deduplicated action per scan.
     }
 
     [Fact]
@@ -76,43 +78,19 @@ public sealed class PaymentReconciliationScannerTests : IClassFixture<PaymentRec
         var results = await scanner.ScanAllAsync();
 
         results.Should().ContainSingle();
-        results[0].CasesCreatedOrDeduplicated.Should().BeGreaterThanOrEqualTo(1);
 
         var caseRecord = await _reconciliationService.GetActiveCaseByDedupKeyAsync($"hugin-unknown:{paymentId}");
         caseRecord.Should().NotBeNull();
         caseRecord!.Severity.Should().Be(CaseSeverity.Critical);
+
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().Be(0);
+        (await _reconciliationService.GetCaseActionsAsync(caseRecord.CaseId)).Should().ContainSingle();
     }
 
     [Fact]
     public async Task AllocationProviderMismatchSourceDetectsADriftedAllocationAmount()
     {
-        var billId = await SeedBillAsync(payable: 90m);
-        var payment = new Payment(Guid.NewGuid(), billId, 90m).Tender(90m).Approve(90m);
-        await _payments.AddAsync(payment);
-        var allocation = await _allocations.AllocateAsync(
-            payment, await _bills.GetByIdAsync(billId) ?? throw new InvalidOperationException("Bill not found."),
-            90m, Guid.NewGuid().ToString());
-
-        // Simulate a card_settlement_attempts row whose own provider-approved
-        // amount has since drifted from the allocation it originally produced.
-        var attemptId = Guid.NewGuid();
-        await using (var command = _dataSource.CreateCommand(
-            """
-            INSERT INTO payments.card_settlement_attempts
-                (card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id,
-                 outcome, approved_amount, allocation_id, fiscal_handoff_queued, created_at)
-            VALUES (@id, @bill, @key, @corr, @payment, 'Approved', @approved, @allocation, true, now());
-            """))
-        {
-            command.Parameters.AddWithValue("id", attemptId);
-            command.Parameters.AddWithValue("bill", billId);
-            command.Parameters.AddWithValue("key", Guid.NewGuid().ToString());
-            command.Parameters.AddWithValue("corr", "TXN-DRIFT");
-            command.Parameters.AddWithValue("payment", payment.Id);
-            command.Parameters.AddWithValue("approved", 85m); // Drifted from the real allocation (90m).
-            command.Parameters.AddWithValue("allocation", allocation.Id);
-            await command.ExecuteNonQueryAsync();
-        }
+        var attemptId = await SeedDriftedCardAttemptAsync();
 
         var scanner = BuildScanner(new CardSettlementAllocationMismatchSourcePair(_dataSource));
         var results = await scanner.ScanAllAsync();
@@ -152,6 +130,87 @@ public sealed class PaymentReconciliationScannerTests : IClassFixture<PaymentRec
 
         results.Should().ContainSingle();
         results[0].CasesCreatedOrDeduplicated.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ACashDifferenceThatAlreadyHasACaseIsNotReadAgain()
+    {
+        var sessionId = await SeedClosedCashSessionWithDifferenceAsync(expected: 500m, actual: 470m);
+        var scanner = BuildScanner(new CashSessionDifferenceSourcePair(_dataSource));
+
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().Be(1);
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().Be(0);
+
+        var caseRecord = await _reconciliationService.GetActiveCaseByDedupKeyAsync($"cash-difference:{sessionId}");
+        (await _reconciliationService.GetCaseActionsAsync(caseRecord!.CaseId)).Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task AResolvedCaseKeepsItsCashDifferenceOutOfLaterScansAndOpensNoSecondCase()
+    {
+        var sessionId = await SeedClosedCashSessionWithDifferenceAsync(expected: 500m, actual: 460m);
+        var scanner = BuildScanner(new CashSessionDifferenceSourcePair(_dataSource));
+        await scanner.ScanAllAsync();
+        await using (var resolve = _dataSource.CreateCommand(
+            "UPDATE reconciliation.cases SET status = 'Resolved', resolved_at = now() WHERE deduplication_key = @key;"))
+        {
+            resolve.Parameters.AddWithValue("key", $"cash-difference:{sessionId}");
+            await resolve.ExecuteNonQueryAsync();
+        }
+
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().Be(0);
+
+        (await _reconciliationService.GetActiveCaseByDedupKeyAsync($"cash-difference:{sessionId}")).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ADriftedCardAttemptThatAlreadyHasACaseIsNotReadAgain()
+    {
+        var attemptId = await SeedDriftedCardAttemptAsync();
+        var scanner = BuildScanner(new CardSettlementAllocationMismatchSourcePair(_dataSource));
+
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().BeGreaterThanOrEqualTo(1);
+        (await scanner.ScanAllAsync())[0].CasesCreatedOrDeduplicated.Should().Be(0);
+
+        var caseRecord = await _reconciliationService.GetActiveCaseByDedupKeyAsync($"allocation-provider-mismatch:{attemptId}");
+        (await _reconciliationService.GetCaseActionsAsync(caseRecord!.CaseId)).Should().ContainSingle();
+    }
+
+    [Theory]
+    [InlineData(400, 100, CaseSeverity.High)]
+    [InlineData(400.01, 99.99, CaseSeverity.Medium)]
+    public async Task ACashDifferenceFromOneHundredLiraIsHighSeverity(double actual, double expectedAmount, CaseSeverity severity)
+    {
+        var sessionId = await SeedClosedCashSessionWithDifferenceAsync(expected: 500m, actual: (decimal)actual);
+
+        await BuildScanner(new CashSessionDifferenceSourcePair(_dataSource)).ScanAllAsync();
+
+        var caseRecord = await _reconciliationService.GetActiveCaseByDedupKeyAsync($"cash-difference:{sessionId}");
+        caseRecord!.Severity.Should().Be(severity);
+        caseRecord.DiscrepancyAmount.Should().Be((decimal)expectedAmount);
+    }
+
+    [Fact]
+    public async Task AFailingSourceReportsAFixedReasonNeverTheRawExceptionText()
+    {
+        var results = await BuildScanner(new ThrowingSourcePair()).ScanAllAsync();
+
+        results.Should().ContainSingle();
+        results[0].FailureReason.Should().Be(PaymentReconciliationScanner.SourceUnreadableReason);
+    }
+
+    [Fact]
+    public async Task AFailingSourceIsLoggedWithItsNameAndTheOriginalException()
+    {
+        var logger = new CapturingLogger();
+        var scanner = new PaymentReconciliationScanner([new ThrowingSourcePair()], _reconciliationService, logger);
+
+        await scanner.ScanAllAsync();
+
+        var entry = logger.Entries.Should().ContainSingle().Subject;
+        entry.Level.Should().Be(LogLevel.Error);
+        entry.Message.Should().Contain("Throwing");
+        entry.Exception.Should().BeOfType<InvalidOperationException>();
     }
 
     [Fact]
@@ -279,6 +338,68 @@ public sealed class PaymentReconciliationScannerTests : IClassFixture<PaymentRec
             .MarkUnknown("provider_timeout");
         await _payments.AddAsync(payment);
         return payment.Id;
+    }
+
+    private async Task<int> CountApprovedWithoutAllocationAndCaseAsync()
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT count(*) FROM payments.payments p
+            WHERE p.status = 'Approved'
+              AND NOT EXISTS (SELECT 1 FROM payments.payment_allocations pa WHERE pa.payment_id = p.payment_id)
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases c WHERE c.deduplication_key = 'approved-without-allocation:' || p.payment_id::text);
+            """);
+        return (int)(long)(await command.ExecuteScalarAsync())!;
+    }
+
+    private sealed class CapturingLogger : ILogger<PaymentReconciliationScanner>
+    {
+        public List<(LogLevel Level, string Message, Exception? Exception)> Entries { get; } = [];
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel logLevel) => true;
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+            => Entries.Add((logLevel, formatter(state, exception), exception));
+    }
+
+    private sealed class ThrowingSourcePair : IReconciliationSourcePair
+    {
+        public string Name => "Throwing";
+        public bool IsEnabled => true;
+        public string? DisabledReason => null;
+        public Task<IReadOnlyList<DetectedDiscrepancy>> ScanAsync(CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("connection string server=10.0.0.5 password=hunter2");
+    }
+
+    private async Task<Guid> SeedDriftedCardAttemptAsync()
+    {
+        var billId = await SeedBillAsync(payable: 90m);
+        var payment = new Payment(Guid.NewGuid(), billId, 90m).Tender(90m).Approve(90m);
+        await _payments.AddAsync(payment);
+        var allocation = await _allocations.AllocateAsync(
+            payment, await _bills.GetByIdAsync(billId) ?? throw new InvalidOperationException("Bill not found."),
+            90m, Guid.NewGuid().ToString());
+
+        // Simulate a card_settlement_attempts row whose own provider-approved
+        // amount has since drifted from the allocation it originally produced.
+        var attemptId = Guid.NewGuid();
+        await using (var command = _dataSource.CreateCommand(
+            """
+            INSERT INTO payments.card_settlement_attempts
+                (card_settlement_attempt_id, bill_id, idempotency_key, provider_correlation_id, payment_id,
+                 outcome, approved_amount, allocation_id, fiscal_handoff_queued, created_at)
+            VALUES (@id, @bill, @key, @corr, @payment, 'Approved', @approved, @allocation, true, now());
+            """))
+        {
+            command.Parameters.AddWithValue("id", attemptId);
+            command.Parameters.AddWithValue("bill", billId);
+            command.Parameters.AddWithValue("key", Guid.NewGuid().ToString());
+            command.Parameters.AddWithValue("corr", "TXN-DRIFT");
+            command.Parameters.AddWithValue("payment", payment.Id);
+            command.Parameters.AddWithValue("approved", 85m); // Drifted from the real allocation (90m).
+            command.Parameters.AddWithValue("allocation", allocation.Id);
+            await command.ExecuteNonQueryAsync();
+        }
+        return attemptId;
     }
 
     private async Task<Guid> SeedClosedCashSessionWithDifferenceAsync(decimal expected, decimal actual)

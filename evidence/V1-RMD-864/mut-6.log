@@ -1,0 +1,5 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:21.63]     ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationScanHostedServiceTests.AScheduledPassTurnsAnApprovedPaymentWithoutAllocationIntoOneCaseEvenWhenTheOnlineScanFails [FAIL]
+
+Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 21 s - ALKAROS.Host.Experience.Reconciliation.Tests.dll (net8.0)

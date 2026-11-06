@@ -25,11 +25,11 @@ public static class OnlineOrderReconciliationEndpoints
     {
         ArgumentNullException.ThrowIfNull(services);
         services.TryAddSingleton<IProviderEventReprocessing, OnlineOrderingInboxReprocessing>();
-        services.AddHostedService(provider => new OnlineOrderReconciliationHostedService(
+        services.AddHostedService(provider => new ReconciliationScanHostedService(
             provider.GetRequiredService<IServiceScopeFactory>(),
-            provider.GetRequiredService<ILogger<OnlineOrderReconciliationHostedService>>(),
-            OnlineOrderReconciliationHostedService.DefaultInitialDelay,
-            OnlineOrderReconciliationHostedService.DefaultInterval));
+            provider.GetRequiredService<ILogger<ReconciliationScanHostedService>>(),
+            ReconciliationScanHostedService.DefaultInitialDelay,
+            ReconciliationScanHostedService.DefaultInterval));
         return services;
     }
 

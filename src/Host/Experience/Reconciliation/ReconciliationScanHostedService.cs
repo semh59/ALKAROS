@@ -1,5 +1,6 @@
 using ALKAROS.Host.Experience.OnlineOrdering;
 using ALKAROS.Reconciliation.OnlineOrders;
+using ALKAROS.Reconciliation.Payments;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,30 +8,31 @@ using Microsoft.Extensions.Logging;
 namespace ALKAROS.Host.Experience.Reconciliation;
 
 /// <summary>
-/// Runs the online order reconciliation scan on a schedule, so divergences (dead status updates, failing
-/// polling, orders left open) reach the Sorunlar list without anyone calling the scan endpoint. The scan
-/// deduplicates open cases itself, so a repeated pass never doubles a case; a failed pass is logged and the
-/// next pass tries again.
+/// Runs the online order and the payment reconciliation scans on a schedule, so divergences (dead status
+/// updates, failing polling, orders left open, payments stuck at Unknown, approved payments without an
+/// allocation, drawer differences) reach the Sorunlar list without anyone calling a scan endpoint. A scan
+/// deduplicates open cases itself, so a repeated pass never doubles a case; each scan is tried on its own, so
+/// one failing scan does not stop the other, and a failed pass is logged and the next pass tries again.
 /// </summary>
-public sealed class OnlineOrderReconciliationHostedService : BackgroundService
+public sealed class ReconciliationScanHostedService : BackgroundService
 {
     public static readonly TimeSpan DefaultInitialDelay = TimeSpan.FromMinutes(1);
     public static readonly TimeSpan DefaultInterval = TimeSpan.FromMinutes(5);
 
-    private static readonly Action<ILogger, Exception?> LogPassFault =
-        LoggerMessage.Define(
+    private static readonly Action<ILogger, string, Exception?> LogPassFault =
+        LoggerMessage.Define<string>(
             LogLevel.Error,
             new EventId(5561, nameof(LogPassFault)),
-            "Online order reconciliation scan failed; it will be retried on the next pass.");
+            "The {ScanName} reconciliation scan failed; it will be retried on the next pass.");
 
     private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<OnlineOrderReconciliationHostedService> _logger;
+    private readonly ILogger<ReconciliationScanHostedService> _logger;
     private readonly TimeSpan _initialDelay;
     private readonly TimeSpan _interval;
 
-    public OnlineOrderReconciliationHostedService(
+    public ReconciliationScanHostedService(
         IServiceScopeFactory scopeFactory,
-        ILogger<OnlineOrderReconciliationHostedService> logger,
+        ILogger<ReconciliationScanHostedService> logger,
         TimeSpan initialDelay,
         TimeSpan interval)
     {
@@ -58,18 +60,28 @@ public sealed class OnlineOrderReconciliationHostedService : BackgroundService
 
     private async Task ScanOnceAsync(CancellationToken cancellationToken)
     {
-        try
+        await RunAsync("online order", async scope =>
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
             // Only hosts that run the online operations experience have the invoice drafting registered.
             if (scope.ServiceProvider.GetService<OnlineOrderInvoiceDrafting>() is { } drafting)
                 await drafting.DraftMissingAsync(cancellationToken).ConfigureAwait(false);
             await scope.ServiceProvider.GetRequiredService<OnlineOrderReconciliationScanner>()
                 .ScanAllAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        }, cancellationToken);
+        await RunAsync("payment", scope => scope.ServiceProvider.GetRequiredService<PaymentReconciliationScanner>()
+            .ScanAllAsync(cancellationToken), cancellationToken);
+    }
+
+    private async Task RunAsync(string scanName, Func<AsyncServiceScope, Task> scan, CancellationToken cancellationToken)
+    {
+        try
         {
-            LogPassFault(_logger, ex);
+            await using var scope = _scopeFactory.CreateAsyncScope();
+            await scan(scope).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
+        {
+            LogPassFault(_logger, scanName, ex);
         }
     }
 }

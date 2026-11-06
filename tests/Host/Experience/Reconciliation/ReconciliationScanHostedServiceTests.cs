@@ -13,7 +13,7 @@ namespace ALKAROS.Host.Experience.Reconciliation.Tests;
 /// scan endpoint, repeated passes never double it, and a pass that fails does not stop the next one.
 /// </summary>
 [Collection("Reconciliation case PostgreSQL HTTP")]
-public sealed class OnlineOrderReconciliationHostedServiceTests : IAsyncLifetime
+public sealed class ReconciliationScanHostedServiceTests : IAsyncLifetime
 {
     private static readonly TimeSpan Tick = TimeSpan.FromMilliseconds(50);
 
@@ -23,7 +23,7 @@ public sealed class OnlineOrderReconciliationHostedServiceTests : IAsyncLifetime
 
     public async Task DisposeAsync() => await _database.DisposeAsync();
 
-    private ServiceProvider BuildProvider(int failingResolutions = 0)
+    private ServiceProvider BuildProvider(int failingResolutions = 0, bool failWithCancellation = false)
     {
         var services = new ServiceCollection();
         services.AddSingleton(_database.DataSource);
@@ -33,7 +33,7 @@ public sealed class OnlineOrderReconciliationHostedServiceTests : IAsyncLifetime
         services.AddReconciliationCaseExperience();
         var remaining = failingResolutions;
         services.AddTransient(provider => remaining-- > 0
-            ? throw new InvalidOperationException("scanner unavailable")
+            ? throw (failWithCancellation ? new OperationCanceledException("database timeout") : new InvalidOperationException("scanner unavailable"))
             : new OnlineOrderReconciliationScanner(
                 provider.GetRequiredService<IReadOnlyList<IOnlineOrderSourcePair>>(),
                 provider.GetRequiredService<IReconciliationService>()));
@@ -55,6 +55,26 @@ public sealed class OnlineOrderReconciliationHostedServiceTests : IAsyncLifetime
             ("inbox", inboxId), ("external", externalOrderId));
     }
 
+    private async Task<Guid> SeedApprovedPaymentWithoutAllocationAsync()
+    {
+        var billId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, status, payable_amount, currency_code, opened_at, created_at, updated_at)
+            VALUES (@bill, 'B-' || left(@bill::text, 18), 'Open', 40, 'TRY', now(), now(), now());
+            INSERT INTO payments.payments
+                (payment_id, bill_id, status, currency_code, requested_amount, tendered_amount, approved_amount,
+                 change_amount, initiated_at, tendered_at, approved_at, created_at, updated_at)
+            VALUES (@payment, @bill, 'Approved', 'TRY', 40, 40, 40, 0, now(), now(), now(), now(), now());
+            """,
+            ("bill", billId), ("payment", paymentId));
+        return paymentId;
+    }
+
+    private async Task<long> PaymentCasesAsync(Guid paymentId) => await _database.ScalarAsync<long>(
+        $"SELECT count(*) FROM reconciliation.cases WHERE deduplication_key = 'approved-without-allocation:{paymentId}';");
+
     private async Task<long> CasesAsync(string externalOrderId) => await _database.ScalarAsync<long>(
         $"SELECT count(*) FROM reconciliation.cases WHERE deduplication_key = 'online-order:provider-accepted-locally-refused:yemeksepeti:{externalOrderId}';");
 
@@ -68,8 +88,8 @@ public sealed class OnlineOrderReconciliationHostedServiceTests : IAsyncLifetime
         }
     }
 
-    private static OnlineOrderReconciliationHostedService Create(ServiceProvider provider) => new(
-        provider.GetRequiredService<IServiceScopeFactory>(), NullLogger<OnlineOrderReconciliationHostedService>.Instance, Tick, Tick);
+    private static ReconciliationScanHostedService Create(ServiceProvider provider) => new(
+        provider.GetRequiredService<IServiceScopeFactory>(), NullLogger<ReconciliationScanHostedService>.Instance, Tick, Tick);
 
     [Fact]
     public async Task AScheduledPassTurnsARefusedOrderIntoACaseAndRepeatedPassesNeverDoubleIt()
@@ -100,5 +120,34 @@ public sealed class OnlineOrderReconciliationHostedServiceTests : IAsyncLifetime
         await service.StopAsync(CancellationToken.None);
 
         Assert.Equal(1L, await CasesAsync(externalOrderId));
+    }
+
+    [Fact]
+    public async Task ATimeoutThatSurfacesAsACancellationDoesNotStopTheScheduledPasses()
+    {
+        var paymentId = await SeedApprovedPaymentWithoutAllocationAsync();
+        await using var provider = BuildProvider(failingResolutions: 1000, failWithCancellation: true);
+        using var service = Create(provider);
+
+        await service.StartAsync(CancellationToken.None);
+        await WaitForAsync(async () => await PaymentCasesAsync(paymentId) == 1);
+        await service.StopAsync(CancellationToken.None);
+
+        Assert.False(service.ExecuteTask!.IsFaulted);
+    }
+
+    [Fact]
+    public async Task AScheduledPassTurnsAnApprovedPaymentWithoutAllocationIntoOneCaseEvenWhenTheOnlineScanFails()
+    {
+        var paymentId = await SeedApprovedPaymentWithoutAllocationAsync();
+        await using var provider = BuildProvider(failingResolutions: 1000);
+        using var service = Create(provider);
+
+        await service.StartAsync(CancellationToken.None);
+        await WaitForAsync(async () => await PaymentCasesAsync(paymentId) == 1);
+        await Task.Delay(TimeSpan.FromMilliseconds(400));
+        await service.StopAsync(CancellationToken.None);
+
+        Assert.Equal(1L, await PaymentCasesAsync(paymentId));
     }
 }

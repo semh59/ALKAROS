@@ -40,6 +40,8 @@ public sealed class ApprovedWithoutAllocationSourcePair : IReconciliationSourceP
     {
         var results = new List<DetectedDiscrepancy>();
 
+        // A payment that already has its case is left out: a case key never opens a second case, and every scan
+        // would otherwise append another Deduplicated action to it for as long as the payment stays unresolved.
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT p.payment_id, p.approved_amount, p.approved_at
@@ -48,6 +50,7 @@ public sealed class ApprovedWithoutAllocationSourcePair : IReconciliationSourceP
               AND NOT EXISTS (
                   SELECT 1 FROM payments.payment_allocations pa WHERE pa.payment_id = p.payment_id
               )
+              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases c WHERE c.deduplication_key = 'approved-without-allocation:' || p.payment_id::text)
             LIMIT {MaxScanRows + 1};
             """);
 

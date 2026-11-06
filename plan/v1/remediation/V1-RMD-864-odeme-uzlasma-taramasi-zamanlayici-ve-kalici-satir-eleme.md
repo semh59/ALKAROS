@@ -1,7 +1,7 @@
 # V1-RMD-864 - Ödeme uzlaşma taraması: zamanlayıcı, kalıcı satırları yeniden okumama, ham hata metni ve zayıf eşik testi
 
 - Task ID: V1-RMD-864
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
