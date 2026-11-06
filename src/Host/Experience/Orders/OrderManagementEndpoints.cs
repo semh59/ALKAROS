@@ -678,6 +678,8 @@ public static class OrderManagementEndpoints
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsComp, "Requester has no assigned role.");
 
+                // A grant for an item that can no longer change would be spent (personal budget) without a comp.
+                await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
                 var order = await orders.GetByIdAsync(orderId, cancellationToken)
                     ?? throw new OrderItemNotFoundException(orderId, itemId);
                 var item = order.Items.FirstOrDefault(i => i.Id == itemId)

@@ -241,6 +241,13 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
         return (decimal)(await command.ExecuteScalarAsync())!;
     }
 
+    public async Task<long> GrantCountForRequesterAsync(Guid requesterUserId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM identity.authorization_grants WHERE requester_user_id = @id;");
+        command.Parameters.AddWithValue("id", requesterUserId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
     public Task SetOrderStatusAsync(Guid orderId, string status)
         => ExecuteAsync("UPDATE orders.orders SET status = @status WHERE order_id = @order_id;", ("status", status), ("order_id", orderId));
 

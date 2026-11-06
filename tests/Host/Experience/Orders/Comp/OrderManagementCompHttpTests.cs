@@ -371,6 +371,33 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         Assert.Equal(120m, body.PersonalBudgetRemaining);
     }
 
+    [Theory]
+    [InlineData("OrderCompleted", "ORDER_CLOSED")]
+    [InlineData("OrderCancelled", "ORDER_CLOSED")]
+    [InlineData("OrderRejected", "ORDER_CLOSED")]
+    [InlineData("BillPaid", "BILL_NOT_MODIFIABLE")]
+    public async Task AWaiterCompingAnItemThatCanNoLongerChangeIsRefusedWithoutSpendingTheBudget(string closedBy, string expectedCode)
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(
+            waiterId, unitPrice: 30m, taxRate: 0m);
+        if (closedBy.StartsWith("Order", StringComparison.Ordinal))
+            await _database.SetOrderStatusAsync(orderId, closedBy["Order".Length..]);
+        else
+            await _database.SeedBillForItemAsync(orderId, itemId, BillState.Paid);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains(expectedCode, await response.Content.ReadAsStringAsync());
+        Assert.Equal(0L, await _database.GrantCountForRequesterAsync(waiterId));
+    }
+
     [Fact]
     public async Task ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder()
     {
