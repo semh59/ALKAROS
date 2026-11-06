@@ -129,10 +129,21 @@ public static class ReconciliationCaseEndpoints
         group.MapGet("/{caseId:guid}/actions", async (
             Guid caseId,
             IReconciliationService reconciliation,
+            NpgsqlDataSource dataSource,
             CancellationToken cancellationToken) =>
         {
             var actions = await reconciliation.GetCaseActionsAsync(caseId, cancellationToken);
-            return Results.Ok(actions.Select(CaseActionV1.From).ToArray());
+            var names = new Dictionary<Guid, string>();
+            if (actions.Count > 0)
+            {
+                await using var command = dataSource.CreateCommand("SELECT user_id, display_name FROM identity.users WHERE user_id = ANY($1);");
+                command.Parameters.AddWithValue(actions.Select(action => action.PerformedBy).Distinct().ToArray());
+                await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+                while (await reader.ReadAsync(cancellationToken))
+                    names[reader.GetGuid(0)] = reader.GetString(1);
+            }
+
+            return Results.Ok(actions.Select(action => CaseActionV1.From(action, names.GetValueOrDefault(action.PerformedBy))).ToArray());
         });
 
         group.MapGet("/", async (
@@ -173,10 +184,11 @@ public sealed record ReconciliationCaseV1(
             record.RowVersion, record.DetailsJson);
 }
 
-public sealed record CaseActionV1(Guid ActionId, Guid CaseId, ActionType ActionType, Guid PerformedBy, DateTimeOffset PerformedAt, string? DetailsJson)
+public sealed record CaseActionV1(
+    Guid ActionId, Guid CaseId, ActionType ActionType, Guid PerformedBy, string? PerformedByName, DateTimeOffset PerformedAt, string? DetailsJson)
 {
-    public static CaseActionV1 From(CaseActionRecord record)
-        => new(record.ActionId, record.CaseId, record.ActionType, record.PerformedBy, record.PerformedAt, record.DetailsJson);
+    public static CaseActionV1 From(CaseActionRecord record, string? performedByName)
+        => new(record.ActionId, record.CaseId, record.ActionType, record.PerformedBy, performedByName, record.PerformedAt, record.DetailsJson);
 }
 
 public sealed class ReconciliationCaseAuthentication

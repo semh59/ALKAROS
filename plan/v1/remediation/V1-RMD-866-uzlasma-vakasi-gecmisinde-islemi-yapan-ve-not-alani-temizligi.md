@@ -1,7 +1,7 @@
 # V1-RMD-866 - Uzlaşma vakası geçmişinde işlemi yapanın adı; durum geçişinden sonra not alanı temizlenir
 
 - Task ID: V1-RMD-866
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

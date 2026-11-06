@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (23 tests | 1 failed) 912ms
+     × shows a case's history with Turkish action names and the stored note or reason 47ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > shows a case's history with Turkish action names and the stored note or reason
+AssertionError: expected 'Vaka geçmişiİşlemZamanİşlemi yapanAyr…' to contain 'Sistem'
+
+Expected: "Sistem"
+Received: "Vaka geçmişiİşlemZamanİşlemi yapanAyrıntıVaka açıldı29.09.2026 12:00BilinmiyorNot eklendi29.09.2026 13:00Ayşe YılmazBanka ile görüşüldüDurum değişti29.09.2026 14:00BilinmiyorFiş bulunduGeçmişi kapat"
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:166:32
+    164|     expect(region.textContent).toContain("İşlemi yapan");
+    165|     expect(region.textContent).toContain("Ayşe Yılmaz");
+    166|     expect(region.textContent).toContain("Sistem");
+       |                                ^
+    167|     expect(region.textContent).toContain("Bilinmiyor");
+    168|     expect(region.textContent).not.toContain("u2");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 passed (23)
+   Start at  02:47:32
+   Duration  2.55s (transform 245ms, setup 0ms, import 379ms, tests 912ms, environment 1.00s)
+

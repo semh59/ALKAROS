@@ -100,6 +100,24 @@ describe("closing and reconciliation section", () => {
     expect(client.transitionCase).toHaveBeenCalledWith("c1", "Investigating", 3, "Slip kontrol edildi");
   });
 
+  it("the note is cleared after a successful transition and kept when the transition fails", async () => {
+    const transitionCase = vi.fn().mockRejectedValueOnce(new ManagementApiError(409, "CONCURRENT_UPDATE", "Vaka başka bir kullanıcı tarafından değiştirildi.")).mockResolvedValue(undefined);
+    await render(<ClosingSection client={fakeClient({ transitionCase })} capabilities={new Set(["reports.view", "reconciliation.manage"])} />);
+    const note = document.getElementById("closing-case-note") as HTMLInputElement;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(note, "Slip kontrol edildi");
+      note.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const transition = () => [...document.querySelectorAll("button")].find((candidate) => candidate.textContent === "İncelemeye al")!;
+    await act(async () => transition().click());
+    expect(transitionCase).toHaveBeenCalledTimes(1);
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Vaka başka bir kullanıcı tarafından değiştirildi.");
+    expect((document.getElementById("closing-case-note") as HTMLInputElement).value).toBe("Slip kontrol edildi");
+    await act(async () => transition().click());
+    expect(transitionCase).toHaveBeenCalledTimes(2);
+    expect((document.getElementById("closing-case-note") as HTMLInputElement).value).toBe("");
+  });
+
   it("the server's Turkish reason is shown as is", async () => {
     const client = fakeClient({ closeDay: vi.fn().mockRejectedValue(new ManagementApiError(409, "OPEN_BILLS", "Açık hesaplar varken gün kapatılamaz.")) });
     await render(<ClosingSection client={client} capabilities={new Set(["reports.view", "reports.close-day"])} />);
@@ -134,9 +152,10 @@ describe("closing and reconciliation section", () => {
   it("shows a case's history with Turkish action names and the stored note or reason", async () => {
     const client = fakeClient({
       listCaseActions: vi.fn().mockResolvedValue([
-        { actionId: "a1", actionType: "Created", performedAt: "2026-09-29T09:00:00Z", detailsJson: null },
-        { actionId: "a2", actionType: "NoteAdded", performedAt: "2026-09-29T10:00:00Z", detailsJson: "{\"note\":\"Banka ile görüşüldü\"}" },
-        { actionId: "a3", actionType: "StatusChanged", performedAt: "2026-09-29T11:00:00Z", detailsJson: "{\"reason\":\"Fiş bulundu\"}" },
+        { actionId: "a1", actionType: "Created", performedBy: "00000000-0000-0000-0000-000000000001", performedByName: null, performedAt: "2026-09-29T09:00:00Z", detailsJson: null },
+        { actionId: "a2", actionType: "NoteAdded", performedBy: "u1", performedByName: "Ayşe Yılmaz", performedAt: "2026-09-29T10:00:00Z", detailsJson: "{\"note\":\"Banka ile görüşüldü\"}" },
+        { actionId: "a4", actionType: "Resolved", performedBy: "00000000-0000-0000-0000-000000000001", performedByName: "Ali Demir", performedAt: "2026-09-29T12:00:00Z", detailsJson: null },
+        { actionId: "a3", actionType: "StatusChanged", performedBy: "u2", performedByName: null, performedAt: "2026-09-29T11:00:00Z", detailsJson: "{\"reason\":\"Fiş bulundu\"}" },
       ]),
     });
     await renderCases(client, new Set(["reports.view"]));
@@ -146,6 +165,17 @@ describe("closing and reconciliation section", () => {
     expect(region.textContent).toContain("Vaka açıldı");
     expect(region.textContent).toContain("Banka ile görüşüldü");
     expect(region.textContent).toContain("Fiş bulundu");
+    expect(region.textContent).toContain("İşlemi yapan");
+    const rows = [...region.querySelectorAll("tbody tr")];
+    const cells = (index: number) => [...rows[index]!.querySelectorAll("td")].map((cell) => cell.textContent);
+    const headers = [...region.querySelectorAll("thead th")].map((cell) => cell.textContent);
+    expect(headers[2]).toBe("İşlemi yapan");
+    expect(cells(0)[0]).toBe("Vaka açıldı");
+    expect(cells(0)[2]).toBe("Sistem");
+    expect(cells(1)[2]).toBe("Ayşe Yılmaz");
+    expect(cells(2)[2]).toBe("Ali Demir");
+    expect(cells(3)[2]).toBe("Bilinmiyor");
+    expect(region.textContent).not.toContain("u2");
     expect(region.textContent).not.toContain("NoteAdded");
     expect(region.textContent).not.toContain("{");
   });

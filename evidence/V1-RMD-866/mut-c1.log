@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (23 tests | 1 failed) 979ms
+     × the note is cleared after a successful transition and kept when the transition fails 85ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > the note is cleared after a successful transition and kept when the transition fails
+AssertionError: expected 'Slip kontrol edildi' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ Slip kontrol edildi
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:115:86
+    113|     expect((document.getElementById("closing-case-note") as HTMLInputE…
+    114|     await act(async () => transition().click());
+    115|     expect((document.getElementById("closing-case-note") as HTMLInputE…
+       |                                                                                      ^
+    116|   });
+    117|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 passed (23)
+   Start at  02:47:21
+   Duration  2.54s (transform 217ms, setup 0ms, import 321ms, tests 979ms, environment 987ms)
+

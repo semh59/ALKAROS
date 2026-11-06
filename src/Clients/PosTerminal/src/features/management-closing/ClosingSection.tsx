@@ -5,7 +5,7 @@ import { commonActions, managementText } from "../../strings";
 import { createClosingClient, type ClosingClient } from "./closingApi";
 import {
   caseStatusLabel, caseStatuses, caseTypeLabel, confirmationStatusLabel, dayStatusLabel, nextStatuses, severityLabel,
-  tenderLabel, transitionActionLabel, caseActionLabel, caseActionText, type CaseAction, type BusinessDay, type BusinessDayReport, type CaseStatus, type ClosePreflight, type ManualConfirmation,
+  systemActorId, tenderLabel, transitionActionLabel, caseActionLabel, caseActionText, type CaseAction, type BusinessDay, type BusinessDayReport, type CaseStatus, type ClosePreflight, type ManualConfirmation,
   type ReconciliationCase, type SettlementReport,
 } from "./models";
 import { errorText } from "../management/panel";
@@ -242,7 +242,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
               {canManage && <Button data-telemetry-id="b.management-closing.closingsection.7" variant="quiet" disabled={busy} onClick={() => addNote(row.caseId)}>{t.caseAddNote}</Button>}
               {canManage && nextStatuses(row.status, row.caseType).map((target) =>
               <Button data-telemetry-id="b.management-closing.closingsection.8" key={target} variant="quiet" disabled={busy}
-                onClick={() => void act(() => api.transitionCase(row.caseId, target, row.rowVersion, caseNote), t.caseUpdated, reloadCases)}>
+                onClick={() => void act(() => api.transitionCase(row.caseId, target, row.rowVersion, caseNote), t.caseUpdated, () => { setCaseNote(""); reloadCases(); })}>
                 {transitionActionLabel(target)}
               </Button>)}</td>
           </tr>)}</tbody>
@@ -250,9 +250,9 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
         {history && <div className="closing__history" role="region" aria-label={t.caseHistoryHeading}>
           <h4>{t.caseHistoryHeading}</h4>
           {history.rows.length === 0 ? <p className="closing__empty">{t.caseHistoryEmpty}</p> : <table>
-            <thead><tr><th>{t.caseActionType}</th><th>{t.caseActionWhen}</th><th>{t.caseActionDetail}</th></tr></thead>
+            <thead><tr><th>{t.caseActionType}</th><th>{t.caseActionWhen}</th><th>{t.caseActionBy}</th><th>{t.caseActionDetail}</th></tr></thead>
             <tbody>{history.rows.map((action) => <tr key={action.actionId}>
-              <td>{caseActionLabel(action.actionType)}</td><td>{stamp(action.performedAt)}</td><td>{caseActionText(action.detailsJson)}</td></tr>)}</tbody>
+              <td>{caseActionLabel(action.actionType)}</td><td>{stamp(action.performedAt)}</td><td>{action.performedByName ?? (action.performedBy === systemActorId ? t.caseActionSystem : t.caseActionUnknownUser)}</td><td>{caseActionText(action.detailsJson)}</td></tr>)}</tbody>
           </table>}
           <Button data-telemetry-id="b.management-closing.closingsection.9" variant="secondary" onClick={() => setHistory(undefined)}>{t.caseHistoryClose}</Button>
         </div>}

@@ -135,6 +135,7 @@ public sealed class ReconciliationCaseHttpTests : IAsyncLifetime
         var actions = await actionsResponse.Content.ReadFromJsonAsync<CaseActionV1[]>();
         Assert.Contains(actions!, a => a.ActionType == ActionType.NoteAdded);
         Assert.Contains(actions!, a => a.ActionType == ActionType.StatusChanged);
+        Assert.All(actions!, a => Assert.Equal("Reconciliation Supervisor", a.PerformedByName));
     }
 
     [Fact]

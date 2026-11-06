@@ -1,0 +1,6 @@
+C1-no-note-clear: testexit=1 
+C2-no-name: testexit=1 
+C3-no-system: testexit=1 
+C4-clear-on-failure: testexit=1 
+S1-no-names: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 13 s - ALKAROS.Host.Exper
+C5-system-first: testexit=1 

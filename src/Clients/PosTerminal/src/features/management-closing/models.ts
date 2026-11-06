@@ -84,7 +84,10 @@ export interface ReconciliationCase {
   rowVersion: number;
 }
 
-export interface CaseAction { actionId: string; actionType: string; performedAt: string; detailsJson: string | null }
+export interface CaseAction { actionId: string; actionType: string; performedBy: string; performedByName: string | null; performedAt: string; detailsJson: string | null }
+
+/** The id the payment and online order scans act under. */
+export const systemActorId = "00000000-0000-0000-0000-000000000001";
 
 export const caseStatuses = ["Open", "Investigating", "Escalated", "Resolved", "Dismissed"] as const;
 export type CaseStatus = (typeof caseStatuses)[number];

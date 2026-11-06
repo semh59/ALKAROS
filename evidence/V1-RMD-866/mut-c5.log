@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx (23 tests | 1 failed) 928ms
+     × shows a case's history with Turkish action names and the stored note or reason 48ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-closing/ClosingSection.test.tsx > closing and reconciliation section > shows a case's history with Turkish action names and the stored note or reason
+AssertionError: expected 'Sistem' to be 'Ali Demir' // Object.is equality
+
+Expected: "Ali Demir"
+Received: "Sistem"
+
+ ❯ src/features/management-closing/ClosingSection.test.tsx:176:25
+    174|     expect(cells(0)[2]).toBe("Sistem");
+    175|     expect(cells(1)[2]).toBe("Ayşe Yılmaz");
+    176|     expect(cells(2)[2]).toBe("Ali Demir");
+       |                         ^
+    177|     expect(cells(3)[2]).toBe("Bilinmiyor");
+    178|     expect(region.textContent).not.toContain("u2");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 passed (23)
+   Start at  02:55:48
+   Duration  2.50s (transform 205ms, setup 0ms, import 308ms, tests 928ms, environment 1.01s)
+
