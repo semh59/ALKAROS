@@ -1,0 +1,24 @@
+n1-tenders-group-unfiltered
+Başarısız! - Başarısız:     6, Başarılı:     4, Atlanan:     0, Toplam:    10, Süre: 1 m 12 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+exit 1
+n1-tenders-group-unfiltered restored (cmp exit 0)
+n2-show-on-display-unfiltered
+Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 1 m 11 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+exit 1
+n2-show-on-display-unfiltered restored (cmp exit 0)
+n3-receipt-unfiltered
+Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 1 m 15 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+exit 1
+n3-receipt-unfiltered restored (cmp exit 0)
+n4-account-charge-unfiltered
+Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 1 m 17 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+exit 1
+n4-account-charge-unfiltered restored (cmp exit 0)
+n5-cash-tender-unchecked
+Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 1 m 13 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+exit 1
+n5-cash-tender-unchecked restored (cmp exit 0)
+ALLDONE
+n6-claim-before-authorization
+Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 1 m 3 s - ALKAROS.Host.Ex
+n6 restored (cmp exit 0)

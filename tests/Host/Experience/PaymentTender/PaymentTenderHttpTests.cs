@@ -775,6 +775,7 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var seeded = new List<Guid>();
+        var tillOfBill = new Dictionary<Guid, (Guid TerminalId, string Cookie)>();
         for (var i = 0; i < 202; i++)
         {
             if (i % 100 == 0)
@@ -785,6 +786,7 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
 
             var billId = await _database.SeedBillAsync(payable: 100m);
             seeded.Add(billId);
+            tillOfBill[billId] = (terminalId, cookie);
             var tender = await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 40m, IdempotencyKey = $"rmd759-q{i}" });
             Assert.True(tender.IsSuccessStatusCode, $"Seeding tender {i} failed with {(int)tender.StatusCode}.");
         }
@@ -793,7 +795,8 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         await using var lastId = _database.DataSource.CreateCommand("SELECT bill_id FROM billing.bills WHERE bill_id = ANY(@ids) ORDER BY bill_id DESC LIMIT 1;");
         lastId.Parameters.AddWithValue("ids", seeded.ToArray());
         var lastBill = (Guid)(await lastId.ExecuteScalarAsync())!;
-        var rest = await PostAsync(client, TendersPath(terminalId, lastBill), cookie, new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd759-rest" });
+        var owningTill = tillOfBill[lastBill];
+        var rest = await PostAsync(client, TendersPath(owningTill.TerminalId, lastBill), owningTill.Cookie, new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd759-rest" });
         Assert.True(rest.IsSuccessStatusCode, $"Paying tender failed with {(int)rest.StatusCode}.");
         await _database.UncloseBillAsync(lastBill);
         var sweeper = app.Services.GetServices<IHostedService>().OfType<BillClosureSweeper>().Single();
@@ -1461,7 +1464,7 @@ internal sealed class PaymentTenderHttpTestDatabase
             VALUES (@user_id, @username, 'x', 'PaymentTender Test Manager', true);
             INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'PaymentTender Test Manager Role');
             INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code IN ('reconciliation.manage', 'payments.take');
+            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code IN ('reconciliation.manage', 'payments.take', 'cash.session.override');
             INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (gen_random_uuid(), @user_id, @role_id);
             INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
             VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');

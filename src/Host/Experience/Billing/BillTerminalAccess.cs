@@ -42,32 +42,52 @@ public sealed class BillTerminalAccess
     }
 
     /// <summary>
-    /// Refuses the caller when another terminal owns the bill. A write also claims a bill nobody owns yet for the terminal;
-    /// a read never does. A user who sees all bills owns nothing and claims nothing. A request without a valid cashier session, or for a bill
-    /// that does not exist, passes: the endpoint answers those itself.
+    /// Refuses the caller when another terminal owns the bill. A write also claims a bill nobody owns yet for the terminal
+    /// unless <paramref name="claim"/> is false (the caller claims after the write succeeded); a read never claims. A user who
+    /// sees all bills owns nothing and claims nothing. A request without a valid cashier session, or for a bill that does
+    /// not exist, passes: the endpoint answers those itself.
     /// </summary>
-    public async Task RequireAsync(HttpContext context, Guid terminalId, Guid billId, CancellationToken cancellationToken)
+    public async Task RequireAsync(
+        HttpContext context, Guid terminalId, Guid billId, CancellationToken cancellationToken, bool claim = true)
     {
-        var cashier = await _sessions.AuthenticateCashierAsync(
-            context.Request.Cookies[DualScreenApplication.CashierCookieName], terminalId, cancellationToken);
-        if (cashier is null || await SeesAllBillsAsync(cashier.UserId, cancellationToken))
+        if (!await IsRestrictedAsync(context, terminalId, cancellationToken))
             return;
 
-        var owner = HttpMethods.IsGet(context.Request.Method)
+        var owner = HttpMethods.IsGet(context.Request.Method) || !claim
             ? await _owners.FindOwnerAsync(billId, cancellationToken)
             : await _owners.ClaimAsync(billId, terminalId, cancellationToken);
         if (owner is { } ownerTerminal && ownerTerminal != terminalId)
             throw new BillOtherTerminalException(billId, ownerTerminal);
     }
 
-    public async Task RequireForRefundRequestAsync(
+    /// <summary>
+    /// Gives a bill nobody owns to the terminal once a write on it succeeded; a lost race leaves the other owner. It ignores
+    /// the request's cancellation: the write is already committed, so a dropped connection must not leave the bill unowned.
+    /// </summary>
+    public async Task ClaimAsync(HttpContext context, Guid terminalId, Guid billId)
+    {
+        if (await IsRestrictedAsync(context, terminalId, CancellationToken.None))
+            await _owners.ClaimAsync(billId, terminalId, CancellationToken.None);
+    }
+
+    private async Task<bool> IsRestrictedAsync(HttpContext context, Guid terminalId, CancellationToken cancellationToken)
+    {
+        var cashier = await _sessions.AuthenticateCashierAsync(
+            context.Request.Cookies[DualScreenApplication.CashierCookieName], terminalId, cancellationToken);
+        return cashier is not null && !await SeesAllBillsAsync(cashier.UserId, cancellationToken);
+    }
+
+    /// <summary>Checks the owner of the bill a refund request belongs to without claiming it; returns that bill, if any.</summary>
+    public async Task<Guid?> RequireForRefundRequestAsync(
         HttpContext context, Guid terminalId, Guid refundRequestId, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
             "SELECT bill_id FROM payments.refund_requests WHERE refund_request_id = @id;");
         command.Parameters.AddWithValue("id", refundRequestId);
-        if (await command.ExecuteScalarAsync(cancellationToken) is Guid billId)
-            await RequireAsync(context, terminalId, billId, cancellationToken);
+        if (await command.ExecuteScalarAsync(cancellationToken) is not Guid billId)
+            return null;
+        await RequireAsync(context, terminalId, billId, cancellationToken, claim: false);
+        return billId;
     }
 
     /// <summary>The bills among the given ones that the terminal may handle: its own and those nobody owns yet.</summary>
@@ -104,10 +124,15 @@ public sealed class BillTerminalAccessFilter : IEndpointFilter
     {
         var http = context.HttpContext;
         var route = http.GetRouteData().Values;
-        if (route.TryGetValue("billId", out var bill) && Guid.TryParse(bill?.ToString(), out var billId)
-            && route.TryGetValue("terminalId", out var terminal) && Guid.TryParse(terminal?.ToString(), out var terminalId))
-            await _access.RequireAsync(http, terminalId, billId, http.RequestAborted);
-        return await next(context);
+        if (!route.TryGetValue("billId", out var bill) || !Guid.TryParse(bill?.ToString(), out var billId)
+            || !route.TryGetValue("terminalId", out var terminal) || !Guid.TryParse(terminal?.ToString(), out var terminalId))
+            return await next(context);
+
+        await _access.RequireAsync(http, terminalId, billId, http.RequestAborted, claim: false);
+        var result = await next(context);
+        if (!HttpMethods.IsGet(http.Request.Method) && result is not IStatusCodeHttpResult { StatusCode: >= 400 })
+            await _access.ClaimAsync(http, terminalId, billId);
+        return result;
     }
 }
 

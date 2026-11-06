@@ -4,6 +4,7 @@ using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.PaymentClosure;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization;
@@ -196,6 +197,7 @@ public static partial class DualScreenApplication
 
         var group = app.MapGroup("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders")
             .WithTags("PaymentTender")
+            .AddEndpointFilter<BillTerminalAccessFilter>()
             .RequireRateLimiting("terminal-write");
 
         group.MapGet("/", async (
@@ -715,7 +717,7 @@ public static partial class DualScreenApplication
             if (bound)
                 await NotifyCustomerDisplayAsync(customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
             return Results.Ok(new ShowBillOnDisplayResultV1(bound));
-        }).WithTags("PaymentTender").RequireRateLimiting("terminal-write");
+        }).WithTags("PaymentTender").AddEndpointFilter<BillTerminalAccessFilter>().RequireRateLimiting("terminal-write");
 
         return group;
     }

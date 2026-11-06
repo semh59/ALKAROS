@@ -112,6 +112,7 @@ public static partial class DualScreenApplication
                         .ToList()));
             })
             .WithTags("BillReceipt")
+            .AddEndpointFilter<BillTerminalAccessFilter>()
             .RequireRateLimiting("terminal-read");
     }
 

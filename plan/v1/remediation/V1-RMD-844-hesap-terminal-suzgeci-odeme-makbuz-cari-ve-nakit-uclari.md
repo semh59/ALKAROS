@@ -1,7 +1,7 @@
 # V1-RMD-844 - Hesap terminal süzgeci: ödeme, makbuz, cari hesap ve nakit tahsilat uçları
 
 - Task ID: V1-RMD-844
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
@@ -20,6 +20,8 @@ Bir terminal başkasının hesabına ödeme alamaz, makbuzunu okuyamaz, cari hes
   - src/Host/DualScreen/DualScreenApplication.Receipt.cs (V1-RMD-516) — filtre bağlama.
   - src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs (V1-RMD-794) — filtre bağlama.
   - src/Host/DualScreen/DualScreenApplication.CashSession.cs (V1-RMD-790) — nakit tahsilatta gövdedeki hesap için denetim.
+  - src/Host/Experience/Billing/BillTerminalAccess.cs (V1-RMD-843) — sahiplenmeyi uç başarısından sonraya alma.
+  - src/Host/Experience/Billing/BillingSplitApplication.cs (V1-RMD-843) — iade tamamlamada aynı sıra.
   - tests/Host/Experience/PaymentTender/ (V1-RMD-787) — yeni BillTerminalAccessTenderHttpTests.cs ve eski testlerin güncellenmesi.
   - tests/Host/Experience/CashSession/ (V1-RMD-790) — eski testlerin güncellenmesi.
   - tests/Host/Experience/CustomerAccounts/ (V1-RMD-794) — eski testlerin güncellenmesi.

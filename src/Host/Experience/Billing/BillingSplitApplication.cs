@@ -462,9 +462,12 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
-            await access.RequireForRefundRequestAsync(context, terminalId, requestId, cancellationToken);
-            return Results.Ok(await store.CompleteManualAsync(
-                requestId, request.SlipNumber, request.Note, principal.UserId, cancellationToken));
+            var billId = await access.RequireForRefundRequestAsync(context, terminalId, requestId, cancellationToken);
+            var completed = await store.CompleteManualAsync(
+                requestId, request.SlipNumber, request.Note, principal.UserId, cancellationToken);
+            if (billId is { } owned)
+                await access.ClaimAsync(context, terminalId, owned);
+            return Results.Ok(completed);
         });
 
         refundsGroup.MapGet("/refund-allowance", async (

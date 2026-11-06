@@ -9,6 +9,7 @@ using ALKAROS.CustomerAccounts.AccountReceipts;
 using ALKAROS.CustomerAccounts.BillCharges;
 using ALKAROS.CustomerAccounts.CashReceipts;
 using ALKAROS.CustomerData.Profiles;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.CustomerAccounts;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Identity.Authorization;
@@ -177,7 +178,7 @@ public static partial class DualScreenApplication
             var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
             var balance = (await accounts.GetAsync(request.CustomerId, cancellationToken))?.Balance ?? 0m;
             return Results.Ok(new AccountChargeResultV1(result.ApprovedAmount, closed, result.WasReplayed, balance));
-        }).RequireRateLimiting("terminal-write");
+        }).AddEndpointFilter<BillTerminalAccessFilter>().RequireRateLimiting("terminal-write");
 
         app.MapPost("/api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/account-receipts", async (
             Guid terminalId,

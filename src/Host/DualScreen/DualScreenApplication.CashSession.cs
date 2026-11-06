@@ -5,6 +5,7 @@ using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Settings.CashCloseTolerance;
@@ -254,12 +255,14 @@ public static partial class DualScreenApplication
             ILoggerFactory loggerFactory,
             HttpContext context,
             ICashSessionRepository sessionRepository,
+            BillTerminalAccess billAccess,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
             // V1-RMD-401: a cash tender is a payment too — cash.drawer (the money enters the drawer) and payments.take.
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
+            await billAccess.RequireAsync(context, terminalId, request.BillId, cancellationToken, claim: false);
             CashTenderResult result;
             try
             {
@@ -276,6 +279,7 @@ public static partial class DualScreenApplication
                     exception.RequestedAmount, exception.RemainingPayable, request.IdempotencyKey);
                 throw;
             }
+            await billAccess.ClaimAsync(context, terminalId, request.BillId);
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
             // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
             await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
