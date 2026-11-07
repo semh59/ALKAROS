@@ -1,7 +1,7 @@
 # V1-RMD-872 - Ok tuşuyla sekme gezinmesinin telemetride sayımı doğrulanır ve sözleşme olarak sabitlenir
 
 - Task ID: V1-RMD-872
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
