@@ -1,0 +1,5 @@
+Q1-no-grouping: Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 45 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+Q2-count-not-summed: Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 50 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+Q3-last-order-represents: Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 49 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+Q4-total-not-summed: Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 44 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+Q5-preview-not-joined: Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 48 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi

@@ -196,7 +196,11 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         await Exec("UPDATE billing.bills SET status = 'Paid' WHERE bill_id = @id;", ("id", merged.BillId));
         var afterPaid = await store.GetChecksAwaitingPaymentAsync();
 
-        Assert.Equal(2, whileOpen.Count(c => c.BillId == merged.BillId));
+        var check = Assert.Single(whileOpen, c => c.BillId == merged.BillId);
+        Assert.Equal(merged.FirstOrderId, check.OrderId);
+        Assert.Equal(2, check.ItemCount);
+        Assert.Equal(200m, check.Total);
+        Assert.Equal("Dish, Dish", check.ItemPreview);
         Assert.DoesNotContain(afterPaid, c => c.OrderId == merged.FirstOrderId || c.OrderId == merged.SecondOrderId);
     }
 
