@@ -1,8 +1,8 @@
 # V1-RMD-896 - Günlük cari bakiye kayıtları için saklama süresi ve silme işi (2 yıl)
 
 - Task ID: V1-RMD-896
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
