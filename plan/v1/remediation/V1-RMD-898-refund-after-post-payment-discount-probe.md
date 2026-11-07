@@ -16,13 +16,18 @@ Kalem iadesi, kalemin indirimli payını iade anındaki ayarlamalardan hesaplar;
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Host/Experience/Billing/RefundAfterDiscountHttpTests.cs — yeni test
   - src/Host/Experience/Billing/PaymentRefunds.cs
+  - src/Clients/PosTerminal/src/features/billing/refundApi.ts
+  - src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
+  - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+  - tests/Clients/StaticApps/split-payment-cancel-order.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
 1. Kırmızı/yeşil test: iade, sonra indirim, sonra kalan adetlerin iadesi; ödemeyle iade toplamlarının ilişkisi
 2. Düzeltme: aşım denetimi, önceki iadelerin fazla ödediği tutarı (indirim sonrası) hesaba katar
-3. İki bağımsız qa incelemesi
+3. İndirimle fazla ödenmiş önceki iade yüzünden kalan kalem iadesi reddedilirse sıfır-tutar mesajı yerine nedeni anlatan Türkçe hata (REFUND_EARLIER_OVERPAID) gösterilir (sunucu, React kasa, Cashier)
+4. İki bağımsız qa incelemesi
 
 ## Out of scope
 
