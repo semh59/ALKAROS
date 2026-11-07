@@ -20,6 +20,7 @@
   - database/MigrationComposition/order.json — 223 kaydı
   - src/Host/Composition/Migrations/MigrationManifest.cs — PhaseBMax 223
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — 223 kaydı
+  - tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs — 223 ileri/geri testi
   - src/Host/DualScreen/DualScreenApplication.Receipt.cs — print ucu, GET alanları
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js — her basım print ucundan
   - tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
