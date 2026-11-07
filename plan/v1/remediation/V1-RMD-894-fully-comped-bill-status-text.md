@@ -8,7 +8,7 @@
 
 ## Goal
 
-Kasiyer ödeme ekranı `renderPaid`, kalan tutar sıfıra inen her hesapta "Hesap Ödendi / Bu hesabın tamamı tahsil edildi." yazıyor. Tamamı ikramla kapanan hesapta hiç tahsilat yoktur; bu metin yanlış bilgi verir. Hiç tahsilat yapılmamış (toplam alınan sıfır) ve düşüşleri yalnız ikramdan oluşan hesapta başlık "İkramla Kapandı", alt metin "Bu hesabın tamamı ikram edildi; tahsilat yapılmadı." olur; hiç tahsilat yapılmamış ama indirim içeren hesapta "İndirimle Kapandı" / "Bu hesap indirim ve ikramla kapandı; tahsilat yapılmadı." olur. Tahsilatı olan hesapta mevcut "Hesap Ödendi" metni değişmez. Türkçe metin `docs/UI_STYLE_GUIDE.md` kurallarına uyar.
+Kasiyer ödeme ekranı `renderPaid`, kalan tutar sıfıra inen her hesapta "Hesap Ödendi / Bu hesabın tamamı tahsil edildi." yazıyor. Tamamı ikramla kapanan hesapta hiç tahsilat yoktur; bu metin yanlış bilgi verir. Hiç tahsilat yapılmamışsa (toplam alınan sıfır): düşüşlerin hepsi ikramsa "İkramla Kapandı" / "Bu hesabın tamamı ikram edildi; tahsilat yapılmadı."; hepsi indirimse "İndirimle Kapandı" / "Bu hesap indirimle kapandı; tahsilat yapılmadı."; karışıksa "İndirim ve İkramla Kapandı" / "Bu hesap indirim ve ikramla kapandı; tahsilat yapılmadı."; hiç düşüş yoksa "Hesap Kapandı". Tahsilat varsa başlık "Hesap Ödendi" kalır; alt metin düşüş yoksa mevcut "Bu hesabın tamamı tahsil edildi.", düşüş varsa "Bu hesap tahsilat ve ikramla / indirimle / indirim ve ikramla kapandı." olur. Türkçe metin `docs/UI_STYLE_GUIDE.md` kurallarına uyar.
 
 ## Owned surface
 
