@@ -20,6 +20,7 @@ terminal via **TokenX Connect Cloud (REST)**:
   `ALKAROS.Host` and the terminal is required.
 - Result retrieval defaults to **polling** (`Get Basket Details`/`Get Open
   Baskets`) rather than the webhook callback Token's API also offers.
+  *(Superseded by the "Decision update (2026-11-07)" at the end of this file.)*
 
 ## Why (three real options compared)
 
@@ -65,6 +66,7 @@ new tunnel route to receive safely. Polling avoids this entirely — matches
 reconciliation as the source of truth rather than trusting a push
 notification alone. This is a default, not a permanent lock: a future
 task may add the webhook path alongside polling if latency requires it.
+*(Superseded by the "Decision update (2026-11-07)" at the end of this file: the webhook route is now required.)*
 
 ## Rejected / deferred alternatives
 
@@ -81,6 +83,7 @@ task may add the webhook path alongside polling if latency requires it.
   non-default: polling is simpler and needs no new network exposure;
   webhook remains available if a future task justifies the added
   complexity.
+  *(Superseded by the "Decision update (2026-11-07)" at the end of this file: the webhook is chosen.)*
 
 ## Invariants for consumers
 
@@ -91,6 +94,8 @@ task may add the webhook path alongside polling if latency requires it.
 - Default result-retrieval strategy is polling; a webhook receiver is not
   assumed to exist unless a later task explicitly adds the Cloudflare
   Tunnel route for it.
+  **Superseded by the "Decision update (2026-11-07)" at the end of this
+  file: the webhook is the result channel and the Tunnel route is required.**
 
 ## Affected tasks
 
@@ -118,3 +123,21 @@ This note does not change the approved decision (2026-09-17); the text above ref
 - If webhook is mandatory, the "no new infrastructure" argument no longer holds: an inbound route would be needed, which would need a new Cloudflare Tunnel route (`docs/architecture/qr-relay-topology.md`).
 - Process facts from the portal: contract first, then test device, test queue about 2 months (V0-HUG-001 note).
 - Open decision (product owner): keep Cloud with webhook and a new tunnel route, or reopen the wired/in-app options. Nothing in the decision or the invariants was changed here.
+
+## Decision update (2026-11-07, Semih)
+
+The product owner closed the open decision of the research note above: the Token path is **TokenX Connect Cloud with the webhook and a new Cloudflare Tunnel route**. The wired and in-app options stay rejected for the kasa scope.
+
+- "Result retrieval defaults to polling" in the selected model no longer holds. The webhook (events `BASKET_COMPLETED`, `BASKET_LOCKED`, `BASKET_UNLOCKED`) is the result channel. Whether polling is also supported stays unverified and is not relied on.
+- "No new infrastructure" no longer holds. Token's cloud calls ALKAROS from outside, so an inbound route is required: a new Cloudflare Tunnel route to the Host, in the same way as the QR relay (`docs/architecture/qr-relay-topology.md`). Inbound ports on the local network stay closed.
+- Scope narrows to the X30 TR, the only model the portal presents for Cloud. The 300 TR is wired-only and is not covered by this path.
+- No code is written by this update. The webhook receiver (inbound authentication, idempotent inbox, replay handling) and the tunnel route are separate future tasks and must be planned before `V13-HUG-001` is coded. The contract and test-device process (contract first, test queue about two months) is unchanged.
+- Still unverified and to be settled with Token during the contract step: whether webhook is mandatory only for Cloud, how a webhook is authenticated, and the production and test addresses.
+
+Requirements the future webhook-receiver task has to meet (recorded here so they are not forgotten; nothing is built yet):
+
+- The tunnel does not buffer: while the Host or the tunnel is down a webhook delivery can be lost (`docs/architecture/qr-relay-topology.md` §2b). The contract step must establish whether Token retries a failed delivery. If it does not, the kasa needs a visible "result pending" state and an operator alert for a basket whose result never arrived, instead of silently losing a paid card sale.
+- Authenticate every request (the method is to be confirmed with Token), compare signatures in constant time, reject stale timestamps, limit body size and request rate, and answer quickly with a 2xx once the event is durably stored.
+- Store events in an idempotent inbox (`docs/architecture/idempotency-inbox-outbox.md`); treat `BASKET_COMPLETED`, `BASKET_LOCKED` and `BASKET_UNLOCKED` as order-independent; log and safely ignore unknown event types; keep poisoned messages apart from the main queue.
+- Never log secrets or card data; keep sandbox and production credentials and addresses separate.
+- The new route exposes the webhook path only. The tunnel isolation allow-list (`V1-RMD-688`) must stay in force so the route cannot reach login, management or kasa endpoints.

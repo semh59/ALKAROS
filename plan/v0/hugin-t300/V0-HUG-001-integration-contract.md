@@ -75,6 +75,7 @@ düzeyinde gerçek doküman ve erişimle doğrulamak — birincil olarak
 - Restoran için entegrasyon ücreti **bulunamadı**; yalnız eczane PDF'inde cihaz başına yıllık 2.999 TL (KDV dahil) görüldü.
 - HoReCa sayfası (`x-platform/baslangic/horeca`): "Polling YAPILMAZ, Webhook ZORUNLUDUR" (olaylar BASKET_COMPLETED/LOCKED/UNLOCKED); Cloud yalnız X30TR için tanıtılıyor. Onaylı V13-GOV-005 kararındaki polling ve "300 TR veya X30 TR" ifadesi bununla çelişiyor (Done kaydı bu görevde değiştirilmedi).
 - Karar bekliyor: V13-GOV-005, V13-HUG-003 ve V13-HUG-004 dayanaklarının yeniden değerlendirilmesi.
+- Karar güncellemesi (2026-11-07, Semih, V1-RMD-888): V13-GOV-005 ile polling/webhook çelişkisi ürün sahibi kararıyla kapandı: webhook'lu Cloud + yeni tünel rotası, kapsam X30 TR. Sözleşme doğrulaması bu yolu hedeflemelidir; webhook kimlik doğrulaması ve adresler Token ile netleştirilecek.
 
 ## Dependencies
 

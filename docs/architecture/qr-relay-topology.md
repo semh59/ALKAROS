@@ -100,6 +100,10 @@ Accepted risk: a customer session is not bound to the token and is not closed wh
 order is created as a pending order and becomes a real order only when staff accept it, so a stale session
 cannot place an order the staff have not seen.
 
+## 2d. Amendment (V1-RMD-888, 2026-11-07) — a second inbound route is planned for the Token webhook
+
+The product owner decided that the Token payment path is TokenX Connect Cloud with its webhook (`docs/domain/token-integration-path-decision.md`, "Decision update"). Token's cloud calls ALKAROS from outside, so a new Cloudflare Tunnel route to the Host is required, in the same way as the QR ingress above; inbound ports on the local network stay closed. The route is not built yet: it is a separate future task together with the webhook receiver, and this section only records that rule 1 above gets this second, explicit exception once that task lands. The route will serve the webhook path only, and the tunnel isolation allow-list (`V1-RMD-688`) must keep login, management and kasa endpoints unreachable through it.
+
 ## 4. Affected Tasks
 
 - V0-QRG-001, V1-FND-001, V12-QRT-001

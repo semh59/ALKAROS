@@ -77,6 +77,7 @@ bağlıyor.
 - Çelişki 2: Karar "300 TR / X30 TR" için Cloud'u seçiyor; portalın Cloud tanıtımında yalnız X30TR geçiyor, 300TR yalnız kablolu (V0-HUG-001 notu).
 - Çelişki 3: "Sıfır yeni altyapı" gerekçesi webhook zorunluysa geçmez; Token bulutundan gelen girişi karşılayacak yeni bir tünel rotası gerekir (`docs/architecture/qr-relay-topology.md` "no public inbound ports").
 - Karar bekliyor: webhook'lu Cloud yolu ve tünel rotası, ya da kablolu/uygulama içi yola dönüş. Sahibi: ürün sahibi.
+- Karar güncellemesi (2026-11-07, Semih, V1-RMD-888): yukarıdaki açık karar kapandı. Token yolu webhook'lu TokenX Connect Cloud ve yeni bir Cloudflare Tunnel rotasıdır; "polling varsayılan" ve "sıfır yeni altyapı" ifadeleri geçersizdir, kapsam X30 TR ile sınırlıdır. Ayrıntı `docs/domain/token-integration-path-decision.md` sonundaki "Decision update" bölümündedir. Kod yazılmadı; webhook alıcısı ve tünel rotası ayrı gelecek görevlerdir.
 
 
 ## Dependencies
