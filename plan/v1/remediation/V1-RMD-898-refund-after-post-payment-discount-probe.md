@@ -1,8 +1,8 @@
 # V1-RMD-898 - Ödeme sonrası indirimde eski iadelerin eski tutardan kalması şüphesi: önce davranışı çalıştıran test
 
 - Task ID: V1-RMD-898
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: validation
 - Surface state: Existing
 
