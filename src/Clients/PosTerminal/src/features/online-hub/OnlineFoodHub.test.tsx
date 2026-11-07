@@ -63,6 +63,16 @@ describe("OnlineFoodHub", () => {
     expect(urls()).toContain("/api/v1/terminals/t-1/online-operations?source=all");
   });
 
+  it("keeps only the active section tab in the tab order", async () => {
+    await render("orders", manager, vi.fn());
+    const tabs = [...document.querySelectorAll<HTMLElement>('[role="tab"]')];
+    const selected = tabs.filter((tab) => tab.getAttribute("aria-selected") === "true");
+
+    expect(tabs.length).toBeGreaterThan(1);
+    expect(selected).toHaveLength(1);
+    expect(tabs.filter((tab) => tab.tabIndex === 0)).toEqual(selected);
+  });
+
   it("selects the next tab when the right arrow is pressed on a tab", async () => {
     const onSelectTab = vi.fn();
     await render("orders", manager, onSelectTab);

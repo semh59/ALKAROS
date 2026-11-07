@@ -109,7 +109,7 @@ export function UserJourneysSection({ capabilities, client }: ManagementSectionP
     <p className="mjny__help">{t.glossary}</p>
     <div className="mjny__actions" role="tablist" tabIndex={-1} onKeyDown={moveBetweenTabs}>
       {views.map((name) => <Button key={name} data-telemetry-id="b.management-user-journeys.userjourneyssection.2" variant={name === view ? "primary" : "secondary"}
-        role="tab" aria-selected={name === view} onClick={() => setView(name)}>{names[name]}</Button>)}
+        role="tab" tabIndex={name === view ? 0 : -1} aria-selected={name === view} onClick={() => setView(name)}>{names[name]}</Button>)}
     </div>
     {view === "requests" && <RequestsView api={api} />}
     {view === "actions" && <ActionsView api={api} />}

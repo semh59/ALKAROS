@@ -600,10 +600,12 @@
     // tabs pattern for exactly this "one of several mutually exclusive views" shape.
     if (el.categoryTabs) el.categoryTabs.setAttribute('role', 'tablist');
     if (!el.categoryTabs) return;
+    // Roving tabindex: one Tab stop, the selected tab (the first one when none is selected).
+    const stop = state.categories.some(c => state.activeCategory === c.id) ? state.activeCategory : state.categories[0]?.id;
     el.categoryTabs.innerHTML = state.categories.map(c => {
       const selected = state.activeCategory === c.id;
       return `
-      <button type="button" class="tab-chip ${selected ? 'active' : ''}" role="tab" aria-selected="${selected}" data-cat-id="${escapeHtml(c.id)}">
+      <button type="button" class="tab-chip ${selected ? 'active' : ''}" role="tab" aria-selected="${selected}" tabindex="${c.id === stop ? 0 : -1}" data-cat-id="${escapeHtml(c.id)}">
         ${escapeHtml(c.name)}
       </button>
     `;

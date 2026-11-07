@@ -1,0 +1,6 @@
+M1-cashier-all-tabs-stop: testexit=1 
+M2-billsplit-all-tabs-stop: testexit=1 
+M3-journeys-all-tabs-stop: testexit=1 
+M4-hub-all-tabs-stop: testexit=1 
+M5-vanilla-all-tabs-stop: testexit=1 
+M6-cashier-all-tab-never-stop: testexit=1 

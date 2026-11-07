@@ -74,6 +74,20 @@ describe("user journeys section", () => {
     expect(document.body.textContent).toContain("Bilinmiyor");
   });
 
+  it("keeps only the selected view tab in the tab order, and moves that stop with the selection", async () => {
+    await render(<UserJourneysSection capabilities={viewer} client={fakeClient()} />);
+    const tabStops = () => [...document.querySelectorAll<HTMLElement>('[role="tab"]')].filter((tab) => tab.tabIndex === 0);
+    const first = document.querySelector('[role="tab"][aria-selected="true"]')!;
+    expect(document.querySelectorAll('[role="tab"]').length).toBeGreaterThan(1);
+    expect(tabStops()).toEqual([first]);
+
+    await act(async () => { first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true })); });
+
+    const moved = document.querySelector('[role="tab"][aria-selected="true"]')!;
+    expect(moved).not.toBe(first);
+    expect(tabStops()).toEqual([moved]);
+  });
+
   it("the right arrow on a view tab opens the next view", async () => {
     await render(<UserJourneysSection capabilities={viewer} client={fakeClient()} />);
     const first = document.querySelector('[role="tab"]')!;

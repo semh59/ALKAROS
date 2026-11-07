@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.category-tabs.test.tsx (3 tests | 1 failed) 2466ms
+     × exposes role=tablist/tab and moves aria-selected when a category is picked 2140ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.category-tabs.test.tsx > Cashier category rail tabs (V1-RMD-364) > exposes role=tablist/tab and moves aria-selected when a category is picked
+AssertionError: expected [ +0, +0, +0 ] to deeply equal [ +0, -1, -1 ]
+
+- Expected
++ Received
+
+  [
+    0,
+-   -1,
+-   -1,
++   0,
++   0,
+  ]
+
+ ❯ src/routes/Cashier.category-tabs.test.tsx:67:45
+     65|     expect(tabs[1].getAttribute("aria-selected")).toBe("false");
+     66|
+     67|     expect(tabs.map((tab) => tab.tabIndex)).toEqual(tabs.map((_, index…
+       |                                             ^
+     68|     await act(async () => { tabs[1].dispatchEvent(new MouseEvent("clic…
+     69|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  11:31:58
+   Duration  3.97s (transform 1.60s, setup 0ms, import 222ms, tests 2.47s, environment 978ms)
+

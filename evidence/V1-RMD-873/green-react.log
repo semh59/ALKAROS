@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/online-hub/OnlineFoodHub.test.tsx (8 tests | 1 failed) 397ms
+     × keeps only the active section tab in the tab order 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/online-hub/OnlineFoodHub.test.tsx > OnlineFoodHub > keeps only the active section tab in the tab order
+TypeError: Cannot read properties of undefined (reading 'some')
+ ❯ src/features/online-menu/OnlineMenuTab.tsx:63:44
+     61|       const loaded = await loadOnlineMenu(terminalId, provider);
+     62|       setMenu(loaded);
+     63|       setMenuId((current) => (loaded.menus.some((m) => m.menuId === cu…
+       |                                            ^
+     64|       setLoadError(undefined);
+     65|     } catch (error) {
+ ❯ basicStateReducer node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7935:45
+ ❯ updateReducerImpl node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:8048:17
+ ❯ updateReducer node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7968:14
+ ❯ Object.useState node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:26511:18
+ ❯ process.env.NODE_ENV.exports.useState node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:1263:34
+ ❯ OnlineMenuTab src/features/online-menu/OnlineMenuTab.tsx:38:31
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 32 passed (33)
+   Start at  11:31:10
+   Duration  4.30s (transform 2.39s, setup 0ms, import 1.71s, tests 3.95s, environment 4.64s)
+

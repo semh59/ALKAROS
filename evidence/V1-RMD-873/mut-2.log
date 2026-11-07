@@ -1,0 +1,56 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx (12 tests | 1 failed) 484ms
+     × keeps only the selected mode tab in the tab order, and moves that stop with the selection 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.test.tsx > bill split workspace > keeps only the selected mode tab in the tab order, and moves that stop with the selection
+AssertionError: expected [ <button …(5)></button>, …(2) ] to deeply equal [ <button …(5)></button> ]
+
+- Expected
++ Received
+
+@@ -6,6 +6,24 @@
+      tabindex="0"
+      type="button"
+    >
+      Eşit böl
+    </button>,
++   <button
++     aria-selected="false"
++     data-telemetry-id="b.billing.billsplitworkspace.1"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     Ürün / miktar
++   </button>,
++   <button
++     aria-selected="false"
++     data-telemetry-id="b.billing.billsplitworkspace.1"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     Tutar gir
++   </button>,
+  ]
+
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx:51:24
+     49|     const first = document.querySelector('[role="tab"][aria-selected="…
+     50|     expect(document.querySelectorAll('[role="tab"]').length).toBeGreat…
+     51|     expect(tabStops()).toEqual([first]);
+       |                        ^
+     52|
+     53|     await act(async () => { first.dispatchEvent(new KeyboardEvent("key…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  11:32:05
+   Duration  2.21s (transform 197ms, setup 0ms, import 355ms, tests 484ms, environment 1.07s)
+

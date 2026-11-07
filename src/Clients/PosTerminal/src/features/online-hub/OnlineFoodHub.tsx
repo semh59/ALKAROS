@@ -52,6 +52,7 @@ export function OnlineFoodHub({
             key={option}
             type="button"
             role="tab"
+            tabIndex={active === option ? 0 : -1}
             aria-selected={active === option}
             aria-controls={panelId}
             className="online-hub__tab"

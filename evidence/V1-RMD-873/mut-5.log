@@ -1,0 +1,62 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ arrow-key-groups.test.js (2 tests | 1 failed) 322ms
+     × moves the selected category with the arrow keys, wraps, and keeps the focus on the selected tab 139ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  arrow-key-groups.test.js > arrow keys in tab and option groups > moves the selected category with the arrow keys, wraps, and keeps the focus on the selected tab
+AssertionError: expected [ <button …(6)></button>, …(2) ] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+@@ -9,6 +9,30 @@
+    >
+      
+          Tüm Ürünler
+        
+    </button>,
++   <button
++     aria-selected="false"
++     class="tab-chip "
++     data-cat-id="drinks"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     
++         İçecek
++       
++   </button>,
++   <button
++     aria-selected="false"
++     class="tab-chip "
++     data-cat-id="food"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     
++         Yemek
++       
++   </button>,
+  ]
+
+ ❯ arrow-key-groups.test.js:40:24
+     38|     const order = names();
+     39|     const tabStops = () => [...document.querySelectorAll(".tab-chip")]…
+     40|     expect(tabStops()).toEqual([selected()]);
+       |                        ^
+     41|     selected().focus();
+     42|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  11:32:19
+   Duration  1.59s (transform 119ms, setup 24ms, import 49ms, tests 322ms, environment 927ms)
+

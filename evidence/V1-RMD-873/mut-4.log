@@ -1,0 +1,60 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/online-hub/OnlineFoodHub.test.tsx (8 tests | 1 failed) 292ms
+     × keeps only the active section tab in the tab order 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/online-hub/OnlineFoodHub.test.tsx > OnlineFoodHub > keeps only the active section tab in the tab order
+AssertionError: expected [ <button …(7)></button>, …(2) ] to deeply equal [ <button …(7)></button> ]
+
+- Expected
++ Received
+
+@@ -8,6 +8,28 @@
+      tabindex="0"
+      type="button"
+    >
+      Siparişler
+    </button>,
++   <button
++     aria-controls="_r_3_"
++     aria-selected="false"
++     class="online-hub__tab"
++     data-telemetry-id="b.online-hub.onlinefoodhub.1"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     Menü
++   </button>,
++   <button
++     aria-controls="_r_3_"
++     aria-selected="false"
++     class="online-hub__tab"
++     data-telemetry-id="b.online-hub.onlinefoodhub.1"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     Ayarlar
++   </button>,
+  ]
+
+ ❯ src/features/online-hub/OnlineFoodHub.test.tsx:73:54
+     71|     expect(tabs.length).toBeGreaterThan(1);
+     72|     expect(selected).toHaveLength(1);
+     73|     expect(tabs.filter((tab) => tab.tabIndex === 0)).toEqual(selected);
+       |                                                      ^
+     74|   });
+     75|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  11:32:14
+   Duration  2.12s (transform 269ms, setup 0ms, import 458ms, tests 292ms, environment 1.12s)
+

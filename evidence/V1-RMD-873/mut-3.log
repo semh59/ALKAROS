@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-user-journeys/UserJourneysSection.test.tsx (10 tests | 1 failed) 238ms
+     × keeps only the selected view tab in the tab order, and moves that stop with the selection 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-user-journeys/UserJourneysSection.test.tsx > user journeys section > keeps only the selected view tab in the tab order, and moves that stop with the selection
+AssertionError: expected [ <button …(6)></button>, …(1) ] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+@@ -7,6 +7,16 @@
+      tabindex="0"
+      type="button"
+    >
+      İstekler
+    </button>,
++   <button
++     aria-selected="false"
++     class="ds-button ds-button--secondary"
++     data-telemetry-id="b.management-user-journeys.userjourneyssection.2"
++     role="tab"
++     tabindex="0"
++     type="button"
++   >
++     Düğmeler
++   </button>,
+  ]
+
+ ❯ src/features/management-user-journeys/UserJourneysSection.test.tsx:82:24
+     80|     const first = document.querySelector('[role="tab"][aria-selected="…
+     81|     expect(document.querySelectorAll('[role="tab"]').length).toBeGreat…
+     82|     expect(tabStops()).toEqual([first]);
+       |                        ^
+     83|
+     84|     await act(async () => { first.dispatchEvent(new KeyboardEvent("key…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  11:32:10
+   Duration  1.71s (transform 170ms, setup 0ms, import 267ms, tests 238ms, environment 946ms)
+

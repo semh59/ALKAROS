@@ -43,6 +43,20 @@ describe("bill split workspace", () => {
     expect(document.body.textContent).toContain("tahsilat veya ödeme yürütmez");
   });
 
+  it("keeps only the selected mode tab in the tab order, and moves that stop with the selection", async () => {
+    await render(<BillSplitWorkspace {...props()} />);
+    const tabStops = () => [...document.querySelectorAll<HTMLElement>('[role="tab"]')].filter((tab) => tab.tabIndex === 0);
+    const first = document.querySelector('[role="tab"][aria-selected="true"]')!;
+    expect(document.querySelectorAll('[role="tab"]').length).toBeGreaterThan(1);
+    expect(tabStops()).toEqual([first]);
+
+    await act(async () => { first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true })); });
+
+    const moved = document.querySelector('[role="tab"][aria-selected="true"]')!;
+    expect(moved).not.toBe(first);
+    expect(tabStops()).toEqual([moved]);
+  });
+
   it("switches the split mode with the right arrow on the mode tabs", async () => {
     await render(<BillSplitWorkspace {...props()} />);
     const first = document.querySelector('[role="tab"][aria-selected="true"]')!;

@@ -108,7 +108,7 @@ export function Cashier() {
   const [notice, setNotice] = useState("");
   const [feedbackKind, setFeedbackKind] = useState<FeedbackKind>("success");
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("ALL");
+  const [chosenCategory, setActiveCategory] = useState("ALL");
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
@@ -489,6 +489,8 @@ export function Cashier() {
     catalog.forEach((product) => values.set(product.categoryCode, product.categoryName));
     return [...values].map(([code, name]) => ({ code, name }));
   }, [catalog]);
+  // A category that vanished from the catalog falls back to "all", so one tab is always selected and in the Tab order.
+  const activeCategory = categories.some((category) => category.code === chosenCategory) ? chosenCategory : "ALL";
 
   if (session !== "ready") {
     return (
@@ -744,6 +746,7 @@ export function Cashier() {
           <button data-telemetry-id="b.routes.cashier.12"
             className={activeCategory === "ALL" ? "active" : ""}
             role="tab"
+            tabIndex={activeCategory === "ALL" ? 0 : -1}
             aria-selected={activeCategory === "ALL"}
             onClick={() => setActiveCategory("ALL")}
           >
@@ -755,6 +758,7 @@ export function Cashier() {
             <button data-telemetry-id="b.routes.cashier.13"
               className={activeCategory === category.code ? "active" : ""}
               role="tab"
+              tabIndex={activeCategory === category.code ? 0 : -1}
               aria-selected={activeCategory === category.code}
               key={category.code}
               onClick={() => setActiveCategory(category.code)}

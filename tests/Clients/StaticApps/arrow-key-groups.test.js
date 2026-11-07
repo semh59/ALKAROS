@@ -36,10 +36,13 @@ describe("arrow keys in tab and option groups", () => {
     const selected = () => document.querySelector('.tab-chip[aria-selected="true"]');
     const names = () => [...document.querySelectorAll(".tab-chip")].map((tab) => tab.textContent.trim());
     const order = names();
+    const tabStops = () => [...document.querySelectorAll(".tab-chip")].filter((tab) => tab.tabIndex === 0);
+    expect(tabStops()).toEqual([selected()]);
     selected().focus();
 
     press(document.activeElement, "ArrowRight");
     expect(names().indexOf(selected().textContent.trim())).toBe(1);
+    expect(tabStops()).toEqual([selected()]);
     expect(document.activeElement).toBe(selected());
     press(document.activeElement, "ArrowRight", { altKey: true });
     expect(names().indexOf(selected().textContent.trim())).toBe(1);

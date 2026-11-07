@@ -1,0 +1,138 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-user-journeys/UserJourneysSection.test.tsx (10 tests | 1 failed) 340ms
+     × keeps only the selected view tab in the tab order, and moves that stop with the selection 32ms
+ ❯ src/features/online-hub/OnlineFoodHub.test.tsx (8 tests | 1 failed) 381ms
+     × keeps only the active section tab in the tab order 23ms
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx (12 tests | 1 failed) 656ms
+     × keeps only the selected mode tab in the tab order, and moves that stop with the selection 46ms
+ ❯ src/routes/Cashier.category-tabs.test.tsx (3 tests | 1 failed) 2439ms
+     × exposes role=tablist/tab and moves aria-selected when a category is picked 2093ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.category-tabs.test.tsx > Cashier category rail tabs (V1-RMD-364) > exposes role=tablist/tab and moves aria-selected when a category is picked
+AssertionError: expected [ +0, +0, +0 ] to deeply equal [ +0, -1, -1 ]
+
+- Expected
++ Received
+
+  [
+    0,
+-   -1,
+-   -1,
++   0,
++   0,
+  ]
+
+ ❯ src/routes/Cashier.category-tabs.test.tsx:67:45
+     65|     expect(tabs[1].getAttribute("aria-selected")).toBe("false");
+     66|
+     67|     expect(tabs.map((tab) => tab.tabIndex)).toEqual(tabs.map((_, index…
+       |                                             ^
+     68|     await act(async () => { tabs[1].dispatchEvent(new MouseEvent("clic…
+     69|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.test.tsx > bill split workspace > keeps only the selected mode tab in the tab order, and moves that stop with the selection
+AssertionError: expected [ <button …(4)></button>, …(2) ] to deeply equal [ <button …(4)></button> ]
+
+- Expected
++ Received
+
+@@ -5,6 +5,22 @@
+      role="tab"
+      type="button"
+    >
+      Eşit böl
+    </button>,
++   <button
++     aria-selected="false"
++     data-telemetry-id="b.billing.billsplitworkspace.1"
++     role="tab"
++     type="button"
++   >
++     Ürün / miktar
++   </button>,
++   <button
++     aria-selected="false"
++     data-telemetry-id="b.billing.billsplitworkspace.1"
++     role="tab"
++     type="button"
++   >
++     Tutar gir
++   </button>,
+  ]
+
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx:51:24
+     49|     const first = document.querySelector('[role="tab"][aria-selected="…
+     50|     expect(document.querySelectorAll('[role="tab"]').length).toBeGreat…
+     51|     expect(tabStops()).toEqual([first]);
+       |                        ^
+     52|
+     53|     await act(async () => { first.dispatchEvent(new KeyboardEvent("key…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/management-user-journeys/UserJourneysSection.test.tsx > user journeys section > keeps only the selected view tab in the tab order, and moves that stop with the selection
+AssertionError: expected [ <button …(5)></button>, …(1) ] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+@@ -6,6 +6,15 @@
+      role="tab"
+      type="button"
+    >
+      İstekler
+    </button>,
++   <button
++     aria-selected="false"
++     class="ds-button ds-button--secondary"
++     data-telemetry-id="b.management-user-journeys.userjourneyssection.2"
++     role="tab"
++     type="button"
++   >
++     Düğmeler
++   </button>,
+  ]
+
+ ❯ src/features/management-user-journeys/UserJourneysSection.test.tsx:82:24
+     80|     const first = document.querySelector('[role="tab"][aria-selected="…
+     81|     expect(document.querySelectorAll('[role="tab"]').length).toBeGreat…
+     82|     expect(tabStops()).toEqual([first]);
+       |                        ^
+     83|
+     84|     await act(async () => { first.dispatchEvent(new KeyboardEvent("key…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/online-hub/OnlineFoodHub.test.tsx > OnlineFoodHub > keeps only the active section tab in the tab order
+TypeError: Cannot read properties of undefined (reading 'some')
+ ❯ src/features/online-menu/OnlineMenuTab.tsx:63:44
+     61|       const loaded = await loadOnlineMenu(terminalId, provider);
+     62|       setMenu(loaded);
+     63|       setMenuId((current) => (loaded.menus.some((m) => m.menuId === cu…
+       |                                            ^
+     64|       setLoadError(undefined);
+     65|     } catch (error) {
+ ❯ basicStateReducer node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7935:45
+ ❯ updateReducerImpl node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:8048:17
+ ❯ updateReducer node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7968:14
+ ❯ Object.useState node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:26511:18
+ ❯ process.env.NODE_ENV.exports.useState node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:1263:34
+ ❯ OnlineMenuTab src/features/online-menu/OnlineMenuTab.tsx:38:31
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  4 failed | 29 passed (33)
+   Start at  11:30:48
+   Duration  4.46s (transform 2.27s, setup 0ms, import 1.68s, tests 3.82s, environment 5.48s)
+
