@@ -1,7 +1,7 @@
 # V1-RMD-895 - Yaşlandırma raporunda müşteri adları tek sorguyla okunur (müşteri başına profil okuması yok)
 
 - Task ID: V1-RMD-895
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

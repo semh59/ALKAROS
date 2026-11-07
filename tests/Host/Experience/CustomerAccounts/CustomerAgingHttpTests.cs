@@ -124,6 +124,76 @@ public sealed class CustomerAgingHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnAnonymizedCustomerIsListedUnderTheNeutralNameToo()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd895-anon");
+        await using var app = await StartAsync();
+        using var cashierClient = CreateClient(app, null);
+        var kept = await CreateCustomerAsync(cashierClient, terminalId, cashier, "Kalan Müşteri");
+        var wiped = await CreateCustomerAsync(cashierClient, terminalId, cashier, "Silinen Müşteri");
+        await Ledger(kept, "Charge", 10m, 3);
+        await Ledger(wiped, "Charge", 20m, 3);
+        await using (var anonymize = _database.DataSource.CreateCommand(
+            "UPDATE customer_data.profiles SET anonymized = TRUE WHERE customer_id = @id;"))
+        {
+            anonymize.Parameters.AddWithValue("id", wiped.CustomerId);
+            await anonymize.ExecuteNonQueryAsync();
+        }
+
+        using var viewer = CreateClient(app, ViewerToken);
+        var body = await viewer.GetFromJsonAsync<JsonElement>(ReportPath);
+
+        var names = body.GetProperty("rows").EnumerateArray().Select(row => row.GetProperty("name").GetString()).Order(StringComparer.Ordinal).ToArray();
+        Assert.Equal("Kalan Müşteri|" + ReceivablesAgingEndpoints.UnknownCustomerName, string.Join("|", names));
+    }
+
+    [Fact]
+    public async Task TheReportReadsTheProfilesInOneQueryHoweverManyCustomersItLists()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd895-cashier");
+        await using var app = await StartAsync();
+        using var cashierClient = CreateClient(app, null);
+        for (var index = 0; index < 12; index++)
+        {
+            var customer = await CreateCustomerAsync(cashierClient, terminalId, cashier, $"Müşteri {index:D2}");
+            await Ledger(customer, "Charge", 10m + index, 3);
+        }
+
+        using var viewer = CreateClient(app, ViewerToken);
+        var before = await ProfileScansAsync(app);
+        var body = await viewer.GetFromJsonAsync<JsonElement>(ReportPath);
+        var scans = await ProfileScansAsync(app) - before;
+
+        var names = body.GetProperty("rows").EnumerateArray().Select(row => row.GetProperty("name").GetString()).Order().ToArray();
+        Assert.Equal(Enumerable.Range(0, 12).Select(index => $"Müşteri {index:D2}"), names);
+        Assert.True(scans is >= 1 and <= 2, $"The report scanned the profile table {scans} times.");
+    }
+
+    /// <summary>
+    /// Scans of the profile table so far. A backend reports its statistics when it exits, so the host's idle connections
+    /// are closed first.
+    /// </summary>
+    private async Task<long> ProfileScansAsync(WebApplication app)
+    {
+        app.Services.GetRequiredService<Npgsql.NpgsqlDataSource>().Clear();
+        long scans = -1;
+        for (var attempt = 0; attempt < 20; attempt++)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            await using var command = _database.DataSource.CreateCommand(
+                "SELECT COALESCE(sum(seq_scan + idx_scan), 0) FROM pg_stat_user_tables WHERE schemaname = 'customer_data' AND relname = 'profiles';");
+            var current = Convert.ToInt64(await command.ExecuteScalarAsync(), CultureInfo.InvariantCulture);
+            if (current == scans)
+                break;
+            scans = current;
+        }
+
+        return scans;
+    }
+
+    [Fact]
     public async Task TheReportFlagsACachedBalanceThatDisagreesWithTheLedger()
     {
         var terminalId = Guid.NewGuid();

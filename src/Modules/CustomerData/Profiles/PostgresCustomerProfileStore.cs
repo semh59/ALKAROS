@@ -70,37 +70,47 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
     }
 
     public async Task<CustomerProfile?> GetAsync(Guid customerId, CustomerAccessRole role, CancellationToken cancellationToken = default)
+        => (await GetManyAsync([customerId], role, cancellationToken)).SingleOrDefault();
+
+    public async Task<IReadOnlyList<CustomerProfile>> GetManyAsync(
+        IReadOnlyCollection<Guid> customerIds, CustomerAccessRole role, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(customerIds);
         await using var command = _dataSource.CreateCommand(
             """
-            SELECT envelope_bytes, created_at, anonymized, row_version
+            SELECT customer_id, envelope_bytes, created_at, anonymized, row_version
             FROM customer_data.profiles
-            WHERE customer_id = @customer_id;
+            WHERE customer_id = ANY(@customer_ids)
+            LIMIT @limit;
             """);
-        command.Parameters.Add("customer_id", NpgsqlDbType.Uuid).Value = customerId;
+        command.Parameters.Add("customer_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = customerIds.ToArray();
+        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = customerIds.Count;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        if (!await reader.ReadAsync(cancellationToken))
-            return null;
-
-        var anonymized = reader.GetFieldValue<bool>(2);
-        var createdAt = reader.GetFieldValue<DateTimeOffset>(1);
-        var rowVersion = reader.GetFieldValue<int>(3);
-
-        string? name = null, phone = null, email = null, address = null;
-        CustomerTaxIdentity? taxIdentity = null;
-        if (!anonymized)
+        var profiles = new List<CustomerProfile>();
+        while (await reader.ReadAsync(cancellationToken))
         {
-            var envelope = SensitiveEnvelope.FromPersistenceBytes((byte[])reader[0]);
-            var payload = _protector.Unprotect(envelope, MasterKey, CustomerProfileEncryptionPolicy.Accessor);
-            payload.Fields.TryGetValue(NameField, out name);
-            payload.Fields.TryGetValue(PhoneField, out phone);
-            payload.Fields.TryGetValue(EmailField, out email);
-            payload.Fields.TryGetValue(AddressField, out address);
-            taxIdentity = ReadTaxIdentity(payload.Fields);
+            var anonymized = reader.GetFieldValue<bool>(3);
+            string? name = null, phone = null, email = null, address = null;
+            CustomerTaxIdentity? taxIdentity = null;
+            if (!anonymized)
+            {
+                var envelope = SensitiveEnvelope.FromPersistenceBytes((byte[])reader[1]);
+                var payload = _protector.Unprotect(envelope, MasterKey, CustomerProfileEncryptionPolicy.Accessor);
+                payload.Fields.TryGetValue(NameField, out name);
+                payload.Fields.TryGetValue(PhoneField, out phone);
+                payload.Fields.TryGetValue(EmailField, out email);
+                payload.Fields.TryGetValue(AddressField, out address);
+                taxIdentity = ReadTaxIdentity(payload.Fields);
+            }
+
+            profiles.Add(CustomerProfileAccessPolicy.Project(
+                new CustomerProfile(
+                    reader.GetGuid(0), name, phone, email, address, reader.GetFieldValue<DateTimeOffset>(2), anonymized,
+                    reader.GetFieldValue<int>(4), taxIdentity),
+                role));
         }
 
-        var profile = new CustomerProfile(customerId, name, phone, email, address, createdAt, anonymized, rowVersion, taxIdentity);
-        return CustomerProfileAccessPolicy.Project(profile, role);
+        return profiles;
     }
 
     public async Task UpdateContactAsync(

@@ -69,12 +69,12 @@ public static class ReceivablesAgingEndpoints
             decimal? Past(Guid customerId, int days)
                 => past.TryGetValue((customerId, asOf.AddDays(-days)), out var balance) ? balance : null;
 
+            var names = await accounts.NamesAsync(customers.Select(customer => customer.CustomerId).ToArray(), cancellationToken);
             var rows = new List<CustomerAgingRowV1>(customers.Count);
             foreach (var customer in customers)
             {
-                var summary = await accounts.GetAsync(customer.CustomerId, cancellationToken);
                 rows.Add(new CustomerAgingRowV1(
-                    customer.CustomerId, summary?.Name ?? UnknownCustomerName,
+                    customer.CustomerId, names.GetValueOrDefault(customer.CustomerId, UnknownCustomerName),
                     customer.Days0To30, customer.Days31To60, customer.Days61To90, customer.Over90,
                     customer.TotalDebt, customer.UnappliedCredit, customer.PaymentTermDays, customer.OverdueAmount,
                     Past(customer.CustomerId, 30), Past(customer.CustomerId, 60), Past(customer.CustomerId, 90)));

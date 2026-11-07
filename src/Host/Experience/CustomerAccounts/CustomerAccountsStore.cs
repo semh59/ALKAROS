@@ -8,10 +8,10 @@ using NpgsqlTypes;
 namespace ALKAROS.Host.Experience.CustomerAccounts;
 
 /// <summary>
-/// V1-RMD-442: the till's read model over customers and their accounts. Contact details are stored encrypted
-/// (V14-CST-001), so names and phones are decrypted per customer through <see cref="ICustomerProfileStore"/> with the
-/// Cashier role; the phone is masked to its last four digits before it leaves the server, and the tax number
-/// (V1-RMD-453) arrives already masked by the profile access policy.
+/// The till's read model over customers and their accounts. Contact details are stored encrypted, so names and
+/// phones are decrypted through <see cref="ICustomerProfileStore"/> with the Cashier role (one read for a whole list of
+/// ids); the phone is masked to its last four digits before it leaves the server, and the tax number arrives already
+/// masked by the profile access policy.
 /// </summary>
 /// <summary>The masked customer after a tax identity change, with the identity kind before and after it.</summary>
 public sealed record TaxIdentityUpdateResult(CustomerAccountSummaryV1 Summary, string? PreviousKind, string? NewKind);
@@ -23,6 +23,8 @@ public sealed class CustomerAccountsStore
 
     /// <summary>Profiles are encrypted, so a search reads and decrypts them; it covers more than the plain list does.</summary>
     public const int MaxSearched = 5000;
+
+    private const string UnnamedCustomer = "İsimsiz müşteri";
 
     private static readonly CultureInfo Turkish = CultureInfo.GetCultureInfo("tr-TR");
 
@@ -71,6 +73,16 @@ public sealed class CustomerAccountsStore
             return null;
         var profile = await _profiles.GetAsync(customerId, CustomerAccessRole.Cashier, cancellationToken);
         return profile is null || profile.Anonymized ? null : Summary(row, profile);
+    }
+
+    /// <summary>The display names of the given customers in one profile read; a customer with no readable profile is absent.</summary>
+    public async Task<IReadOnlyDictionary<Guid, string>> NamesAsync(IReadOnlyCollection<Guid> customerIds, CancellationToken cancellationToken)
+    {
+        if (customerIds.Count == 0)
+            return new Dictionary<Guid, string>();
+        return (await _profiles.GetManyAsync(customerIds, CustomerAccessRole.Cashier, cancellationToken))
+            .Where(profile => !profile.Anonymized)
+            .ToDictionary(profile => profile.CustomerId, profile => profile.Name ?? UnnamedCustomer);
     }
 
     public async Task<CustomerAccountSummaryV1> CreateAsync(CreateCustomerV1 request, CancellationToken cancellationToken)
@@ -201,7 +213,7 @@ public sealed class CustomerAccountsStore
     private static CustomerAccountSummaryV1 Summary(AccountRow row, CustomerProfile profile)
         => new(
             row.CustomerId,
-            profile.Name ?? "İsimsiz müşteri",
+            profile.Name ?? UnnamedCustomer,
             MaskPhone(profile.Phone),
             row.Balance,
             row.CreditLimit,

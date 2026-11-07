@@ -40,6 +40,37 @@ public sealed class PostgresCustomerProfileStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetManyReturnsEachRequestedProfileAndSkipsUnknownIds()
+    {
+        var first = await _store.CreateAsync(SampleRequest());
+        var second = await _store.CreateAsync(new CreateCustomerProfileRequest("Mehmet Kaya", null, null, null));
+        await _store.CreateAsync(new CreateCustomerProfileRequest("Başka Müşteri", null, null, null));
+
+        var profiles = await _store.GetManyAsync([first, second, Guid.NewGuid()], CustomerAccessRole.Cashier);
+
+        Assert.Equal("Ayşe Yılmaz|Mehmet Kaya", string.Join("|", profiles.Select(profile => profile.Name).Order(StringComparer.Ordinal)));
+        Assert.Equal(new[] { first, second }.Order(), profiles.Select(profile => profile.CustomerId).Order());
+        Assert.Empty(await _store.GetManyAsync([], CustomerAccessRole.Cashier));
+    }
+
+    [Fact]
+    public async Task GetManyAppliesTheRoleProjectionAndReportsAnonymizedProfiles()
+    {
+        var kept = await _store.CreateAsync(SampleRequest());
+        var wiped = await _store.CreateAsync(new CreateCustomerProfileRequest("Silinecek", "05550000000", null, null));
+        await _store.AnonymizeAsync(wiped, 1);
+
+        var profiles = (await _store.GetManyAsync([kept, wiped], CustomerAccessRole.Cashier)).ToDictionary(profile => profile.CustomerId);
+
+        Assert.Equal("Ayşe Yılmaz", profiles[kept].Name);
+        Assert.False(profiles[kept].Anonymized);
+        Assert.True(profiles[wiped].Anonymized);
+        Assert.Null(profiles[wiped].Name);
+        Assert.Equal((await _store.GetAsync(kept, CustomerAccessRole.Other))!.Name,
+            (await _store.GetManyAsync([kept], CustomerAccessRole.Other)).Single().Name);
+    }
+
+    [Fact]
     public async Task CreatingAndReadingBackAsManagerRoundTripsEveryField()
     {
         var id = await _store.CreateAsync(SampleRequest());

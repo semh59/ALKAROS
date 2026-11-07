@@ -28,6 +28,12 @@ public interface ICustomerProfileStore
     Task<CustomerProfile?> GetAsync(Guid customerId, CustomerAccessRole role, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// <see cref="GetAsync"/> for many customers in one query; an id with no profile is simply absent from the result.
+    /// </summary>
+    Task<IReadOnlyList<CustomerProfile>> GetManyAsync(
+        IReadOnlyCollection<Guid> customerIds, CustomerAccessRole role, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Replaces the stored contact fields and tax identity entirely. Throws
     /// <see cref="CustomerProfileConcurrencyException"/> if
     /// <paramref name="expectedRowVersion"/> is stale, or
