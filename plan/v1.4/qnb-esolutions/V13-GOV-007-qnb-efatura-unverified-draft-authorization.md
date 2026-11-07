@@ -84,6 +84,13 @@ gerçekten ihtiyaç duyulacak ve iyi dokümante olan **e-Fatura**
   bulunamadı, bu taslak hiç kapsamıyor.
 - `V13-FSC-005` (e-Adisyon) — yön değişikliği sonrası bu görevin kapsamı
   dışında kaldı.
+- Araştırma notu (2026-10-17, V1-RMD-881), kayıt durumunu ve kararı değiştirmez; kaynak 2026-10-17 dış bağımlılık araştırması, kayıtlı hâli `plan/v1.3/fiscal/V13-FSC-005-qnb-eadisyon-adapter.md` ve `plan/v0/qnb-esolutions/V0-QNB-001-integration-contract.md` sonundaki V1-RMD-584 notlarıdır (bulgu F0090):
+- Çelişki 1: "V13-FSC-005 muhtemelen NotApplicable (Token/Beko seçilir)" gerekçesi geçersiz görünüyor. GİB e-Adisyon özel entegratör listesi (https://ebelge.gib.gov.tr/eadisyonbelgesiozelentegratorlerlistesi.html, sayfa güncelleme 25.09.2026) QNB eSolutions'ı içerir, Token/Beko'yu içermez; bu, NotApplicable gerekçesinin ikinci dayanağını (cihaz zaten e-Adisyon cihazı) zayıflatır. Listedeki QNB ürününün hangi API'yi kullandığı doğrulanamadı.
+- Çelişki 2: "e-Adisyon'un kamuya açık teknik dokümanı yok" yalnız QNB kod kütüphanesi için doğrudur; GİB e-Arşiv Teknik Kılavuzu v1.19'da e-Adisyon rapor bölümü (`adisyonIptal`) vardır. e-Adisyon zorunlu değildir; yalnız GİB'in yazılı bildirimiyle en az 3 ay süreli zorunlu olur (VUK 509 IV.12.2, IV.12.4; metin ve Kılavuz bu görevde yeniden okunmadı, V13-FSC-005 notundan aktarıldı).
+- Taslak adaptör: araştırma `belgeGonderExt` cevabında gerçek alanın `belgeOid` olduğunu ve `gonderenEtiket` gönderilmediğini bildirdi; taslak `return` okuyor (`evidence/V13-GOV-007/qnb-efatura-adapter-draft/src/QnbSoapClient.cs:95-96`). Doğrulanamadı: QNB kod kütüphanesinde `belgeGonderExt` sonucu düz string olarak alınıyor (`belgeGonderMsgOid` yerel değişken adıdır, cevap alanı adı değil), `belgeOid` yalnız durum sorgulama parametresi olarak geçiyor; `gonderenEtiket` `belgeGonderExt` örneğinde boş elemandır, "pasiftir" yorumu ise başka bir örnektedir (gelen belge listeleme; `evidence/v0/integrations/V0-QNB-001/qnb-esolutions-code-library-raw.txt:2265`). Kod değişmedi; gerçek WSDL veya test hesabıyla doğrulanmalı.
+- Kapsam notu: online sipariş faturaları e-Arşiv'dir; e-Arşiv gönderim istemcisi V1-RMD-582 ile yazıldı (gerçek hesapla denenmedi). Bu taslak e-Fatura içindir.
+- Karar bekliyor: V13-FSC-005 NotApplicable gerekçesinin yeniden değerlendirilmesi. Sahibi: ürün sahibi/mali müşavir.
+
 
 ## Dependencies
 

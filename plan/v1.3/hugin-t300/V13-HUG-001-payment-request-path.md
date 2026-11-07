@@ -43,6 +43,9 @@ Acceptance evidence yine gerçek sandbox/cihaz transkripti gerektiriyor.
 ## Out of scope
 
 - Payment/allocation mutasyonu, timeout/bilinmeyen kurtarma ve geri ödeme/iptal.
+- Araştırma notu (2026-10-17, V1-RMD-881), kayıt durumunu ve kararı değiştirmez; kaynak `plan/v0/hugin-t300/V0-HUG-001-integration-contract.md` sonundaki V1-RMD-584 notudur (Token geliştirici portalı):
+- Goal'daki "300 TR / X30 TR" ifadesi Cloud yolu için doğrulanmadı: Cloud tanıtımında yalnız X30TR geçiyor, 300TR yalnız kablolu. HoReCa sayfası (`x-platform/baslangic/horeca`) "Polling YAPILMAZ, Webhook ZORUNLUDUR" diyor; onaylı V13-GOV-005 kararındaki polling varsayılanıyla çelişiyor. İstek yolu bu çelişki çözülmeden Cloud için kodlanmamalı.
+- Karar bekliyor: V13-GOV-005 çelişkisinin çözümü (sahibi: ürün sahibi).
 
 ## Dependencies
 

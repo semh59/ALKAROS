@@ -72,6 +72,12 @@ bağlıyor.
 - Webhook vs. polling kararının kesinleştirilmesi — bu görev yalnız bir
   varsayılan ÖNERİ kaydediyor, gerçek implementation görevi (`V13-HUG-001`
   veya benzeri) kesin kararı verir.
+- Araştırma notu (2026-10-17, V1-RMD-881), kayıt durumunu ve kararı değiştirmez; kaynak 2026-10-17 dış bağımlılık araştırması (Token geliştirici portalı), kayıtlı hâli `plan/v0/hugin-t300/V0-HUG-001-integration-contract.md` sonundaki V1-RMD-584 notudur (bulgu F0089):
+- Çelişki 1: Karar polling'i varsayılan yapıyor, webhook'u "gerekmez" sayıyor. HoReCa sayfası (`x-platform/baslangic/horeca`) "Polling YAPILMAZ, Webhook ZORUNLUDUR" diyor (olaylar BASKET_COMPLETED/LOCKED/UNLOCKED); sayfanın bu kuralı yalnız Cloud için mi yazdığı doğrulanamadı (kablolu mod için webhook anlamsız). `Get Basket Details`/`Get Open Baskets` polling'inin desteklenip desteklenmediği doğrulanamadı.
+- Çelişki 2: Karar "300 TR / X30 TR" için Cloud'u seçiyor; portalın Cloud tanıtımında yalnız X30TR geçiyor, 300TR yalnız kablolu (V0-HUG-001 notu).
+- Çelişki 3: "Sıfır yeni altyapı" gerekçesi webhook zorunluysa geçmez; Token bulutundan gelen girişi karşılayacak yeni bir tünel rotası gerekir (`docs/architecture/qr-relay-topology.md` "no public inbound ports").
+- Karar bekliyor: webhook'lu Cloud yolu ve tünel rotası, ya da kablolu/uygulama içi yola dönüş. Sahibi: ürün sahibi.
+
 
 ## Dependencies
 
