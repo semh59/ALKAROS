@@ -18,6 +18,7 @@
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js — Fişi yeniden yazdır eylemi ve KOPYA başlığı
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css — KOPYA yazdırma stili
   - src/Host/Experience/Billing/BillTerminalAccess.cs — yeniden yazdırma sahipsiz hesabı terminale sahiplendirmez (salt okuma)
+  - tests/Architecture/ApiConventions/idempotency_allowlist.json — yeniden yazdırma her çağrıda ayrı kayıt: tekrar anahtarı istisnası
   - tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs — uç nokta testleri
   - tests/Host/Experience/PaymentTender/BillTerminalAccessTenderHttpTests.cs — terminal erişim rotası
   - tests/Clients/StaticApps/split-payment-receipt.test.js — ekran testleri
