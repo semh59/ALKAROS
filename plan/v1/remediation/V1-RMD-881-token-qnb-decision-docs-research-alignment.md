@@ -1,7 +1,7 @@
 # V1-RMD-881 - Token ve QNB karar belgelerini 2026-10-17 araştırmasına uydur
 
 - Task ID: V1-RMD-881
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: documentation
 - Surface state: Existing
