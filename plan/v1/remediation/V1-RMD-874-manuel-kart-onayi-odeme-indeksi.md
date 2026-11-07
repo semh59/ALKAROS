@@ -1,7 +1,7 @@
 # V1-RMD-874 - Manuel kart onayı tablosuna ödeme ve durum üzerinde indeks (migration 221)
 
 - Task ID: V1-RMD-874
-- Status: Done
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
@@ -13,9 +13,9 @@ payments.manual_card_confirmations için yalnız Pending'i kapsayan kısmi indek
 ## Owned surface
 
 - `evidence/V1-RMD-874/**`
+- `database/migrations/V1/V1-RMD-874/221-manual-card-confirmations-payment-index.up.sql` — indeks.
+- `database/migrations/V1/V1-RMD-874/221-manual-card-confirmations-payment-index.down.sql` — geri alma.
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - database/migrations/V1/V1-RMD-874/221-manual-card-confirmations-payment-index.up.sql — indeks.
-  - database/migrations/V1/V1-RMD-874/221-manual-card-confirmations-payment-index.down.sql — geri alma.
   - src/Host/Composition/Migrations/MigrationManifest.cs — PhaseBMax 221.
   - database/MigrationComposition/order.json — 221 kaydı ve aralık.
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — manifest sayımı.
