@@ -15,6 +15,12 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
     /// <summary>Wider than the oldest lookback of the report (90 days) so a day late never leaves a gap.</summary>
     public const int WindowDays = 100;
 
+    /// <summary>
+    /// Daily balances are customer data derived from the ledger and are not invoice records, so they are kept for two
+    /// years.
+    /// </summary>
+    public const int RetentionDays = 730;
+
     private readonly TimeProvider _clock;
 
     public BalanceSnapshotMaintenanceJob(TimeProvider clock)
@@ -24,7 +30,7 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
 
     public string Name => "balance-snapshot";
 
-    public string Description => "Cari hesapların gün sonu bakiyelerini kaydeder; yaşlandırma raporundaki geçmiş bakiyeler buradan gelir.";
+    public string Description => "Cari hesapların gün sonu bakiyelerini kaydeder (yaşlandırma raporundaki geçmiş bakiyeler buradan gelir) ve 2 yıldan eski kayıtları siler.";
 
     public TimeSpan Interval => TimeSpan.FromHours(6);
 
@@ -35,7 +41,8 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
         ArgumentNullException.ThrowIfNull(scopedServices);
         var store = scopedServices.GetRequiredService<IBalanceSnapshotStore>();
 
-        var lastClosedDay = ReceivablesAgingEndpoints.Calendar.DateOf(_clock.GetUtcNow()).AddDays(-1);
+        var today = ReceivablesAgingEndpoints.Calendar.DateOf(_clock.GetUtcNow());
+        var lastClosedDay = today.AddDays(-1);
         var firstDay = lastClosedDay.AddDays(1 - WindowDays);
         var done = await store.GetSnapshotDatesAsync(firstDay, cancellationToken);
 
@@ -51,7 +58,9 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
                 days++;
         }
 
+        var deleted = await store.DeleteOlderThanAsync(today.AddDays(-RetentionDays), cancellationToken);
+
         return new MaintenanceJobOutcome(
-            MaintenanceJobStatusKind.Succeeded, $"{days} gün için {written} bakiye kaydı yazıldı.");
+            MaintenanceJobStatusKind.Succeeded, $"{days} gün için {written} bakiye kaydı yazıldı; {deleted} eski kayıt silindi.");
     }
 }

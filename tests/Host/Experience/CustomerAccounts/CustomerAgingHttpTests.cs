@@ -226,8 +226,68 @@ public sealed class CustomerAgingHttpTests : IAsyncLifetime
         var second = await RunJobAsync(app);
 
         Assert.True(job.DisabledReason is null);
-        Assert.Matches(@"^[1-9]\d* gün için [1-9]\d* bakiye kaydı yazıldı\.$", first.Summary);
-        Assert.Equal("0 gün için 0 bakiye kaydı yazıldı.", second.Summary);
+        Assert.Matches(@"^[1-9]\d* gün için [1-9]\d* bakiye kaydı yazıldı; 0 eski kayıt silindi\.$", first.Summary);
+        Assert.Equal("0 gün için 0 bakiye kaydı yazıldı; 0 eski kayıt silindi.", second.Summary);
+    }
+
+    [Fact]
+    public void DailyBalancesAreKeptTwoYears() => Assert.Equal(730, BalanceSnapshotMaintenanceJob.RetentionDays);
+
+    [Fact]
+    public async Task TheJobDeletesSnapshotsOlderThanTwoYearsAndKeepsTheRest()
+    {
+        await using var app = await StartAsync();
+        var today = ReceivablesAgingEndpoints.Calendar.DateOf(DateTimeOffset.UtcNow);
+        var customer = Guid.NewGuid();
+        await Ledger(customer, "Charge", 10m, 3);
+        var tooOld = await InsertSnapshotAsync(customer, today.AddDays(-BalanceSnapshotMaintenanceJob.RetentionDays - 1));
+        var oldest = await InsertSnapshotAsync(customer, today.AddDays(-BalanceSnapshotMaintenanceJob.RetentionDays));
+        var recent = await InsertSnapshotAsync(customer, today.AddDays(-40));
+
+        var first = await RunJobAsync(app);
+        var second = await RunJobAsync(app);
+
+        Assert.Contains("1 eski kayıt silindi.", first.Summary);
+        Assert.Contains("0 eski kayıt silindi.", second.Summary);
+        var kept = await SnapshotBalancesAsync(customer);
+        Assert.DoesNotContain(tooOld, kept.Keys);
+        Assert.Contains(oldest, kept.Keys);
+        Assert.Contains(recent, kept.Keys);
+    }
+
+    [Fact]
+    public async Task DeletingOldSnapshotsDoesNotChangeTheReport()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd896-report");
+        await using var app = await StartAsync();
+        using var cashierClient = CreateClient(app, null);
+        var customer = await CreateCustomerAsync(cashierClient, terminalId, cashier, "Eski Kayıtlı Müşteri");
+        await Ledger(customer, "Charge", 100m, 75);
+        await Ledger(customer, "Charge", 20m, 5);
+        await RunJobAsync(app);
+        using var viewer = CreateClient(app, ViewerToken);
+        var before = await viewer.GetStringAsync(ReportPath);
+        var today = ReceivablesAgingEndpoints.Calendar.DateOf(DateTimeOffset.UtcNow);
+        await InsertSnapshotAsync(customer.CustomerId, today.AddDays(-BalanceSnapshotMaintenanceJob.RetentionDays - 5));
+
+        var run = await RunJobAsync(app);
+
+        Assert.Contains("1 eski kayıt silindi.", run.Summary);
+        Assert.Equal(before, await viewer.GetStringAsync(ReportPath));
+    }
+
+    private async Task<string> InsertSnapshotAsync(Guid customer, DateOnly date)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO customer_account.balance_snapshots (id, customer_id, snapshot_date, balance, created_at)
+            VALUES (gen_random_uuid(), @customer, @date, 1, now());
+            """);
+        command.Parameters.AddWithValue("customer", customer);
+        command.Parameters.AddWithValue("date", date.ToDateTime(TimeOnly.MinValue));
+        await command.ExecuteNonQueryAsync();
+        return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
     }
 
     [Fact]

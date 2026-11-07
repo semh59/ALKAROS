@@ -19,6 +19,9 @@ public interface IBalanceSnapshotStore
     /// <summary>The dates from <paramref name="from"/> on that already have at least one snapshot; lets the job skip finished days.</summary>
     Task<IReadOnlySet<DateOnly>> GetSnapshotDatesAsync(DateOnly from, CancellationToken cancellationToken = default);
 
+    /// <summary>Deletes the snapshots dated before <paramref name="before"/> and returns how many went; deleting twice is harmless.</summary>
+    Task<int> DeleteOlderThanAsync(DateOnly before, CancellationToken cancellationToken = default);
+
     /// <summary>The snapshots of every customer for the given dates, one query.</summary>
     Task<IReadOnlyList<BalanceSnapshot>> GetSnapshotsOnAsync(IReadOnlyCollection<DateOnly> dates, CancellationToken cancellationToken = default);
 }

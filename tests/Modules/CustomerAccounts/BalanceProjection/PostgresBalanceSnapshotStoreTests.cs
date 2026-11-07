@@ -46,6 +46,23 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task DeletingOlderThanADateRemovesOnlyStrictlyOlderSnapshotsAndIsRepeatable()
+    {
+        var customer = Guid.NewGuid();
+        await Record(customer, AccountTransactionType.Charge, 10m, EndOfDay.AddHours(-5));
+        foreach (var offset in new[] { -2, -1, 0 })
+            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay);
+
+        var removed = await _store.DeleteOlderThanAsync(Day.AddDays(-1));
+        var again = await _store.DeleteOlderThanAsync(Day.AddDays(-1));
+
+        Assert.Equal(1, removed);
+        Assert.Equal(0, again);
+        var left = await _store.GetSnapshotsOnAsync([Day.AddDays(-2), Day.AddDays(-1), Day]);
+        Assert.Equal(new[] { Day.AddDays(-1), Day }, left.Select(snapshot => snapshot.SnapshotDate).Order().ToArray());
+    }
+
+    [Fact]
     public async Task ARerunKeepsTheFirstSnapshotEvenWhenARowIsBackDatedIntoTheDay()
     {
         var customer = Guid.NewGuid();
@@ -83,7 +100,7 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
         var customer = Guid.NewGuid();
         await Record(customer, AccountTransactionType.Charge, 10m, EndOfDay.AddDays(-3));
         foreach (var offset in new[] { -2, -1, 0 })
-            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay.AddDays(offset));
+            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay);
 
         var dates = await _store.GetSnapshotDatesAsync(Day.AddDays(-1));
 

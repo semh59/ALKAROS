@@ -51,6 +51,14 @@ public sealed class PostgresBalanceSnapshotStore : IBalanceSnapshotStore
         return dates;
     }
 
+    public async Task<int> DeleteOlderThanAsync(DateOnly before, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "DELETE FROM customer_account.balance_snapshots WHERE snapshot_date < @before;");
+        command.Parameters.Add("before", NpgsqlDbType.Date).Value = before.ToDateTime(TimeOnly.MinValue);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<BalanceSnapshot>> GetSnapshotsOnAsync(
         IReadOnlyCollection<DateOnly> dates, CancellationToken cancellationToken = default)
     {
