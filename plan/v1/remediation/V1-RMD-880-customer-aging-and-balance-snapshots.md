@@ -27,6 +27,8 @@ F0097: IBalanceSnapshotStore üretimde hiç çağrılmıyordu. Mevcut depo gerç
   - src/Host/Experience/CustomerAging/BalanceSnapshotMaintenanceJob.cs
   - src/Host/DualScreen/DualScreenApplication.cs — kayıt ve eşleme
   - src/Host/Composition/Errors/ApiErrorCatalog.cs — kendi hata alanı
+  - tests/Host/Errors/ApiErrorCatalogTests.cs — yeni hata alanı satırları
+  - tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs — bakım işi listesi
   - tools/consistency-audit/unreachable_services_allowlist.json — iki girdi çıkar
   - tests/Host/Experience/CustomerAccounts/CustomerAgingHttpTests.cs
   - tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTestDatabase.cs
