@@ -13,11 +13,11 @@
 ## Owned surface
 
 - `evidence/V1-RMD-885/**`
+- `src/Host/Experience/Billing/SettingsBillAdjustmentTotalCap.cs`
+- `src/Modules/Settings/BillAdjustmentCap/BillAdjustmentTotalCapSetting.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Identity/Authorization/Grants/BillAdjustmentTotalGate.cs — yeni kapı
   - src/Modules/Identity/Authorization/Grants/IBillAdjustmentTotalCap.cs — sınır kaynağı arayüzü
-  - src/Modules/Settings/BillAdjustmentCap/BillAdjustmentTotalCapSetting.cs — ayar tanımı
-  - src/Host/Experience/Billing/SettingsBillAdjustmentTotalCap.cs — sınırı ayardan okur
   - src/Modules/Identity/Authorization/Grants/IAuthorizationGrantRepository.cs — hesap toplamı sorgusu
   - src/Modules/Identity/Authorization/Grants/PostgresAuthorizationGrantRepository.cs
   - src/Modules/Identity/Authorization/Grants/AuthorizationGrantService.cs — hesap kilidi
