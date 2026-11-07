@@ -19,6 +19,8 @@ G10 (F0096, F0452): (1) PostgresAccountBalanceProjection.RebuildAsync atomik de�
   - src/Modules/CustomerAccounts/TransactionLedger/PostgresAccountTransactionLedger.cs — gövde karşılaştırma.
   - tests/Modules/CustomerAccounts/BalanceProjection/PostgresAccountBalanceProjectionTests.cs — eşzamanlı yazım ve yeniden kurulum testleri.
   - tests/Modules/CustomerAccounts/TransactionLedger/PostgresAccountTransactionLedgerTests.cs — çakışma testleri.
+  - tests/Modules/CustomerAccounts/BillCharges/AccountChargeHandlerTests.cs — yapıcı çağrısı (yeniden kurulum artık defter nesnesi almaz).
+  - tests/Modules/CustomerAccounts/BillCharges/OutstandingBalanceRetentionGuardTests.cs — yapıcı çağrısı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
