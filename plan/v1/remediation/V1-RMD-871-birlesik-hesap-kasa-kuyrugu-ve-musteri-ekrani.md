@@ -1,7 +1,7 @@
 # V1-RMD-871 - Birleşik hesap kasa kuyruğunda ve müşteri ekranında tek hesap olarak görünür
 
 - Task ID: V1-RMD-871
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
