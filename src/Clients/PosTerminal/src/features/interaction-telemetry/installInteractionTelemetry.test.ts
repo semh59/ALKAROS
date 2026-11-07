@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { installInteractionTelemetry } from "./installInteractionTelemetry";
 import { buildNameTable } from "./interactionKeys";
 import { createInteractionRecorder } from "./interactionRecorder";
+import { moveBetweenTabs } from "../../design-system/primitives";
 
 interface Sent { key: string; kind: string; outcome: string; durationMs: number; traceId?: string }
 
@@ -149,5 +150,22 @@ describe("install interaction telemetry", () => {
     document.getElementById("a")!.click();
 
     expect(s.items()).toEqual([]);
+  });
+
+  it("counts an arrow key that selects a tab as one click on that tab, and a modified arrow as none", () => {
+    const s = setup(
+      '<div id="tabs" role="tablist"><button role="tab" data-telemetry-id="tab.first" aria-selected="true">Bir</button>' +
+      '<button role="tab" data-telemetry-id="tab.second" aria-selected="false">İki</button></div>');
+    uninstall = s.uninstall;
+    const tabs = document.getElementById("tabs")!;
+    tabs.addEventListener("keydown", (event) => moveBetweenTabs(event as never));
+    const first = tabs.querySelector<HTMLElement>('[data-telemetry-id="tab.first"]')!;
+
+    for (const modifier of ["ctrlKey", "altKey", "metaKey", "shiftKey"])
+      first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", [modifier]: true, bubbles: true, cancelable: true }));
+    expect(s.items()).toEqual([]);
+
+    first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true, cancelable: true }));
+    expect(s.items().map((i) => `${i.kind}:${i.key}`)).toEqual(["click:tab.second"]);
   });
 });

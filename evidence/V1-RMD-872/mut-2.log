@@ -1,0 +1,43 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/interaction-telemetry/installInteractionTelemetry.test.ts (9 tests | 1 failed) 55ms
+     × counts an arrow key that selects a tab as one click on that tab, and a modified arrow as none 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/interaction-telemetry/installInteractionTelemetry.test.ts > install interaction telemetry > counts an arrow key that selects a tab as one click on that tab, and a modified arrow as none
+AssertionError: expected [ { key: 'tab.second', …(6) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "ageMs": 0,
++     "durationMs": 0,
++     "key": "tab.second",
++     "kind": "click",
++     "longTasks": 0,
++     "outcome": "ok",
++     "shiftMilli": 0,
++   },
++ ]
+
+ ❯ src/features/interaction-telemetry/installInteractionTelemetry.test.ts:166:23
+    164|     for (const modifier of ["ctrlKey", "altKey", "metaKey", "shiftKey"…
+    165|       first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRi…
+    166|     expect(s.items()).toEqual([]);
+       |                       ^
+    167|
+    168|     first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRigh…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  11:29:32
+   Duration  1.47s (transform 137ms, setup 0ms, import 190ms, tests 55ms, environment 957ms)
+

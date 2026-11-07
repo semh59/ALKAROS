@@ -1,0 +1,5 @@
+# V1-RMD-872 sonuç
+
+Kodda doğrulandı: moveBetweenTabs ok tuşunda yeni sekmeye odaklanır ve next.click() çağırır; telemetri click olayını sentetik ayrımı olmadan yakalar. Sonuç: ok tuşuyla seçilen her sekme bir "click" kaydı üretir. Bu doğru kabul edildi (ok tuşu sekmeyi gerçekten seçer, tıklamayla eşdeğer eylemdir, sekmenin kendi anahtarıyla görünür (üretimde sekmeler aynı data-telemetry-id'yi paylaştığı için hangi sekmenin seçildiği ayrışmaz; tıklamada da aynıdır)); değiştirici tuşlu ok odak/seçim değiştirmez ve kayıt üretmez. Üretim kodu değişmedi.
+Aynı next.click() deseni vanilla Cashier'da da var (cashier-app.js:592, split-payment.js:968); vanilla telemetry.js de click dinlediği için aynı sayım geçerli, PosTerminal testiyle sabitlendi, vanilla tarafı için ayrı test eklenmedi.
+Test: installInteractionTelemetry.test.ts 9/9, tsc temiz (green.log, tsc.log). Mutasyon (cp+cmp geri alındı): primitives'teki next.click() kaldırılınca test düşer (mut-1.log); shift değiştirici kontrolü kaldırılınca da düşer (mut-2.log). Test: dört değiştirici tuş (ctrl, alt, meta, shift) kayıt üretmez.
