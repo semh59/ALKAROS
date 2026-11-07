@@ -1,7 +1,7 @@
 # V1-RMD-868 - Billing ve Kitchen projeleri Npgsql paketine doğrudan bağlanır
 
 - Task ID: V1-RMD-868
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

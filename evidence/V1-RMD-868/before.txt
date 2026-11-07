@@ -1,0 +1,6 @@
+== Billing before
+   Geçişli Paket                                                Çözümlendi
+   > Npgsql                                                     9.0.2     
+== Kitchen before
+   Geçişli Paket                                                Çözümlendi
+   > Npgsql                                                     9.0.2     

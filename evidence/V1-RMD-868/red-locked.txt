@@ -1,0 +1,10 @@
+tests/Modules/Billing/Adjustments rc=1 D:\PROJECT\ALKAROS\tests\Modules\Billing\Adjustments\ALKAROS.Billing.Adjustments.Tests.csproj : error NU1004: alkaros.billing proje baï¿½vurusu deï¿½i
+tests/Modules/Billing/BillFoundation rc=1 D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\ALKAROS.Billing.BillFoundation.Tests.csproj : error NU1004: alkaros.billing proje baï¿½vurusu 
+tests/Modules/Billing/PaymentClosure rc=1 D:\PROJECT\ALKAROS\tests\Modules\Billing\PaymentClosure\ALKAROS.Billing.PaymentClosure.Tests.csproj : error NU1004: alkaros.billing proje baï¿½vurusu 
+tests/Modules/Billing/SplitDesign rc=1 D:\PROJECT\ALKAROS\tests\Modules\Billing\SplitDesign\ALKAROS.Billing.SplitDesign.Tests.csproj : error NU1004: alkaros.billing proje baï¿½vurusu deï¿½i
+tests/Modules/Kitchen/OrderItemStateSync rc=1 D:\PROJECT\ALKAROS\tests\Modules\Kitchen\OrderItemStateSync\ALKAROS.Kitchen.OrderItemStateSync.Tests.csproj : error NU1004: alkaros.kitchen proje baï¿
+tests/Modules/Kitchen/PhysicalPrintRecovery rc=1 D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PhysicalPrintRecovery\ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.csproj : error NU1004: alkaros.kitchen proj
+tests/Modules/Kitchen/PrintQueue rc=1 D:\PROJECT\ALKAROS\tests\Modules\Kitchen\PrintQueue\ALKAROS.Kitchen.PrintQueue.Tests.csproj : error NU1004: alkaros.kitchen proje baï¿½vurusu deï¿½iï¿
+tests/Modules/Kitchen/Routing rc=1 D:\PROJECT\ALKAROS\tests\Modules\Kitchen\Routing\ALKAROS.Kitchen.Routing.Tests.csproj : error NU1004: alkaros.kitchen proje baï¿½vurusu deï¿½iï¿½tiril
+tests/Modules/Kitchen/TicketLifecycle rc=1 D:\PROJECT\ALKAROS\tests\Modules\Kitchen\TicketLifecycle\ALKAROS.Kitchen.TicketLifecycle.Tests.csproj : error NU1004: alkaros.kitchen proje baï¿½vurus
+FINISHED

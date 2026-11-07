@@ -1,0 +1,4 @@
+  Geri y�klenecek projeler belirleniyor...
+D:\PROJECT\ALKAROS\src\Modules\Billing\ALKAROS.Billing.csproj : error NU1004: net8.0 i�in paket ba�vurular� de�i�tirildi. Kilit dosyas�n�n paket ba�vurular�: Npgsql:[9.0.2, ), projenin paket ba�vurular�: Yok.Paketler kilit dosyas� proje ba��ml�l�klar� ile tutarl� olmad���ndan geri y�kleme kilitli modda �al��t�r�lam�yor. RestoreLockedMode MSBuild �zelli�ini devre d��� b�rak�n veya kilit dosyas�n� g�ncelle�tirmek �zere geri y�klemeyi �al��t�rmak i�in a��k bir --force-evaluate se�ene�i ge�irin.
+  D:\PROJECT\ALKAROS\src\Modules\Billing\ALKAROS.Billing.csproj geri y�klenemedi (266 ms i�inde).
+  Geri y�kleme i�in 6 proje i�inden 5 tanesi g�ncel.

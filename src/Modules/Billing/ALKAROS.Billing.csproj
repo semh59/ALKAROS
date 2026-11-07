@@ -12,6 +12,10 @@
     <ProjectReference Include="..\..\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
   <!-- V13-ALC-002: PaymentClosure/** is its own separate project
        (ALKAROS.Billing.PaymentClosure.csproj), not part of this assembly -
        it needs ALKAROS.Payments.csproj, and Payments already references
