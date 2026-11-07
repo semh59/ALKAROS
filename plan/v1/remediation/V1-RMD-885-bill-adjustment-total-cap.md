@@ -1,8 +1,8 @@
 # V1-RMD-885 - Hesap başına toplam ikram+indirim sınırı (yetki motoruna sınır, aşılınca yönetici onayı)
 
 - Task ID: V1-RMD-885
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
