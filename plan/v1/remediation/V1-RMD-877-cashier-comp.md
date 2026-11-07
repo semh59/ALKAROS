@@ -13,7 +13,6 @@
 ## Owned surface
 
 - `evidence/V1-RMD-877/**`
-- `tests/Clients/StaticApps/split-payment-comp.test.js`
 - `database/migrations/V1/V1-RMD-877/222-cashier-comp-policy.down.sql`
 - `database/migrations/V1/V1-RMD-877/222-cashier-comp-policy.up.sql`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
