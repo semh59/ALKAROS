@@ -93,6 +93,7 @@ public sealed class CustomerAgingHttpTests : IAsyncLifetime
         using var cashierClient = CreateClient(app, null);
         var owing = await CreateCustomerAsync(cashierClient, terminalId, cashier, "Borçlu Müşteri");
         var prepaid = await CreateCustomerAsync(cashierClient, terminalId, cashier, "Peşin Ödeyen");
+        await _database.SetCreditTermsAsync(owing.CustomerId, 1000m, 60);
         await Ledger(owing, "Charge", 100m, 120);
         await Ledger(owing, "Charge", 40m, 75);
         await Ledger(owing, "Charge", 50m, 45);
@@ -112,10 +113,14 @@ public sealed class CustomerAgingHttpTests : IAsyncLifetime
         Assert.Equal("Borçlu Müşteri", first.GetProperty("name").GetString());
         AssertAmounts(first, ("days0To30", 20m), ("days31To60", 50m), ("days61To90", 40m), ("over90", 70m), ("totalDebt", 180m), ("unappliedCredit", 0m));
         AssertAmounts(first, ("balance30DaysAgo", 190m), ("balance60DaysAgo", 140m), ("balance90DaysAgo", 100m));
+        AssertAmounts(first, ("overdueAmount", 110m));
+        Assert.Equal(60, first.GetProperty("paymentTermDays").GetInt32());
         var second = rows[1];
         Assert.Equal("Peşin Ödeyen", second.GetProperty("name").GetString());
         Assert.Equal(25m, second.GetProperty("unappliedCredit").GetDecimal());
         Assert.Equal(JsonValueKind.Null, second.GetProperty("balance30DaysAgo").ValueKind);
+        Assert.Equal(JsonValueKind.Null, second.GetProperty("paymentTermDays").ValueKind);
+        Assert.Equal(JsonValueKind.Null, second.GetProperty("overdueAmount").ValueKind);
     }
 
     [Fact]

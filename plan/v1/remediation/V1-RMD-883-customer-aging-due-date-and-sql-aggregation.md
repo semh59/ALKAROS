@@ -1,7 +1,7 @@
 # V1-RMD-883 - Cari yaşlandırma: vade bilgisi ve veritabanı tarafında toplulaştırma (500 bin satır sınırı kalkar)
 
 - Task ID: V1-RMD-883
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

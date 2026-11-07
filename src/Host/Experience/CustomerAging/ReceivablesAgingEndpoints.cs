@@ -76,7 +76,7 @@ public static class ReceivablesAgingEndpoints
                 rows.Add(new CustomerAgingRowV1(
                     customer.CustomerId, summary?.Name ?? UnknownCustomerName,
                     customer.Days0To30, customer.Days31To60, customer.Days61To90, customer.Over90,
-                    customer.TotalDebt, customer.UnappliedCredit,
+                    customer.TotalDebt, customer.UnappliedCredit, customer.PaymentTermDays, customer.OverdueAmount,
                     Past(customer.CustomerId, 30), Past(customer.CustomerId, 60), Past(customer.CustomerId, 90)));
             }
 
@@ -97,6 +97,8 @@ public sealed record CustomerAgingRowV1(
     decimal Over90,
     decimal TotalDebt,
     decimal UnappliedCredit,
+    int? PaymentTermDays,
+    decimal? OverdueAmount,
     decimal? Balance30DaysAgo,
     decimal? Balance60DaysAgo,
     decimal? Balance90DaysAgo);

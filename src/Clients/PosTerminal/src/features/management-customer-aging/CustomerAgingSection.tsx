@@ -32,18 +32,20 @@ export function CustomerAgingSection({ client }: Partial<ManagementSectionProps>
               <th className="mca__num">{t.bucket30}</th><th className="mca__num">{t.bucket60}</th>
               <th className="mca__num">{t.bucket90}</th><th className="mca__num">{t.bucketOlder}</th>
               <th className="mca__num">{t.totalDebt}</th><th className="mca__num">{t.credit}</th>
+              <th className="mca__num">{t.termDays}</th><th className="mca__num">{t.overdue}</th>
               <th className="mca__num">{t.ago30}</th><th className="mca__num">{t.ago60}</th><th className="mca__num">{t.ago90}</th></tr></thead>
             <tbody>{report.rows.map((row) => <tr key={row.customerId}>
               <td>{row.name}</td>
               <td className="mca__num">{formatMoney(row.days0To30)}</td><td className="mca__num">{formatMoney(row.days31To60)}</td>
               <td className="mca__num">{formatMoney(row.days61To90)}</td><td className="mca__num">{formatMoney(row.over90)}</td>
               <td className="mca__num">{formatMoney(row.totalDebt)}</td><td className="mca__num">{formatMoney(row.unappliedCredit)}</td>
+              <td className="mca__num">{row.paymentTermDays ?? t.noSnapshot}</td><td className="mca__num">{row.overdueAmount === null ? t.noSnapshot : formatMoney(row.overdueAmount)}</td>
               <td className="mca__num">{past(row.balance30DaysAgo)}</td><td className="mca__num">{past(row.balance60DaysAgo)}</td><td className="mca__num">{past(row.balance90DaysAgo)}</td></tr>)}</tbody>
             <tfoot><tr>
               <td>{t.total}</td>
               <td className="mca__num">{formatMoney(totals.days0To30)}</td><td className="mca__num">{formatMoney(totals.days31To60)}</td>
               <td className="mca__num">{formatMoney(totals.days61To90)}</td><td className="mca__num">{formatMoney(totals.over90)}</td>
-              <td className="mca__num">{formatMoney(totals.totalDebt)}</td><td className="mca__num">{formatMoney(totals.unappliedCredit)}</td><td colSpan={3}>{t.noSnapshot}</td></tr></tfoot>
+              <td className="mca__num">{formatMoney(totals.totalDebt)}</td><td className="mca__num">{formatMoney(totals.unappliedCredit)}</td><td className="mca__num">{t.noSnapshot}</td><td className="mca__num">{totals.overdueAmount === null ? t.noSnapshot : formatMoney(totals.overdueAmount)}</td><td colSpan={3}>{t.noSnapshot}</td></tr></tfoot>
           </table>}
           <p className="mca__hint">{t.method}</p>
         </>;

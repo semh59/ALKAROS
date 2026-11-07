@@ -2,6 +2,7 @@ export interface CustomerAgingRow {
   customerId: string; name: string;
   days0To30: number; days31To60: number; days61To90: number; over90: number;
   totalDebt: number; unappliedCredit: number;
+  paymentTermDays: number | null; overdueAmount: number | null;
   balance30DaysAgo: number | null; balance60DaysAgo: number | null; balance90DaysAgo: number | null;
 }
 
@@ -10,7 +11,7 @@ export interface CustomerAgingReport {
 }
 
 export interface CustomerAgingTotals {
-  days0To30: number; days31To60: number; days61To90: number; over90: number; totalDebt: number; unappliedCredit: number;
+  days0To30: number; days31To60: number; days61To90: number; over90: number; totalDebt: number; unappliedCredit: number; overdueAmount: number | null;
 }
 
 export function totalsOf(rows: readonly CustomerAgingRow[]): CustomerAgingTotals {
@@ -21,7 +22,8 @@ export function totalsOf(rows: readonly CustomerAgingRow[]): CustomerAgingTotals
     over90: sum.over90 + row.over90,
     totalDebt: sum.totalDebt + row.totalDebt,
     unappliedCredit: sum.unappliedCredit + row.unappliedCredit,
-  }), { days0To30: 0, days31To60: 0, days61To90: 0, over90: 0, totalDebt: 0, unappliedCredit: 0 });
+    overdueAmount: row.overdueAmount === null ? sum.overdueAmount : (sum.overdueAmount ?? 0) + row.overdueAmount,
+  }), { days0To30: 0, days31To60: 0, days61To90: 0, over90: 0, totalDebt: 0, unappliedCredit: 0, overdueAmount: null });
 }
 
 export const formatDay = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString("tr-TR");

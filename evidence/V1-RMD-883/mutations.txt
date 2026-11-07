@@ -1,0 +1,13 @@
+credit-ignored: Başarısız! - Başarısız:     4, Başarılı:    16, Atlanan:     0, Toplam:    20, Süre: 22 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+head-ignored: Başarısız! - Başarısız:     6, Başarılı:    14, Atlanan:     0, Toplam:    20, Süre: 18 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+share-uncapped: Başarısız! - Başarısız:     5, Başarılı:    15, Atlanan:     0, Toplam:    20, Süre: 17 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+first-bucket-strict: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 17 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+credit-zero: Başarısız! - Başarısız:     2, Başarılı:    18, Atlanan:     0, Toplam:    20, Süre: 15 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+day-start-hour: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 15 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+third-bucket-merge: Başarısız! - Başarısız:     3, Başarılı:    17, Atlanan:     0, Toplam:    20, Süre: 16 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+term-cutoff-shift: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 15 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+limit-plus-zero: Başarısız! - Başarısız:     1, Başarılı:    26, Atlanan:     0, Toplam:    27, Süre: 24 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+overdue-null-for-zero: Başarısız! - Başarısız:     3, Başarılı:    24, Atlanan:     0, Toplam:    27, Süre: 24 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+no-term-join: Başarısız! - Başarısız:     3, Başarılı:    24, Atlanan:     0, Toplam:    27, Süre: 29 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+term-range-364: Başarısız! - Başarısız:     1, Başarılı:    26, Atlanan:     0, Toplam:    27, Süre: 28 s - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (net8
+overdue-zero-as-dash: vitest killed (ayrı koşu, 1 test başarısız)

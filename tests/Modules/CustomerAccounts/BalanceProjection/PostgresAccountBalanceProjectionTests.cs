@@ -10,6 +10,7 @@ using Xunit;
 /// customer_account.balances current atomically with every ledger insert -
 /// no application code ever writes to that table directly except RebuildAsync.
 /// </summary>
+[Collection("Account balance PostgreSQL")]
 public sealed class PostgresAccountBalanceProjectionTests : IAsyncLifetime
 {
     private readonly AccountBalanceTestDatabase _database = new();
