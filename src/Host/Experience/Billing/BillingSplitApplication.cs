@@ -109,6 +109,96 @@ public static class BillingSplitApplication
         return services;
     }
 
+    private static async Task<IResult> ApplyDiscountOrCompAsync(
+        string permission,
+        bool complimentary,
+        Guid terminalId,
+        Guid billId,
+        ApplyBillDiscountRequestV1 request,
+        IBillingSplitSessionAuthorizer authorizer,
+        BillingSplitStore store,
+        IRoleRepository roles,
+        IAuthorizationGrantService grants,
+        IAuditEventStore auditEvents,
+        IBillClosureService billClosure,
+        OrderSettlementService orderSettlement,
+        IHubContext<CustomerDisplayHub> customerDisplayHub,
+        ILoggerFactory loggerFactory,
+        HttpContext context,
+        CancellationToken cancellationToken)
+    {
+        var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+
+        await store.EnsureDiscountRequestableAsync(billId, request, complimentary, cancellationToken);
+
+        Guid? approverId = null;
+        Guid? grantId = null;
+        var permissions = await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken);
+        if (!permissions.Contains(permission, StringComparer.Ordinal))
+        {
+            var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
+            if (role is null)
+                throw new AuthorizationDeniedException(
+                    principal.UserId, permission, "Requester has no assigned role.");
+
+            // Limits and delegations are in currency; a percentage is turned into the amount it takes off this bill.
+            var grantAmount = string.Equals(request.CalculationType, "Percentage", StringComparison.Ordinal)
+                ? BillMath.RoundCurrency(
+                    (await store.GetAdjustmentsAsync(billId, cancellationToken)).Summary.OriginalPayableAmount * request.Value / 100m)
+                : request.Value;
+
+            var resolution = await grants.RequestAsync(
+                new GrantRequest(
+                    request.IdempotencyKey,
+                    permission,
+                    principal.UserId,
+                    role.Code,
+                    request.ReasonCode,
+                    grantAmount,
+                    SubjectType: "Bill",
+                    SubjectId: billId,
+                    SubjectServingUserId: null),
+                cancellationToken);
+
+            switch (resolution.Outcome)
+            {
+                case GrantOutcome.Refused:
+                    throw new GrantDeniedException(complimentary);
+                case GrantOutcome.Pending:
+                    return Results.Accepted(value: new ApplyBillDiscountResultV1(
+                        "Pending", billId, null, null, resolution.Grant.GrantId));
+                case GrantOutcome.Authorized:
+                    approverId = resolution.Grant.ApproverUserId;
+                    grantId = resolution.Grant.GrantId;
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
+            }
+        }
+
+        var (adjustment, summary) = await store.ApplyDiscountAsync(
+            billId, request, principal.UserId, auditEvents, context.TraceIdentifier, approverId, grantId,
+            complimentary, cancellationToken);
+        // A discount that takes the payable to zero leaves nothing to collect, so no tender will ever close the bill.
+        if (summary.AdjustedPayableAmount <= 0m)
+            await DualScreenApplication.TryCloseBillAsync(
+                billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+        else
+            await DualScreenApplication.NotifyCustomerDisplayAsync(
+                customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
+        return Results.Ok(new ApplyBillDiscountResultV1(
+            "Applied",
+            billId,
+            adjustment.Id,
+            new AdjustedBillSummaryV1(
+                summary.OriginalPayableAmount,
+                summary.TotalDiscounts,
+                summary.TotalFees,
+                summary.TotalTips,
+                summary.AdjustedPayableAmount),
+            null));
+    }
+
     /// <summary>Reads count against the terminal's read budget and everything else against its write budget.</summary>
     private static RouteGroupBuilder WithTerminalRateLimits(this RouteGroupBuilder group)
     {
@@ -206,78 +296,32 @@ public static class BillingSplitApplication
             ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
-        {
-            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await ApplyDiscountOrCompAsync(
+                ApplicationPermissions.BillsDiscount, false, terminalId, billId, request, authorizer, store, roles, grants,
+                auditEvents, billClosure, orderSettlement, customerDisplayHub, loggerFactory, context, cancellationToken));
 
-            await store.EnsureDiscountRequestableAsync(billId, request, cancellationToken);
-
-            Guid? approverId = null;
-            Guid? grantId = null;
-            var permissions = await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken);
-            if (!permissions.Contains(ApplicationPermissions.BillsDiscount, StringComparer.Ordinal))
-            {
-                var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
-                if (role is null)
-                    throw new AuthorizationDeniedException(
-                        principal.UserId, ApplicationPermissions.BillsDiscount, "Requester has no assigned role.");
-
-                // Limits and delegations are in currency; a percentage is turned into the amount it takes off this bill.
-                var grantAmount = string.Equals(request.CalculationType, "Percentage", StringComparison.Ordinal)
-                    ? BillMath.RoundCurrency(
-                        (await store.GetAdjustmentsAsync(billId, cancellationToken)).Summary.OriginalPayableAmount * request.Value / 100m)
-                    : request.Value;
-
-                var resolution = await grants.RequestAsync(
-                    new GrantRequest(
-                        request.IdempotencyKey,
-                        ApplicationPermissions.BillsDiscount,
-                        principal.UserId,
-                        role.Code,
-                        request.ReasonCode,
-                        grantAmount,
-                        SubjectType: "Bill",
-                        SubjectId: billId,
-                        SubjectServingUserId: null),
-                    cancellationToken);
-
-                switch (resolution.Outcome)
-                {
-                    case GrantOutcome.Refused:
-                        throw new GrantDeniedException();
-                    case GrantOutcome.Pending:
-                        return Results.Accepted(value: new ApplyBillDiscountResultV1(
-                            "Pending", billId, null, null, resolution.Grant.GrantId));
-                    case GrantOutcome.Authorized:
-                        approverId = resolution.Grant.ApproverUserId;
-                        grantId = resolution.Grant.GrantId;
-                        break;
-                    default:
-                        throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
-                }
-            }
-
-            var (adjustment, summary) = await store.ApplyDiscountAsync(
-                billId, request, principal.UserId, auditEvents, context.TraceIdentifier, approverId, grantId,
-                cancellationToken);
-            // A discount that takes the payable to zero leaves nothing to collect, so no tender will ever close the bill.
-            if (summary.AdjustedPayableAmount <= 0m)
-                await DualScreenApplication.TryCloseBillAsync(
-                    billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
-            else
-                await DualScreenApplication.NotifyCustomerDisplayAsync(
-                    customerDisplayHub, loggerFactory, terminalId, billId, "PaymentChanged", cancellationToken);
-            return Results.Ok(new ApplyBillDiscountResultV1(
-                "Applied",
-                billId,
-                adjustment.Id,
-                new AdjustedBillSummaryV1(
-                    summary.OriginalPayableAmount,
-                    summary.TotalDiscounts,
-                    summary.TotalFees,
-                    summary.TotalTips,
-                    summary.AdjustedPayableAmount),
-                null));
-        });
+        // Kasada ikram: same grant engine as the discount, but under bills.comp - a cashier holds it only within the
+        // limit a manager set for that role, anything above waits for a manager decision.
+        billsGroup.MapPost("/{billId:guid}/comp", async (
+            Guid terminalId,
+            Guid billId,
+            ApplyBillCompRequestV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            BillingSplitStore store,
+            IRoleRepository roles,
+            IAuthorizationGrantService grants,
+            IAuditEventStore auditEvents,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+            await ApplyDiscountOrCompAsync(
+                ApplicationPermissions.BillsComp, true, terminalId, billId,
+                new ApplyBillDiscountRequestV1(request.IdempotencyKey, "FixedAmount", request.Amount, request.ReasonCode, request.Notes),
+                authorizer, store, roles, grants, auditEvents, billClosure, orderSettlement, customerDisplayHub,
+                loggerFactory, context, cancellationToken));
 
         // V1-WTR-020: records a voluntary tip. bills.split is checked
         // directly (RequireMutationAsync, no grant-request dance) - unlike
@@ -725,7 +769,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
         BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
         KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
-        GrantDeniedException => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
+        GrantDeniedException { Complimentary: false } => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
+        GrantDeniedException => (403, "GRANT_DENIED", "İkram isteği reddedildi."),
         BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
         UnsupportedOrderStateException => (409, "UNSUPPORTED_ORDER_STATE", "Bu sipariş durumunda hesap açılamaz."),
         BillMergeConflictException conflict => (409, conflict.Code, conflict.UserMessage),

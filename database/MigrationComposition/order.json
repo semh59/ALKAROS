@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "221"
+    "max": "222"
   },
   "migrations": [
     {
@@ -1902,6 +1902,14 @@
       "phase": "B",
       "tables": [
         "manual_card_confirmations"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "222",
+      "phase": "B",
+      "tables": [
+        "authorization_policies"
       ],
       "deferredConstraints": []
     }

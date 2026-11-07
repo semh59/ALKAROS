@@ -444,6 +444,21 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCashierCompPolicyIsSeededAndRollingBackRemovesOnlyTheSeededRow()
+    {
+        const string policy = "SELECT mode || ':' || limit_amount || ':' || max_count || ':' || window_seconds FROM identity.authorization_policies WHERE permission_code = 'bills.comp' AND role_code = 'cashier';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal("auto_within:50.00:5:28800", await ScalarAsync<string>(source, policy));
+
+        RollBackDownTo("222");
+        Assert.Equal(0L, await ScalarAsync<long>(source, "SELECT count(*) FROM identity.authorization_policies WHERE permission_code = 'bills.comp' AND role_code = 'cashier';"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal("auto_within:50.00:5:28800", await ScalarAsync<string>(source, policy));
+    }
+
+    [Fact]
     public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";

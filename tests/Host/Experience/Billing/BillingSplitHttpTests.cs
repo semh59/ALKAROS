@@ -1199,6 +1199,133 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 
+    private static async Task<HttpResponseMessage> SendCompAsync(
+        HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillCompRequestV1 body)
+        => await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/comp", cookie, body));
+
+    private static ApplyBillCompRequestV1 Comp(decimal amount, string? key = null, string reason = "CustomerSatisfaction")
+        => new(key ?? Guid.NewGuid().ToString(), amount, reason);
+
+    [Fact]
+    public async Task ACashierCompWithinTheConfiguredLimitIsAppliedAtOnceAndAboveItWaitsForAManager()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        await _database.SetPolicyForRoleOfAsync(userId, "bills.comp", 50m, 5);
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var within = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50m));
+        Assert.Equal(HttpStatusCode.OK, within.StatusCode);
+        var applied = await within.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Applied", applied!.Status);
+        Assert.Equal(50m, applied.Summary!.TotalDiscounts);
+
+        var key = Guid.NewGuid().ToString();
+        using var above = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50.01m, key));
+        Assert.Equal(HttpStatusCode.Accepted, above.StatusCode);
+        var pending = await above.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Pending", pending!.Status);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+
+        using var stillWaiting = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50.01m, key));
+        Assert.Equal(HttpStatusCode.Accepted, stillWaiting.StatusCode);
+
+        await _database.ApproveGrantAsync(pending.GrantId!.Value);
+        using var afterApproval = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50.01m, key));
+        Assert.Equal(HttpStatusCode.OK, afterApproval.StatusCode);
+        Assert.Equal("Applied", (await afterApproval.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.Status);
+        Assert.Equal(2L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ACashierCompIsLimitedByTheNumberOfAutoApprovalsInTheWindow()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        await _database.SetPolicyForRoleOfAsync(userId, "bills.comp", 50m, 1);
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var first = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(5m));
+        using var second = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(5m));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, second.StatusCode);
+    }
+
+    [Fact]
+    public async Task ACashierCompWithNoPolicyRowWaitsForAManagerAndARefusedOneAnswersInTurkish()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = Comp(10m);
+
+        using var pending = await SendCompAsync(client, terminalId, seeded.BillId, cookie, request);
+        Assert.Equal(HttpStatusCode.Accepted, pending.StatusCode);
+        await _database.DenyGrantAsync((await pending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.GrantId!.Value);
+        using var denied = await SendCompAsync(client, terminalId, seeded.BillId, cookie, request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        var (code, message) = await ErrorOf(denied);
+        Assert.Equal("GRANT_DENIED", code);
+        Assert.Equal("İkram isteği reddedildi.", message);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ARoleThatHoldsBillsCompAppliesAFullCompDirectlyAndTheBillCloses()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.comp");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(250m, reason: "VIPGuest"));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Paid", await _database.BillStatusAsync(seeded.BillId));
+        Assert.Equal(0L, await _database.GrantCountAsync());
+        await using var auditDataSource = NpgsqlDataSource.Create(_database.ConnectionString);
+        var events = await new PostgresAuditEventStore(auditDataSource).GetByAggregateAsync("Bill", seeded.BillId);
+        Assert.Equal("bill.comp.applied", Assert.Single(events).EventName);
+    }
+
+    [Fact]
+    public async Task CompAndDiscountReasonsDoNotCrossAndAnImpossibleCompSpendsNoApproval()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.discount");
+        await _database.SetPolicyForRoleOfAsync(userId, "bills.comp", 50m, 5);
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var discountWithCompReason = await SendDiscountAsync(
+            client, terminalId, seeded.BillId, cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 5m, "CustomerSatisfaction"));
+        using var compWithDiscountReason = await SendCompAsync(
+            client, terminalId, seeded.BillId, cookie, Comp(5m, reason: "PromotionalOffer"));
+        using var wrongCase = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(5m, reason: "customersatisfaction"));
+        using var tooMuch = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(250.01m));
+        Assert.Equal(HttpStatusCode.BadRequest, wrongCase.StatusCode);
+
+        Assert.Equal(HttpStatusCode.BadRequest, discountWithCompReason.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, compWithDiscountReason.StatusCode);
+        Assert.Equal("İkram gerekçesi geçerli değil.", (await ErrorOf(compWithDiscountReason)).Message);
+        Assert.Equal(HttpStatusCode.BadRequest, tooMuch.StatusCode);
+        Assert.Equal("DISCOUNT_EXCEEDS_PAYABLE", (await ErrorOf(tooMuch)).Code);
+        Assert.Equal(0L, await _database.GrantCountAsync());
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
     private static async Task<HttpResponseMessage> SendDiscountAsync(
         HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillDiscountRequestV1 body)
         => await client.SendAsync(JsonRequest(
@@ -2420,6 +2547,20 @@ internal sealed class BillingSplitTestDatabase
             ("approver_username", "rmd103-approver-" + approverId.ToString("N")));
         return approverId;
     }
+
+    /// <summary>Sets an auto_within approval policy for the role code SeedSessionWithPermissionsAsync gave this user.</summary>
+    public Task SetPolicyForRoleOfAsync(Guid userId, string permissionCode, decimal limit, int maxCount)
+        => ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.authorization_policies (permission_code, role_code, mode, limit_amount, max_count, window_seconds)
+            SELECT @permission_code, r.code, 'auto_within', @limit, @max_count, 28800
+            FROM identity.user_roles ur JOIN identity.roles r ON r.role_id = ur.role_id WHERE ur.user_id = @user_id;
+            """,
+            ("user_id", userId),
+            ("permission_code", permissionCode),
+            ("limit", limit),
+            ("max_count", maxCount));
 
     public Task DenyGrantAsync(Guid grantId)
     {

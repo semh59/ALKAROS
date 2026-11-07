@@ -113,6 +113,13 @@ public sealed record ApplyBillDiscountRequestV1(
     string ReasonCode,
     string? Notes = null);
 
+/// <summary>Complimentary (comp) of an amount of the remaining bill; ReasonCode comes from the complimentary catalog.</summary>
+public sealed record ApplyBillCompRequestV1(
+    string IdempotencyKey,
+    decimal Amount,
+    string ReasonCode,
+    string? Notes = null);
+
 /// <summary>
 /// "Applied" carries Adjustment/Summary; "Pending" carries only GrantId —
 /// mirrors <c>ApplyComplimentaryResultV1</c>'s Applied/Pending shape.

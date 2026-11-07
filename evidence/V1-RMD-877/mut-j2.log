@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comp.test.js > split-payment.js comp (ikram) > refuses a missing amount or one above the remaining amount without calling the server
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794047564336-0.23434612242766728:226:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794047564336-0.23434612242766728:387:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794047564336-0.23434612242766728:492:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comp.test.js (7 tests | 1 failed) 2504ms
+     × refuses a missing amount or one above the remaining amount without calling the server 1167ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comp.test.js > split-payment.js comp (ikram) > refuses a missing amount or one above the remaining amount without calling the server
+AssertionError: expected 'İkramİkramBu ikram hesabın kalan tuta…' to contain 'hesabın kalan tutarını aşamaz'
+
+Expected: "hesabın kalan tutarını aşamaz"
+Received: "İkramİkramBu ikram hesabın kalan tutarının tamamını (₺100,00) kapatır; hesap tahsilat yapılmadan kapanır. Doğruysa "Evet, ikram et" düğmesine basın.Müşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıEvet, ikram et"
+
+ ❯ split-payment-comp.test.js:141:43
+    139|     type("comp-amount", "100.01");
+    140|     submit().click();
+    141|     await vi.waitFor(() => expect(text()).toContain("hesabın kalan tut…
+       |                                           ^
+    142|
+    143|     expect(compCalls(fetchMock)).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  13:32:41
+   Duration  3.94s (transform 441ms, setup 23ms, import 56ms, tests 2.50s, environment 1.09s)
+

@@ -378,7 +378,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
 
         var listing = await ListPoliciesAsync(client, cookie);
 
-        Assert.Equal(["bills.discount/waiter"], listing.Select(policy => policy.PermissionCode + "/" + policy.RoleCode).ToArray());
+        Assert.Equal(["bills.comp/cashier", "bills.discount/waiter"], listing.Select(policy => policy.PermissionCode + "/" + policy.RoleCode).ToArray());
     }
 
     [Fact]
@@ -399,7 +399,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
             Assert.Equal(2, (await changed.Content.ReadFromJsonAsync<PolicyV1>(WebJson))!.RowVersion);
 
         var listing = await ListPoliciesAsync(client, cookie);
-        var comp = Assert.Single(listing, policy => policy.PermissionCode == "bills.comp");
+        var comp = Assert.Single(listing, policy => policy.PermissionCode == "bills.comp" && policy.RoleCode == "waiter");
         Assert.Equal((150m, 6, 7200), (comp.LimitAmount, comp.MaxCount, comp.WindowSeconds));
 
         using (var removed = await client.SendAsync(Request(HttpMethod.Delete, path, cookie)))
@@ -407,7 +407,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         using (var again = await client.SendAsync(Request(HttpMethod.Delete, path, cookie)))
             Assert.Equal(HttpStatusCode.NoContent, again.StatusCode);
 
-        Assert.DoesNotContain(await ListPoliciesAsync(client, cookie), policy => policy.PermissionCode == "bills.comp");
+        Assert.DoesNotContain(await ListPoliciesAsync(client, cookie), policy => policy.PermissionCode == "bills.comp" && policy.RoleCode == "waiter");
         Assert.Equal(2, await _database.AuditCountAsync("identity.policy-changed"));
         Assert.Equal(1, await _database.AuditCountAsync("identity.policy-removed"));
     }

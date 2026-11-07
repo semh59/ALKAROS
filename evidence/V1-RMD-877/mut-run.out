@@ -1,0 +1,15 @@
+M1-comp-reasons-ignored: testexit=1 Başarısız! - Başarısız:     5, Başarılı:    12, Atlanan:     0, Toplam:    17, Süre: 1 m 50 s - ALKAROS.Host.E
+M2-comp-uses-discount-permission: testexit=1 Başarısız! - Başarısız:     3, Başarılı:    14, Atlanan:     0, Toplam:    17, Süre: 51 s - ALKAROS.Host.Exper
+M3-no-payable-precheck: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 50 s - ALKAROS.Host.Exper
+M4-denied-text-not-comp: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 49 s - ALKAROS.Host.Exper
+M5-audit-name: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 48 s - ALKAROS.Host.Exper
+M6-complimentary-flag-not-passed: testexit=1 Başarısız! - Başarısız:     3, Başarılı:    14, Atlanan:     0, Toplam:    17, Süre: 49 s - ALKAROS.Host.Exper
+M7-seed-limit-changed: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 28 s - ALKAROS.Host.Tests
+M8-down-keeps-row: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 15 s - ALKAROS.Host.Tests
+J1-key-dropped-while-pending: testexit=1 
+MUTATION TARGET COUNT 2
+J2-no-remaining-check: target problem
+MUTATION TARGET COUNT 0
+J3-no-denied-text: target problem
+J4-confirm-skipped: testexit=1 
+J5-edit-keeps-pending: testexit=0 

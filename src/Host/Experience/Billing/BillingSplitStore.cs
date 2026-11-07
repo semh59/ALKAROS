@@ -4,6 +4,7 @@ using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Identity.Authorization.Grants;
+using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
@@ -59,13 +60,14 @@ public sealed class BillingSplitStore
         string correlationId,
         Guid? approverId = null,
         Guid? grantId = null,
+        bool complimentary = false,
         CancellationToken cancellationToken = default)
     {
         if (_adjustments == null)
             throw new InvalidOperationException("Bill adjustment repository is not configured.");
         if (_dataSource == null)
             throw new InvalidOperationException("Data source is not configured.");
-        ValidateDiscountRequest(request);
+        ValidateDiscountRequest(request, complimentary);
 
         // Found by an independent audit (2026-09-06): a bare read-validate-
         // write here let two concurrent discount requests both read the
@@ -168,7 +170,7 @@ public sealed class BillingSplitStore
         await auditEvents.AppendAsync(
             new AuditEvent(
                 id: Guid.NewGuid(),
-                eventName: "bill.discount.applied",
+                eventName: complimentary ? "bill.comp.applied" : "bill.discount.applied",
                 aggregateType: "Bill",
                 aggregateId: billId,
                 actorType: "User",
@@ -213,14 +215,16 @@ public sealed class BillingSplitStore
     }
 
     /// <summary>Everything that can be judged from the request alone, shared by the grant request and the apply path.</summary>
-    public static void ValidateDiscountRequest(ApplyBillDiscountRequestV1 request)
+    public static void ValidateDiscountRequest(ApplyBillDiscountRequestV1 request, bool complimentary = false)
     {
         ArgumentNullException.ThrowIfNull(request);
         ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
-        if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
+        if (!(complimentary
+                ? ComplimentaryReasonCatalog.AllReasons.Any(reason => string.Equals(reason, request.ReasonCode, StringComparison.Ordinal))
+                : DiscountReasonCatalog.IsValid(request.ReasonCode)))
             throw new BillingValidationException(
-                "DISCOUNT_REASON_INVALID", $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.",
-                "İndirim gerekçesi geçerli değil.");
+                "DISCOUNT_REASON_INVALID", $"Reason '{request.ReasonCode}' is not a valid {(complimentary ? "complimentary" : "discount")} catalog reason.",
+                complimentary ? "İkram gerekçesi geçerli değil." : "İndirim gerekçesi geçerli değil.");
         var upper = request.CalculationType switch
         {
             "Percentage" => 100m,
@@ -239,13 +243,20 @@ public sealed class BillingSplitStore
 
     /// <summary>A discount request for a bill that exists and can still take one, before any grant is opened for it.</summary>
     public async Task EnsureDiscountRequestableAsync(
-        Guid billId, ApplyBillDiscountRequestV1 request, CancellationToken cancellationToken = default)
+        Guid billId, ApplyBillDiscountRequestV1 request, bool complimentary = false,
+        CancellationToken cancellationToken = default)
     {
-        ValidateDiscountRequest(request);
+        ValidateDiscountRequest(request, complimentary);
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
         if (IsDiscountable(bill.Status))
+        {
+            // A comp that cannot be applied must not spend one of the cashier's auto-approvals first.
+            if (complimentary && request.Value > AdjustmentCalculator.Calculate(
+                    bill, await _adjustments!.GetByBillIdAsync(billId, cancellationToken)).AdjustedPayableAmount)
+                throw new DiscountExceedsPayableException("The complimentary amount exceeds the payable amount.");
             return;
+        }
 
         // A retry of a discount that was already applied is answered by ApplyDiscountAsync, even after the bill was paid.
         var existing = await _adjustments!.GetByBillIdAsync(billId, cancellationToken);
@@ -1043,8 +1054,11 @@ public sealed class BillingValidationException(string code, string message, stri
     public string UserMessage { get; } = userMessage;
 }
 
-/// <summary>A discount request the approval policy refused.</summary>
-public sealed class GrantDeniedException() : Exception("The discount request was denied.");
+/// <summary>A discount or complimentary request the approval policy refused.</summary>
+public sealed class GrantDeniedException(bool complimentary = false) : Exception("The request was denied.")
+{
+    public bool Complimentary { get; } = complimentary;
+}
 
 /// <summary>
 /// V1-RMD-413: an item split was requested on a bill whose adjustments (discount, fee, tip) change what is owed.

@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comp.test.js > split-payment.js comp (ikram) > asks once before a comp that closes the whole bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794047457996-0.4268939886978307:226:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794047457996-0.4268939886978307:387:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794047457996-0.4268939886978307:492:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comp.test.js (7 tests | 1 failed) 3488ms
+     × asks once before a comp that closes the whole bill 1299ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comp.test.js > split-payment.js comp (ikram) > asks once before a comp that closes the whole bill
+AssertionError: expected 'İkram et' to be 'Evet, ikram et' // Object.is equality
+
+Expected: "Evet, ikram et"
+Received: "İkram et"
+
+ ❯ split-payment-comp.test.js:149:57
+    147|     document.getElementById("comp-all").click();
+    148|     submit().click();
+    149|     await vi.waitFor(() => expect(submit().textContent).toBe("Evet, ik…
+       |                                                         ^
+    150|     expect(compCalls(fetchMock)).toHaveLength(0);
+    151|     submit().click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  13:30:53
+   Duration  6.12s (transform 853ms, setup 59ms, import 98ms, tests 3.49s, environment 1.88s)
+

@@ -76,6 +76,17 @@
     // form after a network failure gets a new key instead of replaying the first attempt's server record.
     discountIdempotencyKey: null,
     discountRequestSignature: null,
+    // A comp waiting for a manager keeps its key: resending the same request is how an approval is picked up.
+    compReason: 'CustomerSatisfaction',
+    compAmountDraft: '',
+    compNoteDraft: '',
+    compBusy: false,
+    compConfirm: false,
+    compPending: false,
+    compError: null,
+    compNotice: null,
+    compIdempotencyKey: null,
+    compRequestSignature: null,
     refundRequestKey: null,
     refundRequestSignature: null,
     tipIdempotencyKey: null,
@@ -250,6 +261,14 @@
     PromotionalOffer: 'Promosyon',
     ServiceRecovery: 'Hizmet telafisi (şikayet/hata düzeltmesi)',
     ManagerDiscretion: 'Yönetici takdiri / düzeltme',
+  };
+
+  // ComplimentaryReasonCatalog's own codes (ALKAROS.Orders.ItemExceptions); the server rejects any other value.
+  var COMP_REASON_LABELS = {
+    CustomerSatisfaction: 'Müşteri memnuniyeti',
+    ManagerPromotion: 'Yönetici ikramı',
+    VIPGuest: 'Özel misafir',
+    ServiceApology: 'Hizmet özrü',
   };
 
   // AdjustmentType's own enum (ALKAROS.Billing.Adjustments) - every value GET .../adjustments can return.
@@ -717,6 +736,76 @@
     });
   }
 
+  // A comp goes through the same approval engine as a discount but under its own permission and limit: within the
+  // limit a manager set for the cashier role it is applied at once (200), above it the request waits for a manager
+  // (202) and is picked up by resending the identical request with the same key.
+  function submitComp() {
+    var amount = Number(state.compAmountDraft);
+    if (!(amount > 0)) {
+      state.compError = 'İkram tutarı sıfırdan büyük olmalı.';
+      render();
+      return;
+    }
+    if (amount > remainingAmount() + 0.004) {
+      state.compError = 'İkram tutarı hesabın kalan tutarını aşamaz.';
+      render();
+      return;
+    }
+    if (amount >= remainingAmount() - 0.004 && !state.compConfirm && !state.compPending) {
+      state.compConfirm = true;
+      state.compError = null;
+      render();
+      return;
+    }
+    state.compConfirm = false;
+    state.compBusy = true;
+    state.compError = null;
+    state.compNotice = null;
+    render();
+    var compBody = { Amount: amount, ReasonCode: state.compReason, Notes: state.compNoteDraft || null };
+    var compSignature = JSON.stringify(compBody);
+    if (!state.compIdempotencyKey || state.compRequestSignature !== compSignature) {
+      state.compIdempotencyKey = crypto.randomUUID();
+      state.compRequestSignature = compSignature;
+    }
+    compBody.IdempotencyKey = state.compIdempotencyKey;
+    api(billBase() + '/comp', { method: 'POST', body: compBody }).then(function (result) {
+      state.compBusy = false;
+      var waiting = result.ok && result.body && result.body.status === 'Pending';
+      if (result.status < 500 && !waiting) state.compIdempotencyKey = null;
+      state.compPending = waiting;
+      if (!result.ok) {
+        var code = result.body && result.body.error && result.body.error.code;
+        state.compError = code === 'GRANT_DENIED' ? 'İkram talebiniz reddedildi. Yetkili bir kullanıcı uygulayabilir.'
+          : code === 'DISCOUNT_EXCEEDS_PAYABLE' ? 'İkram tutarı hesabın kalan tutarını aşıyor.'
+          : code === 'DISCOUNT_BELOW_COLLECTED' ? 'Bu ikram, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.'
+          : code === 'DISCOUNT_REASON_INVALID' ? 'İkram gerekçesi eksik ya da geçersiz.'
+          : describeHttpFailure(result.status, result.body);
+        render();
+        return;
+      }
+      if (waiting) {
+        state.compNotice = 'İkram talebiniz yönetici onayına gönderildi. Onaylandığında "Onay durumunu kontrol et" düğmesine basın; o zamana kadar hesap değişmez.';
+        render();
+        return;
+      }
+      state.compAmountDraft = '';
+      state.compNoteDraft = '';
+      state.compNotice = 'İkram uygulandı ve kaydedildi.';
+      return refreshAdjustments().then(refreshSummary).then(function () {
+        state.amountDraft = remainingAmount().toFixed(2);
+        render();
+      }, function () {
+        state.compNotice = 'İkram uygulandı, ancak güncel tutar alınamadı. Sayfayı yenileyin; tekrar göndermeyin.';
+        render();
+      });
+    }, function () {
+      state.compBusy = false;
+      state.compError = 'Bağlantı kurulamadı. Tekrar deneyin.';
+      render();
+    });
+  }
+
   // V1-RMD-292: bills.split is checked directly (RequireMutationAsync) - a voluntary tip is data entry of
   // money already handed over, never a discretionary decision a role might lack the authority for (see the
   // endpoint's own comment); no grant flow here, unlike the discount above.
@@ -1114,16 +1203,17 @@
     return (
       '<div class="sp-field"><span class="sp-field-label">Uygulanan indirim, bahşiş ve ücretler</span>' +
       state.adjustmentItems.map(function (item) {
-        var label = ADJUSTMENT_TYPE_LABELS[item.adjustmentType] || item.adjustmentType;
+        var isComp = !!COMP_REASON_LABELS[item.reason];
+        var label = isComp ? 'İkram' : (ADJUSTMENT_TYPE_LABELS[item.adjustmentType] || item.adjustmentType);
         var sign = item.isDeduction ? '−' : '+';
         return (
           '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(label) +
-          (item.reason ? ' · ' + escapeHtml(DISCOUNT_REASON_LABELS[item.reason] || item.reason) : '') + '</span>' +
+          (item.reason ? ' · ' + escapeHtml(COMP_REASON_LABELS[item.reason] || DISCOUNT_REASON_LABELS[item.reason] || item.reason) : '') + '</span>' +
           '<span class="sp-line-status is-approved">' + sign + formatMoney(item.amount) + '</span>' +
           (UNDOABLE_ADJUSTMENT_TYPES.indexOf(item.adjustmentType) !== -1
             ? '<button class="sp-btn sp-btn-secondary" type="button" data-undo-adjustment="' + escapeHtml(item.adjustmentId) + '"' +
               ' aria-label="' + escapeHtml(label + ' ' + formatMoney(item.amount) + ' geri al') + '"' +
-              (state.undoBusy || state.busy || state.tipBusy || state.discountBusy ? ' disabled' : '') + '>Geri al</button>'
+              (state.undoBusy || state.busy || state.tipBusy || state.discountBusy || state.compBusy ? ' disabled' : '') + '>Geri al</button>'
             : '') +
           '</div>'
         );
@@ -1167,6 +1257,35 @@
       escapeHtml(state.discountNoteDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
       (state.discountBusy ? 'Gönderiliyor…' : (state.discountConfirm ? 'Evet, indirimi uygula' : 'İndirim uygula')) + '</button>' +
+      '</div>'
+    );
+  }
+
+  function renderCompForm() {
+    var disabled = state.compBusy ? ' disabled' : '';
+    return (
+      '<div class="sp-field"><span class="sp-field-label">İkram</span>' +
+      (state.compNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.compNotice) + '</div>' : '') +
+      (state.compError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.compError) + '</div>' : '') +
+      (state.compConfirm
+        ? '<div class="sp-alert-body" role="alert">Bu ikram hesabın kalan tutarının tamamını (' + escapeHtml(formatMoney(remainingAmount())) +
+          ') kapatır; hesap tahsilat yapılmadan kapanır. Doğruysa "Evet, ikram et" düğmesine basın.</div>'
+        : '') +
+      '<select class="sp-input" id="comp-reason" aria-label="İkram gerekçesi"' + disabled + '>' +
+      Object.keys(COMP_REASON_LABELS).map(function (code) {
+        return '<option value="' + code + '"' + (state.compReason === code ? ' selected' : '') + '>' +
+          escapeHtml(COMP_REASON_LABELS[code]) + '</option>';
+      }).join('') +
+      '</select>' +
+      '<div class="sp-row">' +
+      '<input class="sp-input" type="number" step="0.01" min="0.01" id="comp-amount" placeholder="Tutar" aria-label="İkram tutarı"' + disabled + ' value="' +
+      escapeHtml(state.compAmountDraft) + '">' +
+      '<button class="sp-btn sp-btn-secondary" id="comp-all" type="button"' + disabled + '>Kalanın tamamı</button>' +
+      '</div>' +
+      '<input class="sp-input" type="text" id="comp-note" maxlength="500" placeholder="Not (opsiyonel)" aria-label="İkram notu (opsiyonel)"' + disabled + ' value="' +
+      escapeHtml(state.compNoteDraft) + '">' +
+      '<button class="sp-btn sp-btn-secondary" id="submit-comp" type="button"' + disabled + '>' +
+      (state.compBusy ? 'Gönderiliyor…' : (state.compPending ? 'Onay durumunu kontrol et' : (state.compConfirm ? 'Evet, ikram et' : 'İkram et'))) + '</button>' +
       '</div>'
     );
   }
@@ -1915,6 +2034,8 @@
       renderAllocationLines() +
       (state.locked ? '' : renderFold('discount-tip', 'İndirim ve bahşiş', renderDiscountForm() + renderTipForm(),
         !!(state.discountNotice || state.discountError || state.discountConfirm || state.tipError))) +
+      (state.locked ? '' : renderFold('comp', 'İkram', renderCompForm(),
+        !!(state.compNotice || state.compError || state.compConfirm || state.compPending))) +
       renderFold('refund', 'İade ve iptal', renderRefundSection(true),
         !!(state.refundError || state.refundNotice || state.confirmKey || (state.refundRequests && state.refundRequests.length > 0))) +
       '</div>';
@@ -2028,6 +2149,18 @@
     Array.prototype.forEach.call(document.querySelectorAll('[data-undo-adjustment]'), function (button) {
       button.addEventListener('click', function () { undoAdjustment(button.getAttribute('data-undo-adjustment')); });
     });
+    // Editing the request after it went to a manager starts a new one; the old pending request is left to expire.
+    function editedComp() { state.compConfirm = false; state.compPending = false; state.compNotice = null; }
+    var compReasonInput = document.getElementById('comp-reason');
+    if (compReasonInput) compReasonInput.addEventListener('change', function () { state.compReason = this.value; editedComp(); });
+    var compAmountInput = document.getElementById('comp-amount');
+    if (compAmountInput) compAmountInput.addEventListener('input', function () { state.compAmountDraft = this.value; editedComp(); });
+    var compNoteInput = document.getElementById('comp-note');
+    if (compNoteInput) compNoteInput.addEventListener('input', function () { state.compNoteDraft = this.value; editedComp(); });
+    var compAllButton = document.getElementById('comp-all');
+    if (compAllButton) compAllButton.addEventListener('click', function () { state.compAmountDraft = remainingAmount().toFixed(2); editedComp(); render(); });
+    var submitCompButton = document.getElementById('submit-comp');
+    if (submitCompButton) submitCompButton.addEventListener('click', submitComp);
     var submitDiscountButton = document.getElementById('submit-discount');
     if (submitDiscountButton) submitDiscountButton.addEventListener('click', submitDiscount);
     var tipAmountInput = document.getElementById('tip-amount');
