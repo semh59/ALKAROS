@@ -1,8 +1,8 @@
 # V1-RMD-893 - Kasiyer ekranında bekleyen indirim onaylanınca uygulanabilsin (anahtar 202'de silinmez)
 
 - Task ID: V1-RMD-893
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
