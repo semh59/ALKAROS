@@ -219,7 +219,7 @@ public sealed class PaymentRefundStore
 
     /// <summary>
     /// Checks the asked items against the bill and what was already refunded, and prices them: the line's gross
-    /// share for the units, scaled by the bill-level discount ratio; tips and fees are not refunded.
+    /// share for the units after the bill-level discount is spread over the lines; tips and fees are not refunded.
     /// </summary>
     private async Task<(decimal Amount, IReadOnlyList<RefundRequestItem> Items)> PriceItemsAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, IReadOnlyList<RefundItemInputV1> items,
@@ -237,9 +237,7 @@ public sealed class PaymentRefundStore
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
         var summary = AdjustmentCalculator.Calculate(bill, await _adjustments.GetByBillIdAsync(billId, cancellationToken));
-        var ratio = summary.OriginalPayableAmount > 0m
-            ? (summary.OriginalPayableAmount - summary.TotalDiscounts) / summary.OriginalPayableAmount
-            : 1m;
+        var lineAmounts = AdjustmentCalculator.DiscountedLineAmounts(bill, summary);
         var refunded = await PostgresRefundRequestRepository.RefundedQuantitiesAsync(billId, connection, transaction, cancellationToken);
         var halfPortionProducts = await HalfPortionProductsAsync(
             connection, transaction, bill.Items.Select(candidate => candidate.ProductId).Distinct().ToArray(), cancellationToken);
@@ -260,7 +258,8 @@ public sealed class PaymentRefundStore
                     "Bu ürün yalnız tam adet olarak iade edilebilir.");
             if (item.Quantity > left)
                 throw new RefundItemQuantityException(item.BillItemId);
-            total += decimal.Round(line.GrossAmount * item.Quantity / line.Quantity * ratio, 2, MidpointRounding.AwayFromZero);
+            total += AdjustmentCalculator.RefundAmount(
+                lineAmounts.GetValueOrDefault(line.Id), line.Quantity, refunded.GetValueOrDefault(item.BillItemId), item.Quantity);
         }
 
         if (total <= 0m)

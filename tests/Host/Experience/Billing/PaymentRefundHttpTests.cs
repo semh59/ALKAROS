@@ -955,6 +955,30 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RefundingEveryItemOfADiscountedBillInPartsGivesBackExactlyWhatWasPaid()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(_source).AddAsync(
+            ALKAROS.Billing.Adjustments.BillAdjustment.CreateDiscountAmount(
+                Guid.NewGuid(), seeded.BillId, 10.01m, 0m, "Discount", _managerId, createdBy: _managerId));
+        var paymentId = await CashPaymentAsync(seeded.BillId, 239.99m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var amounts = new List<decimal>();
+
+        foreach (var (itemId, quantity) in new[] { (seeded.FirstItemId, 1m), (seeded.FirstItemId, 1m), (seeded.SecondItemId, 1m) })
+        {
+            var request = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(itemId, quantity, false)]);
+            amounts.Add(request.Amount);
+            Assert.Equal("Completed", (await DecideAsync(client, request.RequestId, "approve", _managerCookie)).Status);
+        }
+
+        Assert.Equal([96.00m, 95.99m, 48.00m], amounts);
+        Assert.Equal(239.99m, amounts.Sum());
+    }
+
+    [Fact]
     public async Task ARejectedItemRequestFreesTheUnitsAndTheRemainingUnitsAreCapped()
     {
         var seeded = await _database.SeedBillAsync();

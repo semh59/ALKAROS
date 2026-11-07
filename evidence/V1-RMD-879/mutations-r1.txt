@@ -1,0 +1,7 @@
+M1-refund-not-cumulative: testexit=1 Başarısız! - Başarısız:     2, Başarılı:    27, Atlanan:     0, Toplam:    29, Süre: 943 ms - ALKAROS.Billing.
+M2-discount-rounded-per-line: testexit=1 Başarısız! - Başarısız:     4, Başarılı:    25, Atlanan:     0, Toplam:    29, Süre: 762 ms - ALKAROS.Billing.
+M3-fees-dropped-from-breakdown: testexit=0 Başarılı!  - Başarısız:     0, Başarılı:    29, Atlanan:     0, Toplam:    29, Süre: 741 ms - ALKAROS.Billing.
+M4-breakdown-old-apportion: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    28, Atlanan:     0, Toplam:    29, Süre: 653 ms - ALKAROS.Billing.
+M5-refund-ignores-earlier-refunds: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi
+M6-refund-ignores-discount: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi
+M7-discount-over-payable-uncapped: testexit=0 Başarılı!  - Başarısız:     0, Başarılı:    29, Atlanan:     0, Toplam:    29, Süre: 736 ms - ALKAROS.Billing.

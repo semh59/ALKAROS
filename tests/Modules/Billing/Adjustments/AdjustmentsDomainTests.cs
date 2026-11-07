@@ -330,4 +330,95 @@ public sealed class AdjustmentsDomainTests
         Assert.Equal(80m, created.GrossAmount);
         Assert.Equal(100m, constructed.Rate);
     }
+
+    private static (Bill Bill, AdjustedBillSummary Summary) DiscountedBill(
+        decimal discount, decimal fee, decimal tip, params (decimal Price, decimal Quantity, decimal Rate)[] lines)
+    {
+        var billId = Guid.NewGuid();
+        var items = lines.Select(line => new BillItem(
+            Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Item", line.Quantity, line.Price, line.Rate)).ToArray();
+        var bill = new Bill(billId, "BILL-ALLOC", items);
+        var adjustments = new List<BillAdjustment>
+        {
+            BillAdjustment.CreateDiscountAmount(Guid.NewGuid(), billId, discount, bill.EffectiveTaxRatePercent, "Promo", Guid.NewGuid()),
+        };
+        if (fee > 0m)
+            adjustments.Add(BillAdjustment.CreateServiceFee(Guid.NewGuid(), billId, fee, 10m, "Fee", Guid.NewGuid()));
+        if (tip > 0m)
+            adjustments.Add(BillAdjustment.CreateTip(Guid.NewGuid(), billId, tip, "Tip", Guid.NewGuid()));
+        return (bill, AdjustmentCalculator.Calculate(bill, adjustments));
+    }
+
+    [Theory]
+    [InlineData(10.00, 0.01)]
+    [InlineData(10.00, 3.34)]
+    [InlineData(33.33, 0.00)]
+    [InlineData(99.99, 0.00)]
+    [InlineData(102.00, 3.34)]
+    public void TheBillDiscountIsSpreadOverTheLinesToTheKurusAndAddsUpToThePaidTotal(double discount, double fee)
+    {
+        var (bill, summary) = DiscountedBill((decimal)discount, (decimal)fee, 0m, (33.33m, 1m, 10m), (33.33m, 1m, 10m), (33.34m, 1m, 20m));
+
+        var amounts = AdjustmentCalculator.DiscountedLineAmounts(bill, summary);
+
+        Assert.Equal(Math.Max(0m, bill.PayableAmount - (decimal)discount), amounts.Values.Sum());
+        Assert.All(bill.Items, item =>
+            Assert.InRange(item.GrossAmount - amounts[item.Id], 0m, item.GrossAmount));
+    }
+
+    [Fact]
+    public void AllTheUnitsOfEveryLineRefundTheWholeDiscountedTotalWhicheverWayTheyAreSplit()
+    {
+        var (bill, summary) = DiscountedBill(10m, 0m, 0m, (33.33m, 3m, 10m), (7.77m, 2m, 20m));
+        var amounts = AdjustmentCalculator.DiscountedLineAmounts(bill, summary);
+        var total = 0m;
+        foreach (var item in bill.Items)
+        {
+            var refunded = 0m;
+            for (var unit = 0; unit < item.Quantity; unit++)
+            {
+                total += AdjustmentCalculator.RefundAmount(amounts[item.Id], item.Quantity, refunded, 1m);
+                refunded += 1m;
+            }
+        }
+
+        Assert.Equal(summary.AdjustedPayableAmount, total);
+    }
+
+    [Fact]
+    public void ARefundOfPartOfALineTakesTheKurusRemainderOnlyWithTheLastUnit()
+    {
+        Assert.Equal(3.33m, AdjustmentCalculator.RefundAmount(10m, 3m, 0m, 1m));
+        Assert.Equal(3.34m, AdjustmentCalculator.RefundAmount(10m, 3m, 1m, 1m));
+        Assert.Equal(3.33m, AdjustmentCalculator.RefundAmount(10m, 3m, 2m, 1m));
+        Assert.Equal(6.67m, AdjustmentCalculator.RefundAmount(10m, 3m, 0m, 2m));
+    }
+
+    [Fact]
+    public void TheDiscountGoesToTheLinesInProportionToTheKurus()
+    {
+        var (bill, summary) = DiscountedBill(10m, 0m, 0m, (33.33m, 1m, 10m), (33.33m, 1m, 10m), (33.34m, 1m, 20m));
+
+        var amounts = AdjustmentCalculator.DiscountedLineAmounts(bill, summary);
+
+        Assert.Equal([30.00m, 30.00m, 30.00m], bill.Items.Select(item => amounts[item.Id]));
+    }
+
+    [Theory]
+    [InlineData(0.00, 0.00, 60.00, 5.46, 30.00, 5.00)]
+    [InlineData(3.34, 0.00, 62.23, 5.61, 31.11, 5.15)]
+    [InlineData(0.00, 5.00, 60.00, 5.46, 30.00, 5.00)]
+    public void TheTaxBreakdownCarriesTheDiscountedLinesAndTheFeeShareOfEachRateAndNeverTheTip(
+        double fee, double tip, double gross10, double tax10, double gross20, double tax20)
+    {
+        var (bill, summary) = DiscountedBill(10m, (decimal)fee, (decimal)tip, (33.33m, 1m, 10m), (33.33m, 1m, 10m), (33.34m, 1m, 20m));
+
+        var lines = TaxBreakdown.Build(bill, summary);
+
+        Assert.Equal([10m, 20m], lines.Select(line => line.RatePercent));
+        Assert.Equal([(decimal)gross10, (decimal)gross20], lines.Select(line => line.Gross));
+        Assert.Equal([(decimal)tax10, (decimal)tax20], lines.Select(line => line.Tax));
+        Assert.Equal(summary.AdjustedPayableAmount - summary.TotalTips, lines.Sum(line => line.Gross));
+        Assert.Equal(summary.AdjustedTaxTotal, lines.Sum(line => line.Tax));
+    }
 }

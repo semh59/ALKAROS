@@ -1,0 +1,3 @@
+tests/Modules/Billing/Adjustments rc=0 Başarılı!  - Başarısız:     0, Başarılı:    29, Atlanan:     0, Toplam:    29, Süre: 1 s - ALKAROS.Billing.Adjustments.Tests.dll (net8.0)
+tests/Host/Experience/Billing rc=0 Başarılı!  - Başarısız:     0, Başarılı:    78, Atlanan:     0, Toplam:    78, Süre: 5 m - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0
+FINISHED

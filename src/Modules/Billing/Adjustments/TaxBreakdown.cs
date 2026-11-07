@@ -24,9 +24,12 @@ public static class TaxBreakdown
         if (groups.Count == 0)
             return [];
 
-        var gross = BillMath.Apportion(
-            BillMath.RoundCurrency(summary.AdjustedPayableAmount - summary.TotalTips),
+        var lineAmounts = AdjustmentCalculator.DiscountedLineAmounts(bill, summary);
+        var groupAmounts = groups.Select(group => group.Sum(item => lineAmounts[item.Id])).ToArray();
+        var fees = BillMath.Apportion(
+            BillMath.RoundCurrency(summary.AdjustedPayableAmount - summary.TotalTips - groupAmounts.Sum()),
             groups.Select(group => group.Sum(item => item.GrossAmount)).ToArray());
+        var gross = groupAmounts.Select((amount, index) => amount + fees[index]).ToArray();
         var tax = BillMath.Apportion(summary.AdjustedTaxTotal, groups.Select(group => group.Sum(item => item.TaxAmount)).ToArray());
 
         return groups

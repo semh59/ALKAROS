@@ -1,0 +1,10 @@
+M3-fees-dropped-from-breakdown: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    30, Atlanan:     0, Toplam:    31, Süre: 623 ms - ALKAROS.Billing.
+M7-discount-over-payable-uncapped: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    30, Atlanan:     0, Toplam:    31, Süre: 845 ms - ALKAROS.Billing.
+M1-refund-not-cumulative: testexit=1 Başarısız! - Başarısız:     2, Başarılı:    23, Atlanan:     0, Toplam:    25, Süre: 113 ms - ALKAROS.Billing.
+M2-discount-rounded-per-line: testexit=1 Başarısız! - Başarısız:     8, Başarılı:    17, Atlanan:     0, Toplam:    25, Süre: 119 ms - ALKAROS.Billing.
+M3-fees-dropped: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 104 ms - ALKAROS.Billing.
+M4-breakdown-old-apportion: testexit=1 Başarısız! - Başarısız:     3, Başarılı:    22, Atlanan:     0, Toplam:    25, Süre: 111 ms - ALKAROS.Billing.
+M7-uncapped: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 101 ms - ALKAROS.Billing.
+M8-tip-not-excluded: testexit=1 Başarısız! - Başarısız:     2, Başarılı:    23, Atlanan:     0, Toplam:    25, Süre: 129 ms - ALKAROS.Billing.
+M9-discount-all-on-first-line: testexit=1 Başarısız! - Başarısız:     6, Başarılı:    19, Atlanan:     0, Toplam:    25, Süre: 108 ms - ALKAROS.Billing.
+M10-tax-weight-gross: testexit=1 Başarısız! - Başarısız:     3, Başarılı:    22, Atlanan:     0, Toplam:    25, Süre: 105 ms - ALKAROS.Billing.
