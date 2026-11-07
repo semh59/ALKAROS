@@ -166,7 +166,8 @@
         "dependencies": {
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Orders": "[1.0.0, )"
+          "ALKAROS.Orders": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.billing.paymentclosure": {
@@ -287,7 +288,8 @@
         "dependencies": {
           "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
-          "ALKAROS.Orders": "[1.0.0, )"
+          "ALKAROS.Orders": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.measurements": {
