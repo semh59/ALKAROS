@@ -22,6 +22,10 @@
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — 223 kaydı
   - tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs — 223 ileri/geri testi
   - src/Host/DualScreen/DualScreenApplication.Receipt.cs — print ucu, GET alanları
+  - src/Modules/Billing/BillFoundation/IBillReceiptPrintRepository.cs — yeni, orijinal basım talebi
+  - src/Modules/Billing/BillFoundation/PostgresBillReceiptPrintRepository.cs — yeni
+  - src/Host/Experience/Billing/BillTerminalAccess.cs — depo kaydı
+  - tests/Clients/StaticApps/split-payment-receipt.test.js — sunucu durumuna bağlı basım
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js — her basım print ucundan
   - tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
   - tests/Host/Experience/PaymentTender/BillTerminalAccessTenderHttpTests.cs — rota listesi
