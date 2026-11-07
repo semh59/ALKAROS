@@ -1,0 +1,66 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > keeps paid wording when money was collected, even with a comp on the bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085465695-0.8612741018356272:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085465695-0.8612741018356272:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085465695-0.8612741018356272:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > keeps paid wording for an ordinary paid bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085465809-0.3224855681520775:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085465809-0.3224855681520775:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085465809-0.3224855681520775:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comped-close.test.js (7 tests | 2 failed) 835ms
+     × keeps paid wording when money was collected, even with a comp on the bill 114ms
+     × keeps paid wording for an ordinary paid bill 106ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > keeps paid wording when money was collected, even with a comp on the bill
+AssertionError: expected 'İkramla Kapandı' to be 'Hesap Ödendi' // Object.is equality
+
+Expected: "Hesap Ödendi"
+Received: "İkramla Kapandı"
+
+ ❯ split-payment-comped-close.test.js:79:21
+     77|     await open(60, [comp]);
+     78|
+     79|     expect(title()).toBe("Hesap Ödendi");
+       |                     ^
+     80|     expect(subtitle()).toBe("Bu hesabın tamamı tahsil edildi.");
+     81|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > keeps paid wording for an ordinary paid bill
+AssertionError: expected 'Hesap Kapandı' to be 'Hesap Ödendi' // Object.is equality
+
+Expected: "Hesap Ödendi"
+Received: "Hesap Kapandı"
+
+ ❯ split-payment-comped-close.test.js:86:21
+     84|     await open(100, []);
+     85|
+     86|     expect(title()).toBe("Hesap Ödendi");
+       |                     ^
+     87|   });
+     88| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  00:04:23
+   Duration  2.22s (transform 350ms, setup 24ms, import 50ms, tests 835ms, environment 1.03s)
+
+vitestexit=1

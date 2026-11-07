@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > does not count a tip as a discount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085484816-0.4360511186724383:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085484816-0.4360511186724383:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085484816-0.4360511186724383:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comped-close.test.js (7 tests | 1 failed) 843ms
+     × does not count a tip as a discount 126ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > does not count a tip as a discount
+AssertionError: expected 'İndirim ve İkramla Kapandı' to be 'İkramla Kapandı' // Object.is equality
+
+Expected: "İkramla Kapandı"
+Received: "İndirim ve İkramla Kapandı"
+
+ ❯ split-payment-comped-close.test.js:52:21
+     50|     await open(0, [comp, tip]);
+     51|
+     52|     expect(title()).toBe("İkramla Kapandı");
+       |                     ^
+     53|   });
+     54|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  00:04:43
+   Duration  2.15s (transform 352ms, setup 27ms, import 51ms, tests 843ms, environment 967ms)
+
+vitestexit=1

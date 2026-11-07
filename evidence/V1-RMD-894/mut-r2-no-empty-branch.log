@@ -1,0 +1,66 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill with nothing to collect and no deduction is closed
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085754254-0.09099089212840217:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085754254-0.09099089212840217:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085754254-0.09099089212840217:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > keeps the plain paid wording when only a tip is on the collected bill
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085754692-0.354126883065496:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085754692-0.354126883065496:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085754692-0.354126883065496:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comped-close.test.js (10 tests | 2 failed) 1171ms
+     × says a bill with nothing to collect and no deduction is closed 114ms
+     × keeps the plain paid wording when only a tip is on the collected bill 110ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill with nothing to collect and no deduction is closed
+AssertionError: expected 'İkramla Kapandı' to be 'Hesap Kapandı' // Object.is equality
+
+Expected: "Hesap Kapandı"
+Received: "İkramla Kapandı"
+
+ ❯ split-payment-comped-close.test.js:72:21
+     70|     await open(0, []);
+     71|
+     72|     expect(title()).toBe("Hesap Kapandı");
+       |                     ^
+     73|     expect(subtitle()).toBe("Bu hesapta tahsil edilecek tutar kalmadı.…
+     74|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > keeps the plain paid wording when only a tip is on the collected bill
+AssertionError: expected 'Bu hesap tahsilat ve ikramla kapandı.' to be 'Bu hesabın tamamı tahsil edildi.' // Object.is equality
+
+Expected: "Bu hesabın tamamı tahsil edildi."
+Received: "Bu hesap tahsilat ve ikramla kapandı."
+
+ ❯ split-payment-comped-close.test.js:91:24
+     89|
+     90|     expect(title()).toBe("Hesap Ödendi");
+     91|     expect(subtitle()).toBe("Bu hesabın tamamı tahsil edildi.");
+       |                        ^
+     92|   });
+     93|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  00:09:12
+   Duration  2.62s (transform 467ms, setup 23ms, import 48ms, tests 1.17s, environment 1.13s)
+
+vitestexit=1

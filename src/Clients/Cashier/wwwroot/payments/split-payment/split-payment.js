@@ -2225,12 +2225,30 @@
     });
   }
 
+  // A bill that closed with nothing collected was settled by comps and discounts, not paid.
+  var CLOSED_BY = {
+    comp: { title: 'İkramla Kapandı', paid: 'Bu hesap tahsilat ve ikramla kapandı.', text: 'Bu hesabın tamamı ikram edildi; tahsilat yapılmadı.' },
+    discount: { title: 'İndirimle Kapandı', paid: 'Bu hesap tahsilat ve indirimle kapandı.', text: 'Bu hesap indirimle kapandı; tahsilat yapılmadı.' },
+    both: { title: 'İndirim ve İkramla Kapandı', paid: 'Bu hesap tahsilat, indirim ve ikramla kapandı.', text: 'Bu hesap indirim ve ikramla kapandı; tahsilat yapılmadı.' },
+  };
+
+  function closedHeading() {
+    var collected = !!state.summary && Number(state.summary.allocatedTotal) > 0.004;
+    var deductions = state.adjustmentItems.filter(function (item) { return item.isDeduction; });
+    var comps = deductions.filter(function (item) { return !!COMP_REASON_LABELS[item.reason]; }).length;
+    var kind = deductions.length === 0 ? null : (comps === deductions.length ? CLOSED_BY.comp : (comps === 0 ? CLOSED_BY.discount : CLOSED_BY.both));
+    if (collected)
+      return { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
+    return kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
+  }
+
   function renderPaid() {
+    var heading = closedHeading();
     app.innerHTML =
       '<div class="sp-card sp-center-text">' +
       '<span class="sp-icon-circle success">✓</span>' +
-      '<h1 class="sp-title">Hesap Ödendi</h1>' +
-      '<p class="sp-subtitle">Bu hesabın tamamı tahsil edildi.</p>' +
+      '<h1 class="sp-title">' + heading.title + '</h1>' +
+      '<p class="sp-subtitle">' + heading.text + '</p>' +
       renderChangeDue() +
       (state.receiptError
         ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'

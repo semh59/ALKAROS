@@ -1,0 +1,26 @@
+collected-ignored: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+no-empty-branch: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+any-comp-is-comp-only: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+mixed-as-discount: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+tip-counted: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+comp-label-ignored: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+--- round 2 (10 tests, collected + deduction wording)
+r2-collected-ignored: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+r2-collected-deduction-text-dropped: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+r2-kind-comp-only-always: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+r2-tip-counted: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+r2-no-empty-branch: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+r2-comp-label-ignored: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+--- uygulanan değişiklikler (sıra: tur 1, tur 2)
+collected-ignored: allocatedTotal > 0.004 -> > 1000
+no-empty-branch: deductions.length === 0 -> false
+any-comp-is-comp-only: comps === deductions.length -> comps > 0
+mixed-as-discount: comps === 0 -> comps !== 99
+tip-counted: filter(isDeduction) -> true
+comp-label-ignored: COMP_REASON_LABELS ayrımı -> false
+r2-collected-ignored: allocatedTotal > 0.004 -> > 1000
+r2-collected-deduction-text-dropped: tahsilatlıda kind.paid kaldırıldı
+r2-kind-comp-only-always: comps === deductions.length -> comps > 0
+r2-tip-counted: filter(isDeduction) -> true
+r2-no-empty-branch: deductions.length === 0 ? null -> false ? null
+r2-comp-label-ignored: COMP_REASON_LABELS ayrımı -> false

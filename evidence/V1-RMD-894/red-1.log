@@ -1,0 +1,117 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill that was only comped closed by comp and that nothing was collected
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085434869-0.5238940759282833:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085434869-0.5238940759282833:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085434869-0.5238940759282833:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill closed by discount alone closed by discount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435047-0.7693083137006318:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435047-0.7693083137006318:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435047-0.7693083137006318:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > names both when a discount and a comp closed the bill, ignoring a tip
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435165-0.1448495942380994:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435165-0.1448495942380994:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435165-0.1448495942380994:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill with nothing to collect and no deduction is closed
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435275-0.39363371060285834:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435275-0.39363371060285834:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794085435275-0.39363371060285834:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comped-close.test.js (6 tests | 4 failed) 748ms
+     × says a bill that was only comped closed by comp and that nothing was collected 193ms
+     × says a bill closed by discount alone closed by discount 118ms
+     × names both when a discount and a comp closed the bill, ignoring a tip 110ms
+     × says a bill with nothing to collect and no deduction is closed 108ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill that was only comped closed by comp and that nothing was collected
+AssertionError: expected 'Hesap Ödendi' to be 'İkramla Kapandı' // Object.is equality
+
+Expected: "İkramla Kapandı"
+Received: "Hesap Ödendi"
+
+ ❯ split-payment-comped-close.test.js:45:21
+     43|     await open(0, [comp]);
+     44|
+     45|     expect(title()).toBe("İkramla Kapandı");
+       |                     ^
+     46|     expect(subtitle()).toBe("Bu hesabın tamamı ikram edildi; tahsilat …
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill closed by discount alone closed by discount
+AssertionError: expected 'Hesap Ödendi' to be 'İndirimle Kapandı' // Object.is equality
+
+Expected: "İndirimle Kapandı"
+Received: "Hesap Ödendi"
+
+ ❯ split-payment-comped-close.test.js:52:21
+     50|     await open(0, [discount]);
+     51|
+     52|     expect(title()).toBe("İndirimle Kapandı");
+       |                     ^
+     53|     expect(subtitle()).toBe("Bu hesap indirimle kapandı; tahsilat yapı…
+     54|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > names both when a discount and a comp closed the bill, ignoring a tip
+AssertionError: expected 'Hesap Ödendi' to be 'İndirim ve İkramla Kapandı' // Object.is equality
+
+Expected: "İndirim ve İkramla Kapandı"
+Received: "Hesap Ödendi"
+
+ ❯ split-payment-comped-close.test.js:59:21
+     57|     await open(0, [comp, discount, tip]);
+     58|
+     59|     expect(title()).toBe("İndirim ve İkramla Kapandı");
+       |                     ^
+     60|     expect(subtitle()).toBe("Bu hesap indirim ve ikramla kapandı; tahs…
+     61|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  split-payment-comped-close.test.js > split-payment.js heading of a bill with nothing left to pay > says a bill with nothing to collect and no deduction is closed
+AssertionError: expected 'Hesap Ödendi' to be 'Hesap Kapandı' // Object.is equality
+
+Expected: "Hesap Kapandı"
+Received: "Hesap Ödendi"
+
+ ❯ split-payment-comped-close.test.js:66:21
+     64|     await open(0, []);
+     65|
+     66|     expect(title()).toBe("Hesap Kapandı");
+       |                     ^
+     67|     expect(subtitle()).toBe("Bu hesapta tahsil edilecek tutar kalmadı.…
+     68|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 2 passed (6)
+   Start at  00:03:53
+   Duration  2.05s (transform 316ms, setup 25ms, import 50ms, tests 748ms, environment 967ms)
+
