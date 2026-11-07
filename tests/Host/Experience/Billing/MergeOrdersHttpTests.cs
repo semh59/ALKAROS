@@ -300,6 +300,36 @@ public sealed class MergeOrdersHttpTests : IAsyncLifetime
         Assert.Equal(1L, await Count("SELECT count(*) FROM billing.bills WHERE order_id IS NULL;"));
     }
 
+    [Fact]
+    public async Task AnOrderDeletedWhileTheMergeWaitsForItsLockIsNotFoundEvenWhenTheOtherOneWentToTheTill()
+    {
+        var table = await SeedTableAsync();
+        var first = await SeedOrderAsync(table, 100m);
+        var second = await SeedOrderAsync(table, 50m);
+        await Exec("INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order, @table);", ("order", second.Id), ("table", table));
+        var (terminalId, cookie) = await CashierAsync("bills.split");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        Assert.Equal(HttpStatusCode.OK, (await MergeAsync(client, terminalId, cookie, "key-warm-up", await SeedOrderAsync(table, 10m), await SeedOrderAsync(table, 20m))).Status);
+
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var deleting = await connection.BeginTransactionAsync();
+        await using (var delete = new NpgsqlCommand(
+            "DELETE FROM orders.order_items WHERE order_id = @id; DELETE FROM orders.orders WHERE order_id = @id;", connection, deleting))
+        {
+            delete.Parameters.AddWithValue("id", first.Id);
+            await delete.ExecuteNonQueryAsync();
+        }
+        var merge = MergeAsync(client, terminalId, cookie, "key-deleted", first, second);
+        await WaitUntilARequestWaitsForAsync(connection);
+
+        await deleting.CommitAsync();
+        var result = await merge;
+        Assert.Equal((HttpStatusCode.NotFound, "NOT_FOUND"), (result.Status, result.Code));
+        Assert.Equal(1L, await Count("SELECT count(*) FROM billing.bills WHERE order_id IS NULL;"));
+        Assert.Equal(0L, await Count("SELECT count(*) FROM billing.bill_items WHERE order_item_id IN (SELECT order_item_id FROM orders.order_items WHERE order_id = @b);", ("b", second.Id)));
+    }
+
     private async Task WaitUntilARequestWaitsForAsync(NpgsqlConnection holder)
     {
         for (var attempt = 0; attempt < 100; attempt++)
