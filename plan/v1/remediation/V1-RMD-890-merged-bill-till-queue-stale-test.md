@@ -1,8 +1,8 @@
 # V1-RMD-890 - MergedBillOrderLinkTests bayat kasa kuyruğu beklentisi (birleşik hesap tek satır)
 
 - Task ID: V1-RMD-890
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
