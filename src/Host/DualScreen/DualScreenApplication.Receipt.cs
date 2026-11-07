@@ -37,13 +37,17 @@ public sealed record BillReceiptV1(
     decimal PayableAmount,
     decimal TaxTotal,
     IReadOnlyList<BillReceiptPaymentV1> Payments,
-    IReadOnlyList<BillReceiptTaxLineV1>? TaxLines = null);
+    IReadOnlyList<BillReceiptTaxLineV1>? TaxLines = null,
+    DateTimeOffset? OriginalPrintedAt = null,
+    bool IsCopy = false);
 
 public static partial class DualScreenApplication
 {
     /// <summary>
-    /// Read-only bill summary the cashier page prints as a non-fiscal information receipt: items, adjustments,
-    /// totals and the payments with the method they were taken by. Writes nothing.
+    /// The bill summary the cashier page prints as a non-fiscal information receipt: items, adjustments, totals and the
+    /// payments with the method they were taken by. Reading it writes nothing, but it carries the print state of the bill
+    /// (<see cref="BillReceiptV1.OriginalPrintedAt"/>, <see cref="BillReceiptV1.IsCopy"/>) so whatever sheet is drawn from
+    /// it is marked a copy once the original is out. Printing goes through the print endpoint, which settles that state.
     /// </summary>
     public static void MapBillReceiptApi(this WebApplication app)
     {
@@ -55,6 +59,7 @@ public static partial class DualScreenApplication
                 IBillRepository billRepository,
                 IBillAdjustmentRepository adjustmentRepository,
                 IPaymentRepository paymentRepository,
+                IBillReceiptPrintRepository receiptPrints,
                 NpgsqlDataSource dataSource,
                 DualScreenStore store,
                 IAuthorizationService authorization,
@@ -68,21 +73,24 @@ public static partial class DualScreenApplication
                 if (bill is null)
                     return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
 
+                var originalPrintedAt = await receiptPrints.FindOriginalPrintedAtAsync(billId, cancellationToken);
                 return Results.Ok(await BuildReceiptAsync(
-                    bill, adjustmentRepository, paymentRepository, dataSource, cancellationToken));
+                    bill, adjustmentRepository, paymentRepository, dataSource, originalPrintedAt, originalPrintedAt is not null, cancellationToken));
             })
             .WithTags("BillReceipt")
             .AddEndpointFilter<BillTerminalAccessFilter>()
             .RequireRateLimiting("terminal-read");
 
-        // Every reprint of a settled bill's receipt is recorded before the data is handed out, so a copy cannot leave
-        // the till unrecorded; the page marks the sheet KOPYA.
-        app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/reprint", async (
+        // The first print of a settled bill's receipt is the original; every later one is a copy. Which it is gets decided and
+        // recorded in one transaction before the data is handed out, so neither can leave the till unrecorded and two
+        // terminals printing at once cannot both get the original.
+        app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/print", async (
                 Guid terminalId,
                 Guid billId,
                 IBillRepository billRepository,
                 IBillAdjustmentRepository adjustmentRepository,
                 IPaymentRepository paymentRepository,
+                IBillReceiptPrintRepository receiptPrints,
                 IAuditEventStore auditEvents,
                 NpgsqlDataSource dataSource,
                 DualScreenStore store,
@@ -98,16 +106,21 @@ public static partial class DualScreenApplication
                     return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
                 if (bill.Status != BillState.Paid)
                     return ReceiptError(
-                        context, StatusCodes.Status409Conflict, "BILL_NOT_PAID", "Yalnız ödenmiş hesabın fişi yeniden yazdırılabilir.");
+                        context, StatusCodes.Status409Conflict, "BILL_NOT_PAID", "Yalnız ödenmiş hesabın fişi yazdırılabilir.");
 
-                var receipt = await BuildReceiptAsync(bill, adjustmentRepository, paymentRepository, dataSource, cancellationToken);
-                await auditEvents.AppendAsync(
-                    new AuditEvent(
-                        Guid.NewGuid(), "bill.receipt.reprinted", "Bill", billId, "User", context.TraceIdentifier,
-                        principal.UserId,
-                        afterStateJson: JsonSerializer.Serialize(new { bill.BillNumber, terminalId })),
-                    cancellationToken);
-                return Results.Ok(receipt);
+                // The sheet is read before the original is claimed, so a failed read never uses the original up.
+                var receipt = await BuildReceiptAsync(
+                    bill, adjustmentRepository, paymentRepository, dataSource, null, false, cancellationToken);
+                var claim = await RecordPrintAsync(
+                    dataSource, receiptPrints, auditEvents, bill, terminalId, principal.UserId, context.TraceIdentifier, cancellationToken);
+                return claim.Outcome switch
+                {
+                    ReceiptPrintOutcome.Original or ReceiptPrintOutcome.Copy => Results.Ok(
+                        receipt with { OriginalPrintedAt = claim.OriginalPrintedAt, IsCopy = claim.Outcome == ReceiptPrintOutcome.Copy }),
+                    ReceiptPrintOutcome.NotFound => ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı."),
+                    _ => ReceiptError(
+                        context, StatusCodes.Status409Conflict, "BILL_NOT_PAID", "Yalnız ödenmiş hesabın fişi yazdırılabilir."),
+                };
             })
             .WithTags("BillReceipt")
             .WithMetadata(new BillRouteDoesNotClaim())
@@ -120,11 +133,42 @@ public static partial class DualScreenApplication
             new BillingSplitErrorEnvelope(new BillingSplitError(code, message, status, context.TraceIdentifier)),
             statusCode: status);
 
+    private static async Task<ReceiptPrintClaim> RecordPrintAsync(
+        NpgsqlDataSource dataSource,
+        IBillReceiptPrintRepository receiptPrints,
+        IAuditEventStore auditEvents,
+        Bill bill,
+        Guid terminalId,
+        Guid userId,
+        string correlationId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        // The paid check, the claim and the audit event share one transaction under the bill's row lock: a refused request
+        // leaves nothing behind, and an audit failure takes the claim with it.
+        var claim = await receiptPrints.ClaimOriginalAsync(bill.Id, userId, connection, transaction, cancellationToken);
+        if (claim.Outcome is ReceiptPrintOutcome.NotFound or ReceiptPrintOutcome.NotPaid)
+            return claim;
+
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                Guid.NewGuid(), claim.Outcome == ReceiptPrintOutcome.Original ? "bill.receipt.printed" : "bill.receipt.reprinted",
+                "Bill", bill.Id, "User", correlationId, userId,
+                afterStateJson: JsonSerializer.Serialize(new { bill.BillNumber, terminalId })),
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return claim;
+    }
+
     private static async Task<BillReceiptV1> BuildReceiptAsync(
         Bill bill,
         IBillAdjustmentRepository adjustmentRepository,
         IPaymentRepository paymentRepository,
         NpgsqlDataSource dataSource,
+        DateTimeOffset? originalPrintedAt,
+        bool isCopy,
         CancellationToken cancellationToken)
     {
         var billId = bill.Id;
@@ -168,7 +212,9 @@ public static partial class DualScreenApplication
                 .ToList(),
             TaxBreakdown.Build(bill, summary)
                 .Select(line => new BillReceiptTaxLineV1(line.RatePercent, line.Net, line.Tax, line.Gross))
-                .ToList());
+                .ToList(),
+            originalPrintedAt,
+            isCopy);
     }
 
     private static async Task<Dictionary<Guid, decimal>> RefundedAmountsAsync(

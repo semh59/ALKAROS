@@ -1,0 +1,21 @@
+client-ignores-server-copy-flag: vitest killed
+paid-check-dropped: Başarısız! - Başarısız:     3, Başarılı:     7, Atlanan:     0, Toplam:    10, Süre: 55 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+copy-branch-dropped: Başarısız! - Başarısız:     2, Başarılı:     8, Atlanan:     0, Toplam:    10, Süre: 54 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+event-names-swapped: Başarısız! - Başarısız:     3, Başarılı:     7, Atlanan:     0, Toplam:    10, Süre: 55 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+copy-flag-inverted: Başarısız! - Başarısız:     3, Başarılı:     7, Atlanan:     0, Toplam:    10, Süre: 54 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+get-ignores-state: Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 54 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+no-commit: Başarısız! - Başarısız:     2, Başarılı:     8, Atlanan:     0, Toplam:    10, Süre: 55 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+no-row-lock: Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 51 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+response-drops-original-time: Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 47 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) t
+
+Mutant açıklamaları (satır kilidi, kopya dalı vb. yüzey: PostgresBillReceiptPrintRepository.cs ve DualScreenApplication.Receipt.cs):
+- no-row-lock: FOR NO KEY UPDATE kaldırıldı (eşzamanlı basım iki orijinal verir).
+- paid-check-dropped: ödenmiş durum kontrolü devre dışı.
+- copy-branch-dropped: işaretli hesapta Copy dönüşü devre dışı (her basım orijinal).
+- event-names-swapped: orijinal/kopya denetim olay adları yer değiştirdi.
+- copy-flag-inverted: yanıttaki isCopy ters.
+- get-ignores-state: GET yanıtında isCopy hep false.
+- no-commit: işlem commit edilmez.
+- response-drops-original-time: yanıttan originalPrintedAt çıkarıldı.
+- client-ignores-server-copy-flag: kasiyer sayfası KOPYA'yı sunucu bayrağı yerine hep false çizer (vitest 2 test başarısız; çıktı mut-client-vitest.log).
+Kırmızı koşu: red-1.log (print ucu yokken 3 yeni test başarısız).

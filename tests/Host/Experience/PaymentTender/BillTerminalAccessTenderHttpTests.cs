@@ -41,7 +41,7 @@ public sealed class BillTerminalAccessTenderHttpTests : IAsyncLifetime
         { "POST", "confirmation-reject", "billing/bills/{b}/tenders/confirmations/{x}/reject", new { note = "x" } },
         { "POST", "show-on-display", "billing/bills/{b}/show-on-display", null },
         { "GET", "receipt", "billing/bills/{b}/receipt", null },
-        { "POST", "receipt-reprint", "billing/bills/{b}/receipt/reprint", null },
+        { "POST", "receipt-print", "billing/bills/{b}/receipt/print", null },
         { "POST", "account-charge", "billing/bills/{b}/account-charge", new { customerId = Guid.NewGuid(), amount = 1, idempotencyKey = "k-account" } },
     };
 

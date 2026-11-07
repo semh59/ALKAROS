@@ -1,7 +1,7 @@
 # V1-RMD-887 - Fiş "orijinal basıldı" durumu sunucuda tutulur (ilk basım orijinal, sonrakiler kayıtlı KOPYA)
 
 - Task ID: V1-RMD-887
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

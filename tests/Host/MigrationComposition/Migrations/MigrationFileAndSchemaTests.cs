@@ -459,6 +459,22 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheBillReceiptFirstPrintColumnsComeAsAPairAndRollingBackRemovesThemAndTheyApplyOnceMore()
+    {
+        const string columns = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name IN ('receipt_first_printed_at', 'receipt_first_printed_by') AND is_nullable = 'YES';";
+        const string pairRule = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_bills_receipt_first_print_pair';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal((2L, 1L), (await ScalarAsync<long>(source, columns), await ScalarAsync<long>(source, pairRule)));
+
+        RollBackDownTo("223");
+        Assert.Equal((0L, 0L), (await ScalarAsync<long>(source, columns), await ScalarAsync<long>(source, pairRule)));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal((2L, 1L), (await ScalarAsync<long>(source, columns), await ScalarAsync<long>(source, pairRule)));
+    }
+
+    [Fact]
     public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";

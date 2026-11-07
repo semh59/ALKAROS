@@ -49,7 +49,7 @@ async function open(receiptRoute, { startUnpaid = false } = {}) {
     { test: (url, init) => url.endsWith("/cash-tender") && init?.method === "POST", get body() { current = settled; return { approvedAmount: 110, changeAmount: 0 }; } },
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
-    { test: (url) => url.endsWith("/receipt") || url.endsWith("/receipt/reprint"), ...receiptRoute },
+    Object.defineProperties({ test: (url) => url.endsWith("/receipt/print") }, Object.getOwnPropertyDescriptors(receiptRoute)),
   ];
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   const fetchMock = installFetchRouter(routeSet);
@@ -59,7 +59,7 @@ async function open(receiptRoute, { startUnpaid = false } = {}) {
 
 const app = () => document.getElementById("app");
 const sheet = () => document.getElementById("receipt-print");
-const reprintCalls = (fetchMock) => fetchMock.mock.calls.filter(([url, init]) => url.endsWith(`/billing/bills/${BILL_ID}/receipt/reprint`) && init?.method === "POST");
+const printCalls = (fetchMock) => fetchMock.mock.calls.filter(([url, init]) => url.endsWith(`/billing/bills/${BILL_ID}/receipt/print`) && init?.method === "POST");
 
 describe("split-payment.js information receipt", () => {
   let printSpy;
@@ -80,7 +80,7 @@ describe("split-payment.js information receipt", () => {
     document.getElementById("print-receipt").click();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
-    expect(reprintCalls(fetchMock)).toHaveLength(1);
+    expect(printCalls(fetchMock)).toHaveLength(1);
     const text = sheet().textContent;
     expect(text).toContain("Bilgi Fişi");
     expect(text).toContain("Bu belge mali fiş değildir.");
@@ -221,13 +221,12 @@ describe("split-payment.js information receipt", () => {
     document.getElementById("print-receipt").click();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
-    expect(reprintCalls(fetchMock)).toHaveLength(1);
+    expect(printCalls(fetchMock)).toHaveLength(1);
   });
 
-  it("marks a reprint of a closed bill as KOPYA and offers it as a reprint", async () => {
-    await open({ body: receipt });
+  it("marks the sheet KOPYA when the server says the print is a copy", async () => {
+    await open({ body: { ...receipt, isCopy: true } });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
-    expect(document.getElementById("print-receipt").textContent).toBe("Fişi yeniden yazdır");
 
     document.getElementById("print-receipt").click();
 
@@ -236,25 +235,24 @@ describe("split-payment.js information receipt", () => {
     expect(sheet().querySelector(".sp-receipt-copy")).not.toBeNull();
   });
 
-  it("prints the original without KOPYA right after paying and records only the later prints", async () => {
-    const fetchMock = await open({ body: receipt }, { startUnpaid: true });
+  it("leaves the original without KOPYA and draws every later print from the server's answer, each one a recorded call", async () => {
+    const answers = [{ ...receipt, isCopy: false }, { ...receipt, isCopy: true }];
+    const fetchMock = await open({ get body() { return answers.length > 1 ? answers.shift() : answers[0]; } }, { startUnpaid: true });
     await vi.waitFor(() => expect(document.getElementById("submit-tender")).not.toBeNull());
 
     document.getElementById("submit-tender").click();
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
-    expect(document.getElementById("print-receipt").textContent).toBe("Fişi yazdır");
     document.getElementById("print-receipt").click();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     expect(sheet().textContent).not.toContain("KOPYA");
-    expect(reprintCalls(fetchMock)).toHaveLength(0);
-    expect(document.getElementById("print-receipt").textContent).toBe("Fişi yeniden yazdır");
+    expect(printCalls(fetchMock)).toHaveLength(1);
 
     document.getElementById("print-receipt").click();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(2));
     expect(sheet().textContent).toContain("KOPYA");
-    expect(reprintCalls(fetchMock)).toHaveLength(1);
+    expect(printCalls(fetchMock)).toHaveLength(2);
   });
 
   it("styles the KOPYA mark for the printed page", async () => {

@@ -121,12 +121,9 @@
     changeDue: null,
     receiptError: null,
     receiptBusy: false,
-    // The first sheet after paying in this very view is the original; every other print is a recorded copy.
-    originalPrinted: true,
   };
 
   function enterPaid() {
-    if (state.phase === 'ready') state.originalPrinted = false;
     state.phase = 'paid';
   }
 
@@ -1918,8 +1915,8 @@
     state.receiptBusy = true;
     state.receiptError = null;
     render();
-    var isCopy = state.originalPrinted;
-    (isCopy ? api(billBase() + '/receipt/reprint', { method: 'POST' }) : api(billBase() + '/receipt')).then(function (result) {
+    // The server decides which print is the original (the first one for the bill, from any terminal) and records every one.
+    api(billBase() + '/receipt/print', { method: 'POST' }).then(function (result) {
       state.receiptBusy = false;
       if (!result.ok || !result.body) {
         state.receiptError = 'Fiş verisi okunamadı. Tekrar deneyin.';
@@ -1933,8 +1930,7 @@
         sheet.className = 'sp-receipt';
         document.body.appendChild(sheet);
       }
-      sheet.innerHTML = receiptHtml(result.body, isCopy);
-      state.originalPrinted = true;
+      sheet.innerHTML = receiptHtml(result.body, result.body.isCopy);
       render();
       window.print();
     }).catch(function () {
@@ -2210,7 +2206,7 @@
         ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'
         : '') +
       '<button class="sp-btn sp-btn-primary" type="button" id="print-receipt" data-receipt-action="print"' +
-      (state.receiptBusy ? ' disabled' : '') + '>' + (state.receiptBusy ? 'Fiş hazırlanıyor…' : state.originalPrinted ? 'Fişi yeniden yazdır' : 'Fişi yazdır') + '</button>' +
+      (state.receiptBusy ? ' disabled' : '') + '>' + (state.receiptBusy ? 'Fiş hazırlanıyor…' : 'Fişi yazdır') + '</button>' +
       BACK_LINK +
       '</div>' +
       '<div class="sp-card">' + renderRefundSection(false) + '</div>';

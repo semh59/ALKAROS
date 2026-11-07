@@ -18,6 +18,7 @@ public static class BillTerminalAccessRegistration
         services.TryAddSingleton<DualScreenStore>();
         services.TryAddSingleton<IRoleRepository, PostgresRoleRepository>();
         services.TryAddSingleton<IBillTerminalOwnerRepository, PostgresBillTerminalOwnerRepository>();
+        services.TryAddSingleton<IBillReceiptPrintRepository, PostgresBillReceiptPrintRepository>();
         services.TryAddSingleton<BillTerminalAccess>();
         services.TryAddTransient<BillTerminalAccessFilter>();
         return services;

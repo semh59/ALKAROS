@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ALKAROS.Billing.Adjustments;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -285,40 +286,137 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AReprintOfAPaidBillReturnsTheReceiptAndRecordsWhoPrintedItForEveryCall()
+    public async Task TheFirstPrintOfAPaidBillIsTheOriginalAndEveryLaterOneARecordedCopy()
     {
         var terminalId = Guid.NewGuid();
-        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint");
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-print");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashierId = (Guid)(await _database.DataSource.CreateCommand(
+            "SELECT user_id FROM identity.users WHERE username LIKE 'pui001-cashier-%';").ExecuteScalarAsync())!;
+
+        var before = await ReadReceiptAsync(client, terminalId, billId, cookie);
+        var first = await PostAsync(client, PrintPath(terminalId, billId), cookie);
+        var second = await PostAsync(client, PrintPath(terminalId, billId), cookie);
+        var third = await PostAsync(client, PrintPath(terminalId, billId), cookie);
+        var after = await ReadReceiptAsync(client, terminalId, billId, cookie);
+
+        Assert.Equal((false, JsonValueKind.Null), (before.GetProperty("isCopy").GetBoolean(), before.GetProperty("originalPrintedAt").ValueKind));
+        var original = await first.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.False(original.GetProperty("isCopy").GetBoolean());
+        Assert.Equal(billId, original.GetProperty("billId").GetGuid());
+        Assert.Equal(100m, Assert.Single(original.GetProperty("payments").EnumerateArray()).GetProperty("amount").GetDecimal());
+        foreach (var response in new[] { second, third })
+        {
+            var copy = await response.Content.ReadFromJsonAsync<JsonElement>();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(copy.GetProperty("isCopy").GetBoolean());
+            Assert.Equal(original.GetProperty("originalPrintedAt").GetDateTimeOffset(), copy.GetProperty("originalPrintedAt").GetDateTimeOffset());
+        }
+
+        Assert.True(after.GetProperty("isCopy").GetBoolean());
+        await using (var firstPrinter = _database.DataSource.CreateCommand("SELECT receipt_first_printed_by FROM billing.bills WHERE bill_id = @id;"))
+        {
+            firstPrinter.Parameters.AddWithValue("id", billId);
+            Assert.Equal(cashierId, await firstPrinter.ExecuteScalarAsync());
+        }
+
+        Assert.Equal(original.GetProperty("originalPrintedAt").GetDateTimeOffset(), after.GetProperty("originalPrintedAt").GetDateTimeOffset());
+        var originals = await PrintEventsAsync(billId, "bill.receipt.printed");
+        var copies = await PrintEventsAsync(billId, "bill.receipt.reprinted");
+        Assert.Single(originals);
+        Assert.Equal(2, copies.Count);
+        foreach (var e in originals.Concat(copies))
+        {
+            Assert.Equal(cashierId, e.ActorId);
+            Assert.Equal("Bill", e.AggregateType);
+            Assert.Contains(original.GetProperty("billNumber").GetString()!, e.AfterState);
+            Assert.Contains(terminalId.ToString(), e.AfterState);
+            Assert.True(e.OccurredAt > DateTimeOffset.UtcNow.AddMinutes(-5));
+        }
+    }
+
+    [Fact]
+    public async Task AFailedAuditWriteTakesTheOriginalClaimWithItAndTheNextPrintIsStillTheOriginal()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-print-audit-fails");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var refuseAudit = _database.DataSource.CreateCommand(
+            """
+            CREATE FUNCTION audit.refuse_receipt_audit() RETURNS trigger AS $$ BEGIN RAISE EXCEPTION 'audit refused'; END $$ LANGUAGE plpgsql;
+            CREATE TRIGGER trg_refuse_receipt_audit BEFORE INSERT ON audit.audit_events
+                FOR EACH ROW WHEN (NEW.event_name = 'bill.receipt.printed') EXECUTE FUNCTION audit.refuse_receipt_audit();
+            """);
+        await refuseAudit.ExecuteNonQueryAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var failed = await PostAsync(client, PrintPath(terminalId, billId), cookie);
+
+        Assert.Equal(HttpStatusCode.InternalServerError, failed.StatusCode);
+        await AssertNothingPrintedAsync(billId);
+        await using var allowAudit = _database.DataSource.CreateCommand("DROP TRIGGER trg_refuse_receipt_audit ON audit.audit_events;");
+        await allowAudit.ExecuteNonQueryAsync();
+        var retry = await PostAsync(client, PrintPath(terminalId, billId), cookie);
+        Assert.False((await retry.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("isCopy").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData("Open", ReceiptPrintOutcome.NotPaid)]
+    [InlineData("PartiallyPaid", ReceiptPrintOutcome.NotPaid)]
+    [InlineData("Cancelled", ReceiptPrintOutcome.NotPaid)]
+    [InlineData("Paid", ReceiptPrintOutcome.Original)]
+    public async Task TheClaimChecksThePaidStatusUnderTheRowLockWhateverTheCallerSawBefore(string status, ReceiptPrintOutcome expected)
+    {
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SetBillStatusAsync(billId, status);
+        var repository = new PostgresBillReceiptPrintRepository(_database.DataSource);
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+
+        var claim = await repository.ClaimOriginalAsync(billId, Guid.NewGuid(), connection, transaction);
+        var missing = await repository.ClaimOriginalAsync(Guid.NewGuid(), Guid.NewGuid(), connection, transaction);
+        await transaction.CommitAsync();
+
+        Assert.Equal(expected, claim.Outcome);
+        Assert.Equal(ReceiptPrintOutcome.NotFound, missing.Outcome);
+        Assert.Equal(expected == ReceiptPrintOutcome.Original, await repository.FindOriginalPrintedAtAsync(billId) is not null);
+    }
+
+    [Fact]
+    public async Task OfParallelPrintsOfOneBillExactlyOneIsTheOriginal()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-print-race");
         var billId = await _database.SeedBillAsync(payable: 100m);
         await _database.SeedCollectedAsync(billId, 100m);
         await _database.SetBillStatusAsync(billId, "Paid");
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        var cashierId = (Guid)(await _database.DataSource.CreateCommand(
-            "SELECT user_id FROM identity.users WHERE username LIKE 'pui001-cashier-%';").ExecuteScalarAsync())!;
-        var first = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
-        var second = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+        var responses = await Task.WhenAll(Enumerable.Range(0, 6).Select(_ => PostAsync(client, PrintPath(terminalId, billId), cookie)));
 
-        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
-        var body = await first.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.Equal(billId, body.GetProperty("billId").GetGuid());
-        Assert.Equal(100m, Assert.Single(body.GetProperty("payments").EnumerateArray()).GetProperty("amount").GetDecimal());
-        var events = await ReprintEventsAsync(billId);
-        Assert.Equal(2, events.Count);
-        Assert.All(events, e => Assert.Equal(cashierId, e.ActorId));
-        Assert.All(events, e => Assert.Equal("Bill", e.AggregateType));
-        Assert.All(events, e => Assert.Contains(body.GetProperty("billNumber").GetString()!, e.AfterState));
-        Assert.All(events, e => Assert.Contains(terminalId.ToString(), e.AfterState));
-        Assert.All(events, e => Assert.True(e.OccurredAt > DateTimeOffset.UtcNow.AddMinutes(-5)));
+        Assert.All(responses, r => Assert.Equal(HttpStatusCode.OK, r.StatusCode));
+        var flags = new List<bool>();
+        foreach (var response in responses)
+            flags.Add((await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("isCopy").GetBoolean());
+        Assert.Equal(1, flags.Count(isCopy => !isCopy));
+        Assert.Single(await PrintEventsAsync(billId, "bill.receipt.printed"));
+        Assert.Equal(5, (await PrintEventsAsync(billId, "bill.receipt.reprinted")).Count);
     }
 
     [Theory]
     [InlineData("Open")]
     [InlineData("PartiallyPaid")]
     [InlineData("Cancelled")]
-    public async Task AReprintOfABillThatIsNotPaidIsRefusedAndNothingIsRecorded(string status)
+    public async Task APrintOfABillThatIsNotPaidIsRefusedAndNothingIsRecorded(string status)
     {
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint-open");
@@ -327,17 +425,17 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        var response = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+        var response = await PostAsync(client, PrintPath(terminalId, billId), cookie);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
         Assert.Equal("BILL_NOT_PAID", error.GetProperty("code").GetString());
-        Assert.Equal("Yalnız ödenmiş hesabın fişi yeniden yazdırılabilir.", error.GetProperty("message").GetString());
-        Assert.Empty(await ReprintEventsAsync(billId));
+        Assert.Equal("Yalnız ödenmiş hesabın fişi yazdırılabilir.", error.GetProperty("message").GetString());
+        await AssertNothingPrintedAsync(billId);
     }
 
     [Fact]
-    public async Task AReprintWithoutPaymentsTakeOrForAnUnknownBillIsRefusedAndNothingIsRecorded()
+    public async Task APrintWithoutPaymentsTakeOrForAnUnknownBillIsRefusedAndNothingIsRecorded()
     {
         var terminalId = Guid.NewGuid();
         var waiterTerminal = Guid.NewGuid();
@@ -348,18 +446,18 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        var forbidden = await PostAsync(client, ReprintPath(waiterTerminal, billId), waiter);
-        var anonymous = await PostAsync(client, ReprintPath(terminalId, billId), cookie: null);
-        var missing = await PostAsync(client, ReprintPath(terminalId, Guid.NewGuid()), cashier);
+        var forbidden = await PostAsync(client, PrintPath(waiterTerminal, billId), waiter);
+        var anonymous = await PostAsync(client, PrintPath(terminalId, billId), cookie: null);
+        var missing = await PostAsync(client, PrintPath(terminalId, Guid.NewGuid()), cashier);
 
         Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
         Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
-        Assert.Empty(await ReprintEventsAsync(billId));
+        await AssertNothingPrintedAsync(billId);
     }
 
     [Fact]
-    public async Task AReprintDoesNotGiveABillNobodyOwnsToTheTerminalThatPrintedIt()
+    public async Task APrintDoesNotGiveABillNobodyOwnsToTheTerminalThatPrintedIt()
     {
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint-unowned");
@@ -368,7 +466,7 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        var response = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+        var response = await PostAsync(client, PrintPath(terminalId, billId), cookie);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         await using var owner = _database.DataSource.CreateCommand("SELECT terminal_id FROM billing.bills WHERE bill_id = @id;");
@@ -376,18 +474,39 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal(DBNull.Value, await owner.ExecuteScalarAsync());
     }
 
-    private static string ReprintPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/reprint";
+    private static string PrintPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/print";
 
-    private async Task<List<(Guid? ActorId, string AggregateType, string AfterState, DateTimeOffset OccurredAt)>> ReprintEventsAsync(Guid billId)
+    private async Task<List<(Guid? ActorId, string AggregateType, string AfterState, DateTimeOffset OccurredAt)>> PrintEventsAsync(Guid billId, string eventName)
     {
         await using var command = _database.DataSource.CreateCommand(
-            "SELECT actor_id, aggregate_type, after_state_json::text, occurred_at FROM audit.audit_events WHERE aggregate_id = @id AND event_name = 'bill.receipt.reprinted';");
+            "SELECT actor_id, aggregate_type, after_state_json::text, occurred_at FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @event;");
         command.Parameters.AddWithValue("id", billId);
+        command.Parameters.AddWithValue("event", eventName);
         var result = new List<(Guid?, string, string, DateTimeOffset)>();
         await using var reader = await command.ExecuteReaderAsync();
         while (await reader.ReadAsync())
             result.Add((reader.IsDBNull(0) ? null : reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetFieldValue<DateTimeOffset>(3)));
         return result;
+    }
+
+    private async Task AssertNothingPrintedAsync(Guid billId)
+    {
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.printed"));
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.reprinted"));
+        await using var command = _database.DataSource.CreateCommand("SELECT receipt_first_printed_at FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        Assert.Equal(DBNull.Value, await command.ExecuteScalarAsync());
+    }
+
+    private static async Task<JsonElement> ReadReceiptAsync(HttpClient client, Guid terminalId, Guid billId, string cookie)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, ReceiptPath(terminalId, billId));
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.10");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return await response.Content.ReadFromJsonAsync<JsonElement>();
     }
 
     private static async Task<HttpResponseMessage> PostAsync(HttpClient client, string path, string? cookie)
