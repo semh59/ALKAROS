@@ -19,6 +19,7 @@ Yaşlandırma raporu iki kusur taşıyordu. (1) Yaşı işlem tarihine göre hes
   - src/Host/Experience/CustomerAging/ReceivablesAgingEndpoints.cs — vade alanları
   - tests/Modules/CustomerAccounts/BalanceProjection/ReceivablesAgingCalculatorTests.cs — silinir, kapsamı servis testlerine taşınır
   - tests/Modules/CustomerAccounts/BalanceProjection/PostgresReceivablesAgingServiceTests.cs
+  - tests/Modules/CustomerAccounts/BalanceProjection/ALKAROS.CustomerAccounts.BalanceProjection.Tests.csproj — kredi vadesi tablosu test şeması
   - tests/Host/Experience/CustomerAccounts/CustomerAgingHttpTests.cs
   - src/Clients/PosTerminal/src/features/management-customer-aging/models.ts
   - src/Clients/PosTerminal/src/features/management-customer-aging/CustomerAgingSection.tsx
