@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-discount-pending.test.js > split-payment.js discount waiting for a manager > ignores a waiting answer for a form that was edited while the request was in flight
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084810557-0.9013619840237366:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084810557-0.9013619840237366:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084810557-0.9013619840237366:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (6 tests | 1 failed) 1508ms
+     × ignores a waiting answer for a form that was edited while the request was in flight 295ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js discount waiting for a manager > ignores a waiting answer for a form that was edited while the request was in flight
+AssertionError: expected 'Onay durumunu kontrol et' to be 'İndirim uygula' // Object.is equality
+
+Expected: "İndirim uygula"
+Received: "Onay durumunu kontrol et"
+
+ ❯ split-payment-discount-pending.test.js:116:34
+    114|
+    115|     expect(text()).not.toContain("yönetici onayına gönderildi");
+    116|     expect(submit().textContent).toBe("İndirim uygula");
+       |                                  ^
+    117|     submit().click();
+    118|     expect(discountCalls(fetchMock)).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  23:53:28
+   Duration  2.88s (transform 358ms, setup 24ms, import 51ms, tests 1.51s, environment 1.02s)
+
+vitestexit=1

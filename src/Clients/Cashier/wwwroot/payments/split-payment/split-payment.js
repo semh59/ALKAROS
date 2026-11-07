@@ -63,6 +63,7 @@
     discountNoteDraft: '',
     discountBusy: false,
     discountConfirm: false,
+    discountPending: false,
     discountError: null,
     discountNotice: null,
     tipAmountDraft: '',
@@ -673,6 +674,15 @@
   // already surfaces (202, Status 'Pending', never silently denied); the policy engine can also refuse it
   // outright (403, code GRANT_DENIED - client-side Turkish override below, since that endpoint's own message
   // is the literal English string "Discount request was denied.", outside this task's Owned surface to fix).
+  function discountDraftBody() {
+    return {
+      CalculationType: state.discountCalcType,
+      Value: Number(state.discountValueDraft),
+      ReasonCode: state.discountReason,
+      Notes: state.discountNoteDraft || null,
+    };
+  }
+
   function submitDiscount() {
     var value = Number(state.discountValueDraft);
     if (!(value > 0)) {
@@ -682,7 +692,7 @@
     }
     // An unintended 100 instead of 10 would close the whole bill with nothing collected: ask once before that.
     var takeOff = state.discountCalcType === 'Percentage' ? remainingAmount() * value / 100 : value;
-    if (takeOff >= remainingAmount() - 0.004 && !state.discountConfirm) {
+    if (takeOff >= remainingAmount() - 0.004 && !state.discountConfirm && !state.discountPending) {
       state.discountConfirm = true;
       state.discountError = null;
       render();
@@ -693,12 +703,7 @@
     state.discountError = null;
     state.discountNotice = null;
     render();
-    var discountBody = {
-      CalculationType: state.discountCalcType,
-      Value: value,
-      ReasonCode: state.discountReason,
-      Notes: state.discountNoteDraft || null,
-    };
+    var discountBody = discountDraftBody();
     var discountSignature = JSON.stringify(discountBody);
     if (!state.discountIdempotencyKey || state.discountRequestSignature !== discountSignature) {
       state.discountIdempotencyKey = crypto.randomUUID();
@@ -707,9 +712,18 @@
     discountBody.IdempotencyKey = state.discountIdempotencyKey;
     api(billBase() + '/discount', { method: 'POST', body: discountBody }).then(function (result) {
       state.discountBusy = false;
-      // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
-      // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
-      if (result.status < 500) state.discountIdempotencyKey = null;
+      // A definitive answer consumes the key; a request waiting for a manager keeps it, because resending the same
+      // request is how the approval is picked up. A network failure (the catch below) keeps it for a retry too.
+      // An answer to a form edited while the request was in flight describes a request the form no longer holds.
+      var stale = JSON.stringify(discountDraftBody()) !== discountSignature;
+      var answeredPending = result.ok && result.body && result.body.status === 'Pending';
+      var waiting = answeredPending && !stale;
+      if (result.status < 500 && !waiting) state.discountIdempotencyKey = null;
+      if (result.status < 500) state.discountPending = waiting;
+      if (stale && !result.ok) {
+        render();
+        return;
+      }
       if (!result.ok) {
         var code = result.body && result.body.error && result.body.error.code;
         state.discountError = code === 'GRANT_DENIED'
@@ -718,12 +732,18 @@
         render();
         return;
       }
-      state.discountValueDraft = '';
-      state.discountNoteDraft = '';
-      if (result.body.status === 'Pending') {
-        state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi; onaylanana kadar hesap değişmez.';
+      if (answeredPending && stale) {
         render();
         return;
+      }
+      if (waiting) {
+        state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi. Onaylandığında "Onay durumunu kontrol et" düğmesine basın; o zamana kadar hesap değişmez.';
+        render();
+        return;
+      }
+      if (!stale) {
+        state.discountValueDraft = '';
+        state.discountNoteDraft = '';
       }
       state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
       // V1-RMD-298: a discount now genuinely lowers remainingAmount() (server-side ceiling fix) - refresh
@@ -1237,7 +1257,7 @@
       '<div class="sp-field"><span class="sp-field-label">İndirim / düzeltme ekle</span>' +
       // V1-RMD-362: a bare .sp-alert-body with no role at all - a screen reader was never told a
       // discount attempt succeeded OR failed, only a sighted cashier watching the screen saw it.
-      (state.discountNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.discountNotice) + '</div>' : '') +
+      (state.discountNotice ? '<div class="sp-alert-body" id="discount-notice" role="status">' + escapeHtml(state.discountNotice) + '</div>' : '') +
       (state.discountError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.discountError) + '</div>' : '') +
       (state.discountConfirm
         ? '<div class="sp-alert-body" role="alert">Bu indirim hesabın kalan tutarının tamamını (' + escapeHtml(formatMoney(remainingAmount())) +
@@ -1260,7 +1280,7 @@
       '<input class="sp-input" type="text" id="discount-note" maxlength="500" placeholder="Not (opsiyonel)" aria-label="İndirim notu (opsiyonel)" value="' +
       escapeHtml(state.discountNoteDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
-      (state.discountBusy ? 'Gönderiliyor…' : (state.discountConfirm ? 'Evet, indirimi uygula' : 'İndirim uygula')) + '</button>' +
+      (state.discountBusy ? 'Gönderiliyor…' : (state.discountPending ? 'Onay durumunu kontrol et' : (state.discountConfirm ? 'Evet, indirimi uygula' : 'İndirim uygula'))) + '</button>' +
       '</div>'
     );
   }
@@ -2144,14 +2164,24 @@
     if (retryCashButton) retryCashButton.addEventListener('click', retryCashState);
     var retrySummaryButton = document.getElementById('retry-summary');
     if (retrySummaryButton) retrySummaryButton.addEventListener('click', retrySummary);
+    // Editing the request after it went to a manager starts a new one; the old pending request is left to expire.
+    function editedDiscount() {
+      state.discountConfirm = false;
+      state.discountPending = false;
+      state.discountNotice = null;
+      var notice = document.getElementById('discount-notice');
+      if (notice) notice.remove();
+      var button = document.getElementById('submit-discount');
+      if (button && !state.discountBusy) button.textContent = 'İndirim uygula';
+    }
     var discountReasonInput = document.getElementById('discount-reason');
-    if (discountReasonInput) discountReasonInput.addEventListener('change', function () { state.discountReason = this.value; });
+    if (discountReasonInput) discountReasonInput.addEventListener('change', function () { state.discountReason = this.value; if (state.discountPending) editedDiscount(); });
     var discountCalcTypeInput = document.getElementById('discount-calc-type');
-    if (discountCalcTypeInput) discountCalcTypeInput.addEventListener('change', function () { state.discountCalcType = this.value; state.discountConfirm = false; });
+    if (discountCalcTypeInput) discountCalcTypeInput.addEventListener('change', function () { state.discountCalcType = this.value; editedDiscount(); });
     var discountValueInput = document.getElementById('discount-value');
-    if (discountValueInput) discountValueInput.addEventListener('input', function () { state.discountValueDraft = this.value; state.discountConfirm = false; });
+    if (discountValueInput) discountValueInput.addEventListener('input', function () { state.discountValueDraft = this.value; editedDiscount(); });
     var discountNoteInput = document.getElementById('discount-note');
-    if (discountNoteInput) discountNoteInput.addEventListener('input', function () { state.discountNoteDraft = this.value; });
+    if (discountNoteInput) discountNoteInput.addEventListener('input', function () { state.discountNoteDraft = this.value; if (state.discountPending) editedDiscount(); });
     Array.prototype.forEach.call(document.querySelectorAll('[data-undo-adjustment]'), function (button) {
       button.addEventListener('click', function () { undoAdjustment(button.getAttribute('data-undo-adjustment')); });
     });

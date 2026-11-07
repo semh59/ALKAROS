@@ -1,0 +1,71 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-discount-pending.test.js > split-payment.js discount waiting for a manager > keeps the request and its key while a manager decides and applies the discount when the check finds it approved
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084533656-0.49293397140178796:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084533656-0.49293397140178796:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084533656-0.49293397140178796:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js discount waiting for a manager > checks a waiting full-bill discount without asking for the confirmation again
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084533883-0.7053762213287632:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084533883-0.7053762213287632:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794084533883-0.7053762213287632:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (4 tests | 2 failed) 1840ms
+     × keeps the request and its key while a manager decides and applies the discount when the check finds it approved 242ms
+     × checks a waiting full-bill discount without asking for the confirmation again 1196ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js discount waiting for a manager > keeps the request and its key while a manager decides and applies the discount when the check finds it approved
+AssertionError: expected '' to be '20' // Object.is equality
+
+- Expected
++ Received
+
+- 20
+
+ ❯ split-payment-discount-pending.test.js:67:61
+     65|     await vi.waitFor(() => expect(text()).toContain("yönetici onayına …
+     66|     expect(submit().textContent).toBe("Onay durumunu kontrol et");
+     67|     expect(document.getElementById("discount-value").value).toBe("20");
+       |                                                             ^
+     68|
+     69|     submit().click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js discount waiting for a manager > checks a waiting full-bill discount without asking for the confirmation again
+AssertionError: expected [ { …(5) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ split-payment-discount-pending.test.js:90:61
+     88|     await vi.waitFor(() => expect(text()).toContain("yönetici onayına …
+     89|     submit().click();
+     90|     await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLeng…
+       |                                                             ^
+     91|   });
+     92|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  23:48:52
+   Duration  3.36s (transform 243ms, setup 24ms, import 53ms, tests 1.84s, environment 1.09s)
+
+vitestexit=1
