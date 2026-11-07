@@ -1,0 +1,9 @@
+no-precheck: Başarısız! - Başarısız:     3, Başarılı:     4, Atlanan:     0, Toplam:     7, Süre: 23 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1
+lte: Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 23 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1
+no-replay-exemption: Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 23 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1
+ignores-existing: Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 22 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=0
+ignores-existing-r2: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1
+--- round 3 (full new test set)
+r3-no-precheck: Başarısız! - Başarısız:     5, Başarılı:     4, Atlanan:     0, Toplam:     9, Süre: 29 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+r3-lte: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+r3-no-replay-exemption: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical

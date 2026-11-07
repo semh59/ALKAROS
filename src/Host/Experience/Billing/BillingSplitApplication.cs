@@ -131,7 +131,7 @@ public static class BillingSplitApplication
     {
         var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
 
-        await store.EnsureDiscountRequestableAsync(billId, request, complimentary, cancellationToken);
+        await store.EnsureDiscountRequestableAsync(billId, request, principal.UserId, complimentary, cancellationToken);
 
         Guid? approverId = null;
         Guid? grantId = null;

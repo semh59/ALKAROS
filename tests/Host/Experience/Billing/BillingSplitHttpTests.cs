@@ -565,6 +565,88 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(1, adjustmentsDoc.RootElement.GetProperty("adjustments").GetArrayLength());
     }
 
+    [Theory]
+    [InlineData("bills.comp", "Comp")]
+    [InlineData("bills.discount", "FixedAmount")]
+    [InlineData("bills.discount", "Percentage")]
+    public async Task AnAdjustmentThatWouldUndercutWhatWasCollectedSpendsNoApproval(string permission, string kind)
+    {
+        // 225 of a 250 bill collected: taking 50 off leaves 200 payable.
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        await _database.SetPolicyForRoleOfAsync(userId, permission, 100m, 5);
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 225m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = kind == "Comp"
+            ? await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50m))
+            : await SendDiscountAsync(client, terminalId, seeded.BillId, cookie,
+                new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), kind, kind == "Percentage" ? 20m : 50m, "PromotionalOffer"));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal("DISCOUNT_BELOW_COLLECTED", (await ErrorOf(refused)).Code);
+        Assert.Equal(0L, await _database.GrantCountAsync());
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task AnAdjustmentThatWouldWaitForAManagerButUndercutsWhatWasCollectedOpensNoRequest()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 225m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50m));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal(0L, await _database.GrantCountAsync());
+    }
+
+    [Fact]
+    public async Task AnAdjustmentThatOnlyTogetherWithAnEarlierOneUndercutsWhatWasCollectedSpendsNoApproval()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        await _database.SetPolicyForRoleOfAsync(userId, "bills.comp", 100m, 5);
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 150m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var first = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(50m));
+        using var second = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(60m));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        Assert.Equal("DISCOUNT_BELOW_COLLECTED", (await ErrorOf(second)).Code);
+        Assert.Equal(1L, await _database.GrantCountAsync());
+    }
+
+    [Fact]
+    public async Task ReplayingAPartlyUsedCompWithTheSameKeyReturnsTheAppliedResult()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier");
+        await _database.SetPolicyForRoleOfAsync(userId, "bills.comp", 150m, 5);
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var key = Guid.NewGuid().ToString();
+
+        using var first = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(140m, key));
+        using var replay = await SendCompAsync(client, terminalId, seeded.BillId, cookie, Comp(140m, key));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal(110m, (await replay.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.Summary!.AdjustedPayableAmount);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
     [Fact]
     public async Task ASplitDesignOnADiscountedBillUsesTheDiscountedPayable()
     {

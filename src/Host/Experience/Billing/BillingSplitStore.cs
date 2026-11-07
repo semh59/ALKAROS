@@ -116,24 +116,7 @@ public sealed class BillingSplitStore
         if (!IsDiscountable(bill.Status))
             throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
-        // A bill's items can carry different tax rates; the discount is split net/tax in the bill's own
-        // proportion (its unrounded weighted-average rate), not an arbitrary single item's rate.
-        var effectiveTaxRate = bill.EffectiveTaxRatePercent;
-
-        var adjustmentId = Guid.NewGuid();
-        var adjustment = request.CalculationType switch
-        {
-            "Percentage" => BillAdjustment.CreateDiscountPercentage(
-                adjustmentId, billId, request.Value, bill.PayableAmount, effectiveTaxRate,
-                request.ReasonCode, approverId ?? actorId, notes: request.Notes, createdBy: actorId,
-                idempotencyKey: request.IdempotencyKey),
-            "FixedAmount" => BillAdjustment.CreateDiscountAmount(
-                adjustmentId, billId, request.Value, effectiveTaxRate,
-                request.ReasonCode, approverId ?? actorId, notes: request.Notes, createdBy: actorId,
-                idempotencyKey: request.IdempotencyKey),
-            _ => throw new ArgumentException(
-                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
-        };
+        var adjustment = CreateDiscount(bill, request, approverId ?? actorId, actorId);
 
         // Validate against the full candidate set BEFORE writing anything —
         // AdjustmentCalculator throws if the total discount would exceed the
@@ -150,14 +133,7 @@ public sealed class BillingSplitStore
             allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
             await allocationLock.ExecuteNonQueryAsync(cancellationToken);
         }
-        decimal collected;
-        await using (var collectedCommand = new NpgsqlCommand(
-            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
-            connection, lockTransaction))
-        {
-            collectedCommand.Parameters.AddWithValue("bill_id", billId);
-            collected = (decimal)(await collectedCommand.ExecuteScalarAsync(cancellationToken))!;
-        }
+        var collected = await ReadCollectedAsync(connection, lockTransaction, billId, cancellationToken);
         if (summary.AdjustedPayableAmount < collected)
             throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
 
@@ -190,6 +166,32 @@ public sealed class BillingSplitStore
         await lockTransaction.CommitAsync(cancellationToken);
 
         return (adjustment, summary);
+    }
+
+    /// <summary>A bill's items can carry different tax rates; the discount is split net/tax in the bill's own weighted-average rate.</summary>
+    private static BillAdjustment CreateDiscount(Bill bill, ApplyBillDiscountRequestV1 request, Guid authorizedBy, Guid actorId)
+        => request.CalculationType switch
+        {
+            "Percentage" => BillAdjustment.CreateDiscountPercentage(
+                Guid.NewGuid(), bill.Id, request.Value, bill.PayableAmount, bill.EffectiveTaxRatePercent,
+                request.ReasonCode, authorizedBy, notes: request.Notes, createdBy: actorId,
+                idempotencyKey: request.IdempotencyKey),
+            "FixedAmount" => BillAdjustment.CreateDiscountAmount(
+                Guid.NewGuid(), bill.Id, request.Value, bill.EffectiveTaxRatePercent,
+                request.ReasonCode, authorizedBy, notes: request.Notes, createdBy: actorId,
+                idempotencyKey: request.IdempotencyKey),
+            _ => throw new ArgumentException(
+                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
+        };
+
+    private static async Task<decimal> ReadCollectedAsync(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
+            connection, transaction);
+        command.Parameters.AddWithValue("bill_id", billId);
+        return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
     private static bool IsDiscountable(BillState status) => status
@@ -241,27 +243,31 @@ public sealed class BillingSplitStore
                     : $"İndirim tutarı 0'dan büyük, en çok {MaxAdjustmentAmount:N0} olmalı.");
     }
 
-    /// <summary>A discount request for a bill that exists and can still take one, before any grant is opened for it.</summary>
+    /// <summary>
+    /// Refuses a discount or comp the bill would refuse anyway (missing or closed bill, more than the payable, below what was
+    /// already collected) before any grant is opened for it; a retry of an already applied request passes.
+    /// </summary>
     public async Task EnsureDiscountRequestableAsync(
-        Guid billId, ApplyBillDiscountRequestV1 request, bool complimentary = false,
+        Guid billId, ApplyBillDiscountRequestV1 request, Guid actorId, bool complimentary = false,
         CancellationToken cancellationToken = default)
     {
         ValidateDiscountRequest(request, complimentary);
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
-        if (IsDiscountable(bill.Status))
-        {
-            // A comp that cannot be applied must not spend one of the cashier's auto-approvals first.
-            if (complimentary && request.Value > AdjustmentCalculator.Calculate(
-                    bill, await _adjustments!.GetByBillIdAsync(billId, cancellationToken)).AdjustedPayableAmount)
-                throw new DiscountExceedsPayableException("The complimentary amount exceeds the payable amount.");
-            return;
-        }
+        var existing = await _adjustments!.GetByBillIdAsync(billId, cancellationToken);
 
         // A retry of a discount that was already applied is answered by ApplyDiscountAsync, even after the bill was paid.
-        var existing = await _adjustments!.GetByBillIdAsync(billId, cancellationToken);
-        if (!existing.Any(a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal)))
+        if (existing.Any(a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal)))
+            return;
+        if (!IsDiscountable(bill.Status))
             throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+
+        // A request the bill would refuse anyway must not spend one of the requester's approvals first.
+        var summary = AdjustmentCalculator.Calculate(bill, [.. existing, CreateDiscount(bill, request, actorId, actorId)]);
+        await using var connection = await _dataSource!.OpenConnectionAsync(cancellationToken);
+        var collected = await ReadCollectedAsync(connection, null, billId, cancellationToken);
+        if (summary.AdjustedPayableAmount < collected)
+            throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
     }
 
     private static bool SameDiscount(BillAdjustment stored, ApplyBillDiscountRequestV1 request)
