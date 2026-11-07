@@ -1,5 +1,6 @@
 using ALKAROS.Reconciliation.CaseFoundation;
 using ALKAROS.Reconciliation.OnlineOrders.Tests.Fixtures;
+using ALKAROS.Reconciliation.Payments;
 using FluentAssertions;
 using Npgsql;
 using Xunit;
@@ -72,6 +73,21 @@ public sealed class NotHandedOverSourcePairTests : IClassFixture<OnlineOrderReco
     }
 
     [Fact]
+    public async Task LaterScansLeaveAnOpenCaseUntouchedAndAddNoActionRows()
+    {
+        var externalId = NewExternalId();
+        await SeedAgedOrderAsync(externalId, "Accepted", NotHandedOverSourcePair.OpenLimit + TimeSpan.FromMinutes(5));
+
+        await ScanAsync();
+        for (var round = 0; round < 3; round++)
+            await ScanAsync();
+
+        var record = (await _cases.GetActiveCaseByDedupKeyAsync(KeyOf("yemeksepeti", externalId)))!;
+        var actions = await _cases.GetCaseActionsAsync(record.CaseId);
+        actions.Select(action => action.ActionType).Should().Equal(ActionType.Created);
+    }
+
+    [Fact]
     public async Task ARecentOrAlreadyFinishedOrderOpensNoCase()
     {
         var recent = NewExternalId();
@@ -105,6 +121,8 @@ public sealed class NotHandedOverSourcePairTests : IClassFixture<OnlineOrderReco
         var externalId = NewExternalId();
         var orderId = await SeedAgedOrderAsync(externalId, "Accepted", TimeSpan.FromHours(4));
         await ScanAsync();
+        await ScanAsync();
+        await ScanAsync();
         var record = (await _cases.GetActiveCaseByDedupKeyAsync(KeyOf("yemeksepeti", externalId)))!;
 
         var refused = await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Kontrol edildi.", Manager);
@@ -134,6 +152,40 @@ public sealed class NotHandedOverSourcePairTests : IClassFixture<OnlineOrderReco
 
         (await CasesAsync(key)).Should().Be(1);
         (await _cases.GetActiveCaseByDedupKeyAsync(key)).Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData(CaseStatus.Resolved)]
+    [InlineData(CaseStatus.Dismissed)]
+    public async Task ASourceThatKeepsReportingAClosedCaseAddsNoActionRows(CaseStatus closedAs)
+    {
+        var key = "fixed-source:" + Guid.NewGuid().ToString("N");
+        var source = new StillReportingPair(key);
+        var scanner = new OnlineOrderReconciliationScanner([source], _cases);
+        await scanner.ScanAllAsync();
+        var created = (await _cases.GetActiveCaseByDedupKeyAsync(key))!;
+        await _cases.TransitionCaseStatusAsync(new TransitionCaseStatusRequest(created.CaseId, closedAs, created.RowVersion, Manager, "Kapatıldı."));
+
+        await scanner.ScanAllAsync();
+        await scanner.ScanAllAsync();
+
+        (await CasesAsync(key)).Should().Be(1);
+        var actions = (await _cases.GetCaseActionsAsync(created.CaseId)).Select(action => action.ActionType).ToList();
+        actions.Should().ContainSingle(action => action == ActionType.Created);
+        actions.Should().NotContain(ActionType.Deduplicated);
+    }
+
+    private sealed class StillReportingPair(string key) : IOnlineOrderSourcePair
+    {
+        public string Name => "still-reporting";
+        public string Kind => OnlineOrderDivergenceKind.NotHandedOver;
+        public bool RequiresManualResolution => false;
+        public bool IsEnabled => true;
+        public string? DisabledReason => null;
+
+        public Task<IReadOnlyList<DetectedDiscrepancy>> ScanAsync(CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyList<DetectedDiscrepancy>>(
+                [new DetectedDiscrepancy(key, CaseType.OnlineOrderMismatch, "a", "b", 0m, CaseSeverity.Low)]);
     }
 
     private sealed class NoReprocessing : IProviderEventReprocessing

@@ -1,7 +1,7 @@
 # V1-RMD-875 - Çevrimiçi sipariş taraması açık bir vakaya her turda Deduplicated eylemi yazmaz
 
 - Task ID: V1-RMD-875
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

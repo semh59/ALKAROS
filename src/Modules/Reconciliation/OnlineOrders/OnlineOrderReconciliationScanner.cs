@@ -41,6 +41,11 @@ public sealed class OnlineOrderReconciliationScanner
                 var discrepancies = await source.ScanAsync(cancellationToken).ConfigureAwait(false);
                 foreach (var discrepancy in discrepancies)
                 {
+                    // The source still reports it (resolving a case relies on that), but a key never opens a second
+                    // case, so every round would only append another Deduplicated action to the case it already has.
+                    if (await _reconciliationService.CaseExistsForDedupKeyAsync(discrepancy.DeduplicationKey, cancellationToken).ConfigureAwait(false))
+                        continue;
+
                     await _reconciliationService.CreateOrDeduplicateCaseAsync(
                         new CreateCaseRequest(
                             discrepancy.DeduplicationKey,

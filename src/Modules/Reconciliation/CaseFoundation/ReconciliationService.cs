@@ -10,6 +10,7 @@ public interface IReconciliationService
     Task AddCaseNoteAsync(AddCaseNoteRequest request, CancellationToken cancellationToken = default);
     Task<ReconciliationCaseRecord?> GetCaseByIdAsync(Guid caseId, CancellationToken cancellationToken = default);
     Task<ReconciliationCaseRecord?> GetActiveCaseByDedupKeyAsync(string deduplicationKey, CancellationToken cancellationToken = default);
+    Task<bool> CaseExistsForDedupKeyAsync(string deduplicationKey, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<CaseActionRecord>> GetCaseActionsAsync(Guid caseId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ReconciliationCaseRecord>> GetCasesByStatusAsync(CaseStatus status, int limit = 50, CancellationToken cancellationToken = default);
 }
@@ -53,6 +54,11 @@ public sealed class ReconciliationService : IReconciliationService
     public Task<ReconciliationCaseRecord?> GetActiveCaseByDedupKeyAsync(string deduplicationKey, CancellationToken cancellationToken = default)
     {
         return _repository.GetActiveCaseByDedupKeyAsync(deduplicationKey, cancellationToken);
+    }
+
+    public Task<bool> CaseExistsForDedupKeyAsync(string deduplicationKey, CancellationToken cancellationToken = default)
+    {
+        return _repository.CaseExistsForDedupKeyAsync(deduplicationKey, cancellationToken);
     }
 
     public Task<IReadOnlyList<CaseActionRecord>> GetCaseActionsAsync(Guid caseId, CancellationToken cancellationToken = default)

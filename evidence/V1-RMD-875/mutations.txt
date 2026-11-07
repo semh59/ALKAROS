@@ -1,0 +1,2 @@
+M1-skip-removed: testexit=1 Başarısız! - Başarısız:     3, Başarılı:    41, Atlanan:     0, Toplam:    44, Süre: 2 s - ALKAROS.Reconciliat
+M2-skip-only-active-cases: testexit=1 Başarısız! - Başarısız:     2, Başarılı:    42, Atlanan:     0, Toplam:    44, Süre: 1 s - ALKAROS.Reconciliat

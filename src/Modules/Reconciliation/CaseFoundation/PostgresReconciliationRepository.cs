@@ -28,6 +28,11 @@ public interface IReconciliationRepository
         string deduplicationKey,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Whether a case with this key exists in any status (a key never opens a second case).</summary>
+    Task<bool> CaseExistsForDedupKeyAsync(
+        string deduplicationKey,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<CaseActionRecord>> GetCaseActionsAsync(
         Guid caseId,
         CancellationToken cancellationToken = default);
@@ -354,6 +359,17 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
             return null;
 
         return ReadCaseRecord(reader);
+    }
+
+    public async Task<bool> CaseExistsForDedupKeyAsync(
+        string deduplicationKey,
+        CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var cmd = connection.CreateCommand();
+        cmd.CommandText = $"SELECT EXISTS (SELECT 1 FROM {CasesTable} WHERE deduplication_key = @key);";
+        AddParameter(cmd, "key", deduplicationKey.Trim());
+        return (bool)(await cmd.ExecuteScalarAsync(cancellationToken))!;
     }
 
     public async Task<IReadOnlyList<CaseActionRecord>> GetCaseActionsAsync(
