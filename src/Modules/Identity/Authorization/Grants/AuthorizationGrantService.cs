@@ -7,6 +7,7 @@ namespace ALKAROS.Identity.Authorization.Grants;
 public sealed class AuthorizationGrantService : IAuthorizationGrantService
 {
     private const string UniqueViolation = "23505";
+    private const string BillLockKey = "bill-adjustment-total";
 
     // Only void and comp carry the "(own check)" restriction in the model's §3
     // role matrix; bills.discount is a plain grant for every role.
@@ -90,6 +91,14 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         {
             return await StoreAsync(request, GrantStatus.Denied, PolicyPath.Auto, cancellationToken);
         }
+
+        // The per-bill total cap sums grants of every requester and of both permissions on one bill, so requests for the
+        // same bill are serialized too. The bill lock is always taken before the requester lock below, so two requests
+        // cannot wait on each other.
+        await using var billLock = request.SubjectId is { } billId
+            && string.Equals(request.SubjectType, BillAdjustmentTotalGate.BillSubjectType, StringComparison.Ordinal)
+                ? await _grants.AcquireRequesterLockAsync(billId, BillLockKey, cancellationToken)
+                : null;
 
         // Found in an independent review (2026-09-11): everything from here
         // to the end of this method reads a running total for this exact

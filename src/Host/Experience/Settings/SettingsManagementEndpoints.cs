@@ -1,7 +1,9 @@
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Settings.BillAdjustmentCap;
 using ALKAROS.Settings.BusinessIdentity;
 using ALKAROS.Settings.CashMovementApproval;
 using ALKAROS.Settings.GarsonFeatureToggles;
@@ -158,6 +160,7 @@ public static class SettingsManagementEndpoints
         await CashOutApprovalThresholdSetting.EnsureRegisteredAsync(settings, cancellationToken);
         await ManagerSelfApprovalSetting.EnsureRegisteredAsync(settings, cancellationToken);
         await CloseVarianceToleranceSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await BillAdjustmentTotalCapSetting.EnsureRegisteredAsync(settings, SettingsBillAdjustmentTotalCap.DefaultCap, cancellationToken);
     }
 
     private static async Task<Dictionary<Guid, string>> DisplayNamesAsync(

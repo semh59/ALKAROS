@@ -232,6 +232,35 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheBillAdjustmentCapIsListedWithTheComplimentaryBudgetCeilingAsItsDefault()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/settings/");
+
+        var cap = Assert.Single((await response.Content.ReadFromJsonAsync<SettingRecordV1[]>())!, r => r.Key == "billing.adjustment_total_cap");
+        Assert.Equal(("150", "WholeNumber", "billing"), (cap.Value, cap.DataType, cap.ModuleOwner));
+    }
+
+    [Theory]
+    [InlineData("-1", false)]
+    [InlineData("100001", false)]
+    [InlineData("12.5", false)]
+    [InlineData("0", true)]
+    [InlineData("100000", true)]
+    public async Task TheBillAdjustmentCapAcceptsWholeLiraFromZeroToTheCeilingOnly(string value, bool accepted)
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var listing = await client.GetAsync("/api/v1/management/settings/");
+
+        using var response = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/billing.adjustment_total_cap", new UpdateSettingValueV1(value, ExpectedRowVersion: 1));
+
+        Assert.Equal(accepted ? HttpStatusCode.OK : HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(accepted ? value : "150", await _database.GetRawValueAsync("billing.adjustment_total_cap"));
+    }
+
+    [Fact]
     public async Task ChangingAndDeactivatingASettingWriteAuditEventsWithTheOldAndNewValue()
     {
         // a change of the cash-out approval threshold, or of any other setting, is audited.

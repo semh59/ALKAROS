@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Xml;
+using ALKAROS.Settings.BillAdjustmentCap;
 using ALKAROS.Settings.BusinessIdentity;
 using ALKAROS.Settings.CashCloseTolerance;
 using ALKAROS.Settings.CashMovementApproval;
@@ -59,6 +60,7 @@ public sealed class SettingValidator : ISettingValidator
         [QrOrderExpirySetting.Key] = (v => DurationBetween(v, TimeSpan.FromMinutes(1), TimeSpan.FromHours(24)), "QR sipariş onay süresi 1 dakika ile 24 saat arasında olmalı."),
         [CashOutApprovalThresholdSetting.Key] = (v => WholeNumberBetween(v, 0, CashOutApprovalThresholdSetting.MaxValue), "Nakit çıkış onay eşiği 0 ile 1.000.000 TL arasında tam sayı olmalı (0 = her çıkış onay ister)."),
         [CloseVarianceToleranceSetting.Key] = (v => WholeNumberBetween(v, 0, CloseVarianceToleranceSetting.MaxValue), "Kasa kapanış fark toleransı 0 ile 500 TL arasında tam sayı olmalı."),
+        [BillAdjustmentTotalCapSetting.Key] = (v => WholeNumberBetween(v, 0, BillAdjustmentTotalCapSetting.MaxValue), "Hesap başına ikram ve indirim sınırı 0 ile 100.000 TL arasında tam sayı olmalı (0 = her ikram ve indirim onay ister)."),
         [BusinessNameSetting.Key] = (v => v.Length <= 80 && !v.Any(char.IsControl), "İşletme adı en çok 80 karakter olabilir ve denetim karakteri içeremez."),
     };
 

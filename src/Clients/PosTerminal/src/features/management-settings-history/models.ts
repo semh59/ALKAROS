@@ -7,6 +7,7 @@ export interface SettingHistoryEntry {
 
 const labels: Record<string, string> = {
   "approvals.manager_self_approval_enabled": "Yönetici kendi talebini ve kendi kasa mutabakatını onaylayabilir",
+  "billing.adjustment_total_cap": "Hesap başına en fazla ikram ve indirim toplamı",
   "business.accent_theme": "Renk teması",
   "business.name": "İşletme adı",
   "cash.cash_out_approval_threshold": "Nakit çıkış onay eşiği",
@@ -40,6 +41,7 @@ const numericRules: Record<string, SettingEditRule> = {
   "kitchen.dense_mode_threshold": { kind: "number", min: 1, max: 99, hint: "1 ile 99 arası" },
   "cash.cash_out_approval_threshold": { kind: "number", min: 0, max: 1000000, hint: "0 ile 1.000.000 ₺ arası; bu tutarın üstündeki nakit çıkışlar yönetici onayı ister" },
   "cash.close_variance_tolerance": { kind: "number", min: 0, max: 500, hint: "0 ile 500 ₺ arası; kasa kapanışında bu tutarı aşan fark yönetici onayı ister" },
+  "billing.adjustment_total_cap": { kind: "number", min: 0, max: 100000, hint: "0 ile 100.000 ₺ arası; bir hesapta kasiyer ve garsonun verdiği ikram ve indirim toplamı bu tutarı aşarsa yönetici onayı gerekir (0 = hepsi onay ister)" },
   "qr_ordering.pending_confirmation_timeout": { kind: "minutes", min: 1, max: 1440, hint: "1 dakika ile 24 saat (1440 dakika) arası" },
 };
 
@@ -74,7 +76,7 @@ export function formatSettingValue(dataType: string, value: string | null, key?:
   if (value === "[Deactivated]") return "Pasifleştirildi";
   if (dataType === "Toggle") return value.toLowerCase() === "true" ? "Evet" : "Hayır";
   if (dataType === "Duration") return formatMinutes(durationToMinutes(value));
-  if (key === "cash.cash_out_approval_threshold" || key === "cash.close_variance_tolerance") return `${value} ₺`;
+  if (key === "cash.cash_out_approval_threshold" || key === "cash.close_variance_tolerance" || key === "billing.adjustment_total_cap") return `${value} ₺`;
   if (key === "waiter.max_active_tables") return value === "0" ? "Sınırsız" : `${value} masa`;
   return value;
 }

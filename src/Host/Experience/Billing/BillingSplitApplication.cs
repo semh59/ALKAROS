@@ -86,6 +86,8 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IBehaviouralRateSource, PostgresBehaviouralRateSource>();
         services.TryAddSingleton<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPrePolicyGate, BillAdjustmentTotalGate>());
+        services.TryAddSingleton<IBillAdjustmentTotalCap, SettingsBillAdjustmentTotalCap>();
         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
         // V1-SET-004: ApplyTipAsync checks GarsonFeature.VoluntaryTip — same
         // DbDataSource/ISettingValidator gap every other settings-backed

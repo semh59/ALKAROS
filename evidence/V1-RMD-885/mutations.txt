@@ -1,0 +1,9 @@
+gte: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 839 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+no-discount: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 657 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+no-sum: Başarısız! - Başarısız:     5, Başarılı:     4, Atlanan:     0, Toplam:     9, Süre: 653 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+any-subject: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 820 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+any-permission: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 729 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+sum-all-status: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 687 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+no-bill-lock-3: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 959 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0) testex
+no-gate-registration: Başarısız! - Başarısız:     2, Başarılı:     3, Atlanan:     0, Toplam:     5, Süre: 20 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+cap-ignores-setting: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 20 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi

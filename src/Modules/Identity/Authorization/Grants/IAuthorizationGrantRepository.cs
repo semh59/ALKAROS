@@ -42,6 +42,15 @@ public interface IAuthorizationGrantRepository
         DateTimeOffset since,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Total <c>amount</c> already granted for the given permissions on one bill (by any path, requester or approver);
+    /// 0 when nothing was granted. Feeds the per-bill total cap.
+    /// </summary>
+    Task<decimal> SumGrantedForSubjectAsync(
+        Guid subjectId,
+        IReadOnlyCollection<string> permissionCodes,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Every pending grant, oldest first. Consumed by the manager surface.</summary>
     Task<IReadOnlyList<AuthorizationGrant>> ListPendingAsync(CancellationToken cancellationToken = default);
 
@@ -70,7 +79,8 @@ public interface IAuthorizationGrantRepository
     /// lock keyed by <paramref name="requesterUserId"/> +
     /// <paramref name="permissionCode"/>, held until the returned handle is
     /// disposed — serializes exactly that (requester, permission) pair;
-    /// every other pair is completely unaffected. The caller
+    /// every other pair is completely unaffected. The bill total cap reuses it
+    /// with the bill id as the first key and a fixed name as the second. The caller
     /// (<see cref="IAuthorizationGrantService"/>) holds it across its own
     /// read-check-then-insert sequence.
     /// </summary>

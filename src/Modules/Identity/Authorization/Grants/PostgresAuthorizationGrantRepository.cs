@@ -161,6 +161,26 @@ public sealed class PostgresAuthorizationGrantRepository : IAuthorizationGrantRe
         return (decimal)(await command.ExecuteScalarAsync(cancellationToken) ?? 0m);
     }
 
+    public async Task<decimal> SumGrantedForSubjectAsync(
+        Guid subjectId,
+        IReadOnlyCollection<string> permissionCodes,
+        CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT coalesce(sum(amount), 0)
+            FROM {Table}
+            WHERE subject_type = 'Bill'
+              AND subject_id = @subject
+              AND permission_code = ANY(@permissions)
+              AND status = 'granted';
+            """);
+        command.Parameters.AddWithValue("subject", subjectId);
+        command.Parameters.AddWithValue("permissions", permissionCodes.ToArray());
+
+        return (decimal)(await command.ExecuteScalarAsync(cancellationToken) ?? 0m);
+    }
+
     public async Task<IReadOnlyList<AuthorizationGrant>> ListPendingAsync(CancellationToken cancellationToken = default)
     {
         var result = new List<AuthorizationGrant>();

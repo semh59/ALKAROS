@@ -214,6 +214,25 @@ describe("settings history section", () => {
     expect(client.update).toHaveBeenCalledWith("cash.close_variance_tolerance", "20", 1, "Sıkılaştır");
   });
 
+  it("names the per-bill comp and discount cap, shows it in lira and accepts only 0 to 100000", async () => {
+    const cap = { ...waiterLimit, settingId: "b1", key: "billing.adjustment_total_cap", value: "150" };
+    const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([cap]) });
+    await render(<SettingsHistorySection client={client} />);
+
+    expect(document.body.textContent).toContain("Hesap başına en fazla ikram ve indirim toplamı");
+    expect(document.body.textContent).toContain("150 ₺");
+    await press("Düzenle");
+    const form = "Ayarı değiştir: Hesap başına en fazla ikram ve indirim toplamı";
+    await typeInto(idOfField("Değişiklik gerekçesi"), "Sıkılaştır");
+    await typeInto(idOfField("Yeni değer"), "100001");
+    await submit(form);
+    expect(alertText()).toContain("0 ile 100.000 ₺ arası");
+    expect(client.update).not.toHaveBeenCalled();
+    await typeInto(idOfField("Yeni değer"), "200");
+    await submit(form);
+    expect(client.update).toHaveBeenCalledWith("billing.adjustment_total_cap", "200", 1, "Sıkılaştır");
+  });
+
   it("accepts a cash-out threshold of 0, which sends every cash-out for approval", async () => {
     const threshold = { ...waiterLimit, settingId: "c1", key: "cash.cash_out_approval_threshold", value: "500" };
     const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([threshold]) });
