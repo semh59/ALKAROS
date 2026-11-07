@@ -169,10 +169,10 @@ public sealed class PaymentRefundStore
         IReadOnlyList<RefundRequestItem>? priced = null;
         if (items is { Count: > 0 })
         {
-            var itemsAmount = 0m;
-            (itemsAmount, priced) = await PriceItemsAsync(connection, transaction, billId, items, cancellationToken);
+            decimal itemsAmount, carry;
+            (itemsAmount, carry, priced) = await PriceItemsAsync(connection, transaction, billId, items, cancellationToken);
             // Per-line rounding can overshoot the payment by a few kuruş when the last units are refunded.
-            if (itemsAmount > amount + items.Count * 0.01m)
+            if (itemsAmount - carry > amount + items.Count * 0.01m)
                 throw new RefundAmountExceedsPaymentException(paymentId);
             amount = Math.Min(itemsAmount, amount);
         }
@@ -221,7 +221,7 @@ public sealed class PaymentRefundStore
     /// Checks the asked items against the bill and what was already refunded, and prices them: the line's gross
     /// share for the units after the bill-level discount is spread over the lines; tips and fees are not refunded.
     /// </summary>
-    private async Task<(decimal Amount, IReadOnlyList<RefundRequestItem> Items)> PriceItemsAsync(
+    private async Task<(decimal Amount, decimal Carry, IReadOnlyList<RefundRequestItem> Items)> PriceItemsAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, IReadOnlyList<RefundItemInputV1> items,
         CancellationToken cancellationToken)
     {
@@ -242,7 +242,12 @@ public sealed class PaymentRefundStore
         var halfPortionProducts = await HalfPortionProductsAsync(
             connection, transaction, bill.Items.Select(candidate => candidate.ProductId).Distinct().ToArray(), cancellationToken);
 
-        var total = 0m;
+        // A request capped by its payment leaves kuruş unpaid; the next item refund pays it, as the lines' shares
+        // add up to what the customer paid.
+        var carry = -await PostgresRefundRequestRepository.ItemRefundedAmountAsync(billId, connection, transaction, cancellationToken);
+        foreach (var line in bill.Items)
+            carry += AdjustmentCalculator.RefundAmount(lineAmounts.GetValueOrDefault(line.Id), line.Quantity, 0m, refunded.GetValueOrDefault(line.Id));
+        var total = carry;
         foreach (var item in items)
         {
             var line = bill.Items.FirstOrDefault(candidate => candidate.Id == item.BillItemId)
@@ -264,7 +269,7 @@ public sealed class PaymentRefundStore
 
         if (total <= 0m)
             throw new RefundInputException("The refund amount must be above zero.", "REFUND_AMOUNT_INVALID", "İade tutarı sıfırdan büyük olmalı.");
-        return (total, items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
+        return (total, carry, items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
     }
 
     private static async Task<HashSet<Guid>> HalfPortionProductsAsync(

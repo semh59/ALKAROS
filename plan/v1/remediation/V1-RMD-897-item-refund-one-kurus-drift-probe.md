@@ -1,8 +1,8 @@
 # V1-RMD-897 - Kalem iadesinde en çok 1 kuruşluk kayma şüphesi: önce davranışı çalıştıran test
 
 - Task ID: V1-RMD-897
-- Status: InProgress
-- Assignee: Unassigned
+- Status: Done
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 

@@ -206,6 +206,21 @@ public static class PostgresRefundRequestRepository
         return result;
     }
 
+    /// <summary>The money handed out (or asked for) by the item refunds of the bill that still count.</summary>
+    public static async Task<decimal> ItemRefundedAmountAsync(
+        Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT COALESCE(SUM(r.amount), 0)
+            FROM payments.refund_requests r
+            WHERE r.bill_id = @bill AND r.status IN ('Requested', 'AwaitingManualRefund', 'Completed')
+              AND EXISTS (SELECT 1 FROM payments.refund_request_items i WHERE i.refund_request_id = r.refund_request_id);
+            """, connection, transaction);
+        command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+        return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
     public static async Task<IReadOnlyList<RefundRequestItem>> LoadItemsAsync(
         Guid requestId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
     {
