@@ -16,14 +16,14 @@
 
 - `evidence/V1-RMD-887/**`
 - `database/migrations/V1/V1-RMD-887/**`
+- `src/Modules/Billing/BillFoundation/IBillReceiptPrintRepository.cs`
+- `src/Modules/Billing/BillFoundation/PostgresBillReceiptPrintRepository.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - database/MigrationComposition/order.json — 223 kaydı
   - src/Host/Composition/Migrations/MigrationManifest.cs — PhaseBMax 223
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — 223 kaydı
   - tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs — 223 ileri/geri testi
   - src/Host/DualScreen/DualScreenApplication.Receipt.cs — print ucu, GET alanları
-  - src/Modules/Billing/BillFoundation/IBillReceiptPrintRepository.cs — yeni, orijinal basım talebi
-  - src/Modules/Billing/BillFoundation/PostgresBillReceiptPrintRepository.cs — yeni
   - src/Host/Experience/Billing/BillTerminalAccess.cs — depo kaydı
   - tests/Clients/StaticApps/split-payment-receipt.test.js — sunucu durumuna bağlı basım
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js — her basım print ucundan
