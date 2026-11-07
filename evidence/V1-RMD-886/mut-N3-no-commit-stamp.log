@@ -1,0 +1,7 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+D:\PROJECT\ALKAROS\Directory.Build.props(55,5): error : RepositoryCommit must be a lowercase 40-character Git SHA, but was '2d84a83a'. [D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj]
+D:\PROJECT\ALKAROS\Directory.Build.props(55,5): error : RepositoryCommit must be a lowercase 40-character Git SHA, but was '2d84a83a'. [D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj]
+D:\PROJECT\ALKAROS\Directory.Build.props(55,5): error : RepositoryCommit must be a lowercase 40-character Git SHA, but was '2d84a83a'. [D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj]
+D:\PROJECT\ALKAROS\Directory.Build.props(55,5): error : RepositoryCommit must be a lowercase 40-character Git SHA, but was '2d84a83a'. [D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\ALKAROS.Measurements.csproj]
+testexit=1

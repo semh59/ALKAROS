@@ -1,0 +1,11 @@
+N1-env-line-removed: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N2-git-line-added: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N3-no-commit-stamp: geçersiz mutant (derleme hatası: RepositoryCommit 40 karakter olmalı), assert kaldırıldı
+N1b-env-line-removed: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N2b-git-line-added: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N4-glob-git-line-added: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N5-git-dir-line-added: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N1c-env-line-removed: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N2c-git-line-added: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 1 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+N6-env-negated: Başarısız! - Başarısız:     1, Başarılı:    24, Atlanan:     0, Toplam:    25, Süre: 2 s - ALKAROS.Host.Tests.dll (net8.0) testexit=1 
+ALLDONE

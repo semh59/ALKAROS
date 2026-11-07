@@ -66,12 +66,13 @@ public sealed class DeployFilesTests
     }
 
     [Fact]
-    public void TheBuildContextExcludesTheEnvironmentFileAndGitHistory()
+    public void TheBuildContextExcludesTheEnvironmentFileButKeepsGitForTheCommitStamp()
     {
         var lines = File.ReadAllLines(Path.Combine(Root, ".dockerignore")).Select(line => line.Trim()).ToHashSet();
 
         Assert.Contains(".env", lines);
-        Assert.Contains(".git", lines);
+        Assert.DoesNotContain("!.env", lines);
+        Assert.DoesNotContain(lines, line => System.Text.RegularExpressions.Regex.IsMatch(line, @"^(\*\*/)?\.git(/.*)?$"));
     }
 
     [Fact]

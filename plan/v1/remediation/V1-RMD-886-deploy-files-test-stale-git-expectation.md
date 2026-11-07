@@ -1,7 +1,7 @@
 # V1-RMD-886 - DeployFilesTests eski .git beklentisi (Docker bağlamı .git'i bilerek tutuyor)
 
 - Task ID: V1-RMD-886
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
