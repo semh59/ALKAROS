@@ -268,8 +268,12 @@ public sealed class PaymentRefundStore
         }
 
         if (total <= 0m)
-            throw new RefundInputException("The refund amount must be above zero.", "REFUND_AMOUNT_INVALID", "İade tutarı sıfırdan büyük olmalı.");
-        return (total, carry, items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
+            throw carry < 0m
+                ? new RefundInputException(
+                    "An earlier refund was overpaid by a later discount.", "REFUND_EARLIER_OVERPAID",
+                    "Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin.")
+                : new RefundInputException("The refund amount must be above zero.", "REFUND_AMOUNT_INVALID", "İade tutarı sıfırdan büyük olmalı.");
+        return (total, Math.Max(carry, 0m), items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
     }
 
     private static async Task<HashSet<Guid>> HalfPortionProductsAsync(

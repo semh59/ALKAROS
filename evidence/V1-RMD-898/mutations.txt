@@ -1,0 +1,7 @@
+raw-carry-in-guard [s/return (total, Math.Max(carry, 0m), items/return (total, carry, items/]: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+overpaid-as-invalid [s/throw carry < 0m$/throw false/]: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 4 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+overpaid-condition-flipped [s/throw carry < 0m$/throw carry > 0m/]: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 4 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+shortfall-unclamped [s/Math.Max(carry, 0m), items/carry, items/]: Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 4 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+cashier-dictionary-entry [/REFUND_EARLIER_OVERPAID:/d]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+react-entry [delete line]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 20 passed (21) vitestexit=1 restored-identical

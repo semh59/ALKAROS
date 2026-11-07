@@ -42,6 +42,7 @@ describe("billing refund client", () => {
     [409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."],
     [409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin."],
     [400, "REFUND_QUANTITY_NOT_WHOLE", "Bu ürün yalnız tam adet olarak iade edilebilir."],
+    [400, "REFUND_EARLIER_OVERPAID", "Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin."],
     [400, "ORDER_QUANTITY_NOT_ALLOWED", "Bu ürün için bu adet girilemez: tam adet girin. Yarım porsiyon yalnız ayarı açık ürünlerde, 0,5'in katı olarak girilebilir."],
     [400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."],
   ])("gives %i %s a fixed Turkish sentence", (status, code, sentence) => {

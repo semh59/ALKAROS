@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > answers 400 REFUND_EARLIER_OVERPAID with a fixed Turkish sentence, never the server text or the code
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794093368043-0.44430278560766523:231:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794093368043-0.44430278560766523:392:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794093368043-0.44430278560766523:497:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-cancel-order.test.js (10 tests | 1 failed) 2939ms
+     × answers 400 REFUND_EARLIER_OVERPAID with a fixed Turkish sentence, never the server text or the code 1155ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > answers 400 REFUND_EARLIER_OVERPAID with a fixed Turkish sentence, never the server text or the code
+AssertionError: expected 'Hesap ÖdemeTahsilatHesap toplamı₺100,…' to contain 'Önceki iade sonradan verilen indirim …'
+
+Expected: "Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin."
+Received: "Hesap ÖdemeTahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Eşit bölüştürHesaplaÖdeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺Alınan para (isteğe bağlı)₺5 ₺10 ₺20 ₺50 ₺100 ₺200 ₺Tam tutarÖdemeyi Ekleİndirim ve bahşişİndirim / düzeltme ekleMüşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltmeYüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekleBahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptal!Hataİstek tamamlanamadı.Hesabı iptal etGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etHazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.Hesabı iptal et"
+
+ ❯ split-payment-cancel-order.test.js:106:54
+    104|     confirmCancel();
+    105|
+    106|     await vi.waitFor(() => expect(app().textContent).toContain(sentenc…
+       |                                                      ^
+    107|     expect(app().textContent).not.toContain("raw server text");
+    108|     expect(app().textContent).not.toContain(code);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  02:16:04
+   Duration  4.22s (transform 482ms, setup 23ms, import 53ms, tests 2.94s, environment 947ms)
+
+vitestexit=1

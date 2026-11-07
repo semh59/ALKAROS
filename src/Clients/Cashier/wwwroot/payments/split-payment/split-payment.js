@@ -176,6 +176,7 @@
     REFUND_ALREADY_REQUESTED: 'Bu ödeme için açık bir iade isteği zaten var.',
     REFUND_AMOUNT_EXCEEDS_PAYMENT: 'İade tutarı seçilen ödemenin kalan tutarını aşıyor.',
     REFUND_AMOUNT_INVALID: 'İade tutarı sıfırdan büyük olmalı.',
+    REFUND_EARLIER_OVERPAID: 'Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin.',
     REFUND_ITEMS_DUPLICATE: 'Aynı kalem iade listesinde bir kez yer alabilir.',
     REFUND_ITEM_NOT_ON_BILL: 'Seçilen kalem bu hesapta yok.',
     REFUND_ITEM_QUANTITY: 'Bu kalemden istenen adet iade edilebilir adedi aşıyor.',

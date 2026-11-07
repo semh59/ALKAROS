@@ -80,6 +80,7 @@ export function describeRefundFailure(error: unknown): string {
     : "Bu işlem için yetkiniz yok.";
   if (status === 400) {
     if (code === "REFUND_QUANTITY_NOT_WHOLE") return "Bu ürün yalnız tam adet olarak iade edilebilir.";
+    if (code === "REFUND_EARLIER_OVERPAID") return "Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin.";
     if (code === "ORDER_QUANTITY_NOT_ALLOWED") return "Bu ürün için bu adet girilemez: tam adet girin. Yarım porsiyon yalnız ayarı açık ürünlerde, 0,5'in katı olarak girilebilir.";
     if (code === "REASON_REQUIRED") return "İptal gerekçesi 1 ile 500 karakter arasında olmalı.";
     return "Gerekçe veya fiş numarası eksik ya da geçersiz.";

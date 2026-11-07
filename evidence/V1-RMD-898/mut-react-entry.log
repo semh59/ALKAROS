@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/refundApi.test.ts (21 tests | 1 failed) 32ms
+     × gives 400 REFUND_EARLIER_OVERPAID a fixed Turkish sentence 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/refundApi.test.ts > billing refund client > gives 400 REFUND_EARLIER_OVERPAID a fixed Turkish sentence
+AssertionError: expected 'Gerekçe veya fiş numarası eksik ya da…' to be 'Önceki iade sonradan verilen indirim …' // Object.is equality
+
+Expected: "Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin."
+Received: "Gerekçe veya fiş numarası eksik ya da geçersiz."
+
+ ❯ src/features/billing/refundApi.test.ts:49:88
+     47|     [400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arası…
+     48|   ])("gives %i %s a fixed Turkish sentence", (status, code, sentence) …
+     49|     expect(describeRefundFailure(new RefundApiError(status, code, "raw…
+       |                                                                                        ^
+     50|   });
+     51|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 20 passed (21)
+   Start at  02:16:11
+   Duration  1.28s (transform 54ms, setup 0ms, import 78ms, tests 32ms, environment 912ms)
+
+vitestexit=1

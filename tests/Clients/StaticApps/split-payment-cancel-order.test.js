@@ -96,6 +96,7 @@ describe("cancelling the order together with the bill on the payment page", () =
     [409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi; sayfayı yenileyip tekrar deneyin."],
     [400, "ORDER_QUANTITY_NOT_ALLOWED", "Bu ürün için bu adet girilemez: tam adet girin."],
     [400, "REFUND_QUANTITY_NOT_WHOLE", "Bu ürün yalnız tam adet olarak iade edilebilir."],
+    [400, "REFUND_EARLIER_OVERPAID", "Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin."],
   ])("answers %i %s with a fixed Turkish sentence, never the server text or the code", async (status, code, sentence) => {
     await open({ status, body: { error: { code, message: "raw server text" } } });
 
