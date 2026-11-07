@@ -1,0 +1,14 @@
+random-id: Başarısız! - Başarısız:     4, Başarılı:     1, Atlanan:     0, Toplam:     5, Süre: 14 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+now-time: Başarısız! - Başarısız:     4, Başarılı:     1, Atlanan:     0, Toplam:     5, Süre: 14 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+duplicate-not-swallowed: Başarısız! - Başarısız:     4, Başarılı:     1, Atlanan:     0, Toplam:     5, Süre: 14 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+denied-named-pending: Başarısız! - Başarısız:     2, Başarılı:     3, Atlanan:     0, Toplam:     5, Süre: 14 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+kind-swapped: Başarısız! - Başarısız:     5, Başarılı:     0, Atlanan:     0, Toplam:     5, Süre: 15 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+no-actor: Başarısız! - Başarısız:     2, Başarılı:     3, Atlanan:     0, Toplam:     5, Süre: 15 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+--- round 2 (7 tests, schema filter)
+r2-schema-filter: Başarısız! - Başarısız:     5, Başarılı:     2, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+r2-random-id: Başarısız! - Başarısız:     5, Başarılı:     2, Atlanan:     0, Toplam:     7, Süre: 22 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+--- round 3 (7 tests, payload asserts)
+r3-amount-zero: Başarısız! - Başarısız:     2, Başarılı:     5, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+r3-now-time: Başarısız! - Başarısız:     5, Başarılı:     2, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+r3-denied-named-pending: Başarısız! - Başarısız:     3, Başarılı:     4, Atlanan:     0, Toplam:     7, Süre: 22 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical
+r3-no-actor: Başarısız! - Başarısız:     3, Başarılı:     4, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit=1 restored-identical

@@ -34,6 +34,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data.Common;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace ALKAROS.Host.Experience.Billing;
@@ -165,8 +167,14 @@ public static class BillingSplitApplication
             switch (resolution.Outcome)
             {
                 case GrantOutcome.Refused:
+                    await AppendGrantOutcomeAuditOnceAsync(
+                        auditEvents, "denied", complimentary, billId, principal.UserId, request, grantAmount, resolution.Grant,
+                        context.TraceIdentifier, cancellationToken);
                     throw new GrantDeniedException(complimentary);
                 case GrantOutcome.Pending:
+                    await AppendGrantOutcomeAuditOnceAsync(
+                        auditEvents, "pending", complimentary, billId, principal.UserId, request, grantAmount, resolution.Grant,
+                        context.TraceIdentifier, cancellationToken);
                     return Results.Accepted(value: new ApplyBillDiscountResultV1(
                         "Pending", billId, null, null, resolution.Grant.GrantId));
                 case GrantOutcome.Authorized:
@@ -199,6 +207,40 @@ public static class BillingSplitApplication
                 summary.TotalTips,
                 summary.AdjustedPayableAmount),
             null));
+    }
+
+    /// <summary>
+    /// The cashier screen polls a waiting request by resending it, so the record's id is derived from the grant and the
+    /// outcome and its time is the grant's own (the audit table's key is id plus time): a repeat insert hits the primary
+    /// key and is dropped, which also holds for concurrent polls and for a first write that was cut short.
+    /// </summary>
+    private static async Task AppendGrantOutcomeAuditOnceAsync(
+        IAuditEventStore auditEvents, string outcome, bool complimentary, Guid billId, Guid actorId,
+        ApplyBillDiscountRequestV1 request, decimal amount, AuthorizationGrant grant, string correlationId,
+        CancellationToken cancellationToken)
+    {
+        var eventName = $"{(complimentary ? "bill.comp" : "bill.discount")}.{outcome}";
+        var id = new Guid(SHA256.HashData(Encoding.UTF8.GetBytes($"{grant.GrantId:N}:{eventName}"))[..16]);
+        try
+        {
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: id,
+                    eventName: eventName,
+                    aggregateType: "Bill",
+                    aggregateId: billId,
+                    actorType: "User",
+                    correlationId: correlationId,
+                    actorId: actorId,
+                    reason: request.ReasonCode,
+                    afterStateJson: JsonSerializer.Serialize(new { grantId = grant.GrantId, amount, calculationType = request.CalculationType }),
+                    occurredAt: grant.ResolvedAt ?? grant.RequestedAt),
+                cancellationToken);
+        }
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.SchemaName == "audit")
+        {
+            // An earlier poll of the same request already wrote this record.
+        }
     }
 
     /// <summary>Reads count against the terminal's read budget and everything else against its write budget.</summary>

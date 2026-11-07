@@ -1,0 +1,174 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Privacy.Anonymization -> D:\PROJECT\ALKAROS\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.Support -> D:\PROJECT\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.Purchasing -> D:\PROJECT\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.Production -> D:\PROJECT\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.QrOrdering -> D:\PROJECT\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Payments.TenderComposition -> D:\PROJECT\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Billing.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:05.04]     ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(kind: "discount") [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(kind: "discount") [1 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Accepted
+Actual:   ServiceUnavailable
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 42
+   at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 49
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:08.41]     ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(kind: "comp") [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(kind: "comp") [371 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Accepted
+Actual:   ServiceUnavailable
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 42
+   at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.AWaitingRequestWritesOnePendingRecordHoweverOftenItIsPolled(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 49
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:11.70]     ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ConcurrentPollsOfAWaitingRequestWriteOnePendingRecord [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ConcurrentPollsOfAWaitingRequestWriteOnePendingRecord [398 ms]
+  Hata İletisi:
+   Assert.All() Failure: 8 out of 8 items in the collection did not pass.
+[0]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[1]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[2]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[3]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[4]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[5]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[6]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+[7]: Item:  StatusCode: 503, ReasonPhrase: 'Service Unavailable', Version: 1.1, Content: System.Net.Http.HttpConnectionResponseContent, Headers:
+            {
+              Date: Sat, 07 Nov 2026 20:31:48 GMT
+              Server: Kestrel
+              Transfer-Encoding: chunked
+              Content-Type: application/json; charset=utf-8
+            }
+     Error: Assert.Equal() Failure: Values differ
+            Expected: Accepted
+            Actual:   ServiceUnavailable
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ConcurrentPollsOfAWaitingRequestWriteOnePendingRecord() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 118
+   at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ConcurrentPollsOfAWaitingRequestWriteOnePendingRecord() in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 119
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:21.99]     ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(kind: "discount") [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(kind: "discount") [448 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   ServiceUnavailable
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 69
+   at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 73
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:25.43]     ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(kind: "comp") [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(kind: "comp") [364 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   ServiceUnavailable
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 69
+   at ALKAROS.Host.Experience.Billing.Tests.BillAdjustmentGrantAuditHttpTests.ARefusedRequestWritesOneDeniedRecordAfterTheWaitingOne(String kind) in D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\BillAdjustmentGrantAuditHttpTests.cs:line 73
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     5, Başarılı:     2, Atlanan:     0, Toplam:     7, Süre: 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+testexit=1
