@@ -1,7 +1,7 @@
 # V1-RMD-879 - Hesap indiriminin kalemlere dağıtılması: iade ve KDV kırılımı tam toplam (F0287)
 
 - Task ID: V1-RMD-879
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
