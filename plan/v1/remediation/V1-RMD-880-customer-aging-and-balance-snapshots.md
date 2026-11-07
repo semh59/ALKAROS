@@ -1,7 +1,7 @@
 # V1-RMD-880 - Cari yaşlandırma raporu ve bakiye anlık görüntülerinin gerçek akışa bağlanması (F0097)
 
 - Task ID: V1-RMD-880
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
