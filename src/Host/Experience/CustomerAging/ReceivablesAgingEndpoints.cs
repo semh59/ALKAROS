@@ -43,6 +43,7 @@ public static class ReceivablesAgingEndpoints
         services.TryAddScoped<IAuthorizationService, AuthorizationService>();
         services.TryAddScoped<CustomerAgingEndpointFilter>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, BalanceSnapshotMaintenanceJob>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, BalanceReconcileMaintenanceJob>());
         return services;
     }
 

@@ -1,0 +1,12 @@
+R1-equal-instead-of-different: Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 402 ms - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (ne
+R2-left-join: Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 334 ms - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (ne
+R3-adjustment-sign-dropped: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 377 ms - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (ne
+R4-limit-removed: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 314 ms - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (ne
+R5-missing-ledger-ignored: Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 404 ms - ALKAROS.CustomerAccounts.BalanceProjection.Tests.dll (ne
+R6-no-rebuild: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 3 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0)
+R7-no-registration: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 3 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0)
+R8-count-wrong: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 2 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0)
+ALLDONE
+R9-cap-5000: Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 20 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0
+R10-interval-1h: Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 20 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0
+ALLDONE2

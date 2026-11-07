@@ -36,6 +36,29 @@ public sealed class PostgresAccountBalanceProjection : IAccountBalanceProjection
             reader.GetFieldValue<DateTimeOffset>(3));
     }
 
+    public async Task<IReadOnlyList<Guid>> FindDriftedCustomersAsync(int limit, CancellationToken cancellationToken = default)
+    {
+        // Same sign rule as the trigger; a customer with neither a ledger nor a non-zero row is not drift.
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT COALESCE(l.customer_id, b.customer_id)
+            FROM (SELECT customer_id,
+                         SUM(CASE WHEN transaction_type = 'Adjustment' OR direction = 'Debit' THEN amount ELSE -amount END) AS total
+                  FROM customer_account.account_transactions
+                  GROUP BY customer_id) l
+            FULL JOIN customer_account.balances b ON b.customer_id = l.customer_id
+            WHERE COALESCE(l.total, 0) <> COALESCE(b.current_balance, 0)
+            ORDER BY 1
+            LIMIT @limit;
+            """);
+        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = limit;
+        var drifted = new List<Guid>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            drifted.Add(reader.GetFieldValue<Guid>(0));
+        return drifted;
+    }
+
     public async Task<CustomerAccountBalance> RebuildAsync(Guid customerId, CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);

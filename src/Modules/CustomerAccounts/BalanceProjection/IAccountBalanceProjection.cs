@@ -21,4 +21,10 @@ public interface IAccountBalanceProjection
     /// "Full rebuild from transactions" rule).
     /// </summary>
     Task<CustomerAccountBalance> RebuildAsync(Guid customerId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// The drift detector: customers whose cached balance differs from the ledger sum (a missing row counts as zero),
+    /// at most <paramref name="limit"/> of them.
+    /// </summary>
+    Task<IReadOnlyList<Guid>> FindDriftedCustomersAsync(int limit, CancellationToken cancellationToken = default);
 }

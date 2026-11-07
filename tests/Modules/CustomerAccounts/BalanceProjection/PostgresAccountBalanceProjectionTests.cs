@@ -253,4 +253,59 @@ public sealed class PostgresAccountBalanceProjectionTests : IAsyncLifetime
         Assert.Null(rebuilt.LastTransactionAt);
         Assert.Null(await _balances.GetBalanceAsync(customerId));
     }
+
+    [Fact]
+    public async Task OnlyCustomersWhoseCachedBalanceDisagreesWithTheLedgerAreReportedAsDrifted()
+    {
+        var consistent = await ChargedCustomerAsync(100);
+        await _ledger.RecordAsync(new RecordAccountTransactionRequest(
+            consistent, AccountTransactionType.Adjustment, -20, "Manual", Guid.NewGuid(), "waived", Guid.NewGuid(), DateTimeOffset.UtcNow));
+        var wrongBalance = await ChargedCustomerAsync(100);
+        var missingRow = await ChargedCustomerAsync(40);
+        var staleRow = Guid.NewGuid();
+        var settledToZero = await ChargedCustomerAsync(30);
+        await _ledger.RecordAsync(new RecordAccountTransactionRequest(
+            settledToZero, AccountTransactionType.Payment, 30, "Payment", Guid.NewGuid(), null, null, DateTimeOffset.UtcNow));
+        await ExecuteAsync("UPDATE customer_account.balances SET current_balance = 90 WHERE customer_id = @id;", wrongBalance);
+        await ExecuteAsync("DELETE FROM customer_account.balances WHERE customer_id = @id;", missingRow);
+        await ExecuteAsync("INSERT INTO customer_account.balances VALUES (@id, 70, now(), now());", staleRow);
+
+        var drifted = await _balances.FindDriftedCustomersAsync(500);
+
+        Assert.Equal(new[] { wrongBalance, missingRow, staleRow }.Order(), drifted.Order());
+        Assert.DoesNotContain(consistent, drifted);
+        Assert.DoesNotContain(settledToZero, drifted);
+    }
+
+    [Fact]
+    public async Task TheDriftListIsCappedAtTheRequestedLimit()
+    {
+        for (var i = 0; i < 3; i++)
+            await ExecuteAsync("INSERT INTO customer_account.balances VALUES (@id, 5, now(), now());", Guid.NewGuid());
+
+        var firstBatch = await _balances.FindDriftedCustomersAsync(2);
+        Assert.Equal(2, firstBatch.Count);
+        foreach (var customerId in firstBatch)
+            await _balances.RebuildAsync(customerId);
+
+        var rest = await _balances.FindDriftedCustomersAsync(2);
+
+        Assert.Single(rest);
+        Assert.DoesNotContain(rest[0], firstBatch);
+    }
+
+    private async Task<Guid> ChargedCustomerAsync(decimal amount)
+    {
+        var customerId = Guid.NewGuid();
+        await _ledger.RecordAsync(new RecordAccountTransactionRequest(
+            customerId, AccountTransactionType.Charge, amount, "Bill", Guid.NewGuid(), null, null, DateTimeOffset.UtcNow));
+        return customerId;
+    }
+
+    private async Task ExecuteAsync(string sql, Guid customerId)
+    {
+        await using var command = _database.DataSource.CreateCommand(sql);
+        command.Parameters.AddWithValue("id", customerId);
+        await command.ExecuteNonQueryAsync();
+    }
 }
