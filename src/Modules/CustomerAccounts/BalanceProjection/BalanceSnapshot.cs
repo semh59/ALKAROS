@@ -1,10 +1,8 @@
 namespace ALKAROS.CustomerAccounts.BalanceProjection;
 
 /// <summary>
-/// A dated, immutable point-in-time balance record
-/// (`customer_account.balance_snapshots`, migration 162) - the basis a
-/// later aging/collections report can build on without re-deriving history
-/// from the full transaction ledger every time.
+/// A dated, immutable closing balance (`customer_account.balance_snapshots`,
+/// migration 162); the customer aging report shows it as the balance 30/60/90 days ago.
 /// </summary>
 public sealed record BalanceSnapshot(
     Guid Id,

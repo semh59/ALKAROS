@@ -8,6 +8,7 @@ using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
+using ALKAROS.Host.Experience.CustomerAging;
 using ALKAROS.Host.Experience.CustomerCredit;
 using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.Observability;
@@ -162,6 +163,27 @@ public static class ApiErrorCatalog
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED",
                     "Kredi limiti 0 veya üstü (en çok iki ondalık), vade 1-365 gün olmalı."),
+            _ =>
+                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
+        });
+
+    /// <summary>CustomerAging/ReceivablesAgingEndpoints.</summary>
+    public static readonly ApiErrorArea CustomerAging = new(
+        [
+            typeof(CustomerAgingUnauthorizedException),
+            typeof(AuthorizationDeniedException),
+            typeof(ArgumentException),
+            typeof(BadHttpRequestException),
+            typeof(NpgsqlException),
+        ],
+        exception => exception switch
+        {
+            CustomerAgingUnauthorizedException =>
+                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
+            AuthorizationDeniedException =>
+                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Cari yaşlandırma raporu için rapor görüntüleme izni gerekiyor."),
+            ArgumentException or BadHttpRequestException =>
+                ValidationAnswer(exception),
             _ =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         });

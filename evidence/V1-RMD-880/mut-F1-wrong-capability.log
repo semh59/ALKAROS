@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-customer-aging/CustomerAgingSection.test.tsx (5 tests | 1 failed) 349ms
+     × the shell lists the tab only for a session holding reports.view 90ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-customer-aging/CustomerAgingSection.test.tsx > customer aging section > the shell lists the tab only for a session holding reports.view
+AssertionError: expected [ 'Gün sonu ve mutabakat', …(13) ] to include 'Cari yaşlandırma'
+ ❯ src/features/management-customer-aging/CustomerAgingSection.test.tsx:31:23
+     29|   it("the shell lists the tab only for a session holding reports.view"…
+     30|     await render(<ManagementArea capabilities={new Set(["reports.view"…
+     31|     expect(buttons()).toContain("Cari yaşlandırma");
+       |                       ^
+     32|     await render(<ManagementArea capabilities={new Set(["orders.create…
+     33|     expect(buttons()).not.toContain("Cari yaşlandırma");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  15:28:19
+   Duration  3.40s (transform 1.03s, setup 0ms, import 1.49s, tests 349ms, environment 1.26s)
+

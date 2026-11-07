@@ -7,6 +7,7 @@ using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Catalog;
+using ALKAROS.Host.Experience.CustomerAging;
 using ALKAROS.Host.Experience.CustomerCredit;
 using ALKAROS.Host.Experience.Menu;
 using ALKAROS.Host.Experience.Observability;
@@ -79,6 +80,11 @@ public sealed class ApiErrorCatalogTests
         { "CatalogManagement", new CatalogConcurrencyException("sample"), 409, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi." },
         { "CatalogManagement", new CatalogRecordNotFoundException("sample"), 404, "NOT_FOUND", "İstenen katalog kaydı bulunamadı." },
         { "CatalogManagement", Uninitialized<NpgsqlException>(), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { "CustomerAging", Uninitialized<CustomerAgingUnauthorizedException>(), 401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş." },
+        { "CustomerAging", Uninitialized<AuthorizationDeniedException>(), 403, "FORBIDDEN", "Cari yaşlandırma raporu için rapor görüntüleme izni gerekiyor." },
+        { "CustomerAging", Uninitialized<ArgumentException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
+        { "CustomerAging", Uninitialized<BadHttpRequestException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
+        { "CustomerAging", new NpgsqlException("sample"), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
         { "CustomerCreditTerms", Uninitialized<CustomerCreditUnauthorizedException>(), 401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş." },
         { "CustomerCreditTerms", Uninitialized<AuthorizationDeniedException>(), 403, "FORBIDDEN", "Kredi limitini yalnız yönetici değiştirebilir." },
         { "CustomerCreditTerms", Uninitialized<CustomerCreditCustomerNotFoundException>(), 404, "NOT_FOUND", "Müşteri bulunamadı veya anonimleştirilmiş." },

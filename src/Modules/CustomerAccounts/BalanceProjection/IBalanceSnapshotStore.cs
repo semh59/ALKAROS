@@ -2,21 +2,23 @@ namespace ALKAROS.CustomerAccounts.BalanceProjection;
 
 /// <summary>
 /// Persistence for dated balance snapshots (`customer_account.balance_snapshots`,
-/// migration 162). Snapshot uniqueness: a unique (customer_id, snapshot_date)
-/// constraint backs every method here - a snapshot is a point-in-time fact,
-/// taken at most once per customer per date, and never edited afterward.
+/// migration 162). A snapshot is the closing balance of one day, taken at most
+/// once per customer per date (unique constraint) and never edited afterward -
+/// a ledger row back-dated into an already snapshotted day does not change it.
 /// </summary>
 public interface IBalanceSnapshotStore
 {
     /// <summary>
-    /// Idempotent: retrying with the same (customerId, snapshotDate) returns
-    /// the snapshot already taken that day rather than creating a duplicate
-    /// or silently overwriting it with a possibly-different balance.
+    /// Writes the closing balance of <paramref name="snapshotDate"/> for every customer with a ledger row before
+    /// <paramref name="cutoff"/>, computed from the ledger itself (never from the live projection, which would freeze
+    /// whatever moment the job happened to run). Idempotent: dates already snapshotted are left untouched.
+    /// Returns how many snapshots were written.
     /// </summary>
-    Task<BalanceSnapshot> TakeSnapshotAsync(Guid customerId, DateOnly snapshotDate, decimal balance, CancellationToken cancellationToken = default);
+    Task<int> TakeClosingSnapshotsAsync(DateOnly snapshotDate, DateTimeOffset cutoff, CancellationToken cancellationToken = default);
 
-    Task<BalanceSnapshot?> GetSnapshotAsync(Guid customerId, DateOnly snapshotDate, CancellationToken cancellationToken = default);
+    /// <summary>The dates from <paramref name="from"/> on that already have at least one snapshot; lets the job skip finished days.</summary>
+    Task<IReadOnlySet<DateOnly>> GetSnapshotDatesAsync(DateOnly from, CancellationToken cancellationToken = default);
 
-    /// <summary>All snapshots for a customer, oldest first, bounded by <paramref name="limit"/>.</summary>
-    Task<IReadOnlyList<BalanceSnapshot>> GetSnapshotsAsync(Guid customerId, int limit = 1000, CancellationToken cancellationToken = default);
+    /// <summary>The snapshots of every customer for the given dates, one query.</summary>
+    Task<IReadOnlyList<BalanceSnapshot>> GetSnapshotsOnAsync(IReadOnlyCollection<DateOnly> dates, CancellationToken cancellationToken = default);
 }

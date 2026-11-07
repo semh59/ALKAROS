@@ -8,6 +8,7 @@ import { StaffSection } from "../management-staff-roles";
 import { SecuritySection, SystemSection } from "../management-security-system";
 import { SettingsHistorySection } from "../management-settings-history";
 import { ChannelReportSection } from "../management-channel-report";
+import { CustomerAgingSection } from "../management-customer-aging";
 import { PurchaseInvoicesSection } from "../management-purchase-invoices";
 import { ProductMarginSection } from "../management-product-margin-report";
 import { OrderInvoicesSection } from "../management-order-invoices";
@@ -45,6 +46,7 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "journeys", label: managementText.journeys.tab, requiredCapability: "reports.view", component: UserJourneysSection },
   { id: "performance-budgets", label: managementText.performanceBudgets.tab, requiredCapability: "reports.view", component: PerformanceBudgetsSection },
   { id: "channel-report", label: managementText.channelReport.tab, requiredCapability: "reports.view", component: ChannelReportSection },
+  { id: "customer-aging", label: managementText.customerAging.tab, requiredCapability: "reports.view", component: CustomerAgingSection },
   { id: "purchase-invoices", label: managementText.purchaseInvoices.tab, requiredCapability: "purchasing.manage", component: PurchaseInvoicesSection },
   { id: "product-margin", label: managementText.productMargin.tab, requiredCapability: "reports.view", component: ProductMarginSection },
   { id: "order-invoices", label: managementText.orderInvoices.tab, requiredCapability: "reports.view", component: OrderInvoicesSection },

@@ -1,0 +1,9 @@
+.mca { display: grid; gap: var(--ds-space-4); }
+.mca__toolbar { display: flex; align-items: center; gap: var(--ds-space-3); flex-wrap: wrap; }
+.mca__empty, .mca__hint { margin: 0; color: var(--ds-color-muted); }
+.mca__warning { margin: 0; color: var(--ds-color-danger, #b3261e); font-weight: 700; }
+.mca table { width: 100%; border-collapse: collapse; }
+.mca th, .mca td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
+.mca th { color: var(--ds-color-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.mca td.mca__num, .mca th.mca__num { text-align: right; font-variant-numeric: tabular-nums; }
+.mca tfoot td { font-weight: 800; }
