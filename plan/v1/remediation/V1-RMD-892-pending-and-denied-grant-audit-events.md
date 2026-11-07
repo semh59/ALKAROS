@@ -1,8 +1,8 @@
 # V1-RMD-892 - Bekleyen ve reddedilen ikram/indirim istekleri denetim olayı yazar (yoklamada tekilleştirilmiş)
 
 - Task ID: V1-RMD-892
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
