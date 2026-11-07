@@ -103,6 +103,28 @@ public sealed class CustomerDisplayBillBindingTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AMergedBillIsShownWithItsOldestOrder()
+    {
+        var productId = await SeedProductAsync();
+        var oldest = await OrderWithItemAsync(productId);
+        var newer = await OrderWithItemAsync(productId);
+        var billId = await InsertBillAsync(null, "Open");
+        await ExecuteAsync(
+            """
+            INSERT INTO billing.bill_items (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price,
+                                            tax_rate, net_amount, gross_amount, line_type, created_at, updated_at)
+            SELECT gen_random_uuid(), @bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, 0, unit_price, unit_price, 'Sale', now(), now()
+            FROM orders.order_items WHERE order_id IN (@a, @b);
+            """,
+            ("bill_id", billId), ("a", oldest), ("b", newer));
+        var terminalId = Guid.NewGuid();
+
+        Assert.True(await _store!.BindBillOrderToDisplayAsync(terminalId, billId, CancellationToken.None));
+
+        Assert.Equal(oldest, (await _store.GetSnapshotAsync(Guid.NewGuid(), terminalId, CancellationToken.None)).OrderId);
+    }
+
+    [Fact]
     public async Task OpeningTheSameBillAgainKeepsItShown()
     {
         var orderId = await StartOrderAsync(Guid.NewGuid());
@@ -119,6 +141,26 @@ public sealed class CustomerDisplayBillBindingTests : IAsyncLifetime
     public async Task AnUnknownBillIsNotFound()
         => await Assert.ThrowsAsync<DualScreenNotFoundException>(() =>
             _store!.BindBillOrderToDisplayAsync(Guid.NewGuid(), Guid.NewGuid(), CancellationToken.None));
+
+    private async Task<Guid> SeedProductAsync()
+    {
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, category_id, tax_profile_id, product_type, stock_mode, active, display_order, current_price)
+            VALUES (@product_id, @sku, 'Merged bill product', NULL, NULL, 1, 1, true, 0, 10.00);
+            """,
+            ("product_id", productId), ("sku", $"MRG-{productId:N}"));
+        return productId;
+    }
+
+    private async Task<Guid> OrderWithItemAsync(Guid productId)
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        await _store.AddItemAsync(terminalId, order.OrderId, new AddOrderItemRequest(productId, 1m, order.Revision), CancellationToken.None);
+        return order.OrderId;
+    }
 
     private async Task<Guid> StartOrderAsync(Guid terminalId)
         => (await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None)).OrderId;

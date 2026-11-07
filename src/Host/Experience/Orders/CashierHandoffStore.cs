@@ -259,14 +259,14 @@ public sealed class CashierHandoffStore
                     SELECT 1 FROM billing.bills pb
                     WHERE {BillOrderLink.Matches("pb", "o.order_id")} AND pb.status = 'Paid')
             GROUP BY o.order_id, o.order_number, t.table_number, o.total, o.created_at, o.table_id, ob.bill_id, ob.paid_amount
-            ORDER BY o.created_at;
+            ORDER BY o.created_at, o.order_id;
             """);
 
-        var results = new List<PendingCheckSummaryV1>();
+        var rows = new List<PendingCheckSummaryV1>();
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
-            results.Add(new PendingCheckSummaryV1(
+            rows.Add(new PendingCheckSummaryV1(
                 reader.GetGuid(0),
                 reader.GetString(1),
                 reader.GetString(2),
@@ -278,7 +278,19 @@ public sealed class CashierHandoffStore
                 reader.IsDBNull(9) ? null : reader.GetString(9),
                 reader.IsDBNull(6) ? null : reader.GetGuid(6)));
         }
-        return results;
+
+        // A bill merged from several orders is one check at the till: the oldest order stands for it (rows come oldest first).
+        return rows
+            .GroupBy(row => row.BillId ?? Guid.NewGuid())
+            .Select(group => group.Count() == 1
+                ? group.Single()
+                : group.First() with
+                {
+                    ItemCount = group.Sum(row => row.ItemCount),
+                    Total = group.Sum(row => row.Total),
+                    ItemPreview = string.Join(", ", group.Select(row => row.ItemPreview).Where(preview => preview is not null)),
+                })
+            .ToList();
     }
 }
 

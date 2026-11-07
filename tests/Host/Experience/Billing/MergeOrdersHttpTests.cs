@@ -343,7 +343,7 @@ public sealed class MergeOrdersHttpTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task CancellingOneOrderOfAMergedBillLeavesTheOtherInTheQueueWithoutABill()
+    public async Task AMergedBillIsOneRowInTheQueueAndCancellingOneOrderLeavesTheOtherAloneWithoutABill()
     {
         var table = await SeedTableAsync();
         var first = await SeedOrderAsync(table, 100m);
@@ -365,9 +365,21 @@ public sealed class MergeOrdersHttpTests : IAsyncLifetime
                 row => row.GetProperty("billId").ValueKind == JsonValueKind.Null ? (Guid?)null : row.GetProperty("billId").GetGuid());
         }
 
+        async Task<JsonElement> QueueRowAsync(Guid orderId)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/awaiting-payment");
+            request.Headers.TryAddWithoutValidation("Cookie", cookie);
+            using var response = await client.SendAsync(request);
+            return (await response.Content.ReadFromJsonAsync<List<JsonElement>>())!.Single(row => row.GetProperty("orderId").GetGuid() == orderId).Clone();
+        }
+
         var before = await QueueAsync();
         Assert.Equal(billId, before[first.Id]);
-        Assert.Equal(billId, before[second.Id]);
+        Assert.False(before.ContainsKey(second.Id));
+        var row = await QueueRowAsync(first.Id);
+        Assert.Equal(150m, row.GetProperty("total").GetDecimal());
+        Assert.Equal(2, row.GetProperty("itemCount").GetInt32());
+        Assert.False(string.IsNullOrWhiteSpace(row.GetProperty("itemPreview").GetString()));
 
         using var cancel = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/orders/{first.Id:D}/cancel")
         {

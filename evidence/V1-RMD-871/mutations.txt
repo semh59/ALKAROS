@@ -1,0 +1,4 @@
+M1-no-grouping: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi
+M2-total-not-summed: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi
+M3-item-count-not-summed: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi
+M4-newest-order-picked: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 1 m 40 s - ALKAROS.Host.T

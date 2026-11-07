@@ -334,14 +334,22 @@ public sealed partial class DualScreenStore
     }
 
     /// <summary>
-    /// Points the terminal's display at the order of a bill being paid. An order still being edited on the terminal
-    /// (Draft) is never replaced; false also means the bill has no order or is already paid or cancelled.
+    /// Points the terminal's display at the order of a bill being paid (a merged bill: its oldest order, the display
+    /// statement then covers every order of the bill). An order still being edited on the terminal (Draft) is never
+    /// replaced; false also means the bill has no order or is already paid or cancelled.
     /// </summary>
     public async Task<bool> BindBillOrderToDisplayAsync(Guid terminalId, Guid billId, CancellationToken cancellationToken)
     {
         await EnsureTerminalAsync(terminalId, cancellationToken);
         await using var billCommand = _dataSource.CreateCommand(
-            "SELECT order_id, status FROM billing.bills WHERE bill_id = @bill_id;");
+            """
+            SELECT COALESCE(b.order_id, (SELECT o.order_id FROM billing.bill_items bi
+                                         JOIN orders.order_items oi ON oi.order_item_id = bi.order_item_id
+                                         JOIN orders.orders o ON o.order_id = oi.order_id
+                                         WHERE bi.bill_id = b.bill_id ORDER BY o.created_at, o.order_id LIMIT 1)),
+                   b.status
+            FROM billing.bills b WHERE b.bill_id = @bill_id;
+            """);
         billCommand.Parameters.AddWithValue("bill_id", billId);
         Guid orderId;
         await using (var reader = await billCommand.ExecuteReaderAsync(cancellationToken))
