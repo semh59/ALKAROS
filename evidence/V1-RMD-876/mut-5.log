@@ -1,0 +1,137 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > offers six banknote buttons and an exact-amount button as real labelled buttons
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766381-0.8818636608487159:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766381-0.8818636608487159:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766381-0.8818636608487159:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > sets the cash taken to the banknote value instead of adding to it, and shows the change
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766533-0.7540790666466289:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766533-0.7540790666466289:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766533-0.7540790666466289:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > sends the chosen banknote as the tendered amount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766646-0.5804269249724918:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766646-0.5804269249724918:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766646-0.5804269249724918:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > uses a fresh idempotency key for a different banknote after an unsettled attempt
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766985-0.9382947673112227:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766985-0.9382947673112227:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044766985-0.9382947673112227:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > ignores the buttons while a payment is being sent
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044767155-0.9381485305799688:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044767155-0.9381485305799688:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044767155-0.9381485305799688:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-quick-cash.test.js (10 tests | 5 failed) 1231ms
+     × offers six banknote buttons and an exact-amount button as real labelled buttons 167ms
+     × sets the cash taken to the banknote value instead of adding to it, and shows the change 113ms
+     × sends the chosen banknote as the tendered amount 103ms
+     × uses a fresh idempotency key for a different banknote after an unsettled attempt 170ms
+     × ignores the buttons while a payment is being sent 117ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > offers six banknote buttons and an exact-amount button as real labelled buttons
+AssertionError: expected [ '5', '10', '20', '50', '100', …(1) ] to deeply equal [ '5', '10', '20', '50', '100', …(2) ]
+
+- Expected
++ Received
+
+@@ -2,8 +2,7 @@
+    "5",
+    "10",
+    "20",
+    "50",
+    "100",
+-   "200",
+    "exact",
+  ]
+
+ ❯ split-payment-quick-cash.test.js:54:53
+     52|
+     53|     const buttons = [...document.querySelectorAll("[data-quick-cash]")…
+     54|     expect(buttons.map((b) => b.dataset.quickCash)).toEqual(["5", "10"…
+       |                                                     ^
+     55|     expect(buttons.every((b) => b.tagName === "BUTTON" && b.type === "…
+     56|     expect(quick("200").textContent).toBe("200 ₺");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > sets the cash taken to the banknote value instead of adding to it, and shows the change
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-quick-cash.test.js:69:17
+     67|     quick("50").click();
+     68|     expect(Number(tenderedField().value)).toBe(50);
+     69|     quick("200").click();
+       |                 ^
+     70|     expect(Number(tenderedField().value)).toBe(200);
+     71|     expect(preview()).toBe("Para üstü: ₺100,00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > sends the chosen banknote as the tendered amount
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-quick-cash.test.js:78:17
+     76|     await vi.waitFor(() => expect(tenderedField()).not.toBeNull());
+     77|
+     78|     quick("200").click();
+       |                 ^
+     79|     submit().click();
+     80|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > uses a fresh idempotency key for a different banknote after an unsettled attempt
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-quick-cash.test.js:120:17
+    118|     await vi.waitFor(() => expect(tenderCalls(fetchMock).length).toBe(…
+    119|     await vi.waitFor(() => expect(submit().disabled).toBe(false));
+    120|     quick("200").click();
+       |                 ^
+    121|     submit().click();
+    122|     await vi.waitFor(() => expect(tenderCalls(fetchMock).length).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > ignores the buttons while a payment is being sent
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-quick-cash.test.js:136:17
+    134|     submit().click();
+    135|     await vi.waitFor(() => expect(tenderCalls(fetchMock).length).toBe(…
+    136|     quick("200").click();
+       |                 ^
+    137|
+    138|     expect(Number(tenderedField().value)).toBe(100);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 5 passed (10)
+   Start at  12:46:04
+   Duration  2.86s (transform 452ms, setup 23ms, import 52ms, tests 1.23s, environment 1.22s)
+

@@ -218,6 +218,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 
 .sp-change-due { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 16px; border-radius: 10px; background: var(--color-success-soft, #def4ea); color: var(--color-success, #1f6b52); font-size: 1.1rem; }
 .sp-change-due strong { font-size: 1.9rem; font-variant-numeric: tabular-nums; }
+.sp-quick-cash { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; margin-top: 8px; }
 .sp-change-preview { min-height: 1.4em; margin-top: 6px; font-weight: 700; }
 .sp-change-preview.is-short { color: var(--color-danger, #b3261e); }
 

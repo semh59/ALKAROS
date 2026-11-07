@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > offers six banknote buttons and an exact-amount button as real labelled buttons
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044771868-0.24869453658678087:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044771868-0.24869453658678087:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044771868-0.24869453658678087:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-quick-cash.test.js (10 tests | 1 failed) 1285ms
+     × offers six banknote buttons and an exact-amount button as real labelled buttons 168ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > offers six banknote buttons and an exact-amount button as real labelled buttons
+AssertionError: expected null to be 'Hızlı nakit tutarı' // Object.is equality
+
+- Expected:
+"Hızlı nakit tutarı"
+
++ Received:
+null
+
+ ❯ split-payment-quick-cash.test.js:57:81
+     55|     expect(buttons.every((b) => b.tagName === "BUTTON" && b.type === "…
+     56|     expect(quick("200").textContent).toBe("200 ₺");
+     57|     expect(document.querySelector(".sp-quick-cash").getAttribute("aria…
+       |                                                                                 ^
+     58|     expect(quick("exact").textContent).toBe("Tam tutar");
+     59|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  12:46:10
+   Duration  2.70s (transform 441ms, setup 22ms, import 51ms, tests 1.29s, environment 1.09s)
+

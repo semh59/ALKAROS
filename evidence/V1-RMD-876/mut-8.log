@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > uses a fresh idempotency key for a different banknote after an unsettled attempt
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044783843-0.8006439572236363:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044783843-0.8006439572236363:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044783843-0.8006439572236363:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-quick-cash.test.js (10 tests | 1 failed) 1271ms
+     × uses a fresh idempotency key for a different banknote after an unsettled attempt 183ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > uses a fresh idempotency key for a different banknote after an unsettled attempt
+AssertionError: expected '95f22cd9-2ad2-4973-bcd5-3389360423b3' not to be '95f22cd9-2ad2-4973-bcd5-3389360423b3' // Object.is equality
+ ❯ split-payment-quick-cash.test.js:126:25
+    124|     const keys = tenderCalls(fetchMock).map(([, init]) => JSON.parse(i…
+    125|     expect(keys[0]).toBeTruthy();
+    126|     expect(keys[1]).not.toBe(keys[0]);
+       |                         ^
+    127|   });
+    128|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  12:46:21
+   Duration  2.59s (transform 436ms, setup 23ms, import 54ms, tests 1.27s, environment 989ms)
+

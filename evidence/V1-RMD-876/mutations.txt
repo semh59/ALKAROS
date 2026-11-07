@@ -1,0 +1,11 @@
+M1-add-instead-of-set: testexit=1 
+M2-exact-wrong-source: testexit=1 
+M3-no-preview-update: testexit=1 
+M4-no-input-sync: testexit=1 
+M5-drop-200: testexit=1 
+M6-no-group-label: testexit=1 
+M7-buttons-removed: testexit=1 
+M8-key-not-reset: testexit=1 
+M9-no-zero-guard: testexit=1 
+M10-no-busy-guard: testexit=1 
+M11-no-toFixed: testexit=1 

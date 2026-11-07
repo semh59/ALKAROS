@@ -1,7 +1,7 @@
 # V1-RMD-876 - Nakit tahsilatta hızlı banknot düğmeleri ve Tam tutar
 
 - Task ID: V1-RMD-876
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

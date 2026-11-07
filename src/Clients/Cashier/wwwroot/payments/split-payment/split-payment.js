@@ -1667,6 +1667,27 @@
     );
   }
 
+  var QUICK_CASH_NOTES = [5, 10, 20, 50, 100, 200];
+
+  function renderQuickCash() {
+    return '<div class="sp-quick-cash" role="group" aria-label="Hızlı nakit tutarı">' +
+      QUICK_CASH_NOTES.map(function (note) {
+        return '<button class="sp-btn sp-btn-secondary" type="button" data-quick-cash="' + note + '">' + note + ' ₺</button>';
+      }).join('') +
+      '<button class="sp-btn sp-btn-secondary" type="button" data-quick-cash="exact">Tam tutar</button></div>';
+  }
+
+  // A banknote button replaces the cash taken (a wrong press is fixed by pressing again); "exact" is the amount being paid.
+  function applyQuickCash(value) {
+    var tendered = value === 'exact' ? Number(state.amountDraft) : Number(value);
+    if (state.busy || !(tendered > 0)) return;
+    var input = document.getElementById('tendered-draft');
+    state.tenderedDraft = tendered.toFixed(2);
+    state.tenderIdempotencyKey = null;
+    if (input) input.value = state.tenderedDraft;
+    updateChangePreview();
+  }
+
   // Cash taken that is less than the amount can never be sent: the button stays off until the amount is covered.
   function tenderedIsShort() {
     var tendered = Number(state.tenderedDraft);
@@ -1875,7 +1896,7 @@
         (state.selectedMethod === 'Cash'
           ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-muted)">(isteğe bağlı)</span></span>' +
             '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
-            '<span class="sp-amount-suffix">₺</span></div>' +
+            '<span class="sp-amount-suffix">₺</span></div>' + renderQuickCash() +
             '<div class="sp-change-preview" id="change-preview" role="status"></div></div>'
           : '') +
         (state.selectedMethod === 'BankCard' || state.selectedMethod === 'Eft'
@@ -1964,6 +1985,9 @@
       updateChangePreview();
     }
     if (amountInput) amountInput.addEventListener('input', updateChangePreview);
+    document.querySelectorAll('[data-quick-cash]').forEach(function (button) {
+      button.addEventListener('click', function () { applyQuickCash(button.getAttribute('data-quick-cash')); });
+    });
     var eftConfirmInput = document.getElementById('eft-confirm');
     if (eftConfirmInput) eftConfirmInput.addEventListener('change', function () {
       state.eftConfirmed = this.checked;

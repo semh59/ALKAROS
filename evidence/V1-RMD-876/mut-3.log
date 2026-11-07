@@ -1,0 +1,98 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > sets the cash taken to the banknote value instead of adding to it, and shows the change
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044754415-0.15689168129372055:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044754415-0.15689168129372055:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044754415-0.15689168129372055:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > keeps the add button off when the banknote does not cover the amount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044755186-0.27952024253013075:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044755186-0.27952024253013075:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044755186-0.27952024253013075:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > writes the amount being paid for the exact button, following a hand-edited amount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044755292-0.13267546268119923:215:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044755292-0.13267546268119923:368:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794044755292-0.13267546268119923:473:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-quick-cash.test.js (10 tests | 3 failed) 1260ms
+     × sets the cash taken to the banknote value instead of adding to it, and shows the change 114ms
+     × keeps the add button off when the banknote does not cover the amount 106ms
+     × writes the amount being paid for the exact button, following a hand-edited amount 115ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > sets the cash taken to the banknote value instead of adding to it, and shows the change
+AssertionError: expected '' to be 'Para üstü: ₺100,00' // Object.is equality
+
+- Expected
++ Received
+
+- Para üstü: ₺100,00
+
+ ❯ split-payment-quick-cash.test.js:71:23
+     69|     quick("200").click();
+     70|     expect(Number(tenderedField().value)).toBe(200);
+     71|     expect(preview()).toBe("Para üstü: ₺100,00");
+       |                       ^
+     72|   });
+     73|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > keeps the add button off when the banknote does not cover the amount
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-quick-cash.test.js:146:31
+    144|
+    145|     quick("20").click();
+    146|     expect(submit().disabled).toBe(true);
+       |                               ^
+    147|     expect(preview()).toContain("tutardan az");
+    148|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > writes the amount being paid for the exact button, following a hand-edited amount
+AssertionError: expected '' to be 'Para üstü: ₺0,00' // Object.is equality
+
+- Expected
++ Received
+
+- Para üstü: ₺0,00
+
+ ❯ split-payment-quick-cash.test.js:159:23
+    157|     quick("exact").click();
+    158|     expect(Number(tenderedField().value)).toBe(50);
+    159|     expect(preview()).toBe("Para üstü: ₺0,00");
+       |                       ^
+    160|
+    161|     const amount = document.getElementById("amount-draft");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 7 passed (10)
+   Start at  12:45:52
+   Duration  2.61s (transform 445ms, setup 24ms, import 56ms, tests 1.26s, environment 953ms)
+
