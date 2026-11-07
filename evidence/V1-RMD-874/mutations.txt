@@ -1,0 +1,5 @@
+M1-index-on-payment-only: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 16 s - ALKAROS.Host.Tests
+M2-partial-index: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 17 s - ALKAROS.Host.Tests
+M3-down-keeps-index: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 17 s - ALKAROS.Host.Tests
+M4-unique-index: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 17 s - ALKAROS.Host.Tests
+M5-wrong-column-order: testexit=1 Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 16 s - ALKAROS.Host.Tests

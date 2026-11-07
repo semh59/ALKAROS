@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS payments.ix_manual_card_confirmations_payment_status;
