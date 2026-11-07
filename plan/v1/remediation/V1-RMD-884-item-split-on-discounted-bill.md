@@ -1,8 +1,8 @@
 # V1-RMD-884 - İndirimli hesapta ürün bazında bölme: kalem indirim dağıtımıyla çalışır (V1-RMD-413 reddinin kaldırılması)
 
 - Task ID: V1-RMD-884
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
 
