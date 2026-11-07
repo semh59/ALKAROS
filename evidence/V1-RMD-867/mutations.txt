@@ -1,0 +1,12 @@
+M2-sign-rule: testexit=1 Başarısız! - Başarısız:     4, Başarılı:    10, Atlanan:     0, Toplam:    14, Süre: 2 s - ALKAROS.CustomerAcc
+M3-amount-compare: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    45, Atlanan:     0, Toplam:    46, Süre: 3 s - ALKAROS.CustomerAcc
+M4-note-compare: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    45, Atlanan:     0, Toplam:    46, Süre: 3 s - ALKAROS.CustomerAcc
+M5-no-placeholder: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 2 s - ALKAROS.CustomerAcc
+M6-keep-row-when-empty: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:    15, Süre: 4 s - ALKAROS.CustomerAcc
+M1-no-row-lock: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    15, Atlanan:     0, Toplam:    16, Süre: 5 s - ALKAROS.CustomerAcc
+M6-keep-row-when-empty: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    15, Atlanan:     0, Toplam:    16, Süre: 6 s - ALKAROS.CustomerAcc
+M1-no-row-lock-b: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 3 s - ALKAROS.CustomerAcc
+M7-no-rounding: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    46, Atlanan:     0, Toplam:    47, Süre: 2 s - ALKAROS.CustomerAcc
+M8-bankers-rounding: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    46, Atlanan:     0, Toplam:    47, Süre: 3 s - ALKAROS.CustomerAcc
+M9-min-last-at: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 3 s - ALKAROS.CustomerAcc
+M10-no-customer-filter: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 3 s - ALKAROS.CustomerAcc

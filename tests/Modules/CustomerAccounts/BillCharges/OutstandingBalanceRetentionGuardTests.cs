@@ -30,7 +30,7 @@ public sealed class OutstandingBalanceRetentionGuardTests : IClassFixture<Accoun
         secretProvider.Set(new SecretReference("envelope-master-key"), Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
         _profiles = new PostgresCustomerProfileStore(dataSource, secretProvider);
         _ledger = new PostgresAccountTransactionLedger(dataSource);
-        _guard = new OutstandingBalanceRetentionGuard(new PostgresAccountBalanceProjection(dataSource, _ledger));
+        _guard = new OutstandingBalanceRetentionGuard(new PostgresAccountBalanceProjection(dataSource));
     }
 
     [Fact]

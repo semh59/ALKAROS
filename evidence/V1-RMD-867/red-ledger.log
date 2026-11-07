@@ -1,0 +1,51 @@
+  Geri y�klenecek projeler belirleniyor...
+  D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj geri y�klendi (1,06 sn i�inde).
+  D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj geri y�klendi (1,06 sn i�inde).
+  D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj geri y�klendi (1,06 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\CustomerData\ALKAROS.CustomerData.csproj geri y�klendi (1,09 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\Tables\ALKAROS.Tables.csproj geri y�klendi (1,1 sn i�inde).
+  D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj geri y�klendi (1,09 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\Orders\ALKAROS.Orders.csproj geri y�klendi (1,1 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\Audit\ALKAROS.Audit.csproj geri y�klendi (1,09 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\Payments\ALKAROS.Payments.csproj geri y�klendi (1,1 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\Cash\ALKAROS.Cash.csproj geri y�klendi (1,1 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\Billing\ALKAROS.Billing.csproj geri y�klendi (1,1 sn i�inde).
+  D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\ALKAROS.CustomerAccounts.csproj geri y�klendi (28 ms i�inde).
+  D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj geri y�klendi (47 ms i�inde).
+  D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\ALKAROS.TestHelpers.csproj geri y�klendi (102 ms i�inde).
+  D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\TransactionLedger\ALKAROS.CustomerAccounts.TransactionLedger.Tests.csproj geri y�klendi (1,25 sn i�inde).
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.CustomerAccounts.TransactionLedger.Tests -> D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\TransactionLedger\bin\Debug\net8.0\ALKAROS.CustomerAccounts.TransactionLedger.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\TransactionLedger\bin\Debug\net8.0\ALKAROS.CustomerAccounts.TransactionLedger.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:03.07]     ALKAROS.CustomerAccounts.TransactionLedger.Tests.PostgresAccountTransactionLedgerTests.TheSameKeyWithADifferentNoteIsRejected [FAIL]
+  Başarısız ALKAROS.CustomerAccounts.TransactionLedger.Tests.PostgresAccountTransactionLedgerTests.TheSameKeyWithADifferentNoteIsRejected [62 ms]
+  Hata İletisi:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(ALKAROS.CustomerAccounts.TransactionLedger.AccountTransactionIdempotencyConflictException)
+  Yığın İzleme:
+     at ALKAROS.CustomerAccounts.TransactionLedger.Tests.PostgresAccountTransactionLedgerTests.TheSameKeyWithADifferentNoteIsRejected() in D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\TransactionLedger\PostgresAccountTransactionLedgerTests.cs:line 110
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:07.23]     ALKAROS.CustomerAccounts.TransactionLedger.Tests.PostgresAccountTransactionLedgerTests.TheSameKeyWithADifferentAmountIsRejectedAndTheLedgerIsUnchanged [FAIL]
+  Başarısız ALKAROS.CustomerAccounts.TransactionLedger.Tests.PostgresAccountTransactionLedgerTests.TheSameKeyWithADifferentAmountIsRejectedAndTheLedgerIsUnchanged [14 ms]
+  Hata İletisi:
+   Assert.Throws() Failure: No exception was thrown
+Expected: typeof(ALKAROS.CustomerAccounts.TransactionLedger.AccountTransactionIdempotencyConflictException)
+  Yığın İzleme:
+     at ALKAROS.CustomerAccounts.TransactionLedger.Tests.PostgresAccountTransactionLedgerTests.TheSameKeyWithADifferentAmountIsRejectedAndTheLedgerIsUnchanged() in D:\PROJECT\ALKAROS\tests\Modules\CustomerAccounts\TransactionLedger\PostgresAccountTransactionLedgerTests.cs:line 92
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     2, Başarılı:    44, Atlanan:     0, Toplam:    46, Süre: 6 s - ALKAROS.CustomerAccounts.TransactionLedger.Tests.dll (net8.0)

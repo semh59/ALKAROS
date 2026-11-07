@@ -67,9 +67,9 @@ public sealed class PostgresAccountTransactionLedger : IAccountTransactionLedger
                 return ReadRecord(reader);
         }
 
-        // ON CONFLICT DO NOTHING hit the idempotency key - the same source
-        // event was already recorded. Return the existing row rather than
-        // creating a duplicate or raising an error.
+        // ON CONFLICT DO NOTHING hit the idempotency key: a retry of the same
+        // request returns the existing row; the same key with another amount
+        // or note is a different request and must not look recorded.
         var existing = connection.CreateCommand();
         existing.Transaction = transaction;
         existing.CommandText =
@@ -87,7 +87,12 @@ public sealed class PostgresAccountTransactionLedger : IAccountTransactionLedger
         await using (var existingReader = await existing.ExecuteReaderAsync(cancellationToken))
         {
             if (await existingReader.ReadAsync(cancellationToken))
-                return ReadRecord(existingReader);
+            {
+                var stored = ReadRecord(existingReader);
+                if (stored.Amount != decimal.Round(request.Amount, 2, MidpointRounding.AwayFromZero) || stored.Note != request.Note)
+                    throw new AccountTransactionIdempotencyConflictException(stored.Id);
+                return stored;
+            }
         }
 
         throw new InvalidOperationException(

@@ -1,7 +1,7 @@
 # V1-RMD-867 - Cari hesap bakiyesi yeniden kurulumu atomik; defterde aynı anahtar farklı tutarla gelirse sessizce eski satır dönmez
 
 - Task ID: V1-RMD-867
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

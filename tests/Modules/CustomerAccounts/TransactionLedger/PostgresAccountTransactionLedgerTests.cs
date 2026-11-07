@@ -81,6 +81,50 @@ public sealed class PostgresAccountTransactionLedgerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheSameKeyWithADifferentAmountIsRejectedAndTheLedgerIsUnchanged()
+    {
+        var customerId = Guid.NewGuid();
+        var billId = Guid.NewGuid();
+        var first = await _ledger.RecordAsync(ChargeRequest(customerId, billId, 100));
+
+        var act = () => _ledger.RecordAsync(ChargeRequest(customerId, billId, 250));
+
+        var conflict = await Assert.ThrowsAsync<AccountTransactionIdempotencyConflictException>(act);
+        Assert.Equal(first.Id, conflict.ExistingTransactionId);
+        var all = await _ledger.GetByCustomerAsync(customerId);
+        Assert.Equal(100, Assert.Single(all).Amount);
+    }
+
+    [Fact]
+    public async Task ReplayingAnAmountWithMoreThanTwoDecimalsReturnsTheStoredRowNotAConflict()
+    {
+        var customerId = Guid.NewGuid();
+        var billId = Guid.NewGuid();
+        var first = await _ledger.RecordAsync(ChargeRequest(customerId, billId, 10.005m));
+
+        var retry = await _ledger.RecordAsync(ChargeRequest(customerId, billId, 10.005m));
+
+        Assert.Equal(first.Id, retry.Id);
+        Assert.Equal(10.01m, retry.Amount);
+    }
+
+    [Fact]
+    public async Task TheSameKeyWithADifferentNoteIsRejected()
+    {
+        var customerId = Guid.NewGuid();
+        var billId = Guid.NewGuid();
+        await _ledger.RecordAsync(new RecordAccountTransactionRequest(
+            customerId, AccountTransactionType.Charge, 100, "Bill", billId, "first", null, DateTimeOffset.UtcNow));
+
+        var differentNote = () => _ledger.RecordAsync(new RecordAccountTransactionRequest(
+            customerId, AccountTransactionType.Charge, 100, "Bill", billId, "second", null, DateTimeOffset.UtcNow));
+        var noNote = () => _ledger.RecordAsync(ChargeRequest(customerId, billId, 100));
+
+        await Assert.ThrowsAsync<AccountTransactionIdempotencyConflictException>(differentNote);
+        await Assert.ThrowsAsync<AccountTransactionIdempotencyConflictException>(noNote);
+    }
+
+    [Fact]
     public async Task TheSameSourceIdWithADifferentTransactionTypeIsARealSeparateRow()
     {
         // The idempotency key includes transaction_type - a Refund

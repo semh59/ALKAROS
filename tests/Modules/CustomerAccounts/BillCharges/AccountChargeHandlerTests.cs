@@ -150,7 +150,7 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
     }
 
     private CreditTermsCreditPolicy ProductionPolicy() =>
-        new(_creditTerms, new PostgresAccountBalanceProjection(_dataSource, _ledger), _dataSource);
+        new(_creditTerms, new PostgresAccountBalanceProjection(_dataSource), _dataSource);
 
     [Fact]
     public async Task TheProductionCreditPolicyRefusesAChargeWhenNoCreditLimitIsSet()
