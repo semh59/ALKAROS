@@ -28,7 +28,7 @@
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — manifest sayımı
   - tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs — geri alma hedefi
   - tests/Host/Experience/Billing/BillingSplitHttpTests.cs — ikram uç nokta testleri
-  - tests/Modules/Identity/Authorization/Delegations/AuthorizationDelegationMigrationTests.cs — tohum testi
+  - tests/Host/Experience/Roles/RoleManagementHttpTests.cs — tohumlanan kasiyer ikram satırı listede görünür
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
