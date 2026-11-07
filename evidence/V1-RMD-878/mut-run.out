@@ -1,0 +1,13 @@
+J1-never-a-copy: testexit=1 
+J2-original-stays-unprinted: testexit=1 
+J3-no-kopya-line: testexit=1 
+J4-paid-here-not-original: testexit=1 
+J5-reprint-not-posted: testexit=1 
+J6-label-not-reprint: testexit=1 
+J7-copy-not-bold: testexit=1 
+M1-paid-check-removed: testexit=1 
+M2-actor-lost: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 1 m 24 s - ALKAROS.Host.E
+M3-wrong-aggregate: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 1 m 23 s - ALKAROS.Host.E
+M4-bill-number-not-recorded: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 1 m 23 s - ALKAROS.Host.E
+M5-event-name: testexit=1 Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 1 m 22 s - ALKAROS.Host.E
+M6-not-found-conflated: testexit=1 Başarısız! - Başarısız:     2, Başarılı:    10, Atlanan:     0, Toplam:    12, Süre: 1 m 24 s - ALKAROS.Host.E

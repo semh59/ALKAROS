@@ -1,3 +1,5 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Billing;
@@ -64,56 +66,109 @@ public static partial class DualScreenApplication
 
                 var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
                 if (bill is null)
-                    return Results.Json(
-                        new BillingSplitErrorEnvelope(new BillingSplitError(
-                            "NOT_FOUND", "İstenen hesap bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
-                        statusCode: StatusCodes.Status404NotFound);
+                    return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
 
-                var adjustments = await adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
-                var summary = AdjustmentCalculator.Calculate(bill, adjustments);
-                var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
-                var methods = await PaymentMethodLookup.ForPaymentsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
-                var refunded = await RefundedQuantitiesAsync(dataSource, billId, cancellationToken);
-                var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
-                var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
-
-                return Results.Ok(new BillReceiptV1(
-                    bill.Id,
-                    bill.BillNumber,
-                    bill.Status.ToString(),
-                    bill.CurrencyCode,
-                    bill.OpenedAt,
-                    bill.ClosedAt,
-                    bill.Items
-                        .Select(i => new BillReceiptItemV1(
-                            i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
-                            completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount))
-                        .ToList(),
-                    adjustments
-                        .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))
-                        .ToList(),
-                    // The printed lines are after any line discount or complimentary, so the subtotal is their sum.
-                    bill.PayableAmount,
-                    summary.AdjustedPayableAmount,
-                    summary.AdjustedTaxTotal,
-                    payments
-                        .Where(p => p.ApprovedAmount is > 0m)
-                        .OrderBy(p => p.ApprovedAt ?? p.InitiatedAt)
-                        .Select(p => new BillReceiptPaymentV1(
-                            p.Id,
-                            p.ApprovedAmount!.Value,
-                            methods[p.Id],
-                            p.Status.ToString(),
-                            p.ApprovedAt,
-                            paidBack.GetValueOrDefault(p.Id)))
-                        .ToList(),
-                    TaxBreakdown.Build(bill, summary)
-                        .Select(line => new BillReceiptTaxLineV1(line.RatePercent, line.Net, line.Tax, line.Gross))
-                        .ToList()));
+                return Results.Ok(await BuildReceiptAsync(
+                    bill, adjustmentRepository, paymentRepository, dataSource, cancellationToken));
             })
             .WithTags("BillReceipt")
             .AddEndpointFilter<BillTerminalAccessFilter>()
             .RequireRateLimiting("terminal-read");
+
+        // Every reprint of a settled bill's receipt is recorded before the data is handed out, so a copy cannot leave
+        // the till unrecorded; the page marks the sheet KOPYA.
+        app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/reprint", async (
+                Guid terminalId,
+                Guid billId,
+                IBillRepository billRepository,
+                IBillAdjustmentRepository adjustmentRepository,
+                IPaymentRepository paymentRepository,
+                IAuditEventStore auditEvents,
+                NpgsqlDataSource dataSource,
+                DualScreenStore store,
+                IAuthorizationService authorization,
+                HttpContext context,
+                CancellationToken cancellationToken) =>
+            {
+                var principal = await RequireCashierPermissionAsync(
+                    context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+
+                var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
+                if (bill is null)
+                    return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
+                if (bill.Status != BillState.Paid)
+                    return ReceiptError(
+                        context, StatusCodes.Status409Conflict, "BILL_NOT_PAID", "Yalnız ödenmiş hesabın fişi yeniden yazdırılabilir.");
+
+                var receipt = await BuildReceiptAsync(bill, adjustmentRepository, paymentRepository, dataSource, cancellationToken);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        Guid.NewGuid(), "bill.receipt.reprinted", "Bill", billId, "User", context.TraceIdentifier,
+                        principal.UserId,
+                        afterStateJson: JsonSerializer.Serialize(new { bill.BillNumber, terminalId })),
+                    cancellationToken);
+                return Results.Ok(receipt);
+            })
+            .WithTags("BillReceipt")
+            .WithMetadata(new BillRouteDoesNotClaim())
+            .AddEndpointFilter<BillTerminalAccessFilter>()
+            .RequireRateLimiting("terminal-write");
+    }
+
+    private static IResult ReceiptError(HttpContext context, int status, string code, string message)
+        => Results.Json(
+            new BillingSplitErrorEnvelope(new BillingSplitError(code, message, status, context.TraceIdentifier)),
+            statusCode: status);
+
+    private static async Task<BillReceiptV1> BuildReceiptAsync(
+        Bill bill,
+        IBillAdjustmentRepository adjustmentRepository,
+        IPaymentRepository paymentRepository,
+        NpgsqlDataSource dataSource,
+        CancellationToken cancellationToken)
+    {
+        var billId = bill.Id;
+        var adjustments = await adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
+        var summary = AdjustmentCalculator.Calculate(bill, adjustments);
+        var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
+        var methods = await PaymentMethodLookup.ForPaymentsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
+        var refunded = await RefundedQuantitiesAsync(dataSource, billId, cancellationToken);
+        var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
+        var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
+
+        return new BillReceiptV1(
+            bill.Id,
+            bill.BillNumber,
+            bill.Status.ToString(),
+            bill.CurrencyCode,
+            bill.OpenedAt,
+            bill.ClosedAt,
+            bill.Items
+                .Select(i => new BillReceiptItemV1(
+                    i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
+                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount))
+                .ToList(),
+            adjustments
+                .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))
+                .ToList(),
+            // The printed lines are after any line discount or complimentary, so the subtotal is their sum.
+            bill.PayableAmount,
+            summary.AdjustedPayableAmount,
+            summary.AdjustedTaxTotal,
+            payments
+                .Where(p => p.ApprovedAmount is > 0m)
+                .OrderBy(p => p.ApprovedAt ?? p.InitiatedAt)
+                .Select(p => new BillReceiptPaymentV1(
+                    p.Id,
+                    p.ApprovedAmount!.Value,
+                    methods[p.Id],
+                    p.Status.ToString(),
+                    p.ApprovedAt,
+                    paidBack.GetValueOrDefault(p.Id)))
+                .ToList(),
+            TaxBreakdown.Build(bill, summary)
+                .Select(line => new BillReceiptTaxLineV1(line.RatePercent, line.Net, line.Tax, line.Gross))
+                .ToList());
     }
 
     private static async Task<Dictionary<Guid, decimal>> RefundedAmountsAsync(

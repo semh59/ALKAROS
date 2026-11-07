@@ -284,6 +284,122 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, summary.StatusCode);
     }
 
+    [Fact]
+    public async Task AReprintOfAPaidBillReturnsTheReceiptAndRecordsWhoPrintedItForEveryCall()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var cashierId = (Guid)(await _database.DataSource.CreateCommand(
+            "SELECT user_id FROM identity.users WHERE username LIKE 'pui001-cashier-%';").ExecuteScalarAsync())!;
+        var first = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+        var second = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        var body = await first.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(billId, body.GetProperty("billId").GetGuid());
+        Assert.Equal(100m, Assert.Single(body.GetProperty("payments").EnumerateArray()).GetProperty("amount").GetDecimal());
+        var events = await ReprintEventsAsync(billId);
+        Assert.Equal(2, events.Count);
+        Assert.All(events, e => Assert.Equal(cashierId, e.ActorId));
+        Assert.All(events, e => Assert.Equal("Bill", e.AggregateType));
+        Assert.All(events, e => Assert.Contains(body.GetProperty("billNumber").GetString()!, e.AfterState));
+        Assert.All(events, e => Assert.Contains(terminalId.ToString(), e.AfterState));
+        Assert.All(events, e => Assert.True(e.OccurredAt > DateTimeOffset.UtcNow.AddMinutes(-5)));
+    }
+
+    [Theory]
+    [InlineData("Open")]
+    [InlineData("PartiallyPaid")]
+    [InlineData("Cancelled")]
+    public async Task AReprintOfABillThatIsNotPaidIsRefusedAndNothingIsRecorded(string status)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint-open");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SetBillStatusAsync(billId, status);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("BILL_NOT_PAID", error.GetProperty("code").GetString());
+        Assert.Equal("Yalnız ödenmiş hesabın fişi yeniden yazdırılabilir.", error.GetProperty("message").GetString());
+        Assert.Empty(await ReprintEventsAsync(billId));
+    }
+
+    [Fact]
+    public async Task AReprintWithoutPaymentsTakeOrForAnUnknownBillIsRefusedAndNothingIsRecorded()
+    {
+        var terminalId = Guid.NewGuid();
+        var waiterTerminal = Guid.NewGuid();
+        var waiter = await _database.SeedCashierSessionAsync(waiterTerminal, "receipt-reprint-waiter", takesPayments: false);
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint-cashier");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var forbidden = await PostAsync(client, ReprintPath(waiterTerminal, billId), waiter);
+        var anonymous = await PostAsync(client, ReprintPath(terminalId, billId), cookie: null);
+        var missing = await PostAsync(client, ReprintPath(terminalId, Guid.NewGuid()), cashier);
+
+        Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+        Assert.Empty(await ReprintEventsAsync(billId));
+    }
+
+    [Fact]
+    public async Task AReprintDoesNotGiveABillNobodyOwnsToTheTerminalThatPrintedIt()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-reprint-unowned");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, ReprintPath(terminalId, billId), cookie);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        await using var owner = _database.DataSource.CreateCommand("SELECT terminal_id FROM billing.bills WHERE bill_id = @id;");
+        owner.Parameters.AddWithValue("id", billId);
+        Assert.Equal(DBNull.Value, await owner.ExecuteScalarAsync());
+    }
+
+    private static string ReprintPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/reprint";
+
+    private async Task<List<(Guid? ActorId, string AggregateType, string AfterState, DateTimeOffset OccurredAt)>> ReprintEventsAsync(Guid billId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT actor_id, aggregate_type, after_state_json::text, occurred_at FROM audit.audit_events WHERE aggregate_id = @id AND event_name = 'bill.receipt.reprinted';");
+        command.Parameters.AddWithValue("id", billId);
+        var result = new List<(Guid?, string, string, DateTimeOffset)>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            result.Add((reader.IsDBNull(0) ? null : reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetFieldValue<DateTimeOffset>(3)));
+        return result;
+    }
+
+    private static async Task<HttpResponseMessage> PostAsync(HttpClient client, string path, string? cookie)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, path);
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.10");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        if (cookie is not null)
+            request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return await client.SendAsync(request);
+    }
+
     private async Task<Guid> UserIdAsync()
     {
         await using var command = _database.DataSource.CreateCommand("SELECT user_id FROM identity.users ORDER BY username LIMIT 1;");

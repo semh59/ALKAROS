@@ -130,11 +130,15 @@ public sealed class BillTerminalAccessFilter : IEndpointFilter
 
         await _access.RequireAsync(http, terminalId, billId, http.RequestAborted, claim: false);
         var result = await next(context);
-        if (!HttpMethods.IsGet(http.Request.Method) && result is not IStatusCodeHttpResult { StatusCode: >= 400 })
+        if (!HttpMethods.IsGet(http.Request.Method) && result is not IStatusCodeHttpResult { StatusCode: >= 400 }
+            && http.GetEndpoint()?.Metadata.GetMetadata<BillRouteDoesNotClaim>() is null)
             await _access.ClaimAsync(http, terminalId, billId);
         return result;
     }
 }
+
+/// <summary>Endpoint metadata for a POST that only reads the bill, so it must not give an unowned bill to the caller's terminal.</summary>
+public sealed class BillRouteDoesNotClaim;
 
 public sealed class BillOtherTerminalException(Guid billId, Guid ownerTerminalId)
     : Exception($"Bill {billId} belongs to terminal {ownerTerminalId}.")

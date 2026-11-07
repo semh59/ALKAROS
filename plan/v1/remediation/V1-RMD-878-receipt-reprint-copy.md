@@ -1,7 +1,7 @@
 # V1-RMD-878 - Kapanmış hesabın fişini yeniden yazdırma: kayıtlı ve KOPYA işaretli (F0052)
 
 - Task ID: V1-RMD-878
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing

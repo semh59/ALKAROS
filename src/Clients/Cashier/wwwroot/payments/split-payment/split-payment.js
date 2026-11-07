@@ -121,7 +121,14 @@
     changeDue: null,
     receiptError: null,
     receiptBusy: false,
+    // The first sheet after paying in this very view is the original; every other print is a recorded copy.
+    originalPrinted: true,
   };
+
+  function enterPaid() {
+    if (state.phase === 'ready') state.originalPrinted = false;
+    state.phase = 'paid';
+  }
 
   function escapeHtml(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -483,7 +490,7 @@
       // client-side only to be rejected by the server with a generic error.
       state.locked = !!state.summary.unsettledPayment;
       state.amountDraft = remainingAmount().toFixed(2);
-      state.phase = remainingAmount() <= 0.004 ? 'paid' : 'ready';
+      if (remainingAmount() <= 0.004) enterPaid(); else state.phase = 'ready';
       // V1-RMD-314: a fresh load re-derives everything from server truth - any in-flight key from before
       // this load is stale.
       state.tenderIdempotencyKey = null;
@@ -540,7 +547,7 @@
       // this both sets the lock when a fresh RequiresReconciliation lands,
       // and clears it once a real resolution exists server-side.
       state.locked = !!state.summary.unsettledPayment;
-      if (remainingAmount() <= 0.004 && !state.locked) state.phase = 'paid';
+      if (remainingAmount() <= 0.004 && !state.locked) enterPaid();
       return true;
     }).catch(function () {
       if (mine === summaryReadSequence) state.summaryStale = true;
@@ -1865,10 +1872,11 @@
       '</table>';
   }
 
-  function receiptHtml(receipt) {
+  function receiptHtml(receipt, isCopy) {
     var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '';
     return (
       '<h1>Bilgi Fişi</h1>' +
+      (isCopy ? '<p class="sp-receipt-copy">KOPYA</p>' : '') +
       '<p class="sp-receipt-note">Bu belge mali fiş değildir.</p>' +
       '<p>Hesap: ' + escapeHtml(receipt.billNumber) + '<br>' + escapeHtml(opened) + '</p>' +
       '<table>' +
@@ -1910,7 +1918,8 @@
     state.receiptBusy = true;
     state.receiptError = null;
     render();
-    api(billBase() + '/receipt').then(function (result) {
+    var isCopy = state.originalPrinted;
+    (isCopy ? api(billBase() + '/receipt/reprint', { method: 'POST' }) : api(billBase() + '/receipt')).then(function (result) {
       state.receiptBusy = false;
       if (!result.ok || !result.body) {
         state.receiptError = 'Fiş verisi okunamadı. Tekrar deneyin.';
@@ -1924,7 +1933,8 @@
         sheet.className = 'sp-receipt';
         document.body.appendChild(sheet);
       }
-      sheet.innerHTML = receiptHtml(result.body);
+      sheet.innerHTML = receiptHtml(result.body, isCopy);
+      state.originalPrinted = true;
       render();
       window.print();
     }).catch(function () {
@@ -2200,7 +2210,7 @@
         ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'
         : '') +
       '<button class="sp-btn sp-btn-primary" type="button" id="print-receipt" data-receipt-action="print"' +
-      (state.receiptBusy ? ' disabled' : '') + '>' + (state.receiptBusy ? 'Fiş hazırlanıyor…' : 'Fişi yazdır') + '</button>' +
+      (state.receiptBusy ? ' disabled' : '') + '>' + (state.receiptBusy ? 'Fiş hazırlanıyor…' : state.originalPrinted ? 'Fişi yeniden yazdır' : 'Fişi yazdır') + '</button>' +
       BACK_LINK +
       '</div>' +
       '<div class="sp-card">' + renderRefundSection(false) + '</div>';

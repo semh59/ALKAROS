@@ -1,0 +1,123 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > reads the receipt from the server, fills the print sheet and opens the print dialog
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048670553-0.3870028345532399:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048670553-0.3870028345532399:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048670553-0.3870028345532399:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > disables the button while the receipt is being read so it is read once
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048672554-0.4315549892038698:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048672554-0.4315549892038698:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048672554-0.4315549892038698:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > marks a reprint of a closed bill as KOPYA and offers it as a reprint
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048672936-0.8745842370401385:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048672936-0.8745842370401385:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048672936-0.8745842370401385:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > prints the original without KOPYA right after paying and records only the later prints
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048673160-0.7842837178452068:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048673160-0.7842837178452068:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794048673160-0.7842837178452068:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt.test.js (13 tests | 4 failed) 3233ms
+     × reads the receipt from the server, fills the print sheet and opens the print dialog 296ms
+     × disables the button while the receipt is being read so it is read once 383ms
+     × marks a reprint of a closed bill as KOPYA and offers it as a reprint 219ms
+     × prints the original without KOPYA right after paying and records only the later prints 603ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > reads the receipt from the server, fills the print sheet and opens the print dialog
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ split-payment-receipt.test.js:83:37
+     81|
+     82|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+     83|     expect(reprintCalls(fetchMock)).toHaveLength(1);
+       |                                     ^
+     84|     const text = sheet().textContent;
+     85|     expect(text).toContain("Bilgi Fişi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > disables the button while the receipt is being read so it is read once
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ split-payment-receipt.test.js:224:37
+    222|
+    223|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    224|     expect(reprintCalls(fetchMock)).toHaveLength(1);
+       |                                     ^
+    225|   });
+    226|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > marks a reprint of a closed bill as KOPYA and offers it as a reprint
+AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' to contain 'KOPYA'
+
+Expected: "KOPYA"
+Received: "Bilgi FişiBu belge mali fiş değildir.Hesap: H-104213.10.2026 13:05:002 × Taş fırın pizza₺80,001 × Ayran <b>₺20,00Ara toplam₺100,00Bahşiş₺20,00İndirim-₺10,00Toplam₺110,00Nakit₺60,00Cari hesap₺30,00Havale / EFT (İade edildi)₺20,00Banka kartı₺15,00Teşekkür ederiz."
+
+ ❯ split-payment-receipt.test.js:235:33
+    233|
+    234|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    235|     expect(sheet().textContent).toContain("KOPYA");
+       |                                 ^
+    236|     expect(sheet().querySelector(".sp-receipt-copy")).not.toBeNull();
+    237|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > prints the original without KOPYA right after paying and records only the later prints
+AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' to contain 'KOPYA'
+
+Expected: "KOPYA"
+Received: "Bilgi FişiBu belge mali fiş değildir.Hesap: H-104213.10.2026 13:05:002 × Taş fırın pizza₺80,001 × Ayran <b>₺20,00Ara toplam₺100,00Bahşiş₺20,00İndirim-₺10,00Toplam₺110,00Nakit₺60,00Cari hesap₺30,00Havale / EFT (İade edildi)₺20,00Banka kartı₺15,00Teşekkür ederiz."
+
+ ❯ split-payment-receipt.test.js:256:33
+    254|
+    255|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(2));
+    256|     expect(sheet().textContent).toContain("KOPYA");
+       |                                 ^
+    257|     expect(reprintCalls(fetchMock)).toHaveLength(1);
+    258|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 9 passed (13)
+   Start at  13:51:07
+   Duration  6.19s (transform 1.09s, setup 43ms, import 95ms, tests 3.23s, environment 2.34s)
+
