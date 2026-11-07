@@ -108,3 +108,13 @@ task may add the webhook path alongside polling if latency requires it.
   `dual-screen-pos-topology.md`).
 - Approver's own words recorded above for the scope boundary (kasa now,
   tableside/Android deferred).
+
+## Research note (2026-10-17, V1-RMD-881)
+
+This note does not change the approved decision (2026-09-17); the text above reflects what was known that day. Source: the 2026-10-17 external-dependency research of the Token developer portal (`developer.tokeninc.com`), recorded in `plan/v0/hugin-t300/V0-HUG-001-integration-contract.md` (V1-RMD-584 note). Finding F0089.
+
+- The portal's HoReCa page (`x-platform/baslangic/horeca`) states "Polling is not done, webhook is mandatory" (events BASKET_COMPLETED/LOCKED/UNLOCKED); whether the page means this only for Cloud was not verified (webhook is meaningless for the wired mode). This conflicts with "Result retrieval defaults to polling". Whether `Get Basket Details`/`Get Open Baskets` polling is supported at all was not verified.
+- The portal's Cloud introduction mentions only the X30 TR; the 300 TR is wired-only. "300 TR / X30 TR" above is therefore not confirmed for Cloud.
+- If webhook is mandatory, the "no new infrastructure" argument no longer holds: an inbound route would be needed, which would need a new Cloudflare Tunnel route (`docs/architecture/qr-relay-topology.md`).
+- Process facts from the portal: contract first, then test device, test queue about 2 months (V0-HUG-001 note).
+- Open decision (product owner): keep Cloud with webhook and a new tunnel route, or reopen the wired/in-app options. Nothing in the decision or the invariants was changed here.
