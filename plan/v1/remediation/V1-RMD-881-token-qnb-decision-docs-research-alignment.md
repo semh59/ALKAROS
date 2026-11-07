@@ -14,9 +14,13 @@ Belge görevi (kod değişmez, ürün kararı verilmez): V13-GOV-005 karar kayd�
 
 - `evidence/V1-RMD-881/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - plan/v1.3/governance/V13-GOV-005-token-cloud-integration-path-decision.md — yalnız sonuna araştırma notu
+  - plan/v1.3/governance/V13-GOV-005-token-cloud-integration-path-decision.md — yalnız Out of scope sonuna araştırma notu
   - docs/domain/token-integration-path-decision.md — yalnız sonuna araştırma notu
-  - plan/v1.4/qnb-esolutions/V13-GOV-007-qnb-efatura-unverified-draft-authorization.md — yalnız sonuna araştırma notu
+  - plan/v1.3/hugin-t300/V13-HUG-001-payment-request-path.md — yalnız sonuna araştırma notu ("300 TR / X30 TR" Cloud ve polling/webhook)
+  - plan/v1.4/qnb-esolutions/V13-GOV-007-qnb-efatura-unverified-draft-authorization.md — yalnız Out of scope sonuna araştırma notu
+  - plan/v1.3/hugin-t300/V13-HUG-001-payment-request-path.md — yalnız Out of scope sonuna araştırma notu ("300 TR / X30 TR" Cloud ve polling/webhook)
+  - evidence/V13-GOV-005/README.md — yalnız bu nota işaret eden kanıt dosyası (kapanış kapısı Done kaydı değişince kanıt ister)
+  - tools/consistency-audit/unreachable_services_allowlist.json — V1-RMD-880'den kalan, commitlenmemiş 2 bayat girdi silme (consistency-audit sıfır ihlal için gerekli)
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
