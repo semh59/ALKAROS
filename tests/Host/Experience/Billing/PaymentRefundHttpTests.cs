@@ -391,6 +391,48 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ParallelRequestsForOnePaymentLeaveExactlyOneOpenRequest()
+    {
+        const int attempts = 6;
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // Holding the bill lock makes every request wait inside its transaction, so they really run side by side once it is released.
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var holder = await connection.BeginTransactionAsync();
+        await using (var hold = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, holder))
+        {
+            hold.Parameters.AddWithValue($"bill-settlement:{seeded.BillId:N}");
+            await hold.ExecuteNonQueryAsync();
+        }
+        var requests = Task.WhenAll(Enumerable.Range(0, attempts).Select(async attempt =>
+        {
+            using var response = await client.SendAsync(
+                Post($"bills/{seeded.BillId:D}/refund-requests", _cashierCookie, new RefundRequestInputV1(paymentId, $"Deneme {attempt}")));
+            return (response.StatusCode, Code: response.IsSuccessStatusCode ? null : await ErrorCode(response));
+        }));
+        for (var wait = 0; wait < 200; wait++)
+        {
+            await using var count = _source.CreateCommand("SELECT count(*) FROM pg_stat_activity WHERE @holder = ANY(pg_blocking_pids(pid))");
+            count.Parameters.AddWithValue("holder", connection.ProcessID);
+            if ((long)(await count.ExecuteScalarAsync())! >= attempts)
+                break;
+            await Task.Delay(100);
+        }
+
+        await holder.CommitAsync();
+        var responses = await requests;
+
+        Assert.Single(responses, r => r.StatusCode == HttpStatusCode.OK);
+        Assert.Equal(attempts - 1, responses.Count(r => r.StatusCode == HttpStatusCode.Conflict && r.Code == "REFUND_ALREADY_REQUESTED"));
+        Assert.Equal(1L, await Scalar<long>("SELECT count(*) FROM payments.refund_requests WHERE payment_id = @p AND status = 'Requested' AND amount = 100", paymentId));
+        Assert.Equal(1L, await Scalar<long>("SELECT count(*) FROM payments.refund_requests WHERE payment_id = @p", paymentId));
+        Assert.Equal(0L, await Scalar<long>("SELECT count(*) FROM payments.payment_reversals WHERE payment_id = @p", paymentId));
+    }
+
+    [Fact]
     public async Task ARefundDecisionWhoseAuditRecordCannotBeWrittenIsNotKept()
     {
         var seeded = await _database.SeedBillAsync();
