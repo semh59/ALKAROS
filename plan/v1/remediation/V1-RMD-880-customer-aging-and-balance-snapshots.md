@@ -12,7 +12,7 @@ F0097: IBalanceSnapshotStore üretimde hiç çağrılmıyordu. Mevcut depo gerç
 
 ## Owned surface
 
-- `evidence/V1-RMD-880/**`, `src/Modules/CustomerAccounts/Aging/**`, `src/Host/Experience/CustomerAccounts/ReceivablesAgingEndpoints.cs`, `src/Host/Experience/CustomerAccounts/BalanceSnapshotMaintenanceJob.cs`, `src/Clients/PosTerminal/src/features/management-customer-aging/**`, `tests/Modules/CustomerAccounts/BalanceProjection/ReceivablesAgingCalculatorTests.cs`, `tests/Modules/CustomerAccounts/BalanceProjection/PostgresReceivablesAgingServiceTests.cs`, `tests/Host/Experience/CustomerAccounts/CustomerAgingHttpTests.cs`
+- `evidence/V1-RMD-880/**`, `src/Modules/CustomerAccounts/Aging/**`, `src/Host/Experience/CustomerAging/**`, `src/Clients/PosTerminal/src/features/management-customer-aging/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/CustomerAccounts/BalanceProjection/IBalanceSnapshotStore.cs — kapanış bakiyesi yazma ve toplu okuma
   - src/Modules/CustomerAccounts/BalanceProjection/PostgresBalanceSnapshotStore.cs
@@ -23,8 +23,8 @@ F0097: IBalanceSnapshotStore üretimde hiç çağrılmıyordu. Mevcut depo gerç
   - tests/Modules/CustomerAccounts/BalanceProjection/PostgresBalanceSnapshotStoreTests.cs
   - tests/Modules/CustomerAccounts/BalanceProjection/ReceivablesAgingCalculatorTests.cs
   - tests/Modules/CustomerAccounts/BalanceProjection/PostgresReceivablesAgingServiceTests.cs
-  - src/Host/Experience/CustomerAccounts/ReceivablesAgingEndpoints.cs — uç nokta, süzgeç, kayıt
-  - src/Host/Experience/CustomerAccounts/BalanceSnapshotMaintenanceJob.cs
+  - src/Host/Experience/CustomerAging/ReceivablesAgingEndpoints.cs — uç nokta, süzgeç, kayıt
+  - src/Host/Experience/CustomerAging/BalanceSnapshotMaintenanceJob.cs
   - src/Host/DualScreen/DualScreenApplication.cs — kayıt ve eşleme
   - src/Host/Composition/Errors/ApiErrorCatalog.cs — kendi hata alanı
   - tools/consistency-audit/unreachable_services_allowlist.json — iki girdi çıkar
