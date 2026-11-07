@@ -1,7 +1,7 @@
 # V1-RMD-873 - Sekme listelerinde gezinen tabindex: yalnız seçili sekme Tab sırasında
 
 - Task ID: V1-RMD-873
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
