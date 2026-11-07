@@ -15,18 +15,16 @@ BillingSplitStore.LockAndCheckOrdersAsync kilit altında okunan satır sayısı 
 - `evidence/V1-RMD-869/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Host/Experience/Billing/MergeOrdersHttpTests.cs — silinen sipariş yarış testi.
-  - src/Host/Experience/Billing/BillingSplitStore.cs — fazlalık satır sayısı kontrolü kaldırılır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
 1. Test: kilit tutan işlem siparişi ve kalemlerini siler, birleştirme kilitte bekler, işlem onaylanınca yanıt 404 NOT_FOUND olur, hesap ve hesap kalemi oluşmaz.
-2. Kilit altında yeniden okumadaki 'sipariş bulunamadı' kontrolü aynı 404'ü verdiği için LockAndCheckOrdersAsync içindeki satır sayısı kontrolü fazlalıktır (kod incelemesi: iki dal aynı özel durumu fırlatır); ölü kod olmasın diye kaldırılır.
-3. Mutasyon: kalan kontrolün kaldırılması (null yok sayma) testi düşürür (cp+cmp geri alınır).
+2. Mutasyon: satır sayısı kontrolünün kaldırılması testi düşürür; test için ikinci sipariş kasaya gönderilmiş olmalı, yoksa sonraki 'bulunamadı' dalı aynı 404'ü verip mutantı gizler (cp+cmp geri alınır).
 
 ## Out of scope
 
-- Silinen siparişin 404 davranışı (aynı kalır).
+- Üretim kodu değişikliği: satır sayısı kontrolü fazlalık değildir (silinen sipariş ile kasaya gönderilmiş sipariş birlikteyse MERGE_MIXED_SENT yerine 404 vermesini o sağlar); kod aynı kalır.
 
 ## Dependencies
 
