@@ -168,7 +168,7 @@
     IDEMPOTENCY_KEY_REUSED: 'Bu işlem anahtarı farklı bir istek için zaten kullanılmış.',
     INSUFFICIENT_CASH_TENDER: 'Verilen tutar hesaplanan tutarı karşılamıyor.',
     INVALID_CASH_SESSION_STATE: 'Kasa oturumu bu işlem için uygun durumda değil.',
-    ITEM_SPLIT_ON_ADJUSTED_BILL: 'İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın.',
+    ITEM_SPLIT_ON_ADJUSTED_BILL: 'Ek ücret veya bahşiş eklenmiş hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın.',
     NOTE_INVALID: 'Not en fazla 500 karakter olabilir.',
     NO_OPEN_CASH_SESSION: 'İadeyi isteyen kasiyerin, isteği yaptığı terminalde açık kasa oturumu yok.',
     OVER_ALLOCATION: 'İstenen tutar hesabın kalan bakiyesini aşıyor.',

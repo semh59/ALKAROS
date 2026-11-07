@@ -340,6 +340,79 @@ public sealed class SplitDesignDomainTests
     }
 
     [Fact]
+    public void ItemSplitOnADiscountedBillSplitsTheDiscountedLinesAndAddsUpToTheAdjustedTotals()
+    {
+        // 3 x 33.33 (taxed 10%) + 1 x 40 (taxed 10%) = 139.99; a 25.01 discount leaves 114.98 owed.
+        var billId = Guid.NewGuid();
+        var pizza = new BillItem(Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Pizza", 3, 33.33m, 10m);
+        var cola = new BillItem(Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Kola", 1, 40m, 10m);
+        var bill = new Bill(billId, "BILL-DISC", new[] { pizza, cola });
+        var discount = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), billId, 25.01m, 10m, "PromotionalOffer", Guid.NewGuid());
+        var summary = AdjustmentCalculator.Calculate(bill, new[] { discount });
+        var lines = AdjustmentCalculator.DiscountedLineAmounts(bill, summary);
+
+        var allocations = SplitEngine.CreateItemSplit(
+            bill,
+            new[]
+            {
+                new ItemSplitTarget(pizza.Id, "A", 1),
+                new ItemSplitTarget(pizza.Id, "B", 1),
+                new ItemSplitTarget(pizza.Id, "C", 1),
+                new ItemSplitTarget(cola.Id, "A", 1),
+            },
+            adjustment: summary);
+
+        Assert.Equal(114.98m, summary.AdjustedPayableAmount);
+        Assert.Equal(summary.AdjustedPayableAmount, allocations.Sum(a => a.AllocatedAmount));
+        Assert.Equal(summary.AdjustedTaxTotal, allocations.Sum(a => a.TaxAmount));
+        Assert.Equal(lines[pizza.Id], allocations.Where(a => a.BillItemId == pizza.Id).Sum(a => a.AllocatedAmount));
+        Assert.Equal(lines[cola.Id], allocations.Single(a => a.BillItemId == cola.Id).AllocatedAmount);
+        Assert.All(allocations, a => Assert.InRange(a.TaxAmount, 0m, a.AllocatedAmount));
+    }
+
+    [Fact]
+    public void ItemSplitOnABillWithAPercentageAndAnAmountDiscountStillAddsUpToTheAdjustedTotals()
+    {
+        var billId = Guid.NewGuid();
+        var pizza = new BillItem(Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Pizza", 2, 49.99m, 10m);
+        var cola = new BillItem(Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Kola", 1, 17.01m, 20m);
+        var bill = new Bill(billId, "BILL-DISC2", new[] { pizza, cola });
+        var percentage = BillAdjustment.CreateDiscountPercentage(
+            Guid.NewGuid(), billId, 7m, bill.PayableAmount, 10m, "PromotionalOffer", Guid.NewGuid());
+        var amount = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), billId, 3.33m, 10m, "PromotionalOffer", Guid.NewGuid());
+        var summary = AdjustmentCalculator.Calculate(bill, new[] { percentage, amount });
+
+        var allocations = SplitEngine.CreateItemSplit(
+            bill,
+            new[]
+            {
+                new ItemSplitTarget(pizza.Id, "A", 1),
+                new ItemSplitTarget(pizza.Id, "B", 1),
+                new ItemSplitTarget(cola.Id, "B", 1),
+            },
+            adjustment: summary);
+
+        Assert.True(summary.TotalDiscounts > 0m);
+        Assert.Equal(summary.AdjustedPayableAmount, allocations.Sum(a => a.AllocatedAmount));
+        Assert.Equal(summary.AdjustedTaxTotal, allocations.Sum(a => a.TaxAmount));
+    }
+
+    [Fact]
+    public void AnEqualSplitLeavesTheKurusRemainderWithTheLastPerson()
+    {
+        var billId = Guid.NewGuid();
+        var item = new BillItem(Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Menu", 1, 100m, 10m);
+        var bill = new Bill(billId, "BILL-EQ", new[] { item });
+
+        var allocations = SplitEngine.CreateEqualSplit(bill, 3);
+
+        decimal[] expected = [33.33m, 33.33m, 33.34m];
+        Assert.Equal(expected, allocations.Select(a => a.AllocatedAmount));
+    }
+
+    [Fact]
     public void ItemSplitDistributesGrossAndTaxAcrossOwnersLosslessly()
     {
         var billId = Guid.NewGuid();

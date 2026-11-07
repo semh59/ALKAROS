@@ -78,7 +78,7 @@ describe("bill split workspace recovery and empty states", () => {
   });
 
   it("does not call an item-split refusal on an adjusted bill a concurrent change", async () => {
-    const refusal = new BillingSplitApiError(409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "İndirim uygulanmış hesap ürün bazında bölünemez.");
+    const refusal = new BillingSplitApiError(409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "Ek ücret veya bahşiş eklenmiş hesap ürün bazında bölünemez.");
     await mount(<BillSplitWorkspace {...props({ onSave: vi.fn().mockRejectedValue(refusal) })} />);
     await tab("Ürün / miktar");
     const cells = [...document.querySelectorAll<HTMLInputElement>(".bill-split__items input")];
@@ -91,11 +91,18 @@ describe("bill split workspace recovery and empty states", () => {
     expect(document.body.textContent).not.toContain("Hesabı yenile");
   });
 
-  it("tells the cashier up front that a discounted bill cannot be split by item", async () => {
+  it("tells the cashier up front that a bill with a fee or a tip cannot be split by item", async () => {
+    await mount(<BillSplitWorkspace {...props({ design: { ...design, payableAmount: 285 } })} />);
+    await tab("Ürün / miktar");
+
+    expect(document.body.textContent).toContain("ek ücret veya bahşiş var; ürün bazında bölme kullanılamaz");
+  });
+
+  it("does not warn on a discounted bill, which can be split by item", async () => {
     await mount(<BillSplitWorkspace {...props({ design: { ...design, payableAmount: 247.5 } })} />);
     await tab("Ürün / miktar");
 
-    expect(document.body.textContent).toContain("ürün bazında bölme kullanılamaz");
+    expect(document.body.textContent).not.toContain("ürün bazında bölme kullanılamaz");
   });
 
   it("an emptied amount cell is not a zero amount", async () => {

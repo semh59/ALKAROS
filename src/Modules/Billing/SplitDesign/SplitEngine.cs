@@ -129,12 +129,15 @@ public static class SplitEngine
 
     /// <summary>
     /// Calculates an item-based split where bill items or partial item quantities are assigned to owners.
-    /// Enforces that no bill item is over-allocated (<c>sum(allocated_quantity) &lt;= item.quantity</c>).
+    /// Enforces that no bill item is over-allocated (<c>sum(allocated_quantity) &lt;= item.quantity</c>). With
+    /// <paramref name="adjustment"/> (a bill with discounts only), each item is split at its discounted amount and its
+    /// share of the adjusted tax, so allocating every item adds up to the adjusted totals.
     /// </summary>
     public static IReadOnlyList<BillAllocation> CreateItemSplit(
         Bill bill,
         IReadOnlyList<ItemSplitTarget> targets,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        AdjustedBillSummary? adjustment = null)
     {
         ArgumentNullException.ThrowIfNull(bill);
         ArgumentNullException.ThrowIfNull(targets);
@@ -153,6 +156,7 @@ public static class SplitEngine
         }
 
         var itemsById = bill.Items.ToDictionary(i => i.Id);
+        var shares = ItemShares(bill, adjustment);
 
         // Group targets by bill item ID to validate against over-allocation
         var groupedByItem = targets.GroupBy(t => t.BillItemId);
@@ -175,6 +179,7 @@ public static class SplitEngine
 
             var groupList = group.ToList();
             var totalAllocatedQty = groupList.Sum(t => t.Quantity);
+            var share = shares[billItem.Id];
 
             if (totalAllocatedQty > billItem.Quantity)
             {
@@ -192,8 +197,8 @@ public static class SplitEngine
             // target in every group now absorbs the remainder against that
             // share, not just when the group happens to be fully allocated.
             var allocatedFraction = totalAllocatedQty / billItem.Quantity;
-            var allocatedGross = BillMath.RoundCurrency(billItem.GrossAmount * allocatedFraction);
-            var allocatedTax = BillMath.RoundCurrency(billItem.TaxAmount * allocatedFraction);
+            var allocatedGross = BillMath.RoundCurrency(share.Gross * allocatedFraction);
+            var allocatedTax = BillMath.RoundCurrency(share.Tax * allocatedFraction);
             var runningItemGross = 0m;
             var runningItemTax = 0m;
 
@@ -214,8 +219,8 @@ public static class SplitEngine
                 else
                 {
                     var fraction = target.Quantity / billItem.Quantity;
-                    targetGross = BillMath.RoundCurrency(billItem.GrossAmount * fraction);
-                    targetTax = BillMath.RoundCurrency(billItem.TaxAmount * fraction);
+                    targetGross = BillMath.RoundCurrency(share.Gross * fraction);
+                    targetTax = BillMath.RoundCurrency(share.Tax * fraction);
 
                     runningItemGross += targetGross;
                     runningItemTax += targetTax;
@@ -309,6 +314,22 @@ public static class SplitEngine
         }
 
         return allocations;
+    }
+
+    /// <summary>What each item is worth to split: its own amounts, or, on a discounted bill, its discounted amount and
+    /// its share of the adjusted tax total (largest remainder over the items' own tax).</summary>
+    private static Dictionary<Guid, (decimal Gross, decimal Tax)> ItemShares(Bill bill, AdjustedBillSummary? adjustment)
+    {
+        var shares = bill.Items.ToDictionary(item => item.Id, item => (item.GrossAmount, item.TaxAmount));
+        if (adjustment is null)
+            return shares;
+
+        var lines = AdjustmentCalculator.DiscountedLineAmounts(bill, adjustment);
+        var priced = bill.Items.Where(item => lines.ContainsKey(item.Id)).ToList();
+        var taxes = BillMath.Apportion(adjustment.AdjustedTaxTotal, priced.Select(item => item.TaxAmount).ToArray());
+        for (var index = 0; index < priced.Count; index++)
+            shares[priced[index].Id] = (lines[priced[index].Id], taxes[index]);
+        return shares;
     }
 
     private static decimal FloorCurrency(decimal value)

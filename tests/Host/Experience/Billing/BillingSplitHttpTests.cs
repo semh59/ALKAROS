@@ -608,22 +608,19 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(225m, saved.Allocations.Sum(allocation => allocation.Amount));
         Assert.Equal(design.TaxTotal, saved.Allocations.Sum(allocation => allocation.TaxAmount));
 
-        using var items = await client.SendAsync(JsonRequest(
-            HttpMethod.Put,
+        var byItem = await PutAsync<BillSplitDesignDto>(
+            client,
             path + "/items",
             cookie,
             new SaveItemSplitRequest(
                 saved.BillRowVersion,
                 Versions(saved),
                 [
-                    new ItemSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), seeded.FirstItemId, 1m),
-                    new ItemSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), seeded.SecondItemId, 1m),
-                ])));
-        Assert.Equal(HttpStatusCode.Conflict, items.StatusCode);
-        Assert.Equal(
-            "ITEM_SPLIT_ON_ADJUSTED_BILL",
-            (await items.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
-        Assert.Equal(saved.Allocations.Select(allocation => allocation.AllocationId).Order(), (await _database.AllocationIdsAsync(seeded.BillId)).Order());
+                    new ItemSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), design.Items[0].BillItemId, design.Items[0].Quantity),
+                    new ItemSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), design.Items[1].BillItemId, design.Items[1].Quantity),
+                ]));
+        Assert.Equal(225m, byItem.Allocations.Sum(allocation => allocation.Amount));
+        Assert.Equal(design.TaxTotal, byItem.Allocations.Sum(allocation => allocation.TaxAmount));
     }
 
     [Fact]
@@ -665,6 +662,43 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
                     new ItemSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), seeded.FirstItemId, 1m),
                     new ItemSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), seeded.SecondItemId, 1m),
                 ])));
+        Assert.Equal(HttpStatusCode.Conflict, items.StatusCode);
+        Assert.Equal(
+            "ITEM_SPLIT_ON_ADJUSTED_BILL",
+            (await items.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+        Assert.Empty(await _database.AllocationIdsAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ATipAloneRefusesAnItemSplitWith409()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync(taxRate: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = Path(terminalId, seeded.BillId);
+        using (var tip = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip",
+            cookie,
+            new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 10m))))
+            Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
+        BillSplitDesignDto design;
+        using (var get = await client.SendAsync(Request(HttpMethod.Get, path, cookie)))
+            design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
+
+        using var items = await client.SendAsync(JsonRequest(
+            HttpMethod.Put,
+            path + "/items",
+            cookie,
+            new SaveItemSplitRequest(
+                design.BillRowVersion,
+                [],
+                design.Items.Select((item, index) => new ItemSplitTargetRequest(
+                    new SplitOwnerRequest("Person", Guid.NewGuid()), item.BillItemId, item.Quantity)).ToList())));
+
         Assert.Equal(HttpStatusCode.Conflict, items.StatusCode);
         Assert.Equal(
             "ITEM_SPLIT_ON_ADJUSTED_BILL",

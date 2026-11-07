@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx (8 tests | 1 failed) 304ms
+     × tells the cashier up front that a bill with a fee or a tip cannot be split by item 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.recovery.test.tsx > bill split workspace recovery and empty states > tells the cashier up front that a bill with a fee or a tip cannot be split by item
+AssertionError: expected 'HESAP / DAĞITIM TASARIMIH-1042Açık · …' to contain 'ek ücret veya bahşiş var; ürün bazınd…'
+
+Expected: "ek ücret veya bahşiş var; ürün bazında bölme kullanılamaz"
+Received: "HESAP / DAĞITIM TASARIMIH-1042Açık · Henüz güncellenmediÖdenecek₺285,00Vergi₺25,00Eşit bölÜrün / miktarTutar gir1Ürün miktarlarını dağıtınBu hesapta indirim veya ek ücret var; ürün bazında bölme kullanılamaz. Eşit bölme veya tutar girme modunu kullanın.Pizza2 adet · ₺220,00Kalan 2Sandalye 1Sandalye 2Ayran1 adet · ₺55,00Kalan 1Sandalye 1Sandalye 2İNCELEMEDağıtıldı₺0,00Dağıtılmadı₺285,00Kaydetmeden önce düzeltinEn az bir ürün miktarı dağıtılmalı.Bu ekran yalnız hesap dağıtım tasarımını kaydeder; tahsilat veya ödeme yürütmez.Dağıtımı kaydetDağıtımı sıfırla"
+
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx:98:39
+     96|     await tab("Ürün / miktar");
+     97|
+     98|     expect(document.body.textContent).toContain("ek ücret veya bahşiş …
+       |                                       ^
+     99|   });
+    100|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  17:04:27
+   Duration  1.92s (transform 194ms, setup 0ms, import 296ms, tests 304ms, environment 1.04s)
+

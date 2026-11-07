@@ -777,20 +777,25 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         var bill = await GetBillAsync(billId, cancellationToken);
         var targets = request.Targets ?? throw new ArgumentException("Item targets are required.", nameof(request));
-        // V1-RMD-413 (V1-RMD-393 F-11): an item split sums the items' own prices, which on a discounted (or
-        // fee/tip-adjusted) bill no longer add up to what is owed. Spreading an adjustment over items is a product
-        // decision not taken yet, so such a bill is split by amount, person or custom split instead.
+        // A discount is spread over the items (AdjustmentCalculator.DiscountedLineAmounts); a fee or a tip belongs to
+        // no item, so such a bill is split by amount, person or custom split instead, unless the adjustments cancel
+        // out and the items' own prices still add up to what is owed.
         var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
-        if (adjustment is not null
-            && (adjustment.AdjustedPayableAmount != bill.PayableAmount || adjustment.AdjustedTaxTotal != bill.TaxTotal))
-            throw new SplitItemsOnAdjustedBillException(billId);
+        if (adjustment is not null && (adjustment.TotalFees != 0m || adjustment.TotalTips != 0m))
+        {
+            if (adjustment.AdjustedPayableAmount != bill.PayableAmount || adjustment.AdjustedTaxTotal != bill.TaxTotal)
+                throw new SplitItemsOnAdjustedBillException(billId);
+            adjustment = null;
+        }
+
         var allocations = SplitEngine.CreateItemSplit(
             bill,
             targets.Select(target => new ItemSplitTarget(
                 target.BillItemId,
                 OwnerReference(target.Owner, SplitMode.ByItem),
                 target.Quantity)).ToList(),
-            actorId);
+            actorId,
+            adjustment);
         return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
     }
 
@@ -1061,12 +1066,12 @@ public sealed class GrantDeniedException(bool complimentary = false) : Exception
 }
 
 /// <summary>
-/// V1-RMD-413: an item split was requested on a bill whose adjustments (discount, fee, tip) change what is owed.
+/// An item split was requested on a bill with a fee or a tip, which belong to no item.
 /// </summary>
 public sealed class SplitItemsOnAdjustedBillException : Exception
 {
     public SplitItemsOnAdjustedBillException(Guid billId)
-        : base($"Bill {billId} carries adjustments; an item split cannot account for them.")
+        : base($"Bill {billId} carries a fee or a tip; an item split cannot account for it.")
     {
         BillId = billId;
     }

@@ -1,0 +1,9 @@
+A1-engine-ignores-discount: Başarısız! - Başarısız:     1, Başarılı:    30, Atlanan:     0, Toplam:    31, Süre: 153 ms - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0) testexit=
+A2-tax-not-apportioned: Başarısız! - Başarısız:     1, Başarılı:    30, Atlanan:     0, Toplam:    31, Süre: 169 ms - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0) testexit=
+A3-store-refuses-any-adjustment: Başarısız! - Başarısız:     3, Başarılı:     0, Atlanan:     0, Toplam:     3, Süre: 9 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexit
+A4-fee-tip-never-refused: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 10 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+A5-remainder-first-person: Başarısız! - Başarısız:     2, Başarılı:    29, Atlanan:     0, Toplam:    31, Süre: 138 ms - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0) testexit=
+A6-item-split-passes-no-adjustment: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 10 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi
+B1-adjusted-not-equal:       Tests  1 failed | 7 passed (8)
+B2-old-wording:       Tests  1 failed | 7 passed (8)
+A7-payable-or-tax-check-and: Başarısız! - Başarısız:     2, Başarılı:     2, Atlanan:     0, Toplam:     4, Süre: 15 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) testexi

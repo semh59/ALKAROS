@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx (8 tests | 1 failed) 316ms
+     × does not warn on a discounted bill, which can be split by item 27ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.recovery.test.tsx > bill split workspace recovery and empty states > does not warn on a discounted bill, which can be split by item
+AssertionError: expected 'HESAP / DAĞITIM TASARIMIH-1042Açık · …' not to contain 'ürün bazında bölme kullanılamaz'
+
+Expected: "ürün bazında bölme kullanılamaz"
+Received: "HESAP / DAĞITIM TASARIMIH-1042Açık · Henüz güncellenmediÖdenecek₺247,50Vergi₺25,00Eşit bölÜrün / miktarTutar gir1Ürün miktarlarını dağıtınBu hesapta ek ücret veya bahşiş var; ürün bazında bölme kullanılamaz. Eşit bölme veya tutar girme modunu kullanın.Pizza2 adet · ₺220,00Kalan 2Sandalye 1Sandalye 2Ayran1 adet · ₺55,00Kalan 1Sandalye 1Sandalye 2İNCELEMEDağıtıldı₺0,00Dağıtılmadı₺247,50Kaydetmeden önce düzeltinEn az bir ürün miktarı dağıtılmalı.Bu ekran yalnız hesap dağıtım tasarımını kaydeder; tahsilat veya ödeme yürütmez.Dağıtımı kaydetDağıtımı sıfırla"
+
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx:105:43
+    103|     await tab("Ürün / miktar");
+    104|
+    105|     expect(document.body.textContent).not.toContain("ürün bazında bölm…
+       |                                           ^
+    106|   });
+    107|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  17:04:22
+   Duration  2.27s (transform 228ms, setup 0ms, import 350ms, tests 316ms, environment 1.33s)
+

@@ -781,7 +781,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         BillDiscountBelowCollectedException => (409, "DISCOUNT_BELOW_COLLECTED", "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz."),
         AdjustmentUndoBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim ya da bahşiş geri alınamaz."),
         AdjustmentUndoBelowCollectedException => (409, "ADJUSTMENT_UNDO_BELOW_COLLECTED", "Geri alınırsa ödenecek tutar, hesaptan şimdiye kadar alınan tutarın altına iniyor; geri alınamaz."),
-        SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
+        SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "Ek ücret veya bahşiş eklenmiş hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
         BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
         BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
         RefundInputException refundInput => (
