@@ -1,7 +1,7 @@
 # V1-RMD-870 - Aynı ödemeye eşzamanlı birden fazla iade talebi yarış testi
 
 - Task ID: V1-RMD-870
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WTVUmS2xYXu1gL4Tsz
 - Work type: implementation
 - Surface state: Existing
