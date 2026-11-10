@@ -69,6 +69,15 @@ internal static class BillMoneyGuard
         return (bool)(await money.ExecuteScalarAsync(cancellationToken))!;
     }
 
+    /// <summary>A payment that may still be approved: its amount is not allocated yet, but the bill's collected total is not final.</summary>
+    public static async Task<bool> BillHasPaymentInFlightAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var inFlight = new NpgsqlCommand($"SELECT {InFlightPredicate("@bill_id")};", connection, transaction);
+        inFlight.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
+        return (bool)(await inFlight.ExecuteScalarAsync(cancellationToken))!;
+    }
+
     /// <summary>True when any bill of the order is Paid or holds money.</summary>
     public static async Task<bool> OrderHasMoneyAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
@@ -88,7 +97,15 @@ internal static class BillMoneyGuard
         SELECT EXISTS (SELECT 1 FROM payments.payment_allocations a
                        JOIN payments.payments ap ON ap.payment_id = a.payment_id
                        WHERE a.bill_id = {billId} AND ap.status <> 'Refunded')
-            OR EXISTS (SELECT 1 FROM payments.payments p
-                       WHERE p.bill_id = {billId} AND p.status IN ('Pending', 'Unknown', 'ReconciliationRequired'))
+            OR {InFlightPredicate(billId)}
+        """;
+
+    private static string InFlightPredicate(string billId) => $"""
+        EXISTS (SELECT 1 FROM payments.payments p
+                WHERE p.bill_id = {billId} AND p.status IN ('Pending', 'Unknown', 'ReconciliationRequired'))
         """;
 }
+
+/// <summary>An item comp was refused because a payment of the bill may still be approved and change what was collected.</summary>
+public sealed class CompWhilePaymentInFlightException(Guid billId)
+    : Exception($"Bill {billId} has a payment that is not settled yet.");

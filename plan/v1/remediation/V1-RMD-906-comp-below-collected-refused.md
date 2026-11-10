@@ -1,7 +1,7 @@
 # V1-RMD-906 - Kısmi ödemesi alınmış açık hesapta tahsil edileni aşağı çekecek kalem ikramı reddedilir
 
 - Task ID: V1-RMD-906
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

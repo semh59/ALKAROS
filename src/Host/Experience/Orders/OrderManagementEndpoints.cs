@@ -3,6 +3,7 @@ using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Orders.OrderCancellation;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
@@ -749,11 +750,26 @@ public static class OrderManagementEndpoints
                 request,
                 async () =>
                 {
-                    await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
-                    var result = await itemExceptions.ApplyComplimentaryAsync(
-                        command,
-                        (comped, connection, transaction, ct) => CompBillLineAsync(bills, billAdjustments, comped, connection, transaction, ct),
-                        cancellationToken);
+                    // The settlement locks come before the order row is written, the order every money path takes them in.
+                    var settlementLocks = new List<IAsyncDisposable>();
+                    ItemExceptionResult result;
+                    try
+                    {
+                        foreach (var bill in (await bills.GetByOrderIdAsync(orderId, cancellationToken))
+                                     .Where(b => b.Items.Any(line => line.OrderItemId == itemId)).OrderBy(b => b.Id))
+                            settlementLocks.Add(await bills.AcquireSettlementLockAsync(bill.Id, cancellationToken));
+                        await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
+                        result = await itemExceptions.ApplyComplimentaryAsync(
+                            command,
+                            (comped, connection, transaction, ct) => CompBillLineAsync(bills, billAdjustments, comped, connection, transaction, ct),
+                            cancellationToken);
+                    }
+                    finally
+                    {
+                        foreach (var held in settlementLocks)
+                            await held.DisposeAsync();
+                    }
+
                     return new ApplyComplimentaryResultV1(
                         "Applied",
                         result.OrderId,
@@ -1096,7 +1112,39 @@ public static class OrderManagementEndpoints
             var updated = bill.RemoveItem(line.Id).AddItem(
                 BillItem.FromOrderItem(bill.Id, comped, line.Id, rowVersion: line.RowVersion));
             // The comp lowers what the bill is worth: a fixed discount already on it must still fit, or the bill could no longer be paid.
-            AdjustmentCalculator.Calculate(updated, await billAdjustments.GetByBillIdAsync(bill.Id, cancellationToken));
+            var summary = AdjustmentCalculator.Calculate(updated, await billAdjustments.GetByBillIdAsync(bill.Id, cancellationToken));
+
+            // And it must not take the payable below what was already collected: the cashier refunds the payment first.
+            // The locks the tender path takes, in its order, keep a concurrent payment or refund from slipping past.
+            // The bill row, then the allocation lock: the discount path takes them in that order, and the settlement
+            // lock was taken by the caller before anything was written.
+            await using (var rowLock = new NpgsqlCommand(
+                "SELECT 1 FROM billing.bills WHERE bill_id = @bill FOR UPDATE;", connection, transaction))
+            {
+                rowLock.Parameters.AddWithValue("bill", bill.Id);
+                await rowLock.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            await using (var allocationLock = new NpgsqlCommand(
+                "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction))
+            {
+                allocationLock.Parameters.AddWithValue($"payment-allocation:{bill.Id:N}");
+                await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            await using var collected = new NpgsqlCommand(
+                """
+                SELECT COALESCE((SELECT SUM(amount) FROM payments.payment_allocations WHERE bill_id = @bill), 0)
+                     - COALESCE((SELECT SUM(r.amount) FROM payments.payment_reversals r
+                                 JOIN payments.payments p ON p.payment_id = r.payment_id WHERE p.bill_id = @bill), 0);
+                """, connection, transaction);
+            collected.Parameters.AddWithValue("bill", bill.Id);
+            var collectedAmount = (decimal)(await collected.ExecuteScalarAsync(cancellationToken))!;
+            if (summary.AdjustedPayableAmount < collectedAmount)
+                throw new BillDiscountBelowCollectedException(bill.Id, summary.AdjustedPayableAmount, collectedAmount);
+            if (await BillMoneyGuard.BillHasPaymentInFlightAsync(connection, transaction, bill.Id, cancellationToken))
+                throw new CompWhilePaymentInFlightException(bill.Id);
+
             await bills.SaveAsync(updated, bill.RowVersion, connection, transaction, cancellationToken);
         }
     }
@@ -1279,6 +1327,8 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
+        CompWhilePaymentInFlightException => (409, "COMP_PAYMENT_IN_FLIGHT", "Bu hesapta sonuçlanmamış bir ödeme var; ödeme sonuçlanmadan ikram edilemez."),
+        BillDiscountBelowCollectedException => (409, "COMP_BELOW_COLLECTED", "Bu hesapta ödeme alınmış; ikram, alınan tutarın altına iniyor. Önce ödemeyi iade edin, sonra ikram edin."),
         DiscountExceedsPayableException => (409, "DISCOUNT_EXCEEDS_PAYABLE", "Hesaptaki indirim, ikramdan sonra kalan tutarı aşıyor; önce indirimi geri alın."),
         OrderClosedException => (409, "ORDER_CLOSED", "Sipariş kapanmış; bu işlem yapılamaz."),
         CheckNotYetOrderedException => (409, "ORDER_NOT_SUBMITTED", "Sipariş henüz mutfağa gönderilmedi; kasaya gönderilemez."),

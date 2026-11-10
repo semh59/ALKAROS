@@ -1,0 +1,7 @@
+1 collected check disabled (false &&) -> KILLED (mut1.log)
+2 refunds not subtracted -> KILLED (mut2.log)
+3 < changed to <= -> KILLED (mut3.log)
+4 error code renamed -> KILLED (mut4.log)
+Each restored with cp + cmp; every run rebuilt.
+5 in-flight payment check disabled (false &&) -> KILLED (mut5.log)
+Survivor (accepted): removing the bill-settlement/payment-allocation locks is not observable in a single-threaded test; the keys equal the tender path keys (qa checked).
