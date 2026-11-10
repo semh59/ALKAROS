@@ -22,6 +22,30 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
         Amount: amount, ReasonCode: "OperatorError", RequestedAt: DateTimeOffset.UtcNow,
         Status: GrantStatus.Pending, Path: null, ApproverUserId: null, ResolvedAt: null);
 
+    private async Task<AuthorizationGrant> ResolveAsync(Guid grantId, GrantStatus status, PolicyPath path, Guid? approverUserId)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var resolved = await _repository.ResolveAsync(grantId, status, path, approverUserId, connection, transaction);
+        await transaction.CommitAsync();
+        return resolved;
+    }
+
+    [Fact]
+    public async Task ARolledBackResolutionLeavesTheGrantPendingAndAnotherResolutionStillWins()
+    {
+        var pending = await _repository.InsertAsync(Pending("k-rollback"));
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _repository.ResolveAsync(pending.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid(), connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        (await _repository.GetAsync(pending.GrantId))!.Status.Should().Be(GrantStatus.Pending);
+        (await ResolveAsync(pending.GrantId, GrantStatus.Denied, PolicyPath.Manual, Guid.NewGuid())).Status.Should().Be(GrantStatus.Denied);
+    }
+
     /// <summary>
     /// Found in an independent review (2026-09-11): a TOCTOU race let two
     /// concurrent grant requests from the same requester/permission both
@@ -102,7 +126,7 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
         var pending = await _repository.InsertAsync(Pending("k-resolve"));
         var approver = Guid.NewGuid();
 
-        var resolved = await _repository.ResolveAsync(
+        var resolved = await ResolveAsync(
             pending.GrantId, GrantStatus.Granted, PolicyPath.Manual, approver);
 
         resolved.Status.Should().Be(GrantStatus.Granted);
@@ -115,10 +139,10 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
     public async Task ResolvingAnAlreadyResolvedGrantThrows()
     {
         var pending = await _repository.InsertAsync(Pending("k-twice"));
-        await _repository.ResolveAsync(pending.GrantId, GrantStatus.Denied, PolicyPath.Manual, Guid.NewGuid());
+        await ResolveAsync(pending.GrantId, GrantStatus.Denied, PolicyPath.Manual, Guid.NewGuid());
 
         await FluentActions
-            .Invoking(() => _repository.ResolveAsync(pending.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid()))
+            .Invoking(() => ResolveAsync(pending.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid()))
             .Should().ThrowAsync<AuthorizationGrantAlreadyResolvedException>();
     }
 
@@ -146,7 +170,7 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
     public async Task TheTriggerBlocksReResolvingViaRawSql()
     {
         var pending = await _repository.InsertAsync(Pending("k-reresolve"));
-        await _repository.ResolveAsync(pending.GrantId, GrantStatus.Granted, PolicyPath.Auto, null);
+        await ResolveAsync(pending.GrantId, GrantStatus.Granted, PolicyPath.Auto, null);
 
         await using var command = _db.DataSource.CreateCommand(
             "UPDATE identity.authorization_grants SET status = 'denied' WHERE grant_id = @id;");
@@ -168,18 +192,18 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
             {
                 RequesterUserId = user, PermissionCode = "bills.comp",
             });
-            await _repository.ResolveAsync(g.GrantId, GrantStatus.Granted, PolicyPath.Auto, null);
+            await ResolveAsync(g.GrantId, GrantStatus.Granted, PolicyPath.Auto, null);
         }
         // one granted-manual (must NOT count), one pending (must NOT count),
         // one for a different permission
         var manual = await _repository.InsertAsync(Pending("k-count-manual") with
         { RequesterUserId = user, PermissionCode = "bills.comp" });
-        await _repository.ResolveAsync(manual.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid());
+        await ResolveAsync(manual.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid());
         await _repository.InsertAsync(Pending("k-count-pending") with
         { RequesterUserId = user, PermissionCode = "bills.comp" });
         var other = await _repository.InsertAsync(Pending("k-count-other") with
         { RequesterUserId = user, PermissionCode = "bills.discount" });
-        await _repository.ResolveAsync(other.GrantId, GrantStatus.Granted, PolicyPath.Auto, null);
+        await ResolveAsync(other.GrantId, GrantStatus.Granted, PolicyPath.Auto, null);
 
         (await _repository.CountAutoGrantsSinceAsync(user, "bills.comp", since)).Should().Be(2);
         (await _repository.CountAutoGrantsSinceAsync(user, "bills.comp", DateTimeOffset.UtcNow.AddYears(1)))
@@ -191,10 +215,10 @@ public sealed class PostgresAuthorizationGrantRepositoryTests : IClassFixture<Gr
     {
         var g1 = await _repository.InsertAsync(Pending("k-rpt-1", amount: 100m) with { ReasonCode = "CustomerChange" });
         var g2 = await _repository.InsertAsync(Pending("k-rpt-2", amount: 50m) with { ReasonCode = "CustomerChange" });
-        await _repository.ResolveAsync(g1.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid());
-        await _repository.ResolveAsync(g2.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid());
+        await ResolveAsync(g1.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid());
+        await ResolveAsync(g2.GrantId, GrantStatus.Granted, PolicyPath.Manual, Guid.NewGuid());
         var denied = await _repository.InsertAsync(Pending("k-rpt-denied", amount: 999m));
-        await _repository.ResolveAsync(denied.GrantId, GrantStatus.Denied, PolicyPath.Manual, Guid.NewGuid());
+        await ResolveAsync(denied.GrantId, GrantStatus.Denied, PolicyPath.Manual, Guid.NewGuid());
 
         await using var command = _db.DataSource.CreateCommand(
             """

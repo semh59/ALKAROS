@@ -20,11 +20,53 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
     private DelegationRequest Request(string permission = "bills.comp", decimal limit = 200m, double expiresInHours = 2)
         => new(permission, Guid.NewGuid(), Guid.NewGuid(), limit, _now.AddHours(expiresInHours));
 
+    private async Task<AuthorizationDelegation> CreateAsync(DelegationRequest request, DateTimeOffset now)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var created = await _repository.CreateAsync(request, now, connection, transaction);
+        await transaction.CommitAsync();
+        return created;
+    }
+
+    private async Task<bool> RevokeAsync(Guid delegationId, DateTimeOffset at, Guid revokedBy)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var revoked = await _repository.RevokeAsync(delegationId, at, revokedBy, connection, transaction);
+        await transaction.CommitAsync();
+        return revoked is not null;
+    }
+
+    [Fact]
+    public async Task ARolledBackCreationLeavesNothingAndARolledBackRevocationLeavesTheDelegationActive()
+    {
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _repository.CreateAsync(Request(permission: "cash.void"), _now, connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        (await _repository.ListActiveAsync(_now)).Should().NotContain(d => d.PermissionCode == "cash.void");
+
+        var created = await CreateAsync(Request(), _now);
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(1), Guid.NewGuid(), connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        (await _repository.ListActiveAsync(_now)).Should().Contain(d => d.DelegationId == created.DelegationId);
+        (await RevokeAsync(created.DelegationId, _now.AddMinutes(2), Guid.NewGuid())).Should().BeTrue();
+    }
+
     [Fact]
     public async Task CreateStoresAndFindCoveringReturnsIt()
     {
         var request = Request();
-        var created = await _repository.CreateAsync(request, _now);
+        var created = await CreateAsync(request, _now);
 
         created.DelegationId.Should().NotBe(Guid.Empty);
         created.GrantedAt.Should().BeCloseTo(_now, TimeSpan.FromSeconds(2));
@@ -41,7 +83,7 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
         var request = Request();
         await _db.ExecuteAsync(
             $"INSERT INTO identity.users (user_id, username, password_hash, display_name) VALUES ('{request.DelegatorUserId}', 'delegator-{request.DelegatorUserId:N}', 'x', 'Devreden');");
-        await _repository.CreateAsync(request, _now);
+        await CreateAsync(request, _now);
 
         (await _repository.FindCoveringAsync(request.GranteeUserId, "bills.comp", 100m, _now.AddMinutes(10)))
             .Should().NotBeNull("the delegator is still active");
@@ -73,7 +115,7 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
     public async Task FindCoveringRespectsAmountExpiryAndRevocation()
     {
         var request = Request(limit: 100m, expiresInHours: 1);
-        var created = await _repository.CreateAsync(request, _now);
+        var created = await CreateAsync(request, _now);
         var grantee = request.GranteeUserId;
 
         (await _repository.FindCoveringAsync(grantee, "bills.comp", 100.01m, _now)).Should().BeNull("over the limit");
@@ -81,18 +123,18 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
         (await _repository.FindCoveringAsync(grantee, "bills.void", 50m, _now)).Should().BeNull("other permission");
 
         var revoker = Guid.NewGuid();
-        (await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(10), revoker)).Should().BeTrue();
+        (await RevokeAsync(created.DelegationId, _now.AddMinutes(10), revoker)).Should().BeTrue();
         (await _repository.FindCoveringAsync(grantee, "bills.comp", 50m, _now.AddMinutes(30))).Should().BeNull("revoked");
-        (await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(20), Guid.NewGuid())).Should().BeFalse("already revoked");
+        (await RevokeAsync(created.DelegationId, _now.AddMinutes(20), Guid.NewGuid())).Should().BeFalse("already revoked");
     }
 
     [Fact]
     public async Task RevokeRecordsWhoRevokedIt()
     {
-        var created = await _repository.CreateAsync(Request(), _now);
+        var created = await CreateAsync(Request(), _now);
         var manager = Guid.NewGuid();
 
-        await _repository.RevokeAsync(created.DelegationId, _now.AddMinutes(10), manager);
+        await RevokeAsync(created.DelegationId, _now.AddMinutes(10), manager);
 
         (await _db.ScalarAsync<Guid>(
             $"SELECT revoked_by_user_id FROM identity.authorization_delegations WHERE delegation_id = '{created.DelegationId}';"))
@@ -103,9 +145,9 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
     public async Task FindCoveringReturnsTheNewestWhenSeveralApply()
     {
         var grantee = Guid.NewGuid();
-        var older = await _repository.CreateAsync(
+        var older = await CreateAsync(
             new DelegationRequest("bills.discount", grantee, Guid.NewGuid(), 500m, _now.AddHours(3)), _now);
-        var newer = await _repository.CreateAsync(
+        var newer = await CreateAsync(
             new DelegationRequest("bills.discount", grantee, Guid.NewGuid(), 500m, _now.AddHours(4)),
             _now.AddMinutes(5));
 
@@ -117,10 +159,10 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
     [Fact]
     public async Task ListActiveExcludesRevokedAndExpired()
     {
-        var live = await _repository.CreateAsync(Request(permission: "cash.drawer", expiresInHours: 5), _now);
-        var revoked = await _repository.CreateAsync(Request(permission: "cash.drawer", expiresInHours: 5), _now);
-        await _repository.RevokeAsync(revoked.DelegationId, _now.AddMinutes(1), Guid.NewGuid());
-        var expired = await _repository.CreateAsync(Request(permission: "cash.drawer", expiresInHours: 1), _now);
+        var live = await CreateAsync(Request(permission: "cash.drawer", expiresInHours: 5), _now);
+        var revoked = await CreateAsync(Request(permission: "cash.drawer", expiresInHours: 5), _now);
+        await RevokeAsync(revoked.DelegationId, _now.AddMinutes(1), Guid.NewGuid());
+        var expired = await CreateAsync(Request(permission: "cash.drawer", expiresInHours: 1), _now);
 
         var active = await _repository.ListActiveAsync(_now.AddHours(2));
 

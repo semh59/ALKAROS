@@ -1,0 +1,5 @@
+1 grant resolve without the pending-only condition -> KILLED (mut1.log)
+2 delegation revoke without the not-yet-revoked condition -> KILLED (mut2.log)
+3 tightening clear without the not-yet-cleared condition -> KILLED (mut3.log)
+4 delegation create stores a different limit -> KILLED (mut4.log)
+Each restored with cp + cmp; every run rebuilt. These show the moved tests exercise the real (transaction) methods.

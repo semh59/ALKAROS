@@ -22,18 +22,11 @@ public interface IAuthorizationGrantRepository
         AuthorizationGrant grant, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Resolves a pending grant. Returns the resolved row; throws
+    /// Resolves a pending grant inside the caller's transaction, so a record written with it commits or rolls back
+    /// together. Returns the resolved row; throws
     /// <see cref="AuthorizationGrantAlreadyResolvedException"/> when the grant is
     /// no longer pending (the database trigger is the backstop).
     /// </summary>
-    Task<AuthorizationGrant> ResolveAsync(
-        Guid grantId,
-        GrantStatus status,
-        PolicyPath path,
-        Guid? approverUserId,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>The same resolution inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
     Task<AuthorizationGrant> ResolveAsync(
         Guid grantId,
         GrantStatus status,

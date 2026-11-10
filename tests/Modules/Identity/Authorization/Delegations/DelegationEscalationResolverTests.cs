@@ -35,11 +35,29 @@ public sealed class DelegationEscalationResolverTests : IClassFixture<Delegation
         => new(key, "bills.comp", requester, "waiter", "CustomerChange", amount,
             SubjectType: "bill", SubjectId: Guid.NewGuid(), SubjectServingUserId: requester);
 
+    private async Task<AuthorizationDelegation> CreateAsync(DelegationRequest request, DateTimeOffset now)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var created = await _delegations.CreateAsync(request, now, connection, transaction);
+        await transaction.CommitAsync();
+        return created;
+    }
+
+    private async Task<bool> RevokeAsync(Guid delegationId, DateTimeOffset at, Guid revokedBy)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var revoked = await _delegations.RevokeAsync(delegationId, at, revokedBy, connection, transaction);
+        await transaction.CommitAsync();
+        return revoked is not null;
+    }
+
     [Fact]
     public async Task ResolverReturnsDelegationPathWhenAnActiveDelegationCovers()
     {
         var waiter = Guid.NewGuid();
-        await _delegations.CreateAsync(
+        await CreateAsync(
             new DelegationRequest("bills.comp", waiter, Guid.NewGuid(), 200m, _now.AddHours(2)), _now);
 
         var path = await new DelegationEscalationResolver(_delegations)
@@ -61,7 +79,7 @@ public sealed class DelegationEscalationResolverTests : IClassFixture<Delegation
     public async Task GrantServiceAuthorizesAnEscalatedRequestViaTheDelegationInsteadOfAManager()
     {
         var waiter = Guid.NewGuid();
-        await _delegations.CreateAsync(
+        await CreateAsync(
             new DelegationRequest("bills.comp", waiter, Guid.NewGuid(), 200m, _now.AddHours(2)), _now);
 
         var result = await ServiceWithDelegation().RequestAsync(Request("svc-deleg", waiter, 120m));
@@ -76,7 +94,7 @@ public sealed class DelegationEscalationResolverTests : IClassFixture<Delegation
     public async Task GrantServiceStillEscalatesToPendingWhenTheDelegationDoesNotCoverTheAmount()
     {
         var waiter = Guid.NewGuid();
-        await _delegations.CreateAsync(
+        await CreateAsync(
             new DelegationRequest("bills.comp", waiter, Guid.NewGuid(), 100m, _now.AddHours(2)), _now);
 
         var result = await ServiceWithDelegation().RequestAsync(Request("svc-deleg-over", waiter, 150m));
@@ -89,9 +107,9 @@ public sealed class DelegationEscalationResolverTests : IClassFixture<Delegation
     public async Task ARevokedDelegationNoLongerAuthorizes()
     {
         var waiter = Guid.NewGuid();
-        var delegation = await _delegations.CreateAsync(
+        var delegation = await CreateAsync(
             new DelegationRequest("bills.comp", waiter, Guid.NewGuid(), 200m, _now.AddHours(2)), _now);
-        await _delegations.RevokeAsync(delegation.DelegationId, _now.AddMinutes(10), Guid.NewGuid());
+        await RevokeAsync(delegation.DelegationId, _now.AddMinutes(10), Guid.NewGuid());
 
         var result = await ServiceWithDelegation().RequestAsync(Request("svc-deleg-revoked", waiter, 50m));
 

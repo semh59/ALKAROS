@@ -51,6 +51,15 @@ public sealed class BehaviouralTighteningGateTests : IClassFixture<BehaviouralDa
             await _db.SeedGrantedAsync(user, "bills.void", _now.AddHours(-2).AddMinutes(i), $"spike-{user:N}-{i}");
     }
 
+    private async Task<BehaviouralTightening> ClearAsync(Guid tighteningId, Guid managerUserId)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var cleared = await _tighteningService.ClearAsync(tighteningId, managerUserId, connection, transaction);
+        await transaction.CommitAsync();
+        return cleared;
+    }
+
     [Fact]
     public async Task WithoutASpikeAMonitoredActionStillAutoApproves()
     {
@@ -108,7 +117,7 @@ public sealed class BehaviouralTighteningGateTests : IClassFixture<BehaviouralDa
         await Service().RequestAsync(Request("gate-clear-trip", user, role));
 
         var open = await _tightenings.FindActiveAsync(user, "bills.void");
-        var cleared = await _tighteningService.ClearAsync(open!.TighteningId, Guid.NewGuid());
+        var cleared = await ClearAsync(open!.TighteningId, Guid.NewGuid());
         cleared.IsActive.Should().BeFalse();
 
         var afterClear = await Service().RequestAsync(Request("gate-clear-after", user, role));

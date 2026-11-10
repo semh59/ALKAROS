@@ -5,11 +5,7 @@ namespace ALKAROS.Identity.Authorization.Delegations;
 /// <summary>Reads and writes <c>identity.authorization_delegations</c>.</summary>
 public interface IAuthorizationDelegationRepository
 {
-    /// <summary>Creates a delegation. Returns the stored row.</summary>
-    Task<AuthorizationDelegation> CreateAsync(
-        DelegationRequest request, DateTimeOffset now, CancellationToken cancellationToken = default);
-
-    /// <summary>The same creation inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
+    /// <summary>Creates a delegation inside the caller's transaction, so a record written with it commits or rolls back together. Returns the stored row.</summary>
     Task<AuthorizationDelegation> CreateAsync(
         DelegationRequest request,
         DateTimeOffset now,
@@ -18,13 +14,9 @@ public interface IAuthorizationDelegationRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Cancels a delegation early, recording who cancelled it. Returns false
-    /// when the id is unknown or the delegation is already revoked.
+    /// Cancels a delegation early inside the caller's transaction, recording who cancelled it. Returns the cancelled row,
+    /// or null when the id is unknown or the delegation is already revoked.
     /// </summary>
-    Task<bool> RevokeAsync(
-        Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default);
-
-    /// <summary>The same cancellation inside the caller's transaction; returns the cancelled row, or null when it is unknown or already revoked.</summary>
     Task<AuthorizationDelegation?> RevokeAsync(
         Guid delegationId,
         DateTimeOffset at,

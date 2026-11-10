@@ -17,15 +17,10 @@ public interface IBehaviouralTighteningRepository
         BehaviouralTightening draft, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Clears the open tightening. Throws
-    /// <see cref="BehaviouralTighteningAlreadyClearedException"/> when it is
-    /// unknown or already cleared (the database trigger is the backstop).
+    /// Clears the open tightening inside the caller's transaction, so a record written with it commits or rolls back
+    /// together. Throws <see cref="BehaviouralTighteningAlreadyClearedException"/> when it is unknown or already cleared
+    /// (the database trigger is the backstop).
     /// </summary>
-    Task<BehaviouralTightening> ClearAsync(
-        Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
-        CancellationToken cancellationToken = default);
-
-    /// <summary>The same clearing inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
     Task<BehaviouralTightening> ClearAsync(
         Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
         NpgsqlConnection connection, NpgsqlTransaction transaction,

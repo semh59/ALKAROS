@@ -22,6 +22,31 @@ public sealed class PostgresBehaviouralTighteningRepositoryTests : IClassFixture
     private BehaviouralTightening Draft(Guid user, string permission = "bills.void")
         => new(Guid.Empty, user, permission, 6, 1.5m, 4m, _now, null, null);
 
+    private async Task<BehaviouralTightening> ClearAsync(Guid tighteningId, Guid clearedBy, DateTimeOffset at)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var cleared = await _repository.ClearAsync(tighteningId, clearedBy, at, connection, transaction);
+        await transaction.CommitAsync();
+        return cleared;
+    }
+
+    [Fact]
+    public async Task ARolledBackClearLeavesTheTighteningOpen()
+    {
+        var user = Guid.NewGuid();
+        var opened = await _repository.OpenAsync(Draft(user));
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _repository.ClearAsync(opened.TighteningId, Guid.NewGuid(), _now.AddMinutes(5), connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        (await _repository.FindActiveAsync(user, "bills.void"))!.TighteningId.Should().Be(opened.TighteningId);
+        (await ClearAsync(opened.TighteningId, Guid.NewGuid(), _now.AddMinutes(6))).IsActive.Should().BeFalse();
+    }
+
     [Fact]
     public async Task OpenThenFindActiveReturnsIt()
     {
@@ -55,7 +80,7 @@ public sealed class PostgresBehaviouralTighteningRepositoryTests : IClassFixture
         var manager = Guid.NewGuid();
         var opened = await _repository.OpenAsync(Draft(user));
 
-        var cleared = await _repository.ClearAsync(opened.TighteningId, manager, _now.AddMinutes(30));
+        var cleared = await ClearAsync(opened.TighteningId, manager, _now.AddMinutes(30));
 
         cleared.ClearedAt.Should().Be(_now.AddMinutes(30));
         cleared.ClearedByUserId.Should().Be(manager);
@@ -69,13 +94,13 @@ public sealed class PostgresBehaviouralTighteningRepositoryTests : IClassFixture
     public async Task ClearingATwiceOrUnknownRowThrows()
     {
         var opened = await _repository.OpenAsync(Draft(Guid.NewGuid()));
-        await _repository.ClearAsync(opened.TighteningId, Guid.NewGuid(), _now.AddMinutes(5));
+        await ClearAsync(opened.TighteningId, Guid.NewGuid(), _now.AddMinutes(5));
 
         await FluentActions.Invoking(() =>
-                _repository.ClearAsync(opened.TighteningId, Guid.NewGuid(), _now.AddMinutes(10)))
+                ClearAsync(opened.TighteningId, Guid.NewGuid(), _now.AddMinutes(10)))
             .Should().ThrowAsync<BehaviouralTighteningAlreadyClearedException>();
         await FluentActions.Invoking(() =>
-                _repository.ClearAsync(Guid.NewGuid(), Guid.NewGuid(), _now))
+                ClearAsync(Guid.NewGuid(), Guid.NewGuid(), _now))
             .Should().ThrowAsync<BehaviouralTighteningAlreadyClearedException>();
     }
 
@@ -84,7 +109,7 @@ public sealed class PostgresBehaviouralTighteningRepositoryTests : IClassFixture
     {
         var user = Guid.NewGuid();
         var first = await _repository.OpenAsync(Draft(user));
-        await _repository.ClearAsync(first.TighteningId, Guid.NewGuid(), _now.AddMinutes(5));
+        await ClearAsync(first.TighteningId, Guid.NewGuid(), _now.AddMinutes(5));
 
         var second = await _repository.OpenAsync(Draft(user) with { TriggeredAt = _now.AddHours(1) });
 

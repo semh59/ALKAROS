@@ -83,30 +83,9 @@ public sealed class PostgresAuthorizationGrantRepository : IAuthorizationGrantRe
         GrantStatus status,
         PolicyPath path,
         Guid? approverUserId,
-        CancellationToken cancellationToken = default)
-    {
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        return await ResolveCoreAsync(grantId, status, path, approverUserId, connection, null, cancellationToken);
-    }
-
-    public Task<AuthorizationGrant> ResolveAsync(
-        Guid grantId,
-        GrantStatus status,
-        PolicyPath path,
-        Guid? approverUserId,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
-        => ResolveCoreAsync(grantId, status, path, approverUserId, connection, transaction, cancellationToken);
-
-    private static async Task<AuthorizationGrant> ResolveCoreAsync(
-        Guid grantId,
-        GrantStatus status,
-        PolicyPath path,
-        Guid? approverUserId,
-        NpgsqlConnection connection,
-        NpgsqlTransaction? transaction,
-        CancellationToken cancellationToken)
     {
         if (status == GrantStatus.Pending)
             throw new ArgumentException("Resolution status must be terminal.", nameof(status));

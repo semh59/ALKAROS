@@ -73,22 +73,8 @@ public sealed class PostgresBehaviouralTighteningRepository : IBehaviouralTighte
 
     public async Task<BehaviouralTightening> ClearAsync(
         Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
-        CancellationToken cancellationToken = default)
-    {
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        return await ClearCoreAsync(tighteningId, clearedByUserId, at, connection, null, cancellationToken);
-    }
-
-    public Task<BehaviouralTightening> ClearAsync(
-        Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
         NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
-        => ClearCoreAsync(tighteningId, clearedByUserId, at, connection, transaction, cancellationToken);
-
-    private static async Task<BehaviouralTightening> ClearCoreAsync(
-        Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
-        NpgsqlConnection connection, NpgsqlTransaction? transaction,
-        CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(
             $"""

@@ -14,15 +14,10 @@ public interface IBehaviouralTighteningService
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Clears the tightening so the scope returns to normal auto-approval on the
-    /// next request. Throws
-    /// <see cref="BehaviouralTighteningAlreadyClearedException"/> when it is
-    /// unknown or already cleared.
+    /// Clears the tightening inside the caller's transaction, so a record written with it commits or rolls back together,
+    /// and the scope returns to normal auto-approval on the next request. Throws
+    /// <see cref="BehaviouralTighteningAlreadyClearedException"/> when it is unknown or already cleared.
     /// </summary>
-    Task<BehaviouralTightening> ClearAsync(
-        Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken = default);
-
-    /// <summary>The same clearing inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
     Task<BehaviouralTightening> ClearAsync(
         Guid tighteningId, Guid managerUserId, NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);

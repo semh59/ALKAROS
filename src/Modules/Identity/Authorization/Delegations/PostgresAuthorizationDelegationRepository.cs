@@ -19,42 +19,11 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
     }
 
     public async Task<AuthorizationDelegation> CreateAsync(
-        DelegationRequest request, DateTimeOffset now, CancellationToken cancellationToken = default)
-    {
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        return await CreateCoreAsync(request, now, connection, null, cancellationToken);
-    }
-
-    public Task<AuthorizationDelegation> CreateAsync(
         DelegationRequest request,
         DateTimeOffset now,
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
-        => CreateCoreAsync(request, now, connection, transaction, cancellationToken);
-
-    public async Task<bool> RevokeAsync(
-        Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default)
-    {
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        return await RevokeCoreAsync(delegationId, at, revokedByUserId, connection, null, cancellationToken) is not null;
-    }
-
-    public Task<AuthorizationDelegation?> RevokeAsync(
-        Guid delegationId,
-        DateTimeOffset at,
-        Guid revokedByUserId,
-        NpgsqlConnection connection,
-        NpgsqlTransaction transaction,
-        CancellationToken cancellationToken = default)
-        => RevokeCoreAsync(delegationId, at, revokedByUserId, connection, transaction, cancellationToken);
-
-    private static async Task<AuthorizationDelegation> CreateCoreAsync(
-        DelegationRequest request,
-        DateTimeOffset now,
-        NpgsqlConnection connection,
-        NpgsqlTransaction? transaction,
-        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         request.Validate(now);
@@ -78,13 +47,13 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
         return Read(reader);
     }
 
-    private static async Task<AuthorizationDelegation?> RevokeCoreAsync(
+    public async Task<AuthorizationDelegation?> RevokeAsync(
         Guid delegationId,
         DateTimeOffset at,
         Guid revokedByUserId,
         NpgsqlConnection connection,
-        NpgsqlTransaction? transaction,
-        CancellationToken cancellationToken)
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
     {
         await using var command = new NpgsqlCommand(
             $"""

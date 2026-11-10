@@ -1,0 +1,38 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Identity.Authorization.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:02.86]     ALKAROS.Identity.Authorization.Tests.Delegations.PostgresAuthorizationDelegationRepositoryTests.FindCoveringRespectsAmountExpiryAndRevocation [FAIL]
+  Başarısız ALKAROS.Identity.Authorization.Tests.Delegations.PostgresAuthorizationDelegationRepositoryTests.FindCoveringRespectsAmountExpiryAndRevocation [44 ms]
+  Hata İletisi:
+   Expected (_repository.FindCoveringAsync(grantee, "bills.comp", 100.01m, _now)) to be <null> because over the limit, but found ALKAROS.Identity.Authorization.Delegations.AuthorizationDelegation
+{
+    DelegationId = {ced749e4-663a-497a-9446-6a01fb57dce9}, 
+    DelegatorUserId = {8a308fd7-a566-4ec8-b56b-fc1e5a3b5493}, 
+    ExpiresAt = <2026-09-04 21:00:00 +0h>, 
+    GrantedAt = <2026-09-04 20:00:00 +0h>, 
+    GranteeUserId = {5465883b-2b29-48b8-b71f-a39ecee9aac5}, 
+    LimitAmount = 101.00M, 
+    PermissionCode = "bills.comp", 
+    RevokedAt = <null>, 
+    RevokedByUserId = <null>
+}.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.ReferenceTypeAssertions`2.BeNull(String because, Object[] becauseArgs)
+   at ALKAROS.Identity.Authorization.Tests.Delegations.PostgresAuthorizationDelegationRepositoryTests.FindCoveringRespectsAmountExpiryAndRevocation() in D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\Delegations\PostgresAuthorizationDelegationRepositoryTests.cs:line 97
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:   256, Atlanan:     0, Toplam:   257, Süre: 3 s - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+testexit=1
