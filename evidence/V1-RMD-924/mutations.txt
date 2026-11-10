@@ -1,0 +1,3 @@
+1 bill id not URL-encoded -> KILLED (vitest)
+3 link points at the wrong route -> KILLED (vitest)
+4 link and form shown while locked -> KILLED (vitest)

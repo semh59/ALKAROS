@@ -1,7 +1,7 @@
 # V1-RMD-924 - Ürüne ve kişiye göre bölme ödeme sayfasından açılır
 
 - Task ID: V1-RMD-924
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
@@ -13,9 +13,9 @@ Kasiyer denemesi (G14, rapor 12, bulgu 4): ödeme sayfasında yalnız "Eşit bö
 ## Owned surface
 
 - `evidence/V1-RMD-924/**`
-- `tests/Clients/StaticApps/split-payment-split-link.test.js`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+  - tests/Clients/StaticApps/split-payment-display-binding.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

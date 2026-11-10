@@ -66,3 +66,56 @@ describe("split-payment.js customer display binding", () => {
     error.mockRestore();
   });
 });
+
+const linkUnpaid = { billId: BILL_ID, payableAmount: 100, allocatedTotal: 0, remainingAmount: 100, allocations: [], unsettledPayment: null };
+const linkPaid = { ...linkUnpaid, allocatedTotal: 100, remainingAmount: 0 };
+const linkLocked = { ...linkUnpaid, unsettledPayment: { paymentId: "33333333-3333-3333-3333-333333333333", pendingConfirmation: false } };
+
+async function openLinkPage(summary, billId = BILL_ID) {
+  window.history.replaceState({}, "", `/?billId=${encodeURIComponent(billId)}`);
+  installFetchRouter([
+    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+    { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: summary },
+    { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
+    { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+    { test: (url) => url.endsWith("/refund-requests"), body: [] },
+    { test: (url) => url.endsWith("/show-on-display"), status: 204 },
+  ]);
+  await loadApp(htmlPath, scriptPath);
+  await vi.waitFor(() => expect(document.querySelector(".sp-title")).not.toBeNull());
+}
+
+describe("split-payment.js split-by-item entry", () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+  });
+
+  it("offers a link to the item and person split screen for this bill", async () => {
+    await openLinkPage(linkUnpaid);
+
+    const link = document.getElementById("split-by-item");
+    expect(link).not.toBeNull();
+    expect(link.getAttribute("href")).toBe(`/billing?billId=${BILL_ID}`);
+    expect(link.textContent).toBe("Ürüne veya kişiye göre böl");
+  });
+
+  it("hides the link while a card payment waits for reconciliation, like the rest of the payment form", async () => {
+    await openLinkPage(linkLocked);
+
+    expect(document.getElementById("split-by-item")).toBeNull();
+  });
+
+  it("hides the link once nothing is left to split", async () => {
+    await openLinkPage(linkPaid);
+
+    expect(document.getElementById("split-by-item")).toBeNull();
+  });
+
+  it("encodes the bill id in the address", async () => {
+    await openLinkPage(linkUnpaid, "a b&c");
+
+    expect(document.getElementById("split-by-item").getAttribute("href")).toBe("/billing?billId=a%20b%26c");
+  });
+});
