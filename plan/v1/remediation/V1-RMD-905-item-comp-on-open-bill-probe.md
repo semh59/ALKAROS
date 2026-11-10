@@ -18,12 +18,14 @@ V1-RMD-903 incelemesi (qa-uctan-uca-akis): hesap bir siparişten oluşturulurken
   - src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs
   - src/Modules/Billing/BillFoundation/BillItem.cs
+  - tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj — hesap düzeltmeleri tablosu göçü
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
 1. Kırmızı test (kanıtlandı: ikramdan sonra hesap kalemi Sale kaldı) ve düzeltme: kalem ikramı, siparişi kaydeden işlemin içinde açık hesabın kalemini Complimentary yapar
-2. İki bağımsız qa incelemesi
+2. Hesapta sabit tutarlı indirim varken kalem ikramı, hesabı ödenemez yapacaksa (indirim > yeni taban) 409 ile reddedilir (qa tur 2 bulgusu)
+3. İki bağımsız qa incelemesi
 
 ## Out of scope
 
