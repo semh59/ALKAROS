@@ -1,0 +1,5 @@
+# V1-RMD-921 reviews
+
+Review 1 (qa-uctan-uca-akis): High: a table merged into another table's check is left Occupied without order or bill, so the new seated-table rule would open a separate check on it -> the order start now refuses a table with an Active merge (test, mutant killed). Medium: resuming relied on the table's order pointer -> a resumed draft must be the order the table points at, otherwise refused (test, mutant killed). Medium: a refusal showed only the generic "changed by another process" text -> refusals the cashier can act on carry a Turkish sentence (new ORDER_START_REFUSED answer, catalog test).
+Review 2 (qa-frontend): Medium: the re-read on return could be overwritten by an older, slower answer, and a tap right after returning could still try to open a second order -> reads are numbered (older answer ignored, test + mutant) and a refused opening continues with the till's own editable order (test + mutant). Low: unused field and duplicate test removed; the disabled-table hint now names the reasons and the action.
+Both reviews' findings were fixed before closing; tests rerun (server 7/7 targeted, 35/35 earlier full class; client 231/231).

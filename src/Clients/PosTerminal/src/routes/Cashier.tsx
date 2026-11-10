@@ -171,8 +171,12 @@ export function Cashier() {
   }, [terminalId]);
 
   // After a sale action only the order can have changed; session, catalog and config are read on sign-in and on a conflict.
+  const orderLoads = useRef(0);
   const reloadOrder = useCallback(async () => {
-    setOrder(await api.activeOrder(terminalId));
+    const load = ++orderLoads.current;
+    const loaded = await api.activeOrder(terminalId);
+    // A slower, older answer must not overwrite what a newer read already showed.
+    if (load === orderLoads.current) setOrder(loaded);
     setBackendStatus("online");
   }, [terminalId]);
 
@@ -581,13 +585,25 @@ export function Cashier() {
     );
   };
 
+  // The till can already hold an order this screen has not seen yet (a table order opened elsewhere): continue with it instead of failing.
+  const openOrder = async () => {
+    try {
+      return await api.startOrder(terminalId);
+    } catch (reason) {
+      if (!(reason instanceof ApiError && reason.status === 409)) throw reason;
+      const current = await api.activeOrder(terminalId);
+      if (current?.editable && current.orderId) return { orderId: current.orderId, revision: current.revision };
+      throw reason;
+    }
+  };
+
   const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
     if (addingProduct.current) return;
     addingProduct.current = true;
     try {
       await execute(async () => {
         const reused = activeOrder?.editable ? activeOrder : null;
-        const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await api.startOrder(terminalId);
+        const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await openOrder();
         try {
           await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);
         } catch (reason) {

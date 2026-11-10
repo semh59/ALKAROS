@@ -706,6 +706,7 @@ public static class ApiErrorCatalog
             AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
             BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
             DualScreenNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
+            DualScreenConflictException { UserMessage: { } shown } => (409, "ORDER_START_REFUSED", shown),
             DualScreenConflictException => (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
             OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),

@@ -46,7 +46,7 @@ afterEach(() => {
   vi.resetModules();
 });
 
-interface Till { calls: string[]; bodies: Record<string, unknown>[]; setActive: (order: ReturnType<typeof snapshot> | null) => void; }
+interface Till { calls: string[]; bodies: Record<string, unknown>[]; gates: Promise<void>[]; setActive: (order: ReturnType<typeof snapshot> | null) => void; }
 
 /**
  * `active` is what GET orders/active answers (null: no order). `startOrder` decides the answer of POST orders;
@@ -58,14 +58,19 @@ async function openTill({
   addItem = async () => jsonResponse({ orderId: "order-new", revision: 2 }),
 } = {}): Promise<Till> {
   let current = active;
-  const till: Till = { calls: [], bodies: [], setActive: (order) => { current = order; } };
+  const till: Till = { calls: [], bodies: [], gates: [], setActive: (order) => { current = order; } };
   vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
     const method = init?.method ?? "GET";
     till.calls.push(`${method} ${path.replace(/^.*\/api\/v1\/terminals\/[^/]+/, "")}`);
     if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal", capabilities: [] });
     if (path.endsWith("/catalog")) return jsonResponse(catalog);
-    if (path.endsWith("/orders/active")) return jsonResponse(current);
+    if (path.endsWith("/orders/active")) {
+      const answer = current;
+      const gate = till.gates.shift();
+      if (gate) await gate;
+      return jsonResponse(answer);
+    }
     if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
     if (path.endsWith("/orders") && method === "POST") {
       const answer = await startOrder();
@@ -201,6 +206,38 @@ describe("Cashier opens the order on the first product tap", () => {
     await act(async () => { window.history.pushState(null, "", "/pending-checks"); window.dispatchEvent(new PopStateEvent("popstate")); });
     await settle();
     await act(async () => { window.history.pushState(null, "", "/"); window.dispatchEvent(new PopStateEvent("popstate")); });
+    await settle();
+    await tap(card("Ayran"));
+    await settle();
+
+    expect(posts(till, "/orders")).toHaveLength(0);
+    expect(till.bodies).toEqual([{ productId: "p-ayran", quantity: 1, expectedRevision: 3 }]);
+  });
+
+  it("when opening an order is refused because the till already holds an editable one, the tap continues with that order", async () => {
+    const till = await openTill({ startOrder: async () => jsonResponse({ error: { code: "ORDER_START_REFUSED", message: "x" } }, 409) });
+    till.setActive(snapshot("order-held", { revision: 5 }));
+
+    await tap(card("Ayran"));
+    await settle();
+
+    expect(till.bodies).toEqual([{ productId: "p-ayran", quantity: 1, expectedRevision: 5 }]);
+    expect(till.calls).toContain("POST /orders/order-held/items");
+  });
+
+  it("a slow, older read of the till's order never replaces a newer one", async () => {
+    const till = await openTill();
+    let release: () => void = () => undefined;
+    till.gates.push(new Promise<void>((resolve) => { release = resolve; }));
+    const go = async (path: string) => act(async () => { window.history.pushState(null, "", path); window.dispatchEvent(new PopStateEvent("popstate")); });
+
+    await go("/pending-checks");
+    await go("/"); // this read answers "no order" but is held back
+    till.setActive(snapshot("order-table", { revision: 3 }));
+    await go("/pending-checks");
+    await go("/"); // this read answers the table order at once
+    await settle();
+    release();
     await settle();
     await tap(card("Ayran"));
     await settle();

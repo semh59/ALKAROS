@@ -4,3 +4,7 @@
 4 bind statement only for Available tables -> KILLED (mut4.log)
 5 client rule refuses seated table -> KILLED (vitest)
 6 no order reload when returning to the till -> KILLED (vitest)
+7 merged-table check never matches -> KILLED (mut7.log)
+8 no check that the resumed draft is the table's order -> KILLED (mut8.log)
+9 a refused order opening is not retried with the till's order -> KILLED (vitest)
+10 an older, slower read of the till's order overwrites a newer one -> KILLED (vitest)

@@ -656,10 +656,58 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         var secondTable = await SeedTableAsync("S-HOLD-B", "Available", 1);
         await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(firstTable, 1), CancellationToken.None);
 
-        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+        var otherTable = await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
             terminalId, Guid.NewGuid(), new StartOrderRequest(secondTable, 1), CancellationToken.None));
-        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+        var quickOrder = await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
             terminalId, Guid.NewGuid(), CancellationToken.None));
+        Assert.Contains("taslağı açık", otherTable.UserMessage, StringComparison.Ordinal);
+        Assert.Contains("taslağı açık", quickOrder.UserMessage, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ADraftThatTheTableDoesNotPointAtIsNotResumedAndLeavesNoSecondOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-STALE", "Available", 1);
+        await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+        await using (var clear = _dataSource!.CreateCommand(
+            "UPDATE table_mgmt.tables SET current_order_id = NULL, current_status = 'Available' WHERE table_id = @table_id;"))
+        {
+            clear.Parameters.AddWithValue("table_id", tableId);
+            await clear.ExecuteNonQueryAsync();
+        }
+
+        var refused = await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+            terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None));
+
+        Assert.Contains("taslağı açık", refused.UserMessage, StringComparison.Ordinal);
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM orders.orders WHERE table_id = @table_id;", ("table_id", tableId)));
+    }
+
+    [Fact]
+    public async Task ATableMergedIntoAnotherTablesCheckTakesNoOrderOfItsOwn()
+    {
+        var terminalId = Guid.NewGuid();
+        var primary = await SeedTableAsync("S-MERGE-A", "Occupied", 1);
+        var merged = await SeedTableAsync("S-MERGE-B", "Occupied", 1);
+        await using (var merge = _dataSource!.CreateCommand(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO table_mgmt.table_merges
+                (table_merge_id, merge_group_id, primary_table_id, merged_table_id, status, reason, merged_by, merged_at)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @primary, @merged, 'Active', 'test', gen_random_uuid(), now());
+            """))
+        {
+            merge.Parameters.AddWithValue("primary", primary);
+            merge.Parameters.AddWithValue("merged", merged);
+            await merge.ExecuteNonQueryAsync();
+        }
+
+        var refused = await Assert.ThrowsAsync<DualScreenConflictException>(() => _store!.StartOrderAsync(
+            terminalId, Guid.NewGuid(), new StartOrderRequest(merged, 1), CancellationToken.None));
+
+        Assert.Contains("birleştirilmiş", refused.UserMessage, StringComparison.Ordinal);
+        Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM orders.orders WHERE table_id = @table_id;", ("table_id", merged)));
     }
 
     [Fact]

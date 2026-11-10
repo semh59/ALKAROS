@@ -414,6 +414,17 @@ public sealed class ApiErrorCatalogTests
     }
 
     [Fact]
+    public void AConflictThatCarriesAScreenSentenceShowsItAndAPlainConflictStaysGeneric()
+    {
+        Assert.Equal(
+            (409, "ORDER_START_REFUSED", "Bu kasada başka bir siparişin taslağı açık; önce onu gönderin veya iptal edin."),
+            ApiExceptionHandler.Resolve([], new DualScreenConflictException("detail", "Bu kasada başka bir siparişin taslağı açık; önce onu gönderin veya iptal edin.")));
+        Assert.Equal(
+            (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
+            ApiExceptionHandler.Resolve([], new DualScreenConflictException("detail")));
+    }
+
+    [Fact]
     public void AnOrdinaryInvalidOperationIsNotTurnedIntoAConflict()
         => Assert.Equal((500, "INTERNAL_ERROR", "İşlem tamamlanamadı."), ApiExceptionHandler.Resolve([], new InvalidOperationException("sample")));
 

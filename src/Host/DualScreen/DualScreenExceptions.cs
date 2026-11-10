@@ -4,7 +4,10 @@ namespace ALKAROS.Host.DualScreen;
 
 public sealed class DualScreenConflictException : Exception
 {
-    public DualScreenConflictException(string message) : base(message) { }
+    public DualScreenConflictException(string message, string? userMessage = null) : base(message) => UserMessage = userMessage;
+
+    /// <summary>A Turkish sentence for the screen when the refusal is something the cashier can act on; null keeps the generic conflict answer.</summary>
+    public string? UserMessage { get; }
 }
 
 public sealed class DualScreenNotFoundException : Exception

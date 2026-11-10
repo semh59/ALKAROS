@@ -1,7 +1,7 @@
 # V1-RMD-921 - Masa siparişi: devam etme, oturmuş masada sipariş açma ve ilk ürün dokunuşu
 
 - Task ID: V1-RMD-921
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

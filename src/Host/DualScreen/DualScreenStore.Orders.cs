@@ -41,6 +41,7 @@ public sealed partial class DualScreenStore
             activeOrderId = result is null or DBNull ? null : (Guid)result;
         }
 
+        var resumesOwnTableOrder = false;
         if (activeOrderId is { } existingId)
         {
             await using var statusCommand = CreateCommand(connection, transaction,
@@ -51,9 +52,9 @@ public sealed partial class DualScreenStore
             var status = found ? statusReader.GetString(0) : null;
             var activeOrderTableId = found && !statusReader.IsDBNull(1) ? statusReader.GetGuid(1) : (Guid?)null;
             // The till's own draft for the very table being asked for is resumed below, not refused.
-            var resumesOwnTableOrder = request.TableId is not null && activeOrderTableId == request.TableId && status == "Draft";
+            resumesOwnTableOrder = request.TableId is not null && activeOrderTableId == request.TableId && status == "Draft";
             if (status is not ("Submitted" or "Completed" or "Cancelled" or "Rejected") && !resumesOwnTableOrder)
-                throw new DualScreenConflictException("Terminal already has an active order.");
+                throw new DualScreenConflictException("Terminal already has an active order.", TerminalHoldsDraftMessage);
         }
 
         if (request.TableId is { } tableId)
@@ -91,6 +92,16 @@ public sealed partial class DualScreenStore
             // seatable table no longer forces a spurious "refresh".
             if (!tableActive)
                 throw new DualScreenConflictException("Inactive tables cannot receive an order.");
+            await using (var mergeCheck = CreateCommand(connection, transaction,
+                "SELECT EXISTS (SELECT 1 FROM table_mgmt.table_merges WHERE merged_table_id = @table_id AND status = 'Active');"))
+            {
+                mergeCheck.Parameters.AddWithValue("table_id", tableId);
+                if ((bool)(await mergeCheck.ExecuteScalarAsync(cancellationToken))!)
+                    throw new DualScreenConflictException("Table is merged into another table's check.", "Bu masa başka bir masayla birleştirilmiş; sipariş birleşik masanın hesabına açılır.");
+            }
+            // A resumed draft must be the order the table itself points at; anything else would leave the till's old draft orphaned.
+            if (resumesOwnTableOrder && tableOrderId != activeOrderId)
+                throw new DualScreenConflictException("Terminal's draft is not the table's order.", TerminalHoldsDraftMessage);
             if (tableBillId is not null)
                 throw new DualScreenConflictException("Table already has an active bill.");
 
@@ -213,6 +224,8 @@ public sealed partial class DualScreenStore
         await transaction.CommitAsync(cancellationToken);
         return new StartOrderResponse(orderId, orderNumber, 1);
     }
+
+    private const string TerminalHoldsDraftMessage = "Bu kasada başka bir siparişin taslağı açık; önce onu gönderin veya iptal edin.";
 
     private static readonly TimeZoneInfo RestaurantTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
 

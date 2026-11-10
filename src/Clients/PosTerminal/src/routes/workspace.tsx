@@ -343,7 +343,7 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
         aria-busy={orderBusy}
         onClick={() => void startTableOrder()}
       >{orderBusy ? "Sipariş hazırlanıyor…" : selectedTable.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>
-      {!tableOrderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil; sunucu durumu değiştirilmeden işlem yapılamaz.</small>}
+      {!tableOrderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu masa kartından değiştirin.</small>}
       {orderError && <p className="table-order-bridge__error" role="alert">{orderError}</p>}
     </section>}
   </div>;
