@@ -3,7 +3,10 @@ using Npgsql;
 
 namespace ALKAROS.Host.Experience.Billing;
 
-/// <summary>The comp and discount total of a bill is what its deduction adjustments take off now, so an undone one drops out of it.</summary>
+/// <summary>
+/// The comp and discount total of a bill is what its deduction adjustments take off now, so an undone one drops out of it,
+/// plus the full value of the items a waiter comped on their own (a comped line pays nothing but keeps its value as discount).
+/// </summary>
 public sealed class BillAppliedAdjustmentTotals : IBillAdjustmentTotals
 {
     private readonly NpgsqlDataSource _dataSource;
@@ -16,7 +19,10 @@ public sealed class BillAppliedAdjustmentTotals : IBillAdjustmentTotals
     public async Task<decimal> GetAppliedAsync(Guid billId, CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(
-            "SELECT COALESCE(SUM(gross_amount), 0) FROM billing.bill_adjustments WHERE bill_id = @bill AND is_deduction;");
+            """
+            SELECT COALESCE((SELECT SUM(gross_amount) FROM billing.bill_adjustments WHERE bill_id = @bill AND is_deduction), 0)
+                 + COALESCE((SELECT SUM(discount_amount) FROM billing.bill_items WHERE bill_id = @bill AND line_type = 'Complimentary'), 0);
+            """);
         command.Parameters.AddWithValue("bill", billId);
         return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
     }

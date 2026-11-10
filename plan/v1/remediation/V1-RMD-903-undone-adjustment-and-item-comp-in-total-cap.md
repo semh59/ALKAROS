@@ -1,7 +1,7 @@
 # V1-RMD-903 - Geri alınan indirim toplam sınırdan düşsün, garsonun kalem ikramı hesap toplamına girsin
 
 - Task ID: V1-RMD-903
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
