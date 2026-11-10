@@ -13,6 +13,8 @@ V1-RMD-891..903 değişikliklerinden sonra bütün testlerin birlikte yeşil old
 ## Owned surface
 
 - `evidence/V1-RMD-904/**`
+- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - tests/Host/Experience/CashSession/ClientLimitLockTests.cs — V1-RMD-885'ten kalan kırmızı: yönetim ekranının sayı aralığı listesine billing.adjustment_total_cap eklenmedi
 
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -23,7 +25,7 @@ V1-RMD-891..903 değişikliklerinden sonra bütün testlerin birlikte yeşil old
 
 ## Out of scope
 
-- Üretim ve test kodu değişikliği (kırmızı çıkarsa ayrı plan değişikliği)
+- Üretim kodu değişikliği; test kodu yalnız yukarıdaki sınırlı ek (kırmızı çıkarsa ayrı plan değişikliği)
 
 ## Dependencies
 
