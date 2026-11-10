@@ -219,7 +219,7 @@ body {
 .cs-alert-warning .cs-alert-icon { background: var(--color-warning); }
 .cs-alert-warning .cs-alert-title { color: var(--color-warning); font-weight: 700; }
 .cs-check { display: flex; align-items: center; gap: 12px; min-height: var(--touch-target); font-weight: 600; color: var(--color-text); }
-.cs-check input { width: 24px; height: 24px; flex: 0 0 auto; }
+.cs-check input { width: var(--touch-target); height: var(--touch-target); flex: 0 0 auto; margin: 0; }
 .cs-alert-title { font-size: 14px; }
 .cs-alert-body { color: var(--color-text-muted); }
 

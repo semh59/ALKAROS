@@ -12,7 +12,9 @@ const read = (relative) => readFileSync(resolve(wwwroot, relative), "utf8");
 const targets = [
   ["payments/cash-session/cash-session.css", ".cs-chip {"],
   ["payments/cash-session/cash-session.css", ".cs-denom-count {"],
+  ["payments/cash-session/cash-session.css", ".cs-check input {"],
   ["payments/split-payment/split-payment.css", '.sp-confirm-row input[type="checkbox"] {'],
+  ["payments/split-payment/split-payment.css", ".sp-check input {"],
   ["payments/split-payment/split-payment.css", ".sp-fold > summary {"],
   ["payments/split-payment/split-payment.css", ".sp-btn {"],
   ["payments/split-payment/split-payment.css", ".sp-method-chip {"],

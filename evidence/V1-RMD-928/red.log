@@ -1,0 +1,28 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-touch-targets.test.js (11 tests | 2 failed) 13ms
+     × payments/cash-session/cash-session.css .cs-check input { is at least 48 px high and wide 4ms
+     × payments/split-payment/split-payment.css .sp-check input { is at least 48 px high and wide 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-touch-targets.test.js > till pages touch targets > payments/cash-session/cash-session.css .cs-check input { is at least 48 px high and wide
+ FAIL  cashier-touch-targets.test.js > till pages touch targets > payments/split-payment/split-payment.css .sp-check input { is at least 48 px high and wide
+AssertionError: expected 24 to be greater than or equal to 48
+ ❯ cashier-touch-targets.test.js:43:44
+     41|     const sizes = sizesOf(read(file), selector);
+     42|     expect(sizes.length).toBeGreaterThan(0);
+     43|     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(MINI…
+       |                                            ^
+     44|   });
+     45|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  01:22:38
+   Duration  1.48s (transform 28ms, setup 23ms, import 28ms, tests 13ms, environment 1.01s)
+
