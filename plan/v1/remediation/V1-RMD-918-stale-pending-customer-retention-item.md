@@ -1,7 +1,7 @@
 # V1-RMD-918 - Faturasız kuyruğa alınıp sonradan fatura alan müşterinin eski bekleyen kaydı yeniden değerlendirilir
 
 - Task ID: V1-RMD-918
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
