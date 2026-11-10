@@ -25,7 +25,7 @@ const splitFailureTexts: Record<string, string> = {
   FORBIDDEN: "Bu işlem için yetkiniz yok.",
   NOT_FOUND: "İstenen kayıt bulunamadı. Hesabı yenileyin.",
   GRANT_DENIED: "İndirim isteği reddedildi.",
-  UNSUPPORTED_ORDER_STATE: "Bu sipariş durumunda hesap açılamaz.",
+  UNSUPPORTED_ORDER_STATE: "Bu sipariş henüz mutfağa gönderilmedi ya da kapanmış; önce siparişi gönderin.",
   CONCURRENT_MODIFICATION: "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi. Hesabı yenileyin.",
   UNSUPPORTED_BILL_STATE: "Bu hesap durumunda değişiklik yapılamaz.",
   DISCOUNT_BELOW_COLLECTED: "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.",

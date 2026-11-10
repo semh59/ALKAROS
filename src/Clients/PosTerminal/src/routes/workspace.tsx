@@ -3,6 +3,7 @@ import { ApiError, api } from "../api";
 import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
 import { canStartTableOrder } from "./tableOrderAvailability";
+import { TableOrderBridge } from "./TableOrderBridge";
 import { managementText, navLabels, roleLabels } from "../strings";
 import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
@@ -155,7 +156,7 @@ export function ExperiencePage({
     headerActions={<>{cashSession && <CashSessionLink status={cashSession} className="experience-header-link" />}<a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
+    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canCollect={capabilitySet.has("bills.split")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
@@ -178,7 +179,7 @@ export function ExperiencePage({
 // Exported for the standalone Reservation Station screen (V1-CUI-006),
 // which reuses this exact table-fetching + floor-plan wiring rather than
 // duplicating it.
-export function TableRoute({ terminalId, canManage, reservationOnly = false }: { terminalId: string; canManage: boolean; reservationOnly?: boolean }) {
+export function TableRoute({ terminalId, canManage, canCollect = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canCollect?: boolean; reservationOnly?: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
@@ -330,22 +331,16 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
       refreshError={refreshError}
       lastUpdated={lastUpdated}
     />
-    {selectedTable && state === "ready" && !reservationOnly && <section className="table-order-bridge" aria-label="Masa sipariş bağlamı">
-      <div>
-        <span className="table-order-bridge__kicker">SİPARİŞ BAĞLAMI</span>
-        <strong>{selectedTable.tableNumber}</strong>
-        <p>{selectedTable.currentOrderId ? "Bu masadaki taslak siparişe devam edin." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
-      </div>
-      <button data-telemetry-id="b.routes.workspace.2"
-        className="primary"
-        type="button"
-        disabled={!canManage || !tableOrderAllowed || orderBusy}
-        aria-busy={orderBusy}
-        onClick={() => void startTableOrder()}
-      >{orderBusy ? "Sipariş hazırlanıyor…" : selectedTable.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>
-      {!tableOrderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu masa kartından değiştirin.</small>}
-      {orderError && <p className="table-order-bridge__error" role="alert">{orderError}</p>}
-    </section>}
+    {selectedTable && state === "ready" && !reservationOnly && <TableOrderBridge
+      terminalId={terminalId}
+      table={selectedTable}
+      orderAllowed={tableOrderAllowed}
+      canManage={canManage}
+      canCollect={canCollect}
+      busy={orderBusy}
+      error={orderError}
+      onStartOrder={() => void startTableOrder()}
+    />}
   </div>;
 }
 

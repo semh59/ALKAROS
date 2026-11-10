@@ -8,16 +8,18 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { ApiError, api, registerSessionExpiredHandler } from "../api";
+import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
-import { navLabels, stateText } from "../strings";
+import { navLabels, openBillDeniedText, stateText } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
 import { onlineHubTabFor } from "../features/online-hub";
 import { useNewOrderChime } from "../features/online-operations/useNewOrderChime";
+import { collectionHrefForOrder } from "../collectOrder";
 import { usePendingChecksAlert } from "../features/pending-checks";
+import { BillingSplitApiError } from "../features/billing";
 import { CashSessionBand, CashSessionLink, useCashSessionState } from "../features/cash-session-status";
 import { CashierModifierPicker } from "./CashierModifierPicker";
 import { ExperiencePage, type BackendStatus } from "./workspace";
@@ -76,7 +78,7 @@ function useNarrowScreen(): boolean {
   return narrow;
 }
 
-export function Cashier() {
+export function Cashier({ navigateToPage = (href: string) => window.location.assign(href) }: { navigateToPage?: (href: string) => void }) {
   const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
   const [username, setUsername] = useState("");
@@ -412,6 +414,21 @@ export function Cashier() {
     } else if (!event.shiftKey && document.activeElement === last) {
       event.preventDefault();
       first.focus();
+    }
+  };
+
+  // The payment page is its own page: the sent order's bill is opened (or found) and the cashier goes straight to collecting.
+  const collectOrder = async (orderId: string) => {
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      navigateToPage(await collectionHrefForOrder(terminalId, orderId, null));
+    } catch (reason) {
+      if (reason instanceof BillingSplitApiError && reason.status === 401) notifySessionExpired();
+      setFeedbackKind("error");
+      setError(reason instanceof BillingSplitApiError ? reason.message : "Hesap açılamadı. Tekrar deneyin.");
+      setBusy(false);
     }
   };
 
@@ -929,6 +946,16 @@ export function Cashier() {
                   <div><strong>Sipariş gönderildi</strong></div>
                 </div>
               )}
+              {!activeOrder.editable && (capabilities.includes("bills.split") ? (
+                <button data-telemetry-id="b.routes.cashier.44"
+                  className="primary submit-order"
+                  disabled={busy || !activeOrder.orderId}
+                  aria-busy={busy}
+                  onClick={() => void collectOrder(activeOrder.orderId!)}
+                >Tahsil et</button>
+              ) : (
+                <p className="submitted-state__hint">{openBillDeniedText}</p>
+              ))}
             </>
           )}
 

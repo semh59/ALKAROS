@@ -190,6 +190,9 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .table-order-bridge strong { display: block; margin-top: .25rem; font-size: 1.15rem; }
 .table-order-bridge p { margin: .25rem 0 0; color: var(--muted); font-size: .84rem; }
 .table-order-bridge__reason, .table-order-bridge__error { grid-column: 1 / -1; }
+.table-order-bridge__actions { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: flex-end; }
+.table-order-bridge__actions button { min-height: 48px; }
+.submitted-state__hint { margin: 0 1.2rem .75rem; color: var(--muted); font-size: .84rem; }
 .table-order-bridge__reason { color: #795b18; }
 .table-order-bridge__error { color: #922c36 !important; border-radius: 9px; padding: .65rem .8rem; background: #fff0f1; font-weight: 750; }
 .operator-card { gap: .45rem; flex-direction: column; align-items: flex-end; padding: 0 .4rem 0 .7rem; }

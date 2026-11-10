@@ -1,7 +1,7 @@
 # V1-RMD-922 - Kasiyer tahsilata ana ekrandan ve masa panelinden ulaşır
 
 - Task ID: V1-RMD-922
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
@@ -13,18 +13,22 @@ Kasiyer denemesi (G14, rapor 12, bulgular 3 ve 2b): ana kasa ekranında tahsilat
 ## Owned surface
 
 - `evidence/V1-RMD-922/**`
-- `src/Clients/PosTerminal/src/features/pending-checks/collectOrder.ts`
-- `src/Clients/PosTerminal/src/features/pending-checks/collectOrder.test.ts`
+- `src/Clients/PosTerminal/src/collectOrder.ts`
+- `src/Clients/PosTerminal/src/collectOrder.test.ts`
 - `src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx`
 - `src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx`
 - `src/Clients/PosTerminal/src/routes/Cashier.collect.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
   - src/Clients/PosTerminal/src/features/pending-checks/pendingChecksApi.ts
   - src/Clients/PosTerminal/src/features/pending-checks/index.ts
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/workspace.tsx
   - src/Clients/PosTerminal/src/strings.ts
+  - src/Clients/PosTerminal/src/styles.css
+  - src/Clients/PosTerminal/src/features/billing/billingApi.ts
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

@@ -1,10 +1,11 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { notifySessionExpired } from "../../api";
-import { BillingSplitApiError, createBillFromOrder, mergeOrdersIntoBill } from "../billing";
+import { BillingSplitApiError, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
 import { cancelOrderText, cancelReasonText, mergeChecksText, openBillDeniedText } from "../../strings";
+import { collectionHrefForOrder } from "../../collectOrder";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
 import "./pending-checks.css";
@@ -122,8 +123,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
   const collect = async (check: PendingCheck) => {
     setOpeningOrderId(check.orderId);
     try {
-      const billId = check.billId ?? (await createBillFromOrder(terminalId, check.orderId)).billId;
-      navigateTo(collectionHref(billId));
+      navigateTo(await collectionHrefForOrder(terminalId, check.orderId, check.billId));
     } catch (reason) {
       setOpeningOrderId(undefined);
       if (reason instanceof BillingSplitApiError && reason.status === 401) notifySessionExpired();
@@ -243,6 +243,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
                     ? <>Kalan {formatMoney(remaining)} <small>(toplam {formatMoney(check.total)})</small></>
                     : formatMoney(check.total)}
                 </span>
+                {(check.billId !== null || mayMerge) && <span className="pending-checks__action">Tahsil et ›</span>}
                 {openingOrderId === check.orderId && <span className="pending-checks__opening">Açılıyor…</span>}
                 {check.billId === null && !mayMerge && <span className="pending-checks__meta">{openBillDeniedText}</span>}
               </button>

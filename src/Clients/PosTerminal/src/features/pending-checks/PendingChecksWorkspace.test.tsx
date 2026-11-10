@@ -97,6 +97,24 @@ describe("PendingChecksWorkspace", () => {
     expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
   });
 
+  it("shows no Tahsil et on a card the cashier may not open", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    await render(vi.fn(), { canCancel: false, canMerge: false });
+
+    const [unbilled, billed] = [...document.querySelectorAll("button.pending-checks__row")];
+    expect(unbilled!.textContent).not.toContain("Tahsil et");
+    expect(billed!.textContent).toContain("Tahsil et");
+  });
+
+  it("marks every card with a visible Tahsil et so the cashier sees where collection starts", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    await render();
+
+    const rows = [...document.querySelectorAll("button.pending-checks__row")];
+    expect(rows).toHaveLength(2);
+    for (const row of rows) expect(row.textContent).toContain("Tahsil et");
+  });
+
   it("opens the bill of a check that has none and goes to collection", async () => {
     fetchMock.mockImplementation(async (url: string, init?: RequestInit) =>
       url.includes("awaiting-payment") ? ok(sample) : url.includes("from-order/o-1") && init?.method === "POST" ? ok({ billId: "b-new", allocations: [] }) : { ok: false, status: 404, json: async () => ({}) });
@@ -340,9 +358,9 @@ describe("PendingChecksWorkspace", () => {
 
       const [unbilled, billed] = [...document.querySelectorAll<HTMLButtonElement>("button.pending-checks__row")];
       expect(unbilled.disabled).toBe(true);
-      expect(unbilled.textContent).toContain("Hesap açmak için bölme yetkisi gerekir.");
+      expect(unbilled.textContent).toContain("Bu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin.");
       expect(billed.disabled).toBe(false);
-      expect(billed.textContent).not.toContain("Hesap açmak için bölme yetkisi gerekir.");
+      expect(billed.textContent).not.toContain("Bu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin.");
     });
 
     it("offers no cancel button to someone without the cancel permission, but keeps merging", async () => {

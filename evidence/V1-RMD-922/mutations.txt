@@ -1,0 +1,7 @@
+1 order bill id ignored, bill always opened from order -> KILLED (vitest)
+2 collect button ignores the bill permission -> KILLED (vitest)
+3 table with only a bill gets no collect button -> KILLED (vitest)
+4 card without the visible Tahsil et -> KILLED (vitest)
+5 sent order shows no Tahsil et -> KILLED (vitest)
+6 Tahsil et also on a card the cashier may not open -> KILLED (vitest)
+7 ended session not reported from the table panel -> KILLED (vitest)

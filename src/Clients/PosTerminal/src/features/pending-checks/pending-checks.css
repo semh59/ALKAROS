@@ -25,3 +25,4 @@
 .pending-checks__cancel label { display: grid; gap: .25rem; }
 .pending-checks__cancel select, .pending-checks__cancel input { min-height: 48px; font: inherit; }
 .pending-checks__cancel-confirm { min-height: 48px; border: 1px solid var(--ds-color-danger); border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-3); color: #fff; background: var(--ds-color-danger); font: inherit; font-weight: 700; cursor: pointer; }
+.pending-checks__action { grid-column: 2; grid-row: 3; justify-self: end; font-weight: 700; color: #0a6b4f; }
