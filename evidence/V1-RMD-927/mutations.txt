@@ -1,0 +1,2 @@
+1 short-screen rule keeps the button sticky -> KILLED
+2 rule only for screens shorter than 500 px (misses 768) -> KILLED

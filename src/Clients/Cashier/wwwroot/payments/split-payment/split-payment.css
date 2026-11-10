@@ -237,6 +237,8 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 .sp-fold { margin-top: 8px; }
 html { scroll-padding-bottom: 80px; }
 #submit-tender { position: sticky; bottom: 8px; z-index: 2; box-shadow: 0 0 0 6px var(--color-surface); }
+/* On a short screen the pinned button would cover the cash-received box and the quick amounts above it. */
+@media (max-height: 860px) { #submit-tender { position: static; box-shadow: none; } }
 .sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }
 .sp-fold > summary::-webkit-details-marker { display: none; }
 .sp-fold > summary::before { content: "▸"; }

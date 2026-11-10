@@ -1,7 +1,7 @@
 # V1-RMD-927 - 1024x768 ödeme ekranında yapışkan Ödemeyi Ekle düğmesi alanları örtmez
 
 - Task ID: V1-RMD-927
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

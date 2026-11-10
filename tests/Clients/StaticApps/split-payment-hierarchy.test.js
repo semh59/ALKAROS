@@ -159,4 +159,14 @@ describe("split-payment.js page hierarchy", () => {
     expect(Boolean(warning.compareDocumentPosition(document.querySelector(".sp-summary-row")) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
     expect($("submit-tender")).toBeNull();
   });
+
+  it("does not pin the Ödemeyi Ekle button on short screens, where it would cover the cash fields", () => {
+    const shortScreen = /@media\s*\(max-height:\s*(\d+)px\)\s*\{[^}]*#submit-tender\s*\{([^}]*)\}/.exec(css);
+
+    expect(shortScreen).not.toBeNull();
+    expect(Number(shortScreen[1])).toBeGreaterThanOrEqual(800);
+    expect(Number(shortScreen[1])).toBeLessThanOrEqual(900);
+    expect(css).toMatch(/#submit-tender\s*\{[^}]*position:\s*sticky/);
+    expect(shortScreen[2]).toMatch(/position:\s*static/);
+  });
 });
