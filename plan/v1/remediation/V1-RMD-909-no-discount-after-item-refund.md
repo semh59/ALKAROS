@@ -1,8 +1,8 @@
 # V1-RMD-909 - Kalem iadesi yapılmış hesaba sonradan hesap indirimi/ikramı uygulanamaz (fazla iade oluşmasın)
 
 - Task ID: V1-RMD-909
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
 
