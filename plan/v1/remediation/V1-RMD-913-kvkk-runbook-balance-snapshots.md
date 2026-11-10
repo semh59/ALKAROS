@@ -1,7 +1,7 @@
 # V1-RMD-913 - KVKK saklama tablosuna günlük bakiye kayıtları eklenir
 
 - Task ID: V1-RMD-913
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: documentation
 - Surface state: Existing
