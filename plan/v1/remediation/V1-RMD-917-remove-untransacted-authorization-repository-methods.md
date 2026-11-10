@@ -1,7 +1,7 @@
 # V1-RMD-917 - Yetki deposunda yalnız testler için duran transaction'sız eski metodlar silinir
 
 - Task ID: V1-RMD-917
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
