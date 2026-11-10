@@ -1,7 +1,7 @@
 # V1-RMD-916 - Faturasız müşteri profili son işlemden 2 yıl sonra anonimleşir; faturaya bağlı müşteri 10 yıl
 
 - Task ID: V1-RMD-916
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
