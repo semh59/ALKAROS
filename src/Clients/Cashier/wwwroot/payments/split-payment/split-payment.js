@@ -163,6 +163,7 @@
     CONFIRMATION_DECIDED: 'Bu bildirim zaten karara bağlanmış.',
     CONFIRMATION_PENDING: 'Bu ödeme için onay bekleyen bir bildirim var.',
     CUSTOMER_NOT_FOUND: 'Müşteri bulunamadı.',
+    DISCOUNT_AFTER_REFUND: 'Bu hesapta kalem iadesi yapılmış; iadeden sonra indirim ya da ikram uygulanamaz.',
     DISCOUNT_BELOW_COLLECTED: 'Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.',
     DISCOUNT_EXCEEDS_PAYABLE: 'İndirim toplamı hesap tutarını aşıyor.',
     FEATURE_DISABLED: 'Bu özellik bu işletme için kapatılmış.',

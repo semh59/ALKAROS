@@ -1,0 +1,4 @@
+# V1-RMD-925 reviews
+
+Review 1 (qa-dokuman-bagimlilik): the sentence equals the server text; the code is sent only by the discount and comp routes, and only the Cashier payment page calls them (PosTerminal has no discount or comp call, so its dictionaries need no entry). Other Cashier lists are consistent.
+Review 2 (qa-test-kalitesi): the red-to-green change is real. Found that the lock test does not scan BillingSplitStore.cs and the three-argument validation exceptions, and the dictionary lacks sentences for DISCOUNT_VALUE_INVALID, DISCOUNT_TYPE_INVALID, TIP_AMOUNT_INVALID, NOTES_TOO_LONG, ADJUSTMENT_NOT_UNDOABLE, IDEMPOTENCY_KEY_REQUIRED, ALLOWANCE_INVALID, REFUND_TEXT_INVALID, REFUND_INPUT_INVALID, BILL_OTHER_TERMINAL (verified by grep) -> a separate task widens the scan and adds the sentences.

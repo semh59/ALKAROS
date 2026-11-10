@@ -1,7 +1,7 @@
 # V1-RMD-925 - Ödeme ekranı "iadeden sonra indirim" hatasının sabit cümlesini bilir
 
 - Task ID: V1-RMD-925
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

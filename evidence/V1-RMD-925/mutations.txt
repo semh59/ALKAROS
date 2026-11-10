@@ -1,0 +1,2 @@
+1 sentence reworded so it differs from the server text -> KILLED (vitest, error-dictionary-lock)
+Restored with cp + cmp.
