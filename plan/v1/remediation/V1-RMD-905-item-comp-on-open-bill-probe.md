@@ -1,8 +1,8 @@
 # V1-RMD-905 - Hesap açıkken yapılan kalem ikramı hesap kalemine yansıyor mu: önce davranışı çalıştıran test
 
 - Task ID: V1-RMD-905
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: validation
 - Surface state: Existing
 
