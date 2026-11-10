@@ -16,6 +16,8 @@ V1-RMD-891..903 değişikliklerinden sonra bütün testlerin birlikte yeşil old
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Host/Experience/CashSession/ClientLimitLockTests.cs — V1-RMD-885'ten kalan kırmızı: yönetim ekranının sayı aralığı listesine billing.adjustment_total_cap eklenmedi
   - tests/Host/Experience/Composition/ProductionExperienceCompositionTests.cs — V1-RMD-885'ten kalan kırmızı: Host ikinci bir IPrePolicyGate kaydettiği için tek kayıt varsayımı bozuldu
+  - tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj — V1-RMD-800'den kalan kırmızı: yarım porsiyon göçü test projesine eklenmemiş
+  - tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj — aynı neden
 
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
