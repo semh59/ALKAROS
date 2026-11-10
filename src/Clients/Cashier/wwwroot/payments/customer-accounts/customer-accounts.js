@@ -398,7 +398,7 @@
   function renderReady() {
     app.innerHTML =
       '<div class="sp-card">' +
-      '<div class="ca-header"><a class="ca-back" href="../../index.html">← Kasaya dön</a>' +
+      '<div class="ca-header"><a class="ca-back" href="/">← Kasaya dön</a>' +
       '<span class="sp-eyebrow">Müşteri</span><h1 class="sp-title">Cari Hesaplar</h1></div>' +
       alerts() +
       '<div class="ca-grid">' + renderList() + renderStatement() + '</div>' +

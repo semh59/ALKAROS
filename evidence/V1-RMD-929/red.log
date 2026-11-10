@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-ui-navigation.test.js (6 tests | 1 failed) 17ms
+     × returns from the payment, cash session and customer account pages to the main till 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-ui-navigation.test.js > payment pages lead back to the till > returns from the payment, cash session and customer account pages to the main till
+AssertionError: expected '<!DOCTYPE html>\n<html lang="tr">\n<h…' to contain '<a class="cs-back" href="/">'
+
+- Expected
++ Received
+
+- <a class="cs-back" href="/">
++ <!DOCTYPE html>
++ <html lang="tr">
++ <head>
++   <meta charset="UTF-8">
++   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
++   <meta name="theme-color" content="#0B2135">
++   <title>ALKAROS Kasa Oturumu</title>
++   <link rel="stylesheet" href="./cash-session.css">
++ </head>
++ <body>
++   <a class="cs-back" href="../../index.html">← Kasaya dön</a>
++   <main id="app" class="cs-shell" aria-busy="true">
++     <div class="cs-loading">Oturum kontrol ediliyor…</div>
++   </main>
++   <script src="../../telemetry/telemetry.js"></script>
++   <script src="./cash-session.js"></script>
++ </body>
++ </html>
++
+
+ ❯ cashier-ui-navigation.test.js:31:54
+     29|   it("returns from the payment, cash session and customer account page…
+     30|     expect(read("payments/split-payment/index.html")).toContain('<a cl…
+     31|     expect(read("payments/cash-session/index.html")).toContain('<a cla…
+       |                                                      ^
+     32|     expect(read("payments/customer-accounts/customer-accounts.js")).to…
+     33|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  01:25:28
+   Duration  1.45s (transform 30ms, setup 24ms, import 29ms, tests 17ms, environment 1.07s)
+

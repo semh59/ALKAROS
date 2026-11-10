@@ -1,7 +1,7 @@
 # V1-RMD-929 - Kasa oturumu ve cari sayfalarındaki "Kasaya dön" ana kasaya gitsin
 
 - Task ID: V1-RMD-929
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

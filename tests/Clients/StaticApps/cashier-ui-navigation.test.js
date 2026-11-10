@@ -26,9 +26,10 @@ describe("payment pages lead back to the till", () => {
     expect(ruleBody(read(stylesheet), selector)).toMatch(/min-height:\s*var\(--touch-target\)|min-height:\s*(4[89]|[5-9]\d)px/);
   });
 
-  it("returns from payments to the main till and from the cash session to the quick till", () => {
-    expect(read("payments/split-payment/index.html")).toContain('href="/"');
-    expect(read("payments/cash-session/index.html")).toContain('href="../../index.html"');
+  it("returns from the payment, cash session and customer account pages to the main till", () => {
+    expect(read("payments/split-payment/index.html")).toContain('<a class="sp-back" href="/">');
+    expect(read("payments/cash-session/index.html")).toContain('<a class="cs-back" href="/">');
+    expect(read("payments/customer-accounts/customer-accounts.js")).toContain('<a class="ca-back" href="/">');
   });
 });
 

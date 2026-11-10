@@ -1,0 +1,4 @@
+M1 cash-session/index.html back link -> old screen: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6) (restored)
+M2 customer-accounts/customer-accounts.js back link -> old screen: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 5 passed (6) (restored)
