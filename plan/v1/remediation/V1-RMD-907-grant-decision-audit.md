@@ -8,7 +8,7 @@
 
 ## Goal
 
-Önceki turların açığı (V1-RMD-901 incelemesinden kalan not): yönetici, bekleyen bir ikram/indirim/iptal talebini onayladığında ya da reddettiğinde karar yalnızca identity.authorization_grants satırına (onaylayan ve zaman) yazılıyor; denetim olayı (audit_events) yazılmıyor, bu yüzden "kim, hangi talebi, ne tutarda, hangi gerekçeyle onayladı veya reddetti" denetim izinden okunamıyor. Karar: POST /api/v1/management/authorization/grants/{id}/approve ve /deny başarılı olduğunda authorization.grant.approved / authorization.grant.denied denetim olayı yazılır (aggregate AuthorizationGrant, aktör onaylayan, gerekçe talebin gerekçe kodu; durum: izin kodu, tutar, konu tipi ve kimliği, talep eden, yol manual). Reddedilen kararlar (zaten çözülmüş talep, kendi talebi, yetkisiz onaylayan) olay yazmaz.
+Önceki turların açığı (V1-RMD-901 incelemesinden kalan not): yönetici, bekleyen bir ikram/indirim/iptal talebini onayladığında ya da reddettiğinde karar yalnızca identity.authorization_grants satırına (onaylayan ve zaman) yazılıyor; denetim olayı (audit_events) yazılmıyor, bu yüzden "kim, hangi talebi, ne tutarda, hangi gerekçeyle onayladı veya reddetti" denetim izinden okunamıyor. Karar: POST /api/v1/management/authorization/grants/{id}/approve ve /deny başarılı olduğunda authorization.grant.approved / authorization.grant.denied denetim olayı yazılır (aggregate AuthorizationGrant, aktör onaylayan, gerekçe talebin gerekçe kodu; durum: izin kodu, tutar, konu tipi ve kimliği, talep eden, yol manual). Reddedilen kararlar (zaten çözülmüş talep, kendi talebi, yetkisiz onaylayan) olay yazmaz. Karar ve olay tek işlemde yazılır (grant deposuna işlem aşırı yüklemesi eklenir): olay yazımı başarısız olursa karar da geri alınır, istemci yeniden denediğinde olay kaybolmaz (qa tur 1).
 
 ## Owned surface
 
@@ -16,6 +16,8 @@
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Authorization/AuthorizationDecisionStore.cs
   - src/Host/Experience/Authorization/AuthorizationDecisionEndpoints.cs
+  - src/Modules/Identity/Authorization/Grants/IAuthorizationGrantRepository.cs
+  - src/Modules/Identity/Authorization/Grants/PostgresAuthorizationGrantRepository.cs
   - tests/Host/Experience/Authorization/AuthorizationDecisionHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -27,7 +29,7 @@
 
 ## Out of scope
 
-- Delegasyon oluşturma ve geri alma olaylarının denetimi, kararla olayın tek işlemde yazılması (grant deposu işlem aşırı yüklemesi sunmuyor; olay karardan hemen sonra yazılır)
+- Delegasyon oluşturma ve geri alma olaylarının denetimi
 
 ## Dependencies
 
