@@ -1,0 +1,6 @@
+1 own-table draft never resumed -> KILLED (mut1.log)
+2 any draft table order resumed for any table -> KILLED (mut2.log)
+3 seated table refused again (guard) -> KILLED (mut3.log)
+4 bind statement only for Available tables -> KILLED (mut4.log)
+5 client rule refuses seated table -> KILLED (vitest)
+6 no order reload when returning to the till -> KILLED (vitest)

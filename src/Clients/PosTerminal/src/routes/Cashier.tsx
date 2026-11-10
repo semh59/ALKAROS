@@ -176,6 +176,14 @@ export function Cashier() {
     setBackendStatus("online");
   }, [terminalId]);
 
+  // Another screen can open the till's order (a table order): coming back reads it, or the first product tap would try to open a second one.
+  const previousPath = useRef(currentPath);
+  useEffect(() => {
+    const cameBack = currentPath === "/" && previousPath.current !== "/";
+    previousPath.current = currentPath;
+    if (cameBack && sessionRef.current === "ready") void reloadOrder().catch(() => undefined);
+  }, [currentPath, reloadOrder]);
+
   const restoreSession = useCallback(async () => {
     try {
       await reload();

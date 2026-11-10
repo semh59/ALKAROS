@@ -46,7 +46,7 @@ afterEach(() => {
   vi.resetModules();
 });
 
-interface Till { calls: string[]; bodies: Record<string, unknown>[]; }
+interface Till { calls: string[]; bodies: Record<string, unknown>[]; setActive: (order: ReturnType<typeof snapshot> | null) => void; }
 
 /**
  * `active` is what GET orders/active answers (null: no order). `startOrder` decides the answer of POST orders;
@@ -57,8 +57,8 @@ async function openTill({
   startOrder = async () => jsonResponse({ orderId: "order-new", orderNumber: "7", revision: 1 }),
   addItem = async () => jsonResponse({ orderId: "order-new", revision: 2 }),
 } = {}): Promise<Till> {
-  const till: Till = { calls: [], bodies: [] };
   let current = active;
+  const till: Till = { calls: [], bodies: [], setActive: (order) => { current = order; } };
   vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
     const path = String(input);
     const method = init?.method ?? "GET";
@@ -192,5 +192,20 @@ describe("Cashier opens the order on the first product tap", () => {
 
     expect(posts(till, "/orders")).toHaveLength(0);
     expect(till.bodies).toEqual([{ productId: "p-ayran", quantity: 1, expectedRevision: 4 }]);
+  });
+
+  it("an order opened while the cashier was on another screen (a table order) is the one the first tap fills", async () => {
+    const till = await openTill();
+    till.setActive(snapshot("order-table", { revision: 3 }));
+
+    await act(async () => { window.history.pushState(null, "", "/pending-checks"); window.dispatchEvent(new PopStateEvent("popstate")); });
+    await settle();
+    await act(async () => { window.history.pushState(null, "", "/"); window.dispatchEvent(new PopStateEvent("popstate")); });
+    await settle();
+    await tap(card("Ayran"));
+    await settle();
+
+    expect(posts(till, "/orders")).toHaveLength(0);
+    expect(till.bodies).toEqual([{ productId: "p-ayran", quantity: 1, expectedRevision: 3 }]);
   });
 });

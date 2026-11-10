@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api } from "../api";
 import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
+import { canStartTableOrder } from "./tableOrderAvailability";
 import { managementText, navLabels, roleLabels } from "../strings";
 import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
@@ -289,10 +290,9 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
     }
   };
   const selectedTable = tables.find((table) => table.tableId === selectedTableId) ?? null;
-  const canStartTableOrder = selectedTable?.active === true
-    && (selectedTable.status === "Available" || (selectedTable.status === "Occupied" && selectedTable.currentOrderId !== null));
+  const tableOrderAllowed = canStartTableOrder(selectedTable);
   const startTableOrder = async () => {
-    if (!selectedTable || !canManage || !canStartTableOrder) return;
+    if (!selectedTable || !canManage || !tableOrderAllowed) return;
     setOrderBusy(true);
     setOrderError(undefined);
     try {
@@ -339,11 +339,11 @@ export function TableRoute({ terminalId, canManage, reservationOnly = false }: {
       <button data-telemetry-id="b.routes.workspace.2"
         className="primary"
         type="button"
-        disabled={!canManage || !canStartTableOrder || orderBusy}
+        disabled={!canManage || !tableOrderAllowed || orderBusy}
         aria-busy={orderBusy}
         onClick={() => void startTableOrder()}
       >{orderBusy ? "Sipariş hazırlanıyor…" : selectedTable.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>
-      {!canStartTableOrder && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil; sunucu durumu değiştirilmeden işlem yapılamaz.</small>}
+      {!tableOrderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil; sunucu durumu değiştirilmeden işlem yapılamaz.</small>}
       {orderError && <p className="table-order-bridge__error" role="alert">{orderError}</p>}
     </section>}
   </div>;

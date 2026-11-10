@@ -1,0 +1,6 @@
+# V1-RMD-921 result
+
+Verified in code: (1) POST /orders/table refused the till's own draft table order ("Terminal already has an active order") before the existing resume path could run; (2) a table seated with "Masayı aç" (Occupied, no order) was refused by server and client; (3) after returning from another screen the till kept a stale active order, so the first product tap tried to open a second order (409), the second tap worked.
+Fix: the guard lets the till resume its own draft for the same table (another table or a quick order is still refused); seated tables without order or bill take an order (bind UPDATE accepts Available or Occupied); the till re-reads the active order when it returns to the sales screen; the table rule moved to a small tested function.
+Red: server resume and seated-table tests failed (red.log), client return test failed (red-client.log). Green: DualScreenStoreTests 35/35 (green.log, about 7.5 minutes: each test migrates a database), client Cashier 63/63. 6 mutants killed.
+Not in this task: cart header table name and getting a bill from the table (V1-RMD-922).

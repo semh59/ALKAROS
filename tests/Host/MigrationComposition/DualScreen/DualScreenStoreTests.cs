@@ -636,6 +636,45 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResumingTheTerminalsOwnTableOrderReturnsItInsteadOfAConflict()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-RESUME", "Available", 1);
+        var first = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+
+        var again = await _store.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 2), CancellationToken.None);
+
+        Assert.Equal(first.OrderId, again.OrderId);
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM orders.orders WHERE table_id = @table_id;", ("table_id", tableId)));
+    }
+
+    [Fact]
+    public async Task AnotherTablesOrderIsStillRefusedWhileTheTerminalHoldsADraftTableOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var firstTable = await SeedTableAsync("S-HOLD-A", "Available", 1);
+        var secondTable = await SeedTableAsync("S-HOLD-B", "Available", 1);
+        await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(firstTable, 1), CancellationToken.None);
+
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+            terminalId, Guid.NewGuid(), new StartOrderRequest(secondTable, 1), CancellationToken.None));
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+            terminalId, Guid.NewGuid(), CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task AnOccupiedTableWithoutAnOrderOrBillTakesANewOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-SEATED", "Occupied", 1);
+
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+
+        Assert.Equal(order.OrderId, await ScalarAsync<Guid>("SELECT current_order_id FROM table_mgmt.tables WHERE table_id = @table_id;", ("table_id", tableId)));
+        Assert.Equal("Occupied", await ScalarAsync<string>("SELECT current_status FROM table_mgmt.tables WHERE table_id = @table_id;", ("table_id", tableId)));
+    }
+
+    [Fact]
     public async Task ConcurrentTableStartsAllowOnlyOneOrderAndLeaveConsistentPointers()
     {
         var firstTerminalId = Guid.NewGuid();

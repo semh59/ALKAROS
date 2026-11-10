@@ -44,10 +44,15 @@ public sealed partial class DualScreenStore
         if (activeOrderId is { } existingId)
         {
             await using var statusCommand = CreateCommand(connection, transaction,
-                "SELECT status FROM orders.orders WHERE order_id = @order_id;");
+                "SELECT status, table_id FROM orders.orders WHERE order_id = @order_id;");
             statusCommand.Parameters.AddWithValue("order_id", existingId);
-            var status = (string?)await statusCommand.ExecuteScalarAsync(cancellationToken);
-            if (status is not ("Submitted" or "Completed" or "Cancelled" or "Rejected"))
+            await using var statusReader = await statusCommand.ExecuteReaderAsync(cancellationToken);
+            var found = await statusReader.ReadAsync(cancellationToken);
+            var status = found ? statusReader.GetString(0) : null;
+            var activeOrderTableId = found && !statusReader.IsDBNull(1) ? statusReader.GetGuid(1) : (Guid?)null;
+            // The till's own draft for the very table being asked for is resumed below, not refused.
+            var resumesOwnTableOrder = request.TableId is not null && activeOrderTableId == request.TableId && status == "Draft";
+            if (status is not ("Submitted" or "Completed" or "Cancelled" or "Rejected") && !resumesOwnTableOrder)
                 throw new DualScreenConflictException("Terminal already has an active order.");
         }
 
@@ -146,8 +151,8 @@ public sealed partial class DualScreenStore
                 return new StartOrderResponse(existingTableOrderId, existingOrderNumber, existingRevision);
             }
 
-            if (tableStatus != "Available")
-                throw new DualScreenConflictException("Only an available table can receive a new order.");
+            if (tableStatus is not ("Available" or "Occupied"))
+                throw new DualScreenConflictException("Only an available or seated table can receive a new order.");
         }
 
         var orderId = Guid.NewGuid();
@@ -183,7 +188,7 @@ public sealed partial class DualScreenStore
                     current_status = 'Occupied',
                     row_version = row_version + 1
                 WHERE table_id = @table_id
-                  AND current_status = 'Available'
+                  AND current_status IN ('Available', 'Occupied')
                   AND current_order_id IS NULL
                   AND current_bill_id IS NULL;
                 """);

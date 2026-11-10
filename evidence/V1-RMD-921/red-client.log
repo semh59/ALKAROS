@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.first-touch.test.tsx (8 tests | 1 failed) 4103ms
+     × an order opened while the cashier was on another screen (a table order) is the one the first tap fills 151ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > an order opened while the cashier was on another screen (a table order) is the one the first tap fills
+AssertionError: expected [ 'POST /orders' ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/routes/Cashier.first-touch.test.tsx:208:36
+    206|     await settle();
+    207|
+    208|     expect(posts(till, "/orders")).toHaveLength(0);
+       |                                    ^
+    209|     expect(till.bodies).toEqual([{ productId: "p-ayran", quantity: 1, …
+    210|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed (14)
+   Start at  23:36:57
+   Duration  7.75s (transform 2.40s, setup 0ms, import 340ms, tests 4.11s, environment 2.69s)
+

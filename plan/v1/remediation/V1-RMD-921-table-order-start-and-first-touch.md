@@ -13,20 +13,24 @@ Kasiyer denemesi (G14, rapor 12, bulgu 2). Kodda doğrulanan üç neden: (1) Sun
 ## Owned surface
 
 - `evidence/V1-RMD-921/**`
+- `src/Clients/PosTerminal/src/routes/tableOrderAvailability.ts`
+- `src/Clients/PosTerminal/src/routes/tableOrderAvailability.test.ts`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/DualScreen/DualScreenStore.Orders.cs
+  - src/Host/DualScreen/DualScreenExceptions.cs
+  - src/Host/Composition/Errors/ApiErrorCatalog.cs
+  - tests/Host/Errors/ApiErrorCatalogTests.cs
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.first-touch.test.tsx
   - src/Clients/PosTerminal/src/routes/workspace.tsx
-  - src/Clients/PosTerminal/src/routes/tableOrderAvailability.ts
-  - src/Clients/PosTerminal/src/routes/tableOrderAvailability.test.ts
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
 1. Kırmızı testler: aynı masaya devam (sunucu), siparişsiz Dolu masaya sipariş (sunucu), dönüşte etkin siparişin yeniden okunması (istemci), masa uygunluk kuralı (istemci)
 2. Düzeltmeler ve mutasyon, iki bağımsız qa
+3. qa bulguları: birleştirilmiş (ikincil) masaya sipariş açılmaz; yeniden bağlanma yalnız masa göstergesi terminalin taslağını gösteriyorsa; terminal başka taslak tutarken 409 kullanıcıya anlaşılır Türkçe sebebi söyler; dönüşte yeniden okumanın eski yanıtı ezmemesi ve ilk dokunuşun 409 durumunda etkin siparişle devam etmesi
 
 ## Out of scope
 
