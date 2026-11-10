@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -201,6 +202,32 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
         Assert.Equal(1, audit.GetProperty("openBills").GetInt32());
         Assert.Equal(3, audit.GetProperty("unsettledPayments").GetInt32());
         Assert.True(audit.GetProperty("unsettledAcknowledged").GetBoolean());
+    }
+
+    [Fact]
+    public async Task ASentOrderWithoutAnyBillIsAnOpenCheckThatWarnsTheCloseButADraftACompletedAnOnlineOrAnAlreadyBilledOneIsNot()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Submitted");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Waiter, "Submitted");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Nfc, "Accepted");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Qr, "Served");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Completed");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Draft");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Online, "Submitted");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Cancelled");
+        var billed = await _database.SeedBillAsync(40m);
+        await _database.SetOrderStatusOfBillAsync(billed, "Submitted");
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(100m);
+
+        var preview = await drawer.PreviewAsync();
+        Assert.Equal(5, preview.GetProperty("openBillCount").GetInt32());
+
+        var refused = await drawer.CloseAsync(100m);
+        await AssertErrorAsync(refused, HttpStatusCode.Conflict, "CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED", "hesap");
+        Assert.Equal("Counting", await drawer.StatusAsync());
+        Assert.Equal(HttpStatusCode.OK, (await drawer.CloseAsync(100m, acknowledge: true)).StatusCode);
     }
 
     [Fact]

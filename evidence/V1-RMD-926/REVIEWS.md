@@ -1,0 +1,4 @@
+# V1-RMD-926 reviews
+
+Review 1 (qa-backend): the status list was too narrow (NFC and confirmed QR orders go to Accepted, served orders stay open) -> widened to the live statuses with a test covering NFC Accepted and QR Served and a Completed order that must not count (mutant killed). Paid orders that stay Submitted are excluded by the bill clause (verified); BillOrderLink use is correct. Reported: no index on orders.status (close is rare, no change here); the count can differ from the Bekleyen hesaplar list because that list hides orders still on a table.
+Review 2 (qa-mevzuat-uyum): the warn-and-acknowledge decision is preserved. Reported: the audit field openBills widened in meaning (kept the name; noted above); the end-of-day report (BusinessDayTotalsReader) still counts bills only -> separate task; whether online orders stay outside the count is an unconfirmed product assumption (reported to the product owner).

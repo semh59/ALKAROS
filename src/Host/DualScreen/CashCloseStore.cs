@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
 using Npgsql;
@@ -13,15 +14,21 @@ namespace ALKAROS.Host.DualScreen;
 /// </summary>
 public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore audit)
 {
-    /// <summary>Bills that are neither paid nor cancelled, and payments whose result is not known yet.</summary>
+    /// <summary>Open checks (bills that are neither paid nor cancelled, and sent orders with no bill yet), and payments whose result is not known yet.</summary>
     public sealed record Unsettled(int OpenBills, int UnsettledPayments)
     {
         public bool Any => OpenBills > 0 || UnsettledPayments > 0;
     }
 
-    private const string UnsettledSql =
-        """
-        SELECT (SELECT count(*) FROM billing.bills WHERE status NOT IN ('Paid', 'Cancelled')),
+    // A sent order (any live status) whose check was never opened has no bill row yet, so it would otherwise be invisible here; online
+    // orders are paid on the platform.
+    private static readonly string UnsettledSql =
+        $"""
+        SELECT (SELECT count(*) FROM billing.bills WHERE status NOT IN ('Paid', 'Cancelled'))
+               + (SELECT count(*) FROM orders.orders o
+                  WHERE o.status IN ('Submitted', 'Accepted', 'Preparing', 'Ready', 'Served') AND o.source <> 'Online'
+                    AND NOT EXISTS (SELECT 1 FROM billing.bills b
+                                    WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status <> 'Cancelled')),
                (SELECT count(*) FROM payments.payments WHERE status IN ('Pending', 'Unknown', 'ReconciliationRequired'));
         """;
 

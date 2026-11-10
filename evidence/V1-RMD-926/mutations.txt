@@ -1,0 +1,4 @@
+0 only Submitted orders counted (NFC/QR Accepted and Served missed) -> KILLED (mut0.log)
+1 online orders counted -> KILLED (mut1.log)
+3 completed orders counted -> KILLED (mut3.log)
+2 orders that already have a bill counted again -> KILLED (mut2.log)

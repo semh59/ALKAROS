@@ -1,7 +1,7 @@
 # V1-RMD-926 - Vardiya kapanışı faturasız gönderilmiş (ödenmemiş) siparişleri de uyarır
 
 - Task ID: V1-RMD-926
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

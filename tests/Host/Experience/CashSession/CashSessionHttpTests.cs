@@ -1122,6 +1122,43 @@ internal sealed class CashSessionHttpTestDatabase
         return billId;
     }
 
+    public async Task SetOrderStatusOfBillAsync(Guid billId, string status)
+    {
+        await using var command = DataSource.CreateCommand(
+            "UPDATE orders.orders SET status = @status WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", billId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>Seeds an order with one item and no bill, put into the given status.</summary>
+    public async Task<Guid> SeedOrderWithoutBillAsync(OrderSource source, string status)
+    {
+        var productId = Guid.NewGuid();
+        await using (var command = DataSource.CreateCommand(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product_id, @sku, 'Test Item', 1, 1, 10);
+            """))
+        {
+            command.Parameters.AddWithValue("product_id", productId);
+            command.Parameters.AddWithValue("sku", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        var orderId = Guid.NewGuid();
+        var item = new OrderItem(
+            id: Guid.NewGuid(), orderId: orderId, productId: productId, productNameSnapshot: "Test Item",
+            quantity: 1, unitPrice: 10m, taxRate: 0m);
+        await new PostgresOrderRepository(DataSource).AddAsync(
+            new Order(orderId, source, "ORD-" + Guid.NewGuid().ToString("N")[..8], [item]));
+        await using var update = DataSource.CreateCommand("UPDATE orders.orders SET status = @status WHERE order_id = @id;");
+        update.Parameters.AddWithValue("status", status);
+        update.Parameters.AddWithValue("id", orderId);
+        await update.ExecuteNonQueryAsync();
+        return orderId;
+    }
+
     private async Task ApplyMigrationsAsync()
     {
         var root = FindRepositoryRoot();
