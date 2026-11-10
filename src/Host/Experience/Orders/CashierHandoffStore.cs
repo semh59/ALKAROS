@@ -242,7 +242,10 @@ public sealed class CashierHandoffStore
             LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
             LEFT JOIN LATERAL (
                 SELECT b.bill_id,
-                       (SELECT SUM(pa.amount) FROM payments.payment_allocations pa WHERE pa.bill_id = b.bill_id) AS paid_amount
+                       (SELECT SUM(pa.amount) FROM payments.payment_allocations pa WHERE pa.bill_id = b.bill_id)
+                       - COALESCE((SELECT SUM(r.amount) FROM payments.payment_reversals r
+                                   JOIN payments.payments rp ON rp.payment_id = r.payment_id
+                                   WHERE rp.bill_id = b.bill_id), 0) AS paid_amount
                 FROM billing.bills b
                 WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status <> 'Cancelled'
                 ORDER BY b.opened_at DESC

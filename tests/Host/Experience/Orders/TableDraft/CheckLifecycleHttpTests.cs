@@ -191,6 +191,57 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Null(await InQueue());
     }
 
+    [Fact]
+    public async Task TheTillQueueShowsWhatIsPaidAfterTheRefundsAreTakenOff()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        using var sent = await client.SendAsync(JsonRequest(
+            SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        Assert.Equal(HttpStatusCode.OK, sent.StatusCode);
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open", allocated: 100m);
+        var otherCheck = await SendRoundAsync(client, cookie, terminalId, await _database.SeedTableAsync(),
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        var other = await _database.SeedBillForOrderAsync(otherCheck.OrderId, 50m, "Open", allocated: 50m);
+        await using (var reverse = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            SELECT gen_random_uuid(), payment_id, 'PartialRefund', 30, 'İade', gen_random_uuid(), gen_random_uuid()::text, now()
+            FROM payments.payments WHERE bill_id = @bill OR bill_id = @other;
+            """))
+        {
+            reverse.Parameters.AddWithValue("bill", billId);
+            reverse.Parameters.AddWithValue("other", other);
+            await reverse.ExecuteNonQueryAsync();
+        }
+
+        using var queue = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
+        var inQueue = (await queue.Content.ReadFromJsonAsync<List<PendingCheckSummaryV1>>())!.Single(c => c.OrderId == check.OrderId);
+
+        Assert.Equal(70m, inQueue.PaidAmount);
+
+        await using (var rest = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            SELECT gen_random_uuid(), payment_id, 'PartialRefund', 70, 'İade', gen_random_uuid(), gen_random_uuid()::text, now()
+            FROM payments.payments WHERE bill_id = @bill;
+            """))
+        {
+            rest.Parameters.AddWithValue("bill", billId);
+            await rest.ExecuteNonQueryAsync();
+        }
+
+        using var afterFull = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
+        var emptied = (await afterFull.Content.ReadFromJsonAsync<List<PendingCheckSummaryV1>>())!.Single(c => c.OrderId == check.OrderId);
+        Assert.Equal(0m, emptied.PaidAmount);
+    }
+
     // V1-RMD-281: a check sent by mistake goes back to its table while no money has moved.
     private static string RecallPath(Guid terminalId, Guid orderId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/recall-from-cashier";

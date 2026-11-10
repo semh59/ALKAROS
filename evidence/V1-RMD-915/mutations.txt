@@ -1,0 +1,4 @@
+1 refund filter by bill removed (another bill's refund leaks in) -> KILLED (mut1.log)
+2 refunds multiplied by zero (not subtracted) -> KILLED (mut2.log)
+3 refunds added instead of subtracted -> KILLED (mut3.log)
+Each restored with cp + cmp; every run rebuilt.

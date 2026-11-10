@@ -1,7 +1,7 @@
 # V1-RMD-915 - Kasa kuyruğunda ödenen tutar iadeleri düşerek gösterilir
 
 - Task ID: V1-RMD-915
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
