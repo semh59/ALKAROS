@@ -1,7 +1,7 @@
 # V1-RMD-914 - Bakiye kayıt tablosuna tarih indeksi (migration 224)
 
 - Task ID: V1-RMD-914
-- Status: Done
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
@@ -13,9 +13,9 @@ V1-RMD-896/910 açığı (koordinatör kararı: ertelenmez). Bakım işi her 6 s
 ## Owned surface
 
 - `evidence/V1-RMD-914/**`
+- `database/migrations/V1/V1-RMD-914/224-balance-snapshots-date-index.up.sql` — indeks.
+- `database/migrations/V1/V1-RMD-914/224-balance-snapshots-date-index.down.sql` — geri alma.
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - database/migrations/V1/V1-RMD-914/224-balance-snapshots-date-index.up.sql
-  - database/migrations/V1/V1-RMD-914/224-balance-snapshots-date-index.down.sql
   - src/Host/Composition/Migrations/MigrationManifest.cs
   - database/MigrationComposition/order.json
   - tests/Host/MigrationComposition/Manifest/ManifestTests.cs
