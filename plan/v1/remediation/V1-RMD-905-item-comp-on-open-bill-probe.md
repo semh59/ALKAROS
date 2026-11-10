@@ -17,6 +17,7 @@ V1-RMD-903 incelemesi (qa-uctan-uca-akis): hesap bir siparişten oluşturulurken
   - tests/Host/Experience/Orders/Comp/OrderCompOnOpenBillHttpTests.cs — yeni test
   - src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs
+  - src/Modules/Billing/BillFoundation/BillItem.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
