@@ -15,6 +15,7 @@ V1-RMD-891..903 değişikliklerinden sonra bütün testlerin birlikte yeşil old
 - `evidence/V1-RMD-904/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Host/Experience/CashSession/ClientLimitLockTests.cs — V1-RMD-885'ten kalan kırmızı: yönetim ekranının sayı aralığı listesine billing.adjustment_total_cap eklenmedi
+  - tests/Host/Experience/Composition/ProductionExperienceCompositionTests.cs — V1-RMD-885'ten kalan kırmızı: Host ikinci bir IPrePolicyGate kaydettiği için tek kayıt varsayımı bozuldu
 
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
