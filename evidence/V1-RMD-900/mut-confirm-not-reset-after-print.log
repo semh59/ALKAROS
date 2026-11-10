@@ -1,0 +1,49 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > prints only after the confirmation and asks again for the next print
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289952917-0.5518198379602121:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289952917-0.5518198379602121:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289952917-0.5518198379602121:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt.test.js (16 tests | 1 failed) 2647ms
+     × prints only after the confirmation and asks again for the next print 179ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > prints only after the confirmation and asks again for the next print
+AssertionError: expected <div class="sp-alert-body" …(2)></div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="sp-alert-body"
+  id="receipt-confirm"
+  role="alert"
+>
+  İlk basım orijinaldir, sonrakiler KOPYA yazar.
+</div>
+
+ ❯ split-payment-receipt.test.js:252:56
+    250|
+    251|     expect(printCalls(fetchMock)).toHaveLength(1);
+    252|     expect(document.getElementById("receipt-confirm")).toBeNull();
+       |                                                        ^
+    253|     document.getElementById("print-receipt").click();
+    254|     expect(document.getElementById("receipt-confirm")).not.toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  08:52:29
+   Duration  4.17s (transform 652ms, setup 32ms, import 77ms, tests 2.65s, environment 1.02s)
+
+vitestexit=1

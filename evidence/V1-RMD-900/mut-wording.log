@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289966742-0.7565675325851702:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289966742-0.7565675325851702:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289966742-0.7565675325851702:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt.test.js (16 tests | 1 failed) 2636ms
+     × asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints 127ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints
+AssertionError: expected 'İlk basım orijinaldir, sonrakiler kop…' to be 'İlk basım orijinaldir, sonrakiler KOP…' // Object.is equality
+
+Expected: "İlk basım orijinaldir, sonrakiler KOPYA yazar."
+Received: "İlk basım orijinaldir, sonrakiler kopya yazar."
+
+ ❯ split-payment-receipt.test.js:238:68
+    236|     document.getElementById("print-receipt").click();
+    237|
+    238|     expect(document.getElementById("receipt-confirm").textContent).toB…
+       |                                                                    ^
+    239|     expect(document.getElementById("print-receipt").textContent).toBe(…
+    240|     expect(printCalls(fetchMock)).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  08:52:43
+   Duration  3.98s (transform 626ms, setup 24ms, import 60ms, tests 2.64s, environment 1.00s)
+
+vitestexit=1

@@ -122,6 +122,7 @@
     changeDue: null,
     receiptError: null,
     receiptBusy: false,
+    receiptConfirm: false,
   };
 
   function enterPaid() {
@@ -1749,7 +1750,21 @@
   function onRefundClick(event) {
     var printButton = event.target.closest ? event.target.closest('[data-receipt-action="print"]') : null;
     if (printButton) {
-      if (!printButton.disabled) printReceipt();
+      if (printButton.disabled) return;
+      // The first print of a bill is the original and every later one says KOPYA, so the cashier confirms before one is used up.
+      if (!state.receiptConfirm) {
+        state.receiptConfirm = true;
+        state.receiptError = null;
+        render();
+        return;
+      }
+      state.receiptConfirm = false;
+      printReceipt();
+      return;
+    }
+    if (event.target.closest && event.target.closest('[data-receipt-action="cancel"]')) {
+      state.receiptConfirm = false;
+      render();
       return;
     }
     var element = event.target.closest ? event.target.closest('[data-refund-action]') : null;
@@ -2254,8 +2269,15 @@
       (state.receiptError
         ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'
         : '') +
+      (state.receiptConfirm
+        ? '<div class="sp-alert-body" role="alert" id="receipt-confirm">İlk basım orijinaldir, sonrakiler KOPYA yazar.</div>'
+        : '') +
       '<button class="sp-btn sp-btn-primary" type="button" id="print-receipt" data-receipt-action="print"' +
-      (state.receiptBusy ? ' disabled' : '') + '>' + (state.receiptBusy ? 'Fiş hazırlanıyor…' : 'Fişi yazdır') + '</button>' +
+      (state.receiptBusy ? ' disabled' : '') + '>' +
+      (state.receiptBusy ? 'Fiş hazırlanıyor…' : (state.receiptConfirm ? 'Evet, yazdır' : 'Fişi yazdır')) + '</button>' +
+      (state.receiptConfirm
+        ? '<button class="sp-btn sp-btn-secondary" type="button" id="cancel-receipt" data-receipt-action="cancel">Vazgeç</button>'
+        : '') +
       BACK_LINK +
       '</div>' +
       '<div class="sp-card">' + renderRefundSection(false) + '</div>';

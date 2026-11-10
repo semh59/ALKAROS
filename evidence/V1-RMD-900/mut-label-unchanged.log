@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt.test.js > split-payment.js information receipt > asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289973743-0.32159122494255854:233:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289973743-0.32159122494255854:394:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289973743-0.32159122494255854:499:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt.test.js (16 tests | 1 failed) 2669ms
+     × asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints 114ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints
+AssertionError: expected 'Fişi yazdır' to be 'Evet, yazdır' // Object.is equality
+
+Expected: "Evet, yazdır"
+Received: "Fişi yazdır"
+
+ ❯ split-payment-receipt.test.js:239:66
+    237|
+    238|     expect(document.getElementById("receipt-confirm").textContent).toB…
+    239|     expect(document.getElementById("print-receipt").textContent).toBe(…
+       |                                                                  ^
+    240|     expect(printCalls(fetchMock)).toHaveLength(0);
+    241|     expect(printSpy).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  08:52:50
+   Duration  4.11s (transform 631ms, setup 24ms, import 59ms, tests 2.67s, environment 1.09s)
+
+vitestexit=1

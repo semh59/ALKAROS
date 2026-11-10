@@ -1,0 +1,7 @@
+no-warning [s/^      if (!state.receiptConfirm) {$/      if (false) {/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+confirm-not-reset-after-print [/^      state.receiptConfirm = false;$/{N;s/state.receiptConfirm = false;\n      printReceipt();/printReceipt();/}]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+cancel-keeps-warning [/data-receipt-action="cancel"..)) {$/,/return;/s/state.receiptConfirm = false;/state.receiptConfirm = true;/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+wording [s/sonrakiler KOPYA yazar\./sonrakiler kopya yazar./]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+label-unchanged [s/(state.receiptConfirm ? 'Evet, yazdır' : 'Fişi yazdır')/'Fişi yazdır'/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+no-cancel-button [/id="cancel-receipt"/s/Vazgeç/Kapat/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+error-kept-with-warning [/^        state.receiptConfirm = true;$/{n;s/state.receiptError = null;/state.receiptError = state.receiptError;/}]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical

@@ -58,6 +58,11 @@ async function open(receiptRoute, { startUnpaid = false } = {}) {
 }
 
 const app = () => document.getElementById("app");
+// The first click only opens the original/KOPYA warning; the second confirms it and prints.
+const clickPrint = () => {
+  document.getElementById("print-receipt").click();
+  document.getElementById("print-receipt").click();
+};
 const sheet = () => document.getElementById("receipt-print");
 const printCalls = (fetchMock) => fetchMock.mock.calls.filter(([url, init]) => url.endsWith(`/billing/bills/${BILL_ID}/receipt/print`) && init?.method === "POST");
 
@@ -77,7 +82,7 @@ describe("split-payment.js information receipt", () => {
     const fetchMock = await open({ body: receipt });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     expect(printCalls(fetchMock)).toHaveLength(1);
@@ -95,7 +100,7 @@ describe("split-payment.js information receipt", () => {
     await open({ body: receipt });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
     await vi.waitFor(() => expect(sheet()).not.toBeNull());
 
     const text = sheet().textContent;
@@ -127,7 +132,7 @@ describe("split-payment.js information receipt", () => {
     await open({ body: taxed });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     const text = document.getElementById("receipt-print").textContent;
@@ -152,7 +157,7 @@ describe("split-payment.js information receipt", () => {
     await open({ body: refunded });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     const sheet = document.getElementById("receipt-print").textContent;
@@ -171,7 +176,7 @@ describe("split-payment.js information receipt", () => {
     await open({ body: pending });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     expect(document.getElementById("receipt-print").textContent).not.toContain("İade edildi:");
@@ -181,7 +186,7 @@ describe("split-payment.js information receipt", () => {
     await open({ body: { ...receipt, items: receipt.items.map(i => ({ ...i, refundedQuantity: 0, completedRefundedQuantity: 0 })), payments: receipt.payments.map((payment) => ({ ...payment, refundedAmount: 0 })) } });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     const sheet = document.getElementById("receipt-print").textContent;
@@ -193,7 +198,7 @@ describe("split-payment.js information receipt", () => {
     await open({ status: 500, body: {} });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(app().textContent).toContain("Fiş verisi okunamadı. Tekrar deneyin."));
     expect(printSpy).not.toHaveBeenCalled();
@@ -204,7 +209,7 @@ describe("split-payment.js information receipt", () => {
     await open({ status: 500, body: receipt });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(app().textContent).toContain("Fiş verisi okunamadı"));
     expect(printSpy).not.toHaveBeenCalled();
@@ -216,19 +221,71 @@ describe("split-payment.js information receipt", () => {
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
     await new Promise((done) => setTimeout(done, 100));
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
     expect(document.getElementById("print-receipt").disabled).toBe(true);
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     expect(printCalls(fetchMock)).toHaveLength(1);
+  });
+
+  it("asks before printing: the first click shows the original/KOPYA warning and neither reads nor prints", async () => {
+    const fetchMock = await open({ body: receipt });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    document.getElementById("print-receipt").click();
+
+    expect(document.getElementById("receipt-confirm").textContent).toBe("İlk basım orijinaldir, sonrakiler KOPYA yazar.");
+    expect(document.getElementById("print-receipt").textContent).toBe("Evet, yazdır");
+    expect(document.getElementById("cancel-receipt").textContent).toBe("Vazgeç");
+    expect(printCalls(fetchMock)).toHaveLength(0);
+    expect(printSpy).not.toHaveBeenCalled();
+  });
+
+  it("prints only after the confirmation and asks again for the next print", async () => {
+    const fetchMock = await open({ body: receipt });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    clickPrint();
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+
+    expect(printCalls(fetchMock)).toHaveLength(1);
+    expect(document.getElementById("receipt-confirm")).toBeNull();
+    document.getElementById("print-receipt").click();
+    expect(document.getElementById("receipt-confirm")).not.toBeNull();
+    expect(printCalls(fetchMock)).toHaveLength(1);
+  });
+
+  it("drops the warning on Vazgeç without printing", async () => {
+    const fetchMock = await open({ body: receipt });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    document.getElementById("print-receipt").click();
+    document.getElementById("cancel-receipt").click();
+
+    expect(document.getElementById("receipt-confirm")).toBeNull();
+    expect(document.getElementById("cancel-receipt")).toBeNull();
+    expect(document.getElementById("print-receipt").textContent).toBe("Fişi yazdır");
+    expect(printCalls(fetchMock)).toHaveLength(0);
+  });
+
+  it("drops an earlier read error when the warning opens so the two never show together", async () => {
+    await open({ status: 500, body: {} });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+    clickPrint();
+    await vi.waitFor(() => expect(app().textContent).toContain("Fiş verisi okunamadı"));
+
+    document.getElementById("print-receipt").click();
+
+    expect(app().textContent).not.toContain("Fiş verisi okunamadı");
+    expect(document.getElementById("receipt-confirm")).not.toBeNull();
   });
 
   it("marks the sheet KOPYA when the server says the print is a copy", async () => {
     await open({ body: { ...receipt, isCopy: true } });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     expect(sheet().textContent).toContain("KOPYA");
@@ -242,13 +299,13 @@ describe("split-payment.js information receipt", () => {
 
     document.getElementById("submit-tender").click();
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
     expect(sheet().textContent).not.toContain("KOPYA");
     expect(printCalls(fetchMock)).toHaveLength(1);
 
-    document.getElementById("print-receipt").click();
+    clickPrint();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(2));
     expect(sheet().textContent).toContain("KOPYA");
