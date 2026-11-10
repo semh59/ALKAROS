@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.Identity.Authorization.Delegations;
 
 /// <summary>Reads and writes <c>identity.authorization_delegations</c>.</summary>
@@ -7,12 +9,29 @@ public interface IAuthorizationDelegationRepository
     Task<AuthorizationDelegation> CreateAsync(
         DelegationRequest request, DateTimeOffset now, CancellationToken cancellationToken = default);
 
+    /// <summary>The same creation inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
+    Task<AuthorizationDelegation> CreateAsync(
+        DelegationRequest request,
+        DateTimeOffset now,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Cancels a delegation early, recording who cancelled it. Returns false
     /// when the id is unknown or the delegation is already revoked.
     /// </summary>
     Task<bool> RevokeAsync(
         Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default);
+
+    /// <summary>The same cancellation inside the caller's transaction; returns the cancelled row, or null when it is unknown or already revoked.</summary>
+    Task<AuthorizationDelegation?> RevokeAsync(
+        Guid delegationId,
+        DateTimeOffset at,
+        Guid revokedByUserId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// The newest delegation that covers <paramref name="permissionCode"/> for

@@ -75,13 +75,28 @@ public sealed class PostgresBehaviouralTighteningRepository : IBehaviouralTighte
         Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
         CancellationToken cancellationToken = default)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        return await ClearCoreAsync(tighteningId, clearedByUserId, at, connection, null, cancellationToken);
+    }
+
+    public Task<BehaviouralTightening> ClearAsync(
+        Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
+        NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+        => ClearCoreAsync(tighteningId, clearedByUserId, at, connection, transaction, cancellationToken);
+
+    private static async Task<BehaviouralTightening> ClearCoreAsync(
+        Guid tighteningId, Guid clearedByUserId, DateTimeOffset at,
+        NpgsqlConnection connection, NpgsqlTransaction? transaction,
+        CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
             $"""
             UPDATE {Table}
             SET cleared_at = @at, cleared_by_user_id = @by
             WHERE tightening_id = @id AND cleared_at IS NULL
             RETURNING {SelectColumns};
-            """);
+            """, connection, transaction);
         command.Parameters.AddWithValue("id", tighteningId);
         command.Parameters.AddWithValue("at", at);
         command.Parameters.AddWithValue("by", clearedByUserId);

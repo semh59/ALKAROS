@@ -1,0 +1,6 @@
+1 delegation create uses the non-transaction repository call -> KILLED (mut1.log)
+2 delegation revoke committed before the audit record -> KILLED (mut2.log)
+3 tightening clear uses the non-transaction call -> KILLED (mut3.log)
+4 tightening-cleared event written under a wrong aggregate id -> KILLED (mut4.log)
+5 delegation-created event written under a wrong actor -> KILLED (mut5.log)
+Each restored with cp + cmp; every run rebuilt. (A first attempt at mutant 2 hung on a row lock and was stopped; the file was restored and the stray test host ended.)

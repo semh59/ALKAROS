@@ -103,14 +103,14 @@ public static class AuthorizationDecisionEndpoints
                 throw new DelegatorLacksPermissionException(request.PermissionCode!);
             }
 
-            var created = await store.CreateDelegationAsync(request, actorId, cancellationToken);
+            var created = await store.CreateDelegationAsync(request, actorId, http.TraceIdentifier, cancellationToken);
             return Results.Created($"{GroupPrefix}/delegations/{created.DelegationId:D}", created);
         });
 
         group.MapPost("/delegations/{delegationId:guid}/revoke", async (
             Guid delegationId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
         {
-            var revoked = await store.RevokeDelegationAsync(delegationId, ActorId(http), cancellationToken);
+            var revoked = await store.RevokeDelegationAsync(delegationId, ActorId(http), http.TraceIdentifier, cancellationToken);
             return revoked ? Results.NoContent() : Results.NotFound();
         });
 
@@ -125,7 +125,7 @@ public static class AuthorizationDecisionEndpoints
         group.MapPost("/behavioural-tightenings/{tighteningId:guid}/clear", async (
             Guid tighteningId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
         {
-            await store.ClearTighteningAsync(tighteningId, ActorId(http), cancellationToken);
+            await store.ClearTighteningAsync(tighteningId, ActorId(http), http.TraceIdentifier, cancellationToken);
             return Results.NoContent();
         });
 

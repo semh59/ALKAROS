@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.Identity.Authorization.Behavioural;
 
 /// <summary>
@@ -19,4 +21,9 @@ public interface IBehaviouralTighteningService
     /// </summary>
     Task<BehaviouralTightening> ClearAsync(
         Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken = default);
+
+    /// <summary>The same clearing inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
+    Task<BehaviouralTightening> ClearAsync(
+        Guid tighteningId, Guid managerUserId, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

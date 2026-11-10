@@ -21,16 +21,51 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
     public async Task<AuthorizationDelegation> CreateAsync(
         DelegationRequest request, DateTimeOffset now, CancellationToken cancellationToken = default)
     {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        return await CreateCoreAsync(request, now, connection, null, cancellationToken);
+    }
+
+    public Task<AuthorizationDelegation> CreateAsync(
+        DelegationRequest request,
+        DateTimeOffset now,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+        => CreateCoreAsync(request, now, connection, transaction, cancellationToken);
+
+    public async Task<bool> RevokeAsync(
+        Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        return await RevokeCoreAsync(delegationId, at, revokedByUserId, connection, null, cancellationToken) is not null;
+    }
+
+    public Task<AuthorizationDelegation?> RevokeAsync(
+        Guid delegationId,
+        DateTimeOffset at,
+        Guid revokedByUserId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+        => RevokeCoreAsync(delegationId, at, revokedByUserId, connection, transaction, cancellationToken);
+
+    private static async Task<AuthorizationDelegation> CreateCoreAsync(
+        DelegationRequest request,
+        DateTimeOffset now,
+        NpgsqlConnection connection,
+        NpgsqlTransaction? transaction,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(request);
         request.Validate(now);
 
-        await using var command = _dataSource.CreateCommand(
+        await using var command = new NpgsqlCommand(
             $"""
             INSERT INTO {Table}
                 (permission_code, grantee_user_id, delegator_user_id, limit_amount, granted_at, expires_at)
             VALUES (@permission, @grantee, @delegator, @limit, @granted_at, @expires_at)
             RETURNING {SelectColumns};
-            """);
+            """, connection, transaction);
         command.Parameters.AddWithValue("permission", request.PermissionCode);
         command.Parameters.AddWithValue("grantee", request.GranteeUserId);
         command.Parameters.AddWithValue("delegator", request.DelegatorUserId);
@@ -43,19 +78,26 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
         return Read(reader);
     }
 
-    public async Task<bool> RevokeAsync(
-        Guid delegationId, DateTimeOffset at, Guid revokedByUserId, CancellationToken cancellationToken = default)
+    private static async Task<AuthorizationDelegation?> RevokeCoreAsync(
+        Guid delegationId,
+        DateTimeOffset at,
+        Guid revokedByUserId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction? transaction,
+        CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var command = new NpgsqlCommand(
             $"""
             UPDATE {Table} SET revoked_at = @at, revoked_by_user_id = @revoked_by
-            WHERE delegation_id = @id AND revoked_at IS NULL;
-            """);
+            WHERE delegation_id = @id AND revoked_at IS NULL
+            RETURNING {SelectColumns};
+            """, connection, transaction);
         command.Parameters.AddWithValue("id", delegationId);
         command.Parameters.AddWithValue("at", at);
         command.Parameters.AddWithValue("revoked_by", revokedByUserId);
 
-        return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken) ? Read(reader) : null;
     }
 
     public async Task<AuthorizationDelegation?> FindCoveringAsync(

@@ -362,6 +362,100 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         Assert.Single(await _database.AuditEventsOfAsync(grantId));
     }
 
+    [Fact]
+    public async Task ACreatedDelegationIsWrittenToTheAuditTrailWithWhoToWhomAndHowLong()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true, withGrantPermissions: false);
+        var (managerId, _) = _database.LastSeededManager;
+        await _database.GrantToUserRoleAsync(managerId, "bills.comp");
+        var granteeId = await _database.SeedGranteeAsync();
+        var expires = DateTimeOffset.UtcNow.AddHours(4);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager,
+            new CreateDelegationRequestV1(granteeId, "bills.comp", 200m, expires)));
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var created = await response.Content.ReadFromJsonAsync<ActiveDelegationV1>();
+
+        var audit = Assert.Single(await _database.AuditEventsOfAsync(created!.DelegationId, "AuthorizationDelegation"));
+        Assert.Equal("authorization.delegation.created", audit.EventName);
+        Assert.Equal(managerId, audit.ActorId);
+        using var json = JsonDocument.Parse(audit.AfterStateJson!);
+        Assert.Equal("bills.comp", json.RootElement.GetProperty("permissionCode").GetString());
+        Assert.Equal(granteeId, json.RootElement.GetProperty("granteeUserId").GetGuid());
+        Assert.Equal(managerId, json.RootElement.GetProperty("delegatorUserId").GetGuid());
+        Assert.Equal(200m, json.RootElement.GetProperty("limitAmount").GetDecimal());
+        Assert.Equal(expires, json.RootElement.GetProperty("expiresAt").GetDateTimeOffset(), TimeSpan.FromSeconds(1));
+    }
+
+    [Fact]
+    public async Task ARevokedDelegationAndAClearedTighteningAreWrittenToTheAuditTrailAndARepeatWritesNothing()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var (managerId, _) = _database.LastSeededManager;
+        var delegationId = await _database.SeedActiveDelegationAsync();
+        var tighteningId = await _database.SeedOpenTighteningAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var revokePath = AuthorizationDecisionEndpoints.GroupPrefix + $"/delegations/{delegationId:D}/revoke";
+        var clearPath = AuthorizationDecisionEndpoints.GroupPrefix + $"/behavioural-tightenings/{tighteningId:D}/clear";
+        var unknownId = Guid.NewGuid();
+
+        using var revoke = await client.SendAsync(Request(HttpMethod.Post, revokePath, manager));
+        using var revokeAgain = await client.SendAsync(Request(HttpMethod.Post, revokePath, manager));
+        using var clear = await client.SendAsync(Request(HttpMethod.Post, clearPath, manager));
+        using var clearAgain = await client.SendAsync(Request(HttpMethod.Post, clearPath, manager));
+        using var unknownRevoke = await client.SendAsync(Request(
+            HttpMethod.Post, AuthorizationDecisionEndpoints.GroupPrefix + $"/delegations/{unknownId:D}/revoke", manager));
+
+        Assert.Equal(HttpStatusCode.NoContent, revoke.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, revokeAgain.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, clear.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, clearAgain.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, unknownRevoke.StatusCode);
+        Assert.Empty(await _database.AuditEventsOfAsync(unknownId, "AuthorizationDelegation"));
+
+        var revoked = Assert.Single(await _database.AuditEventsOfAsync(delegationId, "AuthorizationDelegation"));
+        Assert.Equal("authorization.delegation.revoked", revoked.EventName);
+        Assert.Equal(managerId, revoked.ActorId);
+        var cleared = Assert.Single(await _database.AuditEventsOfAsync(tighteningId, "BehaviouralTightening"));
+        Assert.Equal("authorization.tightening.cleared", cleared.EventName);
+        Assert.Equal(managerId, cleared.ActorId);
+    }
+
+    [Fact]
+    public async Task ADelegationDecisionWhoseAuditRecordCannotBeWrittenIsNotMade()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true, withGrantPermissions: false);
+        var (managerId, _) = _database.LastSeededManager;
+        await _database.GrantToUserRoleAsync(managerId, "bills.comp");
+        var granteeId = await _database.SeedGranteeAsync();
+        var delegationId = await _database.SeedActiveDelegationAsync();
+        var tighteningId = await _database.SeedOpenTighteningAsync();
+        await using var app = await StartAsync(new RefusingAuditStore());
+        using var client = CreateClient(app);
+
+        using var create = await client.SendAsync(JsonRequest(
+            AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager,
+            new CreateDelegationRequestV1(granteeId, "bills.comp", 200m, DateTimeOffset.UtcNow.AddHours(4))));
+        using var revoke = await client.SendAsync(Request(
+            HttpMethod.Post, AuthorizationDecisionEndpoints.GroupPrefix + $"/delegations/{delegationId:D}/revoke", manager));
+        using var clear = await client.SendAsync(Request(
+            HttpMethod.Post, AuthorizationDecisionEndpoints.GroupPrefix + $"/behavioural-tightenings/{tighteningId:D}/clear", manager));
+
+        Assert.Equal(HttpStatusCode.InternalServerError, create.StatusCode);
+        Assert.Equal(HttpStatusCode.InternalServerError, revoke.StatusCode);
+        Assert.Equal(HttpStatusCode.InternalServerError, clear.StatusCode);
+        var delegations = await GetAsync<List<ActiveDelegationV1>>(
+            client, AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager);
+        Assert.Equal(delegationId, Assert.Single(delegations).DelegationId);
+        var tightenings = await GetAsync<List<OpenTighteningV1>>(
+            client, AuthorizationDecisionEndpoints.GroupPrefix + "/behavioural-tightenings", manager);
+        Assert.Equal(tighteningId, Assert.Single(tightenings).TighteningId);
+    }
+
     /// <summary>An audit store that cannot join the decision's transaction, so writing the record fails.</summary>
     private sealed class RefusingAuditStore : IAuditEventStore
     {
@@ -564,10 +658,10 @@ internal sealed class AuthorizationDecisionTestDatabase
         return cookie;
     }
 
-    public async Task<IReadOnlyList<AuditEvent>> AuditEventsOfAsync(Guid grantId)
+    public async Task<IReadOnlyList<AuditEvent>> AuditEventsOfAsync(Guid grantId, string aggregateType = "AuthorizationGrant")
     {
         await using var source = NpgsqlDataSource.Create(ConnectionString);
-        return await new PostgresAuditEventStore(source).GetByAggregateAsync("AuthorizationGrant", grantId);
+        return await new PostgresAuditEventStore(source).GetByAggregateAsync(aggregateType, grantId);
     }
 
     public Task<Guid> SeedPendingGrantAsync(string permissionCode, decimal amount)

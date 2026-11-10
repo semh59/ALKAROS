@@ -99,26 +99,19 @@ public sealed class AuthorizationDecisionStore
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         var resolved = await _grants.ResolveAsync(
             grantId, status, PolicyPath.Manual, approverUserId, connection, transaction, cancellationToken);
-        await _auditEvents.AppendAsync(
-            new AuditEvent(
-                id: Guid.NewGuid(),
-                eventName: status == GrantStatus.Granted ? "authorization.grant.approved" : "authorization.grant.denied",
-                aggregateType: "AuthorizationGrant",
-                aggregateId: resolved.GrantId,
-                actorType: "User",
-                correlationId: correlationId,
-                actorId: approverUserId,
-                reason: resolved.ReasonCode,
-                afterStateJson: JsonSerializer.Serialize(new
-                {
-                    status = GrantText.Status(resolved.Status),
-                    permissionCode = resolved.PermissionCode,
-                    amount = resolved.Amount,
-                    subjectType = resolved.SubjectType,
-                    subjectId = resolved.SubjectId,
-                    requesterUserId = resolved.RequesterUserId,
-                    policyPath = GrantText.Path(resolved.Path!.Value),
-                })),
+        await AppendAuditAsync(
+            status == GrantStatus.Granted ? "authorization.grant.approved" : "authorization.grant.denied",
+            "AuthorizationGrant", resolved.GrantId, approverUserId, correlationId, resolved.ReasonCode,
+            new
+            {
+                status = GrantText.Status(resolved.Status),
+                permissionCode = resolved.PermissionCode,
+                amount = resolved.Amount,
+                subjectType = resolved.SubjectType,
+                subjectId = resolved.SubjectId,
+                requesterUserId = resolved.RequesterUserId,
+                policyPath = GrantText.Path(resolved.Path!.Value),
+            },
             connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
@@ -162,7 +155,7 @@ public sealed class AuthorizationDecisionStore
         => permissionCode is not null && DelegablePermissions.Contains(permissionCode);
 
     public async Task<ActiveDelegationV1> CreateDelegationAsync(
-        CreateDelegationRequestV1 request, Guid delegatorUserId, CancellationToken cancellationToken)
+        CreateDelegationRequestV1 request, Guid delegatorUserId, string correlationId, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         var now = _nowUtc();
@@ -175,15 +168,22 @@ public sealed class AuthorizationDecisionStore
             request.PermissionCode!, request.GranteeUserId, delegatorUserId, request.LimitAmount, request.ExpiresAt);
         delegationRequest.Validate(now);
 
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         AuthorizationDelegation delegation;
         try
         {
-            delegation = await _delegations.CreateAsync(delegationRequest, now, cancellationToken);
+            delegation = await _delegations.CreateAsync(delegationRequest, now, connection, transaction, cancellationToken);
         }
         catch (Npgsql.PostgresException exception) when (exception.SqlState == Npgsql.PostgresErrorCodes.ForeignKeyViolation)
         {
             throw new DelegationGranteeNotFoundException(request.GranteeUserId);
         }
+
+        await AppendAuditAsync(
+            "authorization.delegation.created", "AuthorizationDelegation", delegation.DelegationId,
+            delegatorUserId, correlationId, null, DelegationState(delegation), connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return new ActiveDelegationV1(
             delegation.DelegationId,
@@ -195,8 +195,21 @@ public sealed class AuthorizationDecisionStore
             delegation.ExpiresAt);
     }
 
-    public Task<bool> RevokeDelegationAsync(Guid delegationId, Guid actorUserId, CancellationToken cancellationToken)
-        => _delegations.RevokeAsync(delegationId, _nowUtc(), actorUserId, cancellationToken);
+    public async Task<bool> RevokeDelegationAsync(
+        Guid delegationId, Guid actorUserId, string correlationId, CancellationToken cancellationToken)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var revoked = await _delegations.RevokeAsync(delegationId, _nowUtc(), actorUserId, connection, transaction, cancellationToken);
+        if (revoked is null)
+            return false;
+
+        await AppendAuditAsync(
+            "authorization.delegation.revoked", "AuthorizationDelegation", delegationId,
+            actorUserId, correlationId, null, DelegationState(revoked), connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return true;
+    }
 
     public async Task<IReadOnlyList<OpenTighteningV1>> ListOpenTighteningsAsync(CancellationToken cancellationToken)
     {
@@ -212,7 +225,8 @@ public sealed class AuthorizationDecisionStore
             .ToArray();
     }
 
-    public async Task ClearTighteningAsync(Guid tighteningId, Guid managerUserId, CancellationToken cancellationToken)
+    public async Task ClearTighteningAsync(
+        Guid tighteningId, Guid managerUserId, string correlationId, CancellationToken cancellationToken)
     {
         // V1-RMD-316 (independent 2026-09-26 audit, finding K9): same self-approval gap as ResolveAsync
         // above, one schema over - the user whose own spiking auto-grant rate opened this tightening must
@@ -225,8 +239,41 @@ public sealed class AuthorizationDecisionStore
         if (target is not null && target.UserId == managerUserId)
             throw new BehaviouralTighteningSelfClearException(tighteningId, managerUserId);
 
-        await _tightenings.ClearAsync(tighteningId, managerUserId, cancellationToken);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var cleared = await _tightenings.ClearAsync(tighteningId, managerUserId, connection, transaction, cancellationToken);
+        await AppendAuditAsync(
+            "authorization.tightening.cleared", "BehaviouralTightening", cleared.TighteningId,
+            managerUserId, correlationId, null,
+            new { userId = cleared.UserId, permissionCode = cleared.PermissionCode, triggeredAt = cleared.TriggeredAt },
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
+
+    private static object DelegationState(AuthorizationDelegation delegation) => new
+    {
+        permissionCode = delegation.PermissionCode,
+        granteeUserId = delegation.GranteeUserId,
+        delegatorUserId = delegation.DelegatorUserId,
+        limitAmount = delegation.LimitAmount,
+        expiresAt = delegation.ExpiresAt,
+    };
+
+    private Task AppendAuditAsync(
+        string eventName, string aggregateType, Guid aggregateId, Guid actorId, string correlationId, string? reason,
+        object afterState, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+        => _auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: eventName,
+                aggregateType: aggregateType,
+                aggregateId: aggregateId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: reason,
+                afterStateJson: JsonSerializer.Serialize(afterState)),
+            connection, transaction, cancellationToken);
 }
 
 /// <summary>The person answering a request does not hold the permission the request asks for.</summary>
