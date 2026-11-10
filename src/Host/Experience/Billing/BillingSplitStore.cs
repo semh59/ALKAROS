@@ -80,6 +80,9 @@ public sealed class BillingSplitStore
         // insert is already visible to the next caller's read.
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var lockTransaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        // The settlement lock first, as every money path takes it: an item refund that is being approved is seen or waited for.
+        await BillMoneyGuard.LockBillAsync(connection, lockTransaction, billId, cancellationToken);
         await using (var lockCommand = new NpgsqlCommand(
             "SELECT bill_id FROM billing.bills WHERE bill_id = @bill_id FOR UPDATE;", connection, lockTransaction))
         {
@@ -137,6 +140,8 @@ public sealed class BillingSplitStore
         var collected = await ReadCollectedAsync(connection, lockTransaction, billId, cancellationToken);
         if (summary.AdjustedPayableAmount < collected)
             throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
+        if (await HasItemRefundAsync(connection, lockTransaction, billId, cancellationToken))
+            throw new BillDiscountAfterRefundException(billId);
 
         // Must use the lock's own connection/transaction: the insert's FK
         // reference to billing.bills otherwise waits on the very lock this
@@ -271,6 +276,26 @@ public sealed class BillingSplitStore
         var collected = await ReadCollectedAsync(connection, null, billId, cancellationToken);
         if (summary.AdjustedPayableAmount < collected)
             throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
+        if (await HasItemRefundAsync(connection, null, billId, cancellationToken))
+            throw new BillDiscountAfterRefundException(billId);
+    }
+
+    /// <summary>
+    /// A bill discount spreads over the lines, which lowers what an already refunded item was worth: that refund would then
+    /// have paid out too much. Refusing the discount keeps every refund at the item's final worth.
+    /// </summary>
+    private static async Task<bool> HasItemRefundAsync(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM payments.refund_requests r
+                WHERE r.bill_id = @bill AND r.status IN ('Requested', 'AwaitingManualRefund', 'Completed')
+                  AND EXISTS (SELECT 1 FROM payments.refund_request_items i WHERE i.refund_request_id = r.refund_request_id));
+            """, connection, transaction);
+        command.Parameters.AddWithValue("bill", billId);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
     private static bool SameDiscount(BillAdjustment stored, ApplyBillDiscountRequestV1 request)
@@ -1087,6 +1112,9 @@ public sealed class SplitItemsOnAdjustedBillException : Exception
 
     public Guid BillId { get; }
 }
+
+public sealed class BillDiscountAfterRefundException(Guid billId)
+    : Exception($"Bill {billId} has an item refund; a bill discount would make that refund overpaid.");
 
 /// <summary>
 /// V1-RMD-410 (V1-RMD-393 F-05): the discount would leave the bill's payable below the amount already collected.

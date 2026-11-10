@@ -1,0 +1,5 @@
+1 locked-transaction item-refund check disabled -> SURVIVES (accepted: the early pre-check catches it in a single-threaded test; the locked check guards the race with an approval in flight)
+2 pre-check disabled -> KILLED (mut2.log)
+3 only Completed refunds counted -> KILLED (mut3.log)
+4 bill filter removed from the refund query -> KILLED (mut4.log)
+Each restored with cp + cmp; every run rebuilt.

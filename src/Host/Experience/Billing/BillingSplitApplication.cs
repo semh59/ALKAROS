@@ -833,6 +833,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         SplitDesignConcurrencyException => (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),
         SplitDesignUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda bölme tasarımı değiştirilemez."),
         BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
+        BillDiscountAfterRefundException => (409, "DISCOUNT_AFTER_REFUND", "Bu hesapta kalem iadesi yapılmış; iadeden sonra indirim ya da ikram uygulanamaz."),
         BillDiscountBelowCollectedException => (409, "DISCOUNT_BELOW_COLLECTED", "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz."),
         AdjustmentUndoBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim ya da bahşiş geri alınamaz."),
         AdjustmentUndoBelowCollectedException => (409, "ADJUSTMENT_UNDO_BELOW_COLLECTED", "Geri alınırsa ödenecek tutar, hesaptan şimdiye kadar alınan tutarın altına iniyor; geri alınamaz."),
