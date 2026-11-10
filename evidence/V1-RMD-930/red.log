@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-touch-targets.test.js (12 tests | 1 failed) 12ms
+     × payments/customer-accounts/customer-accounts.css .ca-back { is at least 48 px high and wide 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-touch-targets.test.js > till pages touch targets > payments/customer-accounts/customer-accounts.css .ca-back { is at least 48 px high and wide
+AssertionError: expected 0 to be greater than 0
+ ❯ cashier-touch-targets.test.js:43:26
+     41|   it.each(targets)("%s %s is at least 48 px high and wide", (file, sel…
+     42|     const sizes = sizesOf(read(file), selector);
+     43|     expect(sizes.length).toBeGreaterThan(0);
+       |                          ^
+     44|     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(MINI…
+     45|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  01:27:51
+   Duration  1.31s (transform 29ms, setup 23ms, import 28ms, tests 12ms, environment 978ms)
+

@@ -10,6 +10,7 @@ const read = (relative) => readFileSync(resolve(wwwroot, relative), "utf8");
 
 // Controls staff press with wet or greasy hands; each entry is the opening of a rule exactly as written in its file.
 const targets = [
+  ["payments/customer-accounts/customer-accounts.css", ".ca-back {"],
   ["payments/cash-session/cash-session.css", ".cs-chip {"],
   ["payments/cash-session/cash-session.css", ".cs-denom-count {"],
   ["payments/cash-session/cash-session.css", ".cs-check input {"],
@@ -41,6 +42,10 @@ describe("till pages touch targets", () => {
     const sizes = sizesOf(read(file), selector);
     expect(sizes.length).toBeGreaterThan(0);
     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(MINIMUM_PX);
+  });
+
+  it("draws the customer account back link as a box, so its minimum height applies to the inline anchor", () => {
+    expect(read("payments/customer-accounts/customer-accounts.css")).toMatch(/\.ca-back \{[^}]*display:\s*inline-flex/);
   });
 
   it("carries no style for the tab buttons the payment page no longer draws", () => {
