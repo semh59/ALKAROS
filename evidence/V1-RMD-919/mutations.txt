@@ -1,0 +1,2 @@
+1 customer category period set back to 10 years -> KILLED (mut1.log)
+Restored with cp + cmp; run rebuilt.

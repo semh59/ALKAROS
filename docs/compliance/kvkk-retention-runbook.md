@@ -55,8 +55,7 @@ policy version 2, migration 225), never with an open balance or a pending anonym
 
 This replaces the single 10-year customer row of the approved `V0-CMP-003` inventory (policy version 1
 keeps its recorded windows as history). The generic disposal table `DisposalMatrix` in the security
-module still lists customer data at 10 years; no customer record is registered with it, so it does not
-act on customers. The dry run reports both classes together as `customers=N`.
+module has no sweep period for customer data (the Privacy classes above own it), so it never acts on customers. The dry run reports both classes together as `customers=N`.
 
 A customer queued as one without an invoice who later receives an invoice is no longer read as pending work
 of the no-invoice class: the queued item stays untouched (work items never change), it is not counted as

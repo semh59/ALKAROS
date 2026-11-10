@@ -1,8 +1,8 @@
 namespace ALKAROS.Security.DataProtectionRetention;
 
 /// <summary>
-/// V0-CMP-003's disposal matrix, transcribed verbatim from
-/// evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md section 1. This
+/// The disposal matrix of the KVKK data inventory (customer data has no period
+/// here: the Privacy retention classes own it). This
 /// matrix sits above <see cref="RetentionExecutionService"/> — the service
 /// only dispatches on it, it never decides disposal policy itself.
 /// </summary>
@@ -32,13 +32,14 @@ public static class DisposalMatrix
     /// (<see cref="RetentionExecutionService"/>) applies. <c>null</c> means
     /// the category's real-world trigger is not creation-time-based
     /// (User credentials: employment end + 1 year; Device data: device
-    /// decommission) — out of this task's scope, disposal for those still
+    /// decommission) or another module owns the window (Customer data) — out of this task's scope, disposal for those still
     /// requires an explicit, separately-triggered call.
     /// </summary>
     public static readonly IReadOnlyDictionary<DataCategory, TimeSpan?> RetentionPeriods =
         new Dictionary<DataCategory, TimeSpan?>
         {
-            [DataCategory.CustomerPii] = TimeSpan.FromDays(365 * 10),
+            // Customer profiles are owned by the Privacy retention classes (2 years without an invoice, 10 years with one); this sweep never acts on them.
+            [DataCategory.CustomerPii] = null,
             [DataCategory.UserCredentials] = null,
             [DataCategory.OrderNotes] = TimeSpan.FromDays(365 * 5),
             [DataCategory.ProviderPayloads] = TimeSpan.FromDays(365 * 7),

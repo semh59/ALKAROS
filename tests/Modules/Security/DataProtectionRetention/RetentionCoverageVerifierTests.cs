@@ -25,6 +25,12 @@ public sealed class RetentionCoverageVerifierTests
     }
 
     [Fact]
+    public void CustomerDataHasNoGenericSweepPeriodBecauseThePrivacyClassesOwnIt()
+    {
+        DisposalMatrix.RetentionPeriodFor(DataCategory.CustomerPii).Should().BeNull();
+    }
+
+    [Fact]
     public void ActionForAnUnmappedCategoryThrows()
     {
         var unmapped = (DataCategory)999;

@@ -24,23 +24,6 @@ public sealed class CustomerProfileTests
             Guid.NewGuid(), "Ayşe", null, null, null, DateTimeOffset.UtcNow, false, rowVersion));
     }
 
-    [Fact]
-    public void RetentionIsNotExpiredBeforeTenYears()
-    {
-        var profile = Sample(createdAt: DateTimeOffset.UtcNow.AddYears(-9));
-
-        Assert.False(profile.IsRetentionExpired(DateTimeOffset.UtcNow));
-    }
-
-    [Fact]
-    public void RetentionExpiresAtExactlyTenYears()
-    {
-        var createdAt = DateTimeOffset.UtcNow.AddYears(-10);
-        var profile = Sample(createdAt: createdAt);
-
-        Assert.True(profile.IsRetentionExpired(createdAt.AddYears(10)));
-    }
-
     [Theory]
     [InlineData(CustomerAccessRole.Cashier)]
     [InlineData(CustomerAccessRole.Manager)]

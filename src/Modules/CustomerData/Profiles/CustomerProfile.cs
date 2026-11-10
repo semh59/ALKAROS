@@ -1,11 +1,11 @@
 namespace ALKAROS.CustomerData.Profiles;
 
 /// <summary>
-/// V14-CST-001. Field set matches V0-CMP-003's own KVKK inventory
-/// (evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md) "Customer
-/// PII" row: name, phone, email, address - retention 10 years, disposal
-/// "Anonymize after retention". V1-RMD-453 adds the buyer's tax identity
-/// (Semih, 2026-09-29: an invoice takes it from the customer record). The
+/// Customer contact data: name, phone, email, address (the KVKK inventory's "Customer
+/// PII" row), disposed by anonymization once its retention window ends (the Privacy
+/// retention classes set the window: 2 years without an invoice, 10 years with one).
+/// The buyer's tax identity is also kept here because an invoice takes it from the
+/// customer record. The
 /// inventory lists the tax ID under its "Invoice data" row (Manager/Finance,
 /// not Cashier), so <see cref="CustomerProfileAccessPolicy"/> masks it for the
 /// cashier; it shares the envelope and the anonymization of the other fields.
@@ -23,9 +23,6 @@ public sealed record CustomerProfile
     public DateTimeOffset CreatedAt { get; }
     public bool Anonymized { get; }
     public int RowVersion { get; }
-
-    /// <summary>V0-CMP-003's own "Customer PII" row: retention 10 years (tax-driven, not KVKK-minimum).</summary>
-    public const int RetentionYears = 10;
 
     public CustomerProfile(
         Guid customerId,
@@ -53,6 +50,4 @@ public sealed record CustomerProfile
         Anonymized = anonymized;
         RowVersion = rowVersion;
     }
-
-    public bool IsRetentionExpired(DateTimeOffset asOf) => asOf >= CreatedAt.AddYears(RetentionYears);
 }
