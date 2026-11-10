@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TransactionLedger;
 using ALKAROS.Host.Experience.Billing;
+using ALKAROS.Settings.BillAdjustmentCap;
 using ALKAROS.Settings.CashCloseTolerance;
 using ALKAROS.Settings.CashMovementApproval;
 using ALKAROS.Settings.KitchenDenseModeThreshold;
@@ -32,7 +33,7 @@ public sealed class ClientLimitLockTests
             new[]
             {
                 WaiterMaxActiveTablesSetting.Key, KitchenDenseModeThresholdSetting.Key, QrOrderExpirySetting.Key,
-                CashOutApprovalThresholdSetting.Key, CloseVarianceToleranceSetting.Key,
+                CashOutApprovalThresholdSetting.Key, CloseVarianceToleranceSetting.Key, BillAdjustmentTotalCapSetting.Key,
             }.Order(),
             rules.Select(rule => rule.Groups["key"].Value).Order());
         var data = new TheoryData<string, string, long, long>();

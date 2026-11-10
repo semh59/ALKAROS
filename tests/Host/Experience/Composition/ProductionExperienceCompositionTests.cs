@@ -384,7 +384,8 @@ public sealed class ProductionExperienceCompositionTests
 
             foreach (var descriptor in moduleServices.Where(d => d.ImplementationInstance is null))
             {
-                if (multiRegistered.Contains(descriptor.ServiceType))
+                // The Host adds a second gate next to the module's one; both must resolve. Any other service stays one-to-one.
+                if (multiRegistered.Contains(descriptor.ServiceType) || descriptor.ServiceType == typeof(IPrePolicyGate))
                 {
                     var all = scope.ServiceProvider.GetServices(descriptor.ServiceType);
                     // V1-RMD-396: a factory registration (e.g. V12-TGO-003's Trendyol consumer) carries

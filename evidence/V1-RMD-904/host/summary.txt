@@ -1,0 +1,60 @@
+0 1 ALKAROS.Host.Errors.Tests Başarılı!  - Başarısız:     0, Başarılı:   230, Atlanan:     0, Toplam:   230, Süre: 371 ms
+0 2 ALKAROS.Host.Experience.Authorization.Tests Başarılı!  - Başarısız:     0, Başarılı:    11, Atlanan:     0, Toplam:    11, Süre: 36 s
+0 3 ALKAROS.Host.Experience.Billing.Tests Başarılı!  - Başarısız:     0, Başarılı:   314, Atlanan:     0, Toplam:   314, Süre: 14 m 55 s
+1 4 ALKAROS.Host.Experience.CashSession.Tests Başarısız! - Başarısız:     1, Başarılı:   103, Atlanan:     0, Toplam:   104, Süre: 12 m 10 s
+0 5 ALKAROS.Host.Experience.Catalog.Tests Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 4 s
+1 6 ALKAROS.Host.Experience.Composition.Tests Başarısız! - Başarısız:     1, Başarılı:    21, Atlanan:     0, Toplam:    22, Süre: 2 m 10 s
+0 7 ALKAROS.Host.Experience.CustomerAccounts.Tests Başarılı!  - Başarısız:     0, Başarılı:    37, Atlanan:     0, Toplam:    37, Süre: 3 m 56 s
+0 8 ALKAROS.Host.Experience.HelpRequests.Tests Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 6 s
+0 9 ALKAROS.Host.Experience.Inventory.Tests Başarılı!  - Başarısız:     0, Başarılı:    20, Atlanan:     0, Toplam:    20, Süre: 55 s
+0 10 ALKAROS.Host.Experience.InventoryReporting.Tests Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 17 s
+0 11 ALKAROS.Host.Experience.KitchenOperations.Tests Başarılı!  - Başarısız:     0, Başarılı:    73, Atlanan:     0, Toplam:    73, Süre: 3 m 22 s
+0 12 ALKAROS.Host.Experience.Menu.Tests Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 18 s
+1 13 ALKAROS.Host.Experience.NfcOrdering.Tests Başarısız! - Başarısız:     1, Başarılı:    28, Atlanan:     0, Toplam:    29, Süre: 12 s
+0 14 ALKAROS.Host.Experience.Observability.Tests Başarılı!  - Başarısız:     0, Başarılı:    18, Atlanan:     0, Toplam:    18, Süre: 52 s
+0 15 ALKAROS.Host.Experience.OfflineReconciliation.Tests Başarılı!  - Başarısız:     0, Başarılı:    13, Atlanan:     0, Toplam:    13, Süre: 42 s
+0 16 ALKAROS.Host.Experience.OnlineOrdering.Tests Başarılı!  - Başarısız:     0, Başarılı:   202, Atlanan:     0, Toplam:   202, Süre: 1 m 52 s
+0 17 ALKAROS.Host.Experience.Orders.Comp.Tests Başarılı!  - Başarısız:     0, Başarılı:    34, Atlanan:     0, Toplam:    34, Süre: 20 s
+0 18 ALKAROS.Host.Experience.Orders.Confirmation.Tests Başarılı!  - Başarısız:     0, Başarılı:    39, Atlanan:     0, Toplam:    39, Süre: 23 s
+0 19 ALKAROS.Host.Experience.Orders.TableDraft.Tests Başarılı!  - Başarısız:     0, Başarılı:   127, Atlanan:     0, Toplam:   127, Süre: 1 m 30 s
+0 20 ALKAROS.Host.Experience.Orders.Void.Tests Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 3 s
+0 21 ALKAROS.Host.Experience.Orders.VoidSent.Tests Başarılı!  - Başarısız:     0, Başarılı:    35, Atlanan:     0, Toplam:    35, Süre: 23 s
+0 22 ALKAROS.Host.Experience.PaymentTender.Tests Başarılı!  - Başarısız:     0, Başarılı:   115, Atlanan:     0, Toplam:   115, Süre: 11 m 59 s
+0 23 ALKAROS.Host.Experience.PendingOrderNotifications.Tests Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 3 s
+0 24 ALKAROS.Host.Experience.Production.Tests Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 10 s
+0 25 ALKAROS.Host.Experience.Purchasing.Tests Başarılı!  - Başarısız:     0, Başarılı:     3, Atlanan:     0, Toplam:     3, Süre: 7 s
+0 26 ALKAROS.Host.Experience.QnbCredentialSettings.Tests Başarılı!  - Başarısız:     0, Başarılı:    17, Atlanan:     0, Toplam:    17, Süre: 4 s
+1 27 ALKAROS.Host.Experience.QrOrdering.Tests Başarısız! - Başarısız:     2, Başarılı:    33, Atlanan:     0, Toplam:    35, Süre: 12 s
+0 28 ALKAROS.Host.Experience.Recipes.Tests Başarılı!  - Başarısız:     0, Başarılı:    19, Atlanan:     0, Toplam:    19, Süre: 51 s
+0 29 ALKAROS.Host.Experience.Reconciliation.Tests Başarılı!  - Başarısız:     0, Başarılı:    36, Atlanan:     0, Toplam:    36, Süre: 1 m 41 s
+0 30 ALKAROS.Host.Experience.RelaySettings.Tests Başarılı!  - Başarısız:     0, Başarılı:    19, Atlanan:     0, Toplam:    19, Süre: 7 s
+0 31 ALKAROS.Host.Experience.Reporting.Tests Başarılı!  - Başarısız:     0, Başarılı:    31, Atlanan:     0, Toplam:    31, Süre: 1 m 28 s
+0 32 ALKAROS.Host.Experience.Roles.Tests Başarılı!  - Başarısız:     0, Başarılı:    28, Atlanan:     0, Toplam:    28, Süre: 1 m 23 s
+0 33 ALKAROS.Host.Experience.SecurityAdministration.Tests Başarılı!  - Başarısız:     0, Başarılı:    44, Atlanan:     0, Toplam:    44, Süre: 2 m 1 s
+0 34 ALKAROS.Host.Experience.Settings.Tests Başarılı!  - Başarısız:     0, Başarılı:    79, Atlanan:     0, Toplam:    79, Süre: 3 m 44 s
+0 35 ALKAROS.Host.Experience.Tables.Tests Başarılı!  - Başarısız:     0, Başarılı:    40, Atlanan:     0, Toplam:    40, Süre: 1 m 56 s
+0 36 ALKAROS.Host.Experience.TokenTerminalSettings.Tests Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 2 s
+0 37 ALKAROS.Host.Experience.WaiterNotifications.Tests Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 1 s
+0 38 ALKAROS.Host.Experience.WebPush.Tests Başarılı!  - Başarısız:     0, Başarılı:    95, Atlanan:     0, Toplam:    95, Süre: 10 s
+0 39 ALKAROS.Host.Tests Başarılı!  - Başarısız:     0, Başarılı:   414, Atlanan:     0, Toplam:   414, Süre: 50 m 31 s
+0 40 ALKAROS.Host.Observability.AnalysisRunner.Tests Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 4 s
+0 41 ALKAROS.Host.Observability.BrowserErrors.Tests Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 1 s
+0 42 ALKAROS.Host.Observability.CrashChannel.Tests Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 449 ms
+0 43 ALKAROS.Host.Observability.DomainDetectors.Tests Başarılı!  - Başarısız:     0, Başarılı:    14, Atlanan:     0, Toplam:    14, Süre: 1 s
+0 44 ALKAROS.Host.Observability.ErrorEventEndpoints.Tests Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 2 s
+0 45 ALKAROS.Host.Observability.HealthSnapshot.Tests Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 2 s
+0 46 ALKAROS.Host.Observability.InsightRunner.Tests Başarılı!  - Başarısız:     0, Başarılı:     2, Atlanan:     0, Toplam:     2, Süre: 4 s
+0 47 ALKAROS.Host.Observability.InteractionTelemetry.Tests Başarılı!  - Başarısız:     0, Başarılı:    17, Atlanan:     0, Toplam:    17, Süre: 1 s
+0 48 ALKAROS.Host.Observability.JourneyEndpoints.Tests Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 1 s
+0 49 ALKAROS.Host.Observability.MonitoringSwitch.Tests Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 56 s
+0 50 ALKAROS.Host.Observability.NotificationWiring.Tests Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 611 ms
+0 51 ALKAROS.Host.Observability.OfflineQueueReport.Tests Başarılı!  - Başarısız:     0, Başarılı:    28, Atlanan:     0, Toplam:    28, Süre: 4 s
+0 52 ALKAROS.Host.Observability.OutageWatchdog.Tests Başarılı!  - Başarısız:     0, Başarılı:    19, Atlanan:     0, Toplam:    19, Süre: 455 ms
+0 53 ALKAROS.Host.Observability.ResourceProbes.Tests Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 797 ms
+0 54 ALKAROS.Host.Observability.SecurityDetectors.Tests Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 668 ms
+0 55 ALKAROS.Host.Observability.ServerDetectors.Tests Başarılı!  - Başarısız:     0, Başarılı:    11, Atlanan:     0, Toplam:    11, Süre: 1 s
+0 56 ALKAROS.Host.Observability.ServerDetectorsDeep.Tests Başarılı!  - Başarısız:     0, Başarılı:    11, Atlanan:     0, Toplam:    11, Süre: 4 s
+0 57 ALKAROS.Host.Observability.ServerEndToEnd.Tests Başarılı!  - Başarısız:     0, Başarılı:     2, Atlanan:     0, Toplam:     2, Süre: 1 s
+0 58 ALKAROS.Host.Observability.SyntheticProbes.Tests Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 2 s
+0 59 ALKAROS.Host.Observability.TraceCorrelation.Tests Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 1 s
+0 60 ALKAROS.Host.Observability.Wiring.Tests Başarılı!  - Başarısız:     0, Başarılı:     2, Atlanan:     0, Toplam:     2, Süre: 1 s
