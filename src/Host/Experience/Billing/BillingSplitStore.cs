@@ -61,6 +61,7 @@ public sealed class BillingSplitStore
         Guid? approverId = null,
         Guid? grantId = null,
         bool complimentary = false,
+        decimal? totalCap = null,
         CancellationToken cancellationToken = default)
     {
         if (_adjustments == null)
@@ -161,6 +162,8 @@ public sealed class BillingSplitStore
                     discountValue = request.Value,
                     approverUserId = approverId,
                     grantId,
+                    // A grant above the cap is not stopped here, only marked, so the record shows the manager went past it.
+                    totalCapExceeded = summary.TotalDiscounts > totalCap,
                 })),
             connection, lockTransaction, cancellationToken);
         await lockTransaction.CommitAsync(cancellationToken);

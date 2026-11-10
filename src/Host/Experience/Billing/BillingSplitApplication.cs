@@ -90,6 +90,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IPrePolicyGate, BehaviouralTighteningGate>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IPrePolicyGate, BillAdjustmentTotalGate>());
         services.TryAddSingleton<IBillAdjustmentTotalCap, SettingsBillAdjustmentTotalCap>();
+        services.TryAddSingleton<IBillAdjustmentTotals, BillAppliedAdjustmentTotals>();
         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
         // V1-SET-004: ApplyTipAsync checks GarsonFeature.VoluntaryTip — same
         // DbDataSource/ISettingValidator gap every other settings-backed
@@ -128,10 +129,14 @@ public static class BillingSplitApplication
         OrderSettlementService orderSettlement,
         IHubContext<CustomerDisplayHub> customerDisplayHub,
         ILoggerFactory loggerFactory,
+        NpgsqlDataSource dataSource,
+        IBillAdjustmentTotalCap totalCap,
         HttpContext context,
         CancellationToken cancellationToken)
     {
         var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+
+        await using var adjustmentLock = await BillAdjustmentLock.AcquireAsync(dataSource, billId, cancellationToken);
 
         await store.EnsureDiscountRequestableAsync(billId, request, principal.UserId, complimentary, cancellationToken);
 
@@ -188,7 +193,8 @@ public static class BillingSplitApplication
 
         var (adjustment, summary) = await store.ApplyDiscountAsync(
             billId, request, principal.UserId, auditEvents, context.TraceIdentifier, approverId, grantId,
-            complimentary, cancellationToken);
+            complimentary, await totalCap.GetAsync(cancellationToken), cancellationToken);
+        await adjustmentLock.DisposeAsync();
         // A discount that takes the payable to zero leaves nothing to collect, so no tender will ever close the bill.
         if (summary.AdjustedPayableAmount <= 0m)
             await DualScreenApplication.TryCloseBillAsync(
@@ -338,11 +344,14 @@ public static class BillingSplitApplication
             OrderSettlementService orderSettlement,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
             ILoggerFactory loggerFactory,
+            NpgsqlDataSource dataSource,
+            IBillAdjustmentTotalCap totalCap,
             HttpContext context,
             CancellationToken cancellationToken) =>
             await ApplyDiscountOrCompAsync(
                 ApplicationPermissions.BillsDiscount, false, terminalId, billId, request, authorizer, store, roles, grants,
-                auditEvents, billClosure, orderSettlement, customerDisplayHub, loggerFactory, context, cancellationToken));
+                auditEvents, billClosure, orderSettlement, customerDisplayHub, loggerFactory, dataSource, totalCap, context,
+                cancellationToken));
 
         // Kasada ikram: same grant engine as the discount, but under bills.comp - a cashier holds it only within the
         // limit a manager set for that role, anything above waits for a manager decision.
@@ -359,13 +368,15 @@ public static class BillingSplitApplication
             OrderSettlementService orderSettlement,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
             ILoggerFactory loggerFactory,
+            NpgsqlDataSource dataSource,
+            IBillAdjustmentTotalCap totalCap,
             HttpContext context,
             CancellationToken cancellationToken) =>
             await ApplyDiscountOrCompAsync(
                 ApplicationPermissions.BillsComp, true, terminalId, billId,
                 new ApplyBillDiscountRequestV1(request.IdempotencyKey, "FixedAmount", request.Amount, request.ReasonCode, request.Notes),
                 authorizer, store, roles, grants, auditEvents, billClosure, orderSettlement, customerDisplayHub,
-                loggerFactory, context, cancellationToken));
+                loggerFactory, dataSource, totalCap, context, cancellationToken));
 
         // V1-WTR-020: records a voluntary tip. bills.split is checked
         // directly (RequireMutationAsync, no grant-request dance) - unlike

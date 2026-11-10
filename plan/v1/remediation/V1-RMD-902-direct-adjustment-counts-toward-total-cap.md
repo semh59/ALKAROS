@@ -1,7 +1,7 @@
 # V1-RMD-902 - Yönetici/supervisor doğrudan ikram ve indirimi hesap toplam sınırına sayılsın, aşarsa "yönetici sınırı aştı" işareti
 
 - Task ID: V1-RMD-902
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
@@ -13,12 +13,12 @@
 ## Owned surface
 
 - `evidence/V1-RMD-902/**`
+- `src/Host/Experience/Billing/BillAppliedAdjustmentTotals.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Identity/Authorization/Grants/BillAdjustmentTotalGate.cs
   - src/Modules/Identity/Authorization/Grants/IBillAdjustmentTotals.cs — yeni arayüz
   - src/Modules/Identity/Authorization/Grants/IAuthorizationGrantRepository.cs
   - src/Modules/Identity/Authorization/Grants/PostgresAuthorizationGrantRepository.cs
-  - src/Host/Experience/Billing/BillAppliedAdjustmentTotals.cs — yeni
   - src/Host/Experience/Billing/BillingSplitApplication.cs
   - src/Host/Experience/Billing/BillingSplitStore.cs
   - tests/Modules/Identity/Authorization/Grants/BillAdjustmentTotalGateTests.cs

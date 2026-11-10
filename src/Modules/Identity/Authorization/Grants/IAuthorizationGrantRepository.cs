@@ -42,15 +42,6 @@ public interface IAuthorizationGrantRepository
         DateTimeOffset since,
         CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// Total <c>amount</c> already granted for the given permissions on one bill (by any path, requester or approver);
-    /// 0 when nothing was granted. Feeds the per-bill total cap.
-    /// </summary>
-    Task<decimal> SumGrantedForSubjectAsync(
-        Guid subjectId,
-        IReadOnlyCollection<string> permissionCodes,
-        CancellationToken cancellationToken = default);
-
     /// <summary>Every pending grant, oldest first. Consumed by the manager surface.</summary>
     Task<IReadOnlyList<AuthorizationGrant>> ListPendingAsync(CancellationToken cancellationToken = default);
 
