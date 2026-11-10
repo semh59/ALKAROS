@@ -15,12 +15,14 @@ V1-RMD-896/910 açığı (koordinatör kararı: ertelenmez). Günlük bakiye kay
 - `evidence/V1-RMD-913/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - docs/compliance/kvkk-retention-runbook.md
+  - evidence/V1-RMD-908/RESULT.md
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
 1. Eksik bölümün önce yokluğunu gösteren kanıt, sonra eklenen bölüm ve koddaki sabitlerle karşılaştırma
-2. İki bağımsız qa incelemesi
+2. V1-RMD-908 RESULT notuna fiş sıfırlama sınırının (2) ürün kararı değil varsayım olduğu yazılır (koordinatör talimatı; sınır sabit kalır, yönetici ayarı yapılmaz)
+3. İki bağımsız qa incelemesi
 
 ## Out of scope
 
