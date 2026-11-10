@@ -46,7 +46,7 @@ public sealed class PostgresAnonymizationWorkflow(
         if (!alreadyDone)
         {
             if (plan.BlockSql is not null && await ScalarAsync<bool>(plan, plan.BlockSql, subject, cancellationToken))
-                return await StopAsync(jobId, "Blocked", "Blocked", null, "open balance", actor, JobOutcome.Blocked, cancellationToken);
+                return await StopAsync(jobId, "Blocked", "Blocked", null, "open balance or invoice", actor, JobOutcome.Blocked, cancellationToken);
 
             var done = await DoneStepsAsync(jobId, cancellationToken);
             foreach (var step in plan.Steps.Where(step => !done.Contains(step.Key)))
@@ -55,7 +55,7 @@ public sealed class PostgresAnonymizationWorkflow(
                 {
                     var changed = await ApplyStepAsync(jobId, dataClass, plan, step, subject, actor, cancellationToken);
                     if (changed is null)
-                        return await StopAsync(jobId, "Blocked", "Blocked", null, "open balance", actor, JobOutcome.Blocked, cancellationToken);
+                        return await StopAsync(jobId, "Blocked", "Blocked", null, "open balance or invoice", actor, JobOutcome.Blocked, cancellationToken);
                     fieldsByStore[step.Key] = fieldsByStore.GetValueOrDefault(step.Key) + changed.Value;
                 }
                 catch (RetentionSubjectHeldException)

@@ -1,0 +1,4 @@
+1 StillInClass always TRUE (queued item of the no-invoice class stays pending work) -> KILLED (mut1.log)
+2 plan block check without the invoice clause (invoice landing between read and anonymization) -> KILLED (mut2.log)
+Each restored with cp + cmp; every run rebuilt.
+3 StillInClass filter applied to every class except staff (invoiced class items never worked) -> KILLED (mut3.log)

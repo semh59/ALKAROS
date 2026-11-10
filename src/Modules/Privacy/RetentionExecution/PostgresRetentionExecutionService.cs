@@ -170,10 +170,11 @@ public sealed class PostgresRetentionExecutionService(NpgsqlDataSource dataSourc
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(limit);
         await using var command = dataSource.CreateCommand(
-            """
+            $"""
             SELECT w.subject_id, w.due_since, w.policy_version
             FROM privacy.retention_work_items w
             WHERE w.data_class = @class AND w.status = 'Pending'
+              AND {RetentionSelection.StillInClass(dataClass, "w.subject_id")}
               AND NOT EXISTS (SELECT 1 FROM privacy.legal_holds h
                               WHERE h.data_class = w.data_class AND h.subject_id = w.subject_id AND h.released_at IS NULL)
             ORDER BY w.due_since, w.subject_id

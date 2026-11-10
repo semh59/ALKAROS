@@ -1,7 +1,7 @@
 # V1-RMD-918 - Faturasız kuyruğa alınıp sonradan fatura alan müşterinin eski bekleyen kaydı yeniden değerlendirilir
 
 - Task ID: V1-RMD-918
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
@@ -16,6 +16,7 @@ V1-RMD-916 sonrası: faturasız (`CustomerProfile`) kuyruğa alınmış bir mü�
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs
   - src/Modules/Privacy/RetentionExecution/RetentionSelection.cs
+  - src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs
   - tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs
   - tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs
   - docs/compliance/kvkk-retention-runbook.md

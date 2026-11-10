@@ -46,10 +46,13 @@ internal static class RetentionSelection
                         COALESCE((SELECT max(i.created_at) FROM invoicing.invoices i WHERE i.customer_id = p.customer_id), p.created_at)) AS basis_at
         FROM customer_data.profiles p
         WHERE NOT p.anonymized
-          AND {(invoiced ? "" : "NOT ")}EXISTS (SELECT 1 FROM invoicing.invoices v WHERE v.customer_id = p.customer_id)
+          AND {(invoiced ? "" : "NOT ")}{HasInvoice("p.customer_id")}
           AND COALESCE((SELECT b.current_balance FROM customer_account.balances b WHERE b.customer_id = p.customer_id), 0) = 0
           AND NOT EXISTS (SELECT 1 FROM customer_data.anonymization_requests r WHERE r.customer_id = p.customer_id AND r.status = 'Pending')
         """;
+
+    private static string HasInvoice(string customerId) =>
+        $"EXISTS (SELECT 1 FROM invoicing.invoices v WHERE v.customer_id = {customerId})";
 
     private const string Supplier =
         """
@@ -73,6 +76,14 @@ internal static class RetentionSelection
         RetentionClass.Supplier => Supplier,
         _ => throw new ArgumentOutOfRangeException(nameof(dataClass), dataClass, "Unknown retention class."),
     };
+
+    /// <summary>
+    /// A queued item is read again before it is worked. A queued profile that has since been tied to an invoice no longer
+    /// belongs to the no-invoice class: it is left untouched (work items never change) and the invoiced class picks the
+    /// customer up when its own window elapses. Balance and pending-request exclusions stay with the plan's block check.
+    /// </summary>
+    public static string StillInClass(RetentionClass dataClass, string subjectId) =>
+        dataClass == RetentionClass.CustomerProfile ? $"NOT {HasInvoice(subjectId)}" : "TRUE";
 
     /// <summary>Wraps a class query with the exclusions every class shares: window elapsed, no hold, no work item yet.</summary>
     public static string Due(RetentionClass dataClass) =>

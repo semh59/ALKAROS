@@ -292,7 +292,7 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AProfileQueuedWithoutAnInvoiceWaitsWhenAnInvoiceAppearsBeforeTheApply()
+    public async Task AProfileQueuedWithoutAnInvoiceIsLeftAloneAndNotCountedBlockedWhenAnInvoiceAppearsBeforeTheApply()
     {
         var customerId = Guid.NewGuid();
         await ExecuteAsync(
@@ -314,6 +314,45 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
                     now()::date, 'Draft', '\x00'::bytea, 100, 0, 100, now(), gen_random_uuid());
             """,
             ("c", customerId));
+
+        var result = Apply();
+
+        Assert.Contains("blocked=0 failed=0", result, StringComparison.Ordinal);
+        Assert.False(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", customerId)));
+        Assert.Equal(
+            "Pending",
+            await ScalarAsync<string>("SELECT status FROM privacy.retention_work_items WHERE subject_id = @c;", ("c", customerId)));
+    }
+
+    [Fact]
+    public async Task AProfileThatGetsAnInvoiceAfterItWasReadAsPendingIsStillNotAnonymized()
+    {
+        var customerId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO customer_data.profiles (customer_id, envelope_bytes, created_at) VALUES (@c, '\x00'::bytea, now() - interval '5 years');
+            INSERT INTO customer_account.account_transactions (id, customer_id, transaction_type, amount, source_reference_type, source_reference_id, occurred_at)
+            VALUES (gen_random_uuid(), @c, 'Charge', 10, 'Test', gen_random_uuid(), now() - interval '2 years 3 months');
+            """,
+            ("c", customerId));
+        await new PostgresRetentionExecutionService(_dataSource!).ExecuteAsync(DateTimeOffset.UtcNow, "queued");
+        // The invoice lands between the pending read and the anonymization: the job row is the first thing the workflow writes.
+        await ExecuteAsync(
+            """
+            CREATE FUNCTION public.late_invoice() RETURNS trigger LANGUAGE plpgsql AS $f$
+            BEGIN
+                SET LOCAL session_replication_role = replica;
+                INSERT INTO invoicing.invoices
+                    (invoice_id, source_set_id, period_id, customer_id, profile, ubl_profile_id, invoice_type_code, currency_code,
+                     issue_date, status, buyer_envelope, line_extension_amount, tax_total, payable_amount, created_at, created_by)
+                VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), NEW.subject_id, 'EFatura', 'TEMELFATURA', 'SATIS', 'TRY',
+                        now()::date, 'Draft', '\x00'::bytea, 100, 0, 100, now(), gen_random_uuid());
+                SET LOCAL session_replication_role = origin;
+                RETURN NEW;
+            END $f$;
+            CREATE TRIGGER late_invoice AFTER INSERT ON privacy.anonymization_jobs FOR EACH ROW EXECUTE FUNCTION public.late_invoice();
+            """);
 
         var result = Apply();
 

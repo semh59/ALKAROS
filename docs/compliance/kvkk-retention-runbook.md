@@ -58,6 +58,11 @@ keeps its recorded windows as history). The generic disposal table `DisposalMatr
 module still lists customer data at 10 years; no customer record is registered with it, so it does not
 act on customers. The dry run reports both classes together as `customers=N`.
 
+A customer queued as one without an invoice who later receives an invoice is no longer read as pending work
+of the no-invoice class: the queued item stays untouched (work items never change), it is not counted as
+`blocked`, and the customer is queued again under `InvoicedCustomerProfile` when its 10-year window elapses.
+The anonymization step still re-checks for an invoice, so an invoice that lands during a run also stops it.
+
 | Class | Store | Action |
 | --- | --- | --- |
 | Customer | `customer_data.profiles` | the encrypted contact envelope is replaced by a value no key can open; `anonymized = true`. The row and id stay. |

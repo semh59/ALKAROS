@@ -1,0 +1,4 @@
+# V1-RMD-918 reviews
+
+Review 1 (qa-backend): no high findings. Low: no direct test for the class comparison -> mutant 3 added (killed). Balance-blocked items still count blocked (existing test), other classes untouched, no injection surface (constant argument), sole caller is the anonymization workflow.
+Review 2 (qa-guvenlik-yetki): no path found for an invoiced customer to be anonymized early. Finding on the working tree being mutated was the in-flight mutation run (restored, cmp clean before commit). Fixed: the block reason now reads "open balance or invoice" instead of "open balance". Accepted and reported: a stale item stays Pending and uncounted by design (work items never change); a step-2 failure combined with a later invoice is an unlikely edge (profile is already scrubbed by then); the check-to-commit race window of the plan guard is narrow and runs under the account lock for balances.
