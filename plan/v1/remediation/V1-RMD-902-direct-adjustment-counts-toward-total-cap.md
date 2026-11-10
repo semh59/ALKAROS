@@ -23,11 +23,12 @@
   - src/Host/Experience/Billing/BillingSplitStore.cs
   - tests/Modules/Identity/Authorization/Grants/BillAdjustmentTotalGateTests.cs
   - tests/Host/Experience/Billing/BillAdjustmentTotalCapHttpTests.cs
+  - tests/Host/Experience/Billing/BillingSplitHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
-1. Uygulanmış toplamın kaynağı ve kapıya bağlanması; hibe toplama sorgusunun kaldırılması
+1. Uygulanmış toplamın kaynağı ve kapıya bağlanması; hibe toplama sorgusunun kaldırılması; aynı hesaptaki ikram/indirim isteklerinin kapıdan uygulamaya kadar tek kilitle sıralanması (toplam artık uygulanmış düzeltmelerden okunduğu için)
 2. Doğrudan yol: sayılır, aşınca işaret düşer, engellenmez; hibe yolu davranışı değişmez
 3. Gerçek Postgres testleri, mutasyon, iki bağımsız qa incelemesi
 
