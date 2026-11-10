@@ -1,0 +1,7 @@
+1 selection: invoice predicate inverted (plain class takes invoiced customers) -> KILLED (mut1.log)
+2 selection: invoice predicate always true -> KILLED (mut2.log)
+3 migration: new policy gives the no-invoice class 10 years -> KILLED (mut3.log)
+4 invoiced class given the no-invoice class guard (invoiced customers never anonymized) -> KILLED (mut4.log)
+5 migration: anonymization_jobs class check not widened -> KILLED (mut5.log)
+6 no-invoice class guard without the invoice check (queued, then invoiced, anonymized early) -> KILLED (mut6.log)
+Each restored with cp + cmp; every run rebuilt.

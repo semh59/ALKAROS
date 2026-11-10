@@ -1,0 +1,39 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Privacy.RetentionExecution.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:32.55]     ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ALegalHoldOnAnInvoicedCustomerKeepsItOutOfThePlan [FAIL]
+  Başarısız ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ALegalHoldOnAnInvoicedCustomerKeepsItOutOfThePlan [37 ms]
+  Hata İletisi:
+   Assert.Empty() Failure: Collection was not empty
+Collection: [RetentionCandidate { DataClass = CustomerProfile, SubjectId = 58a6ca9a-c8ca-41a6-9a7e-59c801b4276d, DueSince = 1.04.2022 00:00:00 +00:00 }]
+  Yığın İzleme:
+     at ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ALegalHoldOnAnInvoicedCustomerKeepsItOutOfThePlan() in D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\RetentionExecutionTests.cs:line 111
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:35.38]     ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ACustomerIsNotDueWhileItHasABalanceARecentInvoiceOrAPendingAnonymization [FAIL]
+  Başarısız ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ACustomerIsNotDueWhileItHasABalanceARecentInvoiceOrAPendingAnonymization [65 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: HashSets differ
+Expected: [Tuple (CustomerProfile, 2cadf9b3-dd58-4bba-a6a9-5a67ef36c94e), Tuple (CustomerProfile, d7083be1-f895-4c27-b84d-58e1a1d96cb0)]
+Actual:   [Tuple (CustomerProfile, 2b5905f6-2cf7-4a49-940a-ad405f704f3d), Tuple (CustomerProfile, 2cadf9b3-dd58-4bba-a6a9-5a67ef36c94e), Tuple (CustomerProfile, 62288eb5-90b0-4091-beeb-a6699bc9b954), Tuple (CustomerProfile, 7455edea-70d9-42d5-a4b9-bbda17b822b6), Tuple (CustomerProfile, d7083be1-f895-4c27-b84d-58e1a1d96cb0), ···]
+  Yığın İzleme:
+     at ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ACustomerIsNotDueWhileItHasABalanceARecentInvoiceOrAPendingAnonymization() in D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\RetentionExecutionTests.cs:line 128
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:41.20]     ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AProfileWithoutAnInvoiceIsDueTwoYearsAfterTheLastMovementAndOneTiedToAnInvoiceTenYearsAfterItsLastActivity [FAIL]
+  Başarısız ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AProfileWithoutAnInvoiceIsDueTwoYearsAfterTheLastMovementAndOneTiedToAnInvoiceTenYearsAfterItsLastActivity [44 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: HashSets differ
+Expected: [Tuple (CustomerProfile, 0e45ff9e-2de1-4de9-8c70-dae9a3a22aae), Tuple (InvoicedCustomerProfile, 6b376dd1-6efb-4ae2-927a-363b63292f5a)]
+Actual:   [Tuple (CustomerProfile, 6b376dd1-6efb-4ae2-927a-363b63292f5a), Tuple (CustomerProfile, 0e45ff9e-2de1-4de9-8c70-dae9a3a22aae), Tuple (CustomerProfile, ac288b4e-a29b-4724-88dd-c9c26ba0d0a2), Tuple (InvoicedCustomerProfile, 6b376dd1-6efb-4ae2-927a-363b63292f5a)]
+  Yığın İzleme:
+     at ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AProfileWithoutAnInvoiceIsDueTwoYearsAfterTheLastMovementAndOneTiedToAnInvoiceTenYearsAfterItsLastActivity() in D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\RetentionExecutionTests.cs:line 84
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     3, Başarılı:    12, Atlanan:     0, Toplam:    15, Süre: 40 s - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)
+testexit=1

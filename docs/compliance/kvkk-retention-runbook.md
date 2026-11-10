@@ -43,10 +43,20 @@ Changing a customer's tax identity writes an audit event `customer.tax_identity_
 
 ### Customers and suppliers
 
-Customer profiles (10 years after the last ledger movement or invoice; never with an open
-balance or a pending anonymization request) and suppliers (10 years after the last purchase
-order) past their window are written as pending work items in `privacy.retention_work_items`
-and then anonymized by the same `--apply` run:
+Customer profiles and suppliers (10 years after the last purchase order) past their window are
+written as pending work items in `privacy.retention_work_items` and then anonymized by the same
+`--apply` run. A customer profile has one of two windows (Product Owner decision, 2026-11-10;
+policy version 2, migration 225), never with an open balance or a pending anonymization request:
+
+| Class | Which customers | Window |
+| --- | --- | --- |
+| `CustomerProfile` | no invoice at all | 2 years after the last ledger movement |
+| `InvoicedCustomerProfile` | at least one invoice | 10 years after the last ledger movement or invoice |
+
+This replaces the single 10-year customer row of the approved `V0-CMP-003` inventory (policy version 1
+keeps its recorded windows as history). The generic disposal table `DisposalMatrix` in the security
+module still lists customer data at 10 years; no customer record is registered with it, so it does not
+act on customers. The dry run reports both classes together as `customers=N`.
 
 | Class | Store | Action |
 | --- | --- | --- |
@@ -69,7 +79,7 @@ This class is not handled by the `housekeeping` verb and is not one of the 5-10 
 
 The result line reports how many records were written and deleted. The account ledger (`customer_account.account_transactions`), the current balance (`customer_account.balances`) and invoice records are never touched. The job writes only the last 100 days, so a deleted record is never written back.
 
-The 730 days are counted on the business-day calendar of the job, so the boundary can differ by a few hours from a plain calendar day. This section does not shorten the legal retention of the ledger and invoice records (see above); it also does not change the customer profile window above (10 years after the last ledger movement), which is a separate class.
+The 730 days are counted on the business-day calendar of the job, so the boundary can differ by a few hours from a plain calendar day. This section does not shorten the legal retention of the ledger and invoice records (see above); it also does not change the customer profile windows above, which are separate classes.
 
 ### How a record is processed
 

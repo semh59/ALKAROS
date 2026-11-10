@@ -7,6 +7,7 @@ public enum RetentionClass
     OrderNotes,
     ReservationReason,
     CustomerProfile,
+    InvoicedCustomerProfile,
     Supplier,
 }
 

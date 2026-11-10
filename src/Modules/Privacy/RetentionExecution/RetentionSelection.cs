@@ -32,15 +32,21 @@ internal static class RetentionSelection
         WHERE r.status IN ('Claimed', 'Cancelled', 'Expired') AND r.reason <> @marker
         """;
 
-    // A customer with an open balance is never due; the window starts at the last ledger movement or invoice.
-    private const string CustomerProfile =
-        """
+    // A customer with an open balance is never due; the window starts at the last ledger movement or invoice. A profile with
+    // no invoice and a profile tied to an invoice are two classes, so each has its own window.
+    private static readonly string CustomerProfile = CustomerProfiles(invoiced: false);
+
+    private static readonly string InvoicedCustomerProfile = CustomerProfiles(invoiced: true);
+
+    private static string CustomerProfiles(bool invoiced) =>
+        $"""
         SELECT p.customer_id AS subject_id,
                GREATEST(p.created_at,
                         COALESCE((SELECT max(t.occurred_at) FROM customer_account.account_transactions t WHERE t.customer_id = p.customer_id), p.created_at),
                         COALESCE((SELECT max(i.created_at) FROM invoicing.invoices i WHERE i.customer_id = p.customer_id), p.created_at)) AS basis_at
         FROM customer_data.profiles p
         WHERE NOT p.anonymized
+          AND {(invoiced ? "" : "NOT ")}EXISTS (SELECT 1 FROM invoicing.invoices v WHERE v.customer_id = p.customer_id)
           AND COALESCE((SELECT b.current_balance FROM customer_account.balances b WHERE b.customer_id = p.customer_id), 0) = 0
           AND NOT EXISTS (SELECT 1 FROM customer_data.anonymization_requests r WHERE r.customer_id = p.customer_id AND r.status = 'Pending')
         """;
@@ -63,6 +69,7 @@ internal static class RetentionSelection
         RetentionClass.OrderNotes => OrderNotes,
         RetentionClass.ReservationReason => ReservationReason,
         RetentionClass.CustomerProfile => CustomerProfile,
+        RetentionClass.InvoicedCustomerProfile => InvoicedCustomerProfile,
         RetentionClass.Supplier => Supplier,
         _ => throw new ArgumentOutOfRangeException(nameof(dataClass), dataClass, "Unknown retention class."),
     };

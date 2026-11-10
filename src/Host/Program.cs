@@ -487,7 +487,7 @@ public static class Program
         Console.Out.WriteLine(
             $"kvkk-retention: staff={staff} order_notes={orderNotes} item_notes={itemNotes} "
             + $"reservation_reasons={reservations} "
-            + $"customers={plan.Candidates.Count(c => c.DataClass == RetentionClass.CustomerProfile)} "
+            + $"customers={plan.Candidates.Count(c => c.DataClass is RetentionClass.CustomerProfile or RetentionClass.InvoicedCustomerProfile)} "
             + $"suppliers={plan.Candidates.Count(c => c.DataClass == RetentionClass.Supplier)} "
             + $"policy={plan.PolicyVersion} "
             + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()} "
@@ -784,6 +784,24 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
 
     private static readonly Dictionary<string, object> Parameters = new() { ["m"] = Marker, ["sentinel"] = CustomerEnvelopeSentinel };
 
+    private static readonly AnonymizationStep[] CustomerSteps =
+    [
+        new("customer_data.profiles",
+            """
+            UPDATE customer_data.profiles
+            SET anonymized = TRUE, envelope_bytes = @sentinel, row_version = row_version + 1
+            WHERE customer_id = @subject AND anonymized = FALSE;
+            """,
+            "SELECT count(*) FROM customer_data.profiles WHERE customer_id = @subject AND anonymized = FALSE;"),
+        new("customer_data.anonymization_requests",
+            """
+            UPDATE customer_data.anonymization_requests
+            SET status = 'Anonymized', blocked_reason = NULL, anonymized_at = now(), row_version = row_version + 1
+            WHERE customer_id = @subject AND status <> 'Anonymized';
+            """,
+            "SELECT count(*) FROM customer_data.anonymization_requests WHERE customer_id = @subject AND status <> 'Anonymized';"),
+    ];
+
     private static readonly Dictionary<RetentionClass, AnonymizationPlan> Plans = new()
     {
         [RetentionClass.StaffAccount] = new(null,
@@ -823,24 +841,14 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
                 "SELECT count(*) FROM table_mgmt.table_reservations WHERE table_reservation_id = @subject AND (reason <> @m OR (release_reason IS NOT NULL AND release_reason <> @m));"),
         ], Parameters),
         // A balance that appeared after the record was queued keeps the customer for now; the ledger itself is never touched.
+        // A profile queued as one without an invoice also waits when an invoice appeared since: that customer keeps the long window.
         [RetentionClass.CustomerProfile] = new(
+            "SELECT COALESCE((SELECT b.current_balance FROM customer_account.balances b WHERE b.customer_id = @subject), 0) <> 0 "
+            + "OR EXISTS (SELECT 1 FROM invoicing.invoices v WHERE v.customer_id = @subject);",
+            CustomerSteps, Parameters),
+        [RetentionClass.InvoicedCustomerProfile] = new(
             "SELECT COALESCE((SELECT b.current_balance FROM customer_account.balances b WHERE b.customer_id = @subject), 0) <> 0;",
-        [
-            new("customer_data.profiles",
-                """
-                UPDATE customer_data.profiles
-                SET anonymized = TRUE, envelope_bytes = @sentinel, row_version = row_version + 1
-                WHERE customer_id = @subject AND anonymized = FALSE;
-                """,
-                "SELECT count(*) FROM customer_data.profiles WHERE customer_id = @subject AND anonymized = FALSE;"),
-            new("customer_data.anonymization_requests",
-                """
-                UPDATE customer_data.anonymization_requests
-                SET status = 'Anonymized', blocked_reason = NULL, anonymized_at = now(), row_version = row_version + 1
-                WHERE customer_id = @subject AND status <> 'Anonymized';
-                """,
-                "SELECT count(*) FROM customer_data.anonymization_requests WHERE customer_id = @subject AND status <> 'Anonymized';"),
-        ], Parameters),
+            CustomerSteps, Parameters),
         // The tax number and office stay: they are the supplier's legal identifiers on incoming invoices.
         [RetentionClass.Supplier] = new(null,
         [

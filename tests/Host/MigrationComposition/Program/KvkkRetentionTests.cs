@@ -93,7 +93,7 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
             Assert.Contains("item_notes=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("reservation_reasons=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("apply=false", dryLine, StringComparison.Ordinal);
-            Assert.Contains("customers=1 suppliers=1 policy=1", dryLine, StringComparison.Ordinal);
+            Assert.Contains("customers=1 suppliers=1 policy=2", dryLine, StringComparison.Ordinal);
             Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items;"));
 
             Assert.NotEqual(Marker, await ScalarAsync<string>(
@@ -257,18 +257,87 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Pending';"));
     }
 
+    [Fact]
+    public async Task AProfileWithoutAnInvoiceIsAnonymizedAfterTwoYearsAndOneTiedToAnInvoiceOnlyAfterTen()
+    {
+        var plain = Guid.NewGuid();
+        var recent = Guid.NewGuid();
+        var invoicedOld = Guid.NewGuid();
+        var invoicedRecent = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO customer_data.profiles (customer_id, envelope_bytes, created_at) VALUES
+                (@plain, '\x00'::bytea, now() - interval '5 years'), (@recent, '\x00'::bytea, now() - interval '5 years'),
+                (@old, '\x00'::bytea, now() - interval '12 years'), (@new, '\x00'::bytea, now() - interval '12 years');
+            INSERT INTO customer_account.account_transactions (id, customer_id, transaction_type, amount, source_reference_type, source_reference_id, occurred_at)
+            VALUES (gen_random_uuid(), @plain, 'Charge', 10, 'Test', gen_random_uuid(), now() - interval '2 years 3 months'),
+                   (gen_random_uuid(), @recent, 'Charge', 10, 'Test', gen_random_uuid(), now() - interval '1 year 9 months');
+            INSERT INTO invoicing.invoices
+                (invoice_id, source_set_id, period_id, customer_id, profile, ubl_profile_id, invoice_type_code, currency_code,
+                 issue_date, status, buyer_envelope, line_extension_amount, tax_total, payable_amount, created_at, created_by)
+            VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @old, 'EFatura', 'TEMELFATURA', 'SATIS', 'TRY',
+                    (now() - interval '10 years 3 months')::date, 'Draft', '\x00'::bytea, 100, 0, 100, now() - interval '10 years 3 months', gen_random_uuid()),
+                   (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @new, 'EFatura', 'TEMELFATURA', 'SATIS', 'TRY',
+                    (now() - interval '3 years')::date, 'Draft', '\x00'::bytea, 100, 0, 100, now() - interval '3 years', gen_random_uuid());
+            """,
+            ("plain", plain), ("recent", recent), ("old", invoicedOld), ("new", invoicedRecent));
+
+        Assert.Contains("failed=0", Apply(), StringComparison.Ordinal);
+
+        Assert.True(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", plain)));
+        Assert.False(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", recent)));
+        Assert.True(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", invoicedOld)));
+        Assert.False(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", invoicedRecent)));
+    }
+
+    [Fact]
+    public async Task AProfileQueuedWithoutAnInvoiceWaitsWhenAnInvoiceAppearsBeforeTheApply()
+    {
+        var customerId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO customer_data.profiles (customer_id, envelope_bytes, created_at) VALUES (@c, '\x00'::bytea, now() - interval '5 years');
+            INSERT INTO customer_account.account_transactions (id, customer_id, transaction_type, amount, source_reference_type, source_reference_id, occurred_at)
+            VALUES (gen_random_uuid(), @c, 'Charge', 10, 'Test', gen_random_uuid(), now() - interval '2 years 3 months');
+            """,
+            ("c", customerId));
+        await new PostgresRetentionExecutionService(_dataSource!).ExecuteAsync(DateTimeOffset.UtcNow, "queued");
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO invoicing.invoices
+                (invoice_id, source_set_id, period_id, customer_id, profile, ubl_profile_id, invoice_type_code, currency_code,
+                 issue_date, status, buyer_envelope, line_extension_amount, tax_total, payable_amount, created_at, created_by)
+            VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @c, 'EFatura', 'TEMELFATURA', 'SATIS', 'TRY',
+                    now()::date, 'Draft', '\x00'::bytea, 100, 0, 100, now(), gen_random_uuid());
+            """,
+            ("c", customerId));
+
+        var result = Apply();
+
+        Assert.Contains("blocked=1 failed=0", result, StringComparison.Ordinal);
+        Assert.False(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", customerId)));
+    }
+
     private string Apply()
     {
         using var output = new StringWriter();
+        using var errors = new StringWriter();
         var original = Console.Out;
+        var originalErrors = Console.Error;
         try
         {
             Console.SetOut(output);
-            Assert.Equal((int)HostExitCode.Success, ALKAROS.Host.Program.Main(["kvkk-retention", "--db-url", _database.Url, "--apply"]));
+            Console.SetError(errors);
+            var exitCode = ALKAROS.Host.Program.Main(["kvkk-retention", "--db-url", _database.Url, "--apply"]);
+            Assert.True(exitCode == (int)HostExitCode.Success, output.ToString() + errors.ToString());
         }
         finally
         {
             Console.SetOut(original);
+            Console.SetError(originalErrors);
         }
 
         return output.ToString();

@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "224"
+    "max": "225"
   },
   "migrations": [
     {
@@ -1926,6 +1926,14 @@
       "phase": "B",
       "tables": [
         "balance_snapshots"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "225",
+      "phase": "B",
+      "tables": [
+        "retention_rules"
       ],
       "deferredConstraints": []
     }

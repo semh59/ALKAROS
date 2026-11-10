@@ -500,6 +500,24 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheInvoicedCustomerRetentionClassComesWithANewPolicyAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string rules = "SELECT string_agg(policy_version || ':' || data_class || ':' || retention_years, ',' ORDER BY policy_version, data_class) FROM privacy.retention_rules WHERE data_class IN ('CustomerProfile', 'InvoicedCustomerProfile');";
+        const string withClass = "1:CustomerProfile:10,2:CustomerProfile:2,2:InvoicedCustomerProfile:10";
+        const string without = "1:CustomerProfile:10";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(withClass, await ScalarAsync<string>(source, rules));
+
+        RollBackDownTo("225");
+        Assert.Equal(without, await ScalarAsync<string>(source, rules));
+        Assert.Equal(1L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_policies;"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(withClass, await ScalarAsync<string>(source, rules));
+    }
+
+    [Fact]
     public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";
