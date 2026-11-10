@@ -1,0 +1,7 @@
+amount-unlocked [/id="comp-amount"/s/ + disabled + / + /]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+reason-unlocked [/id="comp-reason"/s/ + disabled + / + /;/id="comp-reason"/s/"' + disabled + '>/">/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+note-unlocked [/id="comp-note"/s/ + disabled + / + /]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+all-unlocked [/id="comp-all"/s/ + disabled + / + /]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+submit-unlocked [/id="submit-comp"/s/ + disabled + / + /]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+busy-never-set [786s/state.compBusy = true;/state.compBusy = false;/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+busy-never-cleared [/^    api(billBase() + .\/comp./,/^      state.compBusy = false;/s/^      state.compBusy = false;/      state.compBusy = state.compBusy;/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical

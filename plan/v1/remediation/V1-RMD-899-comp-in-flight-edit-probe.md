@@ -1,7 +1,7 @@
 # V1-RMD-899 - İkram isteği sürerken tutarın tüm hesaba çevrilip onayın atlatılması şüphesi: önce davranışı çalıştıran test
 
 - Task ID: V1-RMD-899
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: validation
 - Surface state: Existing

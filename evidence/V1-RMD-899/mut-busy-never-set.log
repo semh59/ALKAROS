@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comp-in-flight.test.js > split-payment.js comp while the request is in flight > locks every comp field and button until the answer arrives, so the sent amount cannot be edited into a whole-bill comp
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289852882-0.25711462785715045:232:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289852882-0.25711462785715045:393:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794289852882-0.25711462785715045:498:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comp-in-flight.test.js (1 test | 1 failed) 211ms
+     × locks every comp field and button until the answer arrives, so the sent amount cannot be edited into a whole-bill comp 209ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comp-in-flight.test.js > split-payment.js comp while the request is in flight > locks every comp field and button until the answer arrives, so the sent amount cannot be edited into a whole-bill comp
+AssertionError: expected [ false, false, false, false, false ] to deeply equal [ true, true, true, true, true ]
+
+- Expected
++ Received
+
+  [
+-   true,
+-   true,
+-   true,
+-   true,
+-   true,
++   false,
++   false,
++   false,
++   false,
++   false,
+  ]
+
+ ❯ split-payment-comp-in-flight.test.js:51:71
+     49|     document.getElementById("submit-comp").click();
+     50|
+     51|     expect(compIds.map((id) => document.getElementById(id).disabled)).…
+       |                                                                       ^
+     52|     await vi.waitFor(() => expect(document.getElementById("submit-comp…
+     53|     expect(compIds.map((id) => document.getElementById(id).disabled)).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  08:50:51
+   Duration  1.67s (transform 113ms, setup 29ms, import 54ms, tests 211ms, environment 1.09s)
+
+vitestexit=1
