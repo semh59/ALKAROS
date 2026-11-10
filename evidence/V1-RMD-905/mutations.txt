@@ -1,0 +1,7 @@
+1 ItemExceptionHandler: withinTransaction call disabled (is not null && false) -> KILLED (mut1.log); a first variant (is null) was a compile error, not counted
+2 OrderManagementEndpoints.CompBillLineAsync: line written back as Sale -> KILLED (mut2.log)
+3 OrderManagementEndpoints.CompBillLineAsync: SaveAsync dropped -> KILLED (mut3.log)
+Each restored with cp + cmp; every run rebuilt (no --no-build).
+4 CompBillLineAsync: new bill line id instead of the line's own (delete+insert) -> KILLED (mut4.log)
+5 CompBillLineAsync: discount-fit check removed -> KILLED (mut5.log)
+6 error mapping status changed 409 -> 422 -> KILLED (mut6.log)

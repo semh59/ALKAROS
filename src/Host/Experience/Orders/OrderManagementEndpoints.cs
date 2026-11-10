@@ -1,4 +1,5 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
@@ -148,6 +149,7 @@ public static class OrderManagementEndpoints
         // all three.
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
+        services.TryAddSingleton<IBillAdjustmentRepository, PostgresBillAdjustmentRepository>();
         services.AddOrderCancellation();
         services.TryAddSingleton<SentItemVoidStore>();
         services.TryAddSingleton<OrderCommandReplayStore>();
@@ -650,6 +652,7 @@ public static class OrderManagementEndpoints
             ItemExceptionHandler itemExceptions,
             OrderCommandReplayStore replays,
             IBillRepository bills,
+            IBillAdjustmentRepository billAdjustments,
             IOrderRepository orders,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
@@ -747,7 +750,10 @@ public static class OrderManagementEndpoints
                 async () =>
                 {
                     await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
-                    var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
+                    var result = await itemExceptions.ApplyComplimentaryAsync(
+                        command,
+                        (comped, connection, transaction, ct) => CompBillLineAsync(bills, billAdjustments, comped, connection, transaction, ct),
+                        cancellationToken);
                     return new ApplyComplimentaryResultV1(
                         "Applied",
                         result.OrderId,
@@ -1069,6 +1075,32 @@ public static class OrderManagementEndpoints
         return group;
     }
 
+    /// <summary>
+    /// The bill line of a comped item becomes a complimentary line too, so the guest no longer pays for it. The line is
+    /// updated under its own id: deleting and re-adding it would fail, or drop, the split allocations and adjustments that reference it.
+    /// </summary>
+    private static async Task CompBillLineAsync(
+        IBillRepository bills,
+        IBillAdjustmentRepository billAdjustments,
+        OrderItem comped,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        foreach (var bill in await bills.GetByOrderIdAsync(comped.OrderId, cancellationToken))
+        {
+            var line = bill.Items.FirstOrDefault(i => i.OrderItemId == comped.Id);
+            if (line is null)
+                continue;
+
+            var updated = bill.RemoveItem(line.Id).AddItem(
+                BillItem.FromOrderItem(bill.Id, comped, line.Id, rowVersion: line.RowVersion));
+            // The comp lowers what the bill is worth: a fixed discount already on it must still fit, or the bill could no longer be paid.
+            AdjustmentCalculator.Calculate(updated, await billAdjustments.GetByBillIdAsync(bill.Id, cancellationToken));
+            await bills.SaveAsync(updated, bill.RowVersion, connection, transaction, cancellationToken);
+        }
+    }
+
     // A complimentary changes what the guest owes, so it needs an order that is still alive and a bill that can still change.
     private static async Task RequireItemChangeableAsync(
         IOrderRepository orders, IBillRepository bills, Guid orderId, Guid itemId, CancellationToken cancellationToken)
@@ -1247,6 +1279,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
+        DiscountExceedsPayableException => (409, "DISCOUNT_EXCEEDS_PAYABLE", "Hesaptaki indirim, ikramdan sonra kalan tutarı aşıyor; önce indirimi geri alın."),
         OrderClosedException => (409, "ORDER_CLOSED", "Sipariş kapanmış; bu işlem yapılamaz."),
         CheckNotYetOrderedException => (409, "ORDER_NOT_SUBMITTED", "Sipariş henüz mutfağa gönderilmedi; kasaya gönderilemez."),
         OrderCancelReasonException => (400, "REASON_REQUIRED", OrderCancellationMessages.Reason),

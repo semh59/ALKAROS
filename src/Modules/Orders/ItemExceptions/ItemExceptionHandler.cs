@@ -160,8 +160,13 @@ public sealed class ItemExceptionHandler
             now);
     }
 
+    /// <param name="withinTransaction">
+    /// Runs with the comped item inside the transaction that saves the order, so a change in another module that has to
+    /// follow the comp (the bill line) commits with it or not at all.
+    /// </param>
     public async Task<ItemExceptionResult> ApplyComplimentaryAsync(
         ApplyComplimentaryCommand command,
+        Func<OrderItem, NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task>? withinTransaction = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -305,6 +310,9 @@ public sealed class ItemExceptionHandler
                 connection,
                 transaction,
                 cancellationToken).ConfigureAwait(false);
+
+            if (withinTransaction is not null)
+                await withinTransaction(compItem, connection, transaction, cancellationToken).ConfigureAwait(false);
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }

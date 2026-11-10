@@ -1,7 +1,7 @@
 # V1-RMD-905 - Hesap açıkken yapılan kalem ikramı hesap kalemine yansıyor mu: önce davranışı çalıştıran test
 
 - Task ID: V1-RMD-905
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

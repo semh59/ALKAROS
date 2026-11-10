@@ -149,7 +149,8 @@ public sealed class BillItem
         OrderItem orderItem,
         Guid? billItemId = null,
         BillLineType? lineType = null,
-        string? notes = null)
+        string? notes = null,
+        long rowVersion = 1)
     {
         ArgumentNullException.ThrowIfNull(orderItem);
         if (billId == Guid.Empty)
@@ -184,6 +185,7 @@ public sealed class BillItem
             grossAmount: effectiveLineType == BillLineType.Complimentary ? 0m : orderItem.GrossAmount,
             lineType: effectiveLineType,
             notes: notes ?? orderItem.Notes,
+            rowVersion: rowVersion,
             // V1-RMD-231: the order item's own independent gross (quantity *
             // unit price plus modifiers, computed without any reference to
             // NetAmount/DiscountAmount) so the constructor's Complimentary
