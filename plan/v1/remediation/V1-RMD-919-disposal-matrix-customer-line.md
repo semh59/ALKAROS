@@ -1,7 +1,7 @@
 # V1-RMD-919 - DisposalMatrix müşteri satırı 2y/10y kararıyla hizalanır
 
 - Task ID: V1-RMD-919
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
