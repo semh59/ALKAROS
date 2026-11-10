@@ -9,6 +9,9 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
     private static readonly DateOnly Day = new(2026, 9, 28);
     private static readonly DateTimeOffset EndOfDay = new(2026, 9, 29, 6, 0, 0, TimeSpan.FromHours(3));
 
+    /// <summary>Early enough that every customer of a test counts as active.</summary>
+    private static readonly DateOnly AnyActivity = new(2000, 1, 1);
+
     private readonly AccountBalanceTestDatabase _database = new();
     private PostgresBalanceSnapshotStore _store = null!;
     private PostgresAccountTransactionLedger _ledger = null!;
@@ -38,7 +41,7 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
         await Record(customer, AccountTransactionType.Adjustment, 5m, before);
         await Record(customer, AccountTransactionType.Charge, 999m, EndOfDay);
 
-        var written = await _store.TakeClosingSnapshotsAsync(Day, EndOfDay);
+        var written = await _store.TakeClosingSnapshotsAsync(Day, EndOfDay, AnyActivity);
 
         Assert.Equal(1, written);
         var snapshot = Assert.Single(await _store.GetSnapshotsOnAsync([Day]));
@@ -51,7 +54,7 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
         var customer = Guid.NewGuid();
         await Record(customer, AccountTransactionType.Charge, 10m, EndOfDay.AddHours(-5));
         foreach (var offset in new[] { -2, -1, 0 })
-            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay);
+            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay, AnyActivity);
 
         var removed = await _store.DeleteOlderThanAsync(Day.AddDays(-1));
         var again = await _store.DeleteOlderThanAsync(Day.AddDays(-1));
@@ -63,14 +66,68 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACustomerWhoseLastLedgerRowIsBeforeTheActiveDateGetsNoSnapshot()
+    {
+        var active = Guid.NewGuid();
+        var stopped = Guid.NewGuid();
+        await Record(active, AccountTransactionType.Charge, 10m, EndOfDay.AddHours(-5));
+        await Record(stopped, AccountTransactionType.Charge, 10m, EndOfDay.AddDays(-800));
+
+        var written = await _store.TakeClosingSnapshotsAsync(Day, EndOfDay, Day.AddDays(-730));
+
+        Assert.Equal(1, written);
+        Assert.Equal(active, Assert.Single(await _store.GetSnapshotsOnAsync([Day])).CustomerId);
+    }
+
+    [Fact]
+    public async Task ACustomerWhoseLastLedgerRowIsExactlyOnTheActiveDateIsStillActive()
+    {
+        var onTheDate = Guid.NewGuid();
+        var justBefore = Guid.NewGuid();
+        var activeFrom = Day.AddDays(-730);
+        var boundary = new DateTimeOffset(activeFrom.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+        await Record(onTheDate, AccountTransactionType.Charge, 10m, boundary);
+        await Record(justBefore, AccountTransactionType.Charge, 10m, boundary.AddSeconds(-1));
+
+        var written = await _store.TakeClosingSnapshotsAsync(Day, EndOfDay, activeFrom);
+        await _store.TakeClosingSnapshotsAsync(Day.AddDays(-1), EndOfDay.AddDays(-1), AnyActivity);
+        var removed = await _store.DeleteOfInactiveCustomersAsync(activeFrom);
+
+        Assert.Equal(1, written);
+        Assert.Equal(1, removed);
+        Assert.Equal(onTheDate, Assert.Single(await _store.GetSnapshotsOnAsync([Day])).CustomerId);
+    }
+
+    [Fact]
+    public async Task DeletingTheInactiveRemovesEveryOneOfTheirSnapshotsAndKeepsTheActiveCustomersEvenOldOnes()
+    {
+        var active = Guid.NewGuid();
+        var stopped = Guid.NewGuid();
+        await Record(active, AccountTransactionType.Charge, 10m, EndOfDay.AddDays(-1000));
+        await Record(active, AccountTransactionType.Charge, 10m, EndOfDay.AddHours(-5));
+        await Record(stopped, AccountTransactionType.Charge, 10m, EndOfDay.AddDays(-1000));
+        foreach (var offset in new[] { -900, -1, 0 })
+            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay.AddDays(offset), AnyActivity);
+
+        var removed = await _store.DeleteOfInactiveCustomersAsync(Day.AddDays(-730));
+        var again = await _store.DeleteOfInactiveCustomersAsync(Day.AddDays(-730));
+
+        Assert.Equal(3, removed);
+        Assert.Equal(0, again);
+        var left = await _store.GetSnapshotsOnAsync([Day.AddDays(-900), Day.AddDays(-1), Day]);
+        Assert.All(left, snapshot => Assert.Equal(active, snapshot.CustomerId));
+        Assert.Equal(3, left.Count);
+    }
+
+    [Fact]
     public async Task ARerunKeepsTheFirstSnapshotEvenWhenARowIsBackDatedIntoTheDay()
     {
         var customer = Guid.NewGuid();
         await Record(customer, AccountTransactionType.Charge, 100m, EndOfDay.AddHours(-2));
-        await _store.TakeClosingSnapshotsAsync(Day, EndOfDay);
+        await _store.TakeClosingSnapshotsAsync(Day, EndOfDay, AnyActivity);
 
         await Record(customer, AccountTransactionType.Charge, 50m, EndOfDay.AddHours(-1));
-        var rewritten = await _store.TakeClosingSnapshotsAsync(Day, EndOfDay);
+        var rewritten = await _store.TakeClosingSnapshotsAsync(Day, EndOfDay, AnyActivity);
 
         Assert.Equal(0, rewritten);
         Assert.Equal(100m, Assert.Single(await _store.GetSnapshotsOnAsync([Day])).Balance);
@@ -83,8 +140,8 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
         var second = Guid.NewGuid();
         await Record(first, AccountTransactionType.Charge, 10m, EndOfDay.AddDays(-1).AddHours(-1));
         await Record(second, AccountTransactionType.Charge, 20m, EndOfDay.AddHours(-1));
-        await _store.TakeClosingSnapshotsAsync(Day.AddDays(-1), EndOfDay.AddDays(-1));
-        await _store.TakeClosingSnapshotsAsync(Day, EndOfDay);
+        await _store.TakeClosingSnapshotsAsync(Day.AddDays(-1), EndOfDay.AddDays(-1), AnyActivity);
+        await _store.TakeClosingSnapshotsAsync(Day, EndOfDay, AnyActivity);
 
         var onlyDay = await _store.GetSnapshotsOnAsync([Day]);
         var both = await _store.GetSnapshotsOnAsync([Day, Day.AddDays(-1)]);
@@ -100,7 +157,7 @@ public sealed class PostgresBalanceSnapshotStoreTests : IAsyncLifetime
         var customer = Guid.NewGuid();
         await Record(customer, AccountTransactionType.Charge, 10m, EndOfDay.AddDays(-3));
         foreach (var offset in new[] { -2, -1, 0 })
-            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay);
+            await _store.TakeClosingSnapshotsAsync(Day.AddDays(offset), EndOfDay, AnyActivity);
 
         var dates = await _store.GetSnapshotDatesAsync(Day.AddDays(-1));
 

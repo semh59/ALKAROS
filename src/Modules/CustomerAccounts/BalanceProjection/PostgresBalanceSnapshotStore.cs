@@ -20,7 +20,7 @@ public sealed class PostgresBalanceSnapshotStore : IBalanceSnapshotStore
     }
 
     public async Task<int> TakeClosingSnapshotsAsync(
-        DateOnly snapshotDate, DateTimeOffset cutoff, CancellationToken cancellationToken = default)
+        DateOnly snapshotDate, DateTimeOffset cutoff, DateOnly activeFrom, CancellationToken cancellationToken = default)
     {
         // Same sign rule as the balance trigger (migration 162): Adjustment carries its own sign.
         await using var insert = _dataSource.CreateCommand(
@@ -32,10 +32,13 @@ public sealed class PostgresBalanceSnapshotStore : IBalanceSnapshotStore
             FROM customer_account.account_transactions
             WHERE occurred_at < @cutoff
             GROUP BY customer_id
+            HAVING MAX(occurred_at) >= @active_from
             ON CONFLICT (customer_id, snapshot_date) DO NOTHING;
             """);
         insert.Parameters.Add("snapshot_date", NpgsqlDbType.Date).Value = snapshotDate.ToDateTime(TimeOnly.MinValue);
         insert.Parameters.Add("cutoff", NpgsqlDbType.TimestampTz).Value = cutoff.UtcDateTime;
+        insert.Parameters.Add("active_from", NpgsqlDbType.TimestampTz).Value =
+            new DateTimeOffset(activeFrom.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero).UtcDateTime;
         return await insert.ExecuteNonQueryAsync(cancellationToken);
     }
 
@@ -56,6 +59,20 @@ public sealed class PostgresBalanceSnapshotStore : IBalanceSnapshotStore
         await using var command = _dataSource.CreateCommand(
             "DELETE FROM customer_account.balance_snapshots WHERE snapshot_date < @before;");
         command.Parameters.Add("before", NpgsqlDbType.Date).Value = before.ToDateTime(TimeOnly.MinValue);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task<int> DeleteOfInactiveCustomersAsync(DateOnly activeFrom, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            DELETE FROM customer_account.balance_snapshots s
+            WHERE NOT EXISTS (
+                SELECT 1 FROM customer_account.account_transactions t
+                WHERE t.customer_id = s.customer_id AND t.occurred_at >= @active_from);
+            """);
+        command.Parameters.Add("active_from", NpgsqlDbType.TimestampTz).Value =
+            new DateTimeOffset(activeFrom.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero).UtcDateTime;
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 

@@ -12,15 +12,23 @@ public interface IBalanceSnapshotStore
     /// Writes the closing balance of <paramref name="snapshotDate"/> for every customer with a ledger row before
     /// <paramref name="cutoff"/>, computed from the ledger itself (never from the live projection, which would freeze
     /// whatever moment the job happened to run). Idempotent: dates already snapshotted are left untouched.
-    /// Returns how many snapshots were written.
+    /// Customers whose last ledger row is before <paramref name="activeFrom"/> get none: a customer who stopped
+    /// transacting is not kept alive by a daily row. Returns how many snapshots were written.
     /// </summary>
-    Task<int> TakeClosingSnapshotsAsync(DateOnly snapshotDate, DateTimeOffset cutoff, CancellationToken cancellationToken = default);
+    Task<int> TakeClosingSnapshotsAsync(
+        DateOnly snapshotDate, DateTimeOffset cutoff, DateOnly activeFrom, CancellationToken cancellationToken = default);
 
     /// <summary>The dates from <paramref name="from"/> on that already have at least one snapshot; lets the job skip finished days.</summary>
     Task<IReadOnlySet<DateOnly>> GetSnapshotDatesAsync(DateOnly from, CancellationToken cancellationToken = default);
 
     /// <summary>Deletes the snapshots dated before <paramref name="before"/> and returns how many went; deleting twice is harmless.</summary>
     Task<int> DeleteOlderThanAsync(DateOnly before, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes every snapshot of the customers whose last ledger row is before <paramref name="activeFrom"/> (or who
+    /// have none) and returns how many went; deleting twice is harmless.
+    /// </summary>
+    Task<int> DeleteOfInactiveCustomersAsync(DateOnly activeFrom, CancellationToken cancellationToken = default);
 
     /// <summary>The snapshots of every customer for the given dates, one query.</summary>
     Task<IReadOnlyList<BalanceSnapshot>> GetSnapshotsOnAsync(IReadOnlyCollection<DateOnly> dates, CancellationToken cancellationToken = default);

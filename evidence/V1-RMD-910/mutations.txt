@@ -1,0 +1,5 @@
+1 HAVING MAX(occurred_at) >= active_from removed from the writer -> KILLED (mut1.log)
+2 inactive-customer delete made a no-op -> KILLED (mut2.log)
+3 job writer cutoff relative to the snapshot day instead of today (write-then-delete churn) -> KILLED (mut3.log)
+Each restored with cp + cmp; every run rebuilt.
+4 writer boundary >= changed to > -> KILLED (mut4.log)

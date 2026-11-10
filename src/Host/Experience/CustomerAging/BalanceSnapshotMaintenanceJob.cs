@@ -16,8 +16,8 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
     public const int WindowDays = 100;
 
     /// <summary>
-    /// Daily balances are customer data derived from the ledger and are not invoice records, so they are kept for two
-    /// years.
+    /// Daily balances are customer data derived from the ledger and are not invoice records: a row is kept two years,
+    /// and a customer whose last transaction is two years old has none left and gets no new ones.
     /// </summary>
     public const int RetentionDays = 730;
 
@@ -30,7 +30,7 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
 
     public string Name => "balance-snapshot";
 
-    public string Description => "Cari hesapların gün sonu bakiyelerini kaydeder (yaşlandırma raporundaki geçmiş bakiyeler buradan gelir) ve 2 yıldan eski kayıtları siler.";
+    public string Description => "Cari hesapların gün sonu bakiyelerini kaydeder (yaşlandırma raporundaki geçmiş bakiyeler buradan gelir) ve 2 yıldan eski kayıtları ile son işlemi 2 yıldan eski müşterilerin kayıtlarını siler.";
 
     public TimeSpan Interval => TimeSpan.FromHours(6);
 
@@ -43,6 +43,7 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
 
         var today = ReceivablesAgingEndpoints.Calendar.DateOf(_clock.GetUtcNow());
         var lastClosedDay = today.AddDays(-1);
+        var activeFrom = today.AddDays(-RetentionDays);
         var firstDay = lastClosedDay.AddDays(1 - WindowDays);
         var done = await store.GetSnapshotDatesAsync(firstDay, cancellationToken);
 
@@ -52,13 +53,15 @@ public sealed class BalanceSnapshotMaintenanceJob : IMaintenanceJob
         {
             if (done.Contains(day))
                 continue;
-            var count = await store.TakeClosingSnapshotsAsync(day, BusinessDayWindow.Of(day).End, cancellationToken);
+            var count = await store.TakeClosingSnapshotsAsync(
+                day, BusinessDayWindow.Of(day).End, activeFrom, cancellationToken);
             written += count;
             if (count > 0)
                 days++;
         }
 
-        var deleted = await store.DeleteOlderThanAsync(today.AddDays(-RetentionDays), cancellationToken);
+        var deleted = await store.DeleteOlderThanAsync(activeFrom, cancellationToken)
+            + await store.DeleteOfInactiveCustomersAsync(activeFrom, cancellationToken);
 
         return new MaintenanceJobOutcome(
             MaintenanceJobStatusKind.Succeeded, $"{days} gün için {written} bakiye kaydı yazıldı; {deleted} eski kayıt silindi.");

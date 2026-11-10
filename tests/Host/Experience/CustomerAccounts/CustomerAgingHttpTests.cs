@@ -256,6 +256,26 @@ public sealed class CustomerAgingHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheJobDropsEverySnapshotOfACustomerWhoseLastTransactionIsOverTwoYearsOldAndWritesNoNewOnes()
+    {
+        await using var app = await StartAsync();
+        var today = ReceivablesAgingEndpoints.Calendar.DateOf(DateTimeOffset.UtcNow);
+        var stopped = Guid.NewGuid();
+        var active = Guid.NewGuid();
+        await Ledger(stopped, "Charge", 10m, BalanceSnapshotMaintenanceJob.RetentionDays + 70);
+        await Ledger(active, "Charge", 10m, 3);
+        await InsertSnapshotAsync(stopped, today.AddDays(-40));
+        await InsertSnapshotAsync(stopped, today.AddDays(-10));
+
+        await RunJobAsync(app);
+        var second = await RunJobAsync(app);
+
+        Assert.Contains("0 eski kayıt silindi.", second.Summary);
+        Assert.Empty(await SnapshotBalancesAsync(stopped));
+        Assert.NotEmpty(await SnapshotBalancesAsync(active));
+    }
+
+    [Fact]
     public async Task DeletingOldSnapshotsDoesNotChangeTheReport()
     {
         var terminalId = Guid.NewGuid();

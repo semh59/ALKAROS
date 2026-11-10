@@ -1,7 +1,7 @@
 # V1-RMD-910 - Günlük bakiye kayıtları son işlemden 2 yıl sonra saklanmaz: işlemi bırakan müşteriye kayıt yazma ve sil
 
 - Task ID: V1-RMD-910
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
