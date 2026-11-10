@@ -1,8 +1,8 @@
 # V1-RMD-902 - Yönetici/supervisor doğrudan ikram ve indirimi hesap toplam sınırına sayılsın, aşarsa "yönetici sınırı aştı" işareti
 
 - Task ID: V1-RMD-902
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
 
