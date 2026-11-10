@@ -1,0 +1,2 @@
+1 Host default without the no-default-location mapping -> KILLED (mut1.log)
+2 Host default insufficient-stock message replaced -> KILLED (mut2.log)

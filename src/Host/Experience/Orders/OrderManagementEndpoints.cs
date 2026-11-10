@@ -1336,11 +1336,11 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         // sold product has no stock mapping configured at all, or because
         // the mapped stock item does not have enough on hand right now.
         ProductStockNotConfiguredException stockNotConfigured =>
-            (409, "PRODUCT_STOCK_NOT_CONFIGURED", $"'{stockNotConfigured.ProductName}' için stok tanımlanmamış, lütfen yöneticiye bildirin."),
+            (409, "PRODUCT_STOCK_NOT_CONFIGURED", stockNotConfigured.UserMessage),
         InsufficientOrderStockException insufficientStock =>
-            (409, "INSUFFICIENT_STOCK", $"'{insufficientStock.ProductName}' için yeterli stok yok."),
+            (409, "INSUFFICIENT_STOCK", insufficientStock.UserMessage),
         StockItemHasNoDefaultLocationException =>
-            (409, "STOCK_ITEM_MISCONFIGURED", "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin."),
+            (409, "STOCK_ITEM_MISCONFIGURED", StockItemHasNoDefaultLocationException.UserMessage),
         // V12-QRO-003: the order already holds stock for different lines (a concurrent change
         // between two accept attempts) — a refresh, not a stock shortage.
         CrossChannelReservationConflictException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),

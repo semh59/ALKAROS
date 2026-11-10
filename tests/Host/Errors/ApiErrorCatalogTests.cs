@@ -10,6 +10,7 @@ using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.CustomerAging;
 using ALKAROS.Host.Experience.CustomerCredit;
 using ALKAROS.Host.Experience.Menu;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
@@ -397,6 +398,20 @@ public sealed class ApiErrorCatalogTests
         => Assert.Equal(
             (413, "PAYLOAD_TOO_LARGE", "İstek gövdesi çok büyük."),
             ApiExceptionHandler.Resolve([], new BadHttpRequestException("Request body too large.", StatusCodes.Status413PayloadTooLarge)));
+
+    [Fact]
+    public void AStockRuleFailureIsATurkishConflictInTheHostDefaultSoTheQuickSaleRouteDoesNotAnswer500()
+    {
+        Assert.Equal(
+            (409, "PRODUCT_STOCK_NOT_CONFIGURED", "'Çay' için stok tanımlanmamış, lütfen yöneticiye bildirin."),
+            ApiExceptionHandler.Resolve([], new ProductStockNotConfiguredException(Guid.NewGuid(), "Çay")));
+        Assert.Equal(
+            (409, "INSUFFICIENT_STOCK", "'Çay' için yeterli stok yok."),
+            ApiExceptionHandler.Resolve([], new InsufficientOrderStockException(Guid.NewGuid(), "Çay", "Çay yaprağı")));
+        Assert.Equal(
+            (409, "STOCK_ITEM_MISCONFIGURED", "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin."),
+            ApiExceptionHandler.Resolve([], new StockItemHasNoDefaultLocationException(Guid.NewGuid(), "Çay yaprağı")));
+    }
 
     [Fact]
     public void AnOrdinaryInvalidOperationIsNotTurnedIntoAConflict()

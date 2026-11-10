@@ -11,6 +11,7 @@ using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.CustomerAging;
 using ALKAROS.Host.Experience.CustomerCredit;
 using ALKAROS.Host.Experience.Menu;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Observability;
 using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
@@ -709,6 +710,9 @@ public static class ApiErrorCatalog
             SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
             OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
             OrderQuantityNotAllowedException => (400, "ORDER_QUANTITY_NOT_ALLOWED", OrderQuantityMessage),
+            ProductStockNotConfiguredException stockNotConfigured => (409, "PRODUCT_STOCK_NOT_CONFIGURED", stockNotConfigured.UserMessage),
+            InsufficientOrderStockException insufficientStock => (409, "INSUFFICIENT_STOCK", insufficientStock.UserMessage),
+            StockItemHasNoDefaultLocationException => (409, "STOCK_ITEM_MISCONFIGURED", StockItemHasNoDefaultLocationException.UserMessage),
             // V13-CSH-004: Cash/CashTender domain exceptions, most specific
             // first (CashVarianceThresholdExceededException/
             // ActiveCashSessionExistsException/InvalidCashSessionStateException

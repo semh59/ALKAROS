@@ -477,6 +477,8 @@ public sealed class ProductStockNotConfiguredException : Exception
         ProductId = productId;
         ProductName = productName;
     }
+
+    public string UserMessage => $"'{ProductName}' için stok tanımlanmamış, lütfen yöneticiye bildirin.";
 }
 
 /// <summary>One of a sold product's mapped stock items does not have enough on-hand quantity for this order's requested amount.</summary>
@@ -493,6 +495,8 @@ public sealed class InsufficientOrderStockException : Exception
         ProductName = productName;
         StockItemName = stockItemName;
     }
+
+    public string UserMessage => $"'{ProductName}' için yeterli stok yok.";
 }
 
 /// <summary>A stock item mapped from a product has no `default_location_id` — there is nowhere to actually apply the consumption delta.</summary>
@@ -507,4 +511,6 @@ public sealed class StockItemHasNoDefaultLocationException : Exception
         StockItemId = stockItemId;
         StockItemName = stockItemName;
     }
+
+    public const string UserMessage = "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin.";
 }

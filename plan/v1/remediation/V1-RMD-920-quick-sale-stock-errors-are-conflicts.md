@@ -1,7 +1,7 @@
 # V1-RMD-920 - Hızlı satış gönderiminde stok hataları 500 yerine Türkçe 409 döner
 
 - Task ID: V1-RMD-920
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
