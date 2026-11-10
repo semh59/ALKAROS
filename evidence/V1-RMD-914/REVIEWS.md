@@ -8,3 +8,4 @@
 
 ## qa-test-kalitesi
 - The shape string covers column, non-unique and full; rollback and reapply covered; manifest mutants (PhaseBMax kept at 223, entry removed) were missing and are now killed (mutants 5 and 6).
+- Owned surface corrected after closing: the two migration files are listed as owned production files (plan-audit UNOWNED_PRODUCTION_FILE).
