@@ -1,7 +1,7 @@
 # V1-RMD-912 - Vekalet oluşturma, iptal ve davranışsal sıkılaştırma kaldırma denetim kaydına yazılır
 
 - Task ID: V1-RMD-912
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
