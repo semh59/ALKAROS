@@ -8,7 +8,7 @@
 
 ## Goal
 
-Doğrulandı: `DataCategory.CustomerPii` için üretimde hiçbir kod `security.retention_subjects` kaydı oluşturmuyor (`InsertAsync` çağıranı yok; testlerde de `CustomerPii` geçmiyor). CustomerProfile.cs içindeki kullanılmayan `RetentionYears = 10` sabiti ve "retention 10 years" yorumu da aynı çelişkiyi taşır (kullanan yok), silinir. Müşteri verisinin saklama süresi artık Privacy modülünde (`CustomerProfile` 2 yıl, `InvoicedCustomerProfile` 10 yıl). `DisposalMatrix.RetentionPeriods` içindeki 10 yıllık müşteri satırı bu kararla çelişen yanıltıcı bir ikinci kaynaktır. Kategori değeri veritabanı CHECK kısıtında (migration 137) ve 9 kategorili envanterde durduğundan silinmez; süresi `null` yapılır (otomatik süre taraması müşteri verisine dokunmaz, sahibi Privacy modülüdür) ve yorumda nedeni yazılır; el kitabı notu buna göre düzeltilir.
+Doğrulandı: `DataCategory.CustomerPii` için üretimde hiçbir kod `security.retention_subjects` kaydı oluşturmuyor (`InsertAsync` çağıranı yok; testlerde de `CustomerPii` geçmiyor). CustomerProfile.cs içindeki `RetentionYears = 10` sabiti, yalnız testlerin çağırdığı `IsRetentionExpired` metodu (üretimde çağıranı yok; ölü kod) ve "retention 10 years" yorumu da aynı çelişkiyi taşır, testleriyle birlikte silinir. Müşteri verisinin saklama süresi artık Privacy modülünde (`CustomerProfile` 2 yıl, `InvoicedCustomerProfile` 10 yıl). `DisposalMatrix.RetentionPeriods` içindeki 10 yıllık müşteri satırı bu kararla çelişen yanıltıcı bir ikinci kaynaktır. Kategori değeri veritabanı CHECK kısıtında (migration 137) ve 9 kategorili envanterde durduğundan silinmez; süresi `null` yapılır (otomatik süre taraması müşteri verisine dokunmaz, sahibi Privacy modülüdür) ve yorumda nedeni yazılır; el kitabı notu buna göre düzeltilir.
 
 ## Owned surface
 
@@ -16,6 +16,7 @@ Doğrulandı: `DataCategory.CustomerPii` için üretimde hiçbir kod `security.r
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs
   - src/Modules/CustomerData/Profiles/CustomerProfile.cs
+  - tests/Modules/CustomerData/Profiles/CustomerProfileTests.cs
   - tests/Modules/Security/DataProtectionRetention/RetentionCoverageVerifierTests.cs
   - docs/compliance/kvkk-retention-runbook.md
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
