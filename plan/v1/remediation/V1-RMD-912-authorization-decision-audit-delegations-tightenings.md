@@ -20,6 +20,8 @@ V1-RMD-907 açığı (koordinatör kararı: ertelenmez). Yönetici onay/ret kara
   - src/Modules/Identity/Authorization/Delegations/PostgresAuthorizationDelegationRepository.cs
   - src/Modules/Identity/Authorization/Behavioural/IBehaviouralTighteningRepository.cs
   - src/Modules/Identity/Authorization/Behavioural/PostgresBehaviouralTighteningRepository.cs
+  - src/Modules/Identity/Authorization/Behavioural/IBehaviouralTighteningService.cs
+  - src/Modules/Identity/Authorization/Behavioural/BehaviouralTighteningService.cs
   - tests/Host/Experience/Authorization/AuthorizationDecisionHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
