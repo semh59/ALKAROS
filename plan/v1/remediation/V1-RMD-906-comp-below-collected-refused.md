@@ -15,6 +15,7 @@ Semih kararı (V1-RMD-905 açığı): açık bir hesaba kısmi ödeme (tahsis) a
 - `evidence/V1-RMD-906/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs
+  - src/Host/Experience/Billing/BillMoneyGuard.cs
   - tests/Host/Experience/Orders/Comp/OrderCompOnPartlyPaidBillHttpTests.cs — yeni test
   - tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj — ödeme tabloları göçleri
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
@@ -22,8 +23,9 @@ Semih kararı (V1-RMD-905 açığı): açık bir hesaba kısmi ödeme (tahsis) a
 ## In scope
 
 1. Kırmızı test: kısmi ödemeli açık hesapta tahsili aşacak ikram 409 COMP_BELOW_COLLECTED; sipariş kalemi ve hesap kalemi değişmez
-2. Tahsil edilen eksi iade edilen hesaplanır: iade sonrası aynı ikram uygulanır; tahsil edilene eşit kalan tutar ikrama izin verir
-3. Mutasyon ve iki bağımsız qa incelemesi
+2. Ödemeler hesap başına bill-settlement kilidi ardından ödeme-tahsis kilidi altında kontrol edilir (tender ile aynı sıra); yolda bekleyen (Pending, Unknown, ReconciliationRequired) ödeme varsa ikram reddedilir (qa tur 1)
+3. Tahsil edilen eksi iade edilen hesaplanır: iade sonrası aynı ikram uygulanır; tahsil edilene eşit kalan tutar ikrama izin verir
+4. Mutasyon ve iki bağımsız qa incelemesi
 
 ## Out of scope
 
