@@ -1,0 +1,8 @@
+1 helper ignores reversals (all sites) -> KILLED (mut1.log, 4/4 new tests red)
+2 pre-check site counts allocations only -> KILLED (mut2.log)
+3 apply-discount site counts allocations only -> KILLED (mut3.log)
+4 undo site counts allocations only -> KILLED (mut4.log)
+5 item-comp site counts allocations only -> KILLED (mut5.log, Orders.Comp)
+Each restored with cp + cmp; every run rebuilt.
+6 refund filter by bill removed (another bill's refund leaks in) -> KILLED (mut6.log)
+7 collected inflated (reversal no longer reduces it) -> KILLED (mut7.log)

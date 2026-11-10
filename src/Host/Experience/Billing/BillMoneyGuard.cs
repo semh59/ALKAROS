@@ -69,6 +69,20 @@ internal static class BillMoneyGuard
         return (bool)(await money.ExecuteScalarAsync(cancellationToken))!;
     }
 
+    /// <summary>What the bill holds now: everything allocated to it minus every refund of its payments.</summary>
+    public static async Task<decimal> ReadCollectedAsync(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var collected = new NpgsqlCommand(
+            """
+            SELECT COALESCE((SELECT SUM(amount) FROM payments.payment_allocations WHERE bill_id = @bill_id), 0)
+                 - COALESCE((SELECT SUM(r.amount) FROM payments.payment_reversals r
+                             JOIN payments.payments p ON p.payment_id = r.payment_id WHERE p.bill_id = @bill_id), 0);
+            """, connection, transaction);
+        collected.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
+        return (decimal)(await collected.ExecuteScalarAsync(cancellationToken))!;
+    }
+
     /// <summary>A payment that may still be approved: its amount is not allocated yet, but the bill's collected total is not final.</summary>
     public static async Task<bool> BillHasPaymentInFlightAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)

@@ -1,7 +1,7 @@
 # V1-RMD-911 - İndirim ve geri alma yolu tahsil edilen tutarı iadeleri düşerek hesaplar (tek ortak yardımcı)
 
 - Task ID: V1-RMD-911
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

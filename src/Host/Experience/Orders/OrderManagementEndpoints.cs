@@ -1132,14 +1132,7 @@ public static class OrderManagementEndpoints
                 await allocationLock.ExecuteNonQueryAsync(cancellationToken);
             }
 
-            await using var collected = new NpgsqlCommand(
-                """
-                SELECT COALESCE((SELECT SUM(amount) FROM payments.payment_allocations WHERE bill_id = @bill), 0)
-                     - COALESCE((SELECT SUM(r.amount) FROM payments.payment_reversals r
-                                 JOIN payments.payments p ON p.payment_id = r.payment_id WHERE p.bill_id = @bill), 0);
-                """, connection, transaction);
-            collected.Parameters.AddWithValue("bill", bill.Id);
-            var collectedAmount = (decimal)(await collected.ExecuteScalarAsync(cancellationToken))!;
+            var collectedAmount = await BillMoneyGuard.ReadCollectedAsync(connection, transaction, bill.Id, cancellationToken);
             if (summary.AdjustedPayableAmount < collectedAmount)
                 throw new BillDiscountBelowCollectedException(bill.Id, summary.AdjustedPayableAmount, collectedAmount);
             if (await BillMoneyGuard.BillHasPaymentInFlightAsync(connection, transaction, bill.Id, cancellationToken))

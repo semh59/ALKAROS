@@ -137,7 +137,7 @@ public sealed class BillingSplitStore
             allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
             await allocationLock.ExecuteNonQueryAsync(cancellationToken);
         }
-        var collected = await ReadCollectedAsync(connection, lockTransaction, billId, cancellationToken);
+        var collected = await BillMoneyGuard.ReadCollectedAsync(connection, lockTransaction, billId, cancellationToken);
         if (summary.AdjustedPayableAmount < collected)
             throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
         if (await HasItemRefundAsync(connection, lockTransaction, billId, cancellationToken))
@@ -191,16 +191,6 @@ public sealed class BillingSplitStore
             _ => throw new ArgumentException(
                 $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
         };
-
-    private static async Task<decimal> ReadCollectedAsync(
-        NpgsqlConnection connection, NpgsqlTransaction? transaction, Guid billId, CancellationToken cancellationToken)
-    {
-        await using var command = new NpgsqlCommand(
-            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
-            connection, transaction);
-        command.Parameters.AddWithValue("bill_id", billId);
-        return (decimal)(await command.ExecuteScalarAsync(cancellationToken))!;
-    }
 
     private static bool IsDiscountable(BillState status) => status
         is BillState.Open or BillState.PartiallyAllocated or BillState.Allocated or BillState.Reopened;
@@ -273,7 +263,7 @@ public sealed class BillingSplitStore
         // A request the bill would refuse anyway must not spend one of the requester's approvals first.
         var summary = AdjustmentCalculator.Calculate(bill, [.. existing, CreateDiscount(bill, request, actorId, actorId)]);
         await using var connection = await _dataSource!.OpenConnectionAsync(cancellationToken);
-        var collected = await ReadCollectedAsync(connection, null, billId, cancellationToken);
+        var collected = await BillMoneyGuard.ReadCollectedAsync(connection, null, billId, cancellationToken);
         if (summary.AdjustedPayableAmount < collected)
             throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
         if (await HasItemRefundAsync(connection, null, billId, cancellationToken))
@@ -480,14 +470,7 @@ public sealed class BillingSplitStore
 
         var before = AdjustmentCalculator.Calculate(bill, existing);
         var summary = AdjustmentCalculator.Calculate(bill, existing.Where(a => a.Id != adjustmentId).ToList());
-        decimal collected;
-        await using (var collectedCommand = new NpgsqlCommand(
-            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
-            connection, transaction))
-        {
-            collectedCommand.Parameters.AddWithValue("bill_id", billId);
-            collected = (decimal)(await collectedCommand.ExecuteScalarAsync(cancellationToken))!;
-        }
+        var collected = await BillMoneyGuard.ReadCollectedAsync(connection, transaction, billId, cancellationToken);
         if (summary.AdjustedPayableAmount < collected)
             throw new AdjustmentUndoBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
 
