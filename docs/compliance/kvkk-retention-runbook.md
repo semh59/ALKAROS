@@ -58,6 +58,19 @@ A customer whose balance became non-zero after being queued is held back (the ru
 again once the balance is settled. The account ledger (`customer_account.account_transactions`, append-only) and the invoice
 buyer data are legal retention and are never touched.
 
+### Customer balance records (end-of-day balances)
+
+This class is not handled by the `housekeeping` verb and is not one of the 5-10 year classes; its own job runs on the maintenance timer. `customer_account.balance_snapshots` holds one derived end-of-day balance per customer per day (the past balances of the receivables aging report). It is not the ledger and not an invoice record, so it is **deleted**, not anonymized, and it is not part of `privacy.retention_rules`. The `balance-snapshot` maintenance job (every 6 hours, also runnable from the security screen) enforces two rules, both counted back **730 days (2 years)** from today:
+
+| Rule | Effect |
+| --- | --- |
+| A record older than 730 days | deleted |
+| A customer whose last ledger row is older than 730 days (or who has none) | every existing record of that customer is deleted; a new record for a day is written only when the customer has a ledger row up to that day that is not older than 730 days from today |
+
+The result line reports how many records were written and deleted. The account ledger (`customer_account.account_transactions`), the current balance (`customer_account.balances`) and invoice records are never touched. The job writes only the last 100 days, so a deleted record is never written back.
+
+The 730 days are counted on the business-day calendar of the job, so the boundary can differ by a few hours from a plain calendar day. This section does not shorten the legal retention of the ledger and invoice records (see above); it also does not change the customer profile window above (10 years after the last ledger movement), which is a separate class.
+
 ### How a record is processed
 
 Every record is one job in `privacy.anonymization_jobs`. Each store it touches is a step: the write, its checkpoint

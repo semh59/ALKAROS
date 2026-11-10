@@ -13,3 +13,4 @@ Orijinal fişi basan kullanıcı o hakkı kendisi sıfırlayamaz (403 RECEIPT_RE
 ## Notlar
 - Basanı bilinmeyen eski kayıtta (printed_by null) kendi kendine sıfırlama engellenmez (kayıt eskiden kalma; kabul).
 - Sayaç denetim olaylarından sayılır; denetim bölümleri 10 yıl sonra elle atılır, hesabın fiş akışından uzun (kabul).
+- VARSAYIM: bir fişin en çok 2 kez sıfırlanabilmesi (RECEIPT_RESET_LIMIT) benim varsayımım, ürün sahibi kararı değildir. Sabittir (MaxReceiptResets = 2), yönetici ayarı değildir; ürün sahibi farklı bir sayı isterse tek sabit değişir.
