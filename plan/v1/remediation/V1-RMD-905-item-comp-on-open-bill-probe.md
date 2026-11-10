@@ -3,7 +3,7 @@
 - Task ID: V1-RMD-905
 - Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
-- Work type: validation
+- Work type: implementation
 - Surface state: Existing
 
 ## Goal
@@ -15,16 +15,18 @@ V1-RMD-903 incelemesi (qa-uctan-uca-akis): hesap bir siparişten oluşturulurken
 - `evidence/V1-RMD-905/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Host/Experience/Orders/Comp/OrderCompOnOpenBillHttpTests.cs — yeni test
+  - src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs
+  - src/Host/Experience/Orders/OrderManagementEndpoints.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
-1. Kırmızı/yeşil test: açık hesabı olan siparişte kalem ikramı hesap kalemine ve ödenecek tutara yansıyor
+1. Kırmızı test (kanıtlandı: ikramdan sonra hesap kalemi Sale kaldı) ve düzeltme: kalem ikramı, siparişi kaydeden işlemin içinde açık hesabın kalemini Complimentary yapar
 2. İki bağımsız qa incelemesi
 
 ## Out of scope
 
-- Üretim kodu değişikliği (şüphe gerçek çıkarsa ayrı plan değişikliği)
+- Kalem ikramının geri alınması, kalem ikramının hesap toplam sınırı kapısından geçmesi
 
 ## Dependencies
 
