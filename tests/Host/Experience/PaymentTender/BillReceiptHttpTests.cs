@@ -553,6 +553,62 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
     }
 
+    [Fact]
+    public async Task WhoPrintedTheOriginalCannotResetItButAnotherManagerCan()
+    {
+        var terminalId = Guid.NewGuid();
+        var printer = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-self", true, "payments.refund.approve");
+        var other = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-other", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, PrintPath(terminalId, billId), printer);
+
+        var own = await PostJsonAsync(client, ResetPath(terminalId, billId), printer, new { Reason = "Deneme" });
+        var stillCopy = await (await PostAsync(client, PrintPath(terminalId, billId), printer)).Content.ReadFromJsonAsync<JsonElement>();
+        var byOther = await PostJsonAsync(client, ResetPath(terminalId, billId), other, new { Reason = "Deneme" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, own.StatusCode);
+        var error = (await own.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("RECEIPT_RESET_SELF", error.GetProperty("code").GetString());
+        Assert.Equal("Orijinal fişi siz bastınız; hakkı başka bir yönetici sıfırlamalı.", error.GetProperty("message").GetString());
+        Assert.True(stillCopy.GetProperty("isCopy").GetBoolean());
+        Assert.Equal(HttpStatusCode.OK, byOther.StatusCode);
+        Assert.Single(await ResetEventReasonsAsync(billId));
+    }
+
+    [Fact]
+    public async Task TheOriginalCanBeResetTwiceAndTheThirdResetIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-limit-cashier");
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-limit-manager", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var statuses = new List<HttpStatusCode>();
+        for (var round = 0; round < 3; round++)
+        {
+            await PostAsync(client, PrintPath(terminalId, billId), cashier);
+            statuses.Add((await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" })).StatusCode);
+        }
+
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" });
+
+        Assert.Equal([HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.Conflict], statuses);
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        var error = (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("RECEIPT_RESET_LIMIT", error.GetProperty("code").GetString());
+        Assert.Equal("Bu hesabın orijinal fiş hakkı en fazla 2 kez sıfırlanabilir.", error.GetProperty("message").GetString());
+        Assert.Equal(2, (await ResetEventReasonsAsync(billId)).Count);
+        var stillCopy = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(stillCopy.GetProperty("isCopy").GetBoolean());
+    }
+
     private static string ResetPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/original-reset";
 
     private async Task<List<string?>> ResetEventReasonsAsync(Guid billId)

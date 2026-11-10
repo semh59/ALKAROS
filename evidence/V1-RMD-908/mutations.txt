@@ -1,0 +1,5 @@
+1 self-reset check disabled -> KILLED (mut1.log)
+2 limit >= changed to > -> KILLED (mut2.log)
+3 limit constant 3 -> KILLED (mut3.log)
+4 Turkish dictionary entries removed (client) -> KILLED (mut4.log)
+Each restored with cp + cmp; server runs rebuilt.

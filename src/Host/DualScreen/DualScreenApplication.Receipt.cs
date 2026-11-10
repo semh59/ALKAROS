@@ -49,6 +49,9 @@ public static partial class DualScreenApplication
 {
     private const int MaxReceiptResetReasonLength = 500;
 
+    /// <summary>How often the right to print a bill's original can be given back; counted from the recorded resets.</summary>
+    private const int MaxReceiptResets = 2;
+
     /// <summary>
     /// The bill summary the cashier page prints as a non-fiscal information receipt: items, adjustments, totals and the
     /// payments with the method they were taken by. Reading it writes nothing, but it carries the print state of the bill
@@ -168,6 +171,21 @@ public static partial class DualScreenApplication
                 if (claim.Outcome == ReceiptResetOutcome.NothingToReset)
                     return ReceiptError(
                         context, StatusCodes.Status409Conflict, "RECEIPT_NOT_PRINTED", "Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok.");
+
+                // Returning early leaves the transaction uncommitted, so the original stays used up.
+                if (claim.PreviousPrintedBy == principal.UserId)
+                    return ReceiptError(
+                        context, StatusCodes.Status403Forbidden, "RECEIPT_RESET_SELF", "Orijinal fişi siz bastınız; hakkı başka bir yönetici sıfırlamalı.");
+                await using (var resets = new NpgsqlCommand(
+                    "SELECT count(*) FROM audit.audit_events WHERE aggregate_type = 'Bill' AND aggregate_id = @id AND event_name = 'bill.receipt.original.reset';",
+                    connection, transaction))
+                {
+                    resets.Parameters.AddWithValue("id", billId);
+                    if ((long)(await resets.ExecuteScalarAsync(cancellationToken))! >= MaxReceiptResets)
+                        return ReceiptError(
+                            context, StatusCodes.Status409Conflict, "RECEIPT_RESET_LIMIT",
+                            $"Bu hesabın orijinal fiş hakkı en fazla {MaxReceiptResets} kez sıfırlanabilir.");
+                }
 
                 await auditEvents.AppendAsync(
                     new AuditEvent(

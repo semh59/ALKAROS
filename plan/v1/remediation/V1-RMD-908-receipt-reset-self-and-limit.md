@@ -1,7 +1,7 @@
 # V1-RMD-908 - Fiş orijinal hakkı sıfırlama: basanın kendi fişini sıfırlaması yasak, sıfırlama sayısı sınırlı
 
 - Task ID: V1-RMD-908
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

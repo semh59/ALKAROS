@@ -180,6 +180,8 @@
     REASON_REQUIRED: 'İptal gerekçesi 1 ile 500 karakter arasında olmalı.',
     REFUND_ALREADY_REQUESTED: 'Bu ödeme için açık bir iade isteği zaten var.',
     RECEIPT_NOT_PRINTED: 'Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok.',
+    RECEIPT_RESET_SELF: 'Orijinal fişi siz bastınız; hakkı başka bir yönetici sıfırlamalı.',
+    RECEIPT_RESET_LIMIT: 'Bu hesabın orijinal fiş hakkı en fazla 2 kez sıfırlanabilir.',
     REFUND_AMOUNT_EXCEEDS_PAYMENT: 'İade tutarı seçilen ödemenin kalan tutarını aşıyor.',
     REFUND_AMOUNT_INVALID: 'İade tutarı sıfırdan büyük olmalı.',
     REFUND_EARLIER_OVERPAID: 'Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin.',

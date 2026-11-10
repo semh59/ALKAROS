@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt-reset.test.js > split-payment.js original receipt reset > answers RECEIPT_RESET_SELF in Turkish, never the code
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794321854342-0.32663960335495346:238:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794321854342-0.32663960335495346:399:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794321854342-0.32663960335495346:504:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-receipt-reset.test.js > split-payment.js original receipt reset > answers RECEIPT_RESET_LIMIT in Turkish, never the code
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794321855479-0.9763544685776435:238:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794321855479-0.9763544685776435:399:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794321855479-0.9763544685776435:504:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt-reset.test.js (9 tests | 2 failed) 3611ms
+     × answers RECEIPT_RESET_SELF in Turkish, never the code 1136ms
+     × answers RECEIPT_RESET_LIMIT in Turkish, never the code 1136ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt-reset.test.js > split-payment.js original receipt reset > answers RECEIPT_RESET_SELF in Turkish, never the code
+AssertionError: expected '✓Hesap ÖdendiBu hesabın tamamı tahsil…' to contain 'Orijinal fişi siz bastınız; hakkı baş…'
+
+Expected: "Orijinal fişi siz bastınız; hakkı başka bir yönetici sıfırlamalı."
+Received: "✓Hesap ÖdendiBu hesabın tamamı tahsil edildi.Fişi yazdırBekleyen hesaplara dönOrijinal fişi sıfırla (yönetici)Bu işlem için yetkiniz yok.Orijinal hakkını geri ver"
+
+ ❯ split-payment-receipt-reset.test.js:94:43
+     92|     type("Deneme");
+     93|     document.getElementById("reset-receipt").click();
+     94|     await vi.waitFor(() => expect(text()).toContain(message));
+       |                                           ^
+     95|     expect(text()).not.toContain(code);
+     96|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-receipt-reset.test.js > split-payment.js original receipt reset > answers RECEIPT_RESET_LIMIT in Turkish, never the code
+AssertionError: expected '✓Hesap ÖdendiBu hesabın tamamı tahsil…' to contain 'Bu hesabın orijinal fiş hakkı en fazl…'
+
+Expected: "Bu hesabın orijinal fiş hakkı en fazla 2 kez sıfırlanabilir."
+Received: "✓Hesap ÖdendiBu hesabın tamamı tahsil edildi.Fişi yazdırBekleyen hesaplara dönOrijinal fişi sıfırla (yönetici)İşlem, hesabın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Orijinal hakkını geri ver"
+
+ ❯ split-payment-receipt-reset.test.js:94:43
+     92|     type("Deneme");
+     93|     document.getElementById("reset-receipt").click();
+     94|     await vi.waitFor(() => expect(text()).toContain(message));
+       |                                           ^
+     95|     expect(text()).not.toContain(code);
+     96|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  17:44:12
+   Duration  5.17s (transform 464ms, setup 28ms, import 56ms, tests 3.61s, environment 1.22s)
+

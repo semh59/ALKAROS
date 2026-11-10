@@ -83,6 +83,18 @@ describe("split-payment.js original receipt reset", () => {
     await vi.waitFor(() => expect(text()).toContain("Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok."));
   });
 
+  it.each([
+    ["RECEIPT_RESET_SELF", 403, "Orijinal fişi siz bastınız; hakkı başka bir yönetici sıfırlamalı."],
+    ["RECEIPT_RESET_LIMIT", 409, "Bu hesabın orijinal fiş hakkı en fazla 2 kez sıfırlanabilir."],
+  ])("answers %s in Turkish, never the code", async (code, status, message) => {
+    await open({ status, body: { error: { code, message: "x" } } });
+
+    type("Deneme");
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(text()).toContain(message));
+    expect(text()).not.toContain(code);
+  });
+
   it("keeps the reason typed so far when the screen is redrawn by another action", async () => {
     await open({ status: 200, body: {} });
     document.getElementById("print-receipt").click();
