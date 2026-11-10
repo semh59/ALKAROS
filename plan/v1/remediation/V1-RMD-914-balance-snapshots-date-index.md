@@ -1,7 +1,7 @@
 # V1-RMD-914 - Bakiye kayıt tablosuna tarih indeksi (migration 224)
 
 - Task ID: V1-RMD-914
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
