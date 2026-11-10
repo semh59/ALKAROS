@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
@@ -90,6 +91,50 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
 
         Assert.Equal("denied", resolved.Status);
         Assert.Equal("manual", resolved.PolicyPath);
+    }
+
+    [Theory]
+    [InlineData("approve", "authorization.grant.approved", "granted")]
+    [InlineData("deny", "authorization.grant.denied", "denied")]
+    public async Task ADecisionIsWrittenToTheAuditTrailWithWhoWhatAndHowMuch(string action, string eventName, string status)
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var (managerId, _) = _database.LastSeededManager;
+        var requesterId = await _database.SeedBareUserAsync();
+        var grantId = await _database.SeedPendingGrantAsync("bills.comp", 120m, requesterId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await PostAsync<ResolvedGrantV1>(client, GrantPath(grantId, action), manager);
+
+        var recorded = await _database.AuditEventsOfAsync(grantId);
+        var audit = Assert.Single(recorded);
+        Assert.Equal(eventName, audit.EventName);
+        Assert.Equal(managerId, audit.ActorId);
+        Assert.Equal("CustomerChange", audit.Reason);
+        using var json = JsonDocument.Parse(audit.AfterStateJson!);
+        Assert.Equal(status, json.RootElement.GetProperty("status").GetString());
+        Assert.Equal("bills.comp", json.RootElement.GetProperty("permissionCode").GetString());
+        Assert.Equal(120m, json.RootElement.GetProperty("amount").GetDecimal());
+        Assert.Equal(requesterId, json.RootElement.GetProperty("requesterUserId").GetGuid());
+        Assert.Equal("manual", json.RootElement.GetProperty("policyPath").GetString());
+        Assert.True(json.RootElement.TryGetProperty("subjectType", out _));
+        Assert.True(json.RootElement.TryGetProperty("subjectId", out _));
+    }
+
+    [Fact]
+    public async Task ARefusedDecisionLeavesNoAuditEvent()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var grantId = await _database.SeedPendingGrantAsync("bills.comp", 120m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync<ResolvedGrantV1>(client, GrantPath(grantId, "approve"), manager);
+
+        using var again = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, "deny"), manager));
+
+        Assert.Equal(HttpStatusCode.Conflict, again.StatusCode);
+        Assert.Single(await _database.AuditEventsOfAsync(grantId));
     }
 
     [Fact]
@@ -266,6 +311,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         var pending = await GetAsync<List<PendingGrantV1>>(
             client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
         Assert.Contains(pending, grant => grant.GrantId == grantId);
+        Assert.Empty(await _database.AuditEventsOfAsync(grantId));
     }
 
     /// <summary>
@@ -295,11 +341,46 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         Assert.Contains(tightenings, tightening => tightening.TighteningId == tighteningId);
     }
 
-    private async Task<WebApplication> StartAsync()
+    [Fact]
+    public async Task ADecisionWhoseAuditRecordCannotBeWrittenIsNotMadeAndCanBeRetried()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var grantId = await _database.SeedPendingGrantAsync("bills.comp", 120m);
+        await using (var failing = await StartAsync(new RefusingAuditStore()))
+        {
+            using var client = CreateClient(failing);
+            using var refused = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, "approve"), manager));
+            Assert.Equal(HttpStatusCode.InternalServerError, refused.StatusCode);
+        }
+
+        await using var app = await StartAsync();
+        using var retryClient = CreateClient(app);
+        var pending = await GetAsync<List<PendingGrantV1>>(
+            retryClient, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
+        Assert.Contains(pending, grant => grant.GrantId == grantId);
+        await PostAsync<ResolvedGrantV1>(retryClient, GrantPath(grantId, "approve"), manager);
+        Assert.Single(await _database.AuditEventsOfAsync(grantId));
+    }
+
+    /// <summary>An audit store that cannot join the decision's transaction, so writing the record fails.</summary>
+    private sealed class RefusingAuditStore : IAuditEventStore
+    {
+        public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+    }
+
+    private async Task<WebApplication> StartAsync(IAuditEventStore? auditEvents = null)
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(NpgsqlDataSource.Create(_database.ConnectionString));
+        if (auditEvents is not null)
+            builder.Services.AddSingleton(auditEvents);
         builder.Services.AddAuthorizationDecisionExperience();
         var app = builder.Build();
         app.MapAuthorizationDecisionApi();
@@ -483,6 +564,12 @@ internal sealed class AuthorizationDecisionTestDatabase
         return cookie;
     }
 
+    public async Task<IReadOnlyList<AuditEvent>> AuditEventsOfAsync(Guid grantId)
+    {
+        await using var source = NpgsqlDataSource.Create(ConnectionString);
+        return await new PostgresAuditEventStore(source).GetByAggregateAsync("AuthorizationGrant", grantId);
+    }
+
     public Task<Guid> SeedPendingGrantAsync(string permissionCode, decimal amount)
         => SeedPendingGrantAsync(permissionCode, amount, requesterUserId: null);
 
@@ -574,7 +661,7 @@ internal sealed class AuthorizationDecisionTestDatabase
             ("user_id", userId),
             ("code", permissionCode));
 
-    private async Task<Guid> SeedBareUserAsync()
+    public async Task<Guid> SeedBareUserAsync()
     {
         var userId = Guid.NewGuid();
         await ExecuteAsync(

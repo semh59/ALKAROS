@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
@@ -40,6 +41,7 @@ public static class AuthorizationDecisionEndpoints
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddScoped<IAuthorizationService, AuthorizationService>();
         services.TryAddScoped<AuthorizationDecisionAuthentication>();
+        services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddScoped<AuthorizationDecisionStore>();
         return services;
     }
@@ -61,11 +63,11 @@ public static class AuthorizationDecisionEndpoints
 
         group.MapPost("/grants/{grantId:guid}/approve", async (
             Guid grantId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
-            Results.Ok(await store.ApproveAsync(grantId, ActorId(http), cancellationToken)));
+            Results.Ok(await store.ApproveAsync(grantId, ActorId(http), http.TraceIdentifier, cancellationToken)));
 
         group.MapPost("/grants/{grantId:guid}/deny", async (
             Guid grantId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
-            Results.Ok(await store.DenyAsync(grantId, ActorId(http), cancellationToken)));
+            Results.Ok(await store.DenyAsync(grantId, ActorId(http), http.TraceIdentifier, cancellationToken)));
 
         group.MapGet("/delegations", async (
             AuthorizationDecisionStore store, NpgsqlDataSource dataSource, CancellationToken cancellationToken) =>

@@ -1,7 +1,7 @@
 # V1-RMD-907 - Yöneticinin ikram/indirim onay ve ret kararları denetim kaydına yazılır
 
 - Task ID: V1-RMD-907
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing

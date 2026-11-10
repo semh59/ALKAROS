@@ -1,0 +1,7 @@
+1 event name always approved -> KILLED (mut1.log)
+2 actor = requester -> KILLED (mut2.log)
+3 amount 0 -> KILLED (mut3.log)
+4 reason dropped -> KILLED (mut4.log)
+5 requester = approver -> KILLED (mut5.log)
+Each restored with cp + cmp; every run rebuilt.
+6 decision committed before the audit record is written -> KILLED (mut6.log)

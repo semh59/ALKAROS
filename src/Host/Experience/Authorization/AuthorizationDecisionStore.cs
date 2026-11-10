@@ -1,8 +1,11 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
+using Npgsql;
 
 namespace ALKAROS.Host.Experience.Authorization;
 
@@ -19,6 +22,8 @@ public sealed class AuthorizationDecisionStore
     private readonly IAuthorizationDelegationRepository _delegations;
     private readonly IBehaviouralTighteningService _tightenings;
     private readonly IAuthorizationService _authorization;
+    private readonly IAuditEventStore _auditEvents;
+    private readonly NpgsqlDataSource _dataSource;
     private readonly Func<DateTimeOffset> _nowUtc;
 
     public AuthorizationDecisionStore(
@@ -26,8 +31,12 @@ public sealed class AuthorizationDecisionStore
         IAuthorizationDelegationRepository delegations,
         IBehaviouralTighteningService tightenings,
         IAuthorizationService authorization,
+        IAuditEventStore auditEvents,
+        NpgsqlDataSource dataSource,
         Func<DateTimeOffset>? nowUtc = null)
     {
+        _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _auditEvents = auditEvents ?? throw new ArgumentNullException(nameof(auditEvents));
         _authorization = authorization ?? throw new ArgumentNullException(nameof(authorization));
         _grants = grants ?? throw new ArgumentNullException(nameof(grants));
         _delegations = delegations ?? throw new ArgumentNullException(nameof(delegations));
@@ -53,14 +62,14 @@ public sealed class AuthorizationDecisionStore
             .ToArray();
     }
 
-    public Task<ResolvedGrantV1> ApproveAsync(Guid grantId, Guid approverUserId, CancellationToken cancellationToken)
-        => ResolveAsync(grantId, GrantStatus.Granted, approverUserId, cancellationToken);
+    public Task<ResolvedGrantV1> ApproveAsync(Guid grantId, Guid approverUserId, string correlationId, CancellationToken cancellationToken)
+        => ResolveAsync(grantId, GrantStatus.Granted, approverUserId, correlationId, cancellationToken);
 
-    public Task<ResolvedGrantV1> DenyAsync(Guid grantId, Guid approverUserId, CancellationToken cancellationToken)
-        => ResolveAsync(grantId, GrantStatus.Denied, approverUserId, cancellationToken);
+    public Task<ResolvedGrantV1> DenyAsync(Guid grantId, Guid approverUserId, string correlationId, CancellationToken cancellationToken)
+        => ResolveAsync(grantId, GrantStatus.Denied, approverUserId, correlationId, cancellationToken);
 
     private async Task<ResolvedGrantV1> ResolveAsync(
-        Guid grantId, GrantStatus status, Guid approverUserId, CancellationToken cancellationToken)
+        Guid grantId, GrantStatus status, Guid approverUserId, string correlationId, CancellationToken cancellationToken)
     {
         // V1-RMD-316 (independent 2026-09-26 audit, finding K9): RequesterUserId is immutable once a grant
         // is inserted, so this read-then-write has no meaningful race window for THIS check specifically -
@@ -84,8 +93,35 @@ public sealed class AuthorizationDecisionStore
             }
         }
 
+        // The grant row says who decided; the audit trail says on what, so a decision can be read back like every other
+        // approval. Both commit together: a decision whose record failed is not made, and a retry can still make it.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
         var resolved = await _grants.ResolveAsync(
-            grantId, status, PolicyPath.Manual, approverUserId, cancellationToken);
+            grantId, status, PolicyPath.Manual, approverUserId, connection, transaction, cancellationToken);
+        await _auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: status == GrantStatus.Granted ? "authorization.grant.approved" : "authorization.grant.denied",
+                aggregateType: "AuthorizationGrant",
+                aggregateId: resolved.GrantId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: approverUserId,
+                reason: resolved.ReasonCode,
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    status = GrantText.Status(resolved.Status),
+                    permissionCode = resolved.PermissionCode,
+                    amount = resolved.Amount,
+                    subjectType = resolved.SubjectType,
+                    subjectId = resolved.SubjectId,
+                    requesterUserId = resolved.RequesterUserId,
+                    policyPath = GrantText.Path(resolved.Path!.Value),
+                })),
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+
         return new ResolvedGrantV1(
             resolved.GrantId,
             GrantText.Status(resolved.Status),

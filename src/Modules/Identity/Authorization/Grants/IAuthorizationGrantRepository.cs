@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.Identity.Authorization.Grants;
 
 /// <summary>Reads and writes <c>identity.authorization_grants</c>.</summary>
@@ -29,6 +31,16 @@ public interface IAuthorizationGrantRepository
         GrantStatus status,
         PolicyPath path,
         Guid? approverUserId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>The same resolution inside the caller's transaction, so a record written with it commits or rolls back together.</summary>
+    Task<AuthorizationGrant> ResolveAsync(
+        Guid grantId,
+        GrantStatus status,
+        PolicyPath path,
+        Guid? approverUserId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
 
     /// <summary>
