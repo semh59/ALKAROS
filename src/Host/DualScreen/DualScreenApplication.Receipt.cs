@@ -41,8 +41,14 @@ public sealed record BillReceiptV1(
     DateTimeOffset? OriginalPrintedAt = null,
     bool IsCopy = false);
 
+public sealed record BillReceiptOriginalResetRequestV1(string? Reason);
+
+public sealed record BillReceiptOriginalResetResultV1(Guid BillId, DateTimeOffset PreviousPrintedAt);
+
 public static partial class DualScreenApplication
 {
+    private const int MaxReceiptResetReasonLength = 500;
+
     /// <summary>
     /// The bill summary the cashier page prints as a non-fiscal information receipt: items, adjustments, totals and the
     /// payments with the method they were taken by. Reading it writes nothing, but it carries the print state of the bill
@@ -121,6 +127,59 @@ public static partial class DualScreenApplication
                     _ => ReceiptError(
                         context, StatusCodes.Status409Conflict, "BILL_NOT_PAID", "Yalnız ödenmiş hesabın fişi yazdırılabilir."),
                 };
+            })
+            .WithTags("BillReceipt")
+            .WithMetadata(new BillRouteDoesNotClaim())
+            .AddEndpointFilter<BillTerminalAccessFilter>()
+            .RequireRateLimiting("terminal-write");
+
+        // A print that was cancelled or whose answer got lost still used up the original; a manager gives it back with a
+        // reason, which is kept in the audit trail together with who had printed it and when.
+        app.MapPost("/api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/original-reset", async (
+                Guid terminalId,
+                Guid billId,
+                BillReceiptOriginalResetRequestV1 request,
+                IBillRepository billRepository,
+                IBillReceiptPrintRepository receiptPrints,
+                IAuditEventStore auditEvents,
+                NpgsqlDataSource dataSource,
+                DualScreenStore store,
+                IAuthorizationService authorization,
+                HttpContext context,
+                CancellationToken cancellationToken) =>
+            {
+                var principal = await RequireCashierPermissionAsync(
+                    context, terminalId, store, authorization, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
+
+                var reason = request?.Reason?.Trim();
+                if (string.IsNullOrEmpty(reason) || reason.Length > MaxReceiptResetReasonLength)
+                    return ReceiptError(
+                        context, StatusCodes.Status400BadRequest, "REASON_REQUIRED", "Sıfırlama gerekçesi 1 ile 500 karakter arasında olmalı.");
+
+                var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
+                if (bill is null)
+                    return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
+
+                await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+                await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+                var claim = await receiptPrints.ResetOriginalAsync(billId, connection, transaction, cancellationToken);
+                if (claim.Outcome == ReceiptResetOutcome.NotFound)
+                    return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
+                if (claim.Outcome == ReceiptResetOutcome.NothingToReset)
+                    return ReceiptError(
+                        context, StatusCodes.Status409Conflict, "RECEIPT_NOT_PRINTED", "Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok.");
+
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        Guid.NewGuid(), "bill.receipt.original.reset", "Bill", billId, "User", context.TraceIdentifier, principal.UserId,
+                        reason: reason,
+                        afterStateJson: JsonSerializer.Serialize(new
+                        {
+                            bill.BillNumber, terminalId, previousPrintedAt = claim.PreviousPrintedAt, previousPrintedBy = claim.PreviousPrintedBy,
+                        })),
+                    connection, transaction, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return Results.Ok(new BillReceiptOriginalResetResultV1(billId, claim.PreviousPrintedAt!.Value));
             })
             .WithTags("BillReceipt")
             .WithMetadata(new BillRouteDoesNotClaim())

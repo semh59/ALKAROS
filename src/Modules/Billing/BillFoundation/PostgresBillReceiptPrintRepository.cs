@@ -56,4 +56,35 @@ public sealed class PostgresBillReceiptPrintRepository : IBillReceiptPrintReposi
         await marked.ReadAsync(cancellationToken);
         return new ReceiptPrintClaim(ReceiptPrintOutcome.Original, marked.GetFieldValue<DateTimeOffset>(0));
     }
+
+    public async Task<ReceiptResetClaim> ResetOriginalAsync(
+        Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        DateTimeOffset? printedAt;
+        Guid? printedBy;
+        await using (var locked = new NpgsqlCommand(
+            "SELECT receipt_first_printed_at, receipt_first_printed_by FROM billing.bills WHERE bill_id = @bill FOR NO KEY UPDATE;",
+            connection, transaction))
+        {
+            locked.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+            await using var reader = await locked.ExecuteReaderAsync(cancellationToken);
+            if (!await reader.ReadAsync(cancellationToken))
+                return new ReceiptResetClaim(ReceiptResetOutcome.NotFound, null, null);
+            printedAt = reader.IsDBNull(0) ? null : reader.GetFieldValue<DateTimeOffset>(0);
+            printedBy = reader.IsDBNull(1) ? null : reader.GetGuid(1);
+        }
+
+        if (printedAt is null)
+            return new ReceiptResetClaim(ReceiptResetOutcome.NothingToReset, null, null);
+
+        await using var clear = new NpgsqlCommand(
+            "UPDATE billing.bills SET receipt_first_printed_at = NULL, receipt_first_printed_by = NULL WHERE bill_id = @bill;",
+            connection, transaction);
+        clear.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+        await clear.ExecuteNonQueryAsync(cancellationToken);
+        return new ReceiptResetClaim(ReceiptResetOutcome.Reset, printedAt, printedBy);
+    }
 }

@@ -474,6 +474,109 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal(DBNull.Value, await owner.ExecuteScalarAsync());
     }
 
+    [Fact]
+    public async Task AManagerGivesTheOriginalBackWithAReasonAndTheNextPrintIsTheOriginalAgainAndTheResetIsRecorded()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-cashier");
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-manager", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var burned = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        var lost = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+
+        var reset = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "  Yazıcı kağıdı bitti  " });
+        var again = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.False(burned.GetProperty("isCopy").GetBoolean());
+        Assert.True(lost.GetProperty("isCopy").GetBoolean());
+        Assert.Equal(HttpStatusCode.OK, reset.StatusCode);
+        var body = await reset.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(billId, body.GetProperty("billId").GetGuid());
+        Assert.Equal(burned.GetProperty("originalPrintedAt").GetDateTimeOffset(), body.GetProperty("previousPrintedAt").GetDateTimeOffset());
+        Assert.False(again.GetProperty("isCopy").GetBoolean());
+        var events = await PrintEventsAsync(billId, "bill.receipt.original.reset");
+        var recorded = Assert.Single(events);
+        Assert.Contains("previousPrintedAt", recorded.AfterState);
+        Assert.Equal("Yazıcı kağıdı bitti", Assert.Single(await ResetEventReasonsAsync(billId)));
+    }
+
+    [Fact]
+    public async Task ResettingNeedsTheRefundApprovalPermissionAReasonAndAnOriginalThatWasPrinted()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-denied");
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-rules", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, PrintPath(terminalId, billId), cashier);
+
+        var forbidden = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, new { Reason = "Deneme" });
+        var anonymous = await PostJsonAsync(client, ResetPath(terminalId, billId), null, new { Reason = "Deneme" });
+        var noReason = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "   " });
+        var tooLong = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = new string('x', 501) });
+        var missing = await PostJsonAsync(client, ResetPath(terminalId, Guid.NewGuid()), manager, new { Reason = "Deneme" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, noReason.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, tooLong.StatusCode);
+        Assert.Equal("REASON_REQUIRED", (await noReason.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+        var stillCopy = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(stillCopy.GetProperty("isCopy").GetBoolean());
+    }
+
+    [Fact]
+    public async Task ResettingABillWhoseReceiptWasNeverPrintedIsRefusedWithATurkishMessage()
+    {
+        var terminalId = Guid.NewGuid();
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-unprinted", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" });
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("RECEIPT_NOT_PRINTED", error.GetProperty("code").GetString());
+        Assert.Equal("Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok.", error.GetProperty("message").GetString());
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+    }
+
+    private static string ResetPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/original-reset";
+
+    private async Task<List<string?>> ResetEventReasonsAsync(Guid billId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT reason FROM audit.audit_events WHERE aggregate_id = @id AND event_name = 'bill.receipt.original.reset';");
+        command.Parameters.AddWithValue("id", billId);
+        var result = new List<string?>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            result.Add(reader.IsDBNull(0) ? null : reader.GetString(0));
+        return result;
+    }
+
+    private static async Task<HttpResponseMessage> PostJsonAsync(HttpClient client, string path, string? cookie, object body)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Post, path) { Content = JsonContent.Create(body) };
+        request.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.10");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        if (cookie is not null)
+            request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return await client.SendAsync(request);
+    }
+
     private static string PrintPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/print";
 
     private async Task<List<(Guid? ActorId, string AggregateType, string AfterState, DateTimeOffset OccurredAt)>> PrintEventsAsync(Guid billId, string eventName)

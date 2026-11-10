@@ -1,0 +1,14 @@
+reset-keeps-claim [s/SET receipt_first_printed_at = NULL, receipt_first_printed_by = NULL WHERE/SET receipt_first_printed_by = NULL WHERE/]: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 18 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) testexit=1 restored-identical
+wrong-permission [s/context, terminalId, store, authorization, ApplicationPermissions.PaymentsRefundApprove, cancellationToken/context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken/]: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 18 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) testexit=1 restored-identical
+reason-not-required [s/if (string.IsNullOrEmpty(reason) || reason.Length > MaxReceiptResetReasonLength)/if (reason is null)/]: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 18 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) testexit=1 restored-identical
+reason-length-unchecked [s/if (string.IsNullOrEmpty(reason) || reason.Length > MaxReceiptResetReasonLength)/if (string.IsNullOrEmpty(reason))/]: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 17 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0) testexit=1 restored-identical
+client-reason-unchecked [s/    if (!reason || reason.length > 500) {/    if (false) {/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+reason-not-trimmed [s/    var reason = state.resetReason.trim();/    var reason = state.resetReason;/;s/body: { Reason: reason }/body: { Reason: input.value }/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+wrong-path [s#/receipt/original-reset'#/receipt/print'#]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+reason-kept-after-success [/^        state.resetReason = '';$/d]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+success-text [s/Orijinal fiş hakkı geri verildi; bir sonraki basım orijinal olur\./Tamam./]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+not-printed-text [/RECEIPT_NOT_PRINTED:/d]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+not-locked [/id="reset-receipt"/,+1s/(state.resetBusy ? ' disabled' : '')/''/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+reason-lost-on-error [s/    if (input) state.resetReason = input.value;/    if (input) state.resetReason = '';/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+input-not-tracked [/    if (el.id === 'reset-reason') {/,+1s/state.resetReason = el.value;/state.resetReason = state.resetReason;/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical
+print-during-reset [s/if (printButton.disabled || state.resetBusy) return;/if (printButton.disabled) return;/]: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯ vitestexit=1 restored-identical

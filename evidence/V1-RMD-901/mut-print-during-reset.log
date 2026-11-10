@@ -1,0 +1,49 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-receipt-reset.test.js > split-payment.js original receipt reset > does not start a print while a reset is in flight
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794291192272-0.31928771309122417:238:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794291192272-0.31928771309122417:399:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794291192272-0.31928771309122417:504:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-receipt-reset.test.js (7 tests | 1 failed) 1229ms
+     × does not start a print while a reset is in flight 132ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt-reset.test.js > split-payment.js original receipt reset > does not start a print while a reset is in flight
+AssertionError: expected <div class="sp-alert-body" …(2)></div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="sp-alert-body"
+  id="receipt-confirm"
+  role="alert"
+>
+  İlk basım orijinaldir, sonrakiler KOPYA yazar.
+</div>
+
+ ❯ split-payment-receipt-reset.test.js:103:56
+    101|     document.getElementById("print-receipt").click();
+    102|
+    103|     expect(document.getElementById("receipt-confirm")).toBeNull();
+       |                                                        ^
+    104|     await vi.waitFor(() => expect(document.getElementById("reset-recei…
+    105|     expect(resetCalls(fetchMock)).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  09:13:09
+   Duration  2.72s (transform 370ms, setup 25ms, import 48ms, tests 1.23s, environment 1.11s)
+
+vitestexit=1

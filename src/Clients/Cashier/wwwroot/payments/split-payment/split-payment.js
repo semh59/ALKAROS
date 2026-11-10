@@ -123,6 +123,10 @@
     receiptError: null,
     receiptBusy: false,
     receiptConfirm: false,
+    resetReason: '',
+    resetBusy: false,
+    resetNotice: null,
+    resetError: null,
   };
 
   function enterPaid() {
@@ -175,6 +179,7 @@
     PAYMENT_NOT_RESOLVABLE: 'Bu ödeme artık elle çözülemez; sayfayı yenileyip durumu kontrol edin.',
     REASON_REQUIRED: 'İptal gerekçesi 1 ile 500 karakter arasında olmalı.',
     REFUND_ALREADY_REQUESTED: 'Bu ödeme için açık bir iade isteği zaten var.',
+    RECEIPT_NOT_PRINTED: 'Bu hesabın fişi henüz basılmadı; sıfırlanacak orijinal yok.',
     REFUND_AMOUNT_EXCEEDS_PAYMENT: 'İade tutarı seçilen ödemenin kalan tutarını aşıyor.',
     REFUND_AMOUNT_INVALID: 'İade tutarı sıfırdan büyük olmalı.',
     REFUND_EARLIER_OVERPAID: 'Önceki iade sonradan verilen indirim yüzünden fazla ödendi; bu kalemi diğer kalan kalemlerle birlikte iade edin.',
@@ -1750,7 +1755,7 @@
   function onRefundClick(event) {
     var printButton = event.target.closest ? event.target.closest('[data-receipt-action="print"]') : null;
     if (printButton) {
-      if (printButton.disabled) return;
+      if (printButton.disabled || state.resetBusy) return;
       // The first print of a bill is the original and every later one says KOPYA, so the cashier confirms before one is used up.
       if (!state.receiptConfirm) {
         state.receiptConfirm = true;
@@ -1760,6 +1765,10 @@
       }
       state.receiptConfirm = false;
       printReceipt();
+      return;
+    }
+    if (event.target.closest && event.target.closest('[data-receipt-action="reset"]')) {
+      resetOriginalReceipt();
       return;
     }
     if (event.target.closest && event.target.closest('[data-receipt-action="cancel"]')) {
@@ -1779,6 +1788,10 @@
   function onRefundInput(event) {
     var el = event.target;
     var filled = !!String(el.value || '').trim();
+    if (el.id === 'reset-reason') {
+      state.resetReason = el.value;
+      return;
+    }
     function toggle(selector) {
       var button = app.querySelector(selector);
       if (button) button.disabled = state.refundBusy || !filled;
@@ -2258,6 +2271,48 @@
     return kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
   }
 
+  // A print that was cancelled or whose answer got lost still used up the original; a manager gives it back with a reason.
+  function resetOriginalReceipt() {
+    var reason = state.resetReason.trim();
+    state.resetNotice = null;
+    if (!reason || reason.length > 500) {
+      state.resetError = 'Sıfırlama gerekçesi 1 ile 500 karakter arasında olmalı.';
+      render();
+      return;
+    }
+    state.resetBusy = true;
+    state.resetError = null;
+    render();
+    api(billBase() + '/receipt/original-reset', { method: 'POST', body: { Reason: reason } }).then(function (result) {
+      state.resetBusy = false;
+      if (result.ok) {
+        state.resetReason = '';
+        state.receiptConfirm = false;
+        state.resetNotice = 'Orijinal fiş hakkı geri verildi; bir sonraki basım orijinal olur.';
+      } else {
+        var code = result.body && result.body.error && result.body.error.code;
+        state.resetError = code === 'REASON_REQUIRED' ? 'Sıfırlama gerekçesi 1 ile 500 karakter arasında olmalı.'
+          : describeHttpFailure(result.status, result.body);
+      }
+      render();
+    }, function () {
+      state.resetBusy = false;
+      state.resetError = 'Bağlantı kurulamadı. Tekrar deneyin.';
+      render();
+    });
+  }
+
+  function renderReceiptReset() {
+    return '<div class="sp-card"><span class="sp-field-label">Orijinal fişi sıfırla (yönetici)</span>' +
+      (state.resetNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.resetNotice) + '</div>' : '') +
+      (state.resetError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.resetError) + '</div>' : '') +
+      '<input class="sp-input" type="text" id="reset-reason" maxlength="500" placeholder="Gerekçe (zorunlu)" aria-label="Orijinal fişi sıfırlama gerekçesi"' +
+      (state.resetBusy ? ' disabled' : '') + ' value="' + escapeHtml(state.resetReason) + '">' +
+      '<button class="sp-btn sp-btn-secondary" type="button" id="reset-receipt" data-receipt-action="reset"' +
+      (state.resetBusy || state.receiptBusy ? ' disabled' : '') + '>' + (state.resetBusy ? 'Gönderiliyor…' : 'Orijinal hakkını geri ver') + '</button>' +
+      '</div>';
+  }
+
   function renderPaid() {
     var heading = closedHeading();
     app.innerHTML =
@@ -2280,7 +2335,8 @@
         : '') +
       BACK_LINK +
       '</div>' +
-      '<div class="sp-card">' + renderRefundSection(false) + '</div>';
+      '<div class="sp-card">' + renderRefundSection(false) + '</div>' +
+      renderReceiptReset();
   }
 
   function render() {

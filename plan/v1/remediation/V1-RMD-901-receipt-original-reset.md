@@ -1,7 +1,7 @@
 # V1-RMD-901 - Yönetici, iptal ya da yanıt kaybıyla yanan orijinal fiş hakkını gerekçeyle sıfırlayabilsin
 
 - Task ID: V1-RMD-901
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYXYQSTiLW1J4UDYBY6
 - Work type: implementation
 - Surface state: Existing
