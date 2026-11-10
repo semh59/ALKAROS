@@ -475,6 +475,31 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheDailyBalanceRecordsHaveADateIndexAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string shape =
+            """
+            SELECT (SELECT string_agg(a.attname, ',' ORDER BY k.ord)
+                    FROM unnest(i.indkey::int2[]) WITH ORDINALITY k(attnum, ord)
+                    JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = k.attnum)
+                   || ':' || i.indisunique::text || ':' || (i.indpred IS NULL)::text
+            FROM pg_index i
+            JOIN pg_class c ON c.oid = i.indexrelid
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'customer_account' AND c.relname = 'ix_balance_snapshots_date';
+            """;
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal("snapshot_date:false:true", await ScalarAsync<string>(source, shape));
+
+        RollBackDownTo("224");
+        Assert.Equal(0L, await ScalarAsync<long>(source, "SELECT count(*) FROM pg_indexes WHERE indexname = 'ix_balance_snapshots_date';"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal("snapshot_date:false:true", await ScalarAsync<string>(source, shape));
+    }
+
+    [Fact]
     public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";

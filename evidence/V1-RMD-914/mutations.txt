@@ -1,0 +1,7 @@
+1 index on customer_id instead of snapshot_date -> KILLED (mut1.log)
+2 unique index -> KILLED (mut2.log)
+3 partial index (WHERE balance <> 0) -> KILLED (mut3.log)
+4 down migration does nothing -> KILLED (mut4.log)
+Each restored with cp + cmp; every run rebuilt.
+5 PhaseBMax kept at 223 -> KILLED (mut5.log)
+6 entry 224 removed from order.json -> KILLED (mut6.log)
