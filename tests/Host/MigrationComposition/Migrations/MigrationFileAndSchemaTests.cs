@@ -518,6 +518,27 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task NilTablePointersAreClearedAndRefusedAndRollingBackAllowsThemAgain()
+    {
+        const string nilBillCount = "SELECT count(*) FROM table_mgmt.tables WHERE current_bill_id = '00000000-0000-0000-0000-000000000000';";
+        const string constraint = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_tables_pointers_not_nil';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(1L, await ScalarAsync<long>(source, constraint));
+        var refused = await Assert.ThrowsAsync<PostgresException>(() => ExecuteSqlAsync(source, "INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status, current_bill_id, row_version) VALUES ('b0000000-0000-0000-0000-000000000001', 'NIL-1', 2, true, 'Occupied', '00000000-0000-0000-0000-000000000000', 1);"));
+        Assert.Equal(PostgresErrorCodes.CheckViolation, refused.SqlState);
+
+        RollBackDownTo("228");
+        Assert.Equal(0L, await ScalarAsync<long>(source, constraint));
+        await ExecuteSqlAsync(source, "INSERT INTO table_mgmt.tables (table_id, table_number, capacity, active, current_status, current_bill_id, row_version) VALUES ('b0000000-0000-0000-0000-000000000002', 'NIL-2', 2, true, 'Occupied', '00000000-0000-0000-0000-000000000000', 1);");
+        Assert.Equal(1L, await ScalarAsync<long>(source, nilBillCount));
+        await ExecuteSqlAsync(source, "DELETE FROM table_mgmt.tables WHERE table_id = 'b0000000-0000-0000-0000-000000000002';");
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(1L, await ScalarAsync<long>(source, constraint));
+    }
+
+    [Fact]
     public async Task TheStockMovementTypeRuleAllowsTransferAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string allowsTransfer = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_stock_movements_movement_type' AND pg_get_constraintdef(oid) LIKE '%Transfer%';";

@@ -427,7 +427,7 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
         else if (hasActiveReservation)
         {
             projectedStatus = "Reserved";
-            authOrderId = reservationOrderId ?? openOrderIds.FirstOrDefault();
+            authOrderId = reservationOrderId ?? openOrderIds.Cast<Guid?>().FirstOrDefault();
             authBillId = null;
         }
         else if (currentStatus == "Reserved" && pendingQrOrderId is not null)
@@ -440,8 +440,8 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
         else if (openOrderIds.Count > 0 || openBillIds.Count > 0)
         {
             projectedStatus = "Occupied";
-            authOrderId = openOrderIds.FirstOrDefault();
-            authBillId = openBillIds.FirstOrDefault();
+            authOrderId = openOrderIds.Cast<Guid?>().FirstOrDefault();
+            authBillId = openBillIds.Cast<Guid?>().FirstOrDefault();
         }
         else if (currentStatus is "Cleaning" or "OutOfService")
         {

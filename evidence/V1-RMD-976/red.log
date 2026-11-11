@@ -1,0 +1,4 @@
+  Başarısız ALKAROS.Tables.CurrentPointers.Tests.PostgresTablePointerProjectorTests.AnOpenBillWhoseOrderIsAlreadyCompletedIsNoDriftAndARebuildNeverWritesANilOrderPointer [201 ms]
+  Başarısız ALKAROS.Tables.CurrentPointers.Tests.PostgresTablePointerProjectorTests.AnOpenOrderWithoutABillIsNoDriftAndARebuildNeverWritesANilBillPointer [498 ms]
+   Expected discrepancy!.HasDrift to be false, but found True.
+Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 702 ms - ALKAROS.Tables.CurrentPointers.Tests.dll (net8.0)

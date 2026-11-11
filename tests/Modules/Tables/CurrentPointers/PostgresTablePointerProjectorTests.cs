@@ -121,6 +121,43 @@ public sealed class PostgresTablePointerProjectorTests : IClassFixture<TablePoin
     }
 
     [Fact]
+    public async Task AnOpenOrderWithoutABillIsNoDriftAndARebuildNeverWritesANilBillPointer()
+    {
+        var tableId = await CreateTableAsync("P-901", "Occupied", 1);
+        var orderId = await CreateOrderAsync(tableId, "ORD-P901", 60m, "Submitted");
+        await SetTablePointersAsync(tableId, orderId, null);
+
+        var discrepancy = await _projector.DetectTableDriftAsync(tableId);
+        var result = await _projector.RebuildTablePointersAsync(tableId);
+
+        discrepancy!.HasDrift.Should().BeFalse();
+        discrepancy.AuthoritativeBillId.Should().BeNull();
+        result.WasModified.Should().BeFalse();
+        var (_, curOrderId, curBillId, _) = await GetTableAsync(tableId);
+        curOrderId.Should().Be(orderId);
+        curBillId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task AnOpenBillWhoseOrderIsAlreadyCompletedIsNoDriftAndARebuildNeverWritesANilOrderPointer()
+    {
+        var tableId = await CreateTableAsync("P-902", "Occupied", 1);
+        var orderId = await CreateOrderAsync(tableId, "ORD-P902", 60m, "Completed");
+        var billId = await CreateBillAsync(tableId, orderId, "BIL-P902", 60m, "Open");
+        await SetTablePointersAsync(tableId, null, billId);
+
+        var discrepancy = await _projector.DetectTableDriftAsync(tableId);
+        var result = await _projector.RebuildTablePointersAsync(tableId);
+
+        discrepancy!.HasDrift.Should().BeFalse();
+        discrepancy.AuthoritativeOrderId.Should().BeNull();
+        result.WasModified.Should().BeFalse();
+        var (_, curOrderId, curBillId, _) = await GetTableAsync(tableId);
+        curOrderId.Should().BeNull();
+        curBillId.Should().Be(billId);
+    }
+
+    [Fact]
     public async Task StaleAndGhostPointersOnCompletedOrderClearsPointersAndRestoresAvailable()
     {
         var tableId = await CreateTableAsync("P-301", "Occupied", 1);
