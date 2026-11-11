@@ -1,4 +1,4 @@
-# V1-RMD-982 - Kasada eklendi isaretini hesap kalemlerinde ve gun sonu raporunda gostermek
+# V1-RMD-982 - Kasada eklendi isaretini hesap kalemlerinde gostermek
 
 - Task ID: V1-RMD-982
 - Status: InProgress
@@ -8,7 +8,7 @@
 
 ## Goal
 
-Mutfaksız eklenen kalemin "kasada eklendi" işareti ve neden kodu hesap kalemlerinde görünür; gün sonu toplamlarında mutfaksız eklenen kalem sayısı ve tutarı ayrıca sayılır.
+Mutfaksız eklenen kalemin "kasada eklendi" işareti ve neden kodu hesap kalemlerinde (hesap tasarımı yanıtında) görünür. Gün sonu raporunda ayrı sayım bu görevin dışındadır; rapor şemasına dokunur ve ayrı görevdir.
 
 ## Owned surface
 
@@ -17,7 +17,6 @@ Mutfaksız eklenen kalemin "kasada eklendi" işareti ve neden kodu hesap kalemle
   - src/Host/Experience/Billing/BillingSplitStore.cs
   - src/Host/Experience/Billing/BillingSplitContracts.cs
   - tests/Host/Experience/Billing/KitchenlessAddHttpTests.cs
-  - src/Modules/Reporting/BusinessDayTotals/BusinessDayTotalsReader.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
