@@ -295,7 +295,7 @@ export function CustomerDisplay() {
           <h1>Müşteri ekranını<br />kasaya bağlayın</h1>
           {pairing ? (
             <>
-              <p>Bu kodu kasadaki “Ekranı eşleştir” düğmesiyle açılan pencereye girin.</p>
+              <p>Bu kodu kasadaki “Müşteri ekranını eşleştir” düğmesiyle açılan pencereye girin.</p>
               <div className="pairing-code">{pairing.code}</div>
               <small>Kod {pairingMinutes} dakika sonra otomatik olarak yenilenir.</small>
             </>

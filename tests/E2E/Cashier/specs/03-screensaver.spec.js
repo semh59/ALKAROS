@@ -48,14 +48,13 @@ test.describe('Ekran koruyucu yükleme/kaldırma (PosTerminal /settings/screensa
 
     // Approve the pairing from the cashier's own dialog (Cashier.tsx),
     // exactly the real operator flow - type the code shown on the display.
-    // The trigger button and the dialog's own submit button share the
-    // exact same label ("Ekranı eşleştir"), so the submit click must be
-    // scoped to the dialog itself.
+    // The submit click is scoped to the dialog: the trigger button's label
+    // ("Müşteri ekranını eşleştir") contains the submit label ("Eşleştir").
     await page.goto('/');
-    await page.getByRole('button', { name: 'Ekranı eşleştir', exact: true }).click();
+    await page.getByRole('button', { name: 'Müşteri ekranını eşleştir', exact: true }).click();
     const pairingDialog = page.getByRole('dialog');
     await pairingDialog.getByLabel('Eşleştirme kodu').fill(code);
-    await pairingDialog.getByRole('button', { name: 'Ekranı eşleştir' }).click();
+    await pairingDialog.getByRole('button', { name: 'Eşleştir', exact: true }).click();
 
     // The display polls /complete every 2s (CustomerDisplay.tsx) and moves
     // to its idle screensaver state once approved; no active order exists

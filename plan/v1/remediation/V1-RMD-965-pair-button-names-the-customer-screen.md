@@ -1,7 +1,7 @@
 # V1-RMD-965 - Eşleştirme düğmesi hangi ekranı eşleştirdiğini söylesin
 
 - Task ID: V1-RMD-965
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

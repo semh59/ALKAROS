@@ -146,7 +146,7 @@ describe("PosTerminal accessibility states", () => {
 
     await renderApp();
     const findTrigger = () => [...document.querySelectorAll("button")].find((button) =>
-      button.textContent?.includes("Ekranı eşleştir"));
+      button.textContent?.includes("Müşteri ekranını eşleştir"));
     await waitUntil(() => findTrigger() !== undefined);
     const trigger = findTrigger();
     expect(trigger).toBeDefined();

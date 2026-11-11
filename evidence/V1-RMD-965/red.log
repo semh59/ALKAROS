@@ -1,0 +1,109 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (62 tests | 1 failed) 1393ms
+     × states the pairing instruction with the till's own button name and the real code lifetime 18ms
+ ❯ src/routes/Cashier.help-alerts.test.tsx (14 tests | 4 failed) 3120ms
+     × shows when the paired screen's connection ends, so it is not found out in front of a customer 80ms
+     × says so when no screen is paired 60ms
+     × shows a refused code inside the dialog and clears the code once it is closed 54ms
+     × asks before removing the screen's access and reports how many screens it ended 73ms
+ ❯ src/stale.test.ts (8 tests | 1 failed) 6140ms
+     × gives the pairing dialog an accessible modal contract 5450ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/stale.test.ts > PosTerminal accessibility states > gives the pairing dialog an accessible modal contract
+AssertionError: expected undefined to be defined
+ ❯ src/stale.test.ts:152:21
+    150|     await waitUntil(() => findTrigger() !== undefined);
+    151|     const trigger = findTrigger();
+    152|     expect(trigger).toBeDefined();
+       |                     ^
+    153|     await act(async () => trigger!.dispatchEvent(new MouseEvent("click…
+    154|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/routes/Cashier.help-alerts.test.tsx > Cashier display pairing dialog > shows when the paired screen's connection ends, so it is not found out in front of a customer
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.help-alerts.test.tsx:352:35
+    350|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    351|   const trigger = [...document.querySelectorAll("button")].find((butto…
+    352|   await act(async () => { trigger.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+    353|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    354|   return fetchMock;
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openPairingDialog src/routes/Cashier.help-alerts.test.tsx:352:9
+ ❯ src/routes/Cashier.help-alerts.test.tsx:373:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/routes/Cashier.help-alerts.test.tsx > Cashier display pairing dialog > says so when no screen is paired
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.help-alerts.test.tsx:352:35
+    350|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    351|   const trigger = [...document.querySelectorAll("button")].find((butto…
+    352|   await act(async () => { trigger.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+    353|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    354|   return fetchMock;
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openPairingDialog src/routes/Cashier.help-alerts.test.tsx:352:9
+ ❯ src/routes/Cashier.help-alerts.test.tsx:382:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/routes/Cashier.help-alerts.test.tsx > Cashier display pairing dialog > shows a refused code inside the dialog and clears the code once it is closed
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.help-alerts.test.tsx:352:35
+    350|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    351|   const trigger = [...document.querySelectorAll("button")].find((butto…
+    352|   await act(async () => { trigger.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+    353|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    354|   return fetchMock;
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openPairingDialog src/routes/Cashier.help-alerts.test.tsx:352:9
+ ❯ src/routes/Cashier.help-alerts.test.tsx:390:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/routes/Cashier.help-alerts.test.tsx > Cashier display pairing dialog > asks before removing the screen's access and reports how many screens it ended
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.help-alerts.test.tsx:352:35
+    350|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    351|   const trigger = [...document.querySelectorAll("button")].find((butto…
+    352|   await act(async () => { trigger.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+    353|   await act(async () => { await new Promise((resolve) => setTimeout(re…
+    354|   return fetchMock;
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openPairingDialog src/routes/Cashier.help-alerts.test.tsx:352:9
+ ❯ src/routes/Cashier.help-alerts.test.tsx:408:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > states the pairing instruction with the till's own button name and the real code lifetime
+AssertionError: expected 'AALKAROSGÜVENLİ EKRAN BAĞLANTISIMüşte…' to contain '“Müşteri ekranını eşleştir” düğmesiyl…'
+
+Expected: "“Müşteri ekranını eşleştir” düğmesiyle açılan pencereye"
+Received: "AALKAROSGÜVENLİ EKRAN BAĞLANTISIMüşteri ekranınıkasaya bağlayınBu kodu kasadaki “Ekranı eşleştir” düğmesiyle açılan pencereye girin.CCCC3333Kod 2 dakika sonra otomatik olarak yenilenir."
+
+ ❯ src/routes/CustomerDisplay.test.tsx:269:39
+    267|     await act(async () => Promise.resolve());
+    268|
+    269|     expect(document.body.textContent).toContain("“Müşteri ekranını eşl…
+       |                                       ^
+    270|     expect(document.body.textContent).toContain("2 dakika sonra");
+    271|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  6 failed | 78 passed (84)
+   Start at  14:17:58
+   Duration  7.90s (transform 3.05s, setup 0ms, import 955ms, tests 10.65s, environment 3.25s)
+

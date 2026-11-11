@@ -348,7 +348,7 @@ async function openPairingDialog(handler: Handler) {
   await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
   await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
   await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
-  const trigger = [...document.querySelectorAll("button")].find((button) => button.textContent === "Ekranı eşleştir")!;
+  const trigger = [...document.querySelectorAll("button")].find((button) => button.textContent === "Müşteri ekranını eşleştir")!;
   await act(async () => { trigger.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
   await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
   return fetchMock;
@@ -392,13 +392,13 @@ describe("Cashier display pairing dialog", () => {
       : undefined);
     await typeCode("ABCD2345");
 
-    await click(byText("Ekranı eşleştir"));
+    await click(byText("Eşleştir"));
 
     expect(document.querySelector(".pairing-dialog [role='alert']")?.textContent).toContain("Eşleştirme kodu yanlış");
 
     await click(byText("Vazgeç"));
     expect(document.querySelector(".pairing-dialog")).toBeNull();
-    const trigger = [...document.querySelectorAll("button")].find((button) => button.textContent === "Ekranı eşleştir")!;
+    const trigger = [...document.querySelectorAll("button")].find((button) => button.textContent === "Müşteri ekranını eşleştir")!;
     await click(trigger);
     expect(document.querySelector<HTMLInputElement>(".pairing-dialog input")!.value).toBe("");
     expect(document.querySelector(".pairing-dialog [role='alert']")).toBeNull();

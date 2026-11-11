@@ -266,7 +266,7 @@ describe("CustomerDisplay", () => {
     await act(async () => Promise.resolve());
     await act(async () => Promise.resolve());
 
-    expect(document.body.textContent).toContain("“Ekranı eşleştir” düğmesiyle açılan pencereye");
+    expect(document.body.textContent).toContain("“Müşteri ekranını eşleştir” düğmesiyle açılan pencereye");
     expect(document.body.textContent).toContain("2 dakika sonra");
   });
 

@@ -32,10 +32,10 @@ test.describe('Müşteri ekranı: ödeme siparişi tamamlayınca anında güncel
     const pairingCode = displayPage.locator('.pairing-code');
     await expect(pairingCode).toBeVisible({ timeout: 15_000 });
     const code = (await pairingCode.textContent()).trim();
-    await page.getByRole('button', { name: 'Ekranı eşleştir', exact: true }).click();
+    await page.getByRole('button', { name: 'Müşteri ekranını eşleştir', exact: true }).click();
     const pairingDialog = page.getByRole('dialog');
     await pairingDialog.getByLabel('Eşleştirme kodu').fill(code);
-    await pairingDialog.getByRole('button', { name: 'Ekranı eşleştir' }).click();
+    await pairingDialog.getByRole('button', { name: 'Eşleştir', exact: true }).click();
     await expect(displayPage.getByText('E2E Ödeme Ürünü')).toBeVisible({ timeout: 15_000 });
 
     // Full payment via a real tender - the same server path split-payment.js itself calls.

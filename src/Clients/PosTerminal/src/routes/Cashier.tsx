@@ -681,7 +681,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         aria-expanded={pairingOpen}
         onClick={() => setPairingOpen(true)}
       >
-        Ekranı eşleştir
+        Müşteri ekranını eşleştir
       </button>
     </>
   );
@@ -1025,7 +1025,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                   () => api.approvePairing(terminalId, pairingCode),
                   "Müşteri ekranı eşleştirildi.",
                 ).then((completed) => { if (completed) closePairing(); })}
-              >{busy ? "Eşleştiriliyor…" : "Ekranı eşleştir"}</button>
+              >{busy ? "Eşleştiriliyor…" : "Eşleştir"}</button>
             </div>
             <div className="dialog-danger-zone">
               <strong>Bağlantıyı sonlandır</strong>
