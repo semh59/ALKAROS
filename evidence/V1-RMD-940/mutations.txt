@@ -1,0 +1,3 @@
+M1 the payment line uses its own button-style names again: tests failed (restored)
+M2 the shared name for transfer is changed: line and refund tests failed (restored)
+M3 the refund row uses its own separate names (card named differently): the strengthened refund test failed (restored)

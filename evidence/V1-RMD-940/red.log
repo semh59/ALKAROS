@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-display-binding.test.js (26 tests | 2 failed) 5181ms
+     × names the Eft way on the applied payment line 1073ms
+     × names the Account way on the applied payment line 1087ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the Eft way on the applied payment line
+AssertionError: expected 'EFT/Havale · ₺40,00' to contain 'Havale / EFT'
+
+Expected: "Havale / EFT"
+Received: "EFT/Havale · ₺40,00"
+
+ ❯ split-payment-display-binding.test.js:181:93
+    179|       await loadApp(htmlPath, scriptPath);
+    180|
+    181|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                             ^
+    182|     },
+    183|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the Account way on the applied payment line
+AssertionError: expected 'Hesaba yaz (cari) · ₺40,00' to contain 'Cari hesap'
+
+Expected: "Cari hesap"
+Received: "Hesaba yaz (cari) · ₺40,00"
+
+ ❯ split-payment-display-binding.test.js:181:93
+    179|       await loadApp(htmlPath, scriptPath);
+    180|
+    181|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                             ^
+    182|     },
+    183|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 24 passed (26)
+   Start at  12:31:23
+   Duration  6.52s (transform 1.31s, setup 25ms, import 57ms, tests 5.18s, environment 993ms)
+

@@ -1,7 +1,7 @@
 # V1-RMD-940 - Ödeme sayfası bir ödeme yöntemini tahsilat ve iade satırlarında aynı adla yazsın
 
 - Task ID: V1-RMD-940
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

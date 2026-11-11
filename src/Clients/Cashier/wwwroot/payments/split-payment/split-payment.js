@@ -17,6 +17,7 @@
     Initiated: 'Başlatıldı', Pending: 'Beklemede', Approved: 'Onaylandı', Declined: 'Reddedildi', Cancelled: 'İptal edildi',
     Unknown: 'Sonucu bilinmiyor', ReconciliationRequired: 'Mutabakat bekliyor', Refunded: 'İade edildi', PartiallyRefunded: 'Kısmen iade edildi',
   };
+  var METHOD_NAMES = { Cash: 'Nakit', Card: 'Kart', Eft: 'Havale / EFT', Account: 'Cari hesap' };
   var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', Eft: 'EFT/Havale', Account: 'Hesaba yaz (cari)' };
 
   var MAX_SPLIT_PEOPLE = 50;
@@ -1180,7 +1181,7 @@
       '<div class="sp-field"><span class="sp-field-label">Uygulanan tahsilatlar</span>' +
       allocations.map(function (line) {
         return (
-          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(METHOD_LABELS[line.method === 'Card' ? 'BankCard' : line.method] || 'Tahsilat') + ' · ' + formatMoney(line.amount) + '</span>' +
+          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(METHOD_NAMES[line.method] || 'Tahsilat') + ' · ' + formatMoney(line.amount) + '</span>' +
           '<span class="sp-line-status' + (line.paymentStatus === 'Approved' ? ' is-approved' : '') + '">' +
           escapeHtml(PAYMENT_STATUS_LABELS[line.paymentStatus] || 'Bilinmiyor') + '</span></div>'
         );
@@ -1372,7 +1373,6 @@
     Completed: 'Tamamlandı',
     Rejected: 'Reddedildi',
   };
-  var REFUND_METHOD_LABELS = { Cash: 'Nakit', Card: 'Kart', Eft: 'Havale / EFT', Account: 'Cari hesap' };
 
   // A retry of the same refund after a lost response reuses its key, so the server returns the stored request
   // instead of paying out twice; the key is dropped once the server answered.
@@ -1655,7 +1655,7 @@
         }
         return (
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(row.amount) + ' · ' +
-          escapeHtml(REFUND_METHOD_LABELS[row.method] || 'Bilinmiyor') + '</span>' +
+          escapeHtml(METHOD_NAMES[row.method] || 'Bilinmiyor') + '</span>' +
           '<span class="sp-line-status">' + escapeHtml(REFUND_STATUS_LABELS[row.status] || 'Bilinmiyor') + '</span>' +
           (row.selfApproved ? '<span class="sp-line-status">Kendi onayı</span>' : '') +
           '<span class="sp-alert-body">' + escapeHtml(row.reason) + '</span>' + actions + '</div>'

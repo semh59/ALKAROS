@@ -288,7 +288,8 @@ describe("split-payment.js cancel and refund", () => {
     await vi.waitFor(() => expect(app().textContent).toContain("Havale / EFT"));
 
     const text = app().textContent;
-    for (const label of ["Nakit", "Kart", "Havale / EFT", "Cari hesap"]) expect(text).toContain(label);
+    const refundNames = [...document.querySelectorAll(".sp-line-method")].map((node) => node.textContent.split(" · ")[1]).filter(Boolean);
+    expect(refundNames).toEqual(["Nakit", "Kart", "Havale / EFT", "Cari hesap"]);
     expect(text.match(/Kendi onayı/g)).toHaveLength(1);
     expect(text).not.toContain("Bilinmiyor");
   });

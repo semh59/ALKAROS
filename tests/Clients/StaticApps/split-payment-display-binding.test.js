@@ -170,7 +170,7 @@ describe("split-payment.js card method availability", () => {
     expect(document.getElementById("method-hint")).not.toBeNull();
   });
 
-  it.each([["Cash", "Nakit"], ["Card", "Kredi/Banka Kartı"], ["Eft", "EFT/Havale"], ["Account", "Hesaba yaz (cari)"], ["", "Tahsilat"]])(
+  it.each([["Cash", "Nakit"], ["Card", "Kart"], ["Eft", "Havale / EFT"], ["Account", "Cari hesap"], ["", "Tahsilat"]])(
     "names the %s way on the applied payment line",
     async (method, label) => {
       const paid = { ...summary, allocatedTotal: 40, remainingAmount: 60, allocations: [{ allocationId: "a1", paymentId: "p1", amount: 40, paymentStatus: "Approved", method }] };
@@ -178,7 +178,7 @@ describe("split-payment.js card method availability", () => {
       installFetchRouter(routes({ body: { bound: true } }).map((route) => (route.test("/tenders/") ? { ...route, body: paid } : route)));
       await loadApp(htmlPath, scriptPath);
 
-      await vi.waitFor(() => expect(document.querySelector(".sp-line-method")?.textContent).toContain(label));
+      await vi.waitFor(() => expect(document.querySelector(".sp-line-method")?.textContent.startsWith(`${label} · `)).toBe(true));
     },
   );
 
