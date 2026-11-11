@@ -1,7 +1,7 @@
 # V1-RMD-961 - Ürün ayrıntısı, grup bağlıyken 'modifikatör atanmadı' demesin
 
 - Task ID: V1-RMD-961
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

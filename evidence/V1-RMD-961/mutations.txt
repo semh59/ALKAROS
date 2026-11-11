@@ -1,0 +1,4 @@
+M1 the old sentence comes back:       Tests  1 failed | 49 passed (50)
+M2 the old heading comes back:       Tests  1 failed | 49 passed (50)
+M3 the product filter compares the wrong field:       Tests  1 failed | 49 passed (50)
+M4 the list never shows:       Tests  1 failed | 49 passed (50)

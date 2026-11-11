@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx (36 tests | 1 failed) 1046ms
+     × lists the groups bound to a product and assigns another one 15ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > lists the groups bound to a product and assigns another one
+AssertionError: expected 'SEÇİLİ KAYITEspressoÜrünlerKod / kiml…' to contain 'ÜRÜNE ÖZEL MODİFİKATÖRLER'
+
+Expected: "ÜRÜNE ÖZEL MODİFİKATÖRLER"
+Received: "SEÇİLİ KAYITEspressoÜrünlerKod / kimlikESP-01 · Menü ürünüDurumAktifDeğer95.00 TRYStok moduStok takibi yokKDV profiliKDV %10MODİFİKATÖR ATAMALARIBu ürüne modifikatör atanmadı.BAĞLI MODİFİKATÖR GRUPLARISüt seçimi 1 seçenekGrup ataGrup seçinŞurupGrubu ataGEÇERLİ FİYAT ZAMAN ÇİZELGESİ95.00 TRY01.01.2026 → açık uçluBu ekran yalnız kayıt yönetir. Yayınlama veya kasiyer görünürlüğü, aktif ve geçerli fiyat kuralları sağlanmadan değişmez."
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:317:32
+    315|     expect(detail.textContent).toContain("BAĞLI MODİFİKATÖR GRUPLARI");
+    316|     expect(detail.textContent).toContain("Süt seçimi");
+    317|     expect(detail.textContent).toContain("ÜRÜNE ÖZEL MODİFİKATÖRLER");
+       |                                ^
+    318|     expect(detail.textContent).toContain("Bu ürüne özel modifikatör yo…
+    319|     expect(detail.textContent).not.toContain("modifikatör atanmadı");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 48 passed (49)
+   Start at  14:07:53
+   Duration  3.06s (transform 361ms, setup 0ms, import 771ms, tests 1.31s, environment 4.22s)
+

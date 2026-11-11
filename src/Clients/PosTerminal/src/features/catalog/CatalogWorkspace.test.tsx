@@ -314,11 +314,26 @@ describe("catalog workspace", () => {
     const detail = document.querySelector(".catalog-details")!;
     expect(detail.textContent).toContain("BAĞLI MODİFİKATÖR GRUPLARI");
     expect(detail.textContent).toContain("Süt seçimi");
+    expect(detail.textContent).toContain("ÜRÜNE ÖZEL MODİFİKATÖRLER");
+    expect(detail.textContent).toContain("Bu ürüne özel modifikatör yok.");
+    expect(detail.textContent).not.toContain("modifikatör atanmadı");
     const select = [...detail.querySelectorAll("label")].find((label) => label.textContent?.startsWith("Grup ata"))!.querySelector("select")!;
     expect([...select.options].map((option) => option.textContent)).toEqual(["Grup seçin", "Şurup"]);
     await choose(detail, "Grup ata", "group-2");
     await click([...detail.querySelectorAll("button")].find((button) => button.textContent === "Grubu ata")!);
     expect(onCreate).toHaveBeenCalledWith({ kind: "assignments", value: expect.objectContaining({ productId: "product-1", modifierGroupId: "group-2" }) });
+  });
+
+  it("lists the modifiers that belong to the product itself and not those of another product", async () => {
+    const own = { ...data.modifiers[0], id: "modifier-own", code: "OWN", name: "Ekstra shot", priceDelta: 20, productId: "product-1" };
+    const other = { ...data.modifiers[0], id: "modifier-other", code: "OTHER", name: "Başka ürünün", productId: "product-2" };
+    await render(<CatalogWorkspace {...baseProps({ data: { ...data, modifiers: [own, other] } })} />);
+
+    const detail = document.querySelector(".catalog-details")!.textContent!;
+    expect(detail).toContain("Ekstra shot");
+    expect(detail).toContain("+20.00 TRY");
+    expect(detail).not.toContain("Başka ürünün");
+    expect(detail).not.toContain("Bu ürüne özel modifikatör yok.");
   });
 
   it("offers no group assignment without manage permission", async () => {
