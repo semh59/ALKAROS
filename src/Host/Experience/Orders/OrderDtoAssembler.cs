@@ -258,7 +258,8 @@ public sealed class OrderDtoAssembler
             // own eligibility check exactly.
             CanComp: i.Status == OrderItemState.Active,
             SeatId: i.SeatId,
-            CourseNumber: i.CourseNumber
+            CourseNumber: i.CourseNumber,
+            AddedWithoutKitchenReason: i.WithoutKitchenReasonCode
         )).ToList();
 
         return new OrderDto(

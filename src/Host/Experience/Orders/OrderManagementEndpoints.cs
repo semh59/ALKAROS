@@ -4,6 +4,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Billing;
+using ALKAROS.Host.Experience.Orders.KitchenlessAdd;
 using ALKAROS.Host.Experience.Orders.OrderCancellation;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
@@ -175,6 +176,7 @@ public static class OrderManagementEndpoints
         // V12-STK-001: consumption respects every other order's holds.
         services.TryAddSingleton<IReservationAwareConsumptionGuard, PostgresReservationAwareConsumptionGuard>();
         services.TryAddSingleton<OrderStockConsumptionService>();
+        services.TryAddSingleton<KitchenlessAddStore>();
         // V1-RMD-143 follow-up (2026-09-09): SentItemVoidStore restores an
         // item's own consumed stock when it is voided before the kitchen
         // ever started on it — reuses Inventory's own, already-built (and
@@ -930,6 +932,36 @@ public static class OrderManagementEndpoints
             return Results.Ok(result);
         });
 
+        // A line the guest already had that the waiter never entered: added by the cashier without a kitchen ticket,
+        // stock consumed, who and why kept on the line. Its own permission, not orders.send.
+        group.MapPost("/{orderId:guid}/items/without-kitchen", async (
+            Guid terminalId,
+            Guid orderId,
+            KitchenlessAddRequestV1 request,
+            KitchenlessAddStore store,
+            OrderCommandReplayStore replays,
+            DualScreenStore dualStore,
+            IAuthorizationService authorization,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var userId = await RequireCashierPermissionAsync(
+                context, terminalId, dualStore, authorization, ApplicationPermissions.OrdersAddWithoutKitchen, cancellationToken);
+            if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+                throw new KitchenlessAddKeyException();
+            var result = await replays.ExecuteAsync(
+                $"orders:{orderId:N}:{userId:N}:addnk",
+                request.IdempotencyKey,
+                request,
+                () => store.AddAsync(orderId, request, userId, context.TraceIdentifier, cancellationToken),
+                cancellationToken);
+            await DualScreenApplication.NotifyCustomerDisplayAsync(
+                customerDisplayHub, loggerFactory, terminalId, orderId, "OrderChanged", cancellationToken);
+            return Results.Ok(result);
+        });
+
         // V1-RMD-137: found by an independent audit (2026-09-09) — an
         // age-restricted order (V12-NFC-002) is deliberately parked at
         // PendingConfirmation for a staff ID check at the point of service,
@@ -1326,6 +1358,11 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         OrderClosedException => (409, "ORDER_CLOSED", "Sipariş kapanmış; bu işlem yapılamaz."),
         CheckNotYetOrderedException => (409, "ORDER_NOT_SUBMITTED", "Sipariş henüz mutfağa gönderilmedi; kasaya gönderilemez."),
         OrderCancelReasonException => (400, "REASON_REQUIRED", OrderCancellationMessages.Reason),
+        KitchenlessAddReasonException => (400, "REASON_REQUIRED", KitchenlessAddMessages.Reason),
+        KitchenlessAddQuantityException => (400, "INVALID_QUANTITY", KitchenlessAddMessages.Quantity),
+        KitchenlessAddKeyException => (400, "IDEMPOTENCY_KEY_REQUIRED", KitchenlessAddMessages.Key),
+        KitchenlessAddProductException => (404, "PRODUCT_NOT_FOUND", KitchenlessAddMessages.Product),
+        KitchenlessAddNotAllowedException => (409, "ORDER_NOT_OPEN", KitchenlessAddMessages.NotAllowed),
         OrderCancelNotAllowedException => (409, "ORDER_CANCEL_NOT_ALLOWED", OrderCancellationMessages.NotAllowed),
         OrderCancelHasPaymentException => (409, "ORDER_HAS_PAYMENT", OrderCancellationMessages.HasPayment),
         OrderCancelHasServedItemsException => (409, "ORDER_HAS_SERVED_ITEMS", OrderCancellationMessages.HasServedItems),

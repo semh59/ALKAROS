@@ -1,0 +1,12 @@
+baseline: Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 25 s - ALKAROS.
+M2 uses orders.send: Başarısız! - Başarısız:     7, Başarılı:     1, Atlanan:     0, Toplam:     8, Süre: 25 s - ALKAROS.
+M4 bill not checked: Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 25 s - ALKAROS.
+M6 user not kept: Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 25 s - ALKAROS.
+M1 no stock consumption: Başarısız! - Başarısız:     2, Başarılı:     6, Atlanan:     0, Toplam:     8, Süre: 25 s - ALKAROS.
+M5 no audit: Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 25 s - ALKAROS.
+M8 replay scope without order: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 1 m 6
+M9 key not required: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 1 m 7
+M10 open check not required: Başarılı!  - Başarısız:     0, Başarılı:    20, Atlanan:     0, Toplam:    20, Süre: 1 m 7
+M7 line not stored as served: Başarısız! - Başarısız:     2, Başarılı:    18, Atlanan:     0, Toplam:    20, Süre: 1 m 7
+M10 note: equivalent, the domain method also refuses a closed check (409)
+M3 reason set not checked (rerun): Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 1 m 8

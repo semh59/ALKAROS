@@ -10,7 +10,7 @@ public sealed class ApplicationPermissionsTests
     public void CatalogHasTwentySixDistinctCodes()
     {
         // payments.take is the 23rd code, bills.cancel the 24th, then the two refund permissions.
-        ApplicationPermissions.Codes.Should().HaveCount(26);
+        ApplicationPermissions.Codes.Should().HaveCount(27);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -83,6 +83,15 @@ public sealed class ApplicationPermissionsTests
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.BillsCancel);
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.BillsCancel);
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter].Should().NotContain(ApplicationPermissions.BillsCancel);
+    }
+
+    [Fact]
+    public void AddingWithoutKitchenIsHeldByCashierSupervisorAndManagerButNotWaiter()
+    {
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(ApplicationPermissions.OrdersAddWithoutKitchen);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.OrdersAddWithoutKitchen);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.OrdersAddWithoutKitchen);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter].Should().NotContain(ApplicationPermissions.OrdersAddWithoutKitchen);
     }
 
     [Fact]

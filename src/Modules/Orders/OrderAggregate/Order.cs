@@ -342,6 +342,25 @@ public sealed class Order
     }
 
     /// <summary>
+    /// Adds a line the guest already had to an open check without a kitchen round: the line is Active at once and
+    /// never reaches <see cref="FireRound"/>, so no ticket is written for it. It is stored as Served, since the guest already ate it, which also keeps the ordinary void paths (that would not give its stock back) away from it. A Draft order moves to Submitted, the
+    /// same as its first fired round would have done.
+    /// </summary>
+    public Order AddWithoutKitchen(OrderItem item, Guid changedBy, DateTimeOffset changedAt)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        if (!IsOpenCheck)
+            throw new InvalidOperationException($"Order {Id} cannot accept items in state {Status}.");
+        if (item.Status is not OrderItemState.Draft || item.AddedWithoutKitchenBy is null)
+            throw new ArgumentException("A kitchen-less line must be a Draft line marked as such.", nameof(item));
+
+        var updated = RebuildWith(items: _items.Append(item.Activate().AdvanceKitchenState(KitchenState.Served)).ToList());
+        return Status is OrderState.Draft
+            ? updated.TransitionTo(OrderState.Submitted, "Item added without kitchen", changedBy, changedAt)
+            : updated;
+    }
+
+    /// <summary>
     /// V1-RMD-164: found by the 2026-09-10 Garson audit — <see cref="AddRound"/>
     /// treats any incoming item id that already exists on this check as a
     /// pure retry and drops it outright, keeping whatever was already

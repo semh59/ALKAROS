@@ -539,6 +539,27 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task KitchenLessLinesKeepTheirUserAndReasonAndTheOrderPermissionGoesToCashierAndUpAndRollingBackRemovesBoth()
+    {
+        const string columns = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'orders' AND table_name = 'order_items' AND column_name IN ('added_without_kitchen_by', 'without_kitchen_reason_code');";
+        const string holders = "SELECT string_agg(r.code, ',' ORDER BY r.code) FROM identity.role_permissions rp JOIN identity.roles r ON r.role_id = rp.role_id JOIN identity.permissions p ON p.permission_id = rp.permission_id WHERE p.code = 'orders.add-without-kitchen';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(2L, await ScalarAsync<long>(source, columns));
+        Assert.Equal("cashier,manager,supervisor", await ScalarAsync<string>(source, holders));
+        const string rule = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_order_items_without_kitchen';";
+        Assert.Equal(1L, await ScalarAsync<long>(source, rule));
+
+        RollBackDownTo("229");
+        Assert.Equal(0L, await ScalarAsync<long>(source, "SELECT count(*) FROM identity.permissions WHERE code = 'orders.add-without-kitchen';"));
+        Assert.Equal(0L, await ScalarAsync<long>(source, columns));
+        Assert.Equal(0L, await ScalarAsync<long>(source, rule));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(2L, await ScalarAsync<long>(source, columns));
+    }
+
+    [Fact]
     public async Task TheStockMovementTypeRuleAllowsTransferAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string allowsTransfer = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_stock_movements_movement_type' AND pg_get_constraintdef(oid) LIKE '%Transfer%';";

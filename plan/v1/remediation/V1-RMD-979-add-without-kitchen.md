@@ -1,7 +1,7 @@
 # V1-RMD-979 - Mutfaga gondermeden hesaba kalem ekleme (kasiyer)
 
 - Task ID: V1-RMD-979
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

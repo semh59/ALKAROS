@@ -387,7 +387,9 @@ public sealed record OrderItemDto(
     // V1-WTR-025: null when this order has no course structure. KitchenState
     // "Held" on a course-bearing item is the client's own signal that this
     // course is on the ticket but not yet fired.
-    int? CourseNumber = null);
+    int? CourseNumber = null,
+    /// <summary>Reason code when the cashier added this line without a kitchen ticket, otherwise null.</summary>
+    string? AddedWithoutKitchenReason = null);
 
 /// <summary>
 /// V1-WTR-025: the "fire" action for one Held course — the

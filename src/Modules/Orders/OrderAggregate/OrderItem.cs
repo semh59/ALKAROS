@@ -32,8 +32,12 @@ public sealed class OrderItem
         DateTimeOffset? createdAt = null,
         DateTimeOffset? updatedAt = null,
         Guid? seatId = null,
-        int? courseNumber = null)
+        int? courseNumber = null,
+        Guid? addedWithoutKitchenBy = null,
+        string? withoutKitchenReasonCode = null)
     {
+        if ((addedWithoutKitchenBy is null) != (withoutKitchenReasonCode is null))
+            throw new ArgumentException("The kitchen-less add user and reason code are set together.", nameof(withoutKitchenReasonCode));
         if (id == Guid.Empty)
             throw new ArgumentException("Order item id cannot be empty.", nameof(id));
         if (orderId == Guid.Empty)
@@ -91,6 +95,8 @@ public sealed class OrderItem
         UpdatedAt = updatedAt ?? CreatedAt;
         SeatId = seatId;
         CourseNumber = courseNumber;
+        AddedWithoutKitchenBy = addedWithoutKitchenBy;
+        WithoutKitchenReasonCode = withoutKitchenReasonCode;
 
         var lineSubtotal = LineSubtotal();
         if (DiscountAmount > lineSubtotal)
@@ -166,6 +172,12 @@ public sealed class OrderItem
     /// <see cref="KitchenState"/>.
     /// </summary>
     public int? CourseNumber { get; }
+
+    /// <summary>The cashier who added this line without a kitchen ticket, or null for an ordinary line.</summary>
+    public Guid? AddedWithoutKitchenBy { get; }
+
+    /// <summary>Why the cashier added the line without a kitchen ticket; set exactly when <see cref="AddedWithoutKitchenBy"/> is.</summary>
+    public string? WithoutKitchenReasonCode { get; }
 
     public bool IsActive => Status is OrderItemState.Draft or OrderItemState.Active;
 
@@ -275,7 +287,9 @@ public sealed class OrderItem
             createdAt: CreatedAt,
             updatedAt: DateTimeOffset.UtcNow,
             seatId: SeatId,
-            courseNumber: CourseNumber);
+            courseNumber: CourseNumber,
+            addedWithoutKitchenBy: AddedWithoutKitchenBy,
+            withoutKitchenReasonCode: WithoutKitchenReasonCode);
     }
 
     /// <summary>
@@ -297,6 +311,13 @@ public sealed class OrderItem
     public OrderItem WithSeat(Guid? seatId)
         => Mutate(seatIdSet: true, seatId: seatId);
 
+    /// <summary>Marks the line as added by the cashier without a kitchen ticket.</summary>
+    public OrderItem WithoutKitchen(Guid addedBy, string reasonCode)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(reasonCode);
+        return Mutate(withoutKitchenSet: true, addedWithoutKitchenBy: addedBy, withoutKitchenReasonCode: reasonCode);
+    }
+
     /// <summary>V1-WTR-025: assigns or clears (null) which course this item belongs to.</summary>
     public OrderItem WithCourseNumber(int? courseNumber)
     {
@@ -314,7 +335,10 @@ public sealed class OrderItem
         bool seatIdSet = false,
         Guid? seatId = null,
         bool courseNumberSet = false,
-        int? courseNumber = null)
+        int? courseNumber = null,
+        bool withoutKitchenSet = false,
+        Guid? addedWithoutKitchenBy = null,
+        string? withoutKitchenReasonCode = null)
         => new(
             Id,
             orderId ?? OrderId,
@@ -337,7 +361,9 @@ public sealed class OrderItem
             createdAt: CreatedAt,
             updatedAt: UpdatedAt,
             seatId: seatIdSet ? seatId : SeatId,
-            courseNumber: courseNumberSet ? courseNumber : CourseNumber);
+            courseNumber: courseNumberSet ? courseNumber : CourseNumber,
+            addedWithoutKitchenBy: withoutKitchenSet ? addedWithoutKitchenBy : AddedWithoutKitchenBy,
+            withoutKitchenReasonCode: withoutKitchenSet ? withoutKitchenReasonCode : WithoutKitchenReasonCode);
 
     private decimal LineSubtotal()
     {

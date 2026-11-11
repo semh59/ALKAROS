@@ -15,6 +15,8 @@ public static class ApplicationPermissions
 {
     public const string OrdersCreate = "orders.create";
     public const string OrdersSend = "orders.send";
+    /// <summary>Adding a line to an open check without a kitchen ticket (the guest ate it, the waiter never entered it); cashier tier and up.</summary>
+    public const string OrdersAddWithoutKitchen = "orders.add-without-kitchen";
     public const string OrdersTransferServer = "orders.transfer-server";
     public const string OrdersTransferServerAny = "orders.transfer-server-any";
     public const string TablesStatus = "tables.status";
@@ -120,7 +122,7 @@ public static class ApplicationPermissions
         OrdersTransferServer, OrdersTransferServerAny,
         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
         ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake, BillsCancel,
-        PaymentsRefundRequest, PaymentsRefundApprove,
+        PaymentsRefundRequest, PaymentsRefundApprove, OrdersAddWithoutKitchen,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -137,7 +139,7 @@ public static class ApplicationPermissions
         { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
 
     private static readonly string[] CashierFloorSet =
-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest };
+        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest, OrdersAddWithoutKitchen };
 
     private static readonly string[] SupervisorEscalations =
         {
