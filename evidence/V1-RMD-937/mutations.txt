@@ -1,0 +1,2 @@
+M1 the key handler listens for Tab instead of Enter: 1 test failed (restored)
+M2 every key submits (the Enter check removed): the other-key test failed (restored)

@@ -1,7 +1,7 @@
 # V1-RMD-937 - Kasa açılışında tutar alanında Enter tuşu kasayı açsın
 
 - Task ID: V1-RMD-937
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

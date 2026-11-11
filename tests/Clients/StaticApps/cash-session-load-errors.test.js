@@ -60,4 +60,40 @@ describe("cash-session.js when the active session cannot be read", () => {
 
     await vi.waitFor(() => expect(document.getElementById("login-form")).not.toBeNull());
   });
+
+  it("opens the cash session when Enter is pressed in the opening amount field", async () => {
+    const router = installFetchRouter([
+      signedIn,
+      { test: (url) => url.endsWith("/cash-sessions/active"), status: 404, body: {} },
+      { test: (url) => url.endsWith("/suggested-opening-balance"), body: { suggestedOpeningBalance: 100 } },
+      { test: (url, init) => url.endsWith("/cash-sessions") && init?.method === "POST", status: 409, body: { error: { code: "ACTIVE_CASH_SESSION_EXISTS" } } },
+    ]);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => expect(document.getElementById("opening-balance")).not.toBeNull());
+
+    const press = () => document.getElementById("opening-balance").dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    const posts = () => router.mock.calls.filter(([url, init]) => url.endsWith("/cash-sessions") && init?.method === "POST").length;
+    press();
+    press();
+
+    await vi.waitFor(() => expect(text()).toContain("Zaten Açık Bir Kasa Var"));
+    expect(posts()).toBe(1);
+  });
+
+  it.each([["Enter", "-1", true], ["a", "5", false]])("does not send an opening amount for key %s with value %s", async (key, value, showsError) => {
+    const router = installFetchRouter([
+      signedIn,
+      { test: (url) => url.endsWith("/cash-sessions/active"), status: 404, body: {} },
+      { test: (url) => url.endsWith("/suggested-opening-balance"), body: { suggestedOpeningBalance: 100 } },
+    ]);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => expect(document.getElementById("opening-balance")).not.toBeNull());
+    const field = document.getElementById("opening-balance");
+    field.value = value;
+
+    field.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+
+    if (showsError) await vi.waitFor(() => expect(text()).toContain("Geçerli bir tutar girin."));
+    expect(router.mock.calls.some(([, init]) => init?.method === "POST")).toBe(false);
+  });
 });

@@ -659,13 +659,17 @@
       '<button class="cs-btn cs-btn-primary" id="open-btn" ' + (state.busy ? 'disabled' : '') + '>' +
       (state.busy ? 'Açılıyor…' : 'Kasayı Aç') + '</button>' +
       '</div>';
-    document.getElementById('open-btn').addEventListener('click', function () {
+    var openBtn = document.getElementById('open-btn');
+    openBtn.addEventListener('click', function () {
       var value = Number(document.getElementById('opening-balance').value);
       if (!(value >= 0)) {
         setError('Geçerli bir tutar girin.');
         return;
       }
       submitOpen(value);
+    });
+    document.getElementById('opening-balance').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') openBtn.click();
     });
   }
 

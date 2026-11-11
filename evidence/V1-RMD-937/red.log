@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-load-errors.test.js (7 tests | 1 failed) 1433ms
+     × opens the cash session when Enter is pressed in the opening amount field 1112ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-load-errors.test.js > cash-session.js when the active session cannot be read > opens the cash session when Enter is pressed in the opening amount field
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-load-errors.test.js:76:135
+     74|     document.getElementById("opening-balance").dispatchEvent(new Keybo…
+     75|
+     76|     await vi.waitFor(() => expect(router.mock.calls.some(([url, init])…
+       |                                                                                                                                       ^
+     77|   });
+     78| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  11:48:07
+   Duration  2.97s (transform 215ms, setup 28ms, import 47ms, tests 1.43s, environment 1.20s)
+
