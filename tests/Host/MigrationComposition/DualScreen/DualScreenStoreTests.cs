@@ -20,15 +20,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await _database.InitializeAsync();
-        var root = FindRepositoryRoot();
-        var exit = HostComposition.Run(
-            new HostCompositionOptions(
-                Path.Combine(root, "database", "MigrationComposition", "order.json"),
-                Path.Combine(root, "database", "migrations"),
-                _database.PsqlOptions),
-            TextWriter.Null);
-        Assert.Equal(HostExitCode.Success, exit);
+        await _database.InitializeMigratedAsync(FindRepositoryRoot());
 
         _dataSource = NpgsqlDataSource.Create(CreateConnectionString());
         _store = new DualScreenStore(_dataSource);

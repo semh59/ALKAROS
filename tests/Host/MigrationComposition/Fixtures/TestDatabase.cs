@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
 using Xunit;
 
@@ -48,6 +49,61 @@ public sealed class TestDatabase : IAsyncLifetime
         var create = await PsqlScriptRunner.RunCommandAsync(
             $"CREATE DATABASE {Name};", MaintenanceOptions, CancellationToken.None);
         Assert.True(create.Success, $"CREATE DATABASE failed: {create.ErrorSummary}");
+    }
+
+    private static readonly SemaphoreSlim TemplateLock = new(1, 1);
+    private static string? _templateName;
+
+    /// <summary>
+    /// Creates this test's database as a copy of a fully migrated template that is built once per test process, so a test
+    /// class pays one migration run instead of one per test.
+    /// </summary>
+    public async Task InitializeMigratedAsync(string repositoryRoot)
+    {
+        await TemplateLock.WaitAsync();
+        try
+        {
+            var template = await EnsureTemplateAsync(repositoryRoot);
+            var drop = await PsqlScriptRunner.RunCommandAsync(
+                $"DROP DATABASE IF EXISTS {Name} WITH (FORCE);", MaintenanceOptions, CancellationToken.None);
+            Assert.True(drop.Success, $"Dropping stale test database failed: {drop.ErrorSummary}");
+            var create = await PsqlScriptRunner.RunCommandAsync(
+                $"CREATE DATABASE {Name} TEMPLATE {template};", MaintenanceOptions, CancellationToken.None);
+            Assert.True(create.Success, $"CREATE DATABASE from the template failed: {create.ErrorSummary}");
+        }
+        finally
+        {
+            TemplateLock.Release();
+        }
+    }
+
+    /// <remarks>Called with <see cref="TemplateLock"/> held. The template is dropped when the process exits, also when its migration failed.</remarks>
+    private async Task<string> EnsureTemplateAsync(string repositoryRoot)
+    {
+        if (_templateName is not null)
+            return _templateName;
+
+        var name = "alkaros_tpl_" + Environment.ProcessId + "_" + Guid.NewGuid().ToString("N")[..6];
+        var cleanup = MaintenanceOptions with { Timeout = TimeSpan.FromSeconds(15) };
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => PsqlScriptRunner
+            .RunCommandAsync($"DROP DATABASE IF EXISTS {name} WITH (FORCE);", cleanup, CancellationToken.None)
+            .GetAwaiter().GetResult();
+        var create = await PsqlScriptRunner.RunCommandAsync(
+            $"CREATE DATABASE {name};", MaintenanceOptions, CancellationToken.None);
+        Assert.True(create.Success, $"CREATE DATABASE for the template failed: {create.ErrorSummary}");
+
+        var templateOptions = new PsqlOptions(
+            PsqlOptions.DatabaseUrl[..PsqlOptions.DatabaseUrl.LastIndexOf('/')] + "/" + name, Password: PsqlOptions.Password);
+        var exit = HostComposition.Run(
+            new HostCompositionOptions(
+                Path.Combine(repositoryRoot, "database", "MigrationComposition", "order.json"),
+                Path.Combine(repositoryRoot, "database", "migrations"),
+                templateOptions),
+            TextWriter.Null);
+        Assert.Equal(HostExitCode.Success, exit);
+
+        _templateName = name;
+        return name;
     }
 
     public async Task DisposeAsync()

@@ -1,0 +1,1 @@
+Mutasyon: sablon yerine her testte bos veritabani (onceki kod) 8,6 dk; davranis testleri ayni kaldi (41/41).
