@@ -244,6 +244,29 @@ export const api = {
       `/api/v1/terminals/${terminalId}/orders/${orderId}/items/${itemId}?expectedRevision=${expectedRevision}`,
       { method: "DELETE" },
     ),
+  addWithoutKitchen: async (
+    terminalId: string,
+    orderId: string,
+    productId: string,
+    expectedRowVersion: number,
+    reasonCode: string,
+  ) => {
+    // A retry after a timeout must carry the key of the attempt that may have reached the server.
+    const attempt = `kitchenless:${orderId}:${productId}:${expectedRowVersion}:${reasonCode}`;
+    const idempotencyKey = pendingSubmissions.get(attempt) ?? crypto.randomUUID();
+    pendingSubmissions.set(attempt, idempotencyKey);
+    try {
+      const result = await request<{ rowVersion: number }>(
+        `/api/v1/terminals/${terminalId}/orders/${orderId}/items/without-kitchen`,
+        { method: "POST", body: JSON.stringify({ idempotencyKey, expectedRowVersion, productId, quantity: 1, reasonCode }) },
+      );
+      pendingSubmissions.delete(attempt);
+      return result;
+    } catch (error) {
+      if (error instanceof ApiError && error.status >= 400 && error.status < 500) pendingSubmissions.delete(attempt);
+      throw error;
+    }
+  },
   submitOrder: async (terminalId: string, orderId: string, expectedRevision: number) => {
     // A retry after a timeout must carry the key of the attempt that may have reached the server.
     const attempt = `${orderId}:${expectedRevision}`;

@@ -11,7 +11,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
-import { navLabels, openBillDeniedText, stateText } from "../strings";
+import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
@@ -105,6 +105,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [session, setSession] = useState<CashierSession>("checking");
   const sessionRef = useRef<CashierSession>("checking");
   useEffect(() => { sessionRef.current = session; }, [session]);
+  const kitchenlessOrderId = order?.orderId;
+  const kitchenlessEditable = order?.editable;
+  useEffect(() => { setKitchenlessReason(null); setKitchenlessPicking(false); }, [kitchenlessOrderId, kitchenlessEditable]);
   const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -128,6 +131,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
   const headerMenu = useRef<HTMLElement>(null);
   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
+  const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
+  const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
@@ -625,6 +630,26 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
 
   const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
     if (addingProduct.current) return;
+    if (kitchenlessReason) {
+      if (product.modifierGroups?.length) {
+        setFeedbackKind("error");
+        setNotice("");
+        setError(kitchenlessText.needsOptions);
+        return;
+      }
+      const target = activeOrder;
+      if (!target?.orderId) return;
+      addingProduct.current = true;
+      try {
+        await execute(
+          () => api.addWithoutKitchen(terminalId, target.orderId!, product.productId, target.revision, kitchenlessReason),
+          kitchenlessText.added,
+        );
+      } finally {
+        addingProduct.current = false;
+      }
+      return;
+    }
     addingProduct.current = true;
     try {
       await execute(async () => {
@@ -845,7 +870,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                 key={product.productId}
                 disabled={busy}
                 onClick={() => {
-                  if (product.modifierGroups?.length) setPickingProduct(product);
+                  if (product.modifierGroups?.length && !kitchenlessReason) setPickingProduct(product);
                   else void addProduct(product);
                 }}
               >
@@ -966,6 +991,31 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               ) : (
                 <p className="submitted-state__hint">{openBillDeniedText}</p>
               ))}
+              {capabilities.includes("orders.add-without-kitchen") && activeOrder.orderId && !activeOrder.editable && (
+                <div className="kitchenless">
+                  {kitchenlessReason ? (
+                    <div className="kitchenless__active" role="status">
+                      <span>{kitchenlessText.active(kitchenlessReasons.find((r) => r.code === kitchenlessReason)!.label)}</span>
+                      <button data-telemetry-id="b.routes.cashier.kitchenless.done" className="secondary" onClick={() => setKitchenlessReason(null)}>{kitchenlessText.done}</button>
+                    </div>
+                  ) : kitchenlessPicking ? (
+                    <div className="kitchenless__reasons" role="group" aria-labelledby="kitchenless-reason-title">
+                      <strong id="kitchenless-reason-title">{kitchenlessText.pickReason}</strong>
+                      {kitchenlessReasons.map((reason) => (
+                        <button
+                          className="secondary"
+                          data-telemetry-id="b.routes.cashier.kitchenless.reason"
+                          key={reason.code}
+                          onClick={() => { setKitchenlessReason(reason.code); setKitchenlessPicking(false); }}
+                        >{reason.label}</button>
+                      ))}
+                      <button data-telemetry-id="b.routes.cashier.kitchenless.cancel" className="secondary" onClick={() => setKitchenlessPicking(false)}>{kitchenlessText.cancel}</button>
+                    </div>
+                  ) : (
+                    <button data-telemetry-id="b.routes.cashier.kitchenless.open" className="secondary" aria-expanded={kitchenlessPicking} disabled={busy} onClick={() => setKitchenlessPicking(true)}>{kitchenlessText.open}</button>
+                  )}
+                </div>
+              )}
             </>
           )}
 

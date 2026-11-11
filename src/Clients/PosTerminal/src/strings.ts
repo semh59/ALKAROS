@@ -1399,3 +1399,21 @@ export const cashSessionText = {
   openAction: "Kasayı aç",
   retry: "Kasa durumunu yeniden oku",
 } as const;
+
+export const kitchenlessReasons = [
+  { code: "waiter-forgot", label: "Garson unuttu" },
+  { code: "customer-asked", label: "Müşteri istedi" },
+  { code: "other", label: "Diğer" },
+] as const;
+
+export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
+
+export const kitchenlessText = {
+  open: "Mutfağa göndermeden hesaba ekle",
+  pickReason: "Mutfağa neden gönderilmiyor?",
+  cancel: "Vazgeç",
+  active: (label: string) => `Dokunduğunuz ürünler mutfağa gönderilmeden eklenir. Neden: ${label}`,
+  done: "Normal eklemeye dön",
+  added: "Ürün mutfağa gitmeden hesaba eklendi.",
+  needsOptions: "Seçenekli ürün mutfağa göndermeden eklenemez. Önce normal eklemeye dönün.",
+} as const;

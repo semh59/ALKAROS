@@ -1,7 +1,7 @@
 # V1-RMD-983 - Kasa ekraninda Mutfaga gondermeden hesaba ekle dugmesi
 
 - Task ID: V1-RMD-983
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
