@@ -16,6 +16,7 @@ V1-RMD-936 incelemesinden: PosTerminal hesap bölme istemcisi (billingApi.ts) UN
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/features/billing/billingApi.ts
   - src/Clients/PosTerminal/src/features/billing/billingApi.test.ts
+  - src/Clients/PosTerminal/src/routes/workspace.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
