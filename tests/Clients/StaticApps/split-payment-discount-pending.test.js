@@ -207,4 +207,14 @@ describe("split-payment.js discount waiting for a manager", () => {
     const [first, second] = discountCalls(fetchMock);
     expect(second.IdempotencyKey).not.toBe(first.IdempotencyKey);
   });
+
+  it("tells a discount refused because of the bill state with the server's sentence for that action", async () => {
+    await open([{ status: 409, body: { error: { code: "UNSUPPORTED_BILL_STATE", message: "Bu hesap durumunda indirim uygulanamaz." } } }]);
+
+    type("discount-value", "20");
+    submit().click();
+
+    await vi.waitFor(() => expect(text()).toContain("Bu hesap durumunda indirim uygulanamaz."));
+    expect(text()).not.toContain("bölme tasarımı");
+  });
 });

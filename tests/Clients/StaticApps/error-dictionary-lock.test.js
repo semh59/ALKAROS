@@ -16,6 +16,8 @@ const SERVER_SOURCES = [
   "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
 ];
 // Exceptions that carry the code, an English log message and the sentence shown to the cashier as separate arguments.
+// One code, one sentence per action (split, discount, undo, cancel): the screen shows the server's sentence for the action.
+const PER_ACTION_CODES = new Set(["UNSUPPORTED_BILL_STATE"]);
 // Merging orders is the billing page's own flow, not this screen's.
 const MERGE_CODES = new Set([
   "MERGE_NEEDS_TWO_ORDERS", "MERGE_ORDER_SOURCE", "MERGE_DIFFERENT_TABLES", "MERGE_ORDER_ALREADY_BILLED", "MERGE_ORDER_EMPTY", "MERGE_MIXED_SENT", "MERGE_TOO_MANY_ORDERS",
@@ -90,7 +92,7 @@ describe("payment screen error dictionary", () => {
     const missing = [];
     const different = [];
     for (const [code, { interpolated, message }] of server) {
-      if (STATUS_FALLBACK.has(code) || interpolated) continue;
+      if (STATUS_FALLBACK.has(code) || interpolated || PER_ACTION_CODES.has(code)) continue;
       if (!entries.has(code)) missing.push(code);
       else if (entries.get(code) !== message) different.push(code);
     }
@@ -98,12 +100,20 @@ describe("payment screen error dictionary", () => {
     expect(different).toEqual([]);
   });
 
+  it("keeps every per-action code answered with more than one sentence by the server", () => {
+    const source = read("src/Host/Experience/Billing/BillingSplitApplication.cs");
+    for (const code of PER_ACTION_CODES) {
+      const sentences = new Set([...source.matchAll(new RegExp(String.raw`"${code}",\s*"([^"]+)"`, "g"))].map((match) => match[1]));
+      expect(sentences.size, `${code} is no longer worded per action; drop it from PER_ACTION_CODES`).toBeGreaterThanOrEqual(4);
+    }
+  });
+
   it("lets the server text through only for the codes whose sentence carries this request's amounts or credit reason", () => {
     const interpolated = [...server].filter(([, value]) => value.interpolated).map(([code]) => code);
     for (const code of interpolated) expect([...serverText, ...STATUS_FALLBACK]).toContain(code);
     expect([...serverText].sort()).toEqual([
       "ALLOWANCE_INVALID", "CREDIT_DENIED", "DISCOUNT_REASON_INVALID", "DISCOUNT_VALUE_INVALID", "NOTES_TOO_LONG", "RECEIPT_EXCEEDS_BALANCE",
-      "REFUND_TEXT_INVALID", "TENDER_OVER_ALLOCATION", "TENDER_UNSETTLED_PAYMENT_EXISTS", "TIP_AMOUNT_INVALID",
+      "REFUND_TEXT_INVALID", "TENDER_OVER_ALLOCATION", "TENDER_UNSETTLED_PAYMENT_EXISTS", "TIP_AMOUNT_INVALID", "UNSUPPORTED_BILL_STATE",
     ]);
     for (const code of serverText) expect(entries.has(code)).toBe(false);
   });

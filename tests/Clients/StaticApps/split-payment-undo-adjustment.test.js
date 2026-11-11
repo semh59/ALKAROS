@@ -12,7 +12,7 @@ const unpaid = { billId: BILL_ID, payableAmount: 100, allocatedTotal: 0, remaini
 const adjustment = (id, adjustmentType, amount, isDeduction) => ({ adjustmentId: id, adjustmentType, calculationType: "FixedAmount", amount, isDeduction, reason: "VOLUNTARY_TIP" });
 const summaryOf = (payable) => ({ originalPayableAmount: 100, totalDiscounts: 0, totalFees: 0, totalTips: 0, adjustedPayableAmount: payable });
 
-async function open({ items, undo = { body: {} }, delayMs }) {
+async function open({ items, undo = { body: {} }, delayMs, tip = { body: {} } }) {
   let current = items;
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   const fetchMock = installFetchRouter([
@@ -31,7 +31,7 @@ async function open({ items, undo = { body: {} }, delayMs }) {
     { test: (url) => url.endsWith("/adjustments"), get body() { return { adjustments: current, summary: summaryOf(100 + current.length) }; } },
     { test: (url, init) => url.endsWith("/refund-requests") && (init?.method ?? "GET") === "GET", body: [] },
     { test: (url) => url.endsWith("/show-on-display"), body: {} },
-    { test: (url, init) => url.endsWith("/tip") && init?.method === "POST", delayMs: 80, body: {} },
+    { test: (url, init) => url.endsWith("/tip") && init?.method === "POST", delayMs: 80, ...tip },
   ]);
   await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
   await vi.waitFor(() => expect(document.getElementById("app").textContent).toContain("Uygulanan indirim, bahşiş ve ücretler"));
@@ -77,7 +77,7 @@ describe("taking a wrongly entered discount or tip back off on the payment page"
 
   it.each([
     [404, { error: { code: "NOT_FOUND", message: "RAW_MSG_LEAK" } }, "zaten kaldırılmış"],
-    [409, { error: { code: "UNSUPPORTED_BILL_STATE", message: "RAW_MSG_LEAK" } }, "Bu hesap durumunda indirim ya da bahşiş geri alınamaz."],
+    [409, { error: { code: "UNSUPPORTED_BILL_STATE", message: "Bu hesap durumunda indirim ya da bahşiş geri alınamaz." } }, "Bu hesap durumunda indirim ya da bahşiş geri alınamaz."],
     [409, { error: { code: "ADJUSTMENT_UNDO_BELOW_COLLECTED", message: "RAW_MSG_LEAK" } }, "alınan tutarın altına iniyor"],
     [500, { error: { code: "INTERNAL_ERROR", message: "RAW_MSG_LEAK" } }, "Sunucu tarafında bir sorun oluştu"],
   ])("says what went wrong in Turkish for a %s answer", async (status, body, expected) => {
@@ -119,6 +119,19 @@ describe("taking a wrongly entered discount or tip back off on the payment page"
 
     await vi.waitFor(() => expect(app().textContent).toContain("Geri alındı, ancak liste yenilenemedi."));
     expect(app().textContent).not.toContain("Bağlantı kurulamadı");
+  });
+
+  it("tells a tip refused because of the bill state with the server's sentence, not the split one", async () => {
+    const sentence = "Bu hesap durumunda indirim ya da bahşiş uygulanamaz.";
+    await open({ items: [adjustment("a1", "DiscountAmount", 5, true)], tip: { status: 409, body: { error: { code: "UNSUPPORTED_BILL_STATE", message: sentence } } } });
+    const amount = document.getElementById("tip-amount");
+    amount.value = "10";
+    amount.dispatchEvent(new Event("input", { bubbles: true }));
+
+    document.getElementById("submit-tip").click();
+
+    await vi.waitFor(() => expect(app().textContent).toContain(sentence));
+    expect(app().textContent).not.toContain("bölme tasarımı");
   });
 
   it("keeps the buttons off while a tip is being sent", async () => {

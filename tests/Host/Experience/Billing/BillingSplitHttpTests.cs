@@ -1912,9 +1912,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-        Assert.Equal(
-            "UNSUPPORTED_BILL_STATE",
-            (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+        Assert.Equal(("UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim ya da bahşiş uygulanamaz."), await ErrorOf(response));
         Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 
@@ -1947,7 +1945,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         using var response = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-        Assert.Equal("UNSUPPORTED_BILL_STATE", (await ErrorOf(response)).Code);
+        Assert.Equal(("UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim ya da bahşiş uygulanamaz."), await ErrorOf(response));
         Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 

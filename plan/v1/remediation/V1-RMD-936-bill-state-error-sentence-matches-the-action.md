@@ -1,7 +1,7 @@
 # V1-RMD-936 - "Bu hesap durumunda..." hatası yapılan işleme uygun cümleyle gösterilsin
 
 - Task ID: V1-RMD-936
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

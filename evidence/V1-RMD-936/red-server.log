@@ -1,0 +1,6 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:31.76]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOnAPaidBillIsRejected [FAIL]
+[xUnit.net 00:01:30.94]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipOnASettledBillIsRefusedAndRecordsNothing [FAIL]
+Etkin test çalıştırması iptal edildi. Nedeni: Test ana işlemi kilitlendi
+

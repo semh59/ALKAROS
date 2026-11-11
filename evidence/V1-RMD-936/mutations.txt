@@ -1,0 +1,6 @@
+M1 the fixed split sentence is back in the dictionary: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯      Tests  2 failed | 458 passed (460) (restored)
+M2 the server sentence is not passed through: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯      Tests  2 failed | 458 passed (460) (restored)
+M3 the per-action marker is dropped from the lock test: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 459 passed (460) (restored)
+M4 the screen no longer passes the server sentence through for the tip (SERVER_TEXT_CODES without the code): 4 tests failed (tip screen test, undo 409, lock x2) (restored)
+M5 the cancel sentence equals the split sentence on the server (per-action count drops to 3): the per-action lock test failed (restored)
+M6 the server tip/discount sentence reverted to "indirim uygulanamaz.": BillingSplitHttpTests ATipOnASettledBill... and ADiscountOnAPaidBillIsRejected failed (red-server.log)

@@ -214,13 +214,12 @@
     REFUND_INPUT_INVALID: 'İade bilgisi geçersiz.',
     CARD_TERMINAL_NOT_CONFIGURED: 'Kart terminali tanımlı değil; kartla tahsilat yapılamaz. Nakit veya EFT kullanın.',
     TENDER_METHOD_UNKNOWN: 'Tanınmayan ödeme yöntemi.',
-    UNSUPPORTED_BILL_STATE: 'Bu hesap durumunda bölme tasarımı değiştirilemez.',
     UNSUPPORTED_ORDER_STATE: 'Bu sipariş durumunda hesap açılamaz.',
     USE_CASH_TENDER_ENDPOINT: 'Nakit ödeme için kasa oturumunun kendi tahsilat adresi kullanılmalı.',
   };
   var SERVER_TEXT_CODES = [
     'TENDER_OVER_ALLOCATION', 'TENDER_UNSETTLED_PAYMENT_EXISTS', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE',
-    'DISCOUNT_VALUE_INVALID', 'DISCOUNT_REASON_INVALID', 'TIP_AMOUNT_INVALID', 'NOTES_TOO_LONG', 'ALLOWANCE_INVALID', 'REFUND_TEXT_INVALID',
+    'DISCOUNT_VALUE_INVALID', 'DISCOUNT_REASON_INVALID', 'TIP_AMOUNT_INVALID', 'UNSUPPORTED_BILL_STATE', 'NOTES_TOO_LONG', 'ALLOWANCE_INVALID', 'REFUND_TEXT_INVALID',
   ];
 
   function describeHttpFailure(status, body) {
@@ -1226,7 +1225,6 @@
       var code = result.body && result.body.error && result.body.error.code;
       if (!result.ok) {
         if (result.status === 404) state.undoError = 'Bu kalem zaten kaldırılmış; liste yenilendi.';
-        else if (code === 'UNSUPPORTED_BILL_STATE') state.undoError = 'Bu hesap durumunda indirim ya da bahşiş geri alınamaz.';
         else state.undoError = describeHttpFailure(result.status, result.body);
       }
       // The undo itself is decided; a failed refresh afterwards must not read as a failed undo.
