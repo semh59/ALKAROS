@@ -1,0 +1,57 @@
+D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.10]   Discovering: ALKAROS.Host.Tests
+[xUnit.net 00:00:00.20]   Discovered:  ALKAROS.Host.Tests
+[xUnit.net 00:00:00.20]   Starting:    ALKAROS.Host.Tests
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ResumingTheTerminalsOwnTableOrderReturnsItInsteadOfAConflict [77 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASubmittedQuickSaleWithoutATableTakesNoMoreItems [147 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionQuantityBeyondTheWaiterPathLimitIsRefused [19 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieResolvesBoundTerminalFromDeviceId [15 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentTableStartsAllowOnlyOneOrderAndLeaveConsistentPointers [35 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.APairingIsApprovedThenCompletedWithExpiriesFromTheDatabaseClock [54 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnExpiredPairingCannotBeCompleted [18 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection [26 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings [62 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineIsShownAtItsTaxInclusivePriceNotWithTaxAddedOnTop [33 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineWithAModifierIsShownAtItsFullPrice [31 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASentLineOfAResumedTableOrderCannotBeRemoved [56 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine [49 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnotherTablesOrderIsStillRefusedWhileTheTerminalHoldsADraftTableOrder [24 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct [22 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ADraftThatTheTableDoesNotPointAtIsNotResumedAndLeavesNoSecondOrder [22 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.NonAvailableTableIsRejectedEvenWithAMatchingVersion [10 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.StaleTableVersionStillSeatsAnAvailableTableButBusyTableIsRejected [29 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TableBoundOrderCommitsOrderAndTablePointersTogether [21 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASubmittedTableOrderWithAnOpenBillIsStillRefused [43 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow [22 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainDoesNotMergeIntoALineWithModifiers [41 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused [26 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.RaisingTheQuantityOfALineWithAnOptionChargesTheOptionOnEveryPortion [66 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ALineCarriesItsProductAndOptionIdsSoARemovedLineCanBeRebuilt [46 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused [26 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping [17 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieRejectsUnknownToken [3 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASubmittedTableOrderIsResumedAndTakesAnotherRoundOnTheSameCheck [82 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.EveryOrderMutationWorksOnASingleConnectionPool [73 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOccupiedTableWithoutAnOrderOrBillTakesANewOrder [17 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TheCatalogIsOrderedByTurkishAlphabetAcrossPages [44 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ADiscountedLineIsShownBeforeItsDiscountSoTheLinesAddUpToTheSubtotal [29 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnUnknownLineIsNotFoundButALineThatIsNoLongerDraftIsAConflict [44 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncDropsProductWhenStockExhausted [23 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncReturnsRemainingCountFromDirectStockMapping [23 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.SequentialAddsCommit999AndRejectCumulative1000WithoutChangingRevision [36 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentAddsWithSameRevisionCannotCommitCumulative1000 [38 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainMergesOnlyIntoABareLine [140 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOrderBuiltThroughTheStoreShowsLinesThatAddUpToItsTotals [39 ms]
+[xUnit.net 00:08:34.09]   Finished:    ALKAROS.Host.Tests
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ATableMergedIntoAnotherTablesCheckTakesNoOrderOfItsOwn [16 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 41
+     Geçti: 41
+ Toplam süre: 8,5769 Dakika
+
+real	8m35.771s
+user	0m0.015s
+sys	0m0.015s
