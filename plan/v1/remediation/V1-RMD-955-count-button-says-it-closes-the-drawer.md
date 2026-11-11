@@ -1,7 +1,7 @@
 # V1-RMD-955 - Sayım düğmesi kasayı kapatmanın başladığını söylesin
 
 - Task ID: V1-RMD-955
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

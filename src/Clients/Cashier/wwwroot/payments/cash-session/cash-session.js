@@ -714,9 +714,11 @@
       '</div>' +
       renderMovementList() +
       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
-      (hasPending ? '<p class="cs-field-hint" id="pending-hint">Onay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.</p>' : '') +
+      (hasPending
+        ? '<p class="cs-field-hint" id="pending-hint">Onay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.</p>'
+        : '<p class="cs-field-hint" id="count-hint">Sayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.</p>') +
       '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending ? 'disabled' : '') + '>' +
-      (state.busy ? 'Bekleyin…' : 'Sayıma Başla') + '</button>' +
+      (state.busy ? 'Bekleyin…' : 'Kasayı Kapat: Sayıma Başla') + '</button>' +
       '</div>';
     ['in', 'out'].forEach(function (direction) {
       document.getElementById('cash-' + direction).addEventListener('click', function () {

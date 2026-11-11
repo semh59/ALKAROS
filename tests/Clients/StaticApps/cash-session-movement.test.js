@@ -323,6 +323,15 @@ describe("cash-session.js cash-out requests", () => {
     await open({ capabilities: [], list: request(ME) });
     expect($("#start-count").disabled).toBe(true);
     expect($("#pending-hint").textContent).toContain("sayıma geçilemez");
+    expect($("#count-hint")).toBeNull();
+  });
+
+  it("names the count button as the first step of closing the drawer", async () => {
+    await open();
+
+    expect($("#start-count").textContent).toBe("Kasayı Kapat: Sayıma Başla");
+    expect($("#count-hint").textContent).toContain("başlatınca geri dönülmez");
+    expect($("#pending-hint")).toBeNull();
   });
 
   it("starts with an enabled Sayıma Başla when nothing waits", async () => {

@@ -1,0 +1,2 @@
+M1 the old button label comes back: the new test failed (restored)
+M2 the count hint is not rendered: the new test failed (restored)

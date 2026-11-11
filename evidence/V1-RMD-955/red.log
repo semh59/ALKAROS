@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (65 tests | 1 failed) 11466ms
+     × names the count button as the first step of closing the drawer 106ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > names the count button as the first step of closing the drawer
+AssertionError: expected 'Sayıma Başla' to be 'Kasayı Kapat: Sayıma Başla' // Object.is equality
+
+Expected: "Kasayı Kapat: Sayıma Başla"
+Received: "Sayıma Başla"
+
+ ❯ cash-session-movement.test.js:331:43
+    329|     await open();
+    330|
+    331|     expect($("#start-count").textContent).toBe("Kasayı Kapat: Sayıma B…
+       |                                           ^
+    332|     expect($("#count-hint").textContent).toBe("Sayım, kasa kapanışının…
+    333|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 64 passed (65)
+   Start at  13:49:09
+   Duration  12.71s (transform 1.62s, setup 23ms, import 69ms, tests 11.47s, environment 910ms)
+
