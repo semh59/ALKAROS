@@ -1,0 +1,5 @@
+M1 scrolls on every redraw while the error stays:       Tests  1 failed | 11 passed (12)
+M2 a retry that fails the same way does not scroll:       Tests  1 failed | 11 passed (12)
+M3 a repeated validation error does not scroll:       Tests  1 failed | 11 passed (12)
+M4 never scrolls:       Tests  1 failed | 11 passed (12)
+M5 wrong scroll option:       Tests  1 failed | 11 passed (12)

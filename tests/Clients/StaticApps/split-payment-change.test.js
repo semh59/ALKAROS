@@ -17,7 +17,7 @@ const unpaid = { billId: BILL_ID, payableAmount: 100, allocatedTotal: 0, remaini
 const settled = { ...unpaid, allocatedTotal: 100, remainingAmount: 0 };
 const partial = { ...unpaid, allocatedTotal: 50, remainingAmount: 50 };
 
-async function open({ cash = true, tenderResult = { approvedAmount: 100, changeAmount: 50 }, afterTender = settled } = {}) {
+async function open({ cash = true, tenderStatus = 200, tenderResult = { approvedAmount: 100, changeAmount: 50 }, afterTender = settled } = {}) {
   let current = unpaid;
   const results = Array.isArray(tenderResult) ? [...tenderResult] : null;
   const routeSet = [
@@ -30,6 +30,7 @@ async function open({ cash = true, tenderResult = { approvedAmount: 100, changeA
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
     {
       test: (url, init) => url.endsWith("/cash-tender") && init?.method === "POST",
+      status: tenderStatus,
       get body() { current = afterTender; return results ? (results.length > 1 ? results.shift() : results[0]) : tenderResult; },
     },
   ];
@@ -116,6 +117,41 @@ describe("split-payment.js optional cash change", () => {
 
     typeTendered("");
     expect(submit().disabled).toBe(false);
+  });
+
+  it("scrolls a new error into view once, so the sticky pay button never hides it", async () => {
+    const scrolled = vi.fn();
+    Element.prototype.scrollIntoView = scrolled;
+    try {
+      await open({ tenderStatus: 422, tenderResult: {} });
+      await vi.waitFor(() => expect(tenderedField()).not.toBeNull());
+
+      document.getElementById("submit-tender").click();
+
+      await vi.waitFor(() => expect(app().querySelector('.sp-alert-danger[role="alert"]')).not.toBeNull());
+      expect(scrolled).toHaveBeenCalledTimes(1);
+      expect(scrolled.mock.contexts[0]).toBe(app().querySelector('.sp-alert-danger[role="alert"]'));
+
+      document.querySelector('.sp-method-chip[data-method="Eft"]').click();
+      expect(app().querySelector('.sp-alert-danger[role="alert"]')).not.toBeNull();
+      expect(scrolled).toHaveBeenCalledTimes(1);
+
+      document.querySelector('.sp-method-chip[data-method="Cash"]').click();
+      document.getElementById("submit-tender").click();
+      await vi.waitFor(() => expect(scrolled).toHaveBeenCalledTimes(2));
+
+      const amount = document.getElementById("amount-draft");
+      amount.value = "0";
+      amount.dispatchEvent(new Event("input", { bubbles: true }));
+      document.getElementById("submit-tender").click();
+      await vi.waitFor(() => expect(app().textContent).toContain("Tutar sıfırdan büyük olmalı."));
+      expect(scrolled).toHaveBeenCalledTimes(3);
+      document.getElementById("submit-tender").click();
+      expect(scrolled).toHaveBeenCalledTimes(4);
+      expect(scrolled.mock.calls.every(([options]) => options.block === "nearest")).toBe(true);
+    } finally {
+      delete Element.prototype.scrollIntoView;
+    }
   });
 
   it("accepts a tendered amount equal to the amount due", async () => {

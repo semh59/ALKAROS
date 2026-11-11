@@ -310,7 +310,7 @@
   };
 
   function setBusy(value) { state.busy = value; render(); }
-  function setError(message) { state.error = message; render(); }
+  function setError(message) { state.error = message; lastShownError = null; render(); }
 
   // V1-RMD-378 (module-by-module UI audit round 2, T7 - rol-arası haberleşme): a card payment
   // "onay bekliyor" needs a SECOND, different manager to approve it (V1-RMD-283's own two-person
@@ -1016,6 +1016,7 @@
 
     setBusy(true);
     state.error = null;
+    lastShownError = null;
     state.changeDue = null;
     // V1-RMD-314: reuse the in-flight key across a retry of this exact attempt - see the field's own
     // doc comment. A brand-new key is minted only when none is pending.
@@ -2463,9 +2464,17 @@
       renderReceiptReset();
   }
 
+  // The error box sits at the top of the page while the pay button is sticky at the bottom: bring an error into view, also the
+  // same one again after a new attempt (submitTender and setError forget the last shown error).
+  var lastShownError = null;
   function render() {
     renderPhase();
     syncDisabledReasons();
+    if (state.error && state.error !== lastShownError) {
+      var alertBox = app.querySelector('.sp-alert-danger[role="alert"]');
+      if (alertBox && alertBox.scrollIntoView) alertBox.scrollIntoView({ block: 'nearest' });
+    }
+    lastShownError = state.error;
   }
 
   function renderPhase() {
