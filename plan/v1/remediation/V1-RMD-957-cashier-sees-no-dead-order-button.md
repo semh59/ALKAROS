@@ -1,7 +1,7 @@
 # V1-RMD-957 - Kasiyer Masalar ekranında işlemeyen sipariş düğmesini görmesin
 
 - Task ID: V1-RMD-957
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

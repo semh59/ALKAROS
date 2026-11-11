@@ -46,16 +46,18 @@ export function TableOrderBridge({
     <div>
       <span className="table-order-bridge__kicker">SİPARİŞ BAĞLAMI</span>
       <strong>{table.tableNumber}</strong>
-      <p>{table.currentOrderId ? "Bu masadaki siparişe devam edin ya da hesabını alın." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
+      <p>{!canManage
+        ? hasCheck && canCollect ? "Bu masadaki hesabı alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
+        : table.currentOrderId ? "Bu masadaki siparişe devam edin ya da hesabını alın." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
     </div>
     <div className="table-order-bridge__actions">
-      <button data-telemetry-id="b.routes.tableorderbridge.1"
+      {canManage && <button data-telemetry-id="b.routes.tableorderbridge.1"
         className="primary"
         type="button"
-        disabled={!canManage || !orderAllowed || busy}
+        disabled={!orderAllowed || busy}
         aria-busy={busy}
         onClick={onStartOrder}
-      >{busy ? "Sipariş hazırlanıyor…" : table.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>
+      >{busy ? "Sipariş hazırlanıyor…" : table.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>}
       {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
         type="button"
         disabled={busy || collecting}
@@ -63,7 +65,7 @@ export function TableOrderBridge({
         onClick={() => void collect()}
       >{collecting ? "Hesap açılıyor…" : "Hesabı al"}</button>}
     </div>
-    {!orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu masa kartından değiştirin.</small>}
+    {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu masa kartından değiştirin.</small>}
     {(error ?? collectError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError}</p>}
   </section>;
 }

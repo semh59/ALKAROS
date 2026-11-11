@@ -1,0 +1,4 @@
+M1 the table-card hint shows to everyone:       Tests  1 failed | 9 passed (10)
+M2 the text promises a bill the user may not open:       Tests  1 failed | 9 passed (10)
+M3 the non-manager nothing-to-do text is the manager text:       Tests  2 failed | 8 passed (10)
+M4 the order button is drawn for everyone:       Tests  3 failed | 7 passed (10)

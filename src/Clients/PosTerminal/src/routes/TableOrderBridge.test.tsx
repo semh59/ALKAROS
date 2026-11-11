@@ -74,6 +74,31 @@ describe("TableOrderBridge", () => {
     expect(ended).toHaveBeenCalledTimes(1);
   });
 
+  it("draws no order button for someone who may not open orders, and keeps Hesabı al", () => {
+    render({ canManage: false });
+
+    expect(button("Siparişe devam et")).toBeUndefined();
+    expect(button("Masada sipariş aç")).toBeUndefined();
+    expect(button("Hesabı al")).toBeDefined();
+    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masadaki hesabı alın.");
+    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("devam edin");
+  });
+
+  it("tells someone who may not open orders that an empty table has nothing for them, with no buttons and no table-card hint", () => {
+    render({ canManage: false, orderAllowed: false, table: { tableNumber: "T-4", currentOrderId: null, currentBillId: null } });
+
+    expect(document.querySelectorAll("button")).toHaveLength(0);
+    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masada sizin yapabileceğiniz bir işlem yok.");
+    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("uygun değil");
+  });
+
+  it("does not offer a bill nobody may open: a non-manager without the bill permission gets no button and no promise", () => {
+    render({ canManage: false, canCollect: false, table: { tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1" } });
+
+    expect(document.querySelectorAll("button")).toHaveLength(0);
+    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masada sizin yapabileceğiniz bir işlem yok.");
+  });
+
   it("offers no collection for an empty table", () => {
     render({ table: { tableNumber: "T-4", currentOrderId: null, currentBillId: null } });
 

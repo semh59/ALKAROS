@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (8 tests | 1 failed) 95ms
+     × draws no order button for someone who may not open orders, and keeps Hesabı al 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > draws no order button for someone who may not open orders, and keeps Hesabı al
+AssertionError: expected <button …(5)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  aria-busy="false"
+  class="primary"
+  data-telemetry-id="b.routes.tableorderbridge.1"
+  disabled=""
+  type="button"
+>
+  Siparişe devam et
+</button>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:80:41
+     78|     render({ canManage: false });
+     79|
+     80|     expect(button("Siparişe devam et")).toBeUndefined();
+       |                                         ^
+     81|     expect(button("Masada sipariş aç")).toBeUndefined();
+     82|     expect(button("Hesabı al")).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:57:34
+   Duration  1.59s (transform 215ms, setup 0ms, import 316ms, tests 95ms, environment 920ms)
+
