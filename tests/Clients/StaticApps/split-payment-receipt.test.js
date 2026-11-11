@@ -76,6 +76,7 @@ describe("split-payment.js information receipt", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
+    delete window.print;
   });
 
   it("reads the receipt from the server, fills the print sheet and opens the print dialog", async () => {
@@ -94,6 +95,36 @@ describe("split-payment.js information receipt", () => {
     expect(text).toContain("80,00");
     expect(text).toContain("Toplam");
     expect(text).toContain("110,00");
+  });
+
+  it("has the sheet filled and the print button free again at the moment the print dialog opens", async () => {
+    let atPrint = null;
+    printSpy.mockImplementation(() => {
+      atPrint = { sheet: sheet()?.textContent ?? "", disabled: document.getElementById("print-receipt").disabled };
+    });
+    await open({ body: receipt });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    clickPrint();
+
+    await vi.waitFor(() => expect(atPrint).not.toBeNull());
+    expect(atPrint.sheet).toContain("Bilgi Fişi");
+    expect(atPrint.disabled).toBe(false);
+    expect(printSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("sends one print request and opens one print dialog when the button is pressed again while the receipt is being read", async () => {
+    const fetchMock = await open({ body: receipt });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    clickPrint();
+    document.getElementById("print-receipt").click();
+    document.getElementById("print-receipt").click();
+
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(printCalls(fetchMock)).toHaveLength(1);
+    expect(printSpy).toHaveBeenCalledTimes(1);
   });
 
   it("labels adjustments, deductions, payment methods and refunded payments in Turkish and escapes item names", async () => {

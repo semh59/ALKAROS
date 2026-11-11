@@ -1,0 +1,3 @@
+M1 the print dialog is opened before the page is drawn again (button still busy): the new test failed (restored)
+M2 the print sheet is filled after the dialog opens: the new test failed (restored)
+M3 the page is not drawn busy while the receipt is read (button stays pressable): the double press test and the dialog test failed (restored)
