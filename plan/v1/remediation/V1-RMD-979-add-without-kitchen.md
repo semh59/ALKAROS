@@ -73,6 +73,7 @@ Kasiyer, garsonun girmediği ama müşterinin yediği bir ürünü mutfak fişi 
   - tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj
   - tests/Host/Experience/Billing/BillingSplitTestDatabase.cs
   - tests/Host/MigrationComposition/OrdersRollbackTests.cs
+  - tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs
   - src/Host/DualScreen/DualScreenApplication.cs
   - tests/Architecture/ApiConventions/idempotency_allowlist.json
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
