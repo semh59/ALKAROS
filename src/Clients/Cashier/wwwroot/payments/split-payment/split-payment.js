@@ -104,6 +104,7 @@
     selectedCustomerId: null,
     // İptal ve iade: kasiyerin gerekçeyle hesabı iptal etmesi, ödemeyi iade istemesi ve (yetkiliyse) isteği onaylaması.
     cancelReason: '',
+    canResetReceipt: false,
     cancelOrder: false,
     orderCancelled: false,
     refundRequests: null,
@@ -378,6 +379,7 @@
       }
       state.terminalId = result.body.terminalId;
       state.userId = result.body.userId || null;
+      state.canResetReceipt = Array.isArray(result.body.capabilities) && result.body.capabilities.indexOf('payments.refund.approve') !== -1;
       loadEverything();
     }).catch(function () {
       state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
@@ -2385,6 +2387,7 @@
   }
 
   function renderReceiptReset() {
+    if (!state.canResetReceipt) return '';
     return '<div class="sp-card"><span class="sp-field-label">Orijinal fişi sıfırla (yönetici)</span>' +
       (state.resetNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.resetNotice) + '</div>' : '') +
       (state.resetError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.resetError) + '</div>' : '') +

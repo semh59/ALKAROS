@@ -11,18 +11,18 @@ const TERMINAL_ID = "11111111-1111-1111-1111-111111111111";
 const BILL_ID = "22222222-2222-2222-2222-222222222222";
 const settled = { billId: BILL_ID, payableAmount: 110, allocatedTotal: 110, remainingAmount: 0, allocations: [], unsettledPayment: null };
 
-async function open(resetAnswer) {
+async function open(resetAnswer, capabilities = ["payments.refund.approve"], summary = settled) {
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   const fetchMock = installFetchRouter([
-    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
-    { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: settled },
+    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1", capabilities } },
+    { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: summary },
     { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
     { test: (url, init) => url.endsWith("/receipt/original-reset") && init?.method === "POST", ...resetAnswer },
   ]);
   await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
-  await vi.waitFor(() => expect(document.getElementById("reset-receipt")).not.toBeNull());
+  await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
   return fetchMock;
 }
 
@@ -41,6 +41,39 @@ describe("split-payment.js original receipt reset", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
+  });
+
+  it.each([[[]], [["payments.take", "cash.drawer"]], [null], [undefined], ["payments.refund.approve.x"]])(
+    "does not draw the manager only reset card for a session without the refund approval (%j)",
+    async (capabilities) => {
+      const fetchMock = await open({ status: 200, body: {} }, capabilities === undefined ? null : capabilities);
+
+      expect(document.getElementById("print-receipt")).not.toBeNull();
+      expect(document.getElementById("reset-receipt")).toBeNull();
+      expect(document.getElementById("reset-reason")).toBeNull();
+      expect(text()).not.toContain("Orijinal fişi sıfırla");
+      expect(resetCalls(fetchMock)).toHaveLength(0);
+    },
+  );
+
+  it("draws the reset card for a session that holds the refund approval, and only on the settled page", async () => {
+    await open({ status: 200, body: {} });
+    expect(text()).toContain("Orijinal fişi sıfırla (yönetici)");
+
+    document.body.innerHTML = "";
+    vi.resetModules();
+    window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+    installFetchRouter([
+      { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1", capabilities: ["payments.refund.approve"] } },
+      { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: { ...settled, allocatedTotal: 0, remainingAmount: 110 } },
+      { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
+      { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+      { test: (url) => url.endsWith("/refund-requests"), body: [] },
+    ]);
+    await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
+    await vi.waitFor(() => expect(document.getElementById("submit-tender")).not.toBeNull());
+
+    expect(document.getElementById("reset-receipt")).toBeNull();
   });
 
   it("refuses an empty reason without calling the server", async () => {
