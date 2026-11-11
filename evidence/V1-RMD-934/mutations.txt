@@ -1,0 +1,4 @@
+M1 online orders are excluded again: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.H  (restored)
+M2 served orders are no longer counted: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.H  (restored)
+M3 preparing orders are no longer counted: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.H  (restored)
+M4 ready orders are no longer counted: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.H  (restored)

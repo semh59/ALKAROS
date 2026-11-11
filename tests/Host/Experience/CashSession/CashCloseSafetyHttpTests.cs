@@ -205,7 +205,7 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ASentOrderWithoutAnyBillIsAnOpenCheckThatWarnsTheCloseButADraftACompletedAnOnlineOrAnAlreadyBilledOneIsNot()
+    public async Task ASentOrderWithoutAnyBillIsAnOpenCheckThatWarnsTheCloseButADraftACompletedACancelledOrAnAlreadyBilledOneIsNot()
     {
         await using var drawer = await DrawerAsync(opening: 100m);
         await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Submitted");
@@ -215,6 +215,10 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
         await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Completed");
         await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Draft");
         await _database.SeedOrderWithoutBillAsync(OrderSource.Online, "Submitted");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Preparing");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Waiter, "Ready");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Online, "Completed");
+        await _database.SeedOrderWithoutBillAsync(OrderSource.Online, "Cancelled");
         await _database.SeedOrderWithoutBillAsync(OrderSource.Cashier, "Cancelled");
         var billed = await _database.SeedBillAsync(40m);
         await _database.SetOrderStatusOfBillAsync(billed, "Submitted");
@@ -222,7 +226,7 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
         await drawer.CountAsync(100m);
 
         var preview = await drawer.PreviewAsync();
-        Assert.Equal(5, preview.GetProperty("openBillCount").GetInt32());
+        Assert.Equal(8, preview.GetProperty("openBillCount").GetInt32());
 
         var refused = await drawer.CloseAsync(100m);
         await AssertErrorAsync(refused, HttpStatusCode.Conflict, "CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED", "hesap");

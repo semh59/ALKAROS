@@ -26,7 +26,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
         $"""
         SELECT (SELECT count(*) FROM billing.bills WHERE status NOT IN ('Paid', 'Cancelled'))
                + (SELECT count(*) FROM orders.orders o
-                  WHERE o.status IN ('Submitted', 'Accepted', 'Preparing', 'Ready', 'Served') AND o.source <> 'Online'
+                  WHERE o.status IN ('Submitted', 'Accepted', 'Preparing', 'Ready', 'Served')
                     AND NOT EXISTS (SELECT 1 FROM billing.bills b
                                     WHERE {BillOrderLink.Matches("b", "o.order_id")} AND b.status <> 'Cancelled')),
                (SELECT count(*) FROM payments.payments WHERE status IN ('Pending', 'Unknown', 'ReconciliationRequired'));
