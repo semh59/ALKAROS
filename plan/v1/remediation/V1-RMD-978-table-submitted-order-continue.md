@@ -20,6 +20,11 @@ Masada gönderilmiş (mutfağa gitmiş) bir sipariş varken kasiyer "Siparişe d
   - src/Modules/Orders/OrderAggregate/Order.cs
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
   - tests/Modules/Orders/OrderAggregate/OrderDomainTests.cs
+  - src/Host/DualScreen/DualScreenContracts.cs
+  - tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
+  - src/Clients/PosTerminal/src/contracts.ts
+  - src/Clients/PosTerminal/src/routes/Cashier.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.first-touch.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
