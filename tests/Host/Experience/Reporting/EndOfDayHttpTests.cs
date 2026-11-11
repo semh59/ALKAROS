@@ -112,7 +112,7 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
 
         using var closed = await client.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new { TotalRevenue = 987654.32m, TotalOrders = 4242, CancelledItems = 7, PrintFailures = 7 });
+            new { TotalRevenue = 987654.32m, TotalOrders = 4242, CancelledItems = 7, PrintFailures = 7, AcknowledgeOpenItems = true });
 
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
         var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
@@ -138,7 +138,7 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
 
         using var closed = await client.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new { TotalRevenue = 0m, TotalOrders = 4 });
+            new { TotalRevenue = 0m, TotalOrders = 4, AcknowledgeOpenItems = true });
 
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
         var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();

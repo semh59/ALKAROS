@@ -1,7 +1,7 @@
 # V1-RMD-935 - Gün sonu açık hesap sayısı hesapsız gönderilmiş siparişleri de saysın
 
 - Task ID: V1-RMD-935
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

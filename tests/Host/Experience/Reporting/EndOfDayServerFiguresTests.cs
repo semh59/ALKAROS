@@ -66,6 +66,14 @@ public sealed class EndOfDayServerFiguresTests : IAsyncLifetime
         return client;
     }
 
+    private async Task LinkAsync(Guid billId, Guid orderId)
+    {
+        await using var command = _database.DataSource.CreateCommand("UPDATE billing.bills SET order_id = @order WHERE bill_id = @bill;");
+        command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("bill", billId);
+        await command.ExecuteNonQueryAsync();
+    }
+
     private static Task<HttpResponseMessage> CloseAsync(HttpClient client, bool acknowledge = false)
         => client.PostAsJsonAsync($"{Base}/{Day:yyyy-MM-dd}/close", new CloseBusinessDayV1(acknowledge));
 
@@ -221,6 +229,54 @@ public sealed class EndOfDayServerFiguresTests : IAsyncLifetime
         var day = (await client.GetFromJsonAsync<BusinessDayV1>($"{Base}/{Day:yyyy-MM-dd}"))!;
         Assert.Equal("Open", day.Status);
         Assert.Equal(0L, await _database.CountAsync("SELECT count(*) FROM audit.audit_events WHERE event_name = 'reporting.business_day_closed'"));
+    }
+
+    [Fact]
+    public async Task SentOrdersWithNoBillCountAsOpenBillsInThePreflightAndTheStoredClose()
+    {
+        await _database.SeedOrderAsync(Start.AddHours(1), "Submitted");
+        await _database.SeedOrderAsync(Start.AddHours(2), "Accepted", source: "Online");
+        await _database.SeedOrderAsync(Start.AddHours(3), "Completed");
+        await _database.SeedOrderAsync(Start.AddHours(4), "Draft");
+        await _database.SeedOrderAsync(Start.AddHours(5), "Cancelled");
+        await _database.SeedBillAsync("Open");
+        using var client = await OpenedDayAsync();
+
+        var preflight = (await client.GetFromJsonAsync<BusinessDayPreflightV1>($"{Base}/{Day:yyyy-MM-dd}/close-preflight"))!;
+        var report = await ReportAsync(await CloseAsync(client, acknowledge: true));
+
+        Assert.Equal(3, preflight.OpenBills);
+        Assert.Equal(3, report.BusinessDay.OpenBillsCount);
+    }
+
+    [Theory]
+    [InlineData("Preparing")]
+    [InlineData("Ready")]
+    [InlineData("Served")]
+    public async Task EveryLiveOrderStatusCountsAsAnOpenBillWhenItHasNoBill(string status)
+    {
+        await _database.SeedOrderAsync(Start.AddHours(1), status);
+        using var client = await OpenedDayAsync();
+
+        var preflight = (await client.GetFromJsonAsync<BusinessDayPreflightV1>($"{Base}/{Day:yyyy-MM-dd}/close-preflight"))!;
+
+        Assert.Equal(1, preflight.OpenBills);
+    }
+
+    [Fact]
+    public async Task ABilledSentOrderIsNotCountedTwiceWhileOneWhoseOnlyBillWasCancelledStillIs()
+    {
+        var withOpenBill = await _database.SeedOrderAsync(Start.AddHours(1), "Submitted");
+        var withCancelledBill = await _database.SeedOrderAsync(Start.AddHours(2), "Submitted");
+        var openBill = await _database.SeedBillAsync("Open");
+        var cancelledBill = await _database.SeedBillAsync("Cancelled");
+        await LinkAsync(openBill, withOpenBill);
+        await LinkAsync(cancelledBill, withCancelledBill);
+        using var client = await OpenedDayAsync();
+
+        var preflight = (await client.GetFromJsonAsync<BusinessDayPreflightV1>($"{Base}/{Day:yyyy-MM-dd}/close-preflight"))!;
+
+        Assert.Equal(2, preflight.OpenBills);
     }
 
     [Fact]

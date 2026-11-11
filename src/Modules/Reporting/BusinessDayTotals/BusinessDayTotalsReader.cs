@@ -108,7 +108,14 @@ public sealed class PostgresBusinessDayTotalsReader : IBusinessDayTotalsReader
                 AND occurred_at >= $1 AND occurred_at < $2),
             (SELECT COUNT(*) FROM kitchen.print_jobs WHERE failed_at >= $1 AND failed_at < $2),
             (SELECT COUNT(*) FROM cash.cash_sessions WHERE status IN ('Open', 'Counting', 'Closing')),
-            (SELECT COUNT(*) FROM billing.bills WHERE status NOT IN ('Paid', 'Cancelled')),
+            (SELECT COUNT(*) FROM billing.bills WHERE status NOT IN ('Paid', 'Cancelled'))
+            + (SELECT COUNT(*) FROM orders.orders o
+               WHERE o.status IN ('Submitted', 'Accepted', 'Preparing', 'Ready', 'Served')
+                 AND NOT EXISTS (SELECT 1 FROM billing.bills ob
+                                 WHERE (ob.order_id = o.order_id OR EXISTS (SELECT 1 FROM billing.bill_items obi
+                                            JOIN orders.order_items obo ON obo.order_item_id = obi.order_item_id
+                                            WHERE obi.bill_id = ob.bill_id AND obo.order_id = o.order_id))
+                                   AND ob.status <> 'Cancelled')),
             (SELECT COUNT(*) FROM payments.payments WHERE status IN ('Pending', 'Unknown', 'ReconciliationRequired')),
             (SELECT COALESCE(jsonb_agg(w ORDER BY w."waiterUserId"), '[]'::jsonb)::text FROM (
                 SELECT COALESCE(vo.serving_user_id, vd.serving_user_id) AS "waiterUserId",
