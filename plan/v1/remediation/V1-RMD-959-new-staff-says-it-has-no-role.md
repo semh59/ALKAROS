@@ -1,7 +1,7 @@
 # V1-RMD-959 - Yeni personelin rolü '—' görünmesin, rol atanmadığı söylensin
 
 - Task ID: V1-RMD-959
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

@@ -45,7 +45,7 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
       await api.createUser(username, field("password"), displayName);
       setFields({});
       changed();
-    }, t.created);
+    }, capabilities.has("identity.roles.manage") ? t.created : t.createdNeedsManager);
   }
 
   function toggleActive(user: UserLookup) {

@@ -61,13 +61,13 @@ describe("staff section", () => {
 
   it("creates an account and clears the form", async () => {
     const client = fakeClient();
-    await render(<StaffSection capabilities={manager} client={client} />);
+    await render(<StaffSection capabilities={new Set([...manager, "identity.roles.manage"])} client={client} />);
     await type("u-username", "ayse");
     await type("u-display", "Ayşe Yılmaz");
     await type("u-password", "gizli-parola");
     await submit("Personel hesabı aç");
     expect(client.createUser).toHaveBeenCalledWith("ayse", "gizli-parola", "Ayşe Yılmaz");
-    expect(document.body.textContent).toContain("Personel hesabı açıldı.");
+    expect(document.body.textContent).toContain("Personel hesabı açıldı. Henüz rolü yok; \"Rolleri düzenle\" ile rol atayın.");
     expect((document.getElementById("u-password") as HTMLInputElement).value).toBe("");
   });
 
@@ -80,6 +80,18 @@ describe("staff section", () => {
     await submit("Personel hesabı aç");
     expect(alertText()).toBe("Kullanıcı adı, görünen ad ve en az 8 karakterli bir parola girin.");
     expect(client.createUser).not.toHaveBeenCalled();
+  });
+
+  it("tells someone who may not manage roles to ask a manager instead of pointing at a missing button", async () => {
+    const client = fakeClient();
+    await render(<StaffSection capabilities={manager} client={client} />);
+    await type("u-username", "ayse");
+    await type("u-display", "Ayşe Yılmaz");
+    await type("u-password", "gizli-parola");
+    await submit("Personel hesabı aç");
+
+    expect(document.body.textContent).toContain("rol ataması için yöneticiye başvurun");
+    expect(document.body.textContent).not.toContain("Rolleri düzenle");
   });
 
   it("shows the server's Turkish reason when the account cannot be created", async () => {

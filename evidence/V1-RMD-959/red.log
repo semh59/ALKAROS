@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-staff-roles/RolesPanels.test.tsx (10 tests | 1 failed) 478ms
+     × shows each person's roles by name and marks an unknown role 25ms
+ ❯ src/features/management-staff-roles/StaffSection.test.tsx (11 tests | 1 failed) 222ms
+     × creates an account and clears the form 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-staff-roles/RolesPanels.test.tsx > roles and permissions panels > shows each person's roles by name and marks an unknown role
+AssertionError: expected 'Veli KayaveliPasif—Rolleri düzenle' to contain 'Rol atanmadı'
+
+Expected: "Rol atanmadı"
+Received: "Veli KayaveliPasif—Rolleri düzenle"
+
+ ❯ src/features/management-staff-roles/RolesPanels.test.tsx:120:45
+    118|     expect(rowFor("Ayşe Yılmaz").textContent).toContain("Yönetici, Tan…
+    119|     expect(rowFor("Veli Kaya").textContent).toContain("Pasif");
+    120|     expect(rowFor("Veli Kaya").textContent).toContain("Rol atanmadı");
+       |                                             ^
+    121|     expect(rowFor("Veli Kaya").textContent).not.toContain("—");
+    122|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/management-staff-roles/StaffSection.test.tsx > staff section > creates an account and clears the form
+AssertionError: expected 'Personel hesabı açıldı.Personel hesab…' to contain 'Personel hesabı açıldı. Henüz rolü yo…'
+
+Expected: "Personel hesabı açıldı. Henüz rolü yok; "Rolleri düzenle" ile rol atayın."
+Received: "Personel hesabı açıldı.Personel hesabı açYeni personel için giriş hesabı açar.Kullanıcı adıGörünen adParolaEn az 8 karakter.Hesabı açPersonel bulKullanıcı adıBul"
+
+ ❯ src/features/management-staff-roles/StaffSection.test.tsx:70:39
+     68|     await submit("Personel hesabı aç");
+     69|     expect(client.createUser).toHaveBeenCalledWith("ayse", "gizli-paro…
+     70|     expect(document.body.textContent).toContain("Personel hesabı açıld…
+       |                                       ^
+     71|     expect((document.getElementById("u-password") as HTMLInputElement)…
+     72|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 26 passed (28)
+   Start at  14:00:54
+   Duration  2.67s (transform 1.08s, setup 0ms, import 1.71s, tests 975ms, environment 3.13s)
+

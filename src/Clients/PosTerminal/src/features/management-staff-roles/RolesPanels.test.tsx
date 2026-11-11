@@ -117,6 +117,8 @@ describe("roles and permissions panels", () => {
     await tick();
     expect(rowFor("Ayşe Yılmaz").textContent).toContain("Yönetici, Tanımsız rol");
     expect(rowFor("Veli Kaya").textContent).toContain("Pasif");
+    expect(rowFor("Veli Kaya").querySelectorAll("td")[3].textContent).toBe("Rol atanmadı");
+    expect(rowFor("Ayşe Yılmaz").querySelectorAll("td")[3].textContent).not.toContain("Rol atanmadı");
   });
 
   it("assigns only a role the person does not have, and revoking asks first", async () => {

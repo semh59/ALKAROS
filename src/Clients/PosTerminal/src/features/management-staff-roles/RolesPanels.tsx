@@ -111,7 +111,7 @@ export function UserRolesPanel({ api, revision, onChanged, setNotice }: PanelPro
           <thead><tr><th>{t.person}</th><th>{t.username}</th><th>{t.status}</th><th>{t.userRoles}</th><th>{t.actions}</th></tr></thead>
           <tbody>{users.map((user) => <tr key={user.userId}>
             <td>{user.displayName}</td><td>{user.username}</td><td>{user.active ? t.active : t.inactive}</td>
-            <td>{user.roleIds.length === 0 ? "—" : user.roleIds.map(roleName).join(", ")}</td>
+            <td>{user.roleIds.length === 0 ? t.noRole : user.roleIds.map(roleName).join(", ")}</td>
             <td><Button data-telemetry-id="b.management-staff-roles.rolespanels.5" variant="quiet" onClick={() => { setNotice(undefined); setConfirmation(undefined); setPickedRole(""); setEditingId(user.userId); }}>{t.editRoles}</Button></td></tr>)}</tbody>
         </table>}
 
