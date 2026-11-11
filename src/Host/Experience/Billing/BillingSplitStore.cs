@@ -534,7 +534,7 @@ public sealed class BillingSplitStore
         if (activeBill != null)
         {
             var existingAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(activeBill.Id, cancellationToken);
-            return Map(activeBill, existingAllocations, canMutate, adjustment: await LoadAdjustmentAsync(activeBill, cancellationToken));
+            return await MapAsync(activeBill, existingAllocations, canMutate, adjustment: await LoadAdjustmentAsync(activeBill, cancellationToken), cancellationToken: cancellationToken);
         }
 
         var order = await _orders.GetByIdAsync(orderId, cancellationToken)
@@ -595,12 +595,12 @@ public sealed class BillingSplitStore
             if (retryActive != null)
             {
                 var retryAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(retryActive.Id, cancellationToken);
-                return Map(retryActive, retryAllocations, canMutate, adjustment: await LoadAdjustmentAsync(retryActive, cancellationToken));
+                return await MapAsync(retryActive, retryAllocations, canMutate, adjustment: await LoadAdjustmentAsync(retryActive, cancellationToken), cancellationToken: cancellationToken);
             }
             throw;
         }
 
-        return Map(bill, [], canMutate);
+        return await MapAsync(bill, [], canMutate, cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -693,7 +693,7 @@ public sealed class BillingSplitStore
                 "Seçilen siparişlerden birinin hesabı az önce açıldı; ekranı yenileyin.");
         }
 
-        return Map(bill, [], canMutate);
+        return await MapAsync(bill, [], canMutate, cancellationToken: cancellationToken);
     }
 
     /// <summary>The same lines a bill opened from one order takes: not cancelled, and not a round still waiting to be sent.</summary>
@@ -749,7 +749,7 @@ public sealed class BillingSplitStore
                 "IDEMPOTENCY_KEY_REUSED", "The idempotency key belongs to another or a cancelled merge.",
                 "Bu işlem anahtarı başka bir birleştirme için veya iptal edilmiş bir birleştirme için kullanılmış; yeni işlem anahtarıyla deneyin.");
         var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(existing.Id, cancellationToken);
-        return Map(existing, allocations, canMutate, adjustment: await LoadAdjustmentAsync(existing, cancellationToken));
+        return await MapAsync(existing, allocations, canMutate, adjustment: await LoadAdjustmentAsync(existing, cancellationToken), cancellationToken: cancellationToken);
     }
 
     public async Task<BillSplitDesignDto> GetAsync(
@@ -759,7 +759,7 @@ public sealed class BillingSplitStore
     {
         var bill = await GetBillAsync(billId, cancellationToken);
         var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(billId, cancellationToken);
-        return Map(bill, allocations, canMutate, adjustment: await LoadAdjustmentAsync(bill, cancellationToken));
+        return await MapAsync(bill, allocations, canMutate, adjustment: await LoadAdjustmentAsync(bill, cancellationToken), cancellationToken: cancellationToken);
     }
 
     public async Task<BillSplitDesignDto> SaveEqualAsync(
@@ -901,12 +901,13 @@ public sealed class BillingSplitStore
             versions,
             allocations,
             cancellationToken);
-        return Map(
+        return await MapAsync(
             bill,
             saved.Allocations,
             canMutate: true,
             saved.BillRowVersion,
-            await LoadAdjustmentAsync(bill, cancellationToken));
+            await LoadAdjustmentAsync(bill, cancellationToken),
+            cancellationToken);
     }
 
     /// <summary>
@@ -1004,6 +1005,41 @@ public sealed class BillingSplitStore
         if (value is null or <= 0)
             throw new ArgumentOutOfRangeException(parameterName, "Expected row version must be positive.");
         return value.Value;
+    }
+
+    private async Task<BillSplitDesignDto> MapAsync(
+        Bill bill,
+        IReadOnlyList<BillAllocation> allocations,
+        bool canMutate,
+        long? billRowVersion = null,
+        AdjustedBillSummary? adjustment = null,
+        CancellationToken cancellationToken = default)
+    {
+        var design = Map(bill, allocations, canMutate, billRowVersion, adjustment);
+        if (_dataSource is null || bill.Items.Count == 0)
+            return design;
+
+        var reasons = new Dictionary<Guid, string>();
+        await using (var command = _dataSource.CreateCommand(
+            "SELECT order_item_id, without_kitchen_reason_code FROM orders.order_items WHERE order_item_id = ANY(@ids) AND without_kitchen_reason_code IS NOT NULL;"))
+        {
+            command.Parameters.Add("ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Uuid).Value = bill.Items.Select(i => i.OrderItemId).ToArray();
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                reasons[reader.GetGuid(0)] = reader.GetString(1);
+        }
+
+        if (reasons.Count == 0)
+            return design;
+        var orderItemByBillItem = bill.Items.ToDictionary(i => i.Id, i => i.OrderItemId);
+        return design with
+        {
+            Items = design.Items
+                .Select(i => orderItemByBillItem.TryGetValue(i.BillItemId, out var orderItemId) && reasons.TryGetValue(orderItemId, out var reason)
+                    ? i with { AddedWithoutKitchenReason = reason }
+                    : i)
+                .ToList(),
+        };
     }
 
     private static BillSplitDesignDto Map(

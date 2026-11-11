@@ -311,6 +311,29 @@ public sealed class KitchenlessAddHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheBillShowsTheReasonOnTheKitchenLessLineOnly()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "orders.add-without-kitchen", "bills.split");
+        var seeded = await SeedAsync(withBill: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var added = await client.SendAsync(Add(terminalId, seeded, cookie, "customer-asked", seeded.RowVersion));
+        Assert.Equal(HttpStatusCode.OK, added.StatusCode);
+
+        var openBill = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/from-order/{seeded.OrderId:D}");
+        openBill.Headers.TryAddWithoutValidation("Cookie", cookie);
+        using var response = await client.SendAsync(openBill);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var body = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var reasons = body.RootElement.GetProperty("items").EnumerateArray()
+            .Select(i => i.GetProperty("addedWithoutKitchenReason").GetString())
+            .OrderBy(r => r, StringComparer.Ordinal).ToList();
+        Assert.Equal([null, "customer-asked"], reasons);
+    }
+
+    [Fact]
     public async Task AnOrderCancelledWhileTheBillWaitsForItsLockGetsNoBill()
     {
         var terminalId = Guid.NewGuid();

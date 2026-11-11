@@ -51,7 +51,8 @@ public sealed record BillSplitItemDto(
     decimal Quantity,
     decimal GrossAmount,
     decimal TaxAmount,
-    long RowVersion);
+    long RowVersion,
+    string? AddedWithoutKitchenReason = null);
 
 public sealed record BillSplitAllocationDto(
     Guid AllocationId,

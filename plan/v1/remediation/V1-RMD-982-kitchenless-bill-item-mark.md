@@ -1,7 +1,7 @@
 # V1-RMD-982 - Kasada eklendi isaretini hesap kalemlerinde gostermek
 
 - Task ID: V1-RMD-982
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
