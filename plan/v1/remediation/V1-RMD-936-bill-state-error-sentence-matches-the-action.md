@@ -17,6 +17,7 @@ V1-RMD-933 incelemesinden çıkan bulgu: sunucu UNSUPPORTED_BILL_STATE kodunu b�
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/error-dictionary-lock.test.js
   - tests/Clients/StaticApps/split-payment-discount-pending.test.js
+  - tests/Clients/StaticApps/split-payment-undo-adjustment.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
