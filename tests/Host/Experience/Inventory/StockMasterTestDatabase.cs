@@ -90,15 +90,18 @@ public sealed class StockMasterTestDatabase : PgTestDatabase
         return id;
     }
 
-    public async Task SeedStockBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity)
+    public async Task SeedStockBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, decimal reservedQuantity = 0m)
     {
         await ExecuteAsync(
             """
-            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, available_quantity)
-            VALUES (@id, @item, @loc, @qty, @qty);
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+            VALUES (@id, @item, @loc, @qty, @reserved, @qty - @reserved);
             """,
-            ("id", Guid.NewGuid()), ("item", stockItemId), ("loc", stockLocationId), ("qty", onHandQuantity));
+            ("id", Guid.NewGuid()), ("item", stockItemId), ("loc", stockLocationId), ("qty", onHandQuantity), ("reserved", reservedQuantity));
     }
+
+    public Task DeactivateStockLocationAsync(Guid stockLocationId)
+        => ExecuteAsync("UPDATE inventory.stock_locations SET is_active = false WHERE id = @id;", ("id", stockLocationId));
 
     public async Task<long> CountProductStockMappingsAsync(Guid productId)
         => await ScalarAsync<long>($"SELECT count(*) FROM inventory.product_stock_mappings WHERE product_id = '{productId:D}';");
@@ -110,6 +113,18 @@ public sealed class StockMasterTestDatabase : PgTestDatabase
     public Task<decimal> OnHandAsync(Guid stockItemId, Guid stockLocationId)
         => ScalarAsync<decimal>(
             $"SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = '{stockItemId:D}' AND stock_location_id = '{stockLocationId:D}';");
+
+    public Task<long> TransferMovementCountAsync(Guid stockItemId)
+        => ScalarAsync<long>(
+            $"SELECT count(*) FROM inventory.stock_movements WHERE stock_item_id = '{stockItemId:D}' AND movement_type = 'Transfer';");
+
+    public Task<string> TransferLedgerAsync(Guid stockItemId)
+        => ScalarAsync<string>(
+            $"SELECT string_agg(direction || ':' || stock_location_id::text || ':' || quantity::text, ',' ORDER BY direction) FROM inventory.stock_movements WHERE stock_item_id = '{stockItemId:D}' AND movement_type = 'Transfer';");
+
+    public Task<long> TransferReferenceCountAsync(Guid stockItemId)
+        => ScalarAsync<long>(
+            $"SELECT count(DISTINCT source_reference_id) FROM inventory.stock_movements WHERE stock_item_id = '{stockItemId:D}' AND movement_type = 'Transfer';");
 
     public Task<long> WasteRecordCountAsync(Guid stockItemId)
         => ScalarAsync<long>($"SELECT count(*) FROM inventory.waste_records WHERE stock_item_id = '{stockItemId:D}';");

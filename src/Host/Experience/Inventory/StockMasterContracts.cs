@@ -102,3 +102,8 @@ public sealed record RecordWasteResultV1(WasteRecordV1 Record, bool IsIdempotent
 public sealed record StockMasterApiErrorV1(string Code, string Message, int Status, string TraceId);
 
 public sealed record StockMasterApiErrorEnvelopeV1(StockMasterApiErrorV1 Error);
+
+/// <summary>A manager moves part of one item's stock from one location to another; the key makes a retry safe.</summary>
+public sealed record StockTransferV1(Guid FromLocationId, Guid ToLocationId, decimal Quantity, string Reason, string IdempotencyKey);
+
+public sealed record StockTransferResultV1(Guid TransferId, decimal FromOnHand, decimal ToOnHand, bool IsIdempotentReplay);

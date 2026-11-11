@@ -11,6 +11,7 @@ public static class StockMovementSourceType
     public const string InventoryAudit = "InventoryAudit";
     public const string StockMovement = "StockMovement";
     public const string Manual = "Manual";
+    public const string StockTransfer = "StockTransfer";
 
     public static readonly IReadOnlySet<string> ValidSourceTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -22,7 +23,8 @@ public static class StockMovementSourceType
         WasteRecord,
         InventoryAudit,
         StockMovement,
-        Manual
+        Manual,
+        StockTransfer
     };
 
     public static bool IsValid(string sourceType)

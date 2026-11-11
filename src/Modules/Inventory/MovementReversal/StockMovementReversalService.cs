@@ -163,6 +163,11 @@ public sealed class StockMovementReversalService : IStockMovementReversalService
             throw new ReversalNotEligibleException($"Cannot reverse movement '{original.Id}' because it is already a Reversal.");
         }
 
+        if (original.MovementType == StockMovementType.Transfer)
+        {
+            throw new ReversalNotEligibleException($"Cannot reverse movement '{original.Id}' because it is one leg of a stock transfer; transfer the stock back instead.");
+        }
+
         if (await _movementRepo.HasReversalAsync(original.Id, ct))
         {
             throw new DuplicateReversalException($"Stock movement '{original.Id}' has already been reversed.");

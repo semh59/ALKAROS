@@ -1,7 +1,7 @@
 # V1-RMD-975 - Konumlar arası stok transferi
 
 - Task ID: V1-RMD-975
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

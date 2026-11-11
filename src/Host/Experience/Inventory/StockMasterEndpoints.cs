@@ -5,6 +5,7 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.PhysicalCounts;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.StockTransfers;
 using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
@@ -63,6 +64,7 @@ public static class StockMasterEndpoints
         // V1-RMD-274: waste recording (V11-INV-006) - same defer-to-InventoryModule shape.
         services.TryAddScoped<IWasteRecordRepository, PostgresWasteRecordRepository>();
         services.TryAddScoped<IWasteRecordingService, WasteRecordingService>();
+        services.TryAddScoped<IStockTransferService, StockTransferService>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
@@ -328,6 +330,22 @@ public static class StockMasterEndpoints
             return Results.Ok(new RecordWasteResultV1(WasteRecordV1.From(result.Record), result.IsIdempotentReplay));
         });
 
+        group.MapPost("/stock-items/{stockItemId:guid}/transfers", async (
+            Guid stockItemId,
+            StockTransferV1 request,
+            IStockTransferService service,
+            HttpContext httpContext,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = StockMasterEndpointFilter.RequireActorId(httpContext);
+            var result = await service.TransferAsync(
+                new StockTransferRequest(
+                    stockItemId, request.FromLocationId, request.ToLocationId, request.Quantity,
+                    request.Reason ?? string.Empty, actorId, request.IdempotencyKey ?? string.Empty),
+                cancellationToken);
+            return Results.Ok(new StockTransferResultV1(result.TransferId, result.FromOnHand, result.ToOnHand, result.WasReplayed));
+        });
+
         group.MapGet("/waste", async (
             string wasteSource,
             Guid sourceReferenceId,
@@ -437,6 +455,9 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         UnknownUnitException => (400, "VALIDATION_FAILED", "Birim tanınmıyor."),
         StockMasterConcurrencyException => (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi."),
         InsufficientStockForWasteException => (409, "INSUFFICIENT_STOCK", "Rafta bu kadar stok yok; fire miktarı mevcut stoktan büyük olamaz."),
+        InsufficientStockForTransferException => (409, "INSUFFICIENT_STOCK", "Kaynak konumda bu kadar stok yok; aktarılacak miktar mevcut stoktan büyük olamaz."),
+        StockTransferKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu istek anahtarı başka bir aktarım için kullanılmış."),
+        InvalidStockTransferException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı: iki farklı konum, pozitif miktar, gerekçe ve istek anahtarı gerekir."),
         WasteItemNotFoundException or WasteLocationNotFoundException => (404, "NOT_FOUND", "İstenen stok kalemi ya da konumu bulunamadı."),
         UnauthorizedWasteRecorderException => (403, "FORBIDDEN", "Fire kaydı için yetkili bir kullanıcı gerekiyor."),
         InvalidWasteQuantityException or InvalidWasteReasonException or IncompatibleWasteUnitException =>

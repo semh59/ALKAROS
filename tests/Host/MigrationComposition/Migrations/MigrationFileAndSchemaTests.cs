@@ -518,6 +518,22 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheStockMovementTypeRuleAllowsTransferAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string allowsTransfer = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_stock_movements_movement_type' AND pg_get_constraintdef(oid) LIKE '%Transfer%';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(1L, await ScalarAsync<long>(source, allowsTransfer));
+
+        RollBackDownTo("227");
+        Assert.Equal(0L, await ScalarAsync<long>(source, allowsTransfer));
+        Assert.Equal(1L, await ScalarAsync<long>(source, "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_stock_movements_movement_type';"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(1L, await ScalarAsync<long>(source, allowsTransfer));
+    }
+
+    [Fact]
     public async Task TheTerminalDisplayNameIsUniqueIgnoringCaseAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'customer_display' AND table_name = 'terminals' AND column_name = 'display_name' AND is_nullable = 'YES';";

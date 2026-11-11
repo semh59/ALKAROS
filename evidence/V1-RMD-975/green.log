@@ -1,0 +1,5 @@
+inventory Başarılı!  - Başarısız:     0, Başarılı:    47, Atlanan:     0, Toplam:    47, Süre: 2 m 13 s - ALKAROS.Host.Experience.Inventory.Tests.dll (net8.0)
+reversal Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 74 ms - ALKAROS.Inventory.MovementReversal.Tests.dll (net8.0)
+migration Başarılı!  - Başarısız:     0, Başarılı:    18, Atlanan:     0, Toplam:    18, Süre: 13 s - ALKAROS.Host.Tests.dll (net8.0)
+arch Başarılı!  - Başarısız:     0, Başarılı:     2, Atlanan:     0, Toplam:     2, Süre: 4 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+finished

@@ -155,6 +155,22 @@ public sealed class StockMovementReversalDomainTests
     }
 
     [Fact]
+    public async Task ReversingOneLegOfAStockTransferThrowsReversalNotEligibleException()
+    {
+        var (service, movementRepo, itemRepo, locRepo, _, _) = CreateTestHarness();
+        var item = StockItem.Create("SKU-T", "Flour", StockItemType.RawMaterial, "kg");
+        await itemRepo.AddAsync(item);
+        var loc = StockLocation.Create("LOC-T", "Warehouse", StockLocationType.Warehouse);
+        await locRepo.AddAsync(loc);
+        var leg = StockMovement.Create(item.Id, loc.Id, StockMovementType.Transfer, 4m, "kg", StockMovementSourceType.StockTransfer, MovementDirection.Out);
+        await movementRepo.AppendAsync(leg);
+
+        var act = () => service.ReverseMovementAsync(new StockMovementReversalRequest(leg.Id, "Wrong leg"));
+
+        await act.Should().ThrowAsync<ReversalNotEligibleException>().WithMessage("*stock transfer*");
+    }
+
+    [Fact]
     public async Task DuplicateReversalAttemptThrowsDuplicateReversalException()
     {
         var (service, movementRepo, itemRepo, locRepo, _, _) = CreateTestHarness();

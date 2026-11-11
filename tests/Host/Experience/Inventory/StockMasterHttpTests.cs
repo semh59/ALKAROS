@@ -496,6 +496,140 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         Assert.Equal("NOT_FOUND", (await ReadErrorAsync(response)).Error.Code);
     }
 
+    private static string TransferPath(Guid stockItemId) => $"/api/v1/management/inventory/stock-items/{stockItemId:D}/transfers";
+
+    private async Task<(Guid Item, Guid From, Guid To)> SeedTransferAsync(decimal onHand)
+    {
+        var from = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var to = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var item = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], from);
+        await _database.SeedStockBalanceAsync(item, from, onHand);
+        return (item, from, to);
+    }
+
+    [Fact]
+    public async Task ATransferMovesStockBetweenLocationsAsTwoLedgerMovementsAndARepeatedKeyMovesNothingMore()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var (item, from, to) = await SeedTransferAsync(10m);
+        var request = new StockTransferV1(from, to, 4m, "Mutfağa taşındı", "transfer-key-1");
+
+        using var first = await client.PostAsJsonAsync(TransferPath(item), request);
+        using var replay = await client.PostAsJsonAsync(TransferPath(item), request);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var body = await first.Content.ReadFromJsonAsync<StockTransferResultV1>();
+        Assert.Equal((6m, 4m, false), (body!.FromOnHand, body.ToOnHand, body.IsIdempotentReplay));
+        var replayBody = await replay.Content.ReadFromJsonAsync<StockTransferResultV1>();
+        Assert.Equal((body.TransferId, 6m, 4m, true), (replayBody!.TransferId, replayBody.FromOnHand, replayBody.ToOnHand, replayBody.IsIdempotentReplay));
+        Assert.Equal((6m, 4m), (await _database.OnHandAsync(item, from), await _database.OnHandAsync(item, to)));
+        Assert.Equal((2L, 1L), (await _database.TransferMovementCountAsync(item), await _database.TransferReferenceCountAsync(item)));
+        Assert.Equal($"In:{to:D}:4.0000,Out:{from:D}:4.0000", await _database.TransferLedgerAsync(item));
+    }
+
+    [Fact]
+    public async Task TwoIdenticalTransfersSentAtTheSameTimeMoveTheStockOnce()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var (item, from, to) = await SeedTransferAsync(10m);
+        var request = new StockTransferV1(from, to, 4m, "Taşı", "transfer-key-concurrent");
+
+        var responses = await Task.WhenAll(Enumerable.Range(0, 2).Select(_ => client.PostAsJsonAsync(TransferPath(item), request)));
+
+        Assert.All(responses, response => Assert.Equal(HttpStatusCode.OK, response.StatusCode));
+        Assert.Equal((6m, 4m), (await _database.OnHandAsync(item, from), await _database.OnHandAsync(item, to)));
+        Assert.Equal(2L, await _database.TransferMovementCountAsync(item));
+    }
+
+    [Fact]
+    public async Task ATransferCannotTakeStockThatIsReservedAtTheSource()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var from = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var to = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var item = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], from);
+        await _database.SeedStockBalanceAsync(item, from, 10m, reservedQuantity: 8m);
+
+        using var tooMuch = await client.PostAsJsonAsync(TransferPath(item), new StockTransferV1(from, to, 3m, "Taşı", "transfer-key-reserved-1"));
+        using var fits = await client.PostAsJsonAsync(TransferPath(item), new StockTransferV1(from, to, 2m, "Taşı", "transfer-key-reserved-2"));
+
+        Assert.Equal(HttpStatusCode.Conflict, tooMuch.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, fits.StatusCode);
+        Assert.Equal((8m, 2m), (await _database.OnHandAsync(item, from), await _database.OnHandAsync(item, to)));
+    }
+
+    [Fact]
+    public async Task ARepeatedTransferIsStillAnsweredAfterALocationWasDeactivated()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var (item, from, to) = await SeedTransferAsync(10m);
+        var request = new StockTransferV1(from, to, 4m, "Taşı", "transfer-key-deactivated");
+        using var first = await client.PostAsJsonAsync(TransferPath(item), request);
+        await _database.DeactivateStockLocationAsync(to);
+
+        using var replay = await client.PostAsJsonAsync(TransferPath(item), request);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.True((await replay.Content.ReadFromJsonAsync<StockTransferResultV1>())!.IsIdempotentReplay);
+    }
+
+    [Fact]
+    public async Task ATransferBiggerThanTheSourceShelfIsRefusedAndNothingChanges()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var (item, from, to) = await SeedTransferAsync(3m);
+
+        using var response = await client.PostAsJsonAsync(TransferPath(item), new StockTransferV1(from, to, 3.5m, "Taşı", "transfer-key-2"));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("INSUFFICIENT_STOCK", (await ReadErrorAsync(response)).Error.Code);
+        Assert.Equal(3m, await _database.OnHandAsync(item, from));
+        Assert.Equal(0, await _database.TransferMovementCountAsync(item));
+    }
+
+    [Fact]
+    public async Task TheSameKeyForADifferentTransferIsRefused()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var (item, from, to) = await SeedTransferAsync(10m);
+        using var first = await client.PostAsJsonAsync(TransferPath(item), new StockTransferV1(from, to, 2m, "Taşı", "transfer-key-3"));
+
+        using var other = await client.PostAsJsonAsync(TransferPath(item), new StockTransferV1(from, to, 5m, "Taşı", "transfer-key-3"));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, other.StatusCode);
+        Assert.Equal("IDEMPOTENCY_KEY_REUSED", (await ReadErrorAsync(other)).Error.Code);
+        Assert.Equal(8m, await _database.OnHandAsync(item, from));
+    }
+
+    [Fact]
+    public async Task ATransferNeedsTwoDifferentActiveLocationsAReasonAKeyAPositiveQuantityAndASession()
+    {
+        using var manager = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var (item, from, to) = await SeedTransferAsync(10m);
+        var inactive = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8], isActive: false);
+        var path = TransferPath(item);
+
+        using var sameLocation = await manager.PostAsJsonAsync(path, new StockTransferV1(from, from, 1m, "Taşı", "k-a"));
+        using var noReason = await manager.PostAsJsonAsync(path, new StockTransferV1(from, to, 1m, "  ", "k-b"));
+        using var noKey = await manager.PostAsJsonAsync(path, new StockTransferV1(from, to, 1m, "Taşı", " "));
+        using var zero = await manager.PostAsJsonAsync(path, new StockTransferV1(from, to, 0m, "Taşı", "k-c"));
+        using var tooFine = await manager.PostAsJsonAsync(path, new StockTransferV1(from, to, 1.00001m, "Taşı", "k-g"));
+        using var tooBig = await manager.PostAsJsonAsync(path, new StockTransferV1(from, to, 10_000_000_000m, "Taşı", "k-h"));
+        using var toInactive = await manager.PostAsJsonAsync(path, new StockTransferV1(from, inactive, 1m, "Taşı", "k-d"));
+        using var unknown = await manager.PostAsJsonAsync(path, new StockTransferV1(from, Guid.NewGuid(), 1m, "Taşı", "k-e"));
+        using var anonymous = CreateClient(null);
+        using var noSession = await anonymous.PostAsJsonAsync(path, new StockTransferV1(from, to, 1m, "Taşı", "k-f"));
+
+        Assert.All(new[] { sameLocation, noReason, noKey, zero, tooFine, tooBig }, response => Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode));
+        Assert.Equal(HttpStatusCode.Conflict, toInactive.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, noSession.StatusCode);
+        Assert.Equal(10m, await _database.OnHandAsync(item, from));
+        Assert.Equal(0, await _database.TransferMovementCountAsync(item));
+    }
+
     [Fact]
     public async Task RecordingWasteRemovesRealStockOnceEvenWhenTheRequestIsRepeated()
     {

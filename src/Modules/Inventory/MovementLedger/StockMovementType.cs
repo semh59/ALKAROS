@@ -10,5 +10,6 @@ public enum StockMovementType
     Waste,
     Adjustment,
     Return,
-    Reversal
+    Reversal,
+    Transfer
 }

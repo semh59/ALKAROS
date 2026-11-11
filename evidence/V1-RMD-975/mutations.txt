@@ -1,0 +1,15 @@
+base
+green-baseline Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M1-signs-swapped Başarısız! - Başarısız:     3, Başarılı:     2, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M2-in-leg-written-as-out Başarısız! - Başarısız:     2, Başarılı:     3, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M3-same-location-allowed Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M4-key-reuse-unchecked Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M5-no-recheck-under-lock Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M6-insufficient-mapped-500 Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+M7-reason-optional Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 12 s - ALKAROS.Host.Exper
+finished
+M8-reserved-stock-takeable Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 18 s - ALKAROS.
+M9-fraction-unchecked Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 18 s - ALKAROS.
+M11-transfer-leg-reversible Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 386 ms - ALKARO
+finished2
+M10-no-upper-bound Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 18 s - ALKAROS.

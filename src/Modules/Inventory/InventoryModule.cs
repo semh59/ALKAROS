@@ -10,6 +10,7 @@ using ALKAROS.Inventory.ReservationBalanceProjection;
 using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.PhysicalCounts;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Inventory.StockTransfers;
 using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
@@ -61,6 +62,7 @@ public sealed class InventoryModule : IModule
         context.RegisterTransient<IWasteRecordRepository, PostgresWasteRecordRepository>();
         context.RegisterTransient<IWasteRecordingService, WasteRecordingService>();
         context.RegisterTransient<IInventoryAdjustmentService, InventoryAdjustmentService>();
+        context.RegisterTransient<IStockTransferService, StockTransferService>();
 
         context.RegisterTransient<IPhysicalCountRepository, PostgresPhysicalCountRepository>();
         context.RegisterTransient<IPhysicalCountService, PhysicalCountService>();
