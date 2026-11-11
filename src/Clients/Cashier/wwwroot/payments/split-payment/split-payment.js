@@ -1210,7 +1210,7 @@
       '<button class="sp-btn sp-btn-secondary" id="customer-search-submit" type="button">Ara</button>' +
       '</div>' + list +
       (chosen && chosen.creditLimit <= 0
-        ? '<div class="sp-alert-body" role="status">Bu müşteri için kredi limiti tanımlı değil; hesaba yazma reddedilir.</div>'
+        ? '<div class="sp-alert-body" id="credit-limit-note" role="status">Bu müşterinin kredi limiti 0; hesaba yazılamaz. Limiti yalnız yönetici belirleyebilir.</div>'
         : '') +
       '</div>'
     );

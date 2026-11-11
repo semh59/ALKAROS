@@ -1,0 +1,6 @@
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  customer-accounts-flows.test.js > customer-accounts.js > says plainly that a customer with limit 0 cannot be charged to the account (["payments.take","cash.drawer"])
+ FAIL  customer-accounts-flows.test.js > customer-accounts.js > says plainly that a customer with limit 0 cannot be charged to the account (["payments.take","cash.drawer","settings.manage"])
+ FAIL  split-payment-credit-limit.test.js > split-payment.js customer with no credit limit > says credit cannot be written and that only a manager sets the limit
+ FAIL  split-payment-credit-limit.test.js > split-payment.js customer with no credit limit > shows no note when the customer has a limit
+      Tests  4 failed | 19 passed (23)

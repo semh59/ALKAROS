@@ -1,7 +1,7 @@
 # V1-RMD-972 - Credit limit 0 says clearly that credit cannot be written
 
 - Task ID: V1-RMD-972
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

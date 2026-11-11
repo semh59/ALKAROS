@@ -381,6 +381,10 @@
       '<h2 class="sp-title" id="ca-customer-heading" tabindex="-1">' + escapeHtml(c.name) + '</h2>' +
       '<div class="sp-summary-row is-total"><span>Borç</span><span class="value">' + formatMoney(c.balance) + '</span></div>' +
       '<div class="sp-summary-row"><span>Kredi limiti</span><span class="value">' + formatMoney(c.creditLimit) + '</span></div>' +
+      (c.creditLimit <= 0
+        ? '<p class="sp-hint" id="ca-zero-limit">Kredi limiti 0: bu müşteriye hesaba yazılamaz. ' +
+          (state.canManageCredit ? 'Aşağıdan bir limit belirleyin.' : 'Limiti yalnız yönetici belirleyebilir.') + '</p>'
+        : '') +
       '<div class="sp-summary-row"><span>Kullanılabilir</span><span class="value">' + formatMoney(c.availableCredit) + '</span></div>' +
       '<div class="sp-summary-row"><span>Vade</span><span class="value">' + (c.paymentTermDays ? c.paymentTermDays + ' gün' : 'Tanımsız') + '</span></div>' +
       '<div class="sp-summary-row"><span>Vergi kimliği</span><span class="value" id="ca-tax-identity">' + escapeHtml(describeTaxIdentity(c) || 'Tanımsız') + '</span></div>' +

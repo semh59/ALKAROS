@@ -197,6 +197,19 @@ describe("customer-accounts.js", () => {
     expect($("ca-save-limit")).not.toBeNull();
   });
 
+  it.each([
+    [["payments.take", "cash.drawer"], "Kredi limiti 0: bu müşteriye hesaba yazılamaz. Limiti yalnız yönetici belirleyebilir."],
+    [["payments.take", "cash.drawer", "settings.manage"], "Kredi limiti 0: bu müşteriye hesaba yazılamaz. Aşağıdan bir limit belirleyin."],
+  ])("says plainly that a customer with limit 0 cannot be charged to the account (%j)", async (capabilities, note) => {
+    await open({ capabilities, routes: { "GET /statement": () => reply(200, { ...statement, customer: { ...customer, creditLimit: 0, availableCredit: 0 } }) } });
+    expect($("ca-zero-limit").textContent).toBe(note);
+  });
+
+  it("shows no zero-limit note when the customer has a limit", async () => {
+    await open();
+    expect($("ca-zero-limit")).toBeNull();
+  });
+
   it("does not save an emptied limit as 0: it asks for a value and sends nothing", async () => {
     const calls = await open({ capabilities: ["settings.manage", "payments.take"] });
 
