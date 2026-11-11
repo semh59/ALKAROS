@@ -3,7 +3,7 @@
 - Task ID: V1-RMD-950
 - Status: InProgress
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
-- Work type: implementation
+- Work type: decision
 - Surface state: Existing
 
 ## Goal
@@ -13,13 +13,11 @@ Kasiyer denemesi raporu (G14): tarayıcı konsolu, kasa oturumu yok / iş günü
 ## Owned surface
 
 - `evidence/V1-RMD-950/**`
-- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
-1. Kırmızı test, düzeltme, mutasyon
+1. İstemcilerin 404 yanıtını nasıl okuduğunun taranması ve kararın yazılması
 2. İki bağımsız qa incelemesi
 
 ## Out of scope
