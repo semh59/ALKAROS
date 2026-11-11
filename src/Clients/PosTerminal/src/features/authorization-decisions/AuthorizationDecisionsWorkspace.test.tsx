@@ -80,6 +80,21 @@ describe("authorization decisions workspace", () => {
     expect(document.body.textContent).not.toContain("CustomerChange");
   });
 
+  it("names the bill and table on the card a pending request belongs to", async () => {
+    const base = baseProps();
+    const second = { ...base.pendingGrants[0], grantId: "99999999-9999-9999-9999-999999999999", subjectLabel: "Çay · Masa 7" };
+    await render(<AuthorizationDecisionsWorkspace {...base} pendingGrants={[{ ...base.pendingGrants[0], subjectLabel: "Hesap H-1042 · Masa 5" }, second]} />);
+
+    const rows = [...document.querySelector(".authz-decisions__group")!.querySelectorAll(".authz-decisions__row")];
+    expect(rows.map((row) => row.querySelector("[data-subject]")?.textContent)).toEqual(["Hesap H-1042 · Masa 5", "Çay · Masa 7"]);
+  });
+
+  it("shows no subject line when the server could not name the subject", async () => {
+    await render(<AuthorizationDecisionsWorkspace {...baseProps()} />);
+
+    expect(document.querySelector("[data-subject]")).toBeNull();
+  });
+
   it("wires approve, deny, revoke and clear to their callbacks", async () => {
     const props = baseProps();
     await render(<AuthorizationDecisionsWorkspace {...props} />);

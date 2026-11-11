@@ -121,6 +121,7 @@ export function AuthorizationDecisionsWorkspace({
             {pendingGrants.map((grant) => (
               <li key={grant.grantId} className="authz-decisions__row">
                 <div className="authz-decisions__facts">
+                  {grant.subjectLabel && <strong data-subject>{grant.subjectLabel}</strong>}
                   <strong>{permissionLabel(grant.permissionCode)}</strong>
                   <span>{money(grant.amount)}</span>
                   <span>{reasonLabel(grant.reasonCode)}</span>

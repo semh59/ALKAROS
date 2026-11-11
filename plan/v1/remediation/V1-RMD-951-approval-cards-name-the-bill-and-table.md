@@ -1,7 +1,7 @@
 # V1-RMD-951 - Yönetici onay kartları hangi hesap ve masa için olduğunu göstersin
 
 - Task ID: V1-RMD-951
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

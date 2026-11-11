@@ -1,0 +1,4 @@
+M1 the table part is left out of the line: the bill and item tests failed (restored)
+M2 the bill prefix is left out: the bill test failed (restored)
+M3 the table join never matches: the tests failed (restored)
+M4 the card does not draw the subject line: the card test failed (restored)

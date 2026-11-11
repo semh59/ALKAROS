@@ -12,7 +12,8 @@ public sealed record PendingGrantV1(
     decimal Amount,
     string ReasonCode,
     DateTimeOffset RequestedAt,
-    string? RequesterName = null);
+    string? RequesterName = null,
+    string? SubjectLabel = null);
 
 /// <summary>One active time-boxed delegation (V1-IAM-021), for the revoke list.</summary>
 public sealed record ActiveDelegationV1(

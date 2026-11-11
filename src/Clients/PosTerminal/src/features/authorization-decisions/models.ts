@@ -20,6 +20,7 @@ export interface PendingGrant {
   reasonCode: string;
   requestedAt: string;
   requesterName?: string;
+  subjectLabel?: string;
 }
 
 export interface ActiveDelegation {

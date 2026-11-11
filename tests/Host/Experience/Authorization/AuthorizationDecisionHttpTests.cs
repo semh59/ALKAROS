@@ -212,6 +212,56 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APendingGrantNamesTheBillAndTheTableItIsAbout()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var withTable = await _database.SeedPendingGrantForBillAsync("H-1042", "5");
+        var withoutTable = await _database.SeedPendingGrantForBillAsync("H-2000", null);
+        var noSubject = await _database.SeedPendingGrantAsync("bills.comp", 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var grants = await GetAsync<List<PendingGrantV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
+
+        Assert.Equal("Hesap H-1042 · Masa 5", grants.Single(grant => grant.GrantId == withTable).SubjectLabel);
+        Assert.Equal("Hesap H-2000", grants.Single(grant => grant.GrantId == withoutTable).SubjectLabel);
+        Assert.Null(grants.Single(grant => grant.GrantId == noSubject).SubjectLabel);
+    }
+
+    [Fact]
+    public async Task AGrantWhoseSubjectIsGoneOrOfAnUnknownKindShowsNoLineAndTwoGrantsOnOneBillBothShowIt()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var gone = await _database.SeedPendingGrantWithSubjectAsync("Bill", Guid.NewGuid());
+        var unknownKind = await _database.SeedPendingGrantWithSubjectAsync("Shift", Guid.NewGuid());
+        var first = await _database.SeedPendingGrantForBillAsync("H-3000", "9");
+        var billId = await _database.BillIdAsync("H-3000");
+        var second = await _database.SeedPendingGrantWithSubjectAsync("Bill", billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var grants = await GetAsync<List<PendingGrantV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
+
+        Assert.Null(grants.Single(grant => grant.GrantId == gone).SubjectLabel);
+        Assert.Null(grants.Single(grant => grant.GrantId == unknownKind).SubjectLabel);
+        Assert.Equal("Hesap H-3000 · Masa 9", grants.Single(grant => grant.GrantId == first).SubjectLabel);
+        Assert.Equal("Hesap H-3000 · Masa 9", grants.Single(grant => grant.GrantId == second).SubjectLabel);
+    }
+
+    [Fact]
+    public async Task APendingVoidNamesTheItemAndTheTableItIsAbout()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var grantId = await _database.SeedPendingGrantForOrderItemAsync("Çay", "7");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var grants = await GetAsync<List<PendingGrantV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
+
+        Assert.Equal("Çay · Masa 7", grants.Single(grant => grant.GrantId == grantId).SubjectLabel);
+    }
+
+    [Fact]
     public async Task AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed()
     {
         // V1-RMD-407 (V1-RMD-399 H-04): the time-boxed hand-off of model §1 can finally be created.
@@ -687,6 +737,92 @@ internal sealed class AuthorizationDecisionTestDatabase
             ("requester", requesterId),
             ("amount", amount));
         return grantId;
+    }
+
+    public async Task<Guid> SeedPendingGrantForBillAsync(string billNumber, string? tableNumber)
+    {
+        var billId = Guid.NewGuid();
+        var tableId = tableNumber is null ? (Guid?)null : Guid.NewGuid();
+        if (tableId is not null)
+            await ExecuteAsync(
+                DataSource,
+                "INSERT INTO table_mgmt.tables (table_id, table_number, current_status) VALUES (@id, @number, 'Occupied');",
+                ("id", tableId.Value), ("number", tableNumber!));
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, table_id, status, opened_at, created_at, updated_at)
+            VALUES (@id, @number, @table, 'Open', now(), now(), now());
+            """,
+            ("id", billId), ("number", billNumber), ("table", (object?)tableId ?? DBNull.Value));
+        var grantId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.authorization_grants
+                (grant_id, idempotency_key, permission_code, requester_user_id, requester_role_code,
+                 subject_type, subject_id, amount, reason_code, requested_at, status)
+            VALUES (@grant_id, @key, 'bills.comp', @requester, 'waiter', 'Bill', @bill, 50, 'CustomerChange', now(), 'pending');
+            """,
+            ("grant_id", grantId), ("key", "decision-" + grantId.ToString("N")),
+            ("requester", await SeedBareUserAsync()), ("bill", billId));
+        return grantId;
+    }
+
+    public async Task<Guid> SeedPendingGrantForOrderItemAsync(string productName, string tableNumber)
+    {
+        var tableId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var orderId = Guid.NewGuid();
+        var itemId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO table_mgmt.tables (table_id, table_number, current_status) VALUES (@table, @number, 'Occupied');
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode) VALUES (@product, @sku, @name, 1, 1);
+            INSERT INTO orders.orders (order_id, source, table_id, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES (@order, 'Waiter', @table, 'Accepted', 'NotRequired', @orderNumber, now(), now());
+            INSERT INTO orders.order_items (order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate,
+                                            tax_amount, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, created_at, updated_at)
+            VALUES (@item, @order, @product, @name, 1, 10, 10, 1, 10, 11, 'Active', 'Sent', 'NotApplicable', now(), now());
+            """,
+            ("table", tableId), ("number", tableNumber), ("product", productId), ("sku", "SKU-" + productId.ToString("N")[..8]),
+            ("name", productName), ("order", orderId), ("orderNumber", "O-" + orderId.ToString("N")[..8]), ("item", itemId));
+        var grantId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.authorization_grants
+                (grant_id, idempotency_key, permission_code, requester_user_id, requester_role_code,
+                 subject_type, subject_id, amount, reason_code, requested_at, status)
+            VALUES (@grant_id, @key, 'bills.void', @requester, 'waiter', 'OrderItem', @item, 10, 'CustomerChange', now(), 'pending');
+            """,
+            ("grant_id", grantId), ("key", "decision-" + grantId.ToString("N")),
+            ("requester", await SeedBareUserAsync()), ("item", itemId));
+        return grantId;
+    }
+
+    public async Task<Guid> SeedPendingGrantWithSubjectAsync(string subjectType, Guid subjectId)
+    {
+        var grantId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.authorization_grants
+                (grant_id, idempotency_key, permission_code, requester_user_id, requester_role_code,
+                 subject_type, subject_id, amount, reason_code, requested_at, status)
+            VALUES (@grant_id, @key, 'bills.comp', @requester, 'waiter', @type, @subject, 50, 'CustomerChange', now(), 'pending');
+            """,
+            ("grant_id", grantId), ("key", "decision-" + grantId.ToString("N")),
+            ("requester", await SeedBareUserAsync()), ("type", subjectType), ("subject", subjectId));
+        return grantId;
+    }
+
+    public async Task<Guid> BillIdAsync(string billNumber)
+    {
+        await using var command = DataSource.CreateCommand("SELECT bill_id FROM billing.bills WHERE bill_number = @number;");
+        command.Parameters.AddWithValue("number", billNumber);
+        return (Guid)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<Guid> SeedActiveDelegationAsync()

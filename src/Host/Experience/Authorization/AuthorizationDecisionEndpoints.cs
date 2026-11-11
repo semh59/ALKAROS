@@ -58,7 +58,12 @@ public static class AuthorizationDecisionEndpoints
         {
             var grants = await store.ListPendingGrantsAsync(cancellationToken);
             var names = await DisplayNamesAsync(dataSource, grants.Select(grant => grant.RequesterUserId), cancellationToken);
-            return Results.Ok(grants.Select(grant => grant with { RequesterName = names.GetValueOrDefault(grant.RequesterUserId) }).ToArray());
+            var subjects = await SubjectLabelsAsync(dataSource, grants, cancellationToken);
+            return Results.Ok(grants.Select(grant => grant with
+            {
+                RequesterName = names.GetValueOrDefault(grant.RequesterUserId),
+                SubjectLabel = grant.SubjectId is { } subjectId ? subjects.GetValueOrDefault(subjectId) : null,
+            }).ToArray());
         });
 
         group.MapPost("/grants/{grantId:guid}/approve", async (
@@ -148,6 +153,34 @@ public static class AuthorizationDecisionEndpoints
         while (await reader.ReadAsync(cancellationToken))
             names[reader.GetGuid(0)] = reader.GetString(1);
         return names;
+    }
+
+    /// <summary>One display line per bill or order item a pending grant is about: bill number and table, or product name and table.</summary>
+    private static async Task<Dictionary<Guid, string>> SubjectLabelsAsync(
+        NpgsqlDataSource dataSource, IEnumerable<PendingGrantV1> grants, CancellationToken cancellationToken)
+    {
+        var labels = new Dictionary<Guid, string>();
+        foreach (var (subjectType, sql, prefix) in new[]
+        {
+            ("Bill",
+             "SELECT b.bill_id, b.bill_number, t.table_number FROM billing.bills b LEFT JOIN table_mgmt.tables t ON t.table_id = b.table_id WHERE b.bill_id = ANY(@ids);",
+             "Hesap "),
+            ("OrderItem",
+             "SELECT i.order_item_id, i.product_name_snapshot, t.table_number FROM orders.order_items i JOIN orders.orders o ON o.order_id = i.order_id LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id WHERE i.order_item_id = ANY(@ids);",
+             string.Empty),
+        })
+        {
+            var ids = grants.Where(grant => grant.SubjectType == subjectType && grant.SubjectId is not null).Select(grant => grant.SubjectId!.Value).Distinct().ToArray();
+            if (ids.Length == 0)
+                continue;
+            await using var command = dataSource.CreateCommand(sql);
+            command.Parameters.AddWithValue("ids", ids);
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                labels[reader.GetGuid(0)] = prefix + reader.GetString(1) + (reader.IsDBNull(2) ? string.Empty : " · Masa " + reader.GetString(2));
+        }
+
+        return labels;
     }
 
     internal const string ActorItemKey = "alkaros.authorization-decision.actor";
