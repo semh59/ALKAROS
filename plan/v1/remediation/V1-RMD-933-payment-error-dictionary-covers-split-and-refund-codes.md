@@ -1,7 +1,7 @@
 # V1-RMD-933 - Ödeme ekranı hata sözlüğü indirim, bahşiş, iade ve başka kasa kodlarını da karşılasın
 
 - Task ID: V1-RMD-933
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,58 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ error-dictionary-lock.test.js (3 tests | 2 failed) 14ms
+     × has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server 9ms
+     × lets the server text through only for the codes whose sentence carries this request's amounts or credit reason 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server
+AssertionError: expected [ 'DISCOUNT_TYPE_INVALID', …(10) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "DISCOUNT_TYPE_INVALID",
++   "ADJUSTMENT_NOT_UNDOABLE",
++   "MERGE_NEEDS_TWO_ORDERS",
++   "IDEMPOTENCY_KEY_REQUIRED",
++   "MERGE_ORDER_SOURCE",
++   "MERGE_DIFFERENT_TABLES",
++   "MERGE_ORDER_ALREADY_BILLED",
++   "MERGE_ORDER_EMPTY",
++   "MERGE_MIXED_SENT",
++   "REFUND_INPUT_INVALID",
++   "BILL_OTHER_TERMINAL",
++ ]
+
+ ❯ error-dictionary-lock.test.js:81:21
+     79|       else if (entries.get(code) !== message) different.push(code);
+     80|     }
+     81|     expect(missing).toEqual([]);
+       |                     ^
+     82|     expect(different).toEqual([]);
+     83|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > lets the server text through only for the codes whose sentence carries this request's amounts or credit reason
+AssertionError: expected [ 'TENDER_OVER_ALLOCATION', …(10) ] to include 'NOTES_TOO_LONG'
+ ❯ error-dictionary-lock.test.js:87:82
+     85|   it("lets the server text through only for the codes whose sentence c…
+     86|     const interpolated = [...server].filter(([, value]) => value.inter…
+     87|     for (const code of interpolated) expect([...serverText, ...STATUS_…
+       |                                                                                  ^
+     88|     expect([...serverText].sort()).toEqual([
+     89|       "ALLOWANCE_INVALID", "CREDIT_DENIED", "DISCOUNT_VALUE_INVALID", …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  10:57:20
+   Duration  1.33s (transform 31ms, setup 24ms, import 33ms, tests 14ms, environment 976ms)
+

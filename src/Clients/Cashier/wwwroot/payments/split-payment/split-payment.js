@@ -207,13 +207,21 @@
     SLIP_REUSED: 'Bu fiş numarası başka bir ödemeye zaten bağlı.',
     TENDER_BILL_NOT_PAYABLE: 'Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin.',
     TENDER_IDEMPOTENCY_KEY_REUSED: 'İşlem kimliği başka bir tutarla zaten kullanılmış.',
+    ADJUSTMENT_NOT_UNDOABLE: 'Yalnızca indirim ve bahşiş geri alınabilir.',
+    BILL_OTHER_TERMINAL: 'Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir.',
+    DISCOUNT_TYPE_INVALID: 'İndirim türü yüzde ya da tutar olmalı.',
+    IDEMPOTENCY_KEY_REQUIRED: 'İşlem anahtarı gerekli.',
+    REFUND_INPUT_INVALID: 'İade bilgisi geçersiz.',
     CARD_TERMINAL_NOT_CONFIGURED: 'Kart terminali tanımlı değil; kartla tahsilat yapılamaz. Nakit veya EFT kullanın.',
     TENDER_METHOD_UNKNOWN: 'Tanınmayan ödeme yöntemi.',
     UNSUPPORTED_BILL_STATE: 'Bu hesap durumunda bölme tasarımı değiştirilemez.',
     UNSUPPORTED_ORDER_STATE: 'Bu sipariş durumunda hesap açılamaz.',
     USE_CASH_TENDER_ENDPOINT: 'Nakit ödeme için kasa oturumunun kendi tahsilat adresi kullanılmalı.',
   };
-  var SERVER_TEXT_CODES = ['TENDER_OVER_ALLOCATION', 'TENDER_UNSETTLED_PAYMENT_EXISTS', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE'];
+  var SERVER_TEXT_CODES = [
+    'TENDER_OVER_ALLOCATION', 'TENDER_UNSETTLED_PAYMENT_EXISTS', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE',
+    'DISCOUNT_VALUE_INVALID', 'DISCOUNT_REASON_INVALID', 'TIP_AMOUNT_INVALID', 'NOTES_TOO_LONG', 'ALLOWANCE_INVALID', 'REFUND_TEXT_INVALID',
+  ];
 
   function describeHttpFailure(status, body) {
     var code = body && body.error && body.error.code;

@@ -1,0 +1,8 @@
+M1 the discount type sentence is missing: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)
+M2 the notes limit sentence is not passed through: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)
+M3 the other-terminal sentence differs: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)
+M4 a refused card payment leaves the card selected: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)
+M5 the refund fallback sentence is missing: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)
+M6 the reason code is no longer passed through: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)
+M7 an unlisted merge code is ignored:       Tests  456 passed (456) (the whole suite file fails to load, killed) (restored)
+M8 the exception scan is dropped so unreadable messages are skipped: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯      Tests  1 failed | 458 passed (459) (restored)

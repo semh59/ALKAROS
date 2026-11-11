@@ -167,6 +167,6 @@ describe("split-payment.js card method availability", () => {
 
     await vi.waitFor(() => expect(document.body.textContent).toContain("Kart terminali tanımlı değil; kartla tahsilat yapılamaz."));
     expect(methods()).toEqual(["Cash", "Eft", "Account"]);
-    expect(document.querySelector('.sp-method-chip[aria-checked="true"]')).toBeNull();
+    expect(document.getElementById("method-hint")).not.toBeNull();
   });
 });
