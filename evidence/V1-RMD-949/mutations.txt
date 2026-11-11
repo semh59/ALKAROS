@@ -1,0 +1,5 @@
+M1 the unit field has no sentence: the unit case failed (restored)
+M2 a numeric type value that names nothing counts as defined (IsDefined removed): the numeric case failed (restored)
+M3 the field name is matched case sensitively: the code and name cases failed (restored)
+M4 the unknown unit has no sentence: the unit case failed (restored)
+M5 the negative reorder point has no sentence: its test failed (restored)

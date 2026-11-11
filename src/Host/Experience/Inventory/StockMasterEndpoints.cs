@@ -71,6 +71,11 @@ public static class StockMasterEndpoints
         return services;
     }
 
+    private static T ParseKind<T>(string? value, string field) where T : struct, Enum
+        => Enum.TryParse<T>(value, ignoreCase: true, out var parsed) && Enum.IsDefined(parsed)
+            ? parsed
+            : throw new ArgumentException($"'{value}' is not a valid {field}.", field);
+
     public static RouteGroupBuilder MapStockMasterApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
@@ -91,7 +96,7 @@ public static class StockMasterEndpoints
             IStockMasterService service,
             CancellationToken cancellationToken) =>
         {
-            var locationType = Enum.Parse<StockLocationType>(request.LocationType, ignoreCase: true);
+            var locationType = ParseKind<StockLocationType>(request.LocationType, "locationType");
             var created = await service.CreateLocationAsync(
                 request.Code, request.Name, locationType, request.IsActive, cancellationToken);
             return Results.Created(
@@ -112,7 +117,7 @@ public static class StockMasterEndpoints
             IStockMasterService service,
             CancellationToken cancellationToken) =>
         {
-            var itemType = Enum.Parse<StockItemType>(request.ItemType, ignoreCase: true);
+            var itemType = ParseKind<StockItemType>(request.ItemType, "itemType");
             var created = await service.CreateStockItemAsync(
                 request.Code, request.Name, itemType, request.TrackingUnitCode,
                 request.DefaultLocationId, request.IsActive, request.ReorderPoint, cancellationToken);
@@ -382,6 +387,17 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         }
     }
 
+    private static string? FieldSentence(string? field) => field?.ToLowerInvariant() switch
+    {
+        "code" => "Kod boş olamaz.",
+        "name" => "Ad boş olamaz.",
+        "trackingunitcode" => "Takip birimi boş olamaz.",
+        "itemtype" => "Stok türü geçersiz.",
+        "locationtype" => "Konum türü geçersiz.",
+        "reorderpoint" => "Yeniden sipariş noktası negatif olamaz.",
+        _ => null,
+    };
+
     private static (int Status, string Code, string Message) Map(Exception exception) => exception switch
     {
         StockMasterUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
@@ -394,6 +410,7 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         InactiveStockItemException or InactiveStockLocationException => (409, "INACTIVE_RESOURCE", "Bu kayıt pasif durumda."),
         InvalidStockItemException or InvalidStockLocationException or InvalidProductStockMappingException =>
             (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        UnknownUnitException => (400, "VALIDATION_FAILED", "Birim tanınmıyor."),
         StockMasterConcurrencyException => (409, "CONCURRENCY_CONFLICT", "Kayıt başka bir işlem tarafından değiştirildi."),
         InsufficientStockForWasteException => (409, "INSUFFICIENT_STOCK", "Rafta bu kadar stok yok; fire miktarı mevcut stoktan büyük olamaz."),
         WasteItemNotFoundException or WasteLocationNotFoundException => (404, "NOT_FOUND", "İstenen stok kalemi ya da konumu bulunamadı."),
@@ -404,6 +421,7 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         PhysicalCountBalanceGuardFailedException => (409, "CONCURRENCY_CONFLICT", "Sayım uygulanırken bakiye başka bir işlemle çakıştı, tekrar deneyin."),
         PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } => (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
         PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } => (400, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
+        ArgumentException { ParamName: var field } when FieldSentence(field) is { } sentence => (400, "VALIDATION_FAILED", sentence),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

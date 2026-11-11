@@ -110,6 +110,60 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
         Assert.Contains(items!, i => i.Id == created.Id);
     }
 
+    [Theory]
+    [InlineData("/stock-items", "", "Adı var", "RawMaterial", "kg", "Kod boş olamaz.")]
+    [InlineData("/stock-items", "K-1", " ", "RawMaterial", "kg", "Ad boş olamaz.")]
+    [InlineData("/stock-items", "K-1", "Adı var", "RawMaterial", "", "Takip birimi boş olamaz.")]
+    [InlineData("/stock-items", "K-1", "Adı var", "Nonsense", "kg", "Stok türü geçersiz.")]
+    [InlineData("/stock-items", "K-1", "Adı var", "99", "kg", "Stok türü geçersiz.")]
+    [InlineData("/stock-items", "K-1", "Adı var", "", "kg", "Stok türü geçersiz.")]
+    [InlineData("/stock-items", "   ", "Adı var", "RawMaterial", "kg", "Kod boş olamaz.")]
+    [InlineData("/stock-items", "K-1", "Adı var", "RawMaterial", "xyz", "Birim tanınmıyor.")]
+    [InlineData("/stock-locations", "   ", "Adı var", "Kitchen", "", "Kod boş olamaz.")]
+    [InlineData("/stock-locations", "L-1", "Adı var", "", "", "Konum türü geçersiz.")]
+    [InlineData("/stock-locations", "", "Adı var", "Kitchen", "", "Kod boş olamaz.")]
+    [InlineData("/stock-locations", "L-1", "", "Kitchen", "", "Ad boş olamaz.")]
+    [InlineData("/stock-locations", "L-1", "Adı var", "Nonsense", "", "Konum türü geçersiz.")]
+    public async Task ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(string path, string code, string name, string type, string unit, string sentence)
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        object body = path == "/stock-items"
+            ? new CreateStockItemV1(code, name, type, unit)
+            : new CreateStockLocationV1(code, name, type);
+
+        using var response = await client.PostAsJsonAsync("/api/v1/management/inventory" + path, body);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = (await ReadErrorAsync(response)).Error;
+        Assert.Equal(("VALIDATION_FAILED", sentence), (error.Code, error.Message));
+        var list = await client.GetFromJsonAsync<List<JsonElement>>("/api/v1/management/inventory" + path);
+        Assert.DoesNotContain(list!, entry => entry.GetProperty("code").GetString()!.StartsWith("K-1", StringComparison.Ordinal) || entry.GetProperty("code").GetString()!.StartsWith("L-1", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ANegativeReorderPointSaysSoInTurkish()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+
+        using var response = await client.PostAsJsonAsync(
+            "/api/v1/management/inventory/stock-items", new CreateStockItemV1("K-1", "Adı var", "RawMaterial", "kg", null, true, -1m));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("Yeniden sipariş noktası negatif olamaz.", (await ReadErrorAsync(response)).Error.Message);
+    }
+
+    [Fact]
+    public async Task ASessionWithoutRightsGetsTheSessionAnswerBeforeAnyFieldSentence()
+    {
+        using var anonymous = CreateClient(null);
+        using var noSession = await anonymous.PostAsJsonAsync("/api/v1/management/inventory/stock-items", new CreateStockItemV1("", "", "Nonsense", ""));
+        using var denied = CreateClient(StockMasterTestDatabase.DeniedToken);
+        using var noRight = await denied.PostAsJsonAsync("/api/v1/management/inventory/stock-items", new CreateStockItemV1("", "", "Nonsense", ""));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, noSession.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, noRight.StatusCode);
+    }
+
     [Fact]
     public async Task DuplicateStockItemCodeIsRejectedWithConflict()
     {

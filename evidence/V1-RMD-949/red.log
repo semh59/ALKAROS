@@ -1,0 +1,11 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:05.52]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-locations", code: "L-1", name: "Adı var", type: "Nonsense", unit: "", sentence: "Konum türü geçersiz.") [FAIL]
+[xUnit.net 00:00:08.74]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-locations", code: "L-1", name: "", type: "Kitchen", unit: "", sentence: "Ad boş olamaz.") [FAIL]
+[xUnit.net 00:00:11.81]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-items", code: "", name: "Adı var", type: "RawMaterial", unit: "kg", sentence: "Kod boş olamaz.") [FAIL]
+[xUnit.net 00:00:15.11]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-locations", code: "", name: "Adı var", type: "Kitchen", unit: "", sentence: "Kod boş olamaz.") [FAIL]
+[xUnit.net 00:00:18.29]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-items", code: "K-1", name: "Adı var", type: "RawMaterial", unit: "", sentence: "Takip birimi boş olamaz.") [FAIL]
+[xUnit.net 00:00:21.56]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-items", code: "K-1", name: " ", type: "RawMaterial", unit: "kg", sentence: "Ad boş olamaz.") [FAIL]
+[xUnit.net 00:00:24.67]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.ACreationThatIsMissingSomethingSaysWhatIsWrongInTurkish(path: "/stock-items", code: "K-1", name: "Adı var", type: "Nonsense", unit: "kg", sentence: "Stok türü geçersiz.") [FAIL]
+
+Başarısız! - Başarısız:     7, Başarılı:     0, Atlanan:     0, Toplam:     7, Süre: 19 s - ALKAROS.Host.Experience.Inventory.Tests.dll (net8.0)

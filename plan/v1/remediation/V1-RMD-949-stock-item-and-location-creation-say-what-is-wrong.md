@@ -1,7 +1,7 @@
 # V1-RMD-949 - Stok kalemi ve konumu oluştururken 400 hatası neyin yanlış olduğunu söylesin
 
 - Task ID: V1-RMD-949
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
