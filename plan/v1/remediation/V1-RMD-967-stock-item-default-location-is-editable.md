@@ -19,6 +19,7 @@ Kasiyer denemesi raporu: stok kalemi oluşturulurken seçilen varsayılan konum 
   - src/Host/Experience/Inventory/StockMasterContracts.cs
   - src/Host/Experience/Inventory/StockMasterEndpoints.cs
   - tests/Host/Experience/Inventory/StockMasterHttpTests.cs
+  - tests/Host/Experience/Inventory/StockMasterTestDatabase.cs
   - tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs
   - tests/Modules/Inventory/StockMaster/StockMasterDomainTests.cs
   - tests/Architecture/ApiConventions/idempotency_allowlist.json
