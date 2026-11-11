@@ -71,6 +71,22 @@ describe("catalog workspace", () => {
     expect(document.body.textContent).toContain("Isparta Gülü");
   });
 
+  const future = { id: "price-2", productId: "product-1", priceType: "SalePrice", price: 120, currencyCode: "TRY", effectiveFrom: "2099-01-01T00:00:00Z", effectiveTo: null };
+  it.each([
+    ["a product price and no dated price", 95, [], "Ürün kaydındaki satış fiyatı: 95.00 TRY; tarihli fiyat kaydı yok.", "satılabilir değil"],
+    ["a zero product price and no dated price", 0, [], "Ürün kaydındaki satış fiyatı: 0.00 TRY; tarihli fiyat kaydı yok.", "satılabilir değil"],
+    ["neither a product price nor a dated price", null, [], "Geçerli fiyat yok; satılabilir değil.", "Ürün kaydındaki satış fiyatı"],
+    ["only a price that starts later", null, [future], "Geçerli fiyat yok; satılabilir değil.", "tarihli fiyat kaydı yok"],
+    ["a product price and a price that starts later", 95, [future], "120.00 TRY", "satılabilir değil"],
+  ])("explains %s", async (_name, currentPrice, prices, shown, hidden) => {
+    const product = { ...data.products[0], currentPrice };
+    await render(<CatalogWorkspace {...baseProps({ data: { ...data, products: [product], prices } })} />);
+
+    const detail = document.querySelector(".catalog-details")!.textContent!;
+    expect(detail).toContain(shown);
+    expect(detail).not.toContain(hidden);
+  });
+
   it("shows the last update as a Turkish clock time, never raw ISO text", async () => {
     await render(<CatalogWorkspace {...baseProps({ lastUpdated: "2026-11-01T08:02:49.436Z" })} />);
     const text = document.body.textContent ?? "";

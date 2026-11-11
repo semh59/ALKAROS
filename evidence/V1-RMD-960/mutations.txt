@@ -1,0 +1,4 @@
+M1 the product-price sentence never shows:       Tests  2 failed | 47 passed (49)
+M2 the not-sellable sentence never shows:       Tests  2 failed | 47 passed (49)
+M3 the not-sellable sentence is hidden when only a later price exists:       Tests  1 failed | 48 passed (49)
+M4 a zero product price counts as no price:       Tests  1 failed | 48 passed (49)

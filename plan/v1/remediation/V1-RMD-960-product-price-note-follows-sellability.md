@@ -1,7 +1,7 @@
 # V1-RMD-960 - Fiyatlar bölümü, ürün kaydındaki geçerli fiyatı varken 'satılabilir değil' demesin
 
 - Task ID: V1-RMD-960
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
