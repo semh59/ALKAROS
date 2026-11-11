@@ -1,14 +1,14 @@
 # V1-RMD-943 - "Hesabı iptal et" düğmesi pasifken nedenini söylesin
 
 - Task ID: V1-RMD-943
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
 
 ## Goal
 
-Kasiyer denemesi raporu (G14): iptal gerekçesi seçilmeden "Hesabı iptal et" düğmesi pasif kalıyor ve ekranda nedeni yazmıyor. Karar: gerekçe boşken düğmenin üstünde "Hesabı iptal etmek için bir gerekçe seçin." yazar, gerekçe girilince kaybolur.
+Kasiyer denemesi raporu (G14): iptal gerekçesi seçilmeden "Hesabı iptal et" düğmesi pasif kalıyor ve ekranda nedeni yazmıyor. Karar: gerekçe boşken düğmenin üstünde "Hesabı iptal etmek için bir gerekçe seçin ya da yazın." yazar, gerekçe girilince kaybolur.
 
 ## Owned surface
 

@@ -45,6 +45,39 @@ const app = () => document.getElementById("app");
 describe("cancelling the order together with the bill on the payment page", () => {
   beforeEach(() => { document.body.innerHTML = ""; });
 
+  it("says why the cancel button is off until a reason is chosen or typed", async () => {
+    await open({ body: { orderCancelled: false } });
+    const hint = () => document.getElementById("cancel-hint");
+    const button = () => document.querySelector('[data-refund-action="cancel"]');
+
+    expect(hint().hidden).toBe(false);
+    expect(hint().textContent).toBe("Hesabı iptal etmek için bir gerekçe seçin ya da yazın.");
+    expect(button().disabled).toBe(true);
+    expect(button().getAttribute("aria-describedby")).toBe("cancel-hint");
+
+    chooseReason();
+    expect(hint().hidden).toBe(true);
+    expect(button().disabled).toBe(false);
+    expect(button().hasAttribute("aria-describedby")).toBe(false);
+
+    const select = document.querySelector('[data-reason-select="cancel"]');
+    select.value = "Diğer";
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(hint().hidden).toBe(false);
+    const typed = document.getElementById("cancel-reason");
+    typed.value = "yanlış masa";
+    typed.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(hint().hidden).toBe(true);
+    expect(button().disabled).toBe(false);
+    expect(button().hasAttribute("aria-describedby")).toBe(false);
+
+    typed.value = "   ";
+    typed.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(hint().hidden).toBe(false);
+    expect(button().disabled).toBe(true);
+    expect(button().getAttribute("aria-describedby")).toBe("cancel-hint");
+  });
+
   it("offers the box unchecked with its explanation and sends no flag when it stays unchecked", async () => {
     const fetchMock = await open({ body: { orderCancelled: false } });
 

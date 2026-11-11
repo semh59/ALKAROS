@@ -1,0 +1,4 @@
+M1 typing a reason does not hide the hint: test failed (restored)
+M2 the cancel button is not linked to the hint: test failed (restored)
+M3 the hint is always hidden: test failed (restored)
+M4 the link to the hint stays after a reason is typed: test failed (restored)

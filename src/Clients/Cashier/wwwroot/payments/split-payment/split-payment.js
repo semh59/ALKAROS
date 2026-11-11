@@ -1522,7 +1522,8 @@
       renderReasonField('cancel', 'İptal gerekçesi') +
       '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
       '<span><strong>Siparişi de iptal et</strong><small>Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.</small></span></label>' +
-      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), disabled || (state.cancelReason.trim() ? '' : ' disabled'), 'sp-btn-secondary') +
+      '<p class="sp-hint" id="cancel-hint" role="status"' + (state.cancelReason.trim() ? ' hidden' : '') + '>Hesabı iptal etmek için bir gerekçe seçin ya da yazın.</p>' +
+      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary') +
       '</div>'
     );
   }
@@ -1824,6 +1825,12 @@
     }
     if (el.id === 'cancel-reason') {
       state.cancelReason = el.value;
+      document.getElementById('cancel-hint').hidden = filled;
+      var cancelButton = app.querySelector('[data-refund-action="cancel"]');
+      if (cancelButton) {
+        if (filled) cancelButton.removeAttribute('aria-describedby');
+        else cancelButton.setAttribute('aria-describedby', 'cancel-hint');
+      }
       toggle('[data-refund-action="cancel"]');
       return;
     }
