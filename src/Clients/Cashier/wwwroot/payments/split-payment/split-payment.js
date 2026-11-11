@@ -13,6 +13,10 @@
   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
   var app = document.getElementById('app');
 
+  var PAYMENT_STATUS_LABELS = {
+    Initiated: 'Başlatıldı', Pending: 'Beklemede', Approved: 'Onaylandı', Declined: 'Reddedildi', Cancelled: 'İptal edildi',
+    Unknown: 'Sonucu bilinmiyor', ReconciliationRequired: 'Mutabakat bekliyor', Refunded: 'İade edildi', PartiallyRefunded: 'Kısmen iade edildi',
+  };
   var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', Eft: 'EFT/Havale', Account: 'Hesaba yaz (cari)' };
 
   var MAX_SPLIT_PEOPLE = 50;
@@ -1177,7 +1181,8 @@
       allocations.map(function (line) {
         return (
           '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(METHOD_LABELS[line.method === 'Card' ? 'BankCard' : line.method] || 'Tahsilat') + ' · ' + formatMoney(line.amount) + '</span>' +
-          '<span class="sp-line-status is-approved">Onaylandı</span></div>'
+          '<span class="sp-line-status' + (line.paymentStatus === 'Approved' ? ' is-approved' : '') + '">' +
+          escapeHtml(PAYMENT_STATUS_LABELS[line.paymentStatus] || 'Bilinmiyor') + '</span></div>'
         );
       }).join('') +
       '</div>'

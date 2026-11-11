@@ -1,0 +1,2 @@
+M1 the Refunded label removed from the dictionary: 1 test failed (restored)
+M2 the approved style is given to every status: the status test failed after the style assertion was added (restored)

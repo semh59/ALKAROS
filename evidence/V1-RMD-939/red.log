@@ -1,0 +1,81 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-display-binding.test.js (21 tests | 4 failed) 6618ms
+     × says Refunded as İade edildi on the applied payment line 1088ms
+     × says PartiallyRefunded as Kısmen iade edildi on the applied payment line 1085ms
+     × says ReconciliationRequired as Mutabakat bekliyor on the applied payment line 1078ms
+     × says Weird as Bilinmiyor on the applied payment line 1067ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > says Refunded as İade edildi on the applied payment line
+AssertionError: expected 'Onaylandı' to be 'İade edildi' // Object.is equality
+
+Expected: "İade edildi"
+Received: "Onaylandı"
+
+ ❯ split-payment-display-binding.test.js:193:93
+    191|       await loadApp(htmlPath, scriptPath);
+    192|
+    193|       await vi.waitFor(() => expect(document.querySelector(".sp-line-s…
+       |                                                                                             ^
+    194|     },
+    195|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > says PartiallyRefunded as Kısmen iade edildi on the applied payment line
+AssertionError: expected 'Onaylandı' to be 'Kısmen iade edildi' // Object.is equality
+
+Expected: "Kısmen iade edildi"
+Received: "Onaylandı"
+
+ ❯ split-payment-display-binding.test.js:193:93
+    191|       await loadApp(htmlPath, scriptPath);
+    192|
+    193|       await vi.waitFor(() => expect(document.querySelector(".sp-line-s…
+       |                                                                                             ^
+    194|     },
+    195|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > says ReconciliationRequired as Mutabakat bekliyor on the applied payment line
+AssertionError: expected 'Onaylandı' to be 'Mutabakat bekliyor' // Object.is equality
+
+Expected: "Mutabakat bekliyor"
+Received: "Onaylandı"
+
+ ❯ split-payment-display-binding.test.js:193:93
+    191|       await loadApp(htmlPath, scriptPath);
+    192|
+    193|       await vi.waitFor(() => expect(document.querySelector(".sp-line-s…
+       |                                                                                             ^
+    194|     },
+    195|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > says Weird as Bilinmiyor on the applied payment line
+AssertionError: expected 'Onaylandı' to be 'Bilinmiyor' // Object.is equality
+
+Expected: "Bilinmiyor"
+Received: "Onaylandı"
+
+ ❯ split-payment-display-binding.test.js:193:93
+    191|       await loadApp(htmlPath, scriptPath);
+    192|
+    193|       await vi.waitFor(() => expect(document.querySelector(".sp-line-s…
+       |                                                                                             ^
+    194|     },
+    195|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 17 passed (21)
+   Start at  12:26:27
+   Duration  9.57s (transform 1.17s, setup 50ms, import 74ms, tests 6.62s, environment 2.28s)
+

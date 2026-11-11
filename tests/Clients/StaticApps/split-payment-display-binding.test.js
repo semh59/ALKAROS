@@ -181,4 +181,17 @@ describe("split-payment.js card method availability", () => {
       await vi.waitFor(() => expect(document.querySelector(".sp-line-method")?.textContent).toContain(label));
     },
   );
+
+  it.each([["Initiated", "Başlatıldı"], ["Pending", "Beklemede"], ["Approved", "Onaylandı"], ["Declined", "Reddedildi"], ["Cancelled", "İptal edildi"], ["Unknown", "Sonucu bilinmiyor"], ["ReconciliationRequired", "Mutabakat bekliyor"], ["Refunded", "İade edildi"], ["PartiallyRefunded", "Kısmen iade edildi"], ["Weird", "Bilinmiyor"]])(
+    "says %s as %s on the applied payment line",
+    async (paymentStatus, label) => {
+      const paid = { ...summary, allocatedTotal: 40, remainingAmount: 60, allocations: [{ allocationId: "a1", paymentId: "p1", amount: 40, paymentStatus, method: "Eft" }] };
+      window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+      installFetchRouter(routes({ body: { bound: true } }).map((route) => (route.test("/tenders/") ? { ...route, body: paid } : route)));
+      await loadApp(htmlPath, scriptPath);
+
+      await vi.waitFor(() => expect(document.querySelector(".sp-line-status")?.textContent).toBe(label));
+      expect(document.querySelector(".sp-line-status").classList.contains("is-approved")).toBe(paymentStatus === "Approved");
+    },
+  );
 });
