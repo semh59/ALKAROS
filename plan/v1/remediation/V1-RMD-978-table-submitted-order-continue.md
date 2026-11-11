@@ -38,7 +38,7 @@ Masada gönderilmiş (mutfağa gitmiş) bir sipariş varken kasiyer "Siparişe d
 
 ## Dependencies
 
-- V1-RMD-977
+- V1-RMD-976
 
 ## Acceptance evidence
 
