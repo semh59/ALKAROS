@@ -1,0 +1,2 @@
+M1 the summary reports a zero balance: the list assertion failed (restored)
+M2 the balance join matches every customer (a balance shifts to another row): the two customer list assertion failed (restored)

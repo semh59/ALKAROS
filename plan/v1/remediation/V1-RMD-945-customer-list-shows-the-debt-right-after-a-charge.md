@@ -1,7 +1,7 @@
 # V1-RMD-945 - Cari müşteri listesi, hesaba yazmanın hemen ardından borcu göstersin (doğrulama)
 
 - Task ID: V1-RMD-945
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
