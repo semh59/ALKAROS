@@ -16,6 +16,7 @@ V1-RMD-901 POST .../receipt/original-reset ucunu ekledi; ApiConventions testi Ev
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Architecture/ApiConventions/idempotency_allowlist.json
   - tests/Architecture/ApiConventions/MutatingEndpointIdempotencyTests.cs
+  - tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
