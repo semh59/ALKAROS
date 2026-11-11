@@ -16,6 +16,7 @@ V1-RMD-938 incelemesinden: tahsilat satırı yöntemi düğme adıyla (Kredi/Ban
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/split-payment-display-binding.test.js
+  - tests/Clients/StaticApps/split-payment-refunds.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
