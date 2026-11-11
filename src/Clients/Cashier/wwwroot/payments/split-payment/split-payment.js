@@ -1893,6 +1893,12 @@
       && tendered < Number(state.amountDraft) - 0.004;
   }
 
+  function submitTenderHint() {
+    if (state.selectedMethod === 'Eft' && !state.eftConfirmed) return 'Devam etmek için tutarı banka hesap hareketinde gördüğünüzü işaretleyin.';
+    if (state.selectedMethod === 'Account' && !selectedCustomer()) return 'Devam etmek için bir müşteri seçin.';
+    return '';
+  }
+
   function submitTenderDisabled() {
     return !!(state.busy || state.summaryStale || !state.selectedMethod || tenderedIsShort() || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
       || (state.selectedMethod === 'Account' && !selectedCustomer()));
@@ -2109,7 +2115,8 @@
           ? '<div class="sp-confirm-row"><input type="checkbox" id="eft-confirm"' + (state.eftConfirmed ? ' checked' : '') + '>' +
             '<label for="eft-confirm">Tutarı işletmenin banka hesap hareketinde gördüm</label></div>'
           : '') +
-        '<button class="sp-btn sp-btn-primary" id="submit-tender" ' +
+        (submitTenderHint() ? '<p class="sp-hint" id="submit-hint" role="status">' + submitTenderHint() + '</p>' : '') +
+        '<button class="sp-btn sp-btn-primary" id="submit-tender" ' + (submitTenderHint() ? 'aria-describedby="submit-hint" ' : '') +
         (submitTenderDisabled() ? 'disabled' : '') + '>' +
         (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>') +
       renderAdjustmentList() +

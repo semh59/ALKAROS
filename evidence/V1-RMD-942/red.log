@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-display-binding.test.js (27 tests | 1 failed) 3440ms
+     × says why the add button is off for a transfer that is not confirmed and for an account without a customer 172ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > says why the add button is off for a transfer that is not confirmed and for an account without a customer
+AssertionError: expected '' to be 'Devam etmek için tutarı banka hesap h…' // Object.is equality
+
+- Expected
++ Received
+
+- Devam etmek için tutarı banka hesap hareketinde gördüğünüzü işaretleyin.
+
+ ❯ split-payment-display-binding.test.js:203:20
+    201|
+    202|     document.querySelector('[data-method="Eft"]').click();
+    203|     expect(hint()).toBe("Devam etmek için tutarı banka hesap hareketin…
+       |                    ^
+    204|     expect(document.getElementById("submit-tender").disabled).toBe(tru…
+    205|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 26 passed (27)
+   Start at  12:37:15
+   Duration  4.88s (transform 1.36s, setup 24ms, import 59ms, tests 3.44s, environment 1.07s)
+

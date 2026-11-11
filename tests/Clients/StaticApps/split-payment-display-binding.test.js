@@ -80,6 +80,7 @@ async function openLinkPage(summary, billId = BILL_ID) {
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
     { test: (url) => url.endsWith("/show-on-display"), status: 204 },
+    { test: (url) => url.includes("/customers"), body: [{ customerId: "c1", name: "Ayşe", phoneMasked: null, balance: 0, availableCredit: 500, creditLimit: 500 }] },
   ]);
   await loadApp(htmlPath, scriptPath);
   await vi.waitFor(() => expect(document.querySelector(".sp-title")).not.toBeNull());
@@ -194,4 +195,30 @@ describe("split-payment.js card method availability", () => {
       expect(document.querySelector(".sp-line-status").classList.contains("is-approved")).toBe(paymentStatus === "Approved");
     },
   );
+
+  it("says why the add button is off for a transfer that is not confirmed and for an account without a customer", async () => {
+    await openLinkPage({ ...linkUnpaid, cardTerminalConfigured: false });
+    const hint = () => document.getElementById("submit-hint")?.textContent ?? "";
+
+    document.querySelector('[data-method="Eft"]').click();
+    expect(hint()).toBe("Devam etmek için tutarı banka hesap hareketinde gördüğünüzü işaretleyin.");
+    expect(document.getElementById("submit-tender").disabled).toBe(true);
+
+    document.getElementById("eft-confirm").click();
+    expect(document.getElementById("submit-hint")).toBeNull();
+    expect(document.getElementById("submit-tender").disabled).toBe(false);
+
+    document.querySelector('[data-method="Account"]').click();
+    expect(hint()).toBe("Devam etmek için bir müşteri seçin.");
+    expect(document.getElementById("submit-tender").disabled).toBe(true);
+
+    await vi.waitFor(() => expect(document.querySelector(".sp-customer")).not.toBeNull());
+    document.querySelector(".sp-customer").click();
+    expect(document.getElementById("submit-hint")).toBeNull();
+    expect(document.getElementById("submit-tender").disabled).toBe(false);
+
+    document.querySelector('[data-method="Eft"]').click();
+    expect(hint()).toBe("Devam etmek için tutarı banka hesap hareketinde gördüğünüzü işaretleyin.");
+    expect(document.getElementById("submit-tender").getAttribute("aria-describedby")).toBe("submit-hint");
+  });
 });

@@ -1,0 +1,5 @@
+M1 no hint for an unconfirmed transfer: test failed (restored)
+M2 no hint for an account without a customer: test failed (restored)
+M3 the hint is never drawn: test failed (restored)
+M4 the account hint never clears after a customer is chosen: test failed (restored)
+M5 the button is not linked to the hint (no aria-describedby): test failed (restored)
