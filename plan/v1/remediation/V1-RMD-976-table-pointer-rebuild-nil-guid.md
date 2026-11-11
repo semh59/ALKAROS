@@ -13,6 +13,8 @@ Masa işaretçisi onarımı, açık siparişi olup hesabı olmayan masaya hesap 
 ## Owned surface
 
 - `evidence/V1-RMD-976/**`
+- `database/migrations/V1/V1-RMD-976/228-table-pointers-no-nil-guid.down.sql`
+- `database/migrations/V1/V1-RMD-976/228-table-pointers-no-nil-guid.up.sql`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs
   - tests/Modules/Tables/CurrentPointers/PostgresTablePointerProjectorTests.cs

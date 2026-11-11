@@ -13,6 +13,8 @@ Yönetici her terminale bir ad verebilmeli (ör. Kasa 1). Ad Terminaller ekranı
 ## Owned surface
 
 - `evidence/V1-RMD-974/**`
+- `database/migrations/V1/V1-RMD-974/226-terminal-display-name.down.sql`
+- `database/migrations/V1/V1-RMD-974/226-terminal-display-name.up.sql`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - database/migrations/V1/V1-RMD-974/226-terminal-display-name.up.sql
   - database/migrations/V1/V1-RMD-974/226-terminal-display-name.down.sql

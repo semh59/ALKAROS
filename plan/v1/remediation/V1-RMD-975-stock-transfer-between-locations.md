@@ -13,6 +13,11 @@ Yetkili bir yönetici bir stok kaleminin belirli bir miktarını bir konumdan di
 ## Owned surface
 
 - `evidence/V1-RMD-975/**`
+- `src/Modules/Inventory/StockTransfers/StockTransferService.cs`
+- `src/Modules/Inventory/StockTransfers/StockTransferModels.cs`
+- `src/Modules/Inventory/StockTransfers/IStockTransferService.cs`
+- `database/migrations/V1/V1-RMD-975/227-stock-movement-type-transfer.down.sql`
+- `database/migrations/V1/V1-RMD-975/227-stock-movement-type-transfer.up.sql`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - database/migrations/V1/V1-RMD-975/227-stock-movement-type-transfer.up.sql
   - database/migrations/V1/V1-RMD-975/227-stock-movement-type-transfer.down.sql

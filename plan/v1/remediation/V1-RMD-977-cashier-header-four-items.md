@@ -1,7 +1,7 @@
 # V1-RMD-977 - Kasiyer üst başlığı en çok 4 öğe
 
 - Task ID: V1-RMD-977
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
