@@ -8,7 +8,7 @@
 
 ## Goal
 
-A customer with credit limit 0 cannot be charged to the account (product decision: stays that way). The cashier cari page and the split-payment customer picker must say so plainly and who can change the limit.
+Kredi limiti 0 olan müşteriye hesaba yazılamaz (ürün kararı: böyle kalır). Cari ekranı ve ödeme ekranındaki müşteri seçimi bunu ve limiti kimin değiştirebileceğini açıkça söylemeli.
 
 ## Owned surface
 
