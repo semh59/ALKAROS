@@ -13,6 +13,11 @@ Kasiyer, garsonun girmediği ama müşterinin yediği bir ürünü mutfak fişi 
 ## Owned surface
 
 - `evidence/V1-RMD-979/**`
+- `database/migrations/V1/V1-RMD-979/229-order-item-without-kitchen.up.sql`
+- `database/migrations/V1/V1-RMD-979/229-order-item-without-kitchen.down.sql`
+- `src/Host/Experience/Orders/KitchenlessAdd/KitchenlessAddStore.cs`
+- `src/Host/Experience/Orders/KitchenlessAdd/KitchenlessAddContracts.cs`
+- `src/Host/Experience/Orders/KitchenlessAdd/KitchenlessAddRegistration.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - database/MigrationComposition/order.json
   - src/Host/Composition/Migrations/MigrationManifest.cs
@@ -27,6 +32,7 @@ Kasiyer, garsonun girmediği ama müşterinin yediği bir ürünü mutfak fişi 
   - src/Host/Experience/Orders/OrderManagementContracts.cs
   - src/Host/Experience/Orders/OrderDtoAssembler.cs
   - src/Host/Experience/Orders/OrderCancellation/OrderCancellationRegistration.cs
+  - tests/Host/Experience/Billing/KitchenlessAddHttpTests.cs
   - tests/Host/Experience/Billing/BillingSplitTestDatabase.cs
   - tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj
   - tests/Architecture/ApiConventions/idempotency_allowlist.json
