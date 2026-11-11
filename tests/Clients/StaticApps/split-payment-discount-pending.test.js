@@ -79,6 +79,127 @@ describe("split-payment.js discount waiting for a manager", () => {
     expect(new Set(calls.map((c) => c.Value)).size).toBe(1);
   });
 
+  it("checks a waiting discount by itself every few seconds with the same key and stops once it is applied", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }, { status: 200, body: applied }]);
+      type("discount-value", "20");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLength(2));
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(text()).toContain("İndirim uygulandı ve kaydedildi."));
+      await vi.advanceTimersByTimeAsync(20000);
+
+      const calls = discountCalls(fetchMock);
+      expect(calls).toHaveLength(3);
+      expect(new Set(calls.map((c) => c.IdempotencyKey)).size).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("sends no second check while the previous one is still unanswered", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }, { status: 202, body: pending }], 100);
+      type("discount-value", "20");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(discountCalls(fetchMock).length).toBeLessThanOrEqual(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("checks silently while the manager has not decided or the server fails: nothing is redrawn and no error shows", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }, { status: 503, body: {} }, { status: 202, body: pending }]);
+      type("discount-value", "20");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+      const input = document.getElementById("discount-value");
+
+      for (let tick = 1; tick <= 3; tick += 1) {
+        await vi.advanceTimersByTimeAsync(5000);
+        await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLength(tick + 1));
+      }
+
+      expect(document.getElementById("discount-value")).toBe(input);
+      expect(submit().textContent).toBe("Onay durumunu kontrol et");
+      expect(text()).toContain("yönetici onayına gönderildi");
+      expect(text()).not.toContain("Bağlantı");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not check while the tab is hidden and resumes when it is shown", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    let hidden = true;
+    Object.defineProperty(document, "hidden", { configurable: true, get: () => hidden });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }]);
+      type("discount-value", "20");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+
+      await vi.advanceTimersByTimeAsync(20000);
+      expect(discountCalls(fetchMock)).toHaveLength(1);
+
+      hidden = false;
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLength(2));
+    } finally {
+      delete document.hidden;
+      vi.useRealTimers();
+    }
+  });
+
+  it("stops checking by itself once the waiting discount is refused", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 403, body: { error: { code: "GRANT_DENIED", message: "x" } } }]);
+      type("discount-value", "20");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(text()).toContain("reddedildi"));
+      await vi.advanceTimersByTimeAsync(20000);
+
+      expect(discountCalls(fetchMock)).toHaveLength(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not check by itself once the waiting form was edited", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }]);
+      type("discount-value", "20");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+      type("discount-value", "25");
+
+      await vi.advanceTimersByTimeAsync(20000);
+
+      expect(discountCalls(fetchMock)).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("checks a waiting full-bill discount without asking for the confirmation again", async () => {
     const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }]);
 

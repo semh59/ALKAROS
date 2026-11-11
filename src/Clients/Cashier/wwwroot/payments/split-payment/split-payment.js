@@ -321,6 +321,7 @@
   // person's action anywhere else in the system can change what this screen should show with no
   // action from whoever is looking at it.
   var pendingConfirmationPollTimer = null;
+  var approvalPollTimer = null;
   // The poll redraws the whole page; put the caret back so a cashier typing a note is not thrown out of the field.
   // Fields drawn without an id are found again by the data attribute that identifies them.
   var FIELD_KEYS = ['data-refund-reason', 'data-refund-note', 'data-item-qty', 'data-refund-slip', 'data-reason-select'];
@@ -343,6 +344,37 @@
     if (!again) return;
     again.focus();
     if (start !== null && again.setSelectionRange) again.setSelectionRange(start, end);
+  }
+  // Resends a waiting request with its own key without redrawing: only a decided answer (applied or refused) is
+  // shown; "still waiting" and server failures stay silent so the form is not rebuilt every few seconds.
+  function probeApproval(kind) {
+    var isDiscount = kind === 'discount';
+    var signature = isDiscount ? state.discountRequestSignature : state.compRequestSignature;
+    var body = JSON.parse(signature);
+    body.IdempotencyKey = isDiscount ? state.discountIdempotencyKey : state.compIdempotencyKey;
+    state[kind + 'Busy'] = true;
+    api(billBase() + '/' + kind, { method: 'POST', body: body }).then(function (result) {
+      if (result.status >= 500 || (result.ok && result.body && result.body.status === 'Pending')) {
+        state[kind + 'Busy'] = false;
+        return;
+      }
+      return isDiscount ? discountAnswered(result, signature) : compAnswered(result, signature);
+    }).catch(function () {
+      state[kind + 'Busy'] = false;
+    });
+  }
+  function ensureApprovalPoll() {
+    var waiting = state.discountPending || state.compPending;
+    if (waiting && !approvalPollTimer) {
+      approvalPollTimer = window.setInterval(function () {
+        if (document.hidden || state.busy) return;
+        if (state.discountPending && !state.discountBusy) probeApproval('discount');
+        if (state.compPending && !state.compBusy) probeApproval('comp');
+      }, 5000);
+    } else if (!waiting && approvalPollTimer) {
+      window.clearInterval(approvalPollTimer);
+      approvalPollTimer = null;
+    }
   }
   function ensurePendingConfirmationPoll() {
     var pending = state.summary && state.summary.unsettledPayment && state.summary.unsettledPayment.pendingConfirmation;
@@ -716,6 +748,50 @@
     };
   }
 
+  function discountAnswered(result, discountSignature) {
+    state.discountBusy = false;
+    // A definitive answer consumes the key; a request waiting for a manager keeps it, because resending the same
+    // request is how the approval is picked up. A network failure keeps it for a retry too.
+    // An answer to a form edited while the request was in flight describes a request the form no longer holds.
+    var stale = JSON.stringify(discountDraftBody()) !== discountSignature;
+    var answeredPending = result.ok && result.body && result.body.status === 'Pending';
+    var waiting = answeredPending && !stale;
+    if (result.status < 500 && !waiting) state.discountIdempotencyKey = null;
+    if (result.status < 500) state.discountPending = waiting;
+    if (stale && !result.ok) {
+      render();
+      return;
+    }
+    if (!result.ok) {
+      var code = result.body && result.body.error && result.body.error.code;
+      state.discountError = code === 'GRANT_DENIED'
+        ? 'İndirim talebiniz reddedildi. Yetkili bir kullanıcı uygulayabilir.'
+        : describeHttpFailure(result.status, result.body);
+      render();
+      return;
+    }
+    if (answeredPending && stale) {
+      render();
+      return;
+    }
+    if (waiting) {
+      state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
+      render();
+      return;
+    }
+    if (!stale) {
+      state.discountValueDraft = '';
+      state.discountNoteDraft = '';
+    }
+    state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
+    // A discount lowers remainingAmount(): refresh the tender summary too and re-derive amountDraft from the new
+    // ceiling the same way loadEverything() does on initial load.
+    return refreshAdjustments().then(refreshSummary).then(function () {
+      state.amountDraft = remainingAmount().toFixed(2);
+      render();
+    });
+  }
+
   function submitDiscount() {
     var value = Number(state.discountValueDraft);
     if (!(value > 0)) {
@@ -744,51 +820,42 @@
     }
     discountBody.IdempotencyKey = state.discountIdempotencyKey;
     api(billBase() + '/discount', { method: 'POST', body: discountBody }).then(function (result) {
-      state.discountBusy = false;
-      // A definitive answer consumes the key; a request waiting for a manager keeps it, because resending the same
-      // request is how the approval is picked up. A network failure (the catch below) keeps it for a retry too.
-      // An answer to a form edited while the request was in flight describes a request the form no longer holds.
-      var stale = JSON.stringify(discountDraftBody()) !== discountSignature;
-      var answeredPending = result.ok && result.body && result.body.status === 'Pending';
-      var waiting = answeredPending && !stale;
-      if (result.status < 500 && !waiting) state.discountIdempotencyKey = null;
-      if (result.status < 500) state.discountPending = waiting;
-      if (stale && !result.ok) {
-        render();
-        return;
-      }
-      if (!result.ok) {
-        var code = result.body && result.body.error && result.body.error.code;
-        state.discountError = code === 'GRANT_DENIED'
-          ? 'İndirim talebiniz reddedildi. Yetkili bir kullanıcı uygulayabilir.'
-          : describeHttpFailure(result.status, result.body);
-        render();
-        return;
-      }
-      if (answeredPending && stale) {
-        render();
-        return;
-      }
-      if (waiting) {
-        state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi. Onaylandığında "Onay durumunu kontrol et" düğmesine basın; o zamana kadar hesap değişmez.';
-        render();
-        return;
-      }
-      if (!stale) {
-        state.discountValueDraft = '';
-        state.discountNoteDraft = '';
-      }
-      state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
-      // V1-RMD-298: a discount now genuinely lowers remainingAmount() (server-side ceiling fix) - refresh
-      // the tender summary too, not just the adjustments list, and re-derive amountDraft from the new
-      // ceiling the same way loadEverything() does on initial load.
-      return refreshAdjustments().then(refreshSummary).then(function () {
-        state.amountDraft = remainingAmount().toFixed(2);
-        render();
-      });
+      return discountAnswered(result, discountSignature);
     }).catch(function () {
       state.discountBusy = false;
       state.discountError = 'Bağlantı kurulamadı. Tekrar deneyin.';
+      render();
+    });
+  }
+
+  function compAnswered(result, compSignature) {
+    state.compBusy = false;
+    var waiting = result.ok && result.body && result.body.status === 'Pending';
+    if (result.status < 500 && !waiting) state.compIdempotencyKey = null;
+    state.compPending = waiting;
+    if (!result.ok) {
+      var code = result.body && result.body.error && result.body.error.code;
+      state.compError = code === 'GRANT_DENIED' ? 'İkram talebiniz reddedildi. Yetkili bir kullanıcı uygulayabilir.'
+        : code === 'DISCOUNT_EXCEEDS_PAYABLE' ? 'İkram tutarı hesabın kalan tutarını aşıyor.'
+        : code === 'DISCOUNT_BELOW_COLLECTED' ? 'Bu ikram, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.'
+        : code === 'DISCOUNT_REASON_INVALID' ? 'İkram gerekçesi eksik ya da geçersiz.'
+        : describeHttpFailure(result.status, result.body);
+      render();
+      return;
+    }
+    if (waiting) {
+      state.compNotice = 'İkram talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
+      render();
+      return;
+    }
+    state.compAmountDraft = '';
+    state.compNoteDraft = '';
+    state.compNotice = 'İkram uygulandı ve kaydedildi.';
+    return refreshAdjustments().then(refreshSummary).then(function () {
+      state.amountDraft = remainingAmount().toFixed(2);
+      render();
+    }, function () {
+      state.compNotice = 'İkram uygulandı, ancak güncel tutar alınamadı. Sayfayı yenileyin; tekrar göndermeyin.';
       render();
     });
   }
@@ -827,35 +894,7 @@
     }
     compBody.IdempotencyKey = state.compIdempotencyKey;
     api(billBase() + '/comp', { method: 'POST', body: compBody }).then(function (result) {
-      state.compBusy = false;
-      var waiting = result.ok && result.body && result.body.status === 'Pending';
-      if (result.status < 500 && !waiting) state.compIdempotencyKey = null;
-      state.compPending = waiting;
-      if (!result.ok) {
-        var code = result.body && result.body.error && result.body.error.code;
-        state.compError = code === 'GRANT_DENIED' ? 'İkram talebiniz reddedildi. Yetkili bir kullanıcı uygulayabilir.'
-          : code === 'DISCOUNT_EXCEEDS_PAYABLE' ? 'İkram tutarı hesabın kalan tutarını aşıyor.'
-          : code === 'DISCOUNT_BELOW_COLLECTED' ? 'Bu ikram, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.'
-          : code === 'DISCOUNT_REASON_INVALID' ? 'İkram gerekçesi eksik ya da geçersiz.'
-          : describeHttpFailure(result.status, result.body);
-        render();
-        return;
-      }
-      if (waiting) {
-        state.compNotice = 'İkram talebiniz yönetici onayına gönderildi. Onaylandığında "Onay durumunu kontrol et" düğmesine basın; o zamana kadar hesap değişmez.';
-        render();
-        return;
-      }
-      state.compAmountDraft = '';
-      state.compNoteDraft = '';
-      state.compNotice = 'İkram uygulandı ve kaydedildi.';
-      return refreshAdjustments().then(refreshSummary).then(function () {
-        state.amountDraft = remainingAmount().toFixed(2);
-        render();
-      }, function () {
-        state.compNotice = 'İkram uygulandı, ancak güncel tutar alınamadı. Sayfayı yenileyin; tekrar göndermeyin.';
-        render();
-      });
+      return compAnswered(result, compSignature);
     }, function () {
       state.compBusy = false;
       state.compError = 'Bağlantı kurulamadı. Tekrar deneyin.';
@@ -2435,6 +2474,7 @@
       return;
     }
     if (state.summary) ensurePendingConfirmationPoll();
+    ensureApprovalPoll();
     app.setAttribute('aria-busy', state.busy ? 'true' : 'false');
     switch (state.phase) {
       case 'missingBill': return renderMissingBill();

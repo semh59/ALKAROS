@@ -99,6 +99,61 @@ describe("split-payment.js comp (ikram)", () => {
     expect(keys).toHaveLength(3);
   });
 
+  it("checks a waiting comp by itself every few seconds with the same key and stops once it is applied", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }]);
+      type("comp-amount", "80");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(text()).toContain("İkram uygulandı ve kaydedildi."));
+      await vi.advanceTimersByTimeAsync(20000);
+
+      const keys = compCalls(fetchMock).map((c) => c.IdempotencyKey);
+      expect(keys).toHaveLength(2);
+      expect(new Set(keys).size).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("stops checking by itself once the waiting comp is refused or edited", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }, { status: 403, body: { error: { code: "GRANT_DENIED", message: "x" } } }]);
+      type("comp-amount", "80");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.waitFor(() => expect(text()).toContain("İkram talebiniz reddedildi"));
+      await vi.advanceTimersByTimeAsync(20000);
+
+      expect(compCalls(fetchMock)).toHaveLength(2);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not check a waiting comp by itself after the form is edited", async () => {
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    try {
+      const fetchMock = await open([{ status: 202, body: pending }]);
+      type("comp-amount", "80");
+      submit().click();
+      await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+      type("comp-amount", "70");
+
+      await vi.advanceTimersByTimeAsync(20000);
+
+      expect(compCalls(fetchMock)).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("starts a new request when the pending comp is edited", async () => {
     const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }]);
 
