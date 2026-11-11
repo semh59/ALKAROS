@@ -1,7 +1,7 @@
 # V1-RMD-968 - Sepet başlığı eksik sipariş numarasında tür hatası vermesin
 
 - Task ID: V1-RMD-968
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

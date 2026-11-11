@@ -58,7 +58,8 @@ const focusableSelector = [
 ].join(",");
 
 // The server's order code starts with its creation clock time (POS-yyyyMMdd-HHmmss-...): that is what a cashier can tell orders apart by.
-function orderTitle(orderNumber: string): string {
+function orderTitle(orderNumber: string | null): string {
+  if (!orderNumber) return "Sipariş";
   const created = /^POS-\d{8}-(\d{2})(\d{2})\d{2}-/.exec(orderNumber);
   return created ? `Sipariş ${created[1]}:${created[2]}` : `Sipariş ${orderNumber}`;
 }

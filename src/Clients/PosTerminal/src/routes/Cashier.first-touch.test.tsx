@@ -113,6 +113,8 @@ describe("Cashier opens the order on the first product tap", () => {
     ["POS-20261111-000512-A1B2C3D4E5F6", "Sipariş 00:05"],
     ["7", "Sipariş 7"],
     ["POS-143012", "Sipariş POS-143012"],
+    [null, "Sipariş"],
+    ["", "Sipariş"],
   ])("titles the ticket by a readable name for the order code %s", async (orderNumber, title) => {
     await openTill({ active: snapshot("order-1", { orderNumber }) });
 
