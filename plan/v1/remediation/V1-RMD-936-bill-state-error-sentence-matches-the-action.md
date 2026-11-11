@@ -18,6 +18,8 @@ V1-RMD-933 incelemesinden çıkan bulgu: sunucu UNSUPPORTED_BILL_STATE kodunu b�
   - tests/Clients/StaticApps/error-dictionary-lock.test.js
   - tests/Clients/StaticApps/split-payment-discount-pending.test.js
   - tests/Clients/StaticApps/split-payment-undo-adjustment.test.js
+  - src/Host/Experience/Billing/BillingSplitApplication.cs
+  - tests/Host/Experience/Billing/BillingSplitHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
