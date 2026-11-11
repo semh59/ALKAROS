@@ -42,6 +42,23 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCurrentSessionCarriesTheTerminalNameOnceAManagerGaveOne()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "terminal-name-session");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var before = await (await GetAsync(client, $"/api/v1/auth/session?terminalId={terminalId:D}", cookie)).Content.ReadFromJsonAsync<JsonElement>();
+        await using (var rename = _database.DataSource.CreateCommand($"INSERT INTO customer_display.terminals (terminal_id, created_at, updated_at, display_name) VALUES ('{terminalId:D}', now(), now(), 'Kasa 2') ON CONFLICT (terminal_id) DO UPDATE SET display_name = 'Kasa 2';"))
+            await rename.ExecuteNonQueryAsync();
+        var after = await (await GetAsync(client, $"/api/v1/auth/session?terminalId={terminalId:D}", cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(JsonValueKind.Null, before.GetProperty("terminalName").ValueKind);
+        Assert.Equal("Kasa 2", after.GetProperty("terminalName").GetString());
+    }
+
+    [Fact]
     public async Task OpenSessionSucceedsAndPostsAnOpeningLedgerEntry()
     {
         var terminalId = Guid.NewGuid();

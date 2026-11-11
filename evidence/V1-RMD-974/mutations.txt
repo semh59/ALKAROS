@@ -1,0 +1,12 @@
+M1-list-drops-name Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 418 ms - ALKAROS.Host.Exp
+M2-taken-unmapped Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 460 ms - ALKAROS.Host.Exp
+M4-session-omits-name Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experi
+M5-index-not-unique Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 12 s - ALKAROS.Host.Tests
+M6-header-ignores-name ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M6-header-ignores-name       Tests  1 failed | 40 passed (41)
+M7-panel-ignores-name ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M7-panel-ignores-name       Tests  2 failed | 7 passed (9)
+finished
+M3-clear-keeps-name Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 590 ms - ALKAROS.Host.Exp
+M8-audit-drops-previous Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 503 ms - ALKARO
+M9-control-chars-allowed Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 456 ms - ALKARO

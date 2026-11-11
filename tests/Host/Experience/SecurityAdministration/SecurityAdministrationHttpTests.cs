@@ -247,6 +247,51 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
     }
 
+    [Fact]
+    public async Task AManagerNamesATerminalAndTheNameIsListedUniqueTrimmedBoundedAndAudited()
+    {
+        var manager = SecurityAdministrationTestDatabase.ManagerUserId;
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        await _database.SeedTerminalAsync(first, bound: true);
+        await _database.SeedTerminalAsync(second, bound: true);
+        string Path(Guid id) => $"/api/v1/management/security/terminals/{id:D}/name";
+        async Task<JsonElement> RowAsync(HttpClient http, Guid id)
+            => (await http.GetFromJsonAsync<JsonElement>("/api/v1/management/security/terminals"))
+                .EnumerateArray().Single(row => row.GetProperty("terminalId").GetGuid() == id);
+
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PutAsJsonAsync(Path(first), new { Name = "Kasa 1" })).StatusCode);
+        using var client = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var named = await client.PutAsJsonAsync(Path(first), new { Name = "  Kasa 1  " });
+        Assert.Equal(HttpStatusCode.OK, named.StatusCode);
+        Assert.Equal("Kasa 1", (await RowAsync(client, first)).GetProperty("name").GetString());
+        Assert.Equal(1, await _database.AuditCountAsync("security.terminal-renamed", first, manager));
+
+        using var taken = await client.PutAsJsonAsync(Path(second), new { Name = "kasa 1" });
+        Assert.Equal(HttpStatusCode.Conflict, taken.StatusCode);
+        Assert.Equal("NAME_TAKEN", (await taken.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(JsonValueKind.Null, (await RowAsync(client, second)).GetProperty("name").ValueKind);
+
+        using var tooLong = await client.PutAsJsonAsync(Path(second), new { Name = new string('x', 41) });
+        Assert.Equal(HttpStatusCode.BadRequest, tooLong.StatusCode);
+        using var control = await client.PutAsJsonAsync(Path(second), new { Name = "Kasa\n2" });
+        Assert.Equal(HttpStatusCode.BadRequest, control.StatusCode);
+        Assert.Equal(0, await _database.AuditCountAsync("security.terminal-renamed", second, manager));
+        using var missing = await client.PutAsJsonAsync(Path(Guid.NewGuid()), new { Name = "Kasa 9" });
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+
+        using var cleared = await client.PutAsJsonAsync(Path(first), new { Name = "   " });
+        Assert.Equal(HttpStatusCode.OK, cleared.StatusCode);
+        Assert.Equal(JsonValueKind.Null, (await RowAsync(client, first)).GetProperty("name").ValueKind);
+        await using var audit = _database.DataSource.CreateCommand($"SELECT string_agg(after_state_json->>'previousName', ',' ORDER BY occurred_at) FROM audit.audit_events WHERE event_name = 'security.terminal-renamed' AND aggregate_id = '{first:D}';");
+        Assert.Equal("Kasa 1", await audit.ExecuteScalarAsync());
+
+        using var longest = await client.PutAsJsonAsync(Path(second), new { Name = new string('y', 40) });
+        Assert.Equal(HttpStatusCode.OK, longest.StatusCode);
+    }
+
     private const string BundlePath = "/api/v1/management/security/diagnostic-bundle";
     private static readonly string[] OneCorrelation = ["c"];
     private static readonly string[] BundleCorrelation = ["rmd267-corr"];

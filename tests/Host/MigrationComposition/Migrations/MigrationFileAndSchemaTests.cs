@@ -518,6 +518,26 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheTerminalDisplayNameIsUniqueIgnoringCaseAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'customer_display' AND table_name = 'terminals' AND column_name = 'display_name' AND is_nullable = 'YES';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(1L, await ScalarAsync<long>(source, column));
+        await ExecuteSqlAsync(source, "INSERT INTO customer_display.terminals (terminal_id, created_at, updated_at, display_name) VALUES ('a0000000-0000-0000-0000-000000000001', now(), now(), 'Kasa 1');");
+        var duplicate = await Assert.ThrowsAsync<PostgresException>(() => ExecuteSqlAsync(source, "INSERT INTO customer_display.terminals (terminal_id, created_at, updated_at, display_name) VALUES ('a0000000-0000-0000-0000-000000000002', now(), now(), 'KASA 1');"));
+        Assert.Equal(PostgresErrorCodes.UniqueViolation, duplicate.SqlState);
+        var untrimmed = await Assert.ThrowsAsync<PostgresException>(() => ExecuteSqlAsync(source, "INSERT INTO customer_display.terminals (terminal_id, created_at, updated_at, display_name) VALUES ('a0000000-0000-0000-0000-000000000003', now(), now(), ' Kasa 3');"));
+        Assert.Equal(PostgresErrorCodes.CheckViolation, untrimmed.SqlState);
+
+        RollBackDownTo("226");
+        Assert.Equal(0L, await ScalarAsync<long>(source, column));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(1L, await ScalarAsync<long>(source, column));
+    }
+
+    [Fact]
     public async Task TheBillTerminalOwnerColumnIsNullableAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string column = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'billing' AND table_name = 'bills' AND column_name = 'terminal_id' AND data_type = 'uuid' AND is_nullable = 'YES';";
@@ -705,6 +725,12 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     {
         var failure = await Assert.ThrowsAsync<PostgresException>(() => InsertScreensaverAsync(source, contentType, content));
         Assert.Equal(PostgresErrorCodes.CheckViolation, failure.SqlState);
+    }
+
+    private static async Task ExecuteSqlAsync(NpgsqlDataSource source, string sql)
+    {
+        await using var command = source.CreateCommand(sql);
+        await command.ExecuteNonQueryAsync();
     }
 
     private static async Task<T> ScalarAsync<T>(NpgsqlDataSource source, string sql)

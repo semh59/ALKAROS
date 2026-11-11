@@ -1,3 +1,4 @@
+using System.Text.Json;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Audit.EventStore;
@@ -33,6 +34,10 @@ public static class SecurityAdministrationEndpoints
 {
     public const string ManagerCookieName = "alkaros.manager";
     public const string ManagePermission = ApplicationPermissions.SecurityManage;
+    private const int MaxTerminalNameLength = 40;
+
+    private static IResult TerminalNameError(HttpContext context, int status, string code, string message)
+        => Results.Json(new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)), statusCode: status);
 
     public static IServiceCollection AddSecurityAdministrationExperience(this IServiceCollection services)
     {
@@ -130,7 +135,7 @@ public static class SecurityAdministrationEndpoints
         group.MapGet("/terminals", async (DualScreenStore store, CancellationToken cancellationToken) =>
             Results.Ok((await store.ListTerminalsAsync(cancellationToken))
                 .Select(terminal => new TerminalBindingV1(
-                    terminal.TerminalId, terminal.Bound, terminal.CreatedAt, terminal.LastUserName, terminal.LastLoginAt))));
+                    terminal.TerminalId, terminal.Bound, terminal.CreatedAt, terminal.LastUserName, terminal.LastLoginAt, terminal.Name))));
 
         group.MapPost("/terminals/{terminalId:guid}/reset-binding", async (
             Guid terminalId,
@@ -159,6 +164,44 @@ public static class SecurityAdministrationEndpoints
                     new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen terminal bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound);
+        });
+
+        group.MapPut("/terminals/{terminalId:guid}/name", async (
+            Guid terminalId,
+            TerminalNameRequestV1 request,
+            DualScreenStore store,
+            IAuditEventStore auditEvents,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            var name = request?.Name?.Trim();
+            if (string.IsNullOrEmpty(name))
+                name = null;
+            else if (name.Length > MaxTerminalNameLength || name.Any(char.IsControl))
+                return TerminalNameError(context, StatusCodes.Status400BadRequest, "INVALID_NAME", $"Terminal adı en fazla {MaxTerminalNameLength} karakter olabilir ve satır sonu içeremez.");
+
+            var outcome = await store.SetTerminalNameAsync(
+                terminalId,
+                name,
+                (connection, transaction, previousName, token) => auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "security.terminal-renamed",
+                        aggregateType: "Terminal",
+                        aggregateId: terminalId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: actorId,
+                        afterStateJson: JsonSerializer.Serialize(new { name, previousName })),
+                    connection, transaction, token),
+                cancellationToken);
+            return outcome switch
+            {
+                TerminalNameOutcome.Saved => Results.Ok(new TerminalNameResultV1(terminalId, name)),
+                TerminalNameOutcome.Taken => TerminalNameError(context, StatusCodes.Status409Conflict, "NAME_TAKEN", "Bu ad başka bir terminalde kullanılıyor."),
+                _ => TerminalNameError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen terminal bulunamadı."),
+            };
         });
 
         // V1-RMD-405 (V1-RMD-399 N-2): offboarding. revoke-sessions alone let a leaver sign straight back in.
@@ -308,7 +351,9 @@ public sealed record UserLookupResultV1(Guid UserId, string DisplayName, bool Ac
 public sealed record RevokeSessionsResultV1(Guid UserId, int RevokedSessions);
 
 public sealed record ForceUnlockResultV1(Guid UserId, bool Unlocked);
-public sealed record TerminalBindingV1(Guid TerminalId, bool Bound, DateTimeOffset CreatedAt, string? LastUserName, DateTimeOffset? LastLoginAt);
+public sealed record TerminalBindingV1(Guid TerminalId, bool Bound, DateTimeOffset CreatedAt, string? LastUserName, DateTimeOffset? LastLoginAt, string? Name);
+public sealed record TerminalNameRequestV1(string? Name);
+public sealed record TerminalNameResultV1(Guid TerminalId, string? Name);
 public sealed record TerminalBindingResetV1(Guid TerminalId);
 
 /// <summary>V1-RMD-405: the account's active flag after a deactivate/reactivate call.</summary>

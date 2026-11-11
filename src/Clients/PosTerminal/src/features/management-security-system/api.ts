@@ -9,6 +9,7 @@ export interface SecurityClient {
   forceUnlock: (userId: string) => Promise<void>;
   listTerminals: () => Promise<readonly TerminalBinding[]>;
   resetTerminal: (terminalId: string) => Promise<void>;
+  renameTerminal: (terminalId: string, name: string) => Promise<void>;
   listJobs: () => Promise<readonly MaintenanceJob[]>;
   runJob: (name: string) => Promise<MaintenanceJob>;
   backupRpo: () => Promise<readonly RpoStatus[]>;
@@ -37,6 +38,7 @@ export function createSecurityClient(fetcher: typeof fetch = fetch): SecurityCli
     forceUnlock: async (userId) => { await post(`/security/users/${userId}/force-unlock`); },
     listTerminals: () => json("/security/terminals"),
     resetTerminal: async (terminalId) => { await post(`/security/terminals/${terminalId}/reset-binding`); },
+    renameTerminal: async (terminalId, name) => { await json(`/security/terminals/${terminalId}/name`, { method: "PUT", body: JSON.stringify({ name }) }); },
     listJobs: () => json("/security/maintenance/jobs"),
     runJob: (name) => post(`/security/maintenance/jobs/${encodeURIComponent(name)}/run`),
     backupRpo: () => json("/security/backup/rpo"),

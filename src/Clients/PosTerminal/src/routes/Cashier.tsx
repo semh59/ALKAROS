@@ -91,6 +91,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [terminalName, setTerminalName] = useState<string | null>(null);
   const [capabilities, setCapabilities] = useState<string[]>([]);
   // The queue screen chimes for itself; the sales screen and every other one still have to tell the till that an order landed.
   useNewOrderChime(terminalId, capabilities.includes("orders.create") && onlineHubTabFor(currentPath) !== "orders");
@@ -170,6 +171,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       api.runtimeConfig(terminalId).catch(() => null),
     ]);
     setDisplayName(session.displayName);
+    setTerminalName(session.terminalName ?? null);
     setCapabilities(session.capabilities ?? []);
     setCatalog(products);
     setOrder(active);
@@ -645,6 +647,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     return <ExperiencePage
       terminalId={terminalId}
       displayName={displayName || username}
+      terminalName={terminalName}
       capabilities={capabilities}
       path={currentPath}
       backendStatus={backendStatus}

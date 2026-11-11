@@ -105,6 +105,20 @@ describe("workspace /authorization route", () => {
     expect(item.querySelector("strong")!.textContent).toBe("D60B3DF9");
   });
 
+  it("shows the name a manager gave the terminal in place of the short id", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(emptyAuthorizationData.delegations)));
+
+    window.history.replaceState({}, "", "/authorization");
+    await render(
+      <RouterProvider>
+        <ExperiencePage terminalId="d60b3df9-2222-2222-2222-222222222222" terminalName="Kasa 1" displayName="Deniz Kaya" capabilities={["reports.view"]} path="/authorization" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>,
+    );
+
+    const item = [...document.querySelectorAll(".production-shell__identity-item")].find((element) => element.querySelector("span")!.textContent === "Terminal")!;
+    expect(item.querySelector("strong")!.textContent).toBe("Kasa 1");
+  });
+
   it("wires an approve click through to a real POST against the management API", async () => {
     let approved: string | null = null;
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {

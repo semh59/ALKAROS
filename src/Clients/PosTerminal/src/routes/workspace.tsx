@@ -23,6 +23,7 @@ export type BackendStatus = "checking" | "online" | "offline";
 
 export function ExperiencePage({
   terminalId,
+  terminalName = null,
   displayName,
   capabilities,
   path,
@@ -32,6 +33,7 @@ export function ExperiencePage({
   onLogout,
 }: {
   terminalId: string;
+  terminalName?: string | null;
   displayName: string;
   capabilities: readonly string[];
   path: string;
@@ -87,7 +89,7 @@ export function ExperiencePage({
     identity: {
       // Branch (Sube) is omitted until there is a real multi-branch model;
       // a placeholder string would read as data. (deep-analysis finding F-5)
-      terminalName: terminalId.slice(0, 8).toUpperCase(),
+      terminalName: terminalName ?? terminalId.slice(0, 8).toUpperCase(),
       userName: displayName,
       roleLabel,
       capabilities: capabilitySet,

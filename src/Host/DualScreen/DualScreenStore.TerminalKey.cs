@@ -12,7 +12,9 @@ public enum TerminalKeyResult
     Rejected,
 }
 
-public sealed record TerminalSummary(Guid TerminalId, bool Bound, DateTimeOffset CreatedAt, string? LastUserName, DateTimeOffset? LastLoginAt);
+public sealed record TerminalSummary(Guid TerminalId, bool Bound, DateTimeOffset CreatedAt, string? LastUserName, DateTimeOffset? LastLoginAt, string? Name);
+
+public enum TerminalNameOutcome { Saved, NotFound, Taken }
 
 public sealed partial class DualScreenStore
 {
@@ -77,7 +79,7 @@ public sealed partial class DualScreenStore
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT t.terminal_id, t.terminal_key_hash IS NOT NULL, t.created_at, last_login.display_name, last_login.created_at
+            SELECT t.terminal_id, t.terminal_key_hash IS NOT NULL, t.created_at, last_login.display_name, last_login.created_at, t.display_name
             FROM customer_display.terminals t
             LEFT JOIN LATERAL (
                 SELECT u.display_name, s.created_at
@@ -99,9 +101,51 @@ public sealed partial class DualScreenStore
                 reader.GetBoolean(1),
                 reader.GetFieldValue<DateTimeOffset>(2),
                 reader.IsDBNull(3) ? null : reader.GetString(3),
-                reader.IsDBNull(4) ? null : reader.GetFieldValue<DateTimeOffset>(4)));
+                reader.IsDBNull(4) ? null : reader.GetFieldValue<DateTimeOffset>(4),
+                reader.IsDBNull(5) ? null : reader.GetString(5)));
         }
 
         return terminals;
+    }
+
+    public async Task<string?> GetTerminalNameAsync(Guid terminalId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand("SELECT display_name FROM customer_display.terminals WHERE terminal_id = @terminal_id;");
+        command.Parameters.AddWithValue("terminal_id", terminalId);
+        return await command.ExecuteScalarAsync(cancellationToken) as string;
+    }
+
+    /// <summary>Sets or, with a null name, clears the terminal's name; the audit record is written in the same transaction.</summary>
+    public async Task<TerminalNameOutcome> SetTerminalNameAsync(
+        Guid terminalId,
+        string? name,
+        Func<NpgsqlConnection, NpgsqlTransaction, string?, CancellationToken, Task> audit,
+        CancellationToken cancellationToken)
+    {
+        EnsureNotEmpty(terminalId, nameof(terminalId));
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        string? previousName;
+        try
+        {
+            await using var update = CreateCommand(connection, transaction,
+                "UPDATE customer_display.terminals t SET display_name = @name, row_version = t.row_version + 1, updated_at = now() " +
+                "FROM (SELECT terminal_id, display_name FROM customer_display.terminals WHERE terminal_id = @terminal_id FOR UPDATE) old " +
+                "WHERE t.terminal_id = old.terminal_id RETURNING old.display_name;");
+            update.Parameters.AddWithValue("terminal_id", terminalId);
+            update.Parameters.AddWithValue("name", (object?)name ?? DBNull.Value);
+            await using var reader = await update.ExecuteReaderAsync(cancellationToken);
+            if (!await reader.ReadAsync(cancellationToken))
+                return TerminalNameOutcome.NotFound;
+            previousName = reader.IsDBNull(0) ? null : reader.GetString(0);
+        }
+        catch (PostgresException exception) when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            return TerminalNameOutcome.Taken;
+        }
+
+        await audit(connection, transaction, previousName, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return TerminalNameOutcome.Saved;
     }
 }

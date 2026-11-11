@@ -35,6 +35,7 @@ export interface LoginResponse {
   userId: string;
   displayName: string;
   terminalId: string;
+  terminalName?: string | null;
   capabilities?: string[];
 }
 

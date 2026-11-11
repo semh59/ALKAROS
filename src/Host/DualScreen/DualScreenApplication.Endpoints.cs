@@ -188,6 +188,7 @@ public static partial class DualScreenApplication
                 terminalId,
                 capabilities,
                 pinSet = (await users.GetByIdAsync(principal.UserId, cancellationToken))?.PinHash is not null,
+                terminalName = await store.GetTerminalNameAsync(terminalId, cancellationToken),
             });
         }).RequireRateLimiting("terminal-read");
 

@@ -1,7 +1,7 @@
 # V1-RMD-974 - Terminale yönetici tarafından ad verilebilir
 
 - Task ID: V1-RMD-974
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
