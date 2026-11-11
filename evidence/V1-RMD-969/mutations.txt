@@ -1,0 +1,2 @@
+M1 the entry is removed: Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     
+M2 a reset of an unprinted receipt is not refused: Başarısız! - Başarısız:     2, Başarılı:     4, Atlanan:     0, To

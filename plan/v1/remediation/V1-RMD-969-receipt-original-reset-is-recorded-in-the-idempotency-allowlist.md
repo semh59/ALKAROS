@@ -1,7 +1,7 @@
 # V1-RMD-969 - Fiş orijinal sıfırlama ucu idempotency allowlist'inde kayıtlı olsun
 
 - Task ID: V1-RMD-969
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

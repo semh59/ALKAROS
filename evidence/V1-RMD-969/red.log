@@ -1,0 +1,824 @@
+Oluşturma başlatıldı: 11.11.2026 14:35:38.
+D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\bin\Debug\net8.0\ALKAROS.Architecture.ApiConventions.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.07]   Discovering: ALKAROS.Architecture.ApiConventions.Tests
+[xUnit.net 00:00:00.12]   Discovered:  ALKAROS.Architecture.ApiConventions.Tests
+[xUnit.net 00:00:00.13]   Starting:    ALKAROS.Architecture.ApiConventions.Tests
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52800
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\bin\Debug\net8.0
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.Channels.AsyncOperation`1.GetResult(Int16 token)
+         at System.Threading.Channels.ChannelReader`1.ReadAllAsync(CancellationToken cancellationToken)+MoveNext()
+         at ALKAROS.Host.Experience.WebPush.WebPushDispatchService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\WebPush\WebPushDispatchService.cs:line 43
+         at ALKAROS.Host.Experience.WebPush.WebPushDispatchService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\WebPush\WebPushDispatchService.cs:line 43
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.Channels.AsyncOperation`1.GetResult(Int16 token)
+         at System.Threading.Channels.ChannelReader`1.ReadAllAsync(CancellationToken cancellationToken)+MoveNext()
+         at ALKAROS.Host.Experience.WebPush.WebPushDispatchService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\WebPush\WebPushDispatchService.cs:line 43
+         at ALKAROS.Host.Experience.WebPush.WebPushDispatchService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\WebPush\WebPushDispatchService.cs:line 43
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 69
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync()
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)
+         at Xunit.Sdk.TestInvoker`1.<RunAsync>b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.InitializeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 64
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.StartAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 71
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.TryLoadAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 127
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at ALKAROS.Recipes.Units.PostgresUnitConversionRepository.GetActiveConversionsAsync(CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\Units\PostgresUnitConversionRepository.cs:line 70
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Net.Sockets.SocketAsyncEventArgs.<>c.<.cctor>b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+      --- End of stack trace from previous location ---
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult(Int16 token)
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 165
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 69
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync()
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)
+         at Xunit.Sdk.TestInvoker`1.<RunAsync>b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.InitializeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 64
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.StartAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 71
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.TryLoadAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 127
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at ALKAROS.Recipes.Units.PostgresUnitConversionRepository.GetActiveConversionsAsync(CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\Units\PostgresUnitConversionRepository.cs:line 70
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Net.Sockets.SocketAsyncEventArgs.<>c.<.cctor>b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+      --- End of stack trace from previous location ---
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult(Int16 token)
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 165
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.SyntheticProbes.SyntheticProbeHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\SyntheticProbes\SyntheticProbes.cs:line 67
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.ServerDetectorsDeep.ServerDetectorsDeepRunner.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\ServerDetectorsDeep\ServerDetectorsDeep.cs:line 295
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.SyntheticProbes.SyntheticProbeHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\SyntheticProbes\SyntheticProbes.cs:line 67
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.NotificationWiring.NotificationDispatcherHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\NotificationWiring\NotificationWiring.cs:line 29
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.AnalysisRunner.AnalysisRunnerHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\AnalysisRunner\AnalysisRunner.cs:line 66
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.DomainDetectors.DomainDetectorRunner.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\DomainDetectors\DomainDetectors.cs:line 183
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.ResourceProbes.ResourceMonitorHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\ResourceProbes\ResourceProbes.cs:line 93
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.ServerDetectorsDeep.ServerDetectorsDeepRunner.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\ServerDetectorsDeep\ServerDetectorsDeep.cs:line 295
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.InsightRunner.InsightRunnerHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\InsightRunner\InsightRunner.cs:line 38
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.SecurityDetectors.OutboxDeadLetterWatcher.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\SecurityDetectors\SecurityDetectors.cs:line 104
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.NotificationWiring.NotificationDispatcherHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\NotificationWiring\NotificationWiring.cs:line 29
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.AnalysisRunner.AnalysisRunnerHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\AnalysisRunner\AnalysisRunner.cs:line 66
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.DomainDetectors.DomainDetectorRunner.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\DomainDetectors\DomainDetectors.cs:line 183
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.ResourceProbes.ResourceMonitorHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\ResourceProbes\ResourceProbes.cs:line 93
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.HealthSnapshot.HealthSnapshotJob.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\HealthSnapshot\HealthSnapshotJob.cs:line 88
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.InsightRunner.InsightRunnerHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\InsightRunner\InsightRunner.cs:line 38
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.ServerDetectors.ErrorRetentionHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\ServerDetectors\ServerDetectors.cs:line 244
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.SecurityDetectors.OutboxDeadLetterWatcher.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\SecurityDetectors\SecurityDetectors.cs:line 104
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.HealthSnapshot.HealthSnapshotJob.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\HealthSnapshot\HealthSnapshotJob.cs:line 88
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.Threading.Tasks.TaskCanceledException: A task was canceled.
+         at ALKAROS.Host.Observability.ServerDetectors.ErrorRetentionHostedService.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Observability\ServerDetectors\ServerDetectors.cs:line 244
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 69
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync()
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)
+         at Xunit.Sdk.TestInvoker`1.<RunAsync>b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.InitializeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 64
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.StartAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 71
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.TryLoadAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 127
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at ALKAROS.Recipes.Units.PostgresUnitConversionRepository.GetActiveConversionsAsync(CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\Units\PostgresUnitConversionRepository.cs:line 70
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Net.Sockets.SocketAsyncEventArgs.<>c.<.cctor>b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+      --- End of stack trace from previous location ---
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult(Int16 token)
+         at ALKAROS.Host.Experience.Orders.OrderCleanup.EmptyOrderSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCleanup\EmptyOrderSweeper.cs:line 60
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 69
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync()
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)
+         at Xunit.Sdk.TestInvoker`1.<RunAsync>b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.InitializeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 64
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.StartAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 71
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.TryLoadAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 127
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at ALKAROS.Recipes.Units.PostgresUnitConversionRepository.GetActiveConversionsAsync(CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\Units\PostgresUnitConversionRepository.cs:line 70
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Net.Sockets.SocketAsyncEventArgs.<>c.<.cctor>b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+      --- End of stack trace from previous location ---
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult(Int16 token)
+         at ALKAROS.Host.Experience.Orders.OrderCleanup.EmptyOrderSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderCleanup\EmptyOrderSweeper.cs:line 60
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]
+      BackgroundService failed
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 69
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync()
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)
+         at Xunit.Sdk.TestInvoker`1.<RunAsync>b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.InitializeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 64
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.StartAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 71
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.TryLoadAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 127
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at ALKAROS.Recipes.Units.PostgresUnitConversionRepository.GetActiveConversionsAsync(CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\Units\PostgresUnitConversionRepository.cs:line 70
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Net.Sockets.SocketAsyncEventArgs.<>c.<.cctor>b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+      --- End of stack trace from previous location ---
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult(Int16 token)
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.
+      System.OperationCanceledException: The operation was canceled.
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.<DisposeAsync>g__DisposeAsync|21_0(Object o)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 69
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.DisposeAsync()
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code) in /_/src/xunit.core/Sdk/ExceptionAggregator.cs:line 90
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine& stateMachine)
+         at Xunit.Sdk.ExceptionAggregator.RunAsync(Func`1 code)
+         at Xunit.Sdk.TestInvoker`1.<RunAsync>b__46_0() in /_/src/xunit.execution/Sdk/Frameworks/Runners/TestInvoker.cs:line 186
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.InitializeAsync() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 64
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.SetResult()
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.StartAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 71
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at ALKAROS.Host.Experience.Recipes.UnitConversionLoaderHostedService.TryLoadAsync(CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Recipes\UnitConversionLoaderHostedService.cs:line 127
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)
+         at ALKAROS.Recipes.Units.PostgresUnitConversionRepository.GetActiveConversionsAsync(CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Recipes\Units\PostgresUnitConversionRepository.cs:line 70
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at Npgsql.Internal.NpgsqlReadBuffer.<Ensure>g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+         at System.Net.Sockets.SocketAsyncEventArgs.<>c.<.cctor>b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+      --- End of stack trace from previous location ---
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource<System.Boolean>.GetResult(Int16 token)
+         at ALKAROS.Host.DualScreen.HubSessionSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\PROJECT\ALKAROS\src\Host\DualScreen\HubSessionRegistry.cs:line 108
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)
+[xUnit.net 00:00:07.62]     ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.EveryMutatingEndpointTakesAnIdempotencyKey [FAIL]
+[xUnit.net 00:00:07.62]       Data-changing endpoints without an idempotency key (add an IdempotencyKey body property or an X-Idempotency-Key header, or record the endpoint with a reason and responsible task):
+POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/original-reset
+[xUnit.net 00:00:07.62]       Stack Trace:
+[xUnit.net 00:00:07.62]         D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs(87,0): at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.EveryMutatingEndpointTakesAnIdempotencyKey()
+[xUnit.net 00:00:07.62]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+[xUnit.net 00:00:07.62]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:07.63]   Finished:    ALKAROS.Architecture.ApiConventions.Tests
+  Başarısız ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.EveryMutatingEndpointTakesAnIdempotencyKey [21 ms]
+  Hata İletisi:
+   Data-changing endpoints without an idempotency key (add an IdempotencyKey body property or an X-Idempotency-Key header, or record the endpoint with a reason and responsible task):
+POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/original-reset
+  Yığın İzleme:
+     at ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.EveryMutatingEndpointTakesAnIdempotencyKey() in D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\MutatingEndpointIdempotencyTests.cs:line 87
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Test Çalıştırması Başarısız.
+Toplam test sayısı: 1
+     Başarısız: 1
+ Toplam süre: 8,2139 Saniye
+     1>1 düğümünde "D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ALKAROS.Architecture.ApiConventions.Tests.csproj" projesi (VSTest hedef).
+     1>_VSTestConsole:
+         MSB4181: "VSTestTask" görevi false değerini döndürdü ancak günlüğe hata kaydetmedi.
+     1>"D:\PROJECT\ALKAROS\tests\Architecture\ApiConventions\ALKAROS.Architecture.ApiConventions.Tests.csproj" Projesini Oluşturma İşlemi Tamamlandı (VSTest hedef) -- BAŞARISIZ OLDU.
+
+Oluşturma BAŞARISIZ OLDU.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:08.98

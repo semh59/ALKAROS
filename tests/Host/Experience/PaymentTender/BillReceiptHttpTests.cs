@@ -535,6 +535,34 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResettingTwiceInARowRecordsOneResetAndRefusesTheSecondAndAResetAfterANewPrintIsRecordedAgain()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-twice-cashier");
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-twice-manager", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, PrintPath(terminalId, billId), cashier);
+
+        var first = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Yazıcı kağıdı bitti" });
+        var second = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Yazıcı kağıdı bitti" });
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+        Assert.Equal("RECEIPT_NOT_PRINTED", (await second.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Single(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+
+        await PostAsync(client, PrintPath(terminalId, billId), cashier);
+        var afterNewPrint = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Yine bitti" });
+
+        Assert.Equal(HttpStatusCode.OK, afterNewPrint.StatusCode);
+        Assert.Equal(2, (await PrintEventsAsync(billId, "bill.receipt.original.reset")).Count);
+    }
+
+    [Fact]
     public async Task ResettingABillWhoseReceiptWasNeverPrintedIsRefusedWithATurkishMessage()
     {
         var terminalId = Guid.NewGuid();
