@@ -1,7 +1,7 @@
 # V1-RMD-970 - Kasa açılışında önerilen tutar görünür ve ne yapılacağı söylensin
 
 - Task ID: V1-RMD-970
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

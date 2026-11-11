@@ -653,9 +653,9 @@
       '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
       'value="' + (suggested != null ? Number(suggested).toFixed(2) : '0.00') + '">' +
       '<span class="cs-amount-suffix">₺</span></div>' +
-      (suggested != null
-        ? '<span class="cs-field-hint">Önerilen tutar bir önceki kapanıştan alındı.</span>'
-        : '') +
+      '<span class="cs-field-hint" id="opening-hint">' + (suggested != null
+        ? 'Önerilen tutar: ' + escapeHtml(formatMoney(suggested)) + ' (son kapanışta sayılan nakit). Çekmecedeki parayı sayıp gerekirse değiştirin.'
+        : 'Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın.') + '</span>' +
       '<button class="cs-btn cs-btn-primary" id="open-btn" ' + (state.busy ? 'disabled' : '') + '>' +
       (state.busy ? 'Açılıyor…' : 'Kasayı Aç') + '</button>' +
       '</div>';

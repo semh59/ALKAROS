@@ -61,6 +61,23 @@ describe("cash-session.js when the active session cannot be read", () => {
     await vi.waitFor(() => expect(document.getElementById("login-form")).not.toBeNull());
   });
 
+  it.each([
+    [{ suggestedOpeningBalance: 1250.5 }, "Önerilen tutar: ₺1.250,50 (son kapanışta sayılan nakit). Çekmecedeki parayı sayıp gerekirse değiştirin."],
+    [{ suggestedOpeningBalance: 0 }, "Önerilen tutar: ₺0,00 (son kapanışta sayılan nakit). Çekmecedeki parayı sayıp gerekirse değiştirin."],
+    [{ suggestedOpeningBalance: null }, "Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın."],
+    [{ status: 500 }, "Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın."],
+  ])("tells the cashier what the opening amount is and what to do (%j)", async (suggestion, hint) => {
+    installFetchRouter([
+      signedIn,
+      { test: (url) => url.endsWith("/cash-sessions/active"), status: 404, body: {} },
+      { test: (url) => url.endsWith("/suggested-opening-balance"), status: suggestion.status ?? 200, body: suggestion.status ? {} : suggestion },
+    ]);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => expect(document.getElementById("opening-balance")).not.toBeNull());
+
+    expect(document.getElementById("opening-hint").textContent).toBe(hint);
+  });
+
   it("opens the cash session when Enter is pressed in the opening amount field", async () => {
     const router = installFetchRouter([
       signedIn,

@@ -1,0 +1,4 @@
+M1 the old hint without the amount:       Tests  2 failed | 11 passed (13)
+M2 no hint without a suggestion:       Tests  2 failed | 11 passed (13)
+M3 the amount is not formatted:       Tests  2 failed | 11 passed (13)
+M4 a zero suggestion counts as none:       Tests  1 failed | 12 passed (13)
