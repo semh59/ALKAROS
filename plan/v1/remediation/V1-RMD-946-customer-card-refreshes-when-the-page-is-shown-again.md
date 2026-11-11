@@ -1,7 +1,7 @@
 # V1-RMD-946 - Cari müşteri kartı sayfa tekrar görününce yenilensin
 
 - Task ID: V1-RMD-946
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
