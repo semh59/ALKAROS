@@ -1,0 +1,4 @@
+M1 lock kept, order not re-read: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 2 s -
+M3 no state re-check after lock: Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 9 s -
+M4 order lock only for table orders: Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 8 s -
+M2 no lock, no re-read: Basarisiz (red.log: kalem faturadan dustu, 1 beklenen 2)

@@ -274,6 +274,94 @@ public sealed class KitchenlessAddHttpTests : IAsyncLifetime
         Assert.False(dto.CanVoidSent);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ABillOpenedWhileALineIsBeingAddedWaitsForItAndCarriesIt(bool withTable)
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "orders.add-without-kitchen", "bills.split");
+        var seeded = await SeedAsync(withBill: false, withTable: withTable);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using (var hold = new NpgsqlCommand("SELECT 1 FROM orders.orders WHERE order_id = @id FOR UPDATE;", connection, transaction))
+        {
+            hold.Parameters.AddWithValue("id", seeded.OrderId);
+            await hold.ExecuteScalarAsync();
+        }
+
+        var openBill = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/from-order/{seeded.OrderId:D}");
+        openBill.Headers.TryAddWithoutValidation("Cookie", cookie);
+        var billing = client.SendAsync(openBill);
+        await WaitForALockWaiterAsync();
+        Assert.False(billing.IsCompleted);
+
+        var repository = new PostgresOrderRepository(_source);
+        var order = (await repository.GetByIdAsync(seeded.OrderId))!;
+        var line = new OrderItem(Guid.NewGuid(), seeded.OrderId, seeded.ProductId, "Dish", 1m, 100m, 10m).WithoutKitchen(userId, "other");
+        await repository.SaveAsync(order.AddWithoutKitchen(line, userId, DateTimeOffset.UtcNow), order.RowVersion, connection, transaction);
+        await transaction.CommitAsync();
+        using var response = await billing.WaitAsync(TimeSpan.FromSeconds(30));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(
+            2L, await Count("SELECT count(*) FROM billing.bill_items WHERE order_item_id IN (SELECT order_item_id FROM orders.order_items WHERE order_id = @id);", seeded.OrderId));
+    }
+
+    [Fact]
+    public async Task AnOrderCancelledWhileTheBillWaitsForItsLockGetsNoBill()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await SeedAsync(withBill: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await using var connection = await _source.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using (var hold = new NpgsqlCommand("SELECT 1 FROM orders.orders WHERE order_id = @id FOR UPDATE;", connection, transaction))
+        {
+            hold.Parameters.AddWithValue("id", seeded.OrderId);
+            await hold.ExecuteScalarAsync();
+        }
+
+        var openBill = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/from-order/{seeded.OrderId:D}");
+        openBill.Headers.TryAddWithoutValidation("Cookie", cookie);
+        var billing = client.SendAsync(openBill);
+        await WaitForALockWaiterAsync();
+        await using (var cancel = new NpgsqlCommand("UPDATE orders.orders SET status = 'Cancelled' WHERE order_id = @id;", connection, transaction))
+        {
+            cancel.Parameters.AddWithValue("id", seeded.OrderId);
+            await cancel.ExecuteNonQueryAsync();
+        }
+
+        await transaction.CommitAsync();
+        using var response = await billing.WaitAsync(TimeSpan.FromSeconds(30));
+
+        Assert.InRange((int)response.StatusCode, 400, 499);
+        Assert.Equal(0L, await Count("SELECT count(*) FROM billing.bills b JOIN billing.bill_items i ON i.bill_id = b.bill_id WHERE i.order_item_id IN (SELECT order_item_id FROM orders.order_items WHERE order_id = @id);", seeded.OrderId));
+    }
+
+    [Fact]
+    public async Task WithTooLittleStockTheLineIsRefusedAndNoLineStockOrAuditRecordRemains()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "orders.add-without-kitchen");
+        var seeded = await SeedAsync(withBill: false);
+        await Exec("UPDATE inventory.stock_balances SET on_hand_quantity = 0, available_quantity = 0 WHERE stock_item_id = @id;", ("id", seeded.StockItemId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Add(terminalId, seeded, cookie, "other", seeded.RowVersion));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("INSUFFICIENT_STOCK", await ErrorCode(response));
+        Assert.Equal(1L, await Count("SELECT count(*) FROM orders.order_items WHERE order_id = @id;", seeded.OrderId));
+        Assert.Equal(0m, await OnHandAsync(seeded.StockItemId));
+        Assert.Equal(0L, await Count("SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND event_name = 'order.item-added-without-kitchen';", seeded.OrderId));
+    }
+
     [Fact]
     public void TheOrderViewShowsTheReasonOfAKitchenLessLineAndNothingForOrdinaryLines()
     {
@@ -290,7 +378,7 @@ public sealed class KitchenlessAddHttpTests : IAsyncLifetime
     private sealed record Seeded(Guid OrderId, long RowVersion, Guid ProductId, Guid StockItemId);
 
     /// <summary>A submitted table order with one sent line and a stocked product (five on hand) the cashier can add.</summary>
-    private async Task<Seeded> SeedAsync(bool withBill, OrderState status = OrderState.Submitted)
+    private async Task<Seeded> SeedAsync(bool withBill, OrderState status = OrderState.Submitted, bool withTable = true)
     {
         var zoneId = Guid.NewGuid();
         var tableId = Guid.NewGuid();
@@ -323,7 +411,7 @@ public sealed class KitchenlessAddHttpTests : IAsyncLifetime
         var orderId = Guid.NewGuid();
         var sent = new OrderItem(
             Guid.NewGuid(), orderId, productId, "Dish", 1m, 100m, 10m, status: OrderItemState.Active, kitchenState: KitchenState.Sent);
-        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + orderId.ToString("N"), [sent], tableId, status: status,
+        var order = new Order(orderId, OrderSource.Cashier, "ORD-" + orderId.ToString("N"), [sent], withTable ? tableId : null, status: status,
             servingUserId: Guid.NewGuid());
         await new PostgresOrderRepository(_source).AddAsync(order);
 
@@ -340,6 +428,21 @@ public sealed class KitchenlessAddHttpTests : IAsyncLifetime
             ("order", orderId), ("bill", withBill ? billId : DBNull.Value), ("table", tableId));
         var stored = await new PostgresOrderRepository(_source).GetByIdAsync(orderId);
         return new Seeded(orderId, stored!.RowVersion, productId, stockItemId);
+    }
+
+    /// <summary>Waits until some backend of this database is blocked on a row lock, so the call under test has reached it.</summary>
+    private async Task WaitForALockWaiterAsync()
+    {
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            await using var command = _source.CreateCommand(
+                "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database() AND wait_event_type = 'Lock';");
+            if ((long)(await command.ExecuteScalarAsync())! > 0)
+                return;
+            await Task.Delay(100);
+        }
+
+        Assert.Fail("The call never reached the order row lock.");
     }
 
     private async Task<decimal> OnHandAsync(Guid stockItemId)

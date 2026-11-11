@@ -551,12 +551,25 @@ public sealed class BillingSplitStore
         {
             // The bill and the table's pointer to it commit together: a bill the table does not point at is invisible
             // to the table screens, a pointer to a bill that was not saved is a ghost.
-            if (_dataSource is not null && _tables is not null && order.TableId is { } tableId && tableId != Guid.Empty)
+            if (_dataSource is not null)
             {
                 await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
                 await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+                // A line added to the check right now commits first and is read below, so no line misses the bill.
+                await using (var lockOrder = new NpgsqlCommand("SELECT 1 FROM orders.orders WHERE order_id = @order_id FOR UPDATE;", connection, transaction))
+                {
+                    lockOrder.Parameters.AddWithValue("order_id", orderId);
+                    await lockOrder.ExecuteScalarAsync(cancellationToken);
+                }
+
+                order = await PostgresOrderRepository.GetByIdAsync(orderId, connection, transaction, cancellationToken)
+                    ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.", "sipariş");
+                if (order.Status is OrderState.Cancelled or OrderState.Rejected or OrderState.Draft)
+                    throw new UnsupportedOrderStateException($"Cannot create a bill from an order in '{order.Status}' state.");
+                bill = Bill.FromOrder(billId, billNumber, order);
                 await _bills.AddAsync(bill, connection, transaction, cancellationToken);
-                await _tables.AttachBillPointerAsync(tableId, billId, connection, transaction, cancellationToken);
+                if (_tables is not null && order.TableId is { } tableId && tableId != Guid.Empty)
+                    await _tables.AttachBillPointerAsync(tableId, billId, connection, transaction, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             }
             else

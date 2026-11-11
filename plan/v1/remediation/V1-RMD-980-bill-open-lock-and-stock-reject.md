@@ -1,7 +1,7 @@
 # V1-RMD-980 - Hesap acma ile mutfaksiz eklemenin yarisi ve yetersiz stok reddi
 
 - Task ID: V1-RMD-980
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
