@@ -1158,7 +1158,7 @@ export const productTypeLabels: Record<string, string> = {
  * as a legacy value.
  */
 export const stockModeLabels: Record<string, string> = {
-  Untracked: "Takipsiz (eski kayıt)",
+  Untracked: "Stok takibi yok",
   QuantityTracked: "Miktar takipli",
   PortionTracked: "Porsiyon takipli",
   RecipeDerived: "Reçeteden",
@@ -1169,9 +1169,9 @@ export const priceTypeLabels: Record<string, string> = {
   SalePrice: "Satış fiyatı",
 };
 
-export const selectableStockModes = ["QuantityTracked", "PortionTracked", "RecipeDerived"] as const;
+export const selectableStockModes = ["QuantityTracked", "PortionTracked", "RecipeDerived", "Untracked"] as const;
 
-export const stockModeHint = "Siparişin onaylanması için ürünün stok eşlemesi olmalı.";
+export const stockModeHint = "Takipli ürünün siparişi için stok eşlemesi gerekir; \"Stok takibi yok\" seçilirse ürün stok girmeden satılır.";
 
 export const selectionTypeLabels: Record<string, string> = {
   SelectOne: "Tek seçim",

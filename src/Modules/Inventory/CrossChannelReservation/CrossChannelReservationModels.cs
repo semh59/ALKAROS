@@ -53,7 +53,8 @@ public sealed record CrossChannelReservationRequest(
     string ChannelOrderReference,
     Guid OrderId,
     Guid ActorId,
-    IReadOnlyList<CrossChannelReservationLine> Lines);
+    IReadOnlyList<CrossChannelReservationLine> Lines,
+    IReadOnlySet<Guid>? UntrackedProductIds = null);
 
 /// <summary>
 /// A sale that consumed stock directly, with no hold taken first (waiter, cashier and NFC orders), of an order

@@ -104,6 +104,20 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AProviderOrderForAProductWithoutStockTrackingIsAcceptedWithNoHold()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 0m, withStockMapping: false);
+        var orderId = NewOrderId();
+        await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 2)));
+
+        Assert.Equal(1, await DrainAsync());
+
+        var order = Assert.Single(await _database.OnlineOrdersAsync(orderId));
+        Assert.Equal("Accepted", order.Status);
+        Assert.Empty(await _database.HoldsAsync(order.OrderId));
+    }
+
+    [Fact]
     public async Task AProviderOrderForAProductOnTodaysMenuCountsItsPortionsAsReserved()
     {
         var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 3m);

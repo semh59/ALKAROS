@@ -1,0 +1,13 @@
+== tests/Host/Experience/Orders/TableDraft
+Başarılı!  - Başarısız:     0, Başarılı:   129, Atlanan:     0, Toplam:   129, Süre: 1 m 43 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0)
+== tests/Host/Experience/Orders/Confirmation
+Başarısız! - Başarısız:     1, Başarılı:    39, Atlanan:     0, Toplam:    40, Süre: 26 s - ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll (net8.0)
+== tests/Host/Experience/NfcOrdering
+Başarılı!  - Başarısız:     0, Başarılı:    29, Atlanan:     0, Toplam:    29, Süre: 15 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+== tests/Host/Experience/OnlineOrdering
+Başarısız! - Başarısız:     1, Başarılı:   202, Atlanan:     0, Toplam:   203, Süre: 2 m 6 s - ALKAROS.Host.Experience.OnlineOrdering.Tests.dll (net8.0)
+== tests/Host/Experience/Orders/VoidSent
+Başarılı!  - Başarısız:     0, Başarılı:    35, Atlanan:     0, Toplam:    35, Süre: 26 s - ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll (net8.0)
+== tests/Host/Experience/Orders/Void
+Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 4 s - ALKAROS.Host.Experience.Orders.Void.Tests.dll (net8.0)
+done

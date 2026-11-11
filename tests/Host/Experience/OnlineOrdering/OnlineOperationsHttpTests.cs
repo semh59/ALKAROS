@@ -320,6 +320,7 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
         var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
         var (orderId, _, externalId) = await AcceptedOnlineOrderAsync(sku, productId);
+        await _database.ExecAsync("UPDATE catalog.products SET stock_mode = 2 WHERE product_id = @id;", ("id", productId));
         await _database.ExecAsync("DELETE FROM inventory.product_stock_mappings WHERE product_id = @id;", ("id", productId));
 
         using var response = await _client!.SendAsync(

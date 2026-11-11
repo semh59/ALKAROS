@@ -102,7 +102,7 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     /// age-restricted self-check-in order in.
     /// </summary>
     public async Task<(Guid OrderId, Guid TableId, Guid ProductId)> SeedPendingConfirmationOrderAsync(
-        bool seedStockMapping = true, decimal stockOnHandQuantity = 100m)
+        bool seedStockMapping = true, decimal stockOnHandQuantity = 100m, short stockMode = 1)
     {
         var tableId = Guid.NewGuid();
         await ExecuteAsync(
@@ -117,9 +117,10 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         await ExecuteAsync(
             """
             INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_age_restricted)
-            VALUES (@product_id, @sku, 'Confirmation Test Product', 1, 1, true, true);
+            VALUES (@product_id, @sku, 'Confirmation Test Product', 1, @stock_mode, true, true);
             """,
             ("product_id", productId),
+            ("stock_mode", stockMode),
             ("sku", "rmd137-" + productId.ToString("N")[..8]));
 
         // V1-RMD-143: OrderStockConsumptionService refuses Accept outright
@@ -599,7 +600,7 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     /// <paramref name="stockOnHandQuantity"/> on hand unless <paramref name="seedStockMapping"/> is false.
     /// </summary>
     public async Task<(Guid OrderId, Guid TableId, Guid ProductId, Guid SubmissionId)> SeedQrPendingOrderAsync(
-        decimal stockOnHandQuantity, bool seedStockMapping = true)
+        decimal stockOnHandQuantity, bool seedStockMapping = true, short stockMode = 1)
     {
         var tableId = Guid.NewGuid();
         await ExecuteAsync(
@@ -614,9 +615,10 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         await ExecuteAsync(
             """
             INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
-            VALUES (@product_id, @sku, 'Son Porsiyon Mantı', 1, 1, true);
+            VALUES (@product_id, @sku, 'Son Porsiyon Mantı', 1, @stock_mode, true);
             """,
             ("product_id", productId),
+            ("stock_mode", stockMode),
             ("sku", "qro003-" + productId.ToString("N")[..8]));
         if (seedStockMapping)
             await SeedStockMappingWithBalanceAsync(productId, stockOnHandQuantity);

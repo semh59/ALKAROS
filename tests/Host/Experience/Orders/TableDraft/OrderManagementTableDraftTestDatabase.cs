@@ -243,18 +243,19 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
     /// column's own DEFAULT); pass false to seed a manager-suspended
     /// ("86'd") product for V1-RMD-128 regression coverage.
     /// </summary>
-    public async Task<Guid> SeedProductAsync(string name, decimal price, bool isAvailable = true)
+    public async Task<Guid> SeedProductAsync(string name, decimal price, bool isAvailable = true, short stockMode = 1)
     {
         var productId = Guid.NewGuid();
         await ExecuteAsync(
             """
             INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_available, current_price)
-            VALUES (@product_id, @sku, @name, 1, 1, true, @is_available, @price);
+            VALUES (@product_id, @sku, @name, 1, @stock_mode, true, @is_available, @price);
             """,
             ("product_id", productId),
             ("sku", "ordtd-" + productId.ToString("N")[..8]),
             ("name", name),
             ("is_available", isAvailable),
+            ("stock_mode", stockMode),
             ("price", price));
 
         return productId;

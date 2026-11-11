@@ -182,22 +182,20 @@ describe("catalog workspace", () => {
     expect(onCreate.mock.calls[0][0].value.effectiveFrom).toBe("2026-01-01T10:00:00.000Z");
   });
 
-  it("does not offer the untracked stock mode the sale path ignores and shows older records in Turkish", async () => {
-    // V1-RMD-437 (V1-RMD-398 G-11): an order is only accepted for a product with a stock mapping (V1-RMD-143),
-    // whatever its stock mode, so "Untracked" is no longer offered and the raw enum is never shown.
+  it("offers a no-stock-tracking mode and never shows the raw stock mode enum", async () => {
     const onCreate = vi.fn().mockResolvedValue(undefined);
     await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
     const detail = document.querySelector(".catalog-details")!;
-    expect(detail.textContent).toContain("Takipsiz (eski kayıt)");
+    expect(detail.textContent).toContain("Stok takibi yok");
     expect(detail.textContent).not.toContain("Untracked");
 
     await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Ürün ekle"))!);
     const dialog = document.querySelector('[role="dialog"]')!;
     const stockMode = [...dialog.querySelectorAll("label")].find((label) => label.textContent?.startsWith("Stok modu"))!;
     const select = stockMode.querySelector("select")!;
-    expect([...select.options].map((option) => option.textContent)).toEqual(["Miktar takipli", "Porsiyon takipli", "Reçeteden"]);
+    expect([...select.options].map((option) => option.textContent)).toEqual(["Miktar takipli", "Porsiyon takipli", "Reçeteden", "Stok takibi yok"]);
     expect(select.value).toBe("QuantityTracked");
-    expect(stockMode.textContent).toContain("Siparişin onaylanması için ürünün stok eşlemesi olmalı.");
+    expect(stockMode.textContent).toContain("Takipli ürünün siparişi için stok eşlemesi gerekir; \"Stok takibi yok\" seçilirse ürün stok girmeden satılır.");
 
     const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
     await fill(inputs[0], "SU-01");

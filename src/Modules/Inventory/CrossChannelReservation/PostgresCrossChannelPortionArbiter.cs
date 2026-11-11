@@ -55,6 +55,8 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
             var lineMappings = mappings.Where(m => m.ProductId == line.ProductId).ToList();
             if (lineMappings.Count == 0)
             {
+                if (request.UntrackedProductIds?.Contains(line.ProductId) == true)
+                    continue;
                 unconfigured.Add(new UnconfiguredLine(line.OrderItemId, line.ProductId, StockConfigurationGap.ProductHasNoStockMapping));
                 continue;
             }

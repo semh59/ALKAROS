@@ -98,7 +98,7 @@ public sealed class QrConfirmationReservationHttpTests : IAsyncLifetime
     {
         var terminalId = Guid.NewGuid();
         var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
-        var (orderId, tableId, _, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 0m, seedStockMapping: false);
+        var (orderId, tableId, _, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 0m, seedStockMapping: false, stockMode: 2);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -108,6 +108,22 @@ public sealed class QrConfirmationReservationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         Assert.Contains("PRODUCT_STOCK_NOT_CONFIGURED", await response.Content.ReadAsStringAsync());
         Assert.Equal(("Reserved", (Guid?)orderId), await _database.GetTableStateAsync(tableId));
+        Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
+    }
+
+    [Fact]
+    public async Task AQrOrderForAProductWithoutStockTrackingIsAcceptedWithNoHold()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, _, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 0m, seedStockMapping: false, stockMode: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Empty(await _database.GetHoldsForOrderAsync(orderId));
     }
 

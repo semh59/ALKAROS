@@ -147,6 +147,9 @@ public sealed class OrderStockConsumptionService
             items.Where(i => i.Status != OrderItemState.Cancelled).Select(i => i.ProductId).Distinct().ToList(),
             cancellationToken).ConfigureAwait(false);
 
+        var untracked = await UntrackedProducts.FindAsync(
+            items.Select(i => i.ProductId), connection, transaction, cancellationToken).ConfigureAwait(false);
+
         foreach (var item in items)
         {
             // A waiter can void an item (ItemExceptionHandler.VoidItemAsync)
@@ -161,7 +164,7 @@ public sealed class OrderStockConsumptionService
                 continue;
 
             var productMappings = await _mappings.GetByProductIdAsync(item.ProductId, cancellationToken);
-            if (productMappings.Count == 0)
+            if (productMappings.Count == 0 && !untracked.Contains(item.ProductId))
                 throw new ProductStockNotConfiguredException(item.ProductId, item.ProductNameSnapshot);
 
             foreach (var mapping in productMappings)
@@ -465,7 +468,7 @@ public sealed class OrderStockConsumptionService
     }
 }
 
-/// <summary>A sold product has no `inventory.product_stock_mappings` row at all — Semih's decision: this refuses acceptance outright, it is never silently skipped.</summary>
+/// <summary>A sold product has no `inventory.product_stock_mappings` row at all — Semih's decision: this refuses acceptance outright, it is never silently skipped (unless its stock mode is "not tracked").</summary>
 public sealed class ProductStockNotConfiguredException : Exception
 {
     public Guid ProductId { get; }
@@ -513,4 +516,21 @@ public sealed class StockItemHasNoDefaultLocationException : Exception
     }
 
     public const string UserMessage = "Bu ürünün stok kalemi için bir konum tanımlanmamış, lütfen yöneticiye bildirin.";
+}
+
+/// <summary>Products the manager declared as not stock-tracked (stock mode 1); one without any stock mapping sells with no stock effect.</summary>
+internal static class UntrackedProducts
+{
+    public static async Task<HashSet<Guid>> FindAsync(
+        IEnumerable<Guid> productIds, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT product_id FROM catalog.products WHERE product_id = ANY($1) AND stock_mode = 1;", connection, transaction);
+        command.Parameters.AddWithValue(productIds.Distinct().ToArray());
+        var untracked = new HashSet<Guid>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            untracked.Add(reader.GetGuid(0));
+        return untracked;
+    }
 }

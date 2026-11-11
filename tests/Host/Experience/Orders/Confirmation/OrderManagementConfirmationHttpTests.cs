@@ -153,13 +153,13 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         Assert.Equal(9m, await _database.GetOnHandQuantityForProductAsync(productId));
     }
 
-    /// <summary>Semih's decision (2026-09-09): a sold product with no stock mapping at all refuses Accept outright, it is never silently skipped.</summary>
+    /// <summary>A stock-tracked product with no stock mapping at all refuses Accept outright, it is never silently skipped.</summary>
     [Fact]
     public async Task AcceptingAnOrderForAnUnmappedProductIsRefused()
     {
         var terminalId = Guid.NewGuid();
         var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
-        var (orderId, _, _) = await _database.SeedPendingConfirmationOrderAsync(seedStockMapping: false);
+        var (orderId, _, _) = await _database.SeedPendingConfirmationOrderAsync(seedStockMapping: false, stockMode: 2);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 

@@ -102,6 +102,35 @@ public sealed class CrossChannelPortionArbiterTests : IClassFixture<CrossChannel
     }
 
     [Fact]
+    public async Task AnUnmappedProductTheCallerDeclaresUntrackedIsSkippedWhileAMappedOneIsStillHeld()
+    {
+        var stock = await _db.SeedStockAsync(onHand: 1m);
+        var untracked = Guid.NewGuid();
+        var request = Request(ReservationChannel.Qr, Line(untracked), Line(stock.ProductId)) with
+        {
+            UntrackedProductIds = new HashSet<Guid> { untracked, stock.ProductId },
+        };
+
+        var result = await ReserveCommittedAsync(request);
+
+        result.Outcome.Should().Be(CrossChannelReservationOutcome.Reserved);
+        result.Holds.Select(h => h.StockItemId).Should().Equal(stock.StockItemId);
+        (await _db.BalanceAsync(stock)).Should().Be((1m, 1m, 0m));
+    }
+
+    [Fact]
+    public async Task AnOrderMadeOnlyOfUntrackedProductsIsHeldWithNoHolds()
+    {
+        var untracked = Guid.NewGuid();
+        var request = Request(ReservationChannel.Qr, Line(untracked)) with { UntrackedProductIds = new HashSet<Guid> { untracked } };
+
+        var result = await ReserveCommittedAsync(request);
+
+        result.Outcome.Should().Be(CrossChannelReservationOutcome.Reserved);
+        result.Holds.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task AnUnmappedProductOrAStockItemWithoutLocationIsATypedRefusal()
     {
         var unlocated = await _db.SeedStockAsync(onHand: 0m, withDefaultLocation: false);

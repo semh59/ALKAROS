@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx (31 tests | 1 failed) 1042ms
+     × offers a no-stock-tracking mode and never shows the raw stock mode enum 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > offers a no-stock-tracking mode and never shows the raw stock mode enum
+AssertionError: expected 'SEÇİLİ KAYITEspressoÜrünlerKod / kiml…' to contain 'Stok takibi yok'
+
+Expected: "Stok takibi yok"
+Received: "SEÇİLİ KAYITEspressoÜrünlerKod / kimlikESP-01 · Menü ürünüDurumAktifDeğer95.00 TRYStok moduTakipsiz (eski kayıt)KDV profiliKDV %10MODİFİKATÖR ATAMALARIBu ürüne modifikatör atanmadı.BAĞLI MODİFİKATÖR GRUPLARIBu ürüne modifikatör grubu bağlı değil.Grup ataGrup seçinSüt seçimiGrubu ataGEÇERLİ FİYAT ZAMAN ÇİZELGESİ95.00 TRY01.01.2026 → açık uçluBu ekran yalnız kayıt yönetir. Yayınlama veya kasiyer görünürlüğü, aktif ve geçerli fiyat kuralları sağlanmadan değişmez."
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:189:32
+    187|     await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    188|     const detail = document.querySelector(".catalog-details")!;
+    189|     expect(detail.textContent).toContain("Stok takibi yok");
+       |                                ^
+    190|     expect(detail.textContent).not.toContain("Untracked");
+    191|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 30 passed (31)
+   Start at  09:45:13
+   Duration  3.79s (transform 313ms, setup 0ms, import 531ms, tests 1.04s, environment 1.68s)
+

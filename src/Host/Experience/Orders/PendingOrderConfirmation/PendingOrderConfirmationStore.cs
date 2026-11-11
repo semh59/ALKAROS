@@ -290,13 +290,16 @@ public sealed class PendingOrderConfirmationStore
                 item.Id, item.ProductId, item.Quantity, menuItems.TryGetValue(item.ProductId, out var menuItemId) ? menuItemId : null))
             .ToList();
 
+        var untracked = await UntrackedProducts.FindAsync(
+            active.Select(item => item.ProductId), connection, transaction, cancellationToken).ConfigureAwait(false);
         var result = await _portionArbiter.ReserveAsync(
             new CrossChannelReservationRequest(
                 ReservationChannel.Qr,
                 (order.SourceReferenceId ?? order.Id).ToString("D"),
                 order.Id,
                 actorId,
-                lines),
+                lines,
+                untracked),
             connection,
             transaction,
             cancellationToken).ConfigureAwait(false);

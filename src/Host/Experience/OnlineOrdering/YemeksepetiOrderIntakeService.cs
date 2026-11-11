@@ -1,3 +1,4 @@
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.OnlineOrdering.OrderLinks;
@@ -211,6 +212,9 @@ public sealed class YemeksepetiOrderIntakeService
         var menuItems = await _dailyMenuItems.FindPublishedItemIdsAsync(
             items.Select(item => item.ProductId).Distinct().ToList(), cancellationToken).ConfigureAwait(false);
 
+        var untracked = await UntrackedProducts.FindAsync(
+            items.Select(item => item.ProductId), connection, transaction, cancellationToken).ConfigureAwait(false);
+
         // Stock first: a refusal writes nothing, so there is never an order without its holds.
         var hold = await _arbiter.ReserveAsync(
             new CrossChannelReservationRequest(
@@ -219,7 +223,8 @@ public sealed class YemeksepetiOrderIntakeService
                 orderId,
                 SystemActorId,
                 items.Select(item => new CrossChannelReservationLine(
-                    item.Id, item.ProductId, item.Quantity, menuItems.TryGetValue(item.ProductId, out var menuItemId) ? menuItemId : null)).ToList()),
+                    item.Id, item.ProductId, item.Quantity, menuItems.TryGetValue(item.ProductId, out var menuItemId) ? menuItemId : null)).ToList(),
+                untracked),
             connection, transaction, cancellationToken).ConfigureAwait(false);
         if (hold.Outcome == CrossChannelReservationOutcome.AlreadyConsumed)
         {

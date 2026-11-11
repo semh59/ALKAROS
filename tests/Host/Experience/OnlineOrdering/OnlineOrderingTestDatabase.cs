@@ -162,7 +162,7 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
         return (await projector.GetCountersAsync(menuItemId))!;
     }
 
-    public async Task<(Guid ProductId, string Sku)> SeedSellableProductAsync(decimal onHand, string name = "Lahmacun")
+    public async Task<(Guid ProductId, string Sku)> SeedSellableProductAsync(decimal onHand, string name = "Lahmacun", bool withStockMapping = true)
     {
         var suffix = Guid.NewGuid().ToString("N")[..8];
         var taxProfileId = Guid.NewGuid();
@@ -174,16 +174,23 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
             INSERT INTO catalog.tax_profiles (tax_profile_id, code, name, vat_rate) VALUES (@tax, @tax_code, 'KDV %10', 10);
             INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, tax_profile_id)
             VALUES (@product, @product_sku, @name, 1, 1, true, @tax);
-            INSERT INTO inventory.stock_locations (id, code, name, location_type) VALUES (@location, @location_code, 'Online Test Pass', 'Counter');
-            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
-            VALUES (@stock_item, @stock_code, 'Online Test Portion', 'Portion', 'adet', @location);
-            INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier) VALUES (@product, @stock_item, 1.0);
-            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
-            VALUES (@balance, @stock_item, @location, @on_hand, 0, @on_hand);
             """,
             ("tax", taxProfileId), ("tax_code", "KDV-" + suffix), ("product", productId), ("product_sku", "ON-" + suffix),
-            ("name", name), ("location", locationId), ("location_code", "ONL-" + suffix), ("stock_item", stockItemId),
-            ("stock_code", "ONS-" + suffix), ("balance", Guid.NewGuid()), ("on_hand", onHand));
+            ("name", name));
+        if (withStockMapping)
+        {
+            await ExecAsync(
+                """
+                INSERT INTO inventory.stock_locations (id, code, name, location_type) VALUES (@location, @location_code, 'Online Test Pass', 'Counter');
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, default_location_id)
+                VALUES (@stock_item, @stock_code, 'Online Test Portion', 'Portion', 'adet', @location);
+                INSERT INTO inventory.product_stock_mappings (product_id, stock_item_id, quantity_multiplier) VALUES (@product, @stock_item, 1.0);
+                INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity)
+                VALUES (@balance, @stock_item, @location, @on_hand, 0, @on_hand);
+                """,
+                ("product", productId), ("location", locationId), ("location_code", "ONL-" + suffix), ("stock_item", stockItemId),
+                ("stock_code", "ONS-" + suffix), ("balance", Guid.NewGuid()), ("on_hand", onHand));
+        }
 
         var sku = "ys-" + suffix;
         await new PostgresYemeksepetiProductMappingService(

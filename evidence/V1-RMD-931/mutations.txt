@@ -1,0 +1,11 @@
+M2 consumption skips every untracked product even when mapped: Başarısız! - Başarısız:     1, Başarılı:     3, Atlanan:     0, Toplam:     4, Süre: 5 s - ALKAROS.Host.Experi  (restored)
+M3 lookup matches the wrong stock mode: Başarısız! - Başarısız:     2, Başarılı:     1, Atlanan:     0, Toplam:     3, Süre: 3 s - ALKAROS.Host.Experi  (restored)
+M5 QR accept does not pass the untracked set: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 771 ms - ALKAROS.Host.Exp  (restored)
+M6 Yemeksepeti intake does not pass the untracked set: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 383 ms - ALKAROS.Host.Exp  (restored)
+M1 consumption never skips an untracked product: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi  (restored)
+M4 arbiter keeps refusing untracked lines: Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 576 ms - ALKAROS.Inventor  (restored)
+M7 form no longer offers the no-tracking mode: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 30 passed (31) (restored)
+M8 an untracked product skips its extras' stock: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experi  (restored)
+M1b the lookup result is ignored: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 945 ms - ALKARO  (restored)
+M2b an untracked product with a mapping stops consuming: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 2 s - ALKAROS.H  (restored)

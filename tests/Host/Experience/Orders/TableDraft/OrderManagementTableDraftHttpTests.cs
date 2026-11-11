@@ -1453,13 +1453,11 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     [Fact]
     public async Task SubmittingAProductWithNoStockMappingIsRejected()
     {
-        // V1-RMD-144: Semih's decision (2026-09-10) — an unmapped product
-        // refuses the whole submission rather than being treated as
-        // "not stock-tracked". A product must be mapped before it can sell.
+        // A stock-tracked product without a mapping refuses the whole submission; it must be mapped before it can sell.
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var tableId = await _database.SeedTableAsync();
-        var unmapped = await _database.SeedProductAsync("Eşlenmemiş Ürün", 120m);
+        var unmapped = await _database.SeedProductAsync("Eşlenmemiş Ürün", 120m, stockMode: 2);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -1475,6 +1473,32 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.Conflict, submitResponse.StatusCode);
         Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
+    [Fact]
+    public async Task AProductWithoutStockTrackingSellsWithNoStockMappingAndMovesNoStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var untracked = await _database.SeedProductAsync("Stoksuz Ürün", 80m, stockMode: 1);
+        var itemId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-36",
+                [new OrderItemDraftDto(itemId, untracked, "Stoksuz Ürün", 2, 80m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        Assert.Equal(0, await _database.ConsumptionMovementCountAsync(itemId));
+        Assert.Equal(1, await _database.KitchenTicketCountAsync(draft.OrderId));
     }
 
     [Fact]
@@ -2025,6 +2049,33 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         Assert.Equal(10m, await _database.OnHandQuantityAsync(productStock));
         Assert.Equal(1m, await _database.OnHandQuantityAsync(cheeseStock));
         Assert.Equal(0, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
+    [Fact]
+    public async Task AnExtraWithItsOwnStockStillTakesStockFromAProductWithoutStockTracking()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Stoksuz Lahmacun", 150m, stockMode: 1);
+        var extraCheese = await _database.SeedModifierAsync(product, "Ekstra peynir", 25m);
+        var cheeseStock = await _database.SeedStockForModifierAsync(extraCheese, 5m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-73",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Stoksuz Lahmacun", 2, 150m,
+                    [new OrderItemModifierSelectionDto(extraCheese)])])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        Assert.Equal(3m, await _database.OnHandQuantityAsync(cheeseStock));
     }
 
     [Fact]

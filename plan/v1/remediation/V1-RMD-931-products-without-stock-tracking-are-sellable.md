@@ -1,7 +1,7 @@
 # V1-RMD-931 - Stok takibi olmayan ürün stoksuz satılabilsin
 
 - Task ID: V1-RMD-931
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
