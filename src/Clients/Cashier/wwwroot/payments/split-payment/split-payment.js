@@ -207,6 +207,7 @@
     SLIP_REUSED: 'Bu fiş numarası başka bir ödemeye zaten bağlı.',
     TENDER_BILL_NOT_PAYABLE: 'Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin.',
     TENDER_IDEMPOTENCY_KEY_REUSED: 'İşlem kimliği başka bir tutarla zaten kullanılmış.',
+    CARD_TERMINAL_NOT_CONFIGURED: 'Kart terminali tanımlı değil; kartla tahsilat yapılamaz. Nakit veya EFT kullanın.',
     TENDER_METHOD_UNKNOWN: 'Tanınmayan ödeme yöntemi.',
     UNSUPPORTED_BILL_STATE: 'Bu hesap durumunda bölme tasarımı değiştirilemez.',
     UNSUPPORTED_ORDER_STATE: 'Bu sipariş durumunda hesap açılamaz.',
@@ -485,6 +486,7 @@
       state.error = null;
 
       state.summary = summaryResult.body;
+      dropUnavailableMethod();
       applyCashSession(cashResult);
       applyAdjustmentsResult(adjustmentsResult);
 
@@ -519,6 +521,12 @@
   // (PaymentAllocationFactory, BillPaymentClosureCalculator, CashTenderHandler, EftTenderHandler) were fixed
   // the same way, so this value is now genuinely authoritative for tendering: a discount/tip now really does
   // change what must be collected and when the bill closes, matching what this page has always shown.
+  function dropUnavailableMethod() {
+    if (state.selectedMethod === 'BankCard' && state.summary && state.summary.cardTerminalConfigured === false) {
+      state.selectedMethod = state.cashState === 'open' ? 'Cash' : null;
+    }
+  }
+
   function remainingAmount() {
     return state.summary ? state.summary.remainingAmount : 0;
   }
@@ -550,6 +558,7 @@
       }
       state.summaryStale = false;
       state.summary = result.body;
+      dropUnavailableMethod();
       // Re-derive the lock from server truth on every refresh, same as
       // loadEverything() does on initial load (V1-RMD-258/V13-RMD-002) -
       // this both sets the lock when a fresh RequiresReconciliation lands,
@@ -1003,6 +1012,7 @@
         // the generic error message instead of leaving the cashier with
         // only an ambiguous failure toast.
         var code = result.body && result.body.error && result.body.error.code;
+        if (code === 'CARD_TERMINAL_NOT_CONFIGURED') return refreshSummary().then(render);
         if (code === 'TENDER_UNSETTLED_PAYMENT_EXISTS') {
           state.error = null;
           return refreshSummary().then(render);
@@ -1097,7 +1107,9 @@
   // VIEWS, this is a VALUE choice) - role="radiogroup"/"radio" + aria-checked is the correct
   // pattern for "exactly one of these applies" rather than role="tab".
   function renderMethodChips() {
-    var methods = ['Cash', 'BankCard', 'Eft', 'Account'];
+    var methods = ['Cash', 'BankCard', 'Eft', 'Account'].filter(function (method) {
+      return method !== 'BankCard' || !state.summary || state.summary.cardTerminalConfigured !== false;
+    });
     return (
       '<div class="sp-method-chips" role="radiogroup" aria-label="Ödeme yöntemi">' +
       methods.map(function (method) {

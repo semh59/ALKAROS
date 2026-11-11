@@ -553,6 +553,9 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd409-unsettled");
         var billId = await _database.SeedBillAsync(payable: 80m);
+        await _database.ExecuteAsync(
+            "INSERT INTO payments.token_terminal_credentials (credential_key, merchant_id, branch_id, terminal_id, client_id, envelope_bytes, updated_at) " +
+            "VALUES ('token_terminal', 'm', 'b', 'AV1', 'c', convert_to('x', 'UTF8'), now());");
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var card = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tenders", cookie,

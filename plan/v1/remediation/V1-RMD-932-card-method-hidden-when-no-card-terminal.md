@@ -1,7 +1,7 @@
 # V1-RMD-932 - Kart terminali tanımlı değilse kart yöntemi görünmesin ve mutabakat kilidi oluşmasın
 
 - Task ID: V1-RMD-932
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

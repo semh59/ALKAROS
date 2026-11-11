@@ -1,0 +1,9 @@
+M1 card tender is accepted without a terminal: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.H  (restored)
+M2 summary always says configured: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.H  (restored)
+M3 client always draws the card method: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 8 passed (9) (restored)
+M4 a refused card payment leaves the card selected:       Tests  459 passed (459) (restored)
+M5 the terminal-missing sentence is removed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 457 passed (459) (restored)
+M6 no refresh after the refused card payment: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 458 passed (459) (restored)

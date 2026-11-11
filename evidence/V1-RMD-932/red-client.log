@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-display-binding.test.js (9 tests | 1 failed) 1100ms
+     × does not draw the card method when the server reports no card terminal 120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > does not draw the card method when the server reports no card terminal
+AssertionError: expected [ Array(4) ] to deeply equal [ 'Cash', 'Eft', 'Account' ]
+
+- Expected
++ Received
+
+  [
+    "Cash",
++   "BankCard",
+    "Eft",
+    "Account",
+  ]
+
+ ❯ split-payment-display-binding.test.js:135:23
+    133|     await openLinkPage({ ...linkUnpaid, cardTerminalConfigured: false …
+    134|
+    135|     expect(methods()).toEqual(["Cash", "Eft", "Account"]);
+       |                       ^
+    136|   });
+    137|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  10:20:45
+   Duration  2.72s (transform 436ms, setup 29ms, import 50ms, tests 1.10s, environment 1.26s)
+

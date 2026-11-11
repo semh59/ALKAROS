@@ -119,3 +119,54 @@ describe("split-payment.js split-by-item entry", () => {
     expect(document.getElementById("split-by-item").getAttribute("href")).toBe("/billing?billId=a%20b%26c");
   });
 });
+
+describe("split-payment.js card method availability", () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+  });
+
+  const methods = () => [...document.querySelectorAll(".sp-method-chip")].map((chip) => chip.getAttribute("data-method"));
+
+  it("does not draw the card method when the server reports no card terminal", async () => {
+    await openLinkPage({ ...linkUnpaid, cardTerminalConfigured: false });
+
+    expect(methods()).toEqual(["Cash", "Eft", "Account"]);
+  });
+
+  it("draws the card method when a card terminal is configured", async () => {
+    await openLinkPage({ ...linkUnpaid, cardTerminalConfigured: true });
+
+    expect(methods()).toEqual(["Cash", "BankCard", "Eft", "Account"]);
+  });
+
+  it("keeps drawing the card method when an older server sends no terminal flag", async () => {
+    await openLinkPage(linkUnpaid);
+
+    expect(methods()).toEqual(["Cash", "BankCard", "Eft", "Account"]);
+  });
+
+  it("explains a refused card payment, hides the card method and leaves no card selected", async () => {
+    let refused = false;
+    window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+    installFetchRouter([
+      { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+      { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", get body() { return { ...linkUnpaid, cardTerminalConfigured: !refused }; } },
+      { test: (url, init) => url.endsWith("/tenders/") && init?.method === "POST", get status() { refused = true; return 409; }, body: { error: { code: "CARD_TERMINAL_NOT_CONFIGURED", message: "x" } } },
+      { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
+      { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+      { test: (url) => url.endsWith("/refund-requests"), body: [] },
+      { test: (url) => url.endsWith("/show-on-display"), status: 204 },
+    ]);
+    await loadApp(htmlPath, scriptPath);
+    await vi.waitFor(() => expect(document.querySelector(".sp-title")).not.toBeNull());
+
+    document.querySelector('.sp-method-chip[data-method="BankCard"]').click();
+    document.getElementById("submit-tender").click();
+
+    await vi.waitFor(() => expect(document.body.textContent).toContain("Kart terminali tanımlı değil; kartla tahsilat yapılamaz."));
+    expect(methods()).toEqual(["Cash", "Eft", "Account"]);
+    expect(document.querySelector('.sp-method-chip[aria-checked="true"]')).toBeNull();
+  });
+});

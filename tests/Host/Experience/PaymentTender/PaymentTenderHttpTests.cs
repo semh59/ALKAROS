@@ -229,6 +229,46 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WithoutACardTerminalACardTenderIsRefusedWithoutAnyReconciliationLockAndTheRestCanBePaidByEft()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "card-terminal-missing");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.RemoveCardTerminalAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var card = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 40m, IdempotencyKey = "no-terminal-card" });
+
+        Assert.Equal(HttpStatusCode.Conflict, card.StatusCode);
+        Assert.Equal("CARD_TERMINAL_NOT_CONFIGURED",
+            (await card.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(0L, await _database.PaymentCountAsync(billId));
+
+        var eft = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 100m, IdempotencyKey = "no-terminal-eft" });
+        Assert.Equal(HttpStatusCode.OK, eft.StatusCode);
+    }
+
+    [Fact]
+    public async Task TheTenderSummaryTellsWhetherACardTerminalIsConfigured()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "card-terminal-flag");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var configured = await (await GetAsync(client, TendersPath(terminalId, billId), cookie)).Content.ReadFromJsonAsync<JsonElement>();
+        await _database.RemoveCardTerminalAsync();
+        var missing = await (await GetAsync(client, TendersPath(terminalId, billId), cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.True(configured.GetProperty("cardTerminalConfigured").GetBoolean());
+        Assert.False(missing.GetProperty("cardTerminalConfigured").GetBoolean());
+    }
+
+    [Fact]
     public async Task BankCardRequiresReconciliationIsPersistedAndSurvivesAFreshClientLoad()
     {
         // V1-RMD-258: the Faz 2 independent audit found the "don't retry
@@ -1540,6 +1580,24 @@ internal sealed class PaymentTenderHttpTestDatabase
         ConnectionString = new NpgsqlConnectionStringBuilder(maintenanceConnection) { Database = _databaseName }.ConnectionString;
         _dataSource = NpgsqlDataSource.Create(ConnectionString);
         await ApplyMigrationsAsync();
+        await SeedCardTerminalAsync();
+    }
+
+    private async Task SeedCardTerminalAsync()
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO payments.token_terminal_credentials
+                (credential_key, merchant_id, branch_id, terminal_id, client_id, envelope_bytes, updated_at)
+            VALUES ('token_terminal', 'm', 'b', 'AV1', 'c', convert_to('x', 'UTF8'), now());
+            """);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task RemoveCardTerminalAsync()
+    {
+        await using var command = DataSource.CreateCommand("DELETE FROM payments.token_terminal_credentials;");
+        await command.ExecuteNonQueryAsync();
     }
 
     public async Task DisposeAsync()

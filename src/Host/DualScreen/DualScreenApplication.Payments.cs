@@ -13,6 +13,7 @@ using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.CardSettlement;
 using ALKAROS.Payments.EftTender;
 using ALKAROS.Payments.PaymentAggregate;
+using ALKAROS.Payments.Token.TerminalCredential;
 using ALKAROS.Payments.TenderRouting;
 using ALKAROS.Settings.ManagerSelfApproval;
 using ALKAROS.Settings.TypedSettings;
@@ -208,6 +209,7 @@ public static partial class DualScreenApplication
             IPaymentRepository paymentRepository,
             IManualCardConfirmationRepository confirmations,
             IBillAdjustmentRepository adjustmentRepository,
+            ITokenTerminalCredentialStore cardTerminal,
             DualScreenStore store,
             IAuthorizationService authorization,
             ISettingsService settings,
@@ -266,7 +268,8 @@ public static partial class DualScreenApplication
                             pending.RequestedBy != principal.UserId || await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken)));
 
             return Results.Ok(new BillTenderSummaryV1(
-                billId, adjustedPayableAmount, allocatedTotal, remaining, lines, unsettledDto));
+                billId, adjustedPayableAmount, allocatedTotal, remaining, lines, unsettledDto,
+                (await cardTerminal.GetStatusAsync(cancellationToken)).Configured));
         });
 
         // V1-RMD-264: an unconfirmed card payment locks its bill (no real
@@ -488,6 +491,7 @@ public static partial class DualScreenApplication
             Guid billId,
             SubmitBillTenderRequestV1 request,
             TenderRouter router,
+            ITokenTerminalCredentialStore cardTerminal,
             ICardSettlementOrchestrator cardSettlementOrchestrator,
             IAuditEventStore auditEvents,
             IBillClosureService billClosure,
@@ -520,6 +524,18 @@ public static partial class DualScreenApplication
                         },
                     },
                     statusCode: StatusCodes.Status400BadRequest);
+
+            if (method == TenderMethod.BankCard && !(await cardTerminal.GetStatusAsync(cancellationToken)).Configured)
+                return Results.Json(
+                    new
+                    {
+                        error = new
+                        {
+                            code = "CARD_TERMINAL_NOT_CONFIGURED",
+                            message = "Kart terminali tanımlı değil; kartla tahsilat yapılamaz. Nakit veya EFT kullanın.",
+                        },
+                    },
+                    statusCode: StatusCodes.Status409Conflict);
 
             var tenderRequest = new TenderRequest(
                 PaymentId: Guid.NewGuid(),
@@ -787,4 +803,5 @@ public sealed record BillTenderSummaryV1(
     decimal AllocatedTotal,
     decimal RemainingAmount,
     IReadOnlyList<PaymentAllocationLineV1> Allocations,
-    UnsettledPaymentV1? UnsettledPayment);
+    UnsettledPaymentV1? UnsettledPayment,
+    bool CardTerminalConfigured);
