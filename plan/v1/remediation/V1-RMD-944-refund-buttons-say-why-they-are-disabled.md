@@ -16,6 +16,7 @@ V1-RMD-943 incelemesinden: ödeme ekranındaki "İade iste", "Reddet", "İadeyi 
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/split-payment-refunds.test.js
+  - tests/Clients/StaticApps/split-payment-item-refund.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
