@@ -649,6 +649,101 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASubmittedTableOrderIsResumedAndTakesAnotherRoundOnTheSameCheck()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-ROUND", "Available", 1);
+        var first = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+        var added = await _store.AddItemAsync(
+            terminalId, first.OrderId, new AddOrderItemRequest(_productId, 1m, first.Revision), CancellationToken.None);
+        await MarkSubmittedAsync(first.OrderId);
+
+        var resumed = await _store.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 2), CancellationToken.None);
+        var round = await _store.AddItemAsync(
+            terminalId, resumed.OrderId, new AddOrderItemRequest(_productId, 2m, resumed.Revision), CancellationToken.None);
+
+        Assert.Equal(first.OrderId, resumed.OrderId);
+        Assert.True(round.Revision > added.Revision);
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM orders.orders WHERE table_id = @table_id;", ("table_id", tableId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id AND status = 'Active';", ("order_id", first.OrderId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id AND status = 'Draft';", ("order_id", first.OrderId)));
+        var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+        Assert.True(snapshot.Editable);
+    }
+
+    [Fact]
+    public async Task ASentLineOfAResumedTableOrderCannotBeRemoved()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-SENT", "Available", 1);
+        var first = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+        await _store.AddItemAsync(terminalId, first.OrderId, new AddOrderItemRequest(_productId, 1m, first.Revision), CancellationToken.None);
+        var itemId = await ScalarAsync<Guid>("SELECT order_item_id FROM orders.order_items WHERE order_id = @order_id;", ("order_id", first.OrderId));
+        await MarkSubmittedAsync(first.OrderId);
+        var resumed = await _store.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 2), CancellationToken.None);
+
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.RemoveItemAsync(
+            terminalId, resumed.OrderId, itemId, resumed.Revision, CancellationToken.None));
+        var snapshot = await _store.GetSnapshotAsync(Guid.NewGuid(), terminalId, CancellationToken.None);
+        Assert.True(snapshot.AcceptsRound);
+        Assert.False(snapshot.Editable);
+    }
+
+    [Fact]
+    public async Task ASubmittedQuickSaleWithoutATableTakesNoMoreItems()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None);
+        await MarkSubmittedAsync(order.OrderId);
+        var revision = await ScalarAsync<long>("SELECT row_version FROM orders.orders WHERE order_id = @order_id;", ("order_id", order.OrderId));
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, revision), CancellationToken.None));
+        var snapshot = await _store.GetSnapshotAsync(Guid.NewGuid(), terminalId, CancellationToken.None);
+        Assert.False(snapshot.Editable);
+    }
+
+    [Fact]
+    public async Task ASubmittedTableOrderWithAnOpenBillIsStillRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-BILLED", "Available", 1);
+        var first = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+        await _store.AddItemAsync(terminalId, first.OrderId, new AddOrderItemRequest(_productId, 1m, first.Revision), CancellationToken.None);
+        await MarkSubmittedAsync(first.OrderId);
+        await using (var bill = _dataSource!.CreateCommand(
+            "UPDATE table_mgmt.tables SET current_bill_id = gen_random_uuid() WHERE table_id = @table_id;"))
+        {
+            bill.Parameters.AddWithValue("table_id", tableId);
+            await bill.ExecuteNonQueryAsync();
+        }
+
+        var refused = await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+            terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 2), CancellationToken.None));
+
+        Assert.Contains("active bill", refused.Message, StringComparison.Ordinal);
+        var revision = await ScalarAsync<long>("SELECT row_version FROM orders.orders WHERE order_id = @order_id;", ("order_id", first.OrderId));
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.AddItemAsync(
+            terminalId, first.OrderId, new AddOrderItemRequest(_productId, 1m, revision), CancellationToken.None));
+        Assert.False((await _store.GetSnapshotAsync(Guid.NewGuid(), terminalId, CancellationToken.None)).AcceptsRound);
+    }
+
+    private async Task MarkSubmittedAsync(Guid orderId)
+    {
+        await using var command = _dataSource!.CreateCommand(
+            """
+            UPDATE orders.order_items SET status = 'Active' WHERE order_id = @order_id;
+            UPDATE orders.orders SET status = 'Submitted', row_version = row_version + 1 WHERE order_id = @order_id;
+            """);
+        command.Parameters.AddWithValue("order_id", orderId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
     public async Task AnotherTablesOrderIsStillRefusedWhileTheTerminalHoldsADraftTableOrder()
     {
         var terminalId = Guid.NewGuid();

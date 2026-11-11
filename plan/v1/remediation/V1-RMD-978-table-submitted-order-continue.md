@@ -1,7 +1,7 @@
 # V1-RMD-978 - Gonderilmis masa siparisine devam edilir
 
 - Task ID: V1-RMD-978
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

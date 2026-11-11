@@ -20,7 +20,7 @@ public sealed class CustomerDisplayContractTests
     ];
     private static readonly string[] ExpectedProperties =
     [
-        "currency", "discountTotal", "displayId", "editable", "feeTotal", "lines", "message", "orderId", "orderNumber",
+        "acceptsRound", "currency", "discountTotal", "displayId", "editable", "feeTotal", "lines", "message", "orderId", "orderNumber",
         "paidTotal", "remainingTotal", "revision", "serverTimestamp", "state", "subtotal", "taxTotal", "terminalId", "tipTotal", "total",
     ];
     private static readonly string[] ExpectedLineProperties = ["discountAmount", "itemId", "lineTotal", "name", "quantity", "unitPrice"];

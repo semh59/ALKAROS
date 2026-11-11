@@ -1,0 +1,40 @@
+D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\bin\Debug\net8.0\ALKAROS.Host.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.11]   Discovering: ALKAROS.Host.Tests
+[xUnit.net 00:00:00.21]   Discovered:  ALKAROS.Host.Tests
+[xUnit.net 00:00:00.21]   Starting:    ALKAROS.Host.Tests
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ResumingTheTerminalsOwnTableOrderReturnsItInsteadOfAConflict [71 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionQuantityBeyondTheWaiterPathLimitIsRefused [27 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieResolvesBoundTerminalFromDeviceId [18 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ConcurrentTableStartsAllowOnlyOneOrderAndLeaveConsistentPointers [33 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.APairingIsApprovedThenCompletedWithExpiriesFromTheDatabaseClock [85 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnExpiredPairingCannotBeCompleted [27 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ARequiredOptionGroupRefusesALineWithoutASelection [163 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPicksTheMostRestrictiveMappingWhenAProductHasMultipleStockMappings [61 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineIsShownAtItsTaxInclusivePriceNotWithTaxAddedOnTop [55 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AComplimentaryLineWithAModifierIsShownAtItsFullPrice [54 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASentLineOfAResumedTableOrderCannotBeRemoved [85 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASelectedOptionIsStoredWithTheCatalogNameAndPriceAndStaysItsOwnLine [64 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnotherTablesOrderIsStillRefusedWhileTheTerminalHoldsADraftTableOrder [28 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncPaginationIsUnaffectedByAnExhaustedProduct [25 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ADraftThatTheTableDoesNotPointAtIsNotResumedAndLeavesNoSecondOrder [23 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.NonAvailableTableIsRejectedEvenWithAMatchingVersion [12 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.StaleTableVersionStillSeatsAnAvailableTableButBusyTableIsRejected [30 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.TableBoundOrderCommitsOrderAndTablePointersTogether [23 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWhenMappingHasNoBalanceRow [25 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AddingTheSameProductAgainDoesNotMergeIntoALineWithModifiers [52 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AnOptionThatDoesNotBelongToTheProductIsRefused [36 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.RaisingTheQuantityOfALineWithAnOptionChargesTheOptionOnEveryPortion [64 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ALineCarriesItsProductAndOptionIdsSoARemovedLineCanBeRebuilt [77 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.MoreSelectionsThanTheGroupAllowsAreRefused [29 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.GetCatalogAsyncLeavesRemainingCountNullWithoutStockMapping [17 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.AuthenticateCashierByCookieRejectsUnknownToken [3 ms]
+  Başarılı ALKAROS.Host.Tests.DualScreen.DualScreenStoreTests.ASubmittedTableOrderIsResumedAndTakesAnotherRoundOnTheSameCheck [73 ms]
+Etkin test çalıştırması iptal edildi. Nedeni: Test ana işlemi kilitlendi
+
+Test Çalıştırması Durduruldu.
+Toplam test sayısı: Bilinmiyor
+     Geçti: 27
+ Toplam süre: 6,6516 Dakika
+

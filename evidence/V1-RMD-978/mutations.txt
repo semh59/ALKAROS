@@ -1,0 +1,13 @@
+M1 lock Draft-only: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 16 s - ALKAROS.Host.Tests.dll (net8.0)
+M2 editable Draft-only: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 19 s - ALKAROS.Host.Tests.dll (net8.0)
+M3 remove Draft-only (domain+host): Başarılı!  - Başarısız:     0, Başarılı:     2, Atlanan:     0, Toplam:     2, Süre: 18 s - ALKAROS.Host.Tests.dll (net8.0)
+M3 domain test: Başarısız! - Başarısız:     1, Başarılı:    16, Atlanan:     0, Toplam:    17, Süre: 119 ms - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)
+M4 till tap: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M4 till tap:  FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > a sent table order that takes another round is filled by the next product tap, no new order is opened
+M4 till tap:       Tests  1 failed | 18 passed (19)
+M5 lock ignores bill: Başarılı!  - Başarısız:     0, Başarılı:     1, Atlanan:     0, Toplam:     1, Süre: 244 ms - ALKAROS.Host.Tests.dll (net8.0)
+M6 acceptsRound ignores bill: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 310 ms - ALKAROS.Host.Tests.dll (net8.0)
+D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs(731,53): error CS4034: Await' işleci yalnızca zaman uyumsuz bir lambda ifadesi ile kullanılabilir. Bu lambda ifadesi öğesini 'async' değiştiricisi ile işaretlemeyi düşünün. [D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj]
+D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\DualScreen\DualScreenStoreTests.cs(731,53): error CS4034: Await' işleci yalnızca zaman uyumsuz bir lambda ifadesi ile kullanılabilir. Bu lambda ifadesi öğesini 'async' değiştiricisi ile işaretlemeyi düşünün. [D:\PROJECT\ALKAROS\tests\Host\MigrationComposition\ALKAROS.Host.Tests.csproj]
+M5 lock ignores bill: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 16 s - ALKAROS.Host.Tests.dll (net8.0)
+M7 lock ignores table: Başarısız! - Başarısız:     2, Başarılı:     0, Atlanan:     0, Toplam:     2, Süre: 13 s - ALKAROS.Host.Tests.dll (net8.0)

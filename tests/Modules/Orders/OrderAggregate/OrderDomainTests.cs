@@ -372,10 +372,10 @@ public class OrderItemQuantityAndRemovalTests
     }
 
     [Fact]
-    public void OrderChangeItemQuantityRejectsAfterSubmission()
+    public void OrderChangeItemQuantityRejectsAfterAcceptance()
     {
         var itemId = Guid.NewGuid();
-        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5002", [NewDraftItem(itemId)]).Submit();
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5002", [NewDraftItem(itemId)]).Submit().TransitionTo(OrderState.PendingConfirmation);
 
         var act = () => order.ChangeItemQuantity(itemId, 2);
 
@@ -408,10 +408,24 @@ public class OrderItemQuantityAndRemovalTests
     }
 
     [Fact]
-    public void OrderRemoveItemRejectsAfterSubmission()
+    public void OrderRemoveItemDropsAnUnsentRoundLineOfASubmittedCheckAndKeepsTheSentOne()
+    {
+        var sentId = Guid.NewGuid();
+        var roundId = Guid.NewGuid();
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5006", [NewDraftItem(sentId)]).Submit();
+
+        var updated = order.AddRound([NewDraftItem(roundId)]).RemoveItem(roundId);
+
+        updated.Items.Select(i => i.Id).Should().Equal(sentId);
+        var act = () => updated.RemoveItem(sentId);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void OrderRemoveItemRejectsAfterAcceptance()
     {
         var itemId = Guid.NewGuid();
-        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5005", [NewDraftItem(itemId)]).Submit();
+        var order = new Order(Guid.NewGuid(), OrderSource.Cashier, "ORD-5005", [NewDraftItem(itemId)]).Submit().TransitionTo(OrderState.PendingConfirmation);
 
         var act = () => order.RemoveItem(itemId);
 

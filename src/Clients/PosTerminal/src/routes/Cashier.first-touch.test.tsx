@@ -235,6 +235,16 @@ describe("Cashier opens the order on the first product tap", () => {
     expect(till.calls).not.toContain("POST /orders/order-old/items");
   });
 
+  it("a sent table order that takes another round is filled by the next product tap, no new order is opened", async () => {
+    const till = await openTill({ active: snapshot("order-table", { editable: false, acceptsRound: true, revision: 6 }) });
+
+    await tap(card("Ayran"));
+    await settle();
+
+    expect(posts(till, "/orders")).toHaveLength(0);
+    expect(till.bodies).toEqual([{ productId: "p-ayran", quantity: 1, expectedRevision: 6 }]);
+  });
+
   it("an open editable order is reused, no second order is opened", async () => {
     const till = await openTill({ active: snapshot("order-open", { revision: 4 }) });
 

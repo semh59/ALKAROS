@@ -451,7 +451,9 @@ public sealed partial class DualScreenStore
     {
         await using var command = CreateCommand(connection, transaction,
             """
-            SELECT o.status, o.row_version
+            SELECT o.status, o.row_version,
+                   o.table_id IS NOT NULL AND NOT EXISTS (
+                       SELECT 1 FROM table_mgmt.tables bt WHERE bt.table_id = o.table_id AND bt.current_bill_id IS NOT NULL)
             FROM customer_display.terminals t
             JOIN orders.orders o ON o.order_id = t.active_order_id
             WHERE t.terminal_id = @terminal_id AND o.order_id = @order_id
@@ -462,8 +464,9 @@ public sealed partial class DualScreenStore
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
             throw new DualScreenNotFoundException("Active order was not found for this terminal.");
-        if (!string.Equals(reader.GetString(0), "Draft", StringComparison.Ordinal))
-            throw new DualScreenConflictException("Only a Draft order can be edited.");
+        var status = reader.GetString(0);
+        if (status is not "Draft" && !(status is "Submitted" && reader.GetBoolean(2)))
+            throw new DualScreenConflictException("Only an open check can be edited.");
         var actualRevision = reader.GetInt64(1);
         if (actualRevision != expectedRevision)
             throw new DualScreenConflictException($"Order revision is stale. Expected {expectedRevision}, actual {actualRevision}.");
@@ -587,5 +590,7 @@ public sealed partial class DualScreenStore
         decimal Tax,
         decimal Total,
         string Currency,
-        long Revision);
+        long Revision,
+        bool Editable,
+        bool AcceptsRound);
 }

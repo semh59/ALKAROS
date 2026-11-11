@@ -163,6 +163,7 @@ export interface DisplaySnapshot {
   revision: number;
   state: "Idle" | "Active" | "Completed" | "Unavailable";
   editable: boolean;
+  acceptsRound?: boolean;
   orderNumber: string | null;
   lines: DisplayLine[];
   subtotal: number;

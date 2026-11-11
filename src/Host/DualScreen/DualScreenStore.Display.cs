@@ -242,8 +242,13 @@ public sealed partial class DualScreenStore
         OrderRow order;
         await using (var orderCommand = CreateCommand(connection, transaction,
             """
-            SELECT order_number, status, subtotal, discount_total, tax_total, total, currency_code, row_version
-            FROM orders.orders
+            SELECT o.order_number, o.status, subtotal, discount_total, tax_total, total, currency_code, row_version,
+                   (status = 'Draft' OR (status = 'Submitted' AND table_id IS NOT NULL
+                    AND NOT EXISTS (SELECT 1 FROM table_mgmt.tables t WHERE t.table_id = o.table_id AND t.current_bill_id IS NOT NULL)
+                    AND EXISTS (SELECT 1 FROM orders.order_items i WHERE i.order_id = o.order_id AND i.status = 'Draft'))),
+                   (status = 'Submitted' AND table_id IS NOT NULL
+                    AND NOT EXISTS (SELECT 1 FROM table_mgmt.tables t WHERE t.table_id = o.table_id AND t.current_bill_id IS NOT NULL))
+            FROM orders.orders o
             WHERE order_id = @order_id;
             """))
         {
@@ -253,7 +258,7 @@ public sealed partial class DualScreenStore
                 return IdleSnapshot(displayId, terminalId);
             order = new OrderRow(
                 reader.GetString(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3),
-                reader.GetDecimal(4), reader.GetDecimal(5), reader.GetString(6), reader.GetInt64(7));
+                reader.GetDecimal(4), reader.GetDecimal(5), reader.GetString(6), reader.GetInt64(7), reader.GetBoolean(8), reader.GetBoolean(9));
         }
 
         var lines = new List<CustomerDisplayLineDto>();
@@ -311,9 +316,9 @@ public sealed partial class DualScreenStore
             _ => "Siparişiniz işleniyor.",
         };
         return new CustomerDisplaySnapshotDto(
-            displayId, terminalId, orderId, order.Revision, state, order.Status == "Draft", order.Number, lines,
+            displayId, terminalId, orderId, order.Revision, state, order.Editable, order.Number, lines,
             order.Subtotal, order.Discount, order.Tax, order.Total, order.Currency,
-            DateTimeOffset.UtcNow, message);
+            DateTimeOffset.UtcNow, message, AcceptsRound: order.AcceptsRound);
     }
 
     /// <summary>When the terminal's live display session ends, or null without one: lets the till show it.</summary>

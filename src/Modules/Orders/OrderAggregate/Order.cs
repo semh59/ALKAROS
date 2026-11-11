@@ -635,14 +635,14 @@ public sealed class Order
     /// <summary>
     /// Changes a Draft item's quantity in place (V1-RMD-120: the line-quantity
     /// stepper a channel like Host/DualScreen's quick-sale cart needs before
-    /// submission). The order itself must still be Draft; the target item
+    /// submission). The order must still be an open check; the target item
     /// must be Draft too — an Active item's quantity is frozen, only
     /// <see cref="CancelItem"/> removes its contribution. Returns a new
     /// instance.
     /// </summary>
     public Order ChangeItemQuantity(Guid orderItemId, decimal quantity)
     {
-        if (Status is not OrderState.Draft)
+        if (!IsOpenCheck)
             throw new InvalidOperationException($"Order {Id} cannot change an item quantity in state {Status}.");
 
         var items = new List<OrderItem>(_items.Count);
@@ -670,12 +670,12 @@ public sealed class Order
     /// Removes a Draft item from the order entirely (V1-RMD-120: the
     /// line-delete action a pre-submission cart needs — distinct from
     /// <see cref="CancelItem"/>, which voids an already-Active line and keeps
-    /// it for audit). The order must still be Draft; the target item must be
+    /// it for audit). The order must still be an open check; the target item must be
     /// Draft too. Returns a new instance.
     /// </summary>
     public Order RemoveItem(Guid orderItemId)
     {
-        if (Status is not OrderState.Draft)
+        if (!IsOpenCheck)
             throw new InvalidOperationException($"Order {Id} cannot remove an item in state {Status}.");
 
         var item = _items.FirstOrDefault(i => i.Id == orderItemId)

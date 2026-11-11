@@ -52,7 +52,7 @@ public sealed partial class DualScreenStore
             var status = found ? statusReader.GetString(0) : null;
             var activeOrderTableId = found && !statusReader.IsDBNull(1) ? statusReader.GetGuid(1) : (Guid?)null;
             // The till's own draft for the very table being asked for is resumed below, not refused.
-            resumesOwnTableOrder = request.TableId is not null && activeOrderTableId == request.TableId && status == "Draft";
+            resumesOwnTableOrder = request.TableId is not null && activeOrderTableId == request.TableId && status is "Draft" or "Submitted";
             if (status is not ("Submitted" or "Completed" or "Cancelled" or "Rejected") && !resumesOwnTableOrder)
                 throw new DualScreenConflictException("Terminal already has an active order.", TerminalHoldsDraftMessage);
         }
@@ -129,7 +129,7 @@ public sealed partial class DualScreenStore
                     existingOrderTableId = reader.IsDBNull(3) ? null : reader.GetGuid(3);
                 }
 
-                if (existingOrderTableId != tableId || existingStatus != "Draft")
+                if (existingOrderTableId != tableId || existingStatus is not ("Draft" or "Submitted"))
                     throw new DualScreenConflictException("Table already has a non-editable order.");
 
                 await using (var activeTerminal = CreateCommand(connection, transaction,
@@ -321,7 +321,7 @@ public sealed partial class DualScreenStore
             var newItem = new OrderItem(
                 draft.Id, orderId, request.ProductId, product.Name, request.Quantity, product.UnitPrice, product.TaxRate,
                 skuSnapshot: product.Sku, modifiers: modifiers);
-            updated = order.AddItem(newItem);
+            updated = order.AddRound([newItem]);
         }
 
         var revision = await _orderRepository.SaveAsync(updated, order.RowVersion, connection, transaction, cancellationToken);

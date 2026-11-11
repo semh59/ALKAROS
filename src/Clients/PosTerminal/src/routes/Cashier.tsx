@@ -628,7 +628,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     addingProduct.current = true;
     try {
       await execute(async () => {
-        const reused = activeOrder?.editable ? activeOrder : null;
+        const reused = activeOrder?.editable || activeOrder?.acceptsRound ? activeOrder : null;
         const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await openOrder();
         try {
           await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);

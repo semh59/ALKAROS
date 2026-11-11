@@ -169,7 +169,8 @@ public sealed record CustomerDisplaySnapshotDto(
     decimal PaidTotal = 0m,
     decimal? RemainingTotal = null,
     decimal TipTotal = 0m,
-    decimal FeeTotal = 0m);
+    decimal FeeTotal = 0m,
+    bool AcceptsRound = false);
 
 public sealed record ApiErrorEnvelope([property: JsonPropertyName("error")] ApiError Error);
 
