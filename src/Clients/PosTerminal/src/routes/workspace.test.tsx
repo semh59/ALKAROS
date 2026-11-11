@@ -112,6 +112,10 @@ describe("workspace /authorization route", () => {
       .find((button) => button.textContent?.trim() === "Onayla");
     expect(approveButton).toBeDefined();
     await act(async () => approveButton!.dispatchEvent(new MouseEvent("click", { bubbles: true })));
+    expect(approved).toBeNull();
+    const confirmButton = [...document.querySelectorAll("button")]
+      .find((button) => button.textContent?.trim() === "Evet, onayla");
+    await act(async () => confirmButton!.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     await act(async () => Promise.resolve());
 
     expect(approved).toBe(pendingGrant.grantId);

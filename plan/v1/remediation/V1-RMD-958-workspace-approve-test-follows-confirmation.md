@@ -1,7 +1,7 @@
 # V1-RMD-958 - Yönetim çalışma alanı onay testi iki adımlı onayı izlesin
 
 - Task ID: V1-RMD-958
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
