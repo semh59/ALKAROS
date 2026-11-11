@@ -1,0 +1,2 @@
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.AResetWithoutAKeyIsRefused [2 s]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.ResendingAResetWithTheSameKeyAfterTheAnswerWasLostGivesTheOriginalBackOnlyOnce [2 s]

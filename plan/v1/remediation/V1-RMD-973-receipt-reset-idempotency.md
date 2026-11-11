@@ -1,7 +1,7 @@
 # V1-RMD-973 - Orijinal fiş sıfırlama tekrar anahtarı alır
 
 - Task ID: V1-RMD-973
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

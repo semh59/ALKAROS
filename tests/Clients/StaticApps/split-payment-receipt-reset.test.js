@@ -93,8 +93,49 @@ describe("split-payment.js original receipt reset", () => {
     document.getElementById("reset-receipt").click();
     await vi.waitFor(() => expect(text()).toContain("Orijinal fiş hakkı geri verildi; bir sonraki basım orijinal olur."));
 
-    expect(resetCalls(fetchMock)).toEqual([{ Reason: "Yazıcı kağıdı bitti" }]);
+    expect(resetCalls(fetchMock)).toEqual([{ Reason: "Yazıcı kağıdı bitti", IdempotencyKey: expect.stringMatching(/^[0-9a-f-]{36}$/) }]);
     expect(document.getElementById("reset-reason").value).toBe("");
+  });
+
+  it("resends the same key after a lost answer and uses a new key once the server has answered", async () => {
+    const fetchMock = await open({ status: 200, body: { billId: BILL_ID, previousPrintedAt: "2026-11-10T10:00:00Z" } });
+    const routed = fetchMock.getMockImplementation();
+    fetchMock.mockImplementationOnce(async (url, init) => {
+      if (url.endsWith("/receipt/original-reset")) throw new TypeError("network");
+      return routed(url, init);
+    });
+
+    type("Yazıcı kağıdı bitti");
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(text()).toContain("Bağlantı kurulamadı."));
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(text()).toContain("Orijinal fiş hakkı geri verildi"));
+    type("Yine bitti");
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(resetCalls(fetchMock)).toHaveLength(3));
+
+    const [lost, retry, next] = resetCalls(fetchMock).map((body) => body.IdempotencyKey);
+    expect(retry).toBe(lost);
+    expect(next).not.toBe(retry);
+  });
+
+  it("keeps the key after a server error and takes a new one when the reason changes", async () => {
+    const fetchMock = await open({ status: 503, body: { error: { code: "UNAVAILABLE", message: "x" } } });
+
+    type("Yazıcı kağıdı bitti");
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(resetCalls(fetchMock)).toHaveLength(1));
+    await vi.waitFor(() => expect(document.getElementById("reset-receipt").disabled).toBe(false));
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(resetCalls(fetchMock)).toHaveLength(2));
+    await vi.waitFor(() => expect(document.getElementById("reset-receipt").disabled).toBe(false));
+    type("Başka gerekçe");
+    document.getElementById("reset-receipt").click();
+    await vi.waitFor(() => expect(resetCalls(fetchMock)).toHaveLength(3));
+
+    const [first, retry, changed] = resetCalls(fetchMock).map((body) => body.IdempotencyKey);
+    expect(retry).toBe(first);
+    expect(changed).not.toBe(retry);
   });
 
   it("answers a refused reset in Turkish, never the code, and keeps the typed reason", async () => {

@@ -131,6 +131,8 @@
     receiptConfirm: false,
     resetReason: '',
     resetBusy: false,
+    resetIdempotencyKey: null,
+    resetKeyReason: null,
     resetNotice: null,
     resetError: null,
   };
@@ -2407,8 +2409,13 @@
     state.resetBusy = true;
     state.resetError = null;
     render();
-    api(billBase() + '/receipt/original-reset', { method: 'POST', body: { Reason: reason } }).then(function (result) {
+    if (!state.resetIdempotencyKey || state.resetKeyReason !== reason) {
+      state.resetIdempotencyKey = crypto.randomUUID();
+      state.resetKeyReason = reason;
+    }
+    api(billBase() + '/receipt/original-reset', { method: 'POST', body: { Reason: reason, IdempotencyKey: state.resetIdempotencyKey } }).then(function (result) {
       state.resetBusy = false;
+      if (result.status < 500) state.resetIdempotencyKey = null;
       if (result.ok) {
         state.resetReason = '';
         state.receiptConfirm = false;

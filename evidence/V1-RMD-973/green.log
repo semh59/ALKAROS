@@ -1,0 +1,3 @@
+Passed 29/29 BillReceiptHttpTests
+      Tests  17 passed (17)
+BillReceiptHttpTests 29/29 after removing lateReplay; split-payment-receipt-reset 17/17

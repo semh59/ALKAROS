@@ -1,10 +1,6 @@
 {
   "_comment": "V1-RMD-430: bugün tekrar anahtarı almayan veri değiştiren uçlar. Anahtar \"METOD /rota\" biçimindedir; görev, ucu tanımlayan dosyanın plan sahibidir. Liste yalnız küçülebilir: anahtar eklenen ya da kaldırılan bir uç listede kalırsa MutatingEndpointIdempotencyTests kırılır.",
   "withoutIdempotencyKey": {
-    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/original-reset": {
-      "reason": "Hemen ardından gelen tekrar zararsızdır: sıfırlama orijinal basım izini siler, ikinci istek sıfırlanacak orijinal bulamayıp 409 RECEIPT_NOT_PRINTED döner ve ikinci bir denetim kaydı oluşmaz. Bilinen ürün riski: yanıt kaybolur ve araya bir yeniden basım girerse tekrar yeni bir sıfırlama sayılır ve orijinal hakkını bir kez daha geri verir; her sıfırlama gerekçesiyle ayrı denetim kaydı bırakır ve sıfırlama sınırına sayılır.",
-      "task": "V1-RMD-969"
-    },
     "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/receipt/print": {
       "reason": "Her basım bilerek ayrı bir denetim kaydıdır (kim, ne zaman, orijinal mi kopya mı); tekrar eden çağrı ikinci bir fiş basımıdır ve kopya sayılır; ilk çağrının yanıtı kaybolup yeniden denenirse orijinal hakkı harcanmış olur (bilinen ürün riski), hesapta yalnız ilk basım durumu bir kez işaretlenir.",
       "task": "V1-RMD-887"

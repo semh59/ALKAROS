@@ -41,7 +41,7 @@ public sealed record BillReceiptV1(
     DateTimeOffset? OriginalPrintedAt = null,
     bool IsCopy = false);
 
-public sealed record BillReceiptOriginalResetRequestV1(string? Reason);
+public sealed record BillReceiptOriginalResetRequestV1(string? Reason, Guid IdempotencyKey);
 
 public sealed record BillReceiptOriginalResetResultV1(Guid BillId, DateTimeOffset PreviousPrintedAt);
 
@@ -155,6 +155,8 @@ public static partial class DualScreenApplication
                     context, terminalId, store, authorization, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
 
                 var reason = request?.Reason?.Trim();
+                if ((request?.IdempotencyKey ?? Guid.Empty) == Guid.Empty)
+                    return ReceiptError(context, StatusCodes.Status400BadRequest, "IDEMPOTENCY_KEY_REQUIRED", "İstek bir tekrar anahtarı taşımalı.");
                 if (string.IsNullOrEmpty(reason) || reason.Length > MaxReceiptResetReasonLength)
                     return ReceiptError(
                         context, StatusCodes.Status400BadRequest, "REASON_REQUIRED", "Sıfırlama gerekçesi 1 ile 500 karakter arasında olmalı.");
@@ -165,6 +167,9 @@ public static partial class DualScreenApplication
 
                 await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
                 await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+                var replayed = await FindResetReplayAsync(billId, request!.IdempotencyKey, connection, transaction, cancellationToken);
+                if (replayed is not null)
+                    return Results.Ok(new BillReceiptOriginalResetResultV1(billId, replayed.Value));
                 var claim = await receiptPrints.ResetOriginalAsync(billId, connection, transaction, cancellationToken);
                 if (claim.Outcome == ReceiptResetOutcome.NotFound)
                     return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen hesap bulunamadı.");
@@ -193,7 +198,7 @@ public static partial class DualScreenApplication
                         reason: reason,
                         afterStateJson: JsonSerializer.Serialize(new
                         {
-                            bill.BillNumber, terminalId, previousPrintedAt = claim.PreviousPrintedAt, previousPrintedBy = claim.PreviousPrintedBy,
+                            bill.BillNumber, terminalId, previousPrintedAt = claim.PreviousPrintedAt, previousPrintedBy = claim.PreviousPrintedBy, idempotencyKey = request.IdempotencyKey,
                         })),
                     connection, transaction, cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
@@ -203,6 +208,20 @@ public static partial class DualScreenApplication
             .WithMetadata(new BillRouteDoesNotClaim())
             .AddEndpointFilter<BillTerminalAccessFilter>()
             .RequireRateLimiting("terminal-write");
+    }
+
+    private static async Task<DateTimeOffset?> FindResetReplayAsync(
+        Guid billId, Guid idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT after_state_json->>'previousPrintedAt' FROM audit.audit_events WHERE aggregate_type = 'Bill' AND aggregate_id = @id " +
+            "AND event_name = 'bill.receipt.original.reset' AND after_state_json->>'idempotencyKey' = @key LIMIT 1;",
+            connection, transaction);
+        command.Parameters.AddWithValue("id", billId);
+        command.Parameters.AddWithValue("key", idempotencyKey.ToString());
+        return await command.ExecuteScalarAsync(cancellationToken) is string text
+            ? DateTimeOffset.Parse(text, System.Globalization.CultureInfo.InvariantCulture)
+            : null;
     }
 
     private static IResult ReceiptError(HttpContext context, int status, string code, string message)

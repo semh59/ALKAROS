@@ -1,0 +1,9 @@
+M1-no-early-replay Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, Süre: 11 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+M3-new-key-each-send ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M3-new-key-each-send       Tests  1 failed | 15 passed (16)
+finished
+M2-key-optional Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 4 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+M4-clear-on-5xx ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M4-clear-on-5xx       Tests  1 failed | 16 passed (17)
+M5-key-ignores-reason ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M5-key-ignores-reason       Tests  1 failed | 16 passed (17)

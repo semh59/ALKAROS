@@ -488,7 +488,7 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         var burned = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
         var lost = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
 
-        var reset = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "  Yazıcı kağıdı bitti  " });
+        var reset = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("  Yazıcı kağıdı bitti  "));
         var again = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
 
         Assert.False(burned.GetProperty("isCopy").GetBoolean());
@@ -517,11 +517,11 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         await PostAsync(client, PrintPath(terminalId, billId), cashier);
 
-        var forbidden = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, new { Reason = "Deneme" });
-        var anonymous = await PostJsonAsync(client, ResetPath(terminalId, billId), null, new { Reason = "Deneme" });
-        var noReason = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "   " });
-        var tooLong = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = new string('x', 501) });
-        var missing = await PostJsonAsync(client, ResetPath(terminalId, Guid.NewGuid()), manager, new { Reason = "Deneme" });
+        var forbidden = await PostJsonAsync(client, ResetPath(terminalId, billId), cashier, ResetBody("Deneme"));
+        var anonymous = await PostJsonAsync(client, ResetPath(terminalId, billId), null, ResetBody("Deneme"));
+        var noReason = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("   "));
+        var tooLong = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody(new string('x', 501)));
+        var missing = await PostJsonAsync(client, ResetPath(terminalId, Guid.NewGuid()), manager, ResetBody("Deneme"));
 
         Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
         Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
@@ -547,8 +547,8 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         await PostAsync(client, PrintPath(terminalId, billId), cashier);
 
-        var first = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Yazıcı kağıdı bitti" });
-        var second = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Yazıcı kağıdı bitti" });
+        var first = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("Yazıcı kağıdı bitti"));
+        var second = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("Yazıcı kağıdı bitti"));
 
         Assert.Equal(HttpStatusCode.OK, first.StatusCode);
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
@@ -556,7 +556,7 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Single(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
 
         await PostAsync(client, PrintPath(terminalId, billId), cashier);
-        var afterNewPrint = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Yine bitti" });
+        var afterNewPrint = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("Yine bitti"));
 
         Assert.Equal(HttpStatusCode.OK, afterNewPrint.StatusCode);
         Assert.Equal(2, (await PrintEventsAsync(billId, "bill.receipt.original.reset")).Count);
@@ -572,7 +572,7 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        var response = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" });
+        var response = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("Deneme"));
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
@@ -594,9 +594,9 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         await PostAsync(client, PrintPath(terminalId, billId), printer);
 
-        var own = await PostJsonAsync(client, ResetPath(terminalId, billId), printer, new { Reason = "Deneme" });
+        var own = await PostJsonAsync(client, ResetPath(terminalId, billId), printer, ResetBody("Deneme"));
         var stillCopy = await (await PostAsync(client, PrintPath(terminalId, billId), printer)).Content.ReadFromJsonAsync<JsonElement>();
-        var byOther = await PostJsonAsync(client, ResetPath(terminalId, billId), other, new { Reason = "Deneme" });
+        var byOther = await PostJsonAsync(client, ResetPath(terminalId, billId), other, ResetBody("Deneme"));
 
         Assert.Equal(HttpStatusCode.Forbidden, own.StatusCode);
         var error = (await own.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
@@ -622,10 +622,10 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         for (var round = 0; round < 3; round++)
         {
             await PostAsync(client, PrintPath(terminalId, billId), cashier);
-            statuses.Add((await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" })).StatusCode);
+            statuses.Add((await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("Deneme"))).StatusCode);
         }
 
-        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" });
+        var refused = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, ResetBody("Deneme"));
 
         Assert.Equal([HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.Conflict], statuses);
         Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
@@ -636,6 +636,56 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         var stillCopy = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
         Assert.True(stillCopy.GetProperty("isCopy").GetBoolean());
     }
+
+    [Fact]
+    public async Task ResendingAResetWithTheSameKeyAfterTheAnswerWasLostGivesTheOriginalBackOnlyOnce()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-replay-cashier");
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-replay-manager", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, PrintPath(terminalId, billId), cashier);
+        var body = ResetBody("Yazıcı kağıdı bitti");
+
+        var first = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, body);
+        var reprint = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+        var replay = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, body);
+        var afterReplay = await (await PostAsync(client, PrintPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.False(reprint.GetProperty("isCopy").GetBoolean());
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal(
+            (await first.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("previousPrintedAt").GetDateTimeOffset(),
+            (await replay.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("previousPrintedAt").GetDateTimeOffset());
+        Assert.True(afterReplay.GetProperty("isCopy").GetBoolean());
+        Assert.Single(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+    }
+
+    [Fact]
+    public async Task AResetWithoutAKeyIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-nokey-cashier");
+        var manager = await _database.SeedCashierSessionAsync(terminalId, "receipt-reset-nokey-manager", true, "payments.refund.approve");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, PrintPath(terminalId, billId), cashier);
+
+        var response = await PostJsonAsync(client, ResetPath(terminalId, billId), manager, new { Reason = "Deneme" });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
+    }
+
+    private static object ResetBody(string reason) => new { Reason = reason, IdempotencyKey = Guid.NewGuid() };
 
     private static string ResetPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/original-reset";
 
