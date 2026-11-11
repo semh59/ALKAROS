@@ -1,0 +1,81 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-display-binding.test.js (15 tests | 4 failed) 5681ms
+     × names the Cash way on the applied payment line 1084ms
+     × names the Card way on the applied payment line 1059ms
+     × names the Eft way on the applied payment line 1079ms
+     × names the Account way on the applied payment line 1079ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the Cash way on the applied payment line
+AssertionError: expected '₺40,00' to contain 'Nakit'
+
+Expected: "Nakit"
+Received: "₺40,00"
+
+ ❯ split-payment-display-binding.test.js:181:93
+    179|       await loadApp(htmlPath, scriptPath);
+    180|
+    181|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                             ^
+    182|     },
+    183|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the Card way on the applied payment line
+AssertionError: expected '₺40,00' to contain 'Kredi/Banka Kartı'
+
+Expected: "Kredi/Banka Kartı"
+Received: "₺40,00"
+
+ ❯ split-payment-display-binding.test.js:181:93
+    179|       await loadApp(htmlPath, scriptPath);
+    180|
+    181|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                             ^
+    182|     },
+    183|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the Eft way on the applied payment line
+AssertionError: expected '₺40,00' to contain 'EFT/Havale'
+
+Expected: "EFT/Havale"
+Received: "₺40,00"
+
+ ❯ split-payment-display-binding.test.js:181:93
+    179|       await loadApp(htmlPath, scriptPath);
+    180|
+    181|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                             ^
+    182|     },
+    183|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  split-payment-display-binding.test.js > split-payment.js card method availability > names the Account way on the applied payment line
+AssertionError: expected '₺40,00' to contain 'Hesaba yaz (cari)'
+
+Expected: "Hesaba yaz (cari)"
+Received: "₺40,00"
+
+ ❯ split-payment-display-binding.test.js:181:93
+    179|       await loadApp(htmlPath, scriptPath);
+    180|
+    181|       await vi.waitFor(() => expect(document.querySelector(".sp-line-m…
+       |                                                                                             ^
+    182|     },
+    183|   );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 11 passed (15)
+   Start at  11:53:38
+   Duration  7.12s (transform 730ms, setup 22ms, import 55ms, tests 5.68s, environment 985ms)
+

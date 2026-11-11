@@ -1176,7 +1176,7 @@
       '<div class="sp-field"><span class="sp-field-label">Uygulanan tahsilatlar</span>' +
       allocations.map(function (line) {
         return (
-          '<div class="sp-line"><span class="sp-line-method">' + formatMoney(line.amount) + '</span>' +
+          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(METHOD_LABELS[line.method === 'Card' ? 'BankCard' : line.method] || 'Tahsilat') + ' · ' + formatMoney(line.amount) + '</span>' +
           '<span class="sp-line-status is-approved">Onaylandı</span></div>'
         );
       }).join('') +

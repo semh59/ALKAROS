@@ -1,7 +1,7 @@
 # V1-RMD-938 - Uygulanan tahsilatlar listesi ödeme yöntemini göstersin
 
 - Task ID: V1-RMD-938
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

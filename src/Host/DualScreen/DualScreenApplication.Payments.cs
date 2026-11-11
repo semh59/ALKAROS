@@ -210,6 +210,7 @@ public static partial class DualScreenApplication
             IManualCardConfirmationRepository confirmations,
             IBillAdjustmentRepository adjustmentRepository,
             ITokenTerminalCredentialStore cardTerminal,
+            NpgsqlDataSource dataSource,
             DualScreenStore store,
             IAuthorizationService authorization,
             ISettingsService settings,
@@ -234,6 +235,7 @@ public static partial class DualScreenApplication
 
             var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
             var paymentsById = payments.ToDictionary(p => p.Id);
+            var methods = await PaymentMethodLookup.ForPaymentsAsync(dataSource, [.. paymentsById.Keys], cancellationToken);
 
             var lines = new List<PaymentAllocationLineV1>(allocations.Count);
             foreach (var allocation in allocations)
@@ -243,7 +245,10 @@ public static partial class DualScreenApplication
                     allocation.Id,
                     allocation.PaymentId,
                     allocation.Amount,
-                    payment?.Status.ToString() ?? "Unknown"));
+                    payment?.Status.ToString() ?? "Unknown",
+                    payment is { Status: PaymentStatus.Approved or PaymentStatus.Refunded or PaymentStatus.PartiallyRefunded }
+                        ? methods.GetValueOrDefault(allocation.PaymentId, "")
+                        : ""));
             }
 
             // V1-RMD-258: a genuinely persisted Pending/Unknown/
@@ -782,7 +787,7 @@ public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Stat
 
 public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason, bool BillClosed = false);
 
-public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, decimal Amount, string PaymentStatus);
+public sealed record PaymentAllocationLineV1(Guid AllocationId, Guid PaymentId, decimal Amount, string PaymentStatus, string Method);
 
 /// <summary>V1-RMD-258: a real, persisted unresolved Payment for a bill, if any — the server-side source of truth the client re-derives its lock state from.</summary>
 public sealed record UnsettledPaymentV1(Guid PaymentId, string Status, string? Reason, PendingCardConfirmationV1? PendingConfirmation = null);

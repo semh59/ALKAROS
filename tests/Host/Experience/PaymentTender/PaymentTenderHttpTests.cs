@@ -68,9 +68,46 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(100m, summaryBody.GetProperty("payableAmount").GetDecimal());
         Assert.Equal(60m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
         Assert.Equal(40m, summaryBody.GetProperty("remainingAmount").GetDecimal());
-        Assert.Single(summaryBody.GetProperty("allocations").EnumerateArray());
+        Assert.Equal("Eft", Assert.Single(summaryBody.GetProperty("allocations").EnumerateArray()).GetProperty("method").GetString());
         Assert.Equal(1L, await _database.PaymentCountAsync(billId));
         Assert.Equal(0L, await _database.InitiatedPaymentCountAsync());
+    }
+
+    [Fact]
+    public async Task ThePaymentLineNamesTheWayItWasTakenFromTheRecordsThatWayLeavesBehind()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pui-method-line");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 60m, IdempotencyKey = "method-line-1" });
+        await using (var seed = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO cash.cash_sessions (cash_session_id, cashier_user_id, terminal_id, status, opening_balance, opened_at, created_at, updated_at)
+            SELECT 'aaaaaaaa-0000-0000-0000-000000000001'::uuid, user_id, gen_random_uuid(), 'Open', 0, now(), now(), now() FROM identity.users LIMIT 1;
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, related_payment_id, recorded_by, occurred_at)
+            SELECT gen_random_uuid(), 'aaaaaaaa-0000-0000-0000-000000000001', 'Sale', 'In', 60, payment_id, (SELECT user_id FROM identity.users LIMIT 1), now()
+            FROM payments.payments WHERE bill_id = @bill;
+            """))
+        {
+            seed.Parameters.AddWithValue("bill", billId);
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        var summary = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+
+        var line = Assert.Single((await summary.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("allocations").EnumerateArray());
+        Assert.Equal("Cash", line.GetProperty("method").GetString());
+
+        await using (var unsettle = _database.DataSource.CreateCommand("UPDATE payments.payments SET status = 'Unknown', approved_amount = NULL, approved_at = NULL WHERE bill_id = @bill;"))
+        {
+            unsettle.Parameters.AddWithValue("bill", billId);
+            await unsettle.ExecuteNonQueryAsync();
+        }
+        var unsettled = await GetAsync(client, TendersPath(terminalId, billId), cookie);
+        var unsettledLine = Assert.Single((await unsettled.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("allocations").EnumerateArray());
+        Assert.Equal("", unsettledLine.GetProperty("method").GetString());
     }
 
     [Fact]
