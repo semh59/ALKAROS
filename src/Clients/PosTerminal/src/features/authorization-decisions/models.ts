@@ -102,6 +102,7 @@ export const authorizationDecisionText = {
   title: "Yetki kararları",
   subtitle: "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar",
   pendingHeading: "Bekleyen yetki istekleri",
+  refundNote: "İade istekleri burada değil; ilgili hesabı Hesap ekranında açıp oradan onaylayın.",
   pendingEmpty: "Bekleyen yetki isteği yok.",
   delegationHeading: "Etkin süreli devirler",
   delegationEmpty: "Etkin devir yok.",

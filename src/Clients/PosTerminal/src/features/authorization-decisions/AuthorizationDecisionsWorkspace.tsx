@@ -112,6 +112,8 @@ export function AuthorizationDecisionsWorkspace({
         <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.3" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
       </header>
 
+      <p className="authz-decisions__muted" data-refund-note>{text.refundNote}</p>
+
       {actionError && <p className="authz-decisions__error" role="alert">{actionError}</p>}
 
       <div className="authz-decisions__group" aria-label={text.pendingHeading}>

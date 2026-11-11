@@ -227,6 +227,12 @@ describe("authorization decisions workspace", () => {
     expect(document.body.textContent).not.toMatch(/aaaaaaaa|bbbbbbbb|cccccccc/i);
   });
 
+  it("tells the manager where refund requests are decided", async () => {
+    await render(<AuthorizationDecisionsWorkspace {...baseProps()} />);
+
+    expect(document.querySelector("[data-refund-note]")?.textContent).toBe("İade istekleri burada değil; ilgili hesabı Hesap ekranında açıp oradan onaylayın.");
+  });
+
   it("shows the empty copy when nothing is pending", async () => {
     await render(
       <AuthorizationDecisionsWorkspace
@@ -237,6 +243,7 @@ describe("authorization decisions workspace", () => {
     expect(document.body.textContent).toContain("Bekleyen yetki isteği yok.");
     expect(document.body.textContent).toContain("Etkin devir yok.");
     expect(document.body.textContent).toContain("Açık sıkılaştırma yok.");
+    expect(document.querySelector("[data-refund-note]")).not.toBeNull();
   });
 
   it("blocks the workspace for a non-manager viewer", async () => {

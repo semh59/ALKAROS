@@ -1,7 +1,7 @@
 # V1-RMD-953 - Yetki kararları ekranı iade onayının nerede olduğunu söylesin
 
 - Task ID: V1-RMD-953
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

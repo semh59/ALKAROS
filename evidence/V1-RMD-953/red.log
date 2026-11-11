@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/authorization-decisions/AuthorizationDecisionsWorkspace.test.tsx (15 tests | 1 failed) 247ms
+     × tells the manager where refund requests are decided 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/authorization-decisions/AuthorizationDecisionsWorkspace.test.tsx > authorization decisions workspace > tells the manager where refund requests are decided
+AssertionError: expected undefined to be 'İade istekleri burada değil; Hesap ek…' // Object.is equality
+
+- Expected:
+"İade istekleri burada değil; Hesap ekranından onaylanır."
+
++ Received:
+undefined
+
+ ❯ src/features/authorization-decisions/AuthorizationDecisionsWorkspace.test.tsx:233:71
+    231|     await render(<AuthorizationDecisionsWorkspace {...baseProps()} />);
+    232|
+    233|     expect(document.querySelector("[data-refund-note]")?.textContent).…
+       |                                                                       ^
+    234|   });
+    235|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  13:41:10
+   Duration  1.81s (transform 153ms, setup 0ms, import 263ms, tests 247ms, environment 1.04s)
+
