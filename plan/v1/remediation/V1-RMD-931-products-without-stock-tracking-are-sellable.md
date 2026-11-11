@@ -13,7 +13,6 @@ Kasiyer denemesi (G14, bulgu 1) ve Semih kararı (2026-11-11): yeni bir ürün s
 ## Owned surface
 
 - `evidence/V1-RMD-931/**`
-- `src/Host/Experience/Orders/OrderStockConsumption/UntrackedProducts.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs
   - src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs
@@ -24,6 +23,8 @@ Kasiyer denemesi (G14, bulgu 1) ve Semih kararı (2026-11-11): yeni bir ürün s
   - tests/Host/Experience/Orders/Confirmation/OrderManagementConfirmationTestDatabase.cs
   - tests/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeTests.cs
   - tests/Host/Experience/OnlineOrdering/OnlineOrderingTestDatabase.cs
+  - tests/Host/Experience/OnlineOrdering/OnlineOperationsHttpTests.cs
+  - tests/Host/Experience/Orders/Confirmation/OrderManagementConfirmationHttpTests.cs
   - src/Clients/PosTerminal/src/strings.ts
   - src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.test.tsx
   - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftHttpTests.cs
