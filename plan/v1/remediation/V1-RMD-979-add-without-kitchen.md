@@ -76,6 +76,7 @@ Kasiyer, garsonun girmediği ama müşterinin yediği bir ürünü mutfak fişi 
   - tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs
   - src/Host/DualScreen/DualScreenApplication.cs
   - tests/Architecture/ApiConventions/idempotency_allowlist.json
+  - tests/Architecture/ApiConventions/api_convention_allowlist.json
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
