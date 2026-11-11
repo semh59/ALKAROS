@@ -1,10 +1,14 @@
 # V1-RMD-950 - Beklenen durumlardaki 404 yanıtları (aktif kasa oturumu yok, iş günü yok, kat planı yok) olduğu gibi kalsın
 
 - Task ID: V1-RMD-950
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: decision
 - Surface state: Existing
+
+## Source basis
+
+- PO:2026-11-11
 
 ## Goal
 
