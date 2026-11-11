@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.first-touch.test.tsx (12 tests | 2 failed) 3822ms
+     × titles the ticket by a readable name, not the order code POS-20261111-143012-A1B2C3D4 128ms
+     × titles the ticket by a readable name, not the order code 7 114ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > titles the ticket by a readable name, not the order code POS-20261111-143012-A1B2C3D4
+AssertionError: expected 'POS-20261111-143012-A1B2C3D4' to be 'Sipariş 14:30' // Object.is equality
+
+Expected: "Sipariş 14:30"
+Received: "POS-20261111-143012-A1B2C3D4"
+
+ ❯ src/routes/Cashier.first-touch.test.tsx:116:71
+    114|     await openTill({ active: snapshot("order-1", { orderNumber }) });
+    115|
+    116|     expect(document.querySelector(".ticket-heading h2")!.textContent).…
+       |                                                                       ^
+    117|     expect(document.querySelector(".ticket-heading")!.textContent).not…
+    118|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > titles the ticket by a readable name, not the order code 7
+AssertionError: expected '7' to be 'Sipariş 7' // Object.is equality
+
+Expected: "Sipariş 7"
+Received: "7"
+
+ ❯ src/routes/Cashier.first-touch.test.tsx:116:71
+    114|     await openTill({ active: snapshot("order-1", { orderNumber }) });
+    115|
+    116|     expect(document.querySelector(".ticket-heading h2")!.textContent).…
+       |                                                                       ^
+    117|     expect(document.querySelector(".ticket-heading")!.textContent).not…
+    118|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 10 passed (12)
+   Start at  14:09:42
+   Duration  5.27s (transform 1.84s, setup 0ms, import 141ms, tests 3.82s, environment 1.04s)
+

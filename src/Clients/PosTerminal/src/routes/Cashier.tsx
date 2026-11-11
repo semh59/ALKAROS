@@ -57,6 +57,12 @@ const focusableSelector = [
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
 
+// The server's order code starts with its creation clock time (POS-yyyyMMdd-HHmmss-...): that is what a cashier can tell orders apart by.
+function orderTitle(orderNumber: string): string {
+  const created = /^POS-\d{8}-(\d{2})(\d{2})\d{2}-/.exec(orderNumber);
+  return created ? `Sipariş ${created[1]}:${created[2]}` : `Sipariş ${orderNumber}`;
+}
+
 // The customer display must load from its own origin so the browser partitions
 // its storage from the cashier's (finding B-4). runtime-configuration provides
 // that origin; without it the link stays relative (single-origin / legacy).
@@ -857,7 +863,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           <div className="ticket-heading">
             <div>
               <span className="eyebrow dark">AKTİF SİPARİŞ</span>
-              <h2>{activeOrder?.orderNumber ?? "Yeni satış"}</h2>
+              <h2>{activeOrder ? orderTitle(activeOrder.orderNumber) : "Yeni satış"}</h2>
             </div>
             <div className="ticket-meta"><strong>{formatQuantity(itemCount)}</strong><span>ürün</span></div>
           </div>

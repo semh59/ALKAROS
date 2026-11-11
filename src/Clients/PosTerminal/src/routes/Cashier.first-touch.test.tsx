@@ -107,6 +107,17 @@ describe("Cashier opens the order on the first product tap", () => {
     expect(document.body.textContent).toContain("Ürüne dokununca sipariş açılır");
   });
 
+  it.each([
+    ["POS-20261111-143012-A1B2C3D4E5F6", "Sipariş 14:30"],
+    ["POS-20261111-000512-A1B2C3D4E5F6", "Sipariş 00:05"],
+    ["7", "Sipariş 7"],
+    ["POS-143012", "Sipariş POS-143012"],
+  ])("titles the ticket by a readable name for the order code %s", async (orderNumber, title) => {
+    await openTill({ active: snapshot("order-1", { orderNumber }) });
+
+    expect(document.querySelector(".ticket-heading h2")!.textContent).toBe(title);
+  });
+
   it("opens an order and adds the first product with the revision the opening answered", async () => {
     const till = await openTill();
 

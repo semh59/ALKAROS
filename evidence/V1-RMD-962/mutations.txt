@@ -1,0 +1,5 @@
+M1 the raw code is shown again:       Tests  4 failed | 10 passed (14)
+M2 hour and minute swapped:       Tests  2 failed | 12 passed (14)
+M3 an unknown format shows the bare code:       Tests  2 failed | 12 passed (14)
+M4 the pattern only accepts an 8-character suffix:       Tests  2 failed | 12 passed (14)
+M5 leading zeros dropped:       Tests  1 failed | 13 passed (14)

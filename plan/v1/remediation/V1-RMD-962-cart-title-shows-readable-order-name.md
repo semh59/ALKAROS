@@ -1,7 +1,7 @@
 # V1-RMD-962 - Sepet başlığı teknik sipariş kodu göstermesin
 
 - Task ID: V1-RMD-962
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
