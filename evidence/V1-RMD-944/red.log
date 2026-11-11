@@ -1,0 +1,81 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says why the request button is off and drops the sentence when the missing text is typed
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303520-0.7197278600133433:254:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303520-0.7197278600133433:415:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303520-0.7197278600133433:521:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-item-refund.test.js > split-payment.js item based refund > says which choice is still missing for the item refund, one at a time, until the button turns on
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303532-0.8850442948725441:254:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303532-0.8850442948725441:415:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303532-0.8850442948725441:521:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says why the reject button is off and drops the sentence when the missing text is typed
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303688-0.6264275179748999:254:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303688-0.6264275179748999:415:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303688-0.6264275179748999:521:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > says why the complete button is off and drops the sentence when the missing text is typed
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303804-0.30100016935753526:254:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303804-0.30100016935753526:415:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794390303804-0.30100016935753526:521:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-item-refund.test.js (10 tests | 1 failed) 2626ms
+     × says which choice is still missing for the item refund, one at a time, until the button turns on 204ms
+ ❯ split-payment-refunds.test.js (20 tests | 3 failed) 3066ms
+     × says why the request button is off and drops the sentence when the missing text is typed 181ms
+     × says why the reject button is off and drops the sentence when the missing text is typed 118ms
+     × says why the complete button is off and drops the sentence when the missing text is typed 112ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-item-refund.test.js > split-payment.js item based refund > says which choice is still missing for the item refund, one at a time, until the button turns on
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ hint split-payment-item-refund.test.js:99:124
+     97|     await open();
+     98|     await vi.waitFor(() => expect(quantity(TEA)).not.toBeNull());
+     99|     const hint = () => submit().nextElementSibling?.getAttribute("data…
+       |                                                                                                                            ^
+    100|
+    101|     expect(hint()).toBe("İade edilecek ürünün adedini yazın.");
+ ❯ split-payment-item-refund.test.js:101:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says why the request button is off and drops the sentence when the missing text is typed
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says why the reject button is off and drops the sentence when the missing text is typed
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says why the complete button is off and drops the sentence when the missing text is typed
+TypeError: Cannot read properties of null (reading 'getAttribute')
+ ❯ split-payment-refunds.test.js:107:39
+    105|
+    106|     expect(button().disabled).toBe(true);
+    107|     expect(button().nextElementSibling.getAttribute("data-reason-hint"…
+       |                                       ^
+    108|     expect(button().nextElementSibling.textContent).toBe(sentence);
+    109|     expect(button().getAttribute("aria-describedby")).toBe(button().ne…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 26 passed (30)
+   Start at  12:45:02
+   Duration  4.49s (transform 1.78s, setup 32ms, import 104ms, tests 5.69s, environment 2.20s)
+

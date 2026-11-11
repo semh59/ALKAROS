@@ -93,6 +93,33 @@ describe("split-payment.js item based refund", () => {
     document.body.innerHTML = "";
   });
 
+  it("says which choice is still missing for the item refund, one at a time, until the button turns on", async () => {
+    await open();
+    await vi.waitFor(() => expect(quantity(TEA)).not.toBeNull());
+    const hint = () => (submit().nextElementSibling?.hasAttribute("data-reason-hint") ? submit().nextElementSibling.textContent : "");
+
+    expect(hint()).toBe("İade edilecek ürünün adedini yazın.");
+    typeQuantity(TEA, "5");
+    expect(hint()).toBe("Ürün adedini sayı olarak, kalan adedi aşmayacak şekilde yazın.");
+    typeQuantity(TEA, "2");
+    expect(hint()).toBe("İadenin düşeceği ödemeyi seçin.");
+    choose("[data-item-payment]", PAYMENT_ID);
+    expect(hint()).toBe("Ürünlerin stoğa dönüp dönmeyeceğini seçin.");
+    choose("[data-item-stock]", "yes");
+    expect(hint()).toBe("İade gerekçesini seçin ya da yazın.");
+    chooseReason("İkram");
+
+    expect(submit().disabled).toBe(false);
+    expect(submit().nextElementSibling?.hasAttribute("data-reason-hint") ?? false).toBe(false);
+    typeQuantity(TEA, "");
+    expect(hint()).toBe("İade edilecek ürünün adedini yazın.");
+    expect(document.querySelectorAll('[data-refund-action="request-items"] + [data-reason-hint]')).toHaveLength(1);
+    typeQuantity(TEA, "2");
+    expect(submit().nextElementSibling?.hasAttribute("data-reason-hint") ?? false).toBe(false);
+    expect(submit().disabled).toBe(false);
+    expect(submit().hasAttribute("aria-describedby")).toBe(false);
+  });
+
   it("lists items with what is left and sends the chosen units, payment, stock choice and reason", async () => {
     const fetchMock = await open();
     await fillAll();

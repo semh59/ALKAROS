@@ -1,0 +1,6 @@
+M1 the hint is not removed when the button turns on: tests failed (restored)
+M2 the stock choice is not named as missing: item test failed (restored)
+M3 the hints are not drawn after a render: tests failed (restored)
+M4 the hints are not updated while typing: tests failed (restored)
+M5 the sentence is also shown while a refund request is being sent: the new test failed (restored)
+M6 the row style that gives the sentence its own line is removed: the style test failed (restored)

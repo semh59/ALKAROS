@@ -1571,6 +1571,15 @@
     return !!chosen && chosen.length > 0 && !!state.itemPayment && !!state.itemStock && !!state.itemReason.trim();
   }
 
+  function itemsMissingText() {
+    var chosen = chosenItems();
+    if (!chosen) return 'Ürün adedini sayı olarak, kalan adedi aşmayacak şekilde yazın.';
+    if (chosen.length === 0) return 'İade edilecek ürünün adedini yazın.';
+    if (!state.itemPayment) return 'İadenin düşeceği ödemeyi seçin.';
+    if (!state.itemStock) return 'Ürünlerin stoğa dönüp dönmeyeceğini seçin.';
+    return 'İade gerekçesini seçin ya da yazın.';
+  }
+
   function renderItemRefund() {
     var items = refundableItems();
     if (items.length === 0) return '';
@@ -1596,7 +1605,7 @@
       '<select class="sp-input" data-item-payment="1" aria-label="İadenin düşeceği ödeme"' + disabled + '>' + paymentOptions + '</select>' +
       '<select class="sp-input" data-item-stock="1" aria-label="Stoğa geri dönüş"' + disabled + '>' + stockOptions + '</select>' +
       renderReasonField('items', 'İade gerekçesi') +
-      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request-items"' +
+      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request-items" data-disabled-reason=""' +
       (state.refundBusy || !itemsReady() ? ' disabled' : '') + '>Seçilen ürünleri iade et</button></div>'
     );
   }
@@ -1618,6 +1627,7 @@
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(line.amount) + '</span>' +
           renderReasonField('refund:' + line.paymentId, 'İade gerekçesi (' + formatMoney(line.amount) + ')') +
           '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
+          ' data-disabled-reason="İade istemek için bir gerekçe seçin ya da yazın."' +
           (disabled || (String(state.refundReasons[line.paymentId] || '').trim() ? '' : ' disabled')) + '>İade iste</button></div>'
         );
       }).join('') +
@@ -1641,6 +1651,7 @@
             renderReasonField('note:' + row.requestId, 'Ret gerekçesi') +
             confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary') +
             '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="reject" data-request-id="' + id + '"' +
+            ' data-disabled-reason="Reddetmek için ret gerekçesini seçin ya da yazın."' +
             (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')) + '>Reddet</button>';
         } else if (row.status === 'AwaitingManualRefund' && row.method === 'Eft') {
           actions =
@@ -1652,6 +1663,7 @@
             '<input class="sp-input" type="text" maxlength="50" data-refund-slip="' + id + '" aria-label="İade fiş numarası" ' +
             'placeholder="Fiş numarası" value="' + escapeHtml(state.refundSlips[row.requestId] || '') + '">' +
             '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="complete" data-request-id="' + id + '"' +
+            ' data-disabled-reason="İadeyi tamamlamak için fiş numarasını yazın."' +
             (disabled || (String(state.refundSlips[row.requestId] || '').trim() ? '' : ' disabled')) + '>İadeyi tamamla</button>';
         }
         return (
@@ -1807,9 +1819,37 @@
     if (element && !element.disabled) refundAction(element.getAttribute('data-refund-action'), element);
   }
 
+  // Under every button that is off for a missing entry, one sentence names what is missing.
+  var reasonHintCount = 0;
+  function syncDisabledReasons() {
+    app.querySelectorAll('[data-disabled-reason]').forEach(function (button) {
+      var next = button.nextElementSibling;
+      var hint = next && next.hasAttribute('data-reason-hint') ? next : null;
+      var text = button.disabled && !state.refundBusy
+        ? (button.getAttribute('data-refund-action') === 'request-items' ? itemsMissingText() : button.getAttribute('data-disabled-reason'))
+        : '';
+      if (!text) {
+        if (hint) hint.remove();
+        button.removeAttribute('aria-describedby');
+        return;
+      }
+      if (!hint) {
+        hint = document.createElement('p');
+        hint.className = 'sp-hint';
+        hint.setAttribute('data-reason-hint', '');
+        hint.setAttribute('role', 'status');
+        hint.id = 'reason-hint-' + (reasonHintCount += 1);
+        button.after(hint);
+      }
+      hint.textContent = text;
+      button.setAttribute('aria-describedby', hint.id);
+    });
+  }
+
   function toggleItemsButton() {
     var button = app.querySelector('[data-refund-action="request-items"]');
     if (button) button.disabled = state.refundBusy || !itemsReady();
+    syncDisabledReasons();
   }
 
   function onRefundInput(event) {
@@ -1822,6 +1862,7 @@
     function toggle(selector) {
       var button = app.querySelector(selector);
       if (button) button.disabled = state.refundBusy || !filled;
+      syncDisabledReasons();
     }
     if (el.id === 'cancel-reason') {
       state.cancelReason = el.value;
@@ -2381,6 +2422,11 @@
   }
 
   function render() {
+    renderPhase();
+    syncDisabledReasons();
+  }
+
+  function renderPhase() {
     if (state.phase === 'checking') {
       app.innerHTML = '<div class="sp-loading">Hesap yükleniyor…</div>';
       return;

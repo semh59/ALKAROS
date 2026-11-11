@@ -164,6 +164,8 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
   border: 1px solid var(--color-border); border-radius: var(--radius-md);
   padding: 12px 14px;
 }
+.sp-line { flex-wrap: wrap; }
+.sp-line .sp-hint { flex-basis: 100%; margin: 0; }
 .sp-line-method { font-weight: 700; color: var(--color-ink); font-size: 14px; }
 .sp-line-amount { font-weight: 700; color: var(--color-ink); }
 .sp-line-status { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }

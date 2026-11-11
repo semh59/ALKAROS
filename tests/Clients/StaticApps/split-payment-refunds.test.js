@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { loadApp } from "./support/loadApp.js";
 import { installFetchRouter } from "./support/fetchRouter.js";
@@ -92,6 +93,60 @@ describe("split-payment.js cancel and refund", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
+  });
+
+  it.each([
+    ["request", paidSummary, [], '[data-refund-action="request"]', "İade istemek için bir gerekçe seçin ya da yazın.", '[data-refund-reason="' + PAYMENT_ID + '"]'],
+    ["reject", paidSummary, [request("Requested")], '[data-refund-action="reject"]', "Reddetmek için ret gerekçesini seçin ya da yazın.", '[data-refund-note="' + REQUEST_ID + '"]'],
+    ["complete", paidSummary, [request("AwaitingManualRefund")], '[data-refund-action="complete"]', "İadeyi tamamlamak için fiş numarasını yazın.", '[data-refund-slip="' + REQUEST_ID + '"]'],
+  ])("says why the %s button is off and drops the sentence when the missing text is typed", async (_name, summary, requests, buttonSelector, sentence, fieldSelector) => {
+    await open(routes({ summary, requests }));
+    await vi.waitFor(() => expect(document.querySelector(buttonSelector)).not.toBeNull());
+    const button = () => document.querySelector(buttonSelector);
+
+    expect(button().disabled).toBe(true);
+    expect(button().nextElementSibling.hasAttribute("data-reason-hint")).toBe(true);
+    expect(button().nextElementSibling.textContent).toBe(sentence);
+    expect(button().getAttribute("aria-describedby")).toBe(button().nextElementSibling.id);
+
+    type(fieldSelector, "Yanlış tutar");
+
+    expect(button().disabled).toBe(false);
+    expect(button().nextElementSibling?.hasAttribute("data-reason-hint") ?? false).toBe(false);
+    expect(button().hasAttribute("aria-describedby")).toBe(false);
+  });
+
+  it("keeps one sentence per row under the right button, brings it back when the text is cleared and shows none while a request is being sent", async () => {
+    const second = "55555555-5555-5555-5555-555555555555";
+    const twoPaid = { ...paidSummary, allocations: [...paidSummary.allocations, { allocationId: "a2", paymentId: second, amount: 40, paymentStatus: "Approved" }] };
+    const fetchMock = await open(routes({ summary: twoPaid, requests: [], post: { request: { delayMs: 60, body: request("Requested") } } }));
+    await vi.waitFor(() => expect(document.querySelectorAll('[data-refund-action="request"]')).toHaveLength(2));
+    const buttons = () => [...document.querySelectorAll('[data-refund-action="request"]')];
+    const hints = () => document.querySelectorAll("[data-reason-hint]");
+
+    expect(hints()).toHaveLength(2);
+    expect(new Set([...hints()].map((node) => node.id)).size).toBe(2);
+    buttons().forEach((button) => expect(button.getAttribute("aria-describedby")).toBe(button.nextElementSibling.id));
+    expect([...hints()].every((node) => node.getAttribute("role") === "status" && node.className === "sp-hint")).toBe(true);
+
+    type('[data-refund-reason="' + PAYMENT_ID + '"]', "Yanlış tutar");
+    expect(hints()).toHaveLength(1);
+    expect(buttons()[1].nextElementSibling.id).toBe(buttons()[1].getAttribute("aria-describedby"));
+
+    type('[data-refund-reason="' + PAYMENT_ID + '"]', "");
+    expect(hints()).toHaveLength(2);
+
+    type('[data-refund-reason="' + PAYMENT_ID + '"]', "Yanlış tutar");
+    document.querySelector('[data-refund-action="request"][data-payment-id="' + PAYMENT_ID + '"]').click();
+    await vi.waitFor(() => expect(buttons().every((button) => button.disabled)).toBe(true));
+    expect(hints()).toHaveLength(0);
+    await vi.waitFor(() => expect(posted(fetchMock, "/refund-requests")).not.toBeNull());
+  });
+
+  it("lets a sentence under a button inside a payment or request row take a line of its own", () => {
+    const css = readFileSync(resolve(pageDir, "split-payment.css"), "utf8");
+    expect(css).toMatch(/\.sp-line\s*\{\s*flex-wrap:\s*wrap;\s*\}/);
+    expect(css).toMatch(/\.sp-line \.sp-hint\s*\{[^}]*flex-basis:\s*100%/);
   });
 
   it("offers approve and reject only on the requests the server says the caller may decide", async () => {
