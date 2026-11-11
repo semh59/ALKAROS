@@ -1,7 +1,7 @@
 # V1-RMD-941 - PosTerminal hesap bölme ekranı hesap durumu hatasında bölme cümlesini göstersin
 
 - Task ID: V1-RMD-941
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

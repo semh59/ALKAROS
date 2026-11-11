@@ -27,7 +27,7 @@ const splitFailureTexts: Record<string, string> = {
   GRANT_DENIED: "İndirim isteği reddedildi.",
   UNSUPPORTED_ORDER_STATE: "Bu sipariş henüz mutfağa gönderilmedi ya da kapanmış; önce siparişi gönderin.",
   CONCURRENT_MODIFICATION: "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi. Hesabı yenileyin.",
-  UNSUPPORTED_BILL_STATE: "Bu hesap durumunda değişiklik yapılamaz.",
+  UNSUPPORTED_BILL_STATE: "Bu hesap durumunda bölme tasarımı değiştirilemez.",
   DISCOUNT_BELOW_COLLECTED: "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz.",
   ITEM_SPLIT_ON_ADJUSTED_BILL: "Ek ücret veya bahşiş eklenmiş hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın.",
   BILL_HAS_PAYMENT: "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli.",

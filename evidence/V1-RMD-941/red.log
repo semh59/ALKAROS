@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/billingApi.test.ts (3 tests | 1 failed) 18ms
+     × gives every known split error code and every status a Turkish sentence of its own 9ms
+ ❯ src/routes/workspace.test.tsx (39 tests | 1 failed) 1161ms
+     × shows the fixed Turkish sentence for the split-design error code, not the generic fallback or the server text 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /billing route surfaces the real backend error message > shows the fixed Turkish sentence for the split-design error code, not the generic fallback or the server text
+AssertionError: expected 'Ana içeriğe geçTerminalTerminal 66666…' to contain 'Bu hesap durumunda bölme tasarımı değ…'
+
+Expected: "Bu hesap durumunda bölme tasarımı değiştirilemez."
+Received: "Ana içeriğe geçTerminalTerminal 66666666KullanıcıTest KullanıcıRolKasiyer / OperasyonMüşteri ekranıÇıkışHesapHesap bölmeKişi, ürün veya tutar bazlı hesap paylaştırmaHesap alınamadıBu hesap durumunda değişiklik yapılamaz.Tekrar deneÇevrimiçiVeri: Çevrimiçi doğrulandı"
+
+ ❯ src/routes/workspace.test.tsx:393:39
+    391|     await act(async () => Promise.resolve());
+    392|
+    393|     expect(document.body.textContent).toContain("Bu hesap durumunda bö…
+       |                                       ^
+    394|     expect(document.body.textContent).not.toContain("raw english text"…
+    395|     expect(document.body.textContent).not.toContain("Hesap bölme veris…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/billing/billingApi.test.ts > billing split client > gives every known split error code and every status a Turkish sentence of its own
+AssertionError: expected 'Bu hesap durumunda değişiklik yapılam…' to be 'Bu hesap durumunda bölme tasarımı değ…' // Object.is equality
+
+Expected: "Bu hesap durumunda bölme tasarımı değiştirilemez."
+Received: "Bu hesap durumunda değişiklik yapılamaz."
+
+ ❯ src/features/billing/billingApi.test.ts:49:65
+     47|     expect(new Set(sentences).size).toBe(codes.length);
+     48|     for (const sentence of sentences) expect(sentence).toMatch(/[ıİşŞğ…
+     49|     expect(describeSplitFailure(409, "UNSUPPORTED_BILL_STATE")).toBe("…
+       |                                                                 ^
+     50|     expect(describeSplitFailure(0, "X")).toContain("Sunucuya ulaşılama…
+     51|     expect(describeSplitFailure(401, "X")).toContain("Oturum");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 40 passed (42)
+   Start at  12:35:24
+   Duration  4.93s (transform 1.91s, setup 0ms, import 2.54s, tests 1.18s, environment 2.20s)
+

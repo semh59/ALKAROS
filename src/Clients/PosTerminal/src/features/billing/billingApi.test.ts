@@ -46,6 +46,7 @@ describe("billing split client", () => {
     const sentences = codes.map((code) => describeSplitFailure(500, code));
     expect(new Set(sentences).size).toBe(codes.length);
     for (const sentence of sentences) expect(sentence).toMatch(/[ıİşŞğĞüÜöÖçÇ]/);
+    expect(describeSplitFailure(409, "UNSUPPORTED_BILL_STATE")).toBe("Bu hesap durumunda bölme tasarımı değiştirilemez.");
     expect(describeSplitFailure(0, "X")).toContain("Sunucuya ulaşılamadı");
     expect(describeSplitFailure(401, "X")).toContain("Oturum");
     expect(describeSplitFailure(403, "X")).toContain("yetkiniz yok");

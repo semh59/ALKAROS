@@ -390,7 +390,7 @@ describe("workspace /billing route surfaces the real backend error message", () 
     await act(async () => Promise.resolve());
     await act(async () => Promise.resolve());
 
-    expect(document.body.textContent).toContain("Bu hesap durumunda değişiklik yapılamaz.");
+    expect(document.body.textContent).toContain("Bu hesap durumunda bölme tasarımı değiştirilemez.");
     expect(document.body.textContent).not.toContain("raw english text");
     expect(document.body.textContent).not.toContain("Hesap bölme verisi alınamadı.");
   });
