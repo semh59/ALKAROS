@@ -18,6 +18,7 @@ function fakeClient(overrides: Partial<StockClient> = {}): StockClient {
     createItem: vi.fn().mockResolvedValue(undefined),
     createLocation: vi.fn().mockResolvedValue(undefined),
     setReorderPoint: vi.fn().mockResolvedValue(undefined),
+    setDefaultLocation: vi.fn().mockResolvedValue(undefined),
     recordCount: vi.fn().mockResolvedValue(undefined),
     recordWaste: vi.fn().mockResolvedValue(undefined),
     getCriticalStock: vi.fn().mockResolvedValue({
@@ -126,6 +127,27 @@ describe("stock section", () => {
     expect(client.setReorderPoint).toHaveBeenCalledWith("i1", null);
   });
 
+  it("changes the default location starting from the current one, and an empty choice clears it", async () => {
+    const client = fakeClient({ listLocations: vi.fn().mockResolvedValue([
+      { id: "l1", code: "DEPO", name: "Ana depo", locationType: "ColdStorage", isActive: true },
+      { id: "l2", code: "MUTFAK", name: "Mutfak", locationType: "Warehouse", isActive: true },
+    ]) });
+    await render(<StockSection client={client} capabilities={manager} />);
+    await press("Konumu değiştir");
+    expect((document.getElementById("stock-location") as HTMLSelectElement).value).toBe("l1");
+    expect(document.getElementById("stock-quantity")).toBeNull();
+
+    await type("stock-location", "l2");
+    await submit("Un");
+    expect(client.setDefaultLocation).toHaveBeenLastCalledWith("i1", "l2");
+    expect(document.body.textContent).toContain("Varsayılan konum kaydedildi.");
+
+    await press("Konumu değiştir");
+    await type("stock-location", "");
+    await submit("Un");
+    expect(client.setDefaultLocation).toHaveBeenLastCalledWith("i1", null);
+  });
+
   it("the server's Turkish reason is shown as is", async () => {
     const client = fakeClient({ recordWaste: vi.fn().mockRejectedValue(new ManagementApiError(409, "INSUFFICIENT_STOCK", "Rafta bu kadar stok yok.")) });
     await render(<StockSection client={client} capabilities={manager} />);
@@ -133,6 +155,17 @@ describe("stock section", () => {
     await type("stock-quantity", "99");
     await submit("Un");
     expect(document.querySelector('[role="alert"]')?.textContent).toBe("Rafta bu kadar stok yok.");
+  });
+
+  it("shows the server's reason when the default location is locked by stock, and offers no location change without inventory.manage", async () => {
+    const client = fakeClient({ setDefaultLocation: vi.fn().mockRejectedValue(new ManagementApiError(409, "STOCK_LOCATION_LOCKED", "Bu kalemin stoku var; varsayılan konumu değiştirilemez.")) });
+    await render(<StockSection client={client} capabilities={manager} />);
+    await press("Konumu değiştir");
+    await submit("Un");
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Bu kalemin stoku var; varsayılan konumu değiştirilemez.");
+
+    await render(<StockSection client={fakeClient()} capabilities={new Set(["reports.view"])} />);
+    expect(buttons()).not.toContain("Konumu değiştir");
   });
 
   it("a new item is created with the chosen type and an optional default location", async () => {
@@ -214,6 +247,8 @@ describe("stock section", () => {
       return `${init?.method ?? "GET"} ${url}${init?.body ? ` ${init.body}` : ""}`;
     };
     const base = "/api/v1/management";
+    expect(await seen(() => api.setDefaultLocation("i1", "l2"))).toBe(`PUT ${base}/inventory/stock-items/i1/default-location {"defaultLocationId":"l2"}`);
+    expect(await seen(() => api.setDefaultLocation("i1", null))).toBe(`PUT ${base}/inventory/stock-items/i1/default-location {"defaultLocationId":null}`);
     expect(await seen(() => api.listMappings("product", "p1"))).toBe(`GET ${base}/inventory/products/p1/stock-mappings`);
     expect(await seen(() => api.listMappings("modifier", "m1"))).toBe(`GET ${base}/inventory/modifiers/m1/stock-mappings`);
     expect(await seen(() => api.assignMapping("modifier", "m1", { stockItemId: "i1", quantityMultiplier: 2, notes: null })))

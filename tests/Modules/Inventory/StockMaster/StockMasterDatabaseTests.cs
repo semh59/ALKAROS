@@ -174,6 +174,21 @@ public sealed class StockMasterDatabaseTests : IClassFixture<StockMasterTestDb>
     }
 
     [Fact]
+    public async Task DefaultLocationCanBeChangedAndClearedAfterCreation()
+    {
+        var first = await _service.CreateLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Depo 1", StockLocationType.Warehouse);
+        var second = await _service.CreateLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Depo 2", StockLocationType.ColdStorage);
+        var item = await _service.CreateStockItemAsync(
+            "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Default Location Item", StockItemType.RawMaterial, "kg", first.Id);
+
+        await _service.SetDefaultLocationAsync(item.Id, second.Id);
+        (await _itemRepo.GetByIdAsync(item.Id))!.DefaultLocationId.Should().Be(second.Id);
+
+        await _service.SetDefaultLocationAsync(item.Id, null);
+        (await _itemRepo.GetByIdAsync(item.Id))!.DefaultLocationId.Should().BeNull();
+    }
+
+    [Fact]
     public async Task Migration059RollbackAndReapplyWorksCleanly()
     {
         await _db.RollbackMigration059Async();

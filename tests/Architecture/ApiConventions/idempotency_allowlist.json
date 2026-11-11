@@ -761,6 +761,10 @@
       "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
       "task": "V1-RMD-440"
     },
+    "PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/default-location": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-967"
+    },
     "PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point": {
       "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
       "task": "V1-RMD-143"

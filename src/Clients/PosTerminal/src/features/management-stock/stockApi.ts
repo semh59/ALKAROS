@@ -13,6 +13,7 @@ export interface StockClient {
   createItem: (input: NewStockItem) => Promise<void>;
   createLocation: (input: NewStockLocation) => Promise<void>;
   setReorderPoint: (itemId: string, value: number | null) => Promise<void>;
+  setDefaultLocation: (itemId: string, locationId: string | null) => Promise<void>;
   recordCount: (itemId: string, stockLocationId: string, countedQuantity: number, notes: string) => Promise<void>;
   recordWaste: (itemId: string, input: WasteInput) => Promise<void>;
   getCriticalStock: () => Promise<CriticalStockReport>;
@@ -39,6 +40,7 @@ export function createStockClient(fetcher: typeof fetch = fetch): StockClient {
     createItem: (input) => send("POST", "/stock-items", input),
     createLocation: (input) => send("POST", "/stock-locations", input),
     setReorderPoint: (itemId, value) => send("PUT", `/stock-items/${itemId}/reorder-point`, { reorderPoint: value }),
+    setDefaultLocation: (itemId, locationId) => send("PUT", `/stock-items/${itemId}/default-location`, { defaultLocationId: locationId }),
     recordCount: (itemId, stockLocationId, countedQuantity, notes) =>
       send("POST", `/stock-items/${itemId}/physical-counts`, { stockLocationId, countedQuantity, notes: notes.trim() || null }),
     recordWaste: (itemId, input) => send("POST", `/stock-items/${itemId}/waste`, { ...input, idempotencyKey: crypto.randomUUID() }),

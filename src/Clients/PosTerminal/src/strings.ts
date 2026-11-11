@@ -1026,6 +1026,8 @@ export const managementText = {
     count: "Sayım gir",
     waste: "Fire kaydet",
     setReorder: "Sipariş noktası",
+    setLocation: "Konumu değiştir",
+    locationSaved: "Varsayılan konum kaydedildi.",
     countedQuantity: "Sayılan miktar",
     notes: "Not (isteğe bağlı)",
     wasteSource: "Fire nedeni türü",

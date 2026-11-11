@@ -1,0 +1,44 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-stock/StockSection.test.tsx (15 tests | 2 failed) 963ms
+     × changes the default location starting from the current one, and an empty choice clears it 35ms
+     × the client maps mappings and waste history to the server's routes 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-stock/StockSection.test.tsx > stock section > changes the default location starting from the current one, and an empty choice clears it
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/management-stock/StockSection.test.tsx:57:34
+     55|   const press = async (text: string) => {
+     56|     const button = [...document.querySelectorAll("button")].find((cand…
+     57|     await act(async () => button.click());
+       |                                  ^
+     58|   };
+     59|   const type = async (id: string, value: string) => {
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ press src/features/management-stock/StockSection.test.tsx:57:11
+ ❯ src/features/management-stock/StockSection.test.tsx:136:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/management-stock/StockSection.test.tsx > stock section > the client maps mappings and waste history to the server's routes
+TypeError: api.setDefaultLocation is not a function
+ ❯ src/features/management-stock/StockSection.test.tsx:239:33
+    237|     };
+    238|     const base = "/api/v1/management";
+    239|     expect(await seen(() => api.setDefaultLocation("i1", "l2"))).toBe(…
+       |                                 ^
+    240|     expect(await seen(() => api.setDefaultLocation("i1", null))).toBe(…
+    241|     expect(await seen(() => api.listMappings("product", "p1"))).toBe(`…
+ ❯ seen src/features/management-stock/StockSection.test.tsx:234:13
+ ❯ src/features/management-stock/StockSection.test.tsx:239:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 13 passed (15)
+   Start at  14:38:13
+   Duration  2.60s (transform 198ms, setup 0ms, import 303ms, tests 963ms, environment 1.06s)
+

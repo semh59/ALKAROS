@@ -1,0 +1,5 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Inventory\bin\Debug\net8.0\ALKAROS.Host.Experience.Inventory.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:09.02]     ALKAROS.Host.Experience.Inventory.Tests.StockMasterHttpTests.AnItemThatHoldsStockKeepsItsDefaultLocationBecauseTheBalanceStaysWhereItIs [FAIL]
+
+Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 15 s - ALKAROS.Host.Experience.Inventory.Tests.dll (net8.0)

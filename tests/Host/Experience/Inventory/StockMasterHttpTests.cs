@@ -363,6 +363,95 @@ public sealed class StockMasterHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ChangingAndClearingTheDefaultLocationPersistsIt()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var first = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var second = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], first);
+
+        using var set = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/default-location", new SetDefaultLocationV1(second));
+        Assert.Equal(HttpStatusCode.OK, set.StatusCode);
+        Assert.Equal(second, (await set.Content.ReadFromJsonAsync<StockItemV1>())!.DefaultLocationId);
+
+        using var clear = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/default-location", new SetDefaultLocationV1(null));
+        Assert.Null((await clear.Content.ReadFromJsonAsync<StockItemV1>())!.DefaultLocationId);
+    }
+
+    [Fact]
+    public async Task ChangingTheDefaultLocationToAnUnknownLocationOrOfAnUnknownItemIsNotFoundAndKeepsTheOldLocation()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var location = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], location);
+
+        using var unknownLocation = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/default-location", new SetDefaultLocationV1(Guid.NewGuid()));
+        using var unknownItem = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{Guid.NewGuid():D}/default-location", new SetDefaultLocationV1(location));
+
+        Assert.Equal(HttpStatusCode.NotFound, unknownLocation.StatusCode);
+        Assert.Equal("İstenen stok konumu bulunamadı.", (await ReadErrorAsync(unknownLocation)).Error.Message);
+        Assert.Equal(HttpStatusCode.NotFound, unknownItem.StatusCode);
+        using var read = await client.GetAsync("/api/v1/management/inventory/stock-items");
+        var items = await read.Content.ReadFromJsonAsync<List<StockItemV1>>();
+        Assert.Equal(location, items!.Single(item => item.Id == stockItemId).DefaultLocationId);
+    }
+
+    [Fact]
+    public async Task AnInactiveDefaultLocationIsRefusedAsInactiveAndKeepsTheOldLocation()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var open = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var closed = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8], isActive: false);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], open);
+
+        using var response = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{stockItemId:D}/default-location", new SetDefaultLocationV1(closed));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("INACTIVE_RESOURCE", (await ReadErrorAsync(response)).Error.Code);
+        using var read = await client.GetAsync("/api/v1/management/inventory/stock-items");
+        Assert.Equal(open, (await read.Content.ReadFromJsonAsync<List<StockItemV1>>())!.Single(item => item.Id == stockItemId).DefaultLocationId);
+    }
+
+    [Fact]
+    public async Task AnItemThatHoldsStockKeepsItsDefaultLocationBecauseTheBalanceStaysWhereItIs()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.ManagerToken);
+        var first = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var second = await _database.SeedStockLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8]);
+        var stockItemId = await _database.SeedStockItemAsync("ITEM-" + Guid.NewGuid().ToString("N")[..8], first);
+        await _database.SeedStockBalanceAsync(stockItemId, first, 10m);
+        var route = $"/api/v1/management/inventory/stock-items/{stockItemId:D}/default-location";
+
+        using var move = await client.PutAsJsonAsync(route, new SetDefaultLocationV1(second));
+        using var clear = await client.PutAsJsonAsync(route, new SetDefaultLocationV1(null));
+        using var same = await client.PutAsJsonAsync(route, new SetDefaultLocationV1(first));
+
+        Assert.Equal(HttpStatusCode.Conflict, move.StatusCode);
+        var error = (await ReadErrorAsync(move)).Error;
+        Assert.Equal("STOCK_LOCATION_LOCKED", error.Code);
+        Assert.Equal("Bu kalemin stoku var; varsayılan konumu değiştirilemez.", error.Message);
+        Assert.Equal(HttpStatusCode.Conflict, clear.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, same.StatusCode);
+        Assert.Equal(first, (await same.Content.ReadFromJsonAsync<StockItemV1>())!.DefaultLocationId);
+    }
+
+    [Fact]
+    public async Task AnUnauthorizedCallerCannotChangeTheDefaultLocation()
+    {
+        using var client = CreateClient(StockMasterTestDatabase.DeniedToken);
+
+        using var response = await client.PutAsJsonAsync(
+            $"/api/v1/management/inventory/stock-items/{Guid.NewGuid():D}/default-location", new SetDefaultLocationV1(null));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task RecordingAPhysicalCountAppliesTheDeltaAndReturnsIt()
     {
         using var client = CreateClient(StockMasterTestDatabase.ManagerToken);

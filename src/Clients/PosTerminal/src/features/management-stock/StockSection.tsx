@@ -37,7 +37,7 @@ function PanelView<T>({ title, panel, onRetry, children }: { title: string; pane
 const Empty = () => <p className="stock__empty">{t.empty}</p>;
 const stat = (value: number) => formatQuantity(value);
 
-type RowAction = { kind: "count" | "waste" | "reorder"; item: StockItem };
+type RowAction = { kind: "count" | "waste" | "reorder" | "location"; item: StockItem };
 
 export function StockSection({ capabilities, client }: { capabilities: ReadonlySet<string>; client?: StockClient }) {
   const api = useMemo(() => client ?? createStockClient(), [client]);
@@ -97,6 +97,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
       if (text !== "" && value === null) return invalid();
       return void act(() => api.setReorderPoint(item.id, value), t.reorderSaved, refreshStock);
     }
+    if (kind === "location") return void act(() => api.setDefaultLocation(item.id, field("location") || null), t.locationSaved, refreshStock);
     const quantity = parseQuantity(field("quantity"));
     if (quantity === null) return invalid();
     if (!field("location")) return setNotice({ tone: "error", text: t.pickLocation });
@@ -152,11 +153,12 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
               <Button data-telemetry-id="b.management-stock.stocksection.3" variant="quiet" onClick={() => openAction({ kind: "count", item })}>{t.count}</Button>
               <Button data-telemetry-id="b.management-stock.stocksection.4" variant="quiet" onClick={() => openAction({ kind: "waste", item })}>{t.waste}</Button>
               <Button data-telemetry-id="b.management-stock.stocksection.5" variant="quiet" onClick={() => openAction({ kind: "reorder", item })}>{t.setReorder}</Button>
+              <Button data-telemetry-id="b.management-stock.stocksection.13" variant="quiet" onClick={() => openAction({ kind: "location", item })}>{t.setLocation}</Button>
             </td></tr>)}</tbody>
         </table>}
 
         {action && <form className="stock__form" aria-label={`${action.item.name}`} onSubmit={submitAction}>
-          <h4>{action.item.name} · {action.kind === "count" ? t.count : action.kind === "waste" ? t.waste : t.setReorder}</h4>
+          <h4>{action.item.name} · {action.kind === "count" ? t.count : action.kind === "waste" ? t.waste : action.kind === "location" ? t.setLocation : t.setReorder}</h4>
           {action.kind === "reorder"
             ? <TextField id="stock-reorder" label={t.reorderPoint} hint={t.reorderHint} inputMode="decimal" value={field("reorder")} onChange={set("reorder")} />
             : <>
@@ -164,6 +166,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
                 <option value="">—</option>
                 {locations.state === "ready" && locationOptions(locations.data)}
               </SelectField>
+              {action.kind !== "location" && <>
               <TextField id="stock-quantity" label={action.kind === "count" ? t.countedQuantity : `${t.quantity} (${action.item.trackingUnitCode})`} inputMode="decimal" value={field("quantity")} onChange={set("quantity")} />
               {action.kind === "count"
                 ? <TextField id="stock-notes" label={t.notes} value={field("notes")} onChange={set("notes")} />
@@ -173,6 +176,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
                   </SelectField>
                   <TextField id="stock-reason" label={t.reason} value={field("reason")} onChange={set("reason")} />
                 </>}
+              </>}
             </>}
           <div className="stock__actions">
             <Button data-telemetry-id="b.management-stock.stocksection.6" type="submit" disabled={busy}>{t.save}</Button>

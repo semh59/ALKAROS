@@ -108,6 +108,31 @@ public sealed class StockMasterService : IStockMasterService
         return item;
     }
 
+    public async Task<StockItem> SetDefaultLocationAsync(
+        Guid stockItemId,
+        Guid? defaultLocationId,
+        CancellationToken ct = default)
+    {
+        var item = await _itemRepo.GetByIdAsync(stockItemId, ct)
+            ?? throw new StockItemNotFoundException(stockItemId);
+
+        if (defaultLocationId.HasValue)
+        {
+            var loc = await _locationRepo.GetByIdAsync(defaultLocationId.Value, ct)
+                ?? throw new StockLocationNotFoundException(defaultLocationId.Value);
+
+            if (!loc.IsActive)
+            {
+                throw new InactiveStockLocationException(
+                    $"Cannot set inactive stock location '{loc.Code}' as default location.");
+            }
+        }
+
+        item.Update(item.Name, item.ItemType, item.TrackingUnitCode, defaultLocationId, item.IsActive, item.ReorderPoint);
+        await _itemRepo.UpdateAsync(item, ct);
+        return item;
+    }
+
     public async Task<ProductStockMapping> AssignProductToStockItemAsync(
         Guid productId,
         Guid stockItemId,

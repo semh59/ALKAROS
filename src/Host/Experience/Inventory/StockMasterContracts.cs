@@ -28,6 +28,9 @@ public sealed record StockItemV1(
 /// <summary>V11-INV-009: set (or clear, with null) a stock item's persisted low-stock threshold.</summary>
 public sealed record SetReorderPointV1(decimal? ReorderPoint);
 
+/// <summary>Changes (or clears, with null) the location a stock item is kept in by default.</summary>
+public sealed record SetDefaultLocationV1(Guid? DefaultLocationId);
+
 /// <summary>
 /// <paramref name="AvailableQuantity"/> is null when the mapped stock item
 /// has no balance row yet (never received/produced) — distinct from zero,

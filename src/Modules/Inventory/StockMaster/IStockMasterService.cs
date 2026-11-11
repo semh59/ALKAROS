@@ -30,6 +30,12 @@ public interface IStockMasterService
         decimal? reorderPoint,
         CancellationToken ct = default);
 
+    /// <summary>Changes (or clears, with null) the location a stock item is kept in by default; the location must exist and be active.</summary>
+    Task<StockItem> SetDefaultLocationAsync(
+        Guid stockItemId,
+        Guid? defaultLocationId,
+        CancellationToken ct = default);
+
     Task<ProductStockMapping> AssignProductToStockItemAsync(
         Guid productId,
         Guid stockItemId,

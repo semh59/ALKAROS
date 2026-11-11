@@ -266,6 +266,29 @@ public static class StockMasterEndpoints
             return Results.Ok(StockItemV1.From(updated));
         });
 
+        group.MapPut("/stock-items/{stockItemId:guid}/default-location", async (
+            Guid stockItemId,
+            SetDefaultLocationV1 request,
+            IStockMasterService service,
+            NpgsqlDataSource dataSource,
+            CancellationToken cancellationToken) =>
+        {
+            // Balances and reservations stay at the location they were booked at, so an item that holds stock cannot be moved by changing its default.
+            await using var command = dataSource.CreateCommand(
+                """
+                SELECT i.default_location_id IS DISTINCT FROM @location
+                   AND EXISTS (SELECT 1 FROM inventory.stock_balances b WHERE b.stock_item_id = i.id)
+                FROM inventory.stock_items i WHERE i.id = @item;
+                """);
+            command.Parameters.AddWithValue("location", (object?)request.DefaultLocationId ?? DBNull.Value);
+            command.Parameters.AddWithValue("item", stockItemId);
+            if (await command.ExecuteScalarAsync(cancellationToken) is true)
+                throw new StockItemLocationLockedException();
+
+            var updated = await service.SetDefaultLocationAsync(stockItemId, request.DefaultLocationId, cancellationToken);
+            return Results.Ok(StockItemV1.From(updated));
+        });
+
         // V11-INV-008: a manager/staff member's real shelf count. Records
         // the count regardless of whether it matched the system balance
         // (a match is still evidence for the future AvT report,
@@ -407,6 +430,7 @@ public sealed class StockMasterEndpointFilter : IEndpointFilter
         ProductStockMappingNotFoundException => (404, "NOT_FOUND", "Bu ürün için böyle bir stok eşlemesi bulunamadı."),
         DuplicateStockItemException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok kalemi zaten var."),
         DuplicateStockLocationException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok konumu zaten var."),
+        StockItemLocationLockedException => (409, "STOCK_LOCATION_LOCKED", "Bu kalemin stoku var; varsayılan konumu değiştirilemez."),
         InactiveStockItemException or InactiveStockLocationException => (409, "INACTIVE_RESOURCE", "Bu kayıt pasif durumda."),
         InvalidStockItemException or InvalidStockLocationException or InvalidProductStockMappingException =>
             (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
@@ -448,3 +472,5 @@ public sealed class ProductStockMappingNotFoundException : Exception
         StockItemId = stockItemId;
     }
 }
+
+internal sealed class StockItemLocationLockedException : Exception;

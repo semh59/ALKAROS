@@ -68,12 +68,12 @@ public sealed class StockMasterTestDatabase : PgTestDatabase
             """);
     }
 
-    public async Task<Guid> SeedStockLocationAsync(string code)
+    public async Task<Guid> SeedStockLocationAsync(string code, bool isActive = true)
     {
         var id = Guid.NewGuid();
         await ExecuteAsync(
-            "INSERT INTO inventory.stock_locations (id, code, name, location_type) VALUES (@id, @code, @code, 'Warehouse');",
-            ("id", id), ("code", code));
+            "INSERT INTO inventory.stock_locations (id, code, name, location_type, is_active) VALUES (@id, @code, @code, 'Warehouse', @active);",
+            ("id", id), ("code", code), ("active", isActive));
         return id;
     }
 

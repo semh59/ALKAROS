@@ -98,6 +98,44 @@ public sealed class StockMasterDomainTests
     }
 
     [Fact]
+    public async Task SetDefaultLocationAsyncSetsAndClearsTheLocation()
+    {
+        var locationRepo = new FakeLocationRepository();
+        var location = StockLocation.Create("LOC-A", "Depo A", StockLocationType.Warehouse);
+        await locationRepo.AddAsync(location);
+        var itemRepo = new FakeItemRepository();
+        var item = StockItem.Create("SKU-LOC", "Location Test", StockItemType.RawMaterial, "kg", reorderPoint: 4m);
+        await itemRepo.AddAsync(item);
+        var service = new StockMasterService(locationRepo, itemRepo, new FakeMappingRepository(), new UnitConverter());
+
+        var set = await service.SetDefaultLocationAsync(item.Id, location.Id);
+        set.DefaultLocationId.Should().Be(location.Id);
+        set.ReorderPoint.Should().Be(4m);
+        (await itemRepo.GetByIdAsync(item.Id))!.DefaultLocationId.Should().Be(location.Id);
+
+        var cleared = await service.SetDefaultLocationAsync(item.Id, null);
+        cleared.DefaultLocationId.Should().BeNull();
+        (await itemRepo.GetByIdAsync(item.Id))!.DefaultLocationId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SetDefaultLocationAsyncRefusesAnUnknownItemAnUnknownLocationAndAnInactiveLocation()
+    {
+        var locationRepo = new FakeLocationRepository();
+        var inactive = StockLocation.Create("LOC-OFF", "Kapalı depo", StockLocationType.DryStorage, isActive: false);
+        await locationRepo.AddAsync(inactive);
+        var itemRepo = new FakeItemRepository();
+        var item = StockItem.Create("SKU-REF", "Refuse Test", StockItemType.RawMaterial, "kg");
+        await itemRepo.AddAsync(item);
+        var service = new StockMasterService(locationRepo, itemRepo, new FakeMappingRepository(), new UnitConverter());
+
+        await service.Invoking(s => s.SetDefaultLocationAsync(Guid.NewGuid(), null)).Should().ThrowAsync<StockItemNotFoundException>();
+        await service.Invoking(s => s.SetDefaultLocationAsync(item.Id, Guid.NewGuid())).Should().ThrowAsync<StockLocationNotFoundException>();
+        await service.Invoking(s => s.SetDefaultLocationAsync(item.Id, inactive.Id)).Should().ThrowAsync<InactiveStockLocationException>();
+        (await itemRepo.GetByIdAsync(item.Id))!.DefaultLocationId.Should().BeNull();
+    }
+
+    [Fact]
     public void ProductStockMappingRequiresPositiveMultiplier()
     {
         var prodId = Guid.NewGuid();

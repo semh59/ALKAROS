@@ -1,0 +1,13 @@
+M1 an unknown location is accepted: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:
+M2 an inactive location is accepted: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:
+M3 clearing keeps the old location: Başarısız! - Başarısız:     2, Başarılı:     3, Atlanan:     0, Toplam:
+M4 the change is not saved: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:
+M5 the reorder point is wiped: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:
+M6 an empty choice sends an empty string instead of clearing:       Tests  1 failed | 14 passed (15)
+M7 the quantity field shows for the location action:       Tests  1 failed | 14 passed (15)
+M8 the wrong success message:       Tests  1 failed | 14 passed (15)
+M9 the wrong body field:       Tests  1 failed | 14 passed (15)
+M10 stock never locks the location: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, To
+M11 the same location is locked too: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, To
+M12 the endpoint ignores the requested location: Başarısız! - Başarısız:     4, Başarılı:     1, Atlanan:     0, To
+M13 the lock answers 400: Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, To
