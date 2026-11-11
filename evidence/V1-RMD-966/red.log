@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.first-touch.test.tsx (16 tests | 1 failed) 4129ms
+     × says the catalog is empty, not that a search found nothing, when nobody searched 89ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > says the catalog is empty, not that a search found nothing, when nobody searched
+AssertionError: expected 'Aramanızla eşleşen aktif ürün bulunam…' to be 'Katalogda satılabilir ürün yok. Ürünl…' // Object.is equality
+
+Expected: "Katalogda satılabilir ürün yok. Ürünleri yönetici Menü ekranından ekler."
+Received: "Aramanızla eşleşen aktif ürün bulunamadı."
+
+ ❯ src/routes/Cashier.first-touch.test.tsx:126:19
+    124|
+    125|     const empty = document.querySelector(".catalog-empty")!.textConten…
+    126|     expect(empty).toBe("Katalogda satılabilir ürün yok. Ürünleri yönet…
+       |                   ^
+    127|   });
+    128|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  14:21:53
+   Duration  5.81s (transform 1.81s, setup 0ms, import 139ms, tests 4.13s, environment 1.26s)
+

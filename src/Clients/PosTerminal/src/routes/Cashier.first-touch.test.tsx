@@ -56,6 +56,7 @@ async function openTill({
   active = null as ReturnType<typeof snapshot> | null,
   startOrder = async () => jsonResponse({ orderId: "order-new", orderNumber: "7", revision: 1 }),
   addItem = async () => jsonResponse({ orderId: "order-new", revision: 2 }),
+  products = catalog as unknown[],
 } = {}): Promise<Till> {
   let current = active;
   const till: Till = { calls: [], bodies: [], gates: [], setActive: (order) => { current = order; } };
@@ -64,7 +65,7 @@ async function openTill({
     const method = init?.method ?? "GET";
     till.calls.push(`${method} ${path.replace(/^.*\/api\/v1\/terminals\/[^/]+/, "")}`);
     if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal", capabilities: [] });
-    if (path.endsWith("/catalog")) return jsonResponse(catalog);
+    if (path.endsWith("/catalog")) return jsonResponse(products);
     if (path.endsWith("/orders/active")) {
       const answer = current;
       const gate = till.gates.shift();
@@ -116,6 +117,38 @@ describe("Cashier opens the order on the first product tap", () => {
     await openTill({ active: snapshot("order-1", { orderNumber }) });
 
     expect(document.querySelector(".ticket-heading h2")!.textContent).toBe(title);
+  });
+
+  it("says the catalog is empty, not that a search found nothing, when nobody searched", async () => {
+    await openTill({ products: [] });
+
+    const empty = () => document.querySelector(".catalog-empty")!.textContent;
+    expect(empty()).toBe("Satılabilir ürün yok. Yönetici Menü ekranında ürün, fiyat ve satış durumunu kontrol etmeli.");
+
+    const search = document.querySelector<HTMLInputElement>('input[aria-label="Ürün ara"]')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(search, "   ");
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(empty()).toBe("Satılabilir ürün yok. Yönetici Menü ekranında ürün, fiyat ve satış durumunu kontrol etmeli.");
+  });
+
+  it("says a search found nothing only when something was searched for", async () => {
+    await openTill();
+    const search = document.querySelector<HTMLInputElement>('input[aria-label="Ürün ara"]')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(search, "zzz");
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    expect(document.querySelector(".catalog-empty")!.textContent).toBe("Aramanızla eşleşen aktif ürün bulunamadı.");
+
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(search, "");
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(document.querySelector(".catalog-empty")).toBeNull();
+    expect(card("Pide")).toBeDefined();
   });
 
   it("opens an order and adds the first product with the revision the opening answered", async () => {

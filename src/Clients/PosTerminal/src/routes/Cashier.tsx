@@ -854,7 +854,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               </button>
             ))}
             {visibleProducts.length === 0 && (
-              <div className="catalog-empty">Aramanızla eşleşen aktif ürün bulunamadı.</div>
+              <div className="catalog-empty">{normalizedSearch ? "Aramanızla eşleşen aktif ürün bulunamadı." : "Satılabilir ürün yok. Yönetici Menü ekranında ürün, fiyat ve satış durumunu kontrol etmeli."}</div>
             )}
           </div>
         </section>

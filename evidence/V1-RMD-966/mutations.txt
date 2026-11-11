@@ -1,0 +1,3 @@
+M1 always the search sentence:       Tests  1 failed | 15 passed (16)
+M2 never the search sentence:       Tests  1 failed | 15 passed (16)
+M3 spaces only count as a search:       Tests  1 failed | 15 passed (16)
