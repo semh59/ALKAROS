@@ -87,7 +87,7 @@ export function ExperiencePage({
     identity: {
       // Branch (Sube) is omitted until there is a real multi-branch model;
       // a placeholder string would read as data. (deep-analysis finding F-5)
-      terminalName: `Terminal ${terminalId.slice(0, 8).toUpperCase()}`,
+      terminalName: terminalId.slice(0, 8).toUpperCase(),
       userName: displayName,
       roleLabel,
       capabilities: capabilitySet,

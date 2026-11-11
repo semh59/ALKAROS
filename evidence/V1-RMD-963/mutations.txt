@@ -1,0 +1,4 @@
+M1 the word comes back in the value:       Tests  1 failed | 39 passed (40)
+M2 the value is empty:       Tests  1 failed | 39 passed (40)
+M3 lowercase id:       Tests  1 failed | 39 passed (40)
+M4 two extra characters leak:       Tests  1 failed | 39 passed (40)

@@ -1,7 +1,7 @@
 # V1-RMD-963 - Başlıkta 'Terminal  Terminal D60B3DF9' tekrarı kalksın
 
 - Task ID: V1-RMD-963
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
