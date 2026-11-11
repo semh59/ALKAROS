@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ customer-accounts-flows.test.js (14 tests | 1 failed) 3634ms
+     × reads the list and the open customer again when the page is shown again, keeping what is being typed 1197ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  customer-accounts-flows.test.js > customer-accounts.js > reads the list and the open customer again when the page is shown again, keeping what is being typed
+AssertionError: expected '\n  ← Kasaya dönMüşteriCari HesaplarM…' to contain '280,00'
+
+- Expected
++ Received
+
+- 280,00
++
++   ← Kasaya dönMüşteriCari HesaplarMüşterilerAraAli VeliBorç ₺250,00 · Limit ₺1.000,00Yeni müşteriVergi kimliği yokVKN (şirket)TCKN (şahıs)Müşteri ekleAli VeliBorç₺250,00Kredi limiti₺1.000,00Kullanılabilir₺750,00VadeTanımsızVergi kimliğiTanımsızNakit tahsilatTahsil etKredi limitini ve vadeyi yalnız yönetici oturumu değiştirebilir.Fatura için vergi kimliğiVergi kimliği yokVKN (şirket)TCKN (şahıs)Vergi kimliğini kaydetHareketlerHenüz hareket yok.
++   
++   
++
+
+ ❯ customer-accounts-flows.test.js:76:43
+     74|     document.dispatchEvent(new Event("visibilitychange"));
+     75|
+     76|     await vi.waitFor(() => expect(text()).toContain("280,00"));
+       |                                           ^
+     77|     expect(calls.slice(before).map((call) => call.url.split("/").slice…
+     78|     expect($("ca-receipt-amount").value).toBe("50");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  12:53:53
+   Duration  5.01s (transform 291ms, setup 24ms, import 49ms, tests 3.63s, environment 1.04s)
+

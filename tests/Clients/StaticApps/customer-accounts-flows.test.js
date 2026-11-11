@@ -51,10 +51,137 @@ function type(id, value) {
 }
 
 describe("customer-accounts.js", () => {
-  beforeEach(() => vi.resetModules());
+  const shownListeners = [];
+  beforeEach(() => {
+    vi.resetModules();
+    const add = document.addEventListener.bind(document);
+    vi.spyOn(document, "addEventListener").mockImplementation((type, listener, options) => {
+      if (type === "visibilitychange") shownListeners.push(listener);
+      add(type, listener, options);
+    });
+  });
   afterEach(() => {
+    shownListeners.splice(0).forEach((listener) => document.removeEventListener("visibilitychange", listener));
+    vi.restoreAllMocks();
+    delete document.visibilityState;
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
+  });
+
+  it("reads the list and the open customer again when the page is shown again, keeping what is being typed", async () => {
+    let balance = 250;
+    const calls = await open({
+      routes: {
+        "GET /customers": () => reply(200, [{ ...customer, balance }]),
+        "GET /statement": () => reply(200, { ...statement, customer: { ...customer, balance } }),
+      },
+    });
+    const cardDebt = () => document.querySelector("section .sp-summary-row.is-total .value").textContent;
+    expect(cardDebt()).toContain("250,00");
+    const listDebt = () => document.querySelector(".sp-customer .sp-customer-meta").textContent;
+    expect(listDebt()).toContain("250,00");
+    type("ca-receipt-amount", "50");
+    balance = 280;
+    const before = calls.length;
+
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    await vi.waitFor(() => expect(cardDebt()).toContain("280,00"));
+    expect(listDebt()).toContain("280,00");
+    expect(calls.slice(before).map((call) => call.url.split("/").slice(-1)[0])).toEqual(expect.arrayContaining(["customers", "statement"]));
+    expect($("ca-receipt-amount").value).toBe("50");
+  });
+
+  it("does not read again while the page is hidden", async () => {
+    const calls = await open();
+    const before = calls.length;
+
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(calls.length).toBe(before);
+  });
+
+  it("drops a refresh answer that a newer customer choice overtook", async () => {
+    let release;
+    const gate = new Promise((resolve) => { release = resolve; });
+    let slow = false;
+    const calls = await open({
+      routes: {
+        "GET /statement": () => (slow ? gate.then(() => reply(200, { ...statement, customer: { ...customer, balance: 999 } })) : reply(200, statement)),
+      },
+    });
+    const field = $("ca-receipt-amount");
+    field.focus();
+    field.value = "12345";
+    slow = true;
+
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    await vi.waitFor(() => expect(calls.filter((call) => call.url.endsWith("/statement")).length).toBeGreaterThan(1));
+    slow = false;
+    document.querySelector(".sp-customer").click();
+    await vi.waitFor(() => expect(calls.filter((call) => call.url.endsWith("/statement")).length).toBeGreaterThan(2));
+    release();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(document.querySelector("section .sp-summary-row.is-total .value").textContent).toContain("250,00");
+  });
+
+  it("logs a refresh that could not reach the server and leaves the screen as it was", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    let down = false;
+    await open({
+      routes: {
+        "GET /customers": () => (down ? Promise.reject(new TypeError("offline")) : reply(200, [customer])),
+        "GET /statement": () => (down ? Promise.reject(new TypeError("offline")) : reply(200, statement)),
+      },
+    });
+    down = true;
+
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    await vi.waitFor(() => expect(error).toHaveBeenCalledWith("Müşteri bilgisi yenilenemedi:", expect.any(TypeError)));
+    expect(document.querySelector("section .sp-summary-row.is-total .value").textContent).toContain("250,00");
+  });
+
+  it("puts the focus back in the field after a refresh drew the page again", async () => {
+    const calls = await open();
+    const field = $("ca-receipt-amount");
+    field.focus();
+    field.value = "12345";
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+    const before = calls.length;
+
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    await vi.waitFor(() => expect(calls.length).toBeGreaterThan(before + 1));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(document.activeElement).toBe($("ca-receipt-amount"));
+    expect($("ca-receipt-amount").value).toBe("12345");
+  });
+
+  it("keeps the screen when the refresh fails and does not touch a running action", async () => {
+    let fail = false;
+    const calls = await open({
+      routes: {
+        "GET /customers": () => (fail ? reply(500, {}) : reply(200, [customer])),
+        "GET /statement": () => (fail ? reply(500, {}) : reply(200, statement)),
+      },
+    });
+    fail = true;
+
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    await vi.waitFor(() => expect(calls.filter((call) => call.url.endsWith("/statement")).length).toBeGreaterThan(1));
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    expect(document.querySelector("section .sp-summary-row.is-total .value").textContent).toContain("250,00");
+    expect(document.querySelector('[role="alert"]')).toBeNull();
   });
 
   it("shows the credit limit form only to a session that may change it", async () => {

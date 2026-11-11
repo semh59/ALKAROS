@@ -178,6 +178,40 @@
     });
   }
 
+  // A card left open while the debt changed elsewhere must not keep showing the old amount. The answers are applied
+  // quietly: no error banner, the cashier's focus and cursor stay, and an answer overtaken by a newer choice is dropped.
+  function renderKeepingFocus() {
+    var active = document.activeElement;
+    var id = active && active.id;
+    var start = active && active.selectionStart;
+    var end = active && active.selectionEnd;
+    render();
+    var again = id && document.getElementById(id);
+    if (!again) return;
+    again.focus();
+    if (start != null && again.setSelectionRange) again.setSelectionRange(start, end);
+  }
+
+  function refreshWhenShown() {
+    if (document.visibilityState !== 'visible' || state.phase !== 'ready' || state.busy) return;
+    var listSeq = ++customersSeq;
+    var query = state.search.trim() ? '?search=' + encodeURIComponent(state.search.trim()) : '';
+    api(base() + '/customers' + query).then(function (result) {
+      if (listSeq !== customersSeq || !result.ok) return;
+      state.customers = result.body;
+      renderKeepingFocus();
+    }).catch(function (error) { console.error('Müşteri bilgisi yenilenemedi:', error); });
+    if (!state.selectedId) return;
+    var openId = state.selectedId;
+    var seq = statementSeq;
+    api(base() + '/customers/' + openId + '/statement').then(function (result) {
+      if (seq !== statementSeq || openId !== state.selectedId || !result.ok) return;
+      state.statement = result.body;
+      renderKeepingFocus();
+    }).catch(function (error) { console.error('Müşteri bilgisi yenilenemedi:', error); });
+  }
+  document.addEventListener('visibilitychange', refreshWhenShown);
+
   // `notice` survives the reload so a confirmation shown by the caller (saved, added) is not wiped by it.
   function openCustomer(customerId, notice) {
     state.selectedId = customerId;
