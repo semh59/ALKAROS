@@ -1,0 +1,4 @@
+M1 the old plural-stripping title comes back:       Tests  2 failed | 54 passed (56)
+M2 the label is not lower-cased:       Tests  6 failed | 50 passed (56)
+M3 the created message uses the plural:       Tests  1 failed | 55 passed (56)
+M4 the selected-record card uses the plural:       Tests  1 failed | 55 passed (56)

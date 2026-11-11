@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx (43 tests | 2 failed) 1069ms
+     × titles the create dialog of the Vergi profilleri tab in the singular 15ms
+     × titles the create dialog of the Modifikatör grupları tab in the singular 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > titles the create dialog of the Vergi profilleri tab in the singular
+AssertionError: expected 'Yeni vergi profilleri' to be 'Yeni vergi profili' // Object.is equality
+
+Expected: "Yeni vergi profili"
+Received: "Yeni vergi profilleri"
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:351:71
+    349|     await click([...document.querySelectorAll("button")].find((button)…
+    350|
+    351|     expect(document.querySelector('[role="dialog"] h2')!.textContent).…
+       |                                                                       ^
+    352|   });
+    353|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > titles the create dialog of the Modifikatör grupları tab in the singular
+AssertionError: expected 'Yeni modifikatör grupları' to be 'Yeni modifikatör grubu' // Object.is equality
+
+Expected: "Yeni modifikatör grubu"
+Received: "Yeni modifikatör grupları"
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:351:71
+    349|     await click([...document.querySelectorAll("button")].find((button)…
+    350|
+    351|     expect(document.querySelector('[role="dialog"] h2')!.textContent).…
+       |                                                                       ^
+    352|   });
+    353|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 41 passed (43)
+   Start at  14:15:27
+   Duration  2.66s (transform 210ms, setup 0ms, import 380ms, tests 1.07s, environment 955ms)
+

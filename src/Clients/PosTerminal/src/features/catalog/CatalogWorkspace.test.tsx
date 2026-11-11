@@ -234,6 +234,7 @@ describe("catalog workspace", () => {
     expect(row.textContent).toContain("ESP-01 · Menü ürünü");
     const detail = document.querySelector(".catalog-details")!;
     expect(detail.textContent).toContain("KDV %10");
+    expect(detail.querySelector(".catalog-details__heading span:last-child")!.textContent).toBe("Ürün");
     expect(document.body.textContent).not.toContain("MenuItem");
     expect(detail.textContent).not.toContain("tax-1");
 
@@ -263,6 +264,7 @@ describe("catalog workspace", () => {
         code: "SIZE", name: "Boy seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1,
       }),
     });
+    expect(document.body.textContent).toContain("Modifikatör grubu kaydı oluşturuldu.");
   });
 
   it.each([
@@ -334,6 +336,21 @@ describe("catalog workspace", () => {
     expect(detail).toContain("+20.00 TRY");
     expect(detail).not.toContain("Başka ürünün");
     expect(detail).not.toContain("Bu ürüne özel modifikatör yok.");
+  });
+
+  it.each([
+    ["Ürünler", "Ürün ekle", "Yeni ürün"],
+    ["Kategoriler", "Kategori ekle", "Yeni kategori"],
+    ["Vergi profilleri", "Vergi profili ekle", "Yeni vergi profili"],
+    ["Modifikatör grupları", "Modifikatör grubu ekle", "Yeni modifikatör grubu"],
+    ["Modifikatörler", "Modifikatör ekle", "Yeni modifikatör"],
+    ["Fiyatlar", "Fiyat ekle", "Yeni fiyat"],
+  ])("titles the create dialog of the %s tab in the singular", async (tab, addButton, title) => {
+    await render(<CatalogWorkspace {...baseProps({ onCreate: vi.fn() })} />);
+    await click([...document.querySelectorAll(".catalog-workspace__tabs button")].find((button) => button.textContent?.includes(tab))!);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes(addButton))!);
+
+    expect(document.querySelector('[role="dialog"] h2')!.textContent).toBe(title);
   });
 
   it("offers no group assignment without manage permission", async () => {
