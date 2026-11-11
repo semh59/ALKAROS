@@ -231,7 +231,7 @@ describe("closing and reconciliation section", () => {
     await render(<ClosingSection client={client} capabilities={closeCaps} />);
     const warning = document.querySelector('[role="alert"]')!.textContent!;
     expect(warning).toContain("İşletmede açık işlem var");
-    expect(document.body.textContent).toContain("Açık hesap2");
+    expect(document.body.textContent).toContain("Açık hesap veya sipariş2");
     expect(document.body.textContent).toContain("Sonucu belirsiz ödeme3");
     expect(closeButton().disabled).toBe(true);
     await act(async () => closeButton().closest("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
@@ -309,7 +309,7 @@ describe("closing and reconciliation section", () => {
     await render(<ClosingSection client={client} capabilities={closeCaps} />);
     const text = document.body.textContent!;
     expect(text).toContain("Bahşiş₺80,00");
-    expect(text).toContain("Açık hesap2");
+    expect(text).toContain("Açık hesap veya sipariş2");
     expect(text).toContain("Açık işlemler bilerek kapatıldıEvet");
     expect(text).toContain("A1");
     expect(text).toContain("Numara kayıtlı değil");

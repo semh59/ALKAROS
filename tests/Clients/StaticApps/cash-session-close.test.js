@@ -75,7 +75,7 @@ describe("cash-session.js closing screen", () => {
   it("warns about open bills and unsettled payments and keeps closing off until they are knowingly accepted", async () => {
     const calls = await toClosing({ expected: { openBillCount: 2, unsettledPaymentCount: 1 } });
 
-    expect($("#unsettled-warning").textContent).toContain("2 açık hesap, 1 sonucu belirsiz ödeme");
+    expect($("#unsettled-warning").textContent).toContain("2 açık hesap veya sipariş, 1 sonucu belirsiz ödeme");
     expect($("#submit-close").disabled).toBe(true);
     $("#submit-close").click();
     expect(closes(calls)).toHaveLength(0);
@@ -88,8 +88,8 @@ describe("cash-session.js closing screen", () => {
   });
 
   it.each([
-    ["only open bills", { openBillCount: 3 }, "3 açık hesap, 0 sonucu belirsiz ödeme"],
-    ["only unsettled payments", { unsettledPaymentCount: 2 }, "0 açık hesap, 2 sonucu belirsiz ödeme"],
+    ["only open bills", { openBillCount: 3 }, "3 açık hesap veya sipariş, 0 sonucu belirsiz ödeme"],
+    ["only unsettled payments", { unsettledPaymentCount: 2 }, "0 açık hesap veya sipariş, 2 sonucu belirsiz ödeme"],
   ])("warns for %s", async (_name, expected, sentence) => {
     await toClosing({ expected });
 

@@ -1,0 +1,4 @@
+M1 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+M1       Tests  3 failed | 21 passed (24)
+M2 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M2       Tests  2 failed | 21 passed (23)

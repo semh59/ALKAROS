@@ -1103,7 +1103,7 @@
       (unsettled
         ? '<div class="cs-alert cs-alert-warning" id="unsettled-warning" role="alert"><span class="cs-alert-icon">!</span>' +
           '<div><div class="cs-alert-title">İşletmede açık işlem var</div>' +
-          '<div class="cs-alert-body">' + state.openBills + ' açık hesap, ' + state.unsettledPayments +
+          '<div class="cs-alert-body">' + state.openBills + ' açık hesap veya sipariş, ' + state.unsettledPayments +
           ' sonucu belirsiz ödeme var. Kasayı kapatmak bunları çözmez.</div></div></div>' +
           '<label class="cs-check" for="ack-unsettled"><input type="checkbox" id="ack-unsettled" ' + (acknowledged ? 'checked' : '') +
           '><span>Bunları bilerek kapatıyorum</span></label>'

@@ -72,7 +72,7 @@ export const managementText = {
     openItemsBody: "Açık kasa oturumu, ödenmemiş hesap veya sonucu belirsiz ödeme var. Günü kapatmak bunları çözmez.",
     openItemsAck: "Bunları bilerek kapatıyorum",
     openCashSessions: "Açık kasa oturumu",
-    openBills: "Açık hesap",
+    openBills: "Açık hesap veya sipariş",
     unsettledPayments: "Sonucu belirsiz ödeme",
     tips: "Bahşiş",
     tableHeading: "Masa dökümü",
