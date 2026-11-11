@@ -16,6 +16,7 @@ V1-RMD-926 incelemesinden çıkan tutarsızlık ve Semih talimatı (2026-11-11):
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Modules/Reporting/BusinessDayTotals/BusinessDayTotalsReader.cs
   - tests/Host/Experience/Reporting/EndOfDayServerFiguresTests.cs
+  - tests/Host/Experience/Reporting/EndOfDayHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
