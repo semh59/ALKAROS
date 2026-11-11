@@ -107,6 +107,8 @@ describe("authorization decisions workspace", () => {
     };
 
     await act(async () => click("Onayla"));
+    expect(props.onApprove).not.toHaveBeenCalled();
+    await act(async () => [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Evet, onayla")!.click());
     await act(async () => click("Reddet"));
     await act(async () => click("Devri geri al"));
     await act(async () => click("Sıkılaştırmayı kaldır"));
@@ -117,19 +119,70 @@ describe("authorization decisions workspace", () => {
     expect(props.onClearTightening).toHaveBeenCalledWith("33333333-3333-3333-3333-333333333333");
   });
 
+  it("asks before approving, names the question, and Vazgeç sends nothing", async () => {
+    const base = baseProps();
+    const props = { ...base, pendingGrants: [...base.pendingGrants, { ...base.pendingGrants[0], grantId: "99999999-9999-9999-9999-999999999999" }] };
+    await render(<AuthorizationDecisionsWorkspace {...props} />);
+    const button = (label: string) => [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === label);
+
+    await act(async () => { button("Onayla")!.click(); });
+    expect(document.querySelectorAll('[role="alertdialog"]')).toHaveLength(1);
+    expect(document.querySelector('[role="alertdialog"]')?.textContent).toMatch(/^Emin misiniz\? .+ ₺[\d.,]+/);
+
+    await act(async () => { button("Vazgeç")!.click(); });
+    expect(props.onApprove).not.toHaveBeenCalled();
+    expect(document.querySelector('[role="alertdialog"]')).toBeNull();
+    expect(button("Onayla")).toBeDefined();
+  });
+
+  it("confirms the card it was opened on, and a second card takes the question over", async () => {
+    const base = baseProps();
+    const secondId = "99999999-9999-9999-9999-999999999999";
+    const props = { ...base, pendingGrants: [...base.pendingGrants, { ...base.pendingGrants[0], grantId: secondId }] };
+    await render(<AuthorizationDecisionsWorkspace {...props} />);
+    const rows = () => [...document.querySelector(".authz-decisions__group")!.querySelectorAll(".authz-decisions__row")];
+    const inRow = (index: number, label: string) => [...rows()[index].querySelectorAll("button")].find((b) => b.textContent?.trim() === label)!;
+
+    await act(async () => { inRow(0, "Onayla").click(); });
+    await act(async () => { inRow(1, "Onayla").click(); });
+    expect(rows()[0].querySelector('[role="alertdialog"]')).toBeNull();
+    expect(rows()[1].querySelector('[role="alertdialog"]')).not.toBeNull();
+
+    await act(async () => { inRow(1, "Evet, onayla").click(); });
+    expect(props.onApprove).toHaveBeenCalledExactlyOnceWith(secondId);
+  });
+
+  it("closes an open question when another request is denied", async () => {
+    const base = baseProps();
+    const props = { ...base, pendingGrants: [...base.pendingGrants, { ...base.pendingGrants[0], grantId: "99999999-9999-9999-9999-999999999999" }] };
+    await render(<AuthorizationDecisionsWorkspace {...props} />);
+    const buttons = (label: string) => [...document.querySelectorAll("button")].filter((b) => b.textContent?.trim() === label);
+
+    await act(async () => { buttons("Onayla")[0].click(); });
+    await act(async () => { buttons("Reddet")[1].click(); });
+
+    expect(props.onDeny).toHaveBeenCalledExactlyOnceWith("99999999-9999-9999-9999-999999999999");
+    expect(document.querySelector('[role="alertdialog"]')).toBeNull();
+    expect(props.onApprove).not.toHaveBeenCalled();
+  });
+
   it("shows an error and keeps the lists when an action fails, and locks the buttons while it runs", async () => {
     let release: () => void = () => {};
     const slow = new Promise<void>((resolve) => { release = resolve; });
     const props = baseProps({ onApprove: vi.fn().mockReturnValueOnce(slow).mockRejectedValueOnce(new Error("Bu istek zaten yanıtlandı.")) });
     await render(<AuthorizationDecisionsWorkspace {...props} />);
-    const approve = () => [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Onayla")!;
+    const button = (label: string) => [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === label)!;
+    const approve = async () => {
+      await act(async () => { button("Onayla").click(); });
+      await act(async () => { button("Evet, onayla").click(); });
+    };
 
-    await act(async () => { approve().click(); });
-    expect(approve().disabled).toBe(true);
+    await approve();
+    expect(button("Onayla").disabled).toBe(true);
     await act(async () => { release(); await slow; });
-    expect(approve().disabled).toBe(false);
+    expect(button("Onayla").disabled).toBe(false);
 
-    await act(async () => { approve().click(); });
+    await approve();
     expect(document.querySelector('[role="alert"]')?.textContent).toBe("Bu istek zaten yanıtlandı.");
     expect(document.body.textContent).toContain("Bekleyen yetki istekleri");
   });

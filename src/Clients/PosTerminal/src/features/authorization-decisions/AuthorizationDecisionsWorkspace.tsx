@@ -46,10 +46,12 @@ export function AuthorizationDecisionsWorkspace({
   lastUpdated,
 }: AuthorizationDecisionsWorkspaceProps) {
   const [busy, setBusy] = useState(false);
+  const [confirmingId, setConfirmingId] = useState<string>();
   const [actionError, setActionError] = useState<string>();
   async function run(action: () => void | Promise<void>) {
     if (busy) return;
     setBusy(true);
+    setConfirmingId(undefined);
     setActionError(undefined);
     try {
       await action();
@@ -129,7 +131,15 @@ export function AuthorizationDecisionsWorkspace({
                   <span className="authz-decisions__muted">{text.requestedAt} {formatTime(grant.requestedAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.4" disabled={busy} onClick={() => void run(() => onApprove(grant.grantId))}>{text.approve}</Button>
+                  {confirmingId === grant.grantId ? (
+                    <div role="alertdialog" aria-label={text.approveQuestion}>
+                      <p>{text.approveQuestion} {permissionLabel(grant.permissionCode)} {money(grant.amount)}</p>
+                      <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.8" disabled={busy} onClick={() => void run(() => onApprove(grant.grantId))}>{text.approveConfirm}</Button>
+                      <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.9" variant="secondary" onClick={() => setConfirmingId(undefined)}>{text.cancel}</Button>
+                    </div>
+                  ) : (
+                    <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.4" disabled={busy} onClick={() => setConfirmingId(grant.grantId)}>{text.approve}</Button>
+                  )}
                   <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.5" variant="quiet" disabled={busy} onClick={() => void run(() => onDeny(grant.grantId))}>{text.deny}</Button>
                 </div>
               </li>

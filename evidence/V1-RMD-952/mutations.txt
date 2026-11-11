@@ -1,0 +1,7 @@
+M1 Onayla approves in one click: 3 tests failed (restored)
+M2 Vazgeç does nothing: the cancel test failed (restored)
+M3 the question is not closed after the action: the error test failed (restored)
+M4 the question opens on every card: the two-card test failed (restored)
+M5 Evet approves the first card instead of its own: the second-card test failed (restored)
+M6 the question stays open when a request is denied: 2 tests failed (restored)
+M7 the question does not name the permission and amount: the question test failed (restored)

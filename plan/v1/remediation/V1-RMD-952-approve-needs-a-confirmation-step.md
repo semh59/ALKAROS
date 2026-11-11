@@ -1,7 +1,7 @@
 # V1-RMD-952 - Yönetici onay düğmesi tek tıkla onaylamasın, onay adımı olsun
 
 - Task ID: V1-RMD-952
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
