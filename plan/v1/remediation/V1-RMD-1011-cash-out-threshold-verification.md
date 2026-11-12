@@ -1,7 +1,7 @@
 # V1-RMD-1011 - Nakit çıkış onay eşiği doğrulaması (₺400 onaysız kaydı)
 
 - Task ID: V1-RMD-1011
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,4 @@
+# V1-RMD-1011 - Nakit cikis onay esigi dogrulamasi (kod degisikligi yok)
+
+Sonuc: 400 TL nakit cikisinin onaysiz kaydedilmesi hata degil, onayli kurala uygun. Kural: cikis tutari, kasadaki nakiti asamaz; ayarlanan onay esigini ASARSA yonetici onayina duser, esit veya altindaysa hemen kaydolur (CashMovementStore.cs: amount > threshold). Esik ayari cash.cash_out_approval_threshold, varsayilan 500 TL (CashOutApprovalThresholdSetting.cs); 0 yapilirsa her cikis onay ister. Deneme kurulumunda ayar varsayilan oldugu icin 400 TL (<500) onaysiz gecti, 600 TL onaya dusuyor (deneme 4'te "Cikis 600" ekrani bunu gosterdi). Backend testleri CashMovementApprovalHttpTests dahil 46/46 gecti (backend-cash-approval.log).
+Urun karari icin not: esik her isletmede yonetim ayarindan degistirilir; ofis kurallari 400 TL'yi de onaya baglamak isterse esigi dusurmek yeterli, kod degisikligi gerekmez.
