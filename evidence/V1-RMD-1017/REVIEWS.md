@@ -1,0 +1,2 @@
+qa-frontend: ilk yuklemedeki 401'de silinmedigini dogrulayan test yoktu -> eklendi (mutant killed). Kabul: oturumdayken tek gecici 401 de masa ve hesap anahtarini siler (veri kaybi yok, fatura sunucuda); workspace.tsx forgetSelectedTable ile anahtar iki kez silinir (zararsiz, kapsam disi iki dosya).
+qa-ux-tasarim: ayni kasiyer hemen girerse masayi yeniden secer (2-3 dokunus) - vardiya devri gizliligi icin kabul edildi. Acik dusuk: giris formunda iki kirmizi mesaj ust uste ("Oturumunuz sonlandirildi" ve "Oturum gecersiz veya suresi dolmus") - ayri is.

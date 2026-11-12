@@ -1,0 +1,2 @@
+killed 401 session end keeps remembered table and bill
+killed first 401 probe of a fresh page wipes remembered state

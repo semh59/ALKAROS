@@ -47,6 +47,7 @@ afterEach(() => {
 // happened, indistinguishable from having never logged in at all.
 describe("Cashier tells the operator why they landed back on the login form", () => {
   it("shows no ended-session message when the first session probe of a fresh page comes back 401", async () => {
+    localStorage.setItem("alkaros.selected-table", "table-kept");
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
       if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
@@ -65,6 +66,8 @@ describe("Cashier tells the operator why they landed back on the login form", ()
 
     expect(document.querySelector("input[autocomplete='username']")).not.toBeNull();
     expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
+    expect(localStorage.getItem("alkaros.selected-table")).toBe("table-kept");
+    localStorage.removeItem("alkaros.selected-table");
   });
 
   it('shows "Oturumunuz sonlandırıldı" when a mid-session call comes back 401, and clears it on the next login attempt', async () => {
@@ -103,6 +106,8 @@ describe("Cashier tells the operator why they landed back on the login form", ()
     expect(openOrder).toBeTruthy();
     expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
 
+    localStorage.setItem("alkaros.selected-table", "table-prev");
+    localStorage.setItem("alkaros.current-bill-id", "bill-prev");
     orderStartShouldFail = true;
     await act(async () => {
       openOrder!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
@@ -112,6 +117,8 @@ describe("Cashier tells the operator why they landed back on the login form", ()
     // Bounced back to the login form, this time with an explanation.
     expect(document.querySelector('[aria-label="Oturumu kapat"]')).toBeNull();
     expect(document.body.textContent).toContain("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
+    expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
+    expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
 
     // Submitting the login form again clears the stale message rather than
     // leaving it stuck alongside a fresh attempt's own feedback.

@@ -87,6 +87,14 @@ const connectionStateText: Record<BackendStatus, string> = {
   offline: "Bağlantı yok",
 };
 
+// What this device remembers about the previous cashier's screen: the next person to sign in must not inherit it.
+const forgetShiftState = () => {
+  try {
+    localStorage.removeItem("alkaros.current-bill-id");
+    localStorage.removeItem("alkaros.selected-table");
+  } catch { /* storage unavailable: nothing was remembered */ }
+};
+
 export function Cashier({ navigateToPage = (href: string) => window.location.assign(href) }: { navigateToPage?: (href: string) => void }) {
   const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
@@ -244,7 +252,10 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       // The first session probe of a fresh page load also comes back 401; nobody was signed in, so nothing ended.
       const wasSignedIn = sessionRef.current === "ready";
       setSession("anonymous");
-      if (wasSignedIn) setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
+      if (wasSignedIn) {
+        forgetShiftState();
+        setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
+      }
     });
     return () => registerSessionExpiredHandler(null);
   }, []);
@@ -541,8 +552,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       // a page reload so a cashier can resume the split-payment screen they were on - but logout() never
       // cleared it, so a shift change let the NEXT cashier's session land straight on the PREVIOUS
       // cashier's open split-payment view for whatever bill happened to be last on this device.
-      localStorage.removeItem("alkaros.current-bill-id");
-      localStorage.removeItem("alkaros.selected-table");
+      forgetShiftState();
     } catch (reason) {
       setError(reason instanceof ApiError ? reason.message : "Oturum kapatılamadı.");
     } finally {

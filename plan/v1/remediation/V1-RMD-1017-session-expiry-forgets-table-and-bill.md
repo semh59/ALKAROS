@@ -1,7 +1,7 @@
 # V1-RMD-1017 - Oturum süresi dolunca hatırlanan masa ve hesap silinir
 
 - Task ID: V1-RMD-1017
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
