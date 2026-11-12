@@ -13,6 +13,7 @@ Kasiyerin iki başlığı da dört öğe taşır: Masalar, Bekleyen hesaplar (ro
 ## Owned surface
 
 - `evidence/V1-RMD-1000/**`
+- `src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.low-items.test.tsx
