@@ -1,7 +1,7 @@
 # V1-RMD-1007 - Kasa ekranında Diğer menüsündeki Çıkış düğmesi çalışır
 
 - Task ID: V1-RMD-1007
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

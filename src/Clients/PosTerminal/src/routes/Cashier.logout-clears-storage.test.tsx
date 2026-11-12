@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 
 import { act, createElement } from "react";
+import { flushSync } from "react-dom";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RouterProvider } from "../router";
@@ -86,5 +87,34 @@ describe("Cashier logout clears session-scoped localStorage", () => {
     });
 
     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
+  });
+
+  it("posts the logout even when the browser applies the menu's own close between the menu and the page handlers", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      calls.push(`${init?.method ?? "GET"} ${path}`);
+      if (path.includes("/auth/logout")) return jsonResponse(null);
+      if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
+      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/orders/active")) return jsonResponse(null);
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      return jsonResponse({});
+    }));
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider } = await import("../router");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    await act(async () => { document.querySelector<HTMLButtonElement>(".pos-header button.operator-card")!.click(); });
+    const logoutButton = [...document.querySelectorAll<HTMLButtonElement>(".header-menu button")].find((button) => button.textContent === "Çıkış")!;
+    // A real click lets the pending state updates run once the menu's listener returns, before React reads the click.
+    document.querySelector(".cashier-shell")!.addEventListener("click", () => flushSync(() => undefined));
+
+    await act(async () => { logoutButton.click(); await new Promise((resolve) => setTimeout(resolve, 0)); });
+
+    expect(calls.some((call) => call.startsWith("POST") && call.includes("/auth/logout"))).toBe(true);
+    expect(document.querySelector(".header-menu")).toBeNull();
   });
 });

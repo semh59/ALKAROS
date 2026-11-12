@@ -1,0 +1,2 @@
+killed close in same turn
+killed menu never closes on choice

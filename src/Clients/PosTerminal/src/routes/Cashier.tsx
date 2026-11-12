@@ -375,7 +375,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       userMenuButton.current?.focus();
     };
     const menu = headerMenu.current;
-    const closeOnChoice = (event: Event) => { if ((event.target as Element).closest("a, button")) setMenuOpen(false); };
+    // Closing in the same turn would unmount the menu before the page reads the click, and the chosen button would do nothing.
+    const closeOnChoice = (event: Event) => { if ((event.target as Element).closest("a, button")) setTimeout(() => setMenuOpen(false)); };
     const closeOnOutside = (event: Event) => {
       const target = event.target as Node;
       if (!menu?.contains(target) && !userMenuButton.current?.contains(target)) setMenuOpen(false);

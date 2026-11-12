@@ -1,0 +1,71 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+index ad3ee742..c939dab1 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+@@ -1,6 +1,7 @@
+ // @vitest-environment jsdom
+ 
+ import { act, createElement } from "react";
++import { flushSync } from "react-dom";
+ import { createRoot, type Root } from "react-dom/client";
+ import { afterEach, describe, expect, it, vi } from "vitest";
+ import { RouterProvider } from "../router";
+@@ -87,4 +88,33 @@ describe("Cashier logout clears session-scoped localStorage", () => {
+ 
+     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
+   });
++
++  it("posts the logout even when the browser applies the menu's own close between the menu and the page handlers", async () => {
++    const calls: string[] = [];
++    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
++      const path = String(input);
++      calls.push(`${init?.method ?? "GET"} ${path}`);
++      if (path.includes("/auth/logout")) return jsonResponse(null);
++      if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
++      if (path.endsWith("/catalog")) return jsonResponse([]);
++      if (path.endsWith("/orders/active")) return jsonResponse(null);
++      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
++      return jsonResponse({});
++    }));
++    const { Cashier } = await import("./Cashier");
++    const { RouterProvider } = await import("../router");
++    document.body.innerHTML = '<div id="root"></div>';
++    root = createRoot(document.getElementById("root")!);
++    await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
++    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++    await act(async () => { document.querySelector<HTMLButtonElement>(".pos-header button.operator-card")!.click(); });
++    const logoutButton = [...document.querySelectorAll<HTMLButtonElement>(".header-menu button")].find((button) => button.textContent === "Çıkış")!;
++    // A real click lets the pending state updates run once the menu's listener returns, before React reads the click.
++    document.querySelector(".cashier-shell")!.addEventListener("click", () => flushSync(() => undefined));
++
++    await act(async () => { logoutButton.click(); await new Promise((resolve) => setTimeout(resolve, 0)); });
++
++    expect(calls.some((call) => call.startsWith("POST") && call.includes("/auth/logout"))).toBe(true);
++    expect(document.querySelector(".header-menu")).toBeNull();
++  });
+ });
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index b0eef4ee..8986d7ef 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -375,7 +375,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       userMenuButton.current?.focus();
+     };
+     const menu = headerMenu.current;
+-    const closeOnChoice = (event: Event) => { if ((event.target as Element).closest("a, button")) setMenuOpen(false); };
++    // Closing in the same turn would unmount the menu before the page reads the click, and the chosen button would do nothing.
++    const closeOnChoice = (event: Event) => { if ((event.target as Element).closest("a, button")) setTimeout(() => setMenuOpen(false)); };
+     const closeOnOutside = (event: Event) => {
+       const target = event.target as Node;
+       if (!menu?.contains(target) && !userMenuButton.current?.contains(target)) setMenuOpen(false);
+@@ -386,8 +387,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     return () => {
+       window.removeEventListener("keydown", closeOnEscape);
+       document.removeEventListener("mousedown", closeOnOutside);
+-      menu?.removeEventListener("click", closeOnChoice);
+-    };
++    menu?.removeEventListener("click", closeOnChoice);
++      };
+   }, [menuOpen]);
+ 
+   // A question about a line is only good for the order it was asked on; the safe answer takes the focus.
