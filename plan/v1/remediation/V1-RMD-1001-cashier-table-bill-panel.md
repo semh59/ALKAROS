@@ -27,6 +27,7 @@ Seçili masanın hesabı (kalemler ve toplam) masa planının sağ panelinde gö
   - src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
   - src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
   - src/Clients/PosTerminal/src/features/tables/models.ts
+  - src/Clients/PosTerminal/src/features/tables/tablePlanModel.ts
   - src/Clients/PosTerminal/src/features/tables/tables.css
   - src/Clients/PosTerminal/src/api.ts
   - src/Clients/PosTerminal/src/api.test.ts
