@@ -14,6 +14,7 @@ Kasiyer rolü masa planında Bölge ekle, Masa ekle, Masayı düzenle, Bölgeler
 
 - `evidence/V1-RMD-1004/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
   - src/Clients/PosTerminal/src/routes/workspace.tsx
   - src/Clients/PosTerminal/src/routes/workspace.test.tsx
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
