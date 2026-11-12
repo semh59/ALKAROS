@@ -592,5 +592,6 @@ public sealed partial class DualScreenStore
         string Currency,
         long Revision,
         bool Editable,
-        bool AcceptsRound);
+        bool AcceptsRound,
+        string? TableNumber);
 }

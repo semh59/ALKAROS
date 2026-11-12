@@ -12,6 +12,7 @@ import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } fr
 import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
+import { takeTableCart } from "../tableCart";
 import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
@@ -87,8 +88,10 @@ function useNarrowScreen(): boolean {
 }
 
 // A finished order (completed, cancelled or fully paid) is no cart: the till opens clean.
-const openCheckOnly = (snapshot: DisplaySnapshot | null): DisplaySnapshot | null =>
-  snapshot && (snapshot.state === "Completed" || snapshot.state === "Idle" || (snapshot.paidTotal > 0 && snapshot.remainingTotal === 0))
+// A table order is the cart only when the cashier just opened it from the tables screen; otherwise the till starts a quick sale.
+const openCheckOnly = (snapshot: DisplaySnapshot | null, tableCartId: string | null): DisplaySnapshot | null =>
+  snapshot && (snapshot.state === "Completed" || snapshot.state === "Idle" || (snapshot.paidTotal > 0 && snapshot.remainingTotal === 0)
+    || (!!snapshot.tableNumber && snapshot.orderId !== tableCartId))
     ? { ...snapshot, orderId: null, lines: [] }
     : snapshot;
 
@@ -111,6 +114,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [reservationStationEnabled, setReservationStationEnabled] = useState(false);
   const [session, setSession] = useState<CashierSession>("checking");
   const sessionRef = useRef<CashierSession>("checking");
+  const tableCartRef = useRef<string | null>(null);
+  useEffect(() => { tableCartRef.current = takeTableCart(); }, []);
   useEffect(() => { sessionRef.current = session; }, [session]);
   const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
@@ -186,7 +191,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     setTerminalName(session.terminalName ?? null);
     setCapabilities(session.capabilities ?? []);
     setCatalog(products);
-    setOrder(openCheckOnly(active));
+    setOrder(openCheckOnly(active, tableCartRef.current));
     setCustomerDisplayUrl(config?.customerDisplayUrl ?? "");
     setReservationStationEnabled(config?.reservationStationEnabled ?? false);
     setSession("ready");
@@ -199,7 +204,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     const load = ++orderLoads.current;
     const loaded = await api.activeOrder(terminalId);
     // A slower, older answer must not overwrite what a newer read already showed.
-    if (load === orderLoads.current) setOrder(openCheckOnly(loaded));
+    if (load === orderLoads.current) setOrder(openCheckOnly(loaded, tableCartRef.current));
     setBackendStatus("online");
   }, [terminalId]);
 
@@ -208,6 +213,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   useEffect(() => {
     const cameBack = currentPath === "/" && previousPath.current !== "/";
     previousPath.current = currentPath;
+    if (cameBack) tableCartRef.current = takeTableCart();
     if (cameBack && sessionRef.current === "ready") void reloadOrder().catch(() => undefined);
   }, [currentPath, reloadOrder]);
 
@@ -521,6 +527,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       setCapabilities([]);
       setCatalog([]);
       setOrder(null);
+      tableCartRef.current = null;
       setNotice("");
       // V1-RMD-314 (independent 2026-09-26 audit, finding K4): workspace.tsx reads/writes this key across
       // a page reload so a cashier can resume the split-payment screen they were on - but logout() never
@@ -623,12 +630,18 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   };
 
   // The till can already hold an order this screen has not seen yet (a table order opened elsewhere): continue with it instead of failing.
+  const leaveTableCart = () => {
+    tableCartRef.current = null;
+    void reloadOrder().catch(() => undefined);
+  };
+
   const openOrder = async () => {
     try {
       return await api.startOrder(terminalId);
     } catch (reason) {
       if (!(reason instanceof ApiError && reason.status === 409)) throw reason;
       const current = await api.activeOrder(terminalId);
+      if (current?.tableNumber) throw new ApiError(409, "TABLE_DRAFT_OPEN", `Masa ${current.tableNumber} için açık bir sipariş var; Masalar ekranından devam edin.`);
       if (current?.editable && current.orderId) return { orderId: current.orderId, revision: current.revision };
       throw reason;
     }
@@ -812,7 +825,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
             disabled={busy || activeOrder.lines.length === 0}
             onClick={() => execute(
               () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
-              "Sipariş gönderildi. Yeni satış açabilirsiniz.",
+              activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
             )}
           >Gönder</button>
         )}
@@ -855,7 +868,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         <section className="catalog-workspace">
           <div className="catalog-toolbar">
             <div>
-              <span className="eyebrow dark">HIZLI SİPARİŞ</span>
+              <span className="eyebrow dark">{activeOrder?.tableNumber ? `MASA ${activeOrder.tableNumber}` : "HIZLI SİPARİŞ"}</span>
               <h1>{activeCategory === "ALL" ? "Tüm ürünler" : categories.find((c) => c.code === activeCategory)?.name}</h1>
             </div>
             <label className="search-field">
@@ -898,8 +911,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           <div className="ticket-heading">
             <div>
               <span className="eyebrow dark">AKTİF SİPARİŞ</span>
-              <h2>{activeOrder ? orderTitle(activeOrder.orderNumber) : "Yeni satış"}</h2>
+              <h2>{activeOrder ? `${activeOrder.tableNumber ? `Masa ${activeOrder.tableNumber} · ` : ""}${orderTitle(activeOrder.orderNumber)}` : "Yeni satış"}</h2>
             </div>
+            {activeOrder?.tableNumber && <button data-telemetry-id="b.routes.cashier.table-cart.leave" className="secondary" disabled={busy} onClick={leaveTableCart}>Hızlı satışa geç</button>}
             <div className="ticket-meta"><strong>{formatQuantity(itemCount)}</strong><span>ürün</span></div>
           </div>
 
@@ -978,7 +992,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                   disabled={busy || activeOrder.lines.length === 0}
                   onClick={() => execute(
                     () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
-                    "Sipariş gönderildi. Yeni satış açabilirsiniz.",
+                    activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
                   )}
                 >Siparişi gönder</button>
               ) : (

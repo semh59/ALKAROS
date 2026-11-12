@@ -247,7 +247,8 @@ public sealed partial class DualScreenStore
                     AND NOT EXISTS (SELECT 1 FROM table_mgmt.tables t WHERE t.table_id = o.table_id AND t.current_bill_id IS NOT NULL)
                     AND EXISTS (SELECT 1 FROM orders.order_items i WHERE i.order_id = o.order_id AND i.status = 'Draft'))),
                    (status = 'Submitted' AND table_id IS NOT NULL
-                    AND NOT EXISTS (SELECT 1 FROM table_mgmt.tables t WHERE t.table_id = o.table_id AND t.current_bill_id IS NOT NULL))
+                    AND NOT EXISTS (SELECT 1 FROM table_mgmt.tables t WHERE t.table_id = o.table_id AND t.current_bill_id IS NOT NULL)),
+                   (SELECT tt.table_number FROM table_mgmt.tables tt WHERE tt.table_id = o.table_id)
             FROM orders.orders o
             WHERE order_id = @order_id;
             """))
@@ -258,7 +259,8 @@ public sealed partial class DualScreenStore
                 return IdleSnapshot(displayId, terminalId);
             order = new OrderRow(
                 reader.GetString(0), reader.GetString(1), reader.GetDecimal(2), reader.GetDecimal(3),
-                reader.GetDecimal(4), reader.GetDecimal(5), reader.GetString(6), reader.GetInt64(7), reader.GetBoolean(8), reader.GetBoolean(9));
+                reader.GetDecimal(4), reader.GetDecimal(5), reader.GetString(6), reader.GetInt64(7), reader.GetBoolean(8), reader.GetBoolean(9),
+                reader.IsDBNull(10) ? null : reader.GetString(10));
         }
 
         var lines = new List<CustomerDisplayLineDto>();
@@ -318,7 +320,7 @@ public sealed partial class DualScreenStore
         return new CustomerDisplaySnapshotDto(
             displayId, terminalId, orderId, order.Revision, state, order.Editable, order.Number, lines,
             order.Subtotal, order.Discount, order.Tax, order.Total, order.Currency,
-            DateTimeOffset.UtcNow, message, AcceptsRound: order.AcceptsRound);
+            DateTimeOffset.UtcNow, message, AcceptsRound: order.AcceptsRound, TableNumber: includeLineIds ? order.TableNumber : null);
     }
 
     /// <summary>When the terminal's live display session ends, or null without one: lets the till show it.</summary>

@@ -18,6 +18,7 @@ import { SystemHealthWorkspace, type SystemHealthState } from "../features/syste
 import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
 import { ManagementArea } from "../features/management";
 import { CashSessionBand, CashSessionLink, type CashSessionStatus } from "../features/cash-session-status";
+import { markTableCart } from "../tableCart";
 
 export type BackendStatus = "checking" | "online" | "offline";
 
@@ -299,7 +300,8 @@ export function TableRoute({ terminalId, canManage, canCollect = false, reservat
     setOrderBusy(true);
     setOrderError(undefined);
     try {
-      await api.startTableOrder(terminalId, selectedTable.tableId, selectedTable.rowVersion);
+      const started = await api.startTableOrder(terminalId, selectedTable.tableId, selectedTable.rowVersion);
+      markTableCart(started.orderId);
       navigate("/");
     } catch (reason) {
       setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");

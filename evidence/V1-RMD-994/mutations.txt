@@ -1,0 +1,13 @@
+M1 customer snapshot carries the table -> Başarısız! - Başarısız:     1, Başarılı:    46, Atl
+restored
+M2 table orders always shown -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯ (restored, cmp)
+M3 eyebrow without table -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M4 ticket title without table -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M5 leave does not release the table cart -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M6 mark read on every render -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M7 hidden table draft reused by a quick sale -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored

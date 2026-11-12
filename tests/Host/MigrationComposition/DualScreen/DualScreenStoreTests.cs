@@ -752,6 +752,24 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheSnapshotNamesTheTableOfATableOrderAndOnlyThatOne()
+    {
+        var tableTerminal = Guid.NewGuid();
+        var quickTerminal = Guid.NewGuid();
+        var tableId = await SeedTableAsync("S-NAMED", "Available", 1);
+        await _store!.StartOrderAsync(tableTerminal, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+        await _store.StartOrderAsync(quickTerminal, Guid.NewGuid(), CancellationToken.None);
+
+        var table = await _store.GetSnapshotAsync(Guid.Empty, tableTerminal, CancellationToken.None, includeLineIds: true);
+        var quick = await _store.GetSnapshotAsync(Guid.Empty, quickTerminal, CancellationToken.None, includeLineIds: true);
+        var customerView = await _store.GetSnapshotAsync(Guid.Empty, tableTerminal, CancellationToken.None);
+
+        Assert.Equal("S-NAMED", table.TableNumber);
+        Assert.Null(quick.TableNumber);
+        Assert.Null(customerView.TableNumber);
+    }
+
+    [Fact]
     public async Task AnEmptyQuickDraftIsDiscardedWhenATableOrderIsStarted()
     {
         var terminalId = Guid.NewGuid();

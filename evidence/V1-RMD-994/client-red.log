@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+stderr | src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > does not show a table order the cashier did not just open from the tables screen
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `div`. It was passed a child from Cashier. See https://react.dev/link/warning-keys for more information.
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (3 tests | 3 failed) 3143ms
+     × does not show a table order the cashier did not just open from the tables screen 2892ms
+     × starts a new quick order on a product tap and never writes into the table order 138ms
+     × shows the table order, named by its table, when it was opened from the tables screen 111ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > does not show a table order the cashier did not just open from the tables screen
+AssertionError: expected 'AALKAROSKasa satışSunucu hazırBekleye…' not to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışSunucu hazırBekleyen hesaplarMüşteri ekranıMasalarMutfakMüşteri ekranını eşleştirDeniz KayaKasiyerÇıkışToplam₺45,00⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕İçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞSipariş 08:251ürünÇay₺45,00 × 1 · KDV dahil₺45,00−1+KaldırAra toplam₺45,00İçindeki KDV₺0,00Toplam₺45,00✓Sipariş gönderildiBu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:77:43
+     75|     await openTill();
+     76|
+     77|     expect(document.body.textContent).not.toContain("Çay");
+       |                                           ^
+     78|   });
+     79|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > starts a new quick order on a product tap and never writes into the table order
+AssertionError: expected [ …(9) ] to include 'POST /orders'
+ ❯ src/routes/Cashier.table-cart.test.tsx:85:19
+     83|     await tapProduct("Su");
+     84|
+     85|     expect(calls).toContain("POST /orders");
+       |                   ^
+     86|     expect(calls.some((call) => call.includes("order-table"))).toBe(fa…
+     87|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table order, named by its table, when it was opened from the tables screen
+AssertionError: expected 'AKTİF SİPARİŞSipariş 08:251ürünÇay₺45…' to contain 'Masa M-10'
+
+Expected: "Masa M-10"
+Received: "AKTİF SİPARİŞSipariş 08:251ürünÇay₺45,00 × 1 · KDV dahil₺45,00−1+KaldırAra toplam₺45,00İçindeki KDV₺0,00Toplam₺45,00✓Sipariş gönderildiBu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:95:102
+     93|
+     94|     expect(document.body.textContent).toContain("Çay");
+     95|     expect(document.querySelector(".ticket-panel, aside")?.textContent…
+       |                                                                                                      ^
+     96|   });
+     97| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  08:51:49
+   Duration  5.10s (transform 2.14s, setup 0ms, import 137ms, tests 3.14s, environment 1.49s)
+

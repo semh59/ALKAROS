@@ -1,7 +1,7 @@
 # V1-RMD-994 - Masa siparişi hızlı satış sepetine karışmaz ve sepet masa adını gösterir
 
 - Task ID: V1-RMD-994
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

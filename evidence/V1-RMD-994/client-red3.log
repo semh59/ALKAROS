@@ -1,0 +1,50 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (6 tests | 2 failed) 2635ms
+     × shows the table order after the cashier opens it on the tables screen and comes back 146ms
+     × explains instead of writing into the hidden table draft when a quick sale is refused 104ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > shows the table order after the cashier opens it on the tables screen and comes back
+AssertionError: expected 'AALKAROSKasa satışSunucu hazırBekleye…' to contain 'Çay'
+
+Expected: "Çay"
+Received: "AALKAROSKasa satışSunucu hazırBekleyen hesaplarMüşteri ekranıMasalarMutfakMüşteri ekranını eşleştirDeniz KayaKasiyerÇıkışAktif sipariş yokYeni satış⌂Tümü101İçecek1HIZLI SİPARİŞTüm ürünler⌕İçecekSuSKU-1₺10,00KDV dahilAKTİF SİPARİŞYeni satış0ürün＋Siparişe hazırÜrüne dokununca sipariş açılır."
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:106:39
+    104|     await go("/");
+    105|
+    106|     expect(document.body.textContent).toContain("Çay");
+       |                                       ^
+    107|     window.history.pushState(null, "", "/");
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > explains instead of writing into the hidden table draft when a quick sale is refused
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/routes/Cashier.table-cart.test.tsx:115:64
+    113|     await tapProduct("Su");
+    114|
+    115|     expect(calls.some((call) => call.includes("order-table"))).toBe(fa…
+       |                                                                ^
+    116|     expect(document.body.textContent).toContain("Masalar ekranından de…
+    117|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  09:00:15
+   Duration  3.97s (transform 1.51s, setup 0ms, import 117ms, tests 2.63s, environment 965ms)
+

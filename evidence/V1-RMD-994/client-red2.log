@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+stderr | src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > lets the cashier leave the table order for a quick sale with one tap
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `div`. It was passed a child from Cashier. See https://react.dev/link/warning-keys for more information.
+
+ ❯ src/routes/Cashier.table-cart.test.tsx (4 tests | 1 failed) 2413ms
+     × lets the cashier leave the table order for a quick sale with one tap 81ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.table-cart.test.tsx > a table order and the quick sale cart > lets the cashier leave the table order for a quick sale with one tap
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.table-cart.test.tsx:94:35
+     92|     const leave = [...document.querySelectorAll("button")].find((b) =>…
+     93|
+     94|     await act(async () => { leave.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+     95|     await act(async () => { await new Promise((resolve) => setTimeout(…
+     96|     await tapProduct("Su");
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ src/routes/Cashier.table-cart.test.tsx:94:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  08:58:56
+   Duration  3.75s (transform 1.60s, setup 0ms, import 113ms, tests 2.41s, environment 947ms)
+

@@ -170,7 +170,8 @@ public sealed record CustomerDisplaySnapshotDto(
     decimal? RemainingTotal = null,
     decimal TipTotal = 0m,
     decimal FeeTotal = 0m,
-    bool AcceptsRound = false);
+    bool AcceptsRound = false,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? TableNumber = null);
 
 public sealed record ApiErrorEnvelope([property: JsonPropertyName("error")] ApiError Error);
 

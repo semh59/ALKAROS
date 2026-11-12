@@ -164,6 +164,7 @@ export interface DisplaySnapshot {
   state: "Idle" | "Active" | "Completed" | "Unavailable";
   editable: boolean;
   acceptsRound?: boolean;
+  tableNumber?: string | null;
   orderNumber: string | null;
   lines: DisplayLine[];
   subtotal: number;
