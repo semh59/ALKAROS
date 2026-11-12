@@ -20,7 +20,16 @@ public sealed class PostgresTableReleasePort : ITableReleasePort
         Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
     {
         await using var command = new NpgsqlCommand(
-            "UPDATE table_mgmt.tables SET current_bill_id = NULL, row_version = row_version + 1 WHERE current_bill_id = @bill_id;",
+            """
+            UPDATE table_mgmt.tables t
+            SET current_bill_id = (
+                    SELECT b.bill_id FROM billing.bills b
+                    WHERE b.table_id = t.table_id AND b.bill_id <> @bill_id AND b.status NOT IN ('Paid', 'Cancelled')
+                    ORDER BY b.opened_at, b.created_at, b.bill_id
+                    LIMIT 1),
+                row_version = row_version + 1
+            WHERE t.current_bill_id = @bill_id;
+            """,
             connection, transaction);
         command.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
         await command.ExecuteNonQueryAsync(cancellationToken);

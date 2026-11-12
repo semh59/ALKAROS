@@ -110,6 +110,9 @@ public sealed class TableDraftService
         }
 
         var existingOrder = await OrderDtoAssembler.GetActiveOrderByTableIdInternalAsync(connection, transaction, request.TableId, cancellationToken);
+        if (existingOrder is not null
+            && await ALKAROS.Host.Experience.Orders.KitchenlessAdd.KitchenlessAddStore.HasBillAsync(connection, transaction, existingOrder.OrderId, cancellationToken))
+            throw new TableBillOpenException(request.TableId);
         var orderId = existingOrder?.OrderId ?? Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
 
@@ -715,6 +718,18 @@ public sealed class TableDraftService
         }
 
         return result;
+    }
+}
+
+/// <summary>
+/// The table's order already has a bill, so a waiter round would reach the kitchen
+/// and the stock but never the bill the cashier collects.
+/// </summary>
+public sealed class TableBillOpenException : Exception
+{
+    public TableBillOpenException(Guid tableId)
+        : base($"Table {tableId} has a bill; items cannot be added to its order.")
+    {
     }
 }
 

@@ -718,6 +718,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
             terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 2), CancellationToken.None));
 
         Assert.Contains("active bill", refused.Message, StringComparison.Ordinal);
+        Assert.Contains("hesabı açık", refused.UserMessage, StringComparison.Ordinal);
         var revision = await ScalarAsync<long>("SELECT row_version FROM orders.orders WHERE order_id = @order_id;", ("order_id", first.OrderId));
         await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.AddItemAsync(
             terminalId, first.OrderId, new AddOrderItemRequest(_productId, 1m, revision), CancellationToken.None));

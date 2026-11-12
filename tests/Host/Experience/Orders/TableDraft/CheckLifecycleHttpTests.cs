@@ -192,6 +192,44 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARoundForATableWhoseBillIsOpenIsRefusedInTurkishAndNothingReachesTheKitchen()
+    {
+        var (client, cookie, terminalId, tableId, product, app) = await SeedBusyTableAsync();
+        await using var _ = app;
+        using var __ = client;
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-05", [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)], Id: Guid.NewGuid())));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("TABLE_BILL_OPEN", body);
+        Assert.Contains("hesabı açıldı", body);
+        Assert.Equal(1, await _database.KitchenTicketItemCountAsync(check.OrderId));
+    }
+
+    [Fact]
+    public async Task ARoundIsAcceptedAgainOnceTheTablesBillIsCancelled()
+    {
+        var (client, cookie, terminalId, tableId, product, app) = await SeedBusyTableAsync();
+        await using var _ = app;
+        using var __ = client;
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+
+        var second = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+
+        Assert.Equal(check.OrderId, second.OrderId);
+    }
+
+    [Fact]
     public async Task TheTillQueueShowsWhatIsPaidAfterTheRefundsAreTakenOff()
     {
         var terminalId = Guid.NewGuid();

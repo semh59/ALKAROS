@@ -1,0 +1,3 @@
+M1-no-bill-gate: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S� (restored, cmp ok)
+M2-pointer-null: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S� (restored, cmp ok)
+M3-no-turkish: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S� (restored, cmp ok)

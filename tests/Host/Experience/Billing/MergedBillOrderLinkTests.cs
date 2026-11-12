@@ -264,6 +264,31 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ClearingACancelledBillsPointerLeavesTheTablePointingAtItsOtherOpenBill()
+    {
+        var (tableId, first) = await SeedTableBoundOrderAsync();
+        var second = await SeedOrderAsync(tableId);
+        var firstBillId = Guid.NewGuid();
+        var secondBillId = Guid.NewGuid();
+        foreach (var (bill, order) in new[] { (firstBillId, first.Id), (secondBillId, second.Id) })
+            await Exec(
+                "INSERT INTO billing.bills (bill_id, bill_number, table_id, order_id, status, currency_code, opened_at, created_at, updated_at) " +
+                "VALUES (@bill, @number, @table, @order, 'Open', 'TRY', now(), now(), now());",
+                ("bill", bill), ("number", "BIL-P-" + bill.ToString("N")[..10]), ("table", tableId), ("order", order));
+        await Exec("UPDATE table_mgmt.tables SET current_bill_id = @bill WHERE table_id = @table;", ("bill", firstBillId), ("table", tableId));
+        await Exec("UPDATE billing.bills SET status = 'Cancelled' WHERE bill_id = @id;", ("id", firstBillId));
+
+        await using (var connection = await _source.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await new ALKAROS.Tables.TableRelease.PostgresTableReleasePort().ClearBillPointerAsync(firstBillId, connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        Assert.Equal(secondBillId, await Guid_("SELECT current_bill_id FROM table_mgmt.tables WHERE table_id = @id;", tableId));
+    }
+
+    [Fact]
     public async Task TheMergedBillIsFoundOnEveryOrderItIsMadeOf()
     {
         var merged = await SeedMergedAsync();

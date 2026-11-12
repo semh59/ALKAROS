@@ -1,7 +1,7 @@
 # V1-RMD-996 - Garson masa taslağı hesabı açık masaya ürün eklemeyi reddeder
 
 - Task ID: V1-RMD-996
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

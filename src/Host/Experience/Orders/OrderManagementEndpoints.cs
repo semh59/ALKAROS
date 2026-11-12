@@ -1397,6 +1397,8 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         InvalidTransferTargetException => (400, "INVALID_TRANSFER_TARGET", "Devir hedefi geçersiz."),
         // V1-ORD-006: the waiter is asked what happened at the table rather
         // than having the previous party's unpaid check silently orphaned.
+        TableBillOpenException => (409, "TABLE_BILL_OPEN",
+            "Bu masanın hesabı açıldı; ürün eklenemez. Hesabı kasadan iptal edin ya da yeni sipariş için masanın kapanmasını bekleyin."),
         TableCheckAlreadyOpenException => (409, "TABLE_CHECK_ALREADY_OPEN",
             "Bu masada kapanmamış bir hesap var. Önce hesabı kasaya gönderin."),
         // V1-SET-004: the whole feature is turned off for this deployment.

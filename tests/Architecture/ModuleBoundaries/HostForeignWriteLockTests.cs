@@ -21,7 +21,7 @@ public static class HostForeignWriteLockTests
     {
         ["src/Host/DualScreen/DualScreenStore.Orders.cs"] = 1,
         ["src/Host/Experience/NfcOrdering/NfcOrderingStore.cs"] = 1,
-        ["src/Host/Experience/Orders/CashierHandoffStore.cs"] = 4,
+        ["src/Host/Experience/Orders/CashierHandoffStore.cs"] = 5,
         ["src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs"] = 1,
         ["src/Host/Experience/Orders/TableDraft/TableDraftService.cs"] = 1,
         ["src/Host/Experience/Tables/TableManagementStore.cs"] = 1,

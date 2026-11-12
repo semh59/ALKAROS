@@ -75,7 +75,7 @@ public sealed class KitchenlessAddStore(
         return new KitchenlessAddResultV1(orderId, item.Id, rowVersion, reasonCode);
     }
 
-    private static async Task<bool> HasBillAsync(
+    internal static async Task<bool> HasBillAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {
         await using var command = new NpgsqlCommand(

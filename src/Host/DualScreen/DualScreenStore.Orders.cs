@@ -59,23 +59,12 @@ public sealed partial class DualScreenStore
             // A quick-sale draft the cashier emptied is no work to protect: it is dropped so it cannot block the next order.
             if (status == "Draft" && activeOrderTableId is null)
             {
-                await using (var discard = CreateCommand(connection, transaction,
-                    """
-                    WITH discarded AS (
-                        UPDATE orders.orders
-                        SET status = 'Cancelled', row_version = row_version + 1, cancelled_at = now(), updated_at = now()
-                        WHERE order_id = @order_id AND status = 'Draft' AND table_id IS NULL
-                          AND NOT EXISTS (SELECT 1 FROM orders.order_items i
-                                          WHERE i.order_id = @order_id AND i.status IN ('Draft', 'Active', 'Complimentary'))
-                        RETURNING order_id)
-                    INSERT INTO orders.order_status_history (order_status_history_id, order_id, old_status, new_status, reason, changed_by, changed_at)
-                    SELECT gen_random_uuid(), order_id, 'Draft', 'Cancelled', 'Boş taslak yeni sipariş açılırken bırakıldı.', @actor, now() FROM discarded;
-                    """))
+                var emptied = await PostgresOrderRepository.GetByIdAsync(existingId, connection, transaction, cancellationToken);
+                if (emptied is not null && !emptied.Items.Any(i => i.Status is OrderItemState.Draft or OrderItemState.Active or OrderItemState.Complimentary))
                 {
-                    discard.Parameters.AddWithValue("order_id", existingId);
-                    discard.Parameters.AddWithValue("actor", servingUserId);
-                    if (await discard.ExecuteNonQueryAsync(cancellationToken) == 1)
-                        status = "Cancelled";
+                    await _orderRepository.SaveAsync(
+                        emptied.CancelWhole("Boş taslak yeni sipariş açılırken bırakıldı.", servingUserId), emptied.RowVersion, connection, transaction, cancellationToken);
+                    status = "Cancelled";
                 }
             }
             // The till's own draft for the very table being asked for is resumed below, not refused.
@@ -130,7 +119,7 @@ public sealed partial class DualScreenStore
             if (resumesOwnTableOrder && tableOrderId != activeOrderId)
                 throw new DualScreenConflictException("Terminal's draft is not the table's order.", TerminalHoldsDraftMessage);
             if (tableBillId is not null)
-                throw new DualScreenConflictException("Table already has an active bill.");
+                throw new DualScreenConflictException("Table already has an active bill.", "Bu masanın hesabı açık; ürün eklenemez. Hesabı iptal etmeden masaya yeni sipariş açılamaz.");
 
             if (tableOrderId is { } existingTableOrderId)
             {
