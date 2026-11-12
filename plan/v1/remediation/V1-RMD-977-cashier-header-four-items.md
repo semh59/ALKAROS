@@ -44,4 +44,4 @@ Kasiyer ana ekranının üst başlığı en çok dört öğe taşımalı: Masala
 
 ## Handoff
 
-- Kapsam V1-RMD-1000 görevinde tamamlandı (başlık çalışması orada uygulandı).
+- None
