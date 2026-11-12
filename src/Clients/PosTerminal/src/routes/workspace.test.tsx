@@ -415,10 +415,11 @@ describe("workspace /tables route marks tables whose check waits at the till", (
   };
   const json = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
 
-  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"]) {
+  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"], withPlan = false) {
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
-      if (path.includes("/table-management/zones")) return json([]);
+      if (withPlan && path.includes("/floor-plans/")) return json({ zoneId: "z1", zoneCode: "Z", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1, tables: [] });
+      if (path.includes("/table-management/zones")) return json(withPlan ? [{ zoneId: "z1", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }] : []);
       if (path.includes("/table-management/tables")) return json([table]);
       if (path.includes("awaiting-payment") && awaiting) return awaiting();
       throw new Error(`unexpected fetch: ${path}`);
@@ -444,6 +445,31 @@ describe("workspace /tables route marks tables whose check waits at the till", (
   it("shows Hesap istedi for a sent check without a bill", async () => {
     await open(() => json([{ orderId: "o1", orderNumber: "1", tableNumber: "M-3", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tbl-ask" }]));
     expect(document.querySelector(".table-card--plan-ask")?.textContent).toContain("Hesap istedi");
+  });
+
+  it("draws the layout configuration buttons only for someone who holds floorplan.manage", async () => {
+    const labels = () => [...document.querySelectorAll(".table-workspace__toolbar-actions button")].map((button) => button.textContent);
+    await open(() => json([]));
+    expect(labels()).toEqual(["Hızlı satış", "Yenile"]);
+    expect(document.querySelector(".table-order-bridge")).not.toBeNull();
+
+    await act(async () => root!.unmount());
+    await open(() => json([]), ["tables.status", "orders.create", "floorplan.manage"]);
+    expect(labels()).toEqual(expect.arrayContaining(["+ Bölge ekle", "+ Masa ekle", "Bölgeleri yönet"]));
+  });
+
+  it("offers Planı düzenle on the floor plan only to someone who holds floorplan.manage", async () => {
+    const editButton = () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Planı düzenle");
+    const showPlan = async () => { await act(async () => { [...document.querySelectorAll(".table-workspace__view-toggle button")].find((button) => button.textContent === "Salon planı")!.dispatchEvent(new MouseEvent("click", { bubbles: true })); }); };
+    await open(() => json([]), ["tables.status", "orders.create"], true);
+    await showPlan();
+    expect(document.querySelector(".floor-plan-shell")).not.toBeNull();
+    expect(editButton()).toBeUndefined();
+
+    await act(async () => root!.unmount());
+    await open(() => json([]), ["tables.status", "orders.create", "floorplan.manage"], true);
+    await showPlan();
+    expect(editButton()).toBeDefined();
   });
 
   it("never asks the till list for an operator who may not read it", async () => {

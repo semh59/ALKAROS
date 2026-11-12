@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:709:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+
+ Test Files  115 passed (115)
+      Tests  1279 passed (1279)
+   Start at  17:59:39
+   Duration  40.54s (transform 18.15s, setup 0ms, import 38.97s, tests 125.72s, environment 207.13s)
+

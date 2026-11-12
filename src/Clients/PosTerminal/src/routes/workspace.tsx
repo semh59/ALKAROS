@@ -165,7 +165,7 @@ export function ExperiencePage({
     </>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} />}
+    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
@@ -188,7 +188,7 @@ export function ExperiencePage({
 // Exported for the standalone Reservation Station screen (V1-CUI-006),
 // which reuses this exact table-fetching + floor-plan wiring rather than
 // duplicating it.
-export function TableRoute({ terminalId, canManage, canCollect = false, canSeeChecks = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canCollect?: boolean; canSeeChecks?: boolean; reservationOnly?: boolean }) {
+export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; reservationOnly?: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
@@ -332,16 +332,16 @@ export function TableRoute({ terminalId, canManage, canCollect = false, canSeeCh
       selectedZoneId={selectedZoneId}
       onSelectZone={handleSelectZone}
       onRefresh={() => load()}
-      onCreateZone={canManage && !reservationOnly ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
-      onCreateTable={canManage && !reservationOnly ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
-      onUpdateZone={canManage && !reservationOnly ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}
-      onDeleteZone={canManage && !reservationOnly ? (zone) => mutate(() => client.deleteZone(zone)) : undefined}
-      onUpdateTable={canManage && !reservationOnly ? (table, input) => mutate(() => client.updateTable(table, input)) : undefined}
+      onCreateZone={canConfigure && !reservationOnly ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
+      onCreateTable={canConfigure && !reservationOnly ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
+      onUpdateZone={canConfigure && !reservationOnly ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}
+      onDeleteZone={canConfigure && !reservationOnly ? (zone) => mutate(() => client.deleteZone(zone)) : undefined}
+      onUpdateTable={canConfigure && !reservationOnly ? (table, input) => mutate(() => client.updateTable(table, input)) : undefined}
       onAction={canManage ? (request: TableActionRequest) => mutate(() => client.execute(request)) : undefined}
       floorPlan={floorPlan}
       floorPlanBusy={floorPlanBusy}
       floorPlanError={floorPlanError}
-      onSaveFloorPlan={canManage && !reservationOnly ? handleSaveFloorPlan : undefined}
+      onSaveFloorPlan={canConfigure && !reservationOnly ? handleSaveFloorPlan : undefined}
       errorMessage={errorMessage}
       refreshError={refreshError}
       lastUpdated={lastUpdated}

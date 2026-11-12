@@ -194,6 +194,12 @@ describe("table workspace", () => {
     expect(cards[1].querySelector(".table-card__select")?.getAttribute("aria-label")).toBe("S-14 masasını seç, Dolu, ₺80,00");
   });
 
+  it("tells someone who cannot add tables that none are defined yet, and offers no add button", async () => {
+    await render(<TableWorkspace {...baseProps({ state: "empty", tables: [], zones: [], onCreateZone: undefined, onCreateTable: undefined })} />);
+    expect(document.querySelector(".table-workspace__empty")?.textContent).toContain("Müdürünüze bildirin");
+    expect(document.querySelector(".table-workspace__empty button")).toBeNull();
+  });
+
   it("offers Hızlı satış as a framed secondary button only when the operator may sell", async () => {
     const onQuickSale = vi.fn();
     await render(<TableWorkspace {...baseProps({ selectedTableId: null, onQuickSale })} />);

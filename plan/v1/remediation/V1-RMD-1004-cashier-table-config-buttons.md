@@ -1,7 +1,7 @@
 # V1-RMD-1004 - Kasiyer masa planında yapılandırma düğmeleri yalnız yetkiliye görünür
 
 - Task ID: V1-RMD-1004
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

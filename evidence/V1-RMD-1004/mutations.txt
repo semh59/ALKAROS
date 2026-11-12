@@ -1,0 +1,5 @@
+killed manage zones for all
+killed always configure
+SURVIVED create table button for all (equivalent: needs zone handler too)
+killed floor plan edit for all
+killed empty text for all
