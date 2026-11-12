@@ -1,31 +1,46 @@
-# V1-RMD-1000 - Kasa üst başlığı dört öğe ve bağlantı göstergesi
+# V1-RMD-1000 - Kasa üst başlığı: Masalar, Bekleyen hesaplar, Kasa durumu, Diğer ve bağlantı göstergesi
 
 - Task ID: V1-RMD-1000
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
 
 ## Goal
 
-Üst başlık dört öğe taşır: Masalar, Bekleyen hesaplar (rozetli), Kasa durumu, Diğer; yanında bağlantı ve son güncelleme göstergesi ile kullanıcı adı bulunur. 977 görevinin duraklatılmış başlık çalışması (stash) bu görevde tamamlanır ve 977 bu görevle kapatılır. Kısa ekranda başlık taşmaz.
+Kasiyerin iki başlığı da dört öğe taşır: Masalar, Bekleyen hesaplar (rozetli), Kasa durumu ve Diğer menüsü; yanında bağlantı göstergesi bulunur. Hızlı satış ekranının başlığı (977 görevinin duraklatılmış çalışması) Masalar ile Hızlı satış geçişi, Bekleyen hesaplar, Kasa durumu ve kullanıcı menüsünü (Diğer) gösterir; Mutfak, Cari hesaplar, Ürün menüsü, Yönetim, Müşteri ekranını eşleştir ve Çıkış menünün içine girer; bağlantı sorununda uyarı görünür. Masa planı kabuğunda ana gezinme Masalar ve Bekleyen hesaplar ile sınırlıdır, diğer yollar Diğer menüsündedir; başlıkta bağlantı ve son güncelleme göstergesi vardır. Masa planı ekranında Hızlı satış çerçeveli ikincil düğmedir. 977 bu görevle kapanır.
 
 ## Owned surface
 
 - `evidence/V1-RMD-1000/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - Başlangıç commit'inde bu listeye gerçek dosya yolları yazılır (plan commit'i ayrı).
+  - src/Clients/PosTerminal/src/routes/Cashier.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.low-items.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.management-link.test.tsx
+  - src/Clients/PosTerminal/src/routes/workspace.tsx
+  - src/Clients/PosTerminal/src/routes/workspace.test.tsx
+  - src/Clients/PosTerminal/src/shell/ProductionShell.tsx
+  - src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
+  - src/Clients/PosTerminal/src/shell/models.ts
+  - src/Clients/PosTerminal/src/shell/shell.css
+  - src/Clients/PosTerminal/src/shell/layout-contract.test.ts
+  - src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+  - src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+  - src/Clients/PosTerminal/src/features/tables/models.ts
+  - src/Clients/PosTerminal/src/features/tables/tables.css
+  - src/Clients/PosTerminal/src/styles.css
+  - src/Clients/PosTerminal/src/strings.ts
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
-1. Dört öğe ve gösterge testleri; Diğer menüsü Mutfak, Müşteri ekranı, Cari hesaplar, Rezervasyon, Ürün menüsü, Yönetim, Çıkış öğelerini içerir; yetkisiz rol öğeyi görmez.
-2. Bağlantı yoksa gösterge uyarı verir; son güncelleme süresi eskirse bayat uyarısı çıkar.
+1. Hızlı satış başlığında dört öğe ve Diğer menüsü, bağlantı uyarısı (kırmızı test, mutasyon)
+2. Kabukta ana gezinme Masalar ve Bekleyen hesaplar, geri kalanı Diğer; rozet; başlıkta bağlantı ve son güncelleme göstergesi
+3. Masa planında Hızlı satış düğmesi
 
 ## Out of scope
 
-- Listede olmayan ekranlar ve dosyalar
-- Koyu tema
+- Sağ panel (1001), ödeme ekranı (1002), koyu tema
 
 ## Dependencies
 
@@ -33,7 +48,7 @@
 
 ## Acceptance evidence
 
-1. Kırmızı test, mutant listesi, oxlint --max-warnings=0 + tsc + vite build çıktıları (istemci değişiyorsa)
+1. Kırmızı test, mutant listesi, oxlint --max-warnings=0 + tsc + vite build çıktıları
 2. İki ardışık bağımsız qa-* incelemesi (qa-frontend ve qa-ux-tasarim) ve doğrulama turu.
 
 ## Handoff
