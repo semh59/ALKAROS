@@ -237,3 +237,9 @@ export const isClientExecutableAction = (action: TableAction, table?: TableRecor
   action !== "CancelReservation" && action !== "ClaimReservation"
     ? true
     : Boolean(table?.activeReservationId);
+
+/** A table with an open order or bill must not be released with Müsait yap: that would orphan the check. */
+export const hasOpenCheck = (table: Pick<TableRecord, "currentOrderId" | "currentBillId">) => Boolean(table.currentOrderId || table.currentBillId);
+
+export const isOfferedAction = (action: string, table?: Pick<TableRecord, "currentOrderId" | "currentBillId">) =>
+  !(action === "SetAvailable" && table && hasOpenCheck(table));

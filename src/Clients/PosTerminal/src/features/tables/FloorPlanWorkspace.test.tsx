@@ -131,6 +131,15 @@ describe("floor plan workspace", () => {
     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
   });
 
+  it("does not offer Müsait yap for a table with an open order or bill", async () => {
+    const withRelease = { ...plan, tables: [{ ...plan.tables[0], allowedCommands: ["SetAvailable", "Transfer"] } as FloorPlan["tables"][number], plan.tables[1]] };
+    const records = tables.map((table, index) => index === 0 ? { ...table, allowedCommands: ["SetAvailable", "Transfer"] } : table);
+    await render(<FloorPlanWorkspace plan={withRelease} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={vi.fn()} onSave={vi.fn()} />);
+
+    const labels = [...document.querySelectorAll(".floor-plan-inspector__command-buttons button")].map((button) => button.textContent);
+    expect(labels).toEqual(["Masa değiştir"]);
+  });
+
   it("offers the unmerge action only when the server sends it for the merge leader", async () => {
     const leader = (allowedCommands: string[]) => ({ ...plan, tables: [{ ...plan.tables[0], allowedCommands } as FloorPlan["tables"][number], plan.tables[1]] });
     const ungated = leader(["Transfer", "Merge"]);

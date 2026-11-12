@@ -219,6 +219,19 @@ describe("table workspace", () => {
     expect(document.querySelector(".table-card__quick-action")).not.toBeNull();
   });
 
+  it("never puts Müsait yap on the card of a table with an open order", async () => {
+    await render(<TableWorkspace {...cashierProps({ cardActions: true, selectedTableId: null, tables: [tables[1]] })} />);
+
+    expect(document.querySelector(".table-card__quick-action")?.textContent).toBe("Masa değiştir");
+  });
+
+  it("offers no Müsait yap when only a bill is open", async () => {
+    const billOnly = { ...tables[1], currentOrderId: null };
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", tables: [billOnly], billPanel: () => <span /> })} />);
+
+    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).not.toContain("Müsait yap");
+  });
+
   it("tells someone who cannot add tables that none are defined yet, and offers no add button", async () => {
     await render(<TableWorkspace {...baseProps({ state: "empty", tables: [], zones: [], onCreateZone: undefined, onCreateTable: undefined })} />);
     expect(document.querySelector(".table-workspace__empty")?.textContent).toContain("Müdürünüze bildirin");
@@ -262,7 +275,14 @@ describe("table workspace", () => {
     expect(box.textContent).not.toMatch(/KAPASİTE|Kapasite|AKTİF BAĞLAM|SEÇİLİ MASA/);
     const more = box.querySelector<HTMLDetailsElement>("details.table-details__more")!;
     expect(more.open).toBe(false);
-    expect([...more.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Müsait yap", "Masaları birleştir"]);
+    expect([...more.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Masaları birleştir"]);
+  });
+
+  it("offers Müsait yap only when the occupied table has no open order or bill", async () => {
+    const bare = { ...tables[1], currentOrderId: null, currentBillId: null };
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", tables: [bare], billPanel: () => <span /> })} />);
+
+    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Müsait yap");
   });
 
   it("keeps Masa taşı in the menu when no till panel carries it", async () => {

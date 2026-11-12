@@ -5,6 +5,7 @@ import { planStatus } from "./tablePlanModel";
 import {
   tableStatusLabels,
   isClientExecutableAction,
+  isOfferedAction,
   type FloorPlan,
   type FloorPlanSeat,
   type FloorPlanTable,
@@ -426,9 +427,9 @@ export function FloorPlanWorkspace({
               return <>
                 <div className="floor-plan-inspector__commands">
                   <span>Sunucunun izin verdiği işlemler</span>
-                  {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels)
+                  {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels && isOfferedAction(command, selected))
                     ? <div className="floor-plan-inspector__command-buttons">{selected.allowedCommands
-                      .filter((command): command is TableAction => command in tableActionLabels)
+                      .filter((command): command is TableAction => command in tableActionLabels && isOfferedAction(command, selected))
                       .map((command) => <Button data-telemetry-id="b.tables.floorplanworkspace.6"
                         key={command}
                         variant={command === "SetOutOfService" ? "secondary" : "primary"}

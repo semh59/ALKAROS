@@ -1,7 +1,7 @@
 # V1-RMD-1014 - Açık hesaplı dolu masada Müsait yap gösterilmez
 
 - Task ID: V1-RMD-1014
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

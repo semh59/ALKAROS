@@ -1,0 +1,132 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
+index 16ac9e00..076b98ff 100644
+--- a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
+@@ -131,6 +131,15 @@ describe("floor plan workspace", () => {
+     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
+   });
+ 
++  it("does not offer Müsait yap for a table with an open order or bill", async () => {
++    const withRelease = { ...plan, tables: [{ ...plan.tables[0], allowedCommands: ["SetAvailable", "Transfer"] } as FloorPlan["tables"][number], plan.tables[1]] };
++    const records = tables.map((table, index) => index === 0 ? { ...table, allowedCommands: ["SetAvailable", "Transfer"] } : table);
++    await render(<FloorPlanWorkspace plan={withRelease} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={vi.fn()} onSave={vi.fn()} />);
++
++    const labels = [...document.querySelectorAll(".floor-plan-inspector__command-buttons button")].map((button) => button.textContent);
++    expect(labels).toEqual(["Masa değiştir"]);
++  });
++
+   it("offers the unmerge action only when the server sends it for the merge leader", async () => {
+     const leader = (allowedCommands: string[]) => ({ ...plan, tables: [{ ...plan.tables[0], allowedCommands } as FloorPlan["tables"][number], plan.tables[1]] });
+     const ungated = leader(["Transfer", "Merge"]);
+diff --git a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
+index d47361ab..e647374b 100644
+--- a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
+@@ -5,6 +5,7 @@ import { planStatus } from "./tablePlanModel";
+ import {
+   tableStatusLabels,
+   isClientExecutableAction,
++  isOfferedAction,
+   type FloorPlan,
+   type FloorPlanSeat,
+   type FloorPlanTable,
+@@ -426,9 +427,9 @@ export function FloorPlanWorkspace({
+               return <>
+                 <div className="floor-plan-inspector__commands">
+                   <span>Sunucunun izin verdiği işlemler</span>
+-                  {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels)
++                  {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels && isOfferedAction(command, selected))
+                     ? <div className="floor-plan-inspector__command-buttons">{selected.allowedCommands
+-                      .filter((command): command is TableAction => command in tableActionLabels)
++                      .filter((command): command is TableAction => command in tableActionLabels && isOfferedAction(command, selected))
+                       .map((command) => <Button data-telemetry-id="b.tables.floorplanworkspace.6"
+                         key={command}
+                         variant={command === "SetOutOfService" ? "secondary" : "primary"}
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+index 44adc92e..ada85e82 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+@@ -219,6 +219,19 @@ describe("table workspace", () => {
+     expect(document.querySelector(".table-card__quick-action")).not.toBeNull();
+   });
+ 
++  it("never puts Müsait yap on the card of a table with an open order", async () => {
++    await render(<TableWorkspace {...cashierProps({ cardActions: true, selectedTableId: null, tables: [tables[1]] })} />);
++
++    expect(document.querySelector(".table-card__quick-action")?.textContent).toBe("Masa değiştir");
++  });
++
++  it("offers no Müsait yap when only a bill is open", async () => {
++    const billOnly = { ...tables[1], currentOrderId: null };
++    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", tables: [billOnly], billPanel: () => <span /> })} />);
++
++    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).not.toContain("Müsait yap");
++  });
++
+   it("tells someone who cannot add tables that none are defined yet, and offers no add button", async () => {
+     await render(<TableWorkspace {...baseProps({ state: "empty", tables: [], zones: [], onCreateZone: undefined, onCreateTable: undefined })} />);
+     expect(document.querySelector(".table-workspace__empty")?.textContent).toContain("Müdürünüze bildirin");
+@@ -262,7 +275,14 @@ describe("table workspace", () => {
+     expect(box.textContent).not.toMatch(/KAPASİTE|Kapasite|AKTİF BAĞLAM|SEÇİLİ MASA/);
+     const more = box.querySelector<HTMLDetailsElement>("details.table-details__more")!;
+     expect(more.open).toBe(false);
+-    expect([...more.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Müsait yap", "Masaları birleştir"]);
++    expect([...more.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Masaları birleştir"]);
++  });
++
++  it("offers Müsait yap only when the occupied table has no open order or bill", async () => {
++    const bare = { ...tables[1], currentOrderId: null, currentBillId: null };
++    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", tables: [bare], billPanel: () => <span /> })} />);
++
++    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Müsait yap");
+   });
+ 
+   it("keeps Masa taşı in the menu when no till panel carries it", async () => {
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+index cbbf8c80..50a7be92 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+@@ -11,7 +11,9 @@ import {
+ import { commonActions, stateText, tablePlanText } from "../../strings";
+ import {
+   actionNeedsReason,
++  hasOpenCheck,
+   isClientExecutableAction,
++  isOfferedAction,
+   tableActionLabels,
+   tableStatusLabels,
+   type CreateTableInput,
+@@ -530,7 +532,7 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
+ }
+ 
+ function TableCard({ table, plan, selected, onSelect, onAction }: { table: TableRecord; plan: PlanStatus; selected: boolean; onSelect: () => void; onAction?: (action: TableAction) => void }) {
+-  const command = !onAction ? undefined : table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isClientExecutableAction(value as TableAction, table));
++  const command = !onAction ? undefined : table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isOfferedAction(value, table) && isClientExecutableAction(value as TableAction, table));
+   const total = table.currentOrderTotal ?? 0;
+   const meta = [
+     table.servingWaiterName || null,
+@@ -568,8 +570,8 @@ function BillPanelSlot({ render, table, openAction }: { render: NonNullable<Tabl
+ }
+ 
+ function TableDetails({ table, plan, zoneName, onAction, children }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void; children?: ReactNode }) {
+-  const hasCheck = Boolean(table.currentOrderId || table.currentBillId);
+-  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && !(value === "Transfer" && hasCheck && children));
++  const hasCheck = hasOpenCheck(table);
++  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && isOfferedAction(value, table) && !(value === "Transfer" && hasCheck && children));
+   const meta = [zoneName ?? "Bölge atanmamış", table.servingWaiterName || null, table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null, table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : null].filter(Boolean).join(" · ");
+   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
+     <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
+diff --git a/src/Clients/PosTerminal/src/features/tables/models.ts b/src/Clients/PosTerminal/src/features/tables/models.ts
+index 8e84f478..2d077add 100644
+--- a/src/Clients/PosTerminal/src/features/tables/models.ts
++++ b/src/Clients/PosTerminal/src/features/tables/models.ts
+@@ -237,3 +237,9 @@ export const isClientExecutableAction = (action: TableAction, table?: TableRecor
+   action !== "CancelReservation" && action !== "ClaimReservation"
+     ? true
+     : Boolean(table?.activeReservationId);
++
++/** A table with an open order or bill must not be released with Müsait yap: that would orphan the check. */
++export const hasOpenCheck = (table: Pick<TableRecord, "currentOrderId" | "currentBillId">) => Boolean(table.currentOrderId || table.currentBillId);
++
++export const isOfferedAction = (action: string, table?: Pick<TableRecord, "currentOrderId" | "currentBillId">) =>
++  !(action === "SetAvailable" && table && hasOpenCheck(table));

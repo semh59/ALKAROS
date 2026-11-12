@@ -11,7 +11,9 @@ import {
 import { commonActions, stateText, tablePlanText } from "../../strings";
 import {
   actionNeedsReason,
+  hasOpenCheck,
   isClientExecutableAction,
+  isOfferedAction,
   tableActionLabels,
   tableStatusLabels,
   type CreateTableInput,
@@ -530,7 +532,7 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
 }
 
 function TableCard({ table, plan, selected, onSelect, onAction }: { table: TableRecord; plan: PlanStatus; selected: boolean; onSelect: () => void; onAction?: (action: TableAction) => void }) {
-  const command = !onAction ? undefined : table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isClientExecutableAction(value as TableAction, table));
+  const command = !onAction ? undefined : table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isOfferedAction(value, table) && isClientExecutableAction(value as TableAction, table));
   const total = table.currentOrderTotal ?? 0;
   const meta = [
     table.servingWaiterName || null,
@@ -568,8 +570,8 @@ function BillPanelSlot({ render, table, openAction }: { render: NonNullable<Tabl
 }
 
 function TableDetails({ table, plan, zoneName, onAction, children }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void; children?: ReactNode }) {
-  const hasCheck = Boolean(table.currentOrderId || table.currentBillId);
-  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && !(value === "Transfer" && hasCheck && children));
+  const hasCheck = hasOpenCheck(table);
+  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && isOfferedAction(value, table) && !(value === "Transfer" && hasCheck && children));
   const meta = [zoneName ?? "Bölge atanmamış", table.servingWaiterName || null, table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null, table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : null].filter(Boolean).join(" · ");
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
     <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
