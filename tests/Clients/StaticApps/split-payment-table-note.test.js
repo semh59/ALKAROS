@@ -116,4 +116,17 @@ describe("split-payment.js table name and kitchen-less note", () => {
     expect(shortScreen[2]).toMatch(/\.sp-shell\s*\{[^}]*padding:\s*8px/);
     expect(shortScreen[2]).not.toMatch(/order:/);
   });
+
+  it("puts the banknote buttons in one row only on a wide short display, and tightens the amount and remaining rows", () => {
+    const shortScreen = /@media\s*\(max-height:\s*(\d+)px\)\s*\{([\s\S]*?)\n\}/.exec(css);
+    const wideShort = /@media\s*\(max-height:\s*(\d+)px\)\s*and\s*\(min-width:\s*(\d+)px\)\s*\{([\s\S]*?)\n\}/.exec(css);
+
+    expect(wideShort).not.toBeNull();
+    expect(Number(wideShort[2])).toBeGreaterThanOrEqual(600);
+    expect(wideShort[3]).toMatch(/\.sp-quick-cash\s*\{[^}]*repeat\(7,/);
+    expect(wideShort[3]).toMatch(/\.sp-quick-cash \.sp-btn\s*\{[^}]*font-size:\s*16px/);
+    expect(shortScreen[2]).not.toMatch(/repeat\(7,/);
+    expect(shortScreen[2]).toMatch(/\.sp-amount-field\s*\{[^}]*padding:\s*8px/);
+    expect(shortScreen[2]).toMatch(/\.sp-summary-row\.is-remaining\s*\{[^}]*padding:\s*2px/);
+  });
 });

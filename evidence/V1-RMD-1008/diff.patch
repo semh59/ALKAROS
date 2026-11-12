@@ -1,0 +1,32 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+index 5ba5d19f..de620594 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+@@ -246,6 +246,10 @@ html { scroll-padding-bottom: 80px; }
+   #submit-tender { position: static; box-shadow: none; }
+   .sp-shell { padding: 8px 24px; }
+   .sp-card { gap: 10px; padding-top: 16px; padding-bottom: 16px; margin-top: 0; }
++  .sp-quick-cash { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 4px; }
++  .sp-quick-cash .sp-btn { padding: 6px 2px; font-size: 14px; }
++  .sp-amount-field { padding: 8px 16px; }
++  .sp-summary-row.is-remaining { padding: 2px; }
+ }
+ .sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }
+ .sp-fold > summary::-webkit-details-marker { display: none; }
+diff --git a/tests/Clients/StaticApps/split-payment-table-note.test.js b/tests/Clients/StaticApps/split-payment-table-note.test.js
+index 638b0208..9e0bd75e 100644
+--- a/tests/Clients/StaticApps/split-payment-table-note.test.js
++++ b/tests/Clients/StaticApps/split-payment-table-note.test.js
+@@ -116,4 +116,12 @@ describe("split-payment.js table name and kitchen-less note", () => {
+     expect(shortScreen[2]).toMatch(/\.sp-shell\s*\{[^}]*padding:\s*8px/);
+     expect(shortScreen[2]).not.toMatch(/order:/);
+   });
++
++  it("puts the banknote buttons in one row and tightens the amount and remaining rows on a short display", () => {
++    const shortScreen = /@media\s*\(max-height:\s*(\d+)px\)\s*\{([\s\S]*?)\n\}/.exec(css);
++
++    expect(shortScreen[2]).toMatch(/\.sp-quick-cash\s*\{[^}]*repeat\(7,/);
++    expect(shortScreen[2]).toMatch(/\.sp-amount-field\s*\{[^}]*padding:\s*8px/);
++    expect(shortScreen[2]).toMatch(/\.sp-summary-row\.is-remaining\s*\{[^}]*padding:\s*2px/);
++  });
+ });

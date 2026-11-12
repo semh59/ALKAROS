@@ -1,0 +1,5 @@
+killed narrow screens get 7 columns
+killed 4 columns
+killed amount padding back
+killed remaining padding back
+killed font back to 14
