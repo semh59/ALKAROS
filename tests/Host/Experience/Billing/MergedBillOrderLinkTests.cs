@@ -205,6 +205,21 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ATableOrderEntersTheTillQueueOnlyOnceItsBillIsOpened()
+    {
+        var (tableId, order) = await SeedTableBoundOrderAsync();
+        var store = new CashierHandoffStore(_source);
+
+        var beforeBill = await store.GetChecksAwaitingPaymentAsync();
+        var bill = BillSourceOperations.CreateMergedBill(Guid.NewGuid(), "BIL-T-" + Guid.NewGuid().ToString("N")[..10], [order.Items[0]], tableId);
+        await new PostgresBillRepository(_source).AddAsync(bill);
+        var afterBill = await store.GetChecksAwaitingPaymentAsync();
+
+        Assert.DoesNotContain(beforeBill, c => c.OrderId == order.Id);
+        Assert.Contains(afterBill, c => c.OrderId == order.Id && c.BillId == bill.Id);
+    }
+
+    [Fact]
     public async Task ACheckWhoseMergedBillHoldsMoneyCannotBeRecalledToItsTableAndOneWithoutMoneyCancelsTheBill()
     {
         var withMoney = await SeedMergedAsync();
@@ -256,6 +271,52 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
 
         Assert.Equal(merged.BillId, Assert.Single(await bills.GetByOrderIdAsync(merged.FirstOrderId)).Id);
         Assert.Equal(merged.BillId, Assert.Single(await bills.GetByOrderIdAsync(merged.SecondOrderId)).Id);
+    }
+
+    [Theory]
+    [InlineData("Cancelled")]
+    [InlineData("Paid")]
+    public async Task ATableOrderWhoseBillIsCancelledOrPaidIsNotInTheTillQueue(string billStatus)
+    {
+        var (tableId, order) = await SeedTableBoundOrderAsync();
+        var bill = BillSourceOperations.CreateMergedBill(Guid.NewGuid(), "BIL-S-" + Guid.NewGuid().ToString("N")[..10], [order.Items[0]], tableId);
+        await new PostgresBillRepository(_source).AddAsync(bill);
+        await Exec("UPDATE billing.bills SET status = @status WHERE bill_id = @id;", ("status", billStatus), ("id", bill.Id));
+
+        Assert.DoesNotContain(await new CashierHandoffStore(_source).GetChecksAwaitingPaymentAsync(), c => c.OrderId == order.Id);
+    }
+
+    [Fact]
+    public async Task RecallingAnOrderStillAtItsTableCancelsTheBillAndClearsTheTablePointer()
+    {
+        var (tableId, order) = await SeedTableBoundOrderAsync();
+        var bill = BillSourceOperations.CreateMergedBill(Guid.NewGuid(), "BIL-R-" + Guid.NewGuid().ToString("N")[..10], [order.Items[0]], tableId);
+        await new PostgresBillRepository(_source).AddAsync(bill);
+        await Exec("UPDATE table_mgmt.tables SET current_bill_id = @bill WHERE table_id = @table;", ("bill", bill.Id), ("table", tableId));
+        var store = new CashierHandoffStore(_source);
+
+        var result = await store.RecallCheckAsync(
+            tableId, order.Id, new PostgresBillRepository(_source), new ALKAROS.Audit.EventStore.PostgresAuditEventStore(_source), _actor, "corr-recall-3");
+
+        Assert.Equal("AlreadyAttached", result.Outcome);
+        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", bill.Id));
+        Assert.Equal(0L, await Count("SELECT count(*) FROM table_mgmt.tables WHERE table_id = @id AND current_bill_id IS NOT NULL;", tableId));
+    }
+
+    private async Task<(Guid TableId, Order Order)> SeedTableBoundOrderAsync()
+    {
+        var tableId = Guid.NewGuid();
+        var zoneId = Guid.NewGuid();
+        await Exec(
+            """
+            INSERT INTO table_mgmt.zones (zone_id, code, name) VALUES (@zone, @zone_code, 'Main Floor');
+            INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+            VALUES (@table, @zone, @number, 4, 'Occupied');
+            """,
+            ("zone", zoneId), ("zone_code", "Z-" + zoneId.ToString("N")), ("table", tableId), ("number", "T-" + tableId.ToString("N")[..6]));
+        var order = await SeedOrderAsync(tableId);
+        await Exec("UPDATE table_mgmt.tables SET current_order_id = @order WHERE table_id = @table;", ("order", order.Id), ("table", tableId));
+        return (tableId, order);
     }
 
     private sealed record Merged(Guid BillId, Guid FirstOrderId, Guid SecondOrderId, Guid TableId);

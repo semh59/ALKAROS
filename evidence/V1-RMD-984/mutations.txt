@@ -1,0 +1,8 @@
+M1 bill clause removed -> Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 129 ms - ALKAROS.Host.Exp
+restored
+M2 cancelled bill allowed -> Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     0, Toplam:     2, S�
+restored
+M3 table-bound without bill allowed -> Başarısız! - Başarısız:     2, Başarılı:     1, Atlanan:     0, Toplam:     3, S�
+restored
+M4 pointer not cleared -> Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S�
+restored

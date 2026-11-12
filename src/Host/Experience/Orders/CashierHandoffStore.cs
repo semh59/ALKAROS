@@ -143,7 +143,18 @@ public sealed class CashierHandoffStore
             // A repeat of a recall: completes one that failed half-way before V1-RMD-414 (bill left open), but
             // never cancels a bill that money has since moved on.
             if (!await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
+            {
                 await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
+                await using var clearPointer = new NpgsqlCommand(
+                    """
+                    UPDATE table_mgmt.tables t
+                    SET current_bill_id = NULL, row_version = row_version + 1
+                    WHERE t.table_id = @table_id
+                      AND EXISTS (SELECT 1 FROM billing.bills b WHERE b.bill_id = t.current_bill_id AND b.status = 'Cancelled');
+                    """, connection, transaction);
+                clearPointer.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+                await clearPointer.ExecuteNonQueryAsync(cancellationToken);
+            }
             await ForgetSentCheckAsync(connection, transaction, orderId, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return new RecallCheckResultV1(orderId, tableId, "AlreadyAttached");
@@ -252,9 +263,9 @@ public sealed class CashierHandoffStore
                 LIMIT 1
             ) ob ON TRUE
             WHERE o.status = 'Submitted'
-              AND NOT EXISTS (
+              AND (ob.bill_id IS NOT NULL OR NOT EXISTS (
                     SELECT 1 FROM table_mgmt.tables ct
-                    WHERE ct.current_order_id = o.order_id)
+                    WHERE ct.current_order_id = o.order_id))
               -- V1-RMD-279: a check whose bill is fully paid has left the till's queue. The order
               -- itself stays Submitted (the order lifecycle is a separate, larger gap), so the
               -- queue must look at the bill, not the order.
