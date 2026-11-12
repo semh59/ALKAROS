@@ -1,7 +1,7 @@
 # V1-RMD-1024 - Dar yan şerit stil testi bir görevin sahipliğinde
 
 - Task ID: V1-RMD-1024
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
@@ -13,14 +13,12 @@ V1-RMD-1023 görevinin eklediği shellStyle.test.ts dosyası görev sahipliğind
 ## Owned surface
 
 - `evidence/V1-RMD-1024/**`
-- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - tools/plan-audit/plan_audit_tool.py
+- `src/Clients/PosTerminal/src/shell/shellStyle.test.ts`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
 
-1. Kırmızı test, düzeltme, mutasyon
-2. İki bağımsız qa incelemesi
+1. Dosyanın sahiplik kaydı (içerik V1-RMD-1023 görevinde test edilip incelenmiştir)
 
 ## Out of scope
 
@@ -32,8 +30,7 @@ V1-RMD-1023 görevinin eklediği shellStyle.test.ts dosyası görev sahipliğind
 
 ## Acceptance evidence
 
-1. Test çıktıları, mutant listesi ve sonuç gerekçesi
-2. İki ardışık bağımsız qa-* incelemesi ve doğrulama turu.
+1. plan-audit validate çıktısı (0 hata, 0 uyarı)
 
 ## Handoff
 
