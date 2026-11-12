@@ -18,6 +18,9 @@ Kasiyerin iki başlığı da dört öğe taşır: Masalar, Bekleyen hesaplar (ro
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.low-items.test.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.management-link.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.help-alerts.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.kitchenless.test.tsx
   - src/Clients/PosTerminal/src/routes/workspace.tsx
   - src/Clients/PosTerminal/src/routes/workspace.test.tsx
   - src/Clients/PosTerminal/src/shell/ProductionShell.tsx
