@@ -1,7 +1,7 @@
 # V1-RMD-1002 - Ödeme ekranı masa adı, kasada eklendi notu ve kısa ilk ekran
 
 - Task ID: V1-RMD-1002
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
@@ -13,8 +13,28 @@
 ## Owned surface
 
 - `evidence/V1-RMD-1002/**`
+- `tests/Clients/StaticApps/split-payment-table-note.test.js`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - Başlangıç commit'inde bu listeye gerçek dosya yolları yazılır (plan commit'i ayrı).
+  - src/Host/Experience/Billing/BillingSplitContracts.cs
+  - src/Host/Experience/Billing/BillingSplitStore.cs
+  - src/Host/DualScreen/DualScreenApplication.Receipt.cs
+  - src/Host/Experience/Orders/CashierHandoffStore.cs
+  - src/Host/Experience/Orders/OrderManagementContracts.cs
+  - tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
+  - tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
+  - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+  - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+  - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx
+  - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx
+  - src/Clients/PosTerminal/src/features/billing/models.ts
+  - src/Clients/PosTerminal/src/features/billing/billing.css
+  - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/pendingChecksApi.ts
+  - src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
+  - src/Clients/PosTerminal/src/strings.ts
+  - tests/Clients/StaticApps/split-payment-receipt.test.js
+  - tests/Clients/StaticApps/split-payment-hierarchy.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
