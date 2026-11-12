@@ -113,37 +113,3 @@ describe("removing an order line", () => {
     expect(css).toMatch(/\.remove-confirm button\s*\{[^}]*min-height:\s*48px/);
   });
 });
-
-describe("the till header on a narrow screen", () => {
-  it("keeps the secondary actions in a Menü list that opens on demand", async () => {
-    await openTill({ compact: true });
-
-    const links = () => [...document.querySelectorAll(".pos-header a, .header-menu a")].map((a) => a.textContent);
-    expect(links()).not.toContain("Masalar");
-    expect(buttons("Menü")).toHaveLength(1);
-    await tap(buttons("Menü")[0]);
-
-    expect(links()).toEqual(expect.arrayContaining(["Masalar", "Mutfak", "Cari hesaplar"]));
-    expect(buttons("Müşteri ekranı")).toHaveLength(1);
-  });
-
-  it("closes the Menü list after an action is chosen and on Escape", async () => {
-    await openTill({ compact: true });
-    await tap(buttons("Menü")[0]);
-    expect(document.querySelector(".header-menu")).not.toBeNull();
-
-    await tap(buttons("Müşteri ekranı")[0]);
-    expect(document.querySelector(".header-menu")).toBeNull();
-
-    await tap(buttons("Menü")[0]);
-    await act(async () => { window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })); });
-    expect(document.querySelector(".header-menu")).toBeNull();
-  });
-
-  it("shows every action in the header on a wide screen and no Menü button", async () => {
-    await openTill();
-
-    expect(buttons("Menü")).toHaveLength(0);
-    expect([...document.querySelectorAll(".pos-header a, .header-menu a")].map((a) => a.textContent)).toEqual(expect.arrayContaining(["Masalar", "Mutfak"]));
-  });
-});

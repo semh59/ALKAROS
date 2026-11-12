@@ -9,7 +9,7 @@ import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
 import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
-import { PendingChecksWorkspace } from "../features/pending-checks";
+import { PendingChecksWorkspace, usePendingChecksAlert } from "../features/pending-checks";
 import { loadPendingChecks } from "../features/pending-checks/pendingChecksApi";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
@@ -47,6 +47,7 @@ export function ExperiencePage({
 }) {
   const { navigate } = useRouter();
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
+  const pendingCheckCount = usePendingChecksAlert(terminalId, capabilitySet.has("orders.create") && path !== "/pending-checks");
   // Which capability a route needs is a route->permission map, not a role guess.
   // `pos.cashier.mutate` was dropped from the permission catalog in migration
   // 049 (V1-IAM-024) — every check below used to key off it, so no session
@@ -127,22 +128,22 @@ export function ExperiencePage({
         onRefresh: () => window.location.reload(),
       };
   const navigation: readonly ShellNavigationItem[] = [
-    { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "orders.create" },
+    { id: "sales", label: navLabels.sales, href: "/", icon: "sales", requiredCapability: "orders.create", primary: false },
     { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
-    { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split" },
-    { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "clock", requiredCapability: "orders.create" },
+    { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split", primary: false },
+    { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "clock", requiredCapability: "orders.create", badge: pendingCheckCount },
     // V12-OUI-004: one entry for online food (orders, and for a manager its settings); same permission as accepting a QR order.
-    { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "send", requiredCapability: "orders.create" },
+    { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "send", requiredCapability: "orders.create", primary: false },
     // V1-IAM-028: kitchen.advance is additive — every role that held
     // orders.send before still holds it, and the new kitchen-staff
     // ("Mutfak Personeli") role holds ONLY kitchen.advance. Gating the nav
     // link on orders.send would have locked that role out of the Kitchen
     // tab entirely.
-    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "kitchen.advance" },
-    { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage" },
-    { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
-    { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "lock", requiredCapability: "reports.view" },
-    { id: "management", label: navLabels.management, href: "/management", icon: "brand", requiredCapability: "reports.view" },
+    { id: "kitchen", label: navLabels.kitchen, href: "/kitchen", icon: "kitchen", requiredCapability: "kitchen.advance", primary: false },
+    { id: "catalog", label: navLabels.catalog, href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage", primary: false },
+    { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage", primary: false },
+    { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "lock", requiredCapability: "reports.view", primary: false },
+    { id: "management", label: navLabels.management, href: "/management", icon: "brand", requiredCapability: "reports.view", primary: false },
   ];
   const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
   const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
@@ -157,7 +158,11 @@ export function ExperiencePage({
     activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
-    headerActions={<>{cashSession && <CashSessionLink status={cashSession} className="experience-header-link" />}<a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
+    headerActions={cashSession ? <CashSessionLink status={cashSession} className="experience-header-link" /> : undefined}
+    moreActions={(close) => <>
+      <a className="production-shell__nav-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display" onClick={close}>Müşteri ekranı</a>
+      <button data-telemetry-id="b.routes.workspace.1" type="button" onClick={() => { close(); void onLogout(); }}>Çıkış</button>
+    </>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} />}
@@ -344,6 +349,7 @@ export function TableRoute({ terminalId, canManage, canCollect = false, canSeeCh
       lastUpdated={lastUpdated}
       awaitingCheckTableIds={awaitingCheckTableIds}
       awaitingChecksUnavailable={canSeeChecks && awaitingCheckTableIds === undefined}
+      onQuickSale={canSeeChecks ? () => navigate("/") : undefined}
     />
     {selectedTable && state === "ready" && !reservationOnly && <TableOrderBridge
       terminalId={terminalId}

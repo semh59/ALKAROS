@@ -1,0 +1,8 @@
+# V1-RMD-1000 Result
+
+- Till (quick sale) header: Masalar | Hizli satis switch, Bekleyen hesaplar (badge), Kasa durumu, user menu "Diger" (4 items); Mutfak, Cari hesaplar, Urun menusu, Yonetim, Musteri ekranini eslestir, Cikis live in the menu; always-visible connection state plus a warning banner (role alert) when the server stops answering. This closes V1-RMD-977 (its stash is applied here).
+- Shell (table plan screen and the other experience pages): main navigation is Masalar and Bekleyen hesaplar (waiting count badge); everything else and the extra actions (Musteri ekrani, Cikis) are under "Diger" (focus returns on Escape, closes on outside press and after a choice, marks the button when the open page lives inside, roles without a primary item keep their few items in the main navigation). Header shows connection and last update; Kasa durumu stays in the header actions.
+- Table plan screen has Hizli satis as a framed secondary button (only with orders.create).
+- New "more" icon. Removed the Menu/narrow-screen header code (useNarrowScreen); its tests were replaced by Cashier.header.test.tsx; the four line-removal tests of Cashier.low-items.test.tsx are kept.
+- Evidence: client-all.log 1259/1259, lint.log, tsc.log, build.log exit 0, mutations.txt (M1-M15 killed, restored).
+- Reviews flagged and left for later (noted, not blocking): one shared top tab set for both screens (B5), Cari hesaplar/Mutfak one tap deeper (B6), hex colours to tokens (B8/B9), shell footer duplicates the connection state (B10), Kasa durumu position differs between the two headers (B4), real 768x1024 render check is done in the final screenshot round.

@@ -34,7 +34,8 @@ export type IconName =
   | "pause"
   | "recall"
   | "gift"
-  | "search";
+  | "search"
+  | "more";
 
 const paths: Record<IconName, string> = {
   sales:
@@ -67,6 +68,7 @@ const paths: Record<IconName, string> = {
     "M6 14 7.5 11.1A2 2 0 0 1 9.3 10H20a2 2 0 0 1 1.9 2.5l-1.5 6A2 2 0 0 1 18.5 20H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.7.9l.8 1.2a2 2 0 0 0 1.7.9H18a2 2 0 0 1 2 2v2",
   gift: "M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M2 8h20v4H2zM12 8v13M12 8 8.5 4.5a2.1 2.1 0 0 1 3-3L12 8l.5-6.5a2.1 2.1 0 0 1 3 3Z",
   search: "M21 21l-4.3-4.3M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z",
+  more: "M5 12h.01M12 12h.01M19 12h.01",
 };
 
 export interface IconProps {

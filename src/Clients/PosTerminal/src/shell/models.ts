@@ -40,6 +40,10 @@ export interface ShellNavigationItem {
   href: string;
   icon: IconName;
   requiredCapability: string;
+  /** Items marked false are folded into the "Diğer" menu instead of the main navigation. */
+  primary?: boolean;
+  /** Pending count shown as a badge on the link. */
+  badge?: number;
 }
 
 export function allowedNavigation(items: readonly ShellNavigationItem[], capabilities: ReadonlySet<string>) {

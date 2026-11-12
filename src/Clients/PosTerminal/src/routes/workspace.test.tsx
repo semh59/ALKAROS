@@ -227,6 +227,7 @@ describe("workspace route gating uses granular permission codes, not the removed
 
   it("gives every left-menu entry its own icon", async () => {
     await renderRoute("/", ["orders.create", "tables.status", "bills.split", "kitchen.advance", "catalog.manage", "reports.view"]);
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
 
     const drawn = [...document.querySelectorAll(".production-shell__nav-symbol svg")].map((svg) => svg.innerHTML);
     expect(drawn.length).toBeGreaterThan(8);
@@ -261,6 +262,7 @@ describe("workspace route gating uses granular permission codes, not the removed
       : url.endsWith("/online-channels") ? { platforms: [] } : url.includes("/online-platform-credentials") ? { platforms: [] } : [];
     await renderRoute("/online", ["orders.create"], online);
     expect(document.body.textContent).not.toContain(forbiddenText);
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
     const entries = [...document.querySelectorAll("a, button")].filter((e) => e.textContent?.includes("Online"));
     expect(entries.map((e) => e.textContent?.trim()).filter((t) => t === "Online Yemek").length).toBeGreaterThanOrEqual(1);
     expect(document.body.textContent).not.toContain("Online platform bilgileri");
@@ -348,6 +350,58 @@ describe("workspace /tables route surfaces the real backend error message", () =
 
     expect(document.body.textContent).toContain("Masa servisi şu anda yanıt vermiyor.");
     expect(document.body.textContent).not.toContain("Masa verisi alınamadı.");
+  });
+});
+
+describe("workspace header for the cashier", () => {
+  let root: Root | null = null;
+  const json = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+
+  async function open(onLogout = async () => {}) {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("awaiting-payment")) return json([{ orderId: "o1", orderNumber: "1", tableNumber: "M-3", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "t" }, { orderId: "o2", orderNumber: "2", tableNumber: "M-4", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "u" }]);
+      return json([]);
+    }));
+    window.history.replaceState({}, "", "/tables");
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="88888888-8888-8888-8888-888888888888" displayName="Test" capabilities={["tables.status", "orders.create", "kitchen.advance", "catalog.manage"]} path="/tables" backendStatus="online" customerDisplayUrl="http://display" onLogout={onLogout} />
+      </RouterProvider>));
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("keeps Masalar and Bekleyen hesaplar (with the waiting count) in the main navigation and the rest under Diğer", async () => {
+    await open();
+    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).toEqual(["Masalar", "Bekleyen hesaplar2 bekleyen"]);
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
+    const more = [...document.querySelectorAll(".production-shell__more a, .production-shell__more button")].map((item) => item.textContent);
+    expect(more).toEqual(["Kasa", "Online Yemek", "Mutfak", "Menü", "Sistem", "Müşteri ekranı", "Çıkış"]);
+    expect(more).not.toContain("Masalar");
+  });
+
+  it("opens the quick sale screen from the table plan", async () => {
+    await open();
+    await act(async () => document.querySelector<HTMLButtonElement>(".table-quick-sale")!.click());
+    expect(window.location.pathname).toBe("/");
+  });
+
+  it("signs out from the Diğer menu", async () => {
+    const onLogout = vi.fn(async () => {});
+    await open(onLogout);
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
+    await act(async () => [...document.querySelectorAll<HTMLButtonElement>(".production-shell__more button")].find((button) => button.textContent === "Çıkış")!.click());
+    expect(onLogout).toHaveBeenCalledTimes(1);
   });
 });
 

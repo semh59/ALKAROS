@@ -74,6 +74,97 @@ describe("production shell", () => {
     expect(document.querySelector('.production-shell__identity[role="group"][aria-label="Aktif çalışma bağlamı"]')).not.toBeNull();
   });
 
+  it("keeps the main navigation to the primary items and folds the rest into a Diğer menu with the extra actions", async () => {
+    const onExtra = vi.fn();
+    const items = [
+      { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "tables.read" },
+      { id: "pending", label: "Bekleyen hesaplar", href: "/pending", icon: "clock", requiredCapability: "tables.read", badge: 3 },
+      { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "tables.read", primary: false },
+      { id: "catalog", label: "Menü ve katalog", href: "/catalog", icon: "catalog", requiredCapability: "catalog.manage", primary: false },
+    ] as const;
+    await render(<ProductionShell {...baseProps} navigation={items} moreActions={(close) => <button type="button" onClick={() => { close(); onExtra(); }}>Çıkış</button>} />);
+
+    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).toEqual(["Masalar", "Bekleyen hesaplar3 bekleyen"]);
+    expect(document.querySelector(".production-shell__nav-badge")?.textContent).toBe("3 bekleyen");
+    const more = document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!;
+    expect(more.textContent).toBe("Diğer ▾");
+    expect(more.getAttribute("aria-expanded")).toBe("false");
+    expect(document.querySelector(".production-shell__more")).toBeNull();
+
+    await act(async () => more.click());
+    expect(more.getAttribute("aria-expanded")).toBe("true");
+    expect([...document.querySelectorAll(".production-shell__more a, .production-shell__more button")].map((item) => item.textContent)).toEqual(["Mutfak", "Çıkış"]);
+
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more button")!.click());
+    expect(onExtra).toHaveBeenCalledTimes(1);
+    expect(document.querySelector(".production-shell__more")).toBeNull();
+  });
+
+  it("closes the Diğer menu after a link in it is followed in the app", async () => {
+    const onNavigate = vi.fn();
+    const items = [
+      { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "tables.read" },
+      { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "tables.read", primary: false },
+    ] as const;
+    await render(<ProductionShell {...baseProps} navigation={items} onNavigate={onNavigate} />);
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
+    await act(async () => document.querySelector<HTMLAnchorElement>(".production-shell__more a")!.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 })));
+    expect(onNavigate).toHaveBeenCalledWith("/kitchen");
+    expect(document.querySelector(".production-shell__more")).toBeNull();
+  });
+
+  it("returns the focus to the Diğer button on Escape, closes on an outside press and marks it when the open page lives inside", async () => {
+    const items = [
+      { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "tables.read" },
+      { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "tables.read", primary: false },
+    ] as const;
+    await render(<ProductionShell {...baseProps} navigation={items} activeNavigationId="kitchen" />);
+    const toggle = document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!;
+    expect(toggle.getAttribute("aria-current")).toBe("true");
+    expect(toggle.hasAttribute("aria-controls")).toBe(false);
+    await act(async () => toggle.click());
+    expect(toggle.getAttribute("aria-controls")).toBe(document.querySelector(".production-shell__more")!.id);
+    await act(async () => { window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })); });
+    expect(document.activeElement).toBe(toggle);
+
+    await act(async () => toggle.click());
+    await act(async () => { document.querySelector(".production-shell__workspace")!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); });
+    expect(document.querySelector(".production-shell__more")).toBeNull();
+  });
+
+  it("closes the Diğer menu on Escape and shows no menu button when nothing is folded", async () => {
+    const items = [
+      { id: "tables", label: "Masalar", href: "/tables", icon: "tables", requiredCapability: "tables.read" },
+      { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "tables.read", primary: false },
+    ] as const;
+    await render(<ProductionShell {...baseProps} navigation={items} />);
+    await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
+    expect(document.querySelector(".production-shell__more")).not.toBeNull();
+    await act(async () => { window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })); });
+    expect(document.querySelector(".production-shell__more")).toBeNull();
+
+    await render(<ProductionShell {...baseProps} />);
+    expect(document.querySelector(".production-shell__more-toggle")).toBeNull();
+  });
+
+  it("shows every allowed item in the main navigation when the role has no primary item", async () => {
+    const items = [
+      { id: "kitchen", label: "Mutfak", href: "/kitchen", icon: "kitchen", requiredCapability: "tables.read", primary: false },
+    ] as const;
+    await render(<ProductionShell {...baseProps} navigation={items} />);
+    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).toEqual(["Mutfak"]);
+    expect(document.querySelector(".production-shell__more-toggle")).toBeNull();
+  });
+
+  it("shows the connection and the last update in the header", async () => {
+    await render(<ProductionShell {...baseProps} />);
+    expect(document.querySelector(".production-shell__sync")?.textContent).toBe("Güncel · 10:00 itibarıyla güncel");
+
+    await render(<ProductionShell {...baseProps} connectivity={{ status: "offline" }} freshness={{ status: "stale", dateTime: "2026-08-26T10:00:00Z", label: "10:00", onRefresh: () => undefined }} />);
+    expect(document.querySelector(".production-shell__sync")?.textContent).toBe("Çevrimdışı · son veri 10:00");
+    expect(document.querySelector(".production-shell__sync")?.classList.contains("production-shell__sync--offline")).toBe(true);
+  });
+
   it("keeps missing and expired sessions distinct from forbidden access", async () => {
     const signIn = vi.fn();
     await render(<ProductionShell {...baseProps} session={{ status: "unauthenticated", reason: "expired", onSignIn: signIn }} />);

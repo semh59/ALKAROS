@@ -238,6 +238,7 @@
 .table-attention__chip--pay { border-color: var(--table-pay); background: var(--table-pay-soft); }
 .table-attention__unavailable { margin: 0; align-self: center; color: var(--ds-color-warning); font-weight: 800; }
 
+.table-quick-sale { border: 2px solid var(--ds-color-brand); }
 .table-card__icon { font-size: 1rem; line-height: 1; }
 .table-card__amount { font-size: 1.25rem; font-weight: 900; letter-spacing: -.03em; }
 .table-card__meta { color: var(--table-muted); font-size: .8rem; }

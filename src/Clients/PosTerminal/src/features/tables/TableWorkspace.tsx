@@ -140,6 +140,7 @@ export function TableWorkspace({
   lastUpdated,
   awaitingCheckTableIds,
   awaitingChecksUnavailable,
+  onQuickSale,
 }: TableWorkspaceProps) {
   // The grid opens first: it carries the amounts, waiters and attention cues the floor plan drawing does not.
   const [view, setView] = useState<TableView>("list");
@@ -386,6 +387,7 @@ export function TableWorkspace({
           {refreshError && <p className="table-workspace__refresh-error" role="alert">Masa durumu güncellenemedi; son bilinen durum gösteriliyor. {refreshError}</p>}
         </div>
         <div className="table-workspace__toolbar-actions">
+          {onQuickSale && <Button data-telemetry-id="b.tables.tableworkspace.quick-sale" className="table-quick-sale" variant="secondary" onClick={onQuickSale}>Hızlı satış</Button>}
           {canCreate && <><Button data-telemetry-id="b.tables.tableworkspace.4" variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Bölge ekle</Button><Button data-telemetry-id="b.tables.tableworkspace.5" onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
           {canManage && onUpdateTable && selectedTable && <Button data-telemetry-id="b.tables.tableworkspace.6" variant="secondary" onClick={openTableEdit}>Masayı düzenle</Button>}
           {canManage && onUpdateZone && <Button data-telemetry-id="b.tables.tableworkspace.7" variant="secondary" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(null); setZonesDialogOpen(true); }}>Bölgeleri yönet</Button>}

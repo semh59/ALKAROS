@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type MouseEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { Button, ContextDrawer, Icon, StateMessage } from "../design-system";
 import alkarosLogo from "../design-system/brand/alkaros-logo-on-dark.png";
 import { isPlainClick } from "../router";
@@ -46,6 +46,8 @@ export interface ProductionShellProps {
   onContextOpen?: () => void;
   onContextClose?: () => void;
   headerActions?: ReactNode;
+  /** Extra actions (not links) listed at the end of the "Diğer" menu. */
+  moreActions?: (close: () => void) => ReactNode;
   children: ReactNode;
 }
 
@@ -53,10 +55,32 @@ export function ProductionShell(props: ProductionShellProps) {
   const {
     session, authorization, connectivity, freshness, navigation, activeNavigationId,
     onNavigate, workspaceTitle, workspaceDescription, contextTitle, context, contextOpen = false,
-    onContextOpen, onContextClose, headerActions, children,
+    onContextOpen, onContextClose, headerActions, moreActions, children,
   } = props;
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreToggle = useRef<HTMLButtonElement>(null);
+  const moreMenu = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!moreOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMoreOpen(false);
+      moreToggle.current?.focus();
+    };
+    const closeOnOutside = (event: Event) => {
+      const target = event.target as Node;
+      if (!moreMenu.current?.contains(target) && !moreToggle.current?.contains(target)) setMoreOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("mousedown", closeOnOutside);
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("mousedown", closeOnOutside);
+    };
+  }, [moreOpen]);
 
   const handleNavClick = (href: string) => (event: MouseEvent<HTMLAnchorElement>) => {
+    setMoreOpen(false);
     if (!onNavigate || !isPlainClick(event)) return;
     event.preventDefault();
     onNavigate(href);
@@ -65,6 +89,12 @@ export function ProductionShell(props: ProductionShellProps) {
   const workspaceId = useId();
   const identity = session.status === "authenticated" ? session.identity : null;
   const allowedItems = identity ? allowedNavigation(navigation, identity.capabilities) : [];
+  // A role with no primary item (a kitchen-only user) keeps its few items in the main navigation.
+  const hasPrimary = allowedItems.some((item) => item.primary !== false);
+  const mainItems = hasPrimary ? allowedItems.filter((item) => item.primary !== false) : allowedItems;
+  const moreItems = hasPrimary ? allowedItems.filter((item) => item.primary === false) : [];
+  const hasMore = moreItems.length > 0 || moreActions != null;
+  const moreId = useId();
   const showPersistentContext = mode === "wide" && context != null;
   const showContextSheet = mode !== "wide" && context != null && contextOpen;
 
@@ -81,14 +111,20 @@ export function ProductionShell(props: ProductionShellProps) {
           <IdentityItem label="Kullanıcı" value={identity.userName} />
           <IdentityItem label="Rol" value={identity.roleLabel} />
         </div>}
+        <SyncIndicator connectivity={connectivity} freshness={freshness} />
         {headerActions && <div className="production-shell__header-actions">{headerActions}</div>}
       </header>
 
       <nav className="production-shell__nav" aria-label="Ana navigasyon">
-        {allowedItems.map((item) => <a key={item.id} className="production-shell__nav-link" href={item.href} onClick={handleNavClick(item.href)} aria-current={item.id === activeNavigationId ? "page" : undefined}>
-          <span className="production-shell__nav-symbol" aria-hidden="true"><Icon name={item.icon} /></span>
-          <span className="production-shell__nav-label">{item.label}</span>
-        </a>)}
+        {mainItems.map((item) => <NavLink key={item.id} item={item} active={item.id === activeNavigationId} onClick={handleNavClick(item.href)} />)}
+        {hasMore && <button data-telemetry-id="b.shell.productionshell.more" ref={moreToggle} type="button" className="production-shell__nav-link production-shell__more-toggle" aria-expanded={moreOpen} aria-controls={moreOpen ? moreId : undefined} aria-current={moreItems.some((item) => item.id === activeNavigationId) ? "true" : undefined} onClick={() => setMoreOpen((open) => !open)}>
+          <span className="production-shell__nav-symbol" aria-hidden="true"><Icon name="more" /></span>
+          <span className="production-shell__nav-label">Diğer ▾</span>
+        </button>}
+        {hasMore && moreOpen && <div id={moreId} ref={moreMenu} className="production-shell__more">
+          {moreItems.map((item) => <NavLink key={item.id} item={item} active={item.id === activeNavigationId} onClick={handleNavClick(item.href)} />)}
+          {moreActions?.(() => setMoreOpen(false))}
+        </div>}
       </nav>
 
       <main id={workspaceId} className="production-shell__workspace" tabIndex={-1}>
@@ -105,6 +141,24 @@ export function ProductionShell(props: ProductionShellProps) {
       <SystemStatus connectivity={connectivity} freshness={freshness} />
     </div>
   );
+}
+
+function NavLink({ item, active, onClick }: { item: ShellNavigationItem; active: boolean; onClick: (event: MouseEvent<HTMLAnchorElement>) => void }) {
+  return <a className="production-shell__nav-link" href={item.href} onClick={onClick} aria-current={active ? "page" : undefined}>
+    <span className="production-shell__nav-symbol" aria-hidden="true"><Icon name={item.icon} /></span>
+    <span className="production-shell__nav-label">{item.label}</span>
+    {item.badge ? <span className="production-shell__nav-badge">{item.badge}<span className="production-shell__visually-hidden"> bekleyen</span></span> : null}
+  </a>;
+}
+
+function SyncIndicator({ connectivity, freshness }: { connectivity: Connectivity; freshness: Freshness }) {
+  const text = connectivity.status === "offline"
+    ? `${connectivityLabels.offline} · son veri ${freshness.label}`
+    : connectivity.status === "reconnecting"
+      ? connectivityLabels.reconnecting
+      : freshness.status === "fresh" ? `Güncel · ${freshness.label}` : `Veri eski · ${freshness.label}`;
+  const tone = connectivity.status === "online" && freshness.status === "fresh" ? "online" : connectivity.status === "online" ? "stale" : connectivity.status;
+  return <span className={`production-shell__sync production-shell__sync--${tone}`} role="status">{text}</span>;
 }
 
 function IdentityItem({ label, value }: { label: string; value: string }) {

@@ -41,16 +41,19 @@ async function renderHome(capabilities: string[]) {
   await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
 }
 
-const managementLink = () => [...document.querySelectorAll("a.header-action")].find((link) => link.textContent === "Yönetim");
+const managementLink = () => [...document.querySelectorAll(".header-menu a.header-action")].find((link) => link.textContent === "Yönetim");
+const openMenu = () => act(async () => { document.querySelector<HTMLButtonElement>(".pos-header button.operator-card")!.click(); });
 
 describe("Cashier home header management link", () => {
   it("is shown to a session with reports.view and points to the management area", async () => {
     await renderHome(["orders.create", "reports.view"]);
+    await openMenu();
     expect(managementLink()?.getAttribute("href")).toBe("/management");
   });
 
   it("is not shown without reports.view", async () => {
     await renderHome(["orders.create"]);
+    await openMenu();
     expect(managementLink()).toBeUndefined();
   });
 });

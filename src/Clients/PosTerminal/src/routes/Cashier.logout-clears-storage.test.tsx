@@ -74,7 +74,8 @@ describe("Cashier logout clears session-scoped localStorage", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     });
 
-    const logoutButton = document.querySelector('[aria-label="Oturumu kapat"]') as HTMLButtonElement | null;
+    await act(async () => { document.querySelector<HTMLButtonElement>(".pos-header button.operator-card")!.click(); });
+    const logoutButton = [...document.querySelectorAll<HTMLButtonElement>(".header-menu button")].find((button) => button.textContent === "Çıkış") ?? null;
     expect(logoutButton).not.toBeNull();
 
     expect(localStorage.getItem("alkaros.current-bill-id")).toBe("11111111-1111-1111-1111-111111111111");

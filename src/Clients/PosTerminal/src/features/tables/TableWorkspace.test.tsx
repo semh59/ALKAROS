@@ -194,6 +194,18 @@ describe("table workspace", () => {
     expect(cards[1].querySelector(".table-card__select")?.getAttribute("aria-label")).toBe("S-14 masasını seç, Dolu, ₺80,00");
   });
 
+  it("offers Hızlı satış as a framed secondary button only when the operator may sell", async () => {
+    const onQuickSale = vi.fn();
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, onQuickSale })} />);
+    const button = document.querySelector<HTMLButtonElement>(".table-quick-sale")!;
+    expect(button.textContent).toBe("Hızlı satış");
+    await click(button);
+    expect(onQuickSale).toHaveBeenCalledTimes(1);
+
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null })} />);
+    expect(document.querySelector(".table-quick-sale")).toBeNull();
+  });
+
   it("opens on the table grid even when a floor plan exists", async () => {
     await render(<TableWorkspace {...baseProps({ selectedTableId: null, floorPlan: { zoneId: "zone-salon", rowVersion: 1, tables: [] } as never })} />);
     expect(document.querySelectorAll(".table-card")).toHaveLength(2);

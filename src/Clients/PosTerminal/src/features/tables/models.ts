@@ -195,6 +195,8 @@ export interface TableWorkspaceProps {
   awaitingCheckTableIds?: ReadonlySet<string>;
   /** The operator may read the till list but it could not be loaded, so "asking" marks may be missing. */
   awaitingChecksUnavailable?: boolean;
+  /** Opens the quick sale screen; absent for an operator who may not sell. */
+  onQuickSale?: () => void;
   onRefresh: () => void | Promise<void>;
   onCreateZone?: (input: CreateZoneInput) => void | Promise<void>;
   onCreateTable?: (input: CreateTableInput) => void | Promise<void>;

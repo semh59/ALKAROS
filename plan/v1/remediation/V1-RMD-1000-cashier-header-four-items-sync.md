@@ -1,7 +1,7 @@
 # V1-RMD-1000 - Kasa üst başlığı: Masalar, Bekleyen hesaplar, Kasa durumu, Diğer ve bağlantı göstergesi
 
 - Task ID: V1-RMD-1000
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

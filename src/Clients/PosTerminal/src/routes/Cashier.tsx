@@ -73,20 +73,6 @@ export function customerDisplayHref(originUrl: string): string {
   return `${originUrl.replace(/\/+$/, "")}/display`;
 }
 
-function useNarrowScreen(): boolean {
-  const query = "(max-width: 600px)";
-  const [narrow, setNarrow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia(query).matches);
-  useEffect(() => {
-    if (typeof window.matchMedia !== "function") return;
-    const list = window.matchMedia(query);
-    const update = () => setNarrow(list.matches);
-    list.addEventListener("change", update);
-    update();
-    return () => list.removeEventListener("change", update);
-  }, []);
-  return narrow;
-}
-
 // A finished order (completed, cancelled or fully paid) is no cart: the till opens clean.
 // A table order is the cart only when the cashier just opened it from the tables screen; otherwise the till starts a quick sale.
 const openCheckOnly = (snapshot: DisplaySnapshot | null, tableCartId: string | null): DisplaySnapshot | null =>
@@ -94,6 +80,12 @@ const openCheckOnly = (snapshot: DisplaySnapshot | null, tableCartId: string | n
     || (!!snapshot.tableNumber && snapshot.orderId !== tableCartId))
     ? { ...snapshot, orderId: null, lines: [] }
     : snapshot;
+
+const connectionStateText: Record<BackendStatus, string> = {
+  checking: "Bağlantı kontrol ediliyor",
+  online: "Bağlantı var",
+  offline: "Bağlantı yok",
+};
 
 export function Cashier({ navigateToPage = (href: string) => window.location.assign(href) }: { navigateToPage?: (href: string) => void }) {
   const { path: currentPath, navigate } = useRouter();
@@ -106,7 +98,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   // The queue screen chimes for itself; the sales screen and every other one still have to tell the till that an order landed.
   useNewOrderChime(terminalId, capabilities.includes("orders.create") && onlineHubTabFor(currentPath) !== "orders");
   // The pending-checks screen sounds and lists for itself; every other screen still has to tell the till that a check was sent over.
-  const pendingCheckCount = usePendingChecksAlert(terminalId, capabilities.includes("orders.create") && currentPath !== "/pending-checks");
+  // Every other screen is drawn by ExperiencePage, which polls on its own.
+  const pendingCheckCount = usePendingChecksAlert(terminalId, capabilities.includes("orders.create") && currentPath === "/");
   const [catalog, setCatalog] = useState<CatalogProduct[]>([]);
   const [order, setOrder] = useState<DisplaySnapshot | null>(null);
   const [pairingCode, setPairingCode] = useState("");
@@ -136,7 +129,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [removedLine, setRemovedLine] = useState<DisplayLine | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const compactHeader = useNarrowScreen();
   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
   const headerMenu = useRef<HTMLElement>(null);
   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
@@ -154,7 +146,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const knownHelpIds = useRef(new Set<string>());
   // One tap = one action: a second tap during the first one must not open a second order.
   const addingProduct = useRef(false);
-  const pairingTrigger = useRef<HTMLButtonElement>(null);
+  const userMenuButton = useRef<HTMLButtonElement>(null);
   const pairingDialog = useRef<HTMLDivElement>(null);
 
   // A call already on screen is not added or announced twice (it can arrive live and again in the open list).
@@ -365,21 +357,29 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     const dialog = pairingDialog.current;
     const first = dialog?.querySelector<HTMLElement>(focusableSelector);
     first?.focus();
-    const trigger = pairingTrigger.current;
+    const trigger = userMenuButton.current;
     return () => trigger?.focus();
   }, [pairingOpen]);
 
-  useEffect(() => { if (!compactHeader) setMenuOpen(false); }, [compactHeader]);
-
   useEffect(() => {
     if (!menuOpen) return;
-    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setMenuOpen(false); };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      userMenuButton.current?.focus();
+    };
     const menu = headerMenu.current;
     const closeOnChoice = (event: Event) => { if ((event.target as Element).closest("a, button")) setMenuOpen(false); };
+    const closeOnOutside = (event: Event) => {
+      const target = event.target as Node;
+      if (!menu?.contains(target) && !userMenuButton.current?.contains(target)) setMenuOpen(false);
+    };
     window.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("mousedown", closeOnOutside);
     menu?.addEventListener("click", closeOnChoice);
     return () => {
       window.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("mousedown", closeOnOutside);
       menu?.removeEventListener("click", closeOnChoice);
     };
   }, [menuOpen]);
@@ -719,18 +719,19 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         </button>
       )}
       {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
-      <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
       <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
       {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Ürün menüsü</a>}
       {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
       <button data-telemetry-id="b.routes.cashier.4"
         className="header-action"
-        ref={pairingTrigger}
         aria-haspopup="dialog"
         aria-expanded={pairingOpen}
         onClick={() => setPairingOpen(true)}
       >
         Müşteri ekranını eşleştir
+      </button>
+      <button data-telemetry-id="b.routes.cashier.5" className="header-action" disabled={busy} onClick={() => void logout()}>
+        Çıkış
       </button>
     </>
   );
@@ -742,30 +743,23 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           <div className="brand-mark compact">A</div>
           <div><strong>ALKAROS</strong><span>Kasa satış</span></div>
         </div>
+        <div className={`system-state connection-state ${backendStatus}`} role="status"><span aria-hidden="true" />{connectionStateText[backendStatus]}</div>
         <div className="pos-header-actions">
-          <div className={`system-state compact ${backendStatus}`} title="Gerçek /health/ready sonucu">
-            <span />
-            {backendStatus === "online" ? "Sunucu hazır" : "Bağlantı sorunu"}
-          </div>
+          <nav className="view-switch" aria-label="Çalışma alanı">
+            <a href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
+            <a href="/" aria-current="page" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/"); } }}>Hızlı satış</a>
+          </nav>
           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
           {cashSession && <CashSessionLink status={cashSession} />}
-          {compactHeader ? (
-            <button data-telemetry-id="b.routes.cashier.42" className="header-action" aria-expanded={menuOpen} aria-controls="header-menu" onClick={() => setMenuOpen((open) => !open)}>Menü</button>
-          ) : (
-            <>
-              {secondaryActions}
-            </>
-          )}
-          <div className="operator-card"><span>{displayName || username}</span><small>Kasiyer</small></div>
-          <button data-telemetry-id="b.routes.cashier.5" className="icon-action" disabled={busy} onClick={() => void logout()} aria-label="Oturumu kapat">
-            Çıkış
+          <button data-telemetry-id="b.routes.cashier.42" className="operator-card" ref={userMenuButton} aria-expanded={menuOpen} aria-controls="header-menu" onClick={() => setMenuOpen((open) => !open)}>
+            <span>{displayName || username}</span><small>Kasiyer · Diğer ▾</small>
           </button>
         </div>
       </header>
-      {compactHeader && menuOpen && (
+      {menuOpen && (
         <nav id="header-menu" className="header-menu" aria-label="Diğer eylemler" ref={headerMenu}>{secondaryActions}</nav>
       )}
-
+      {backendStatus === "offline" && <div className="connection-warning" role="alert">Bağlantı sorunu: sunucuya ulaşılamıyor, işlemler tamamlanmayabilir. Bağlantı gelene kadar sayfayı kapatmayın.</div>}
       {cashSession && <CashSessionBand status={cashSession} />}
 
       {helpLink !== "ok" && (

@@ -115,7 +115,7 @@ describe("Cashier adds an item to the open check without a kitchen ticket", () =
   it("leaves the kitchen-less mode with the done button", async () => {
     await openTill(["orders.create", "orders.add-without-kitchen"]);
     await tap(button("Mutfağa göndermeden hesaba ekle")!);
-    await tap(button("Diğer")!);
+    await tap([...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Diğer")!);
 
     await tap(button("Normal eklemeye dön")!);
 

@@ -145,6 +145,9 @@ describe("PosTerminal accessibility states", () => {
     }));
 
     await renderApp();
+    const userMenu = () => document.querySelector<HTMLButtonElement>(".pos-header button.operator-card");
+    await waitUntil(() => userMenu() !== null);
+    await act(async () => userMenu()!.dispatchEvent(new MouseEvent("click", { bubbles: true })));
     const findTrigger = () => [...document.querySelectorAll("button")].find((button) =>
       button.textContent?.includes("Müşteri ekranını eşleştir"));
     await waitUntil(() => findTrigger() !== undefined);
