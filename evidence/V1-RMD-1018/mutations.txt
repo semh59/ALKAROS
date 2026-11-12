@@ -1,0 +1,3 @@
+killed refund section not folded
+killed fold never forced open for a waiting request
+killed folds not bound in the paid view

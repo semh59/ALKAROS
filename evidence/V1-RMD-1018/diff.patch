@@ -1,0 +1,54 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index ae577550..eeba8877 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2161,6 +2161,19 @@
+       '<summary id="fold-' + name + '-summary">' + title + '</summary>' + body + '</details>';
+   }
+ 
++  function refundNeedsAttention() {
++    return !!(state.refundError || state.refundNotice || state.confirmKey || (state.refundRequests && state.refundRequests.length > 0));
++  }
++
++  function bindFolds() {
++    document.querySelectorAll('details.sp-fold > summary').forEach(function (summary) {
++      summary.addEventListener('click', function () {
++        var details = summary.parentElement;
++        state.folds[details.getAttribute('data-fold')] = !details.open;
++      });
++    });
++  }
++
+   // Which table the bill belongs to, and the lines the cashier added without a kitchen ticket.
+   function renderBillContext() {
+     var added = state.billItems.filter(function (item) { return item.addedWithoutKitchenReason; });
+@@ -2232,16 +2245,10 @@
+         !!(state.discountNotice || state.discountError || state.discountConfirm || state.tipError))) +
+       (state.locked ? '' : renderFold('comp', 'İkram', renderCompForm(),
+         !!(state.compNotice || state.compError || state.compConfirm || state.compPending))) +
+-      renderFold('refund', 'İade ve iptal', renderRefundSection(true),
+-        !!(state.refundError || state.refundNotice || state.confirmKey || (state.refundRequests && state.refundRequests.length > 0))) +
++      renderFold('refund', 'İade ve iptal', renderRefundSection(true), refundNeedsAttention()) +
+       '</div>';
+ 
+-    document.querySelectorAll('details.sp-fold > summary').forEach(function (summary) {
+-      summary.addEventListener('click', function () {
+-        var details = summary.parentElement;
+-        state.folds[details.getAttribute('data-fold')] = !details.open;
+-      });
+-    });
++    bindFolds();
+ 
+     document.querySelectorAll('[role="radiogroup"]').forEach(function (group) {
+       group.addEventListener('keydown', function (event) { moveWithinGroup(event, 'radio'); });
+@@ -2483,8 +2490,9 @@
+         : '') +
+       BACK_LINK +
+       '</div>' +
+-      '<div class="sp-card">' + renderRefundSection(false) + '</div>' +
++      '<div class="sp-card">' + renderFold('refundPaid', 'İade', renderRefundSection(false), refundNeedsAttention()) + '</div>' +
+       renderReceiptReset();
++    bindFolds();
+   }
+ 
+   // The error box sits at the top of the page while the pay button is sticky at the bottom: bring an error into view, also the
