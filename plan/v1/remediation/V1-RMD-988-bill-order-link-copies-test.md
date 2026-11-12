@@ -1,7 +1,7 @@
 # V1-RMD-988 - Fatura-sipariş bağı kopya testi üçüncü kopyayı da denetler
 
 - Task ID: V1-RMD-988
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

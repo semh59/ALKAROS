@@ -1,0 +1,5 @@
+M1 third copy loses the order condition -> Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:
+restored
+M2 count back to 2 (old test) -> Başarısız! - Başarısız:     3, Başarılı:     3, Atlanan:     0, Toplam:
+M3 cancelled-bill condition dropped -> Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:
+restored

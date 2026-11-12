@@ -30,6 +30,7 @@ public sealed class BillOrderLinkCopiesTests
     [Theory]
     [InlineData("rb", "rbi", "rbo")]
     [InlineData("pb", "pbi", "pbo")]
+    [InlineData("ob", "obi", "obo")]
     public void TheBusinessDayReportCopiesAreTheBillingCondition(string bill, string billItem, string orderItem)
     {
         var reader = Assembly.Load("ALKAROS.Reporting").GetType("ALKAROS.Reporting.BusinessDayTotals.PostgresBusinessDayTotalsReader", throwOnError: true)!;
@@ -37,6 +38,15 @@ public sealed class BillOrderLinkCopiesTests
         var canonical = Regex.Replace(Regex.Replace(BillOrderLink.Matches(bill, "o.order_id"), @"\bbli\b", billItem), @"\boli\b", orderItem);
 
         Assert.Contains(Normalize(canonical), Normalize(sql));
-        Assert.Equal(2, Regex.Count(sql, "billing.bill_items"));
+    }
+
+    [Fact]
+    public void TheBusinessDayReportHoldsExactlyThreeCopiesAndTheOpenOrderCheckSkipsCancelledBills()
+    {
+        var reader = Assembly.Load("ALKAROS.Reporting").GetType("ALKAROS.Reporting.BusinessDayTotals.PostgresBusinessDayTotalsReader", throwOnError: true)!;
+        var sql = (string)reader.GetField("Sql", BindingFlags.NonPublic | BindingFlags.Static)!.GetRawConstantValue()!;
+
+        Assert.True(Regex.Count(sql, "billing.bill_items") == 3, "A new bill-order link copy must be added to the theory above.");
+        Assert.Contains("AND ob.status <> 'Cancelled'", Normalize(sql));
     }
 }
