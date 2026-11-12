@@ -351,6 +351,65 @@ describe("workspace /tables route surfaces the real backend error message", () =
   });
 });
 
+describe("workspace /tables route marks tables whose check waits at the till", () => {
+  let root: Root | null = null;
+  const terminal = "88888888-8888-8888-8888-888888888888";
+  const table = {
+    tableId: "tbl-ask", tableNumber: "M-3", zoneId: null, capacity: 4, active: true, status: "Cleaning", currentOrderId: null,
+    currentBillId: null, rowVersion: 1, allowedCommands: [], activeReservationId: null, reservationRowVersion: null,
+    statusChangedAt: "2026-11-12T08:00:00Z",
+  };
+  const json = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+
+  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"]) {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/table-management/zones")) return json([]);
+      if (path.includes("/table-management/tables")) return json([table]);
+      if (path.includes("awaiting-payment") && awaiting) return awaiting();
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    window.history.replaceState({}, "", "/tables");
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId={terminal} displayName="Test" capabilities={capabilities} path="/tables" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>));
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("shows Hesap istedi for a sent check without a bill", async () => {
+    await open(() => json([{ orderId: "o1", orderNumber: "1", tableNumber: "M-3", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tbl-ask" }]));
+    expect(document.querySelector(".table-card--plan-ask")?.textContent).toContain("Hesap istedi");
+  });
+
+  it("never asks the till list for an operator who may not read it", async () => {
+    await open(() => json([]), ["tables.status"]);
+    expect(document.querySelector(".table-attention__unavailable")).toBeNull();
+    const fetched = (fetch as unknown as { mock: { calls: unknown[][] } }).mock.calls.map((call) => String(call[0]));
+    expect(fetched.some((path) => path.includes("awaiting-payment"))).toBe(false);
+    expect(document.querySelector(".table-card")).not.toBeNull();
+  });
+
+  it("does not ask when the check already has a bill, and still renders when the till list cannot be read", async () => {
+    await open(() => json([{ orderId: "o1", orderNumber: "1", tableNumber: "M-3", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: "b1", paidAmount: 0, itemPreview: null, tableId: "tbl-ask" }]));
+    expect(document.querySelector(".table-card--plan-ask")).toBeNull();
+    await act(async () => root!.unmount());
+    await open(null);
+    expect(document.querySelector(".table-card--plan-clean")).not.toBeNull();
+    expect(document.querySelector(".table-attention__unavailable")).not.toBeNull();
+  });
+});
+
 /**
  * V1-RMD-366 (module-by-module UI audit, 2026-09-27): BillingRoute's load()
  * checked only `reason instanceof ApiError` for the message it shows, but
@@ -981,6 +1040,7 @@ describe("workspace /tables route background refresh", () => {
     }));
     vi.useFakeTimers();
     await renderRoute();
+    await act(async () => [...document.querySelectorAll<HTMLButtonElement>(".table-workspace__view-toggle button")].find((button) => button.textContent === "Salon planı")!.click());
     expect(document.querySelector(".table-workspace__floor-plan")).not.toBeNull();
 
     planFails = true;
@@ -1030,11 +1090,8 @@ describe("workspace /tables route background refresh", () => {
     await renderRoute();
     planPaths.length = 0;
 
-    const zoneSelect = [...document.querySelectorAll("select")].find((select) => [...select.options].some((option) => option.value === "zone-2"))!;
-    await act(async () => {
-      zoneSelect.value = "zone-2";
-      zoneSelect.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    const terrace = [...document.querySelectorAll<HTMLButtonElement>(".table-zone-tabs button")].find((tab) => tab.textContent === "Teras")!;
+    await act(async () => terrace.click());
     for (let i = 0; i < 5; i++) await act(async () => { await Promise.resolve(); });
 
     expect(planPaths.filter((path) => path.includes("zone-2"))).toHaveLength(1);

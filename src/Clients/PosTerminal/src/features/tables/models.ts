@@ -42,6 +42,10 @@ export interface TableRecord {
   // while status is "Reserved" and an Active reservation actually exists.
   activeReservationId: string | null;
   reservationRowVersion: number | null;
+  /** Running total of the current order; 0 when there is none. */
+  currentOrderTotal?: number;
+  servingWaiterName?: string | null;
+  partySize?: number | null;
 }
 
 export interface FloorPlanSeat {
@@ -187,6 +191,10 @@ export interface TableWorkspaceProps {
   onSelectTable: (tableId: string) => void;
   selectedZoneId?: string;
   onSelectZone?: (zoneId: string) => void;
+  /** Tables that have a check waiting at the till without a bill yet; absent when the till list could not be read. */
+  awaitingCheckTableIds?: ReadonlySet<string>;
+  /** The operator may read the till list but it could not be loaded, so "asking" marks may be missing. */
+  awaitingChecksUnavailable?: boolean;
   onRefresh: () => void | Promise<void>;
   onCreateZone?: (input: CreateZoneInput) => void | Promise<void>;
   onCreateTable?: (input: CreateTableInput) => void | Promise<void>;

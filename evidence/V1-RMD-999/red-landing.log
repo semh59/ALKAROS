@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.session-ended-message.test.tsx (4 tests | 1 failed) 2560ms
+     × opens the table plan for an operator who may see tables 107ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.session-ended-message.test.tsx > Cashier lands on the table plan after signing in > opens the table plan for an operator who may see tables
+AssertionError: expected '/' to be '/tables' // Object.is equality
+
+Expected: "/tables"
+Received: "/"
+
+ ❯ src/routes/Cashier.session-ended-message.test.tsx:171:38
+    169|   it("opens the table plan for an operator who may see tables", async …
+    170|     await signIn(["orders.create", "tables.status"]);
+    171|     expect(window.location.pathname).toBe("/tables");
+       |                                      ^
+    172|   });
+    173|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  10:06:24
+   Duration  4.24s (transform 1.75s, setup 0ms, import 128ms, tests 2.56s, environment 1.27s)
+

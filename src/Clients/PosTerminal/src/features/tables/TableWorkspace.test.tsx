@@ -73,8 +73,8 @@ describe("table workspace", () => {
   it.each(["izgara", "IZGARA", "ızgara"])("finds a table whose number has a capital I when the search is %s", async (query) => {
     await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [{ ...tables[0], tableNumber: "IZGARA-1" }, tables[1]] })} />);
     await fillInput(document.querySelector<HTMLInputElement>('input[aria-label="Masa ara"]')!, query);
-    expect(document.body.textContent).toContain("IZGARA-1");
-    expect(document.body.textContent).not.toContain(tables[1].tableNumber);
+    const cards = [...document.querySelectorAll(".table-card")].map((card) => card.querySelector("strong")?.textContent);
+    expect(cards).toEqual(["IZGARA-1"]);
   });
 
   let root: Root | null = null;
@@ -106,6 +106,100 @@ describe("table workspace", () => {
     vi.restoreAllMocks();
   });
 
+  const busyTable = (id: string, overrides: Partial<TableRecord> = {}): TableRecord => ({
+    ...tables[1], tableId: id, tableNumber: id.toUpperCase(), currentBillId: null, currentOrderId: "order-" + id, ...overrides,
+  });
+
+  it("names a table whose bill is open as waiting for payment, with icon and pattern as well as colour", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null })} />);
+
+    const card = [...document.querySelectorAll<HTMLElement>(".table-card")].find((element) => element.textContent?.includes("S-10"))!;
+    expect(card.classList.contains("table-card--plan-pay")).toBe(true);
+    expect(card.querySelector(".table-card__icon")?.textContent).toBe("₺");
+    expect(card.querySelector(".table-status")?.textContent).toBe("Ödeme bekliyor");
+    expect(card.querySelector(".table-card__select")?.getAttribute("aria-label")).toBe("S-10 masasını seç, Ödeme bekliyor");
+  });
+
+  it("marks a table whose check was sent to the till as asking for the bill, only when the till list says so", async () => {
+    const asking = busyTable("s-11", { status: "Cleaning", currentOrderId: null });
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0], asking], awaitingCheckTableIds: new Set(["s-11"]) })} />);
+    const card = document.querySelector<HTMLElement>(".table-card--plan-ask")!;
+    expect(card.textContent).toContain("Hesap istedi");
+    expect(card.querySelector(".table-card__icon")?.textContent).toBe("⚠");
+
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0], asking] })} />);
+    expect(document.querySelector(".table-card--plan-ask")).toBeNull();
+    expect(document.querySelector(".table-card--plan-clean")).not.toBeNull();
+  });
+
+  it("shows amount, age, waiter and party size on a busy card and no amount on an empty one", async () => {
+    const busy = busyTable("s-12", { currentOrderTotal: 245.5, servingWaiterName: "Ayşe", partySize: 3 });
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0], busy] })} />);
+
+    const card = [...document.querySelectorAll<HTMLElement>(".table-card")].find((element) => element.textContent?.includes("S-12"))!;
+    expect(card.querySelector(".table-card__amount")?.textContent).toBe("₺245,50");
+    expect(card.querySelector(".table-card__meta")?.textContent).toBe("Ayşe · 3 kişi");
+    expect(card.querySelector(".table-card__elapsed")?.textContent).toBe("30 dk");
+    const empty = [...document.querySelectorAll<HTMLElement>(".table-card")].find((element) => element.textContent?.includes("S-09"))!;
+    expect(empty.querySelector(".table-card__amount")).toBeNull();
+    expect(empty.querySelector(".table-card__meta")).toBeNull();
+  });
+
+  it("lists the attention groups and selects the first table of a group on tap", async () => {
+    const onSelectTable = vi.fn();
+    const asking = busyTable("s-13", { status: "Cleaning", currentOrderId: null });
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, onSelectTable, tables: [tables[0], tables[1], asking], awaitingCheckTableIds: new Set(["s-13"]) })} />);
+
+    const chips = [...document.querySelectorAll<HTMLButtonElement>(".table-attention button")];
+    expect(chips.map((chip) => chip.textContent)).toEqual(["⚠ Hesap isteyen · S-13", "₺ Ödeme bekleyen · S-10"]);
+    await click(chips[0]);
+    expect(onSelectTable).toHaveBeenCalledWith("s-13");
+  });
+
+  it("shows the attention strip only when a group has tables", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0]] })} />);
+    expect(document.querySelector(".table-attention")).toBeNull();
+  });
+
+  it("filters by zone with tabs instead of a dropdown", async () => {
+    const terrace = { ...tables[0], tableId: "table-t1", tableNumber: "T-01", zoneId: "zone-terrace" };
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [...tables, terrace] })} />);
+
+    const tabs = [...document.querySelectorAll<HTMLButtonElement>('.table-zone-tabs button')];
+    expect(tabs.map((tab) => tab.textContent)).toEqual(["Tüm bölgeler", "Salon", "Teras"]);
+    expect(tabs[0].getAttribute("aria-pressed")).toBe("true");
+    await click(tabs[2]);
+    expect(tabs[2].getAttribute("aria-pressed")).toBe("true");
+    expect([...document.querySelectorAll(".table-card")].map((card) => card.querySelector("strong")?.textContent)).toEqual(["T-01"]);
+  });
+
+  it("warns that asking tables may be missing when the till list could not be read", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0]], awaitingChecksUnavailable: true })} />);
+    expect(document.querySelector(".table-attention__unavailable")?.textContent).toContain("alınamadı");
+  });
+
+  it("explains every status icon in the legend and names the plan status in the details panel", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
+    const legend = document.querySelector(".table-workspace__legend")?.textContent ?? "";
+    for (const label of ["Müsait", "Dolu", "Hesap istedi", "Ödeme bekliyor", "Rezerve", "Toplanıyor", "Servis dışı"]) expect(legend).toContain(label);
+    expect(document.querySelector(".table-details__status")?.textContent).toBe("Ödeme bekliyor");
+  });
+
+  it("shows the capacity only on a free table and puts the amount in the card's accessible name", async () => {
+    const busy = busyTable("s-14", { currentOrderTotal: 80 });
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0], busy] })} />);
+    const cards = [...document.querySelectorAll<HTMLElement>(".table-card")];
+    expect(cards[0].querySelector(".table-card__capacity")).not.toBeNull();
+    expect(cards[1].querySelector(".table-card__capacity")).toBeNull();
+    expect(cards[1].querySelector(".table-card__select")?.getAttribute("aria-label")).toBe("S-14 masasını seç, Dolu, ₺80,00");
+  });
+
+  it("opens on the table grid even when a floor plan exists", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, floorPlan: { zoneId: "zone-salon", rowVersion: 1, tables: [] } as never })} />);
+    expect(document.querySelectorAll(".table-card")).toHaveLength(2);
+    expect(document.querySelector(".table-workspace__view-toggle button[aria-pressed='true']")?.textContent).toBe("Liste");
+  });
+
   it("renders a dense zone-filtered map, authoritative context and capability actions", async () => {
     const props = baseProps({ selectedTableId: null });
     await render(<TableWorkspace {...props} />);
@@ -113,7 +207,6 @@ describe("table workspace", () => {
     expect(document.querySelector("h2")?.textContent).toBe("Masa düzeni");
     expect(document.body.textContent).toContain("S-09");
     expect(document.body.textContent).toContain("S-10");
-    expect(document.body.textContent).toContain("Sipariş #order-12");
     expect(document.body.textContent).toContain("30 dk");
     expect(document.body.textContent).not.toContain("Satır sürümü");
     expect(document.body.textContent).not.toContain("order-12345678");
@@ -214,7 +307,6 @@ describe("table workspace", () => {
     expect(onAction.mock.calls[1][0].idempotencyKey).toBe(onAction.mock.calls[0][0].idempotencyKey);
     // The conflict is reported inside the dialog, which stays open for a second look.
     expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Masa başka biri tarafından değiştirildi");
-    expect(document.body.textContent).toContain("Sipariş #order-12");
   });
 
   it("offers a prepared reason and asks for free text only for 'Diğer'", async () => {

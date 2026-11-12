@@ -10,6 +10,7 @@ import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
 import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace } from "../features/pending-checks";
+import { loadPendingChecks } from "../features/pending-checks/pendingChecksApi";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogProductDetailsInput, type CatalogWorkspaceState } from "../features/catalog";
@@ -159,7 +160,7 @@ export function ExperiencePage({
     headerActions={<>{cashSession && <CashSessionLink status={cashSession} className="experience-header-link" />}<a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canCollect={capabilitySet.has("bills.split")} />}
+    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
@@ -182,7 +183,7 @@ export function ExperiencePage({
 // Exported for the standalone Reservation Station screen (V1-CUI-006),
 // which reuses this exact table-fetching + floor-plan wiring rather than
 // duplicating it.
-export function TableRoute({ terminalId, canManage, canCollect = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canCollect?: boolean; reservationOnly?: boolean }) {
+export function TableRoute({ terminalId, canManage, canCollect = false, canSeeChecks = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canCollect?: boolean; canSeeChecks?: boolean; reservationOnly?: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
@@ -196,6 +197,8 @@ export function TableRoute({ terminalId, canManage, canCollect = false, reservat
   const [lastUpdated, setLastUpdated] = useState<string>();
   const [refreshError, setRefreshError] = useState<string>();
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  // Absent when the till list could not be read: a table is then never shown as asking for the bill.
+  const [awaitingCheckTableIds, setAwaitingCheckTableIds] = useState<ReadonlySet<string> | undefined>();
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
@@ -226,7 +229,12 @@ export function TableRoute({ terminalId, canManage, canCollect = false, reservat
       setErrorMessage(undefined);
     }
     try {
-      const [nextZones, nextTables] = await Promise.all([client.listZones(), client.listTables()]);
+      const [nextZones, nextTables, awaiting] = await Promise.all([
+        client.listZones(),
+        client.listTables(),
+        !canSeeChecks ? Promise.resolve(undefined) : loadPendingChecks(terminalId).then((checks) => new Set(checks.flatMap((check) => check.tableId && !check.billId ? [check.tableId] : [])), () => undefined),
+      ]);
+      setAwaitingCheckTableIds(awaiting);
       setZones(nextZones);
       setTables(nextTables);
       setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
@@ -252,7 +260,7 @@ export function TableRoute({ terminalId, canManage, canCollect = false, reservat
       // error/offline/stale states) never got the same fix.
       setErrorMessage(failure);
     }
-  }, [client, selectedZoneId, loadFloorPlanForZone]);
+  }, [client, terminalId, canSeeChecks, selectedZoneId, loadFloorPlanForZone]);
 
   useEffect(() => { void load(); }, [load]);
 
@@ -334,6 +342,8 @@ export function TableRoute({ terminalId, canManage, canCollect = false, reservat
       errorMessage={errorMessage}
       refreshError={refreshError}
       lastUpdated={lastUpdated}
+      awaitingCheckTableIds={awaitingCheckTableIds}
+      awaitingChecksUnavailable={canSeeChecks && awaitingCheckTableIds === undefined}
     />
     {selectedTable && state === "ready" && !reservationOnly && <TableOrderBridge
       terminalId={terminalId}

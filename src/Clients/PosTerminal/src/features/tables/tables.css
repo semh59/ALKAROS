@@ -47,7 +47,7 @@
 
 .table-workspace__filters {
   display: grid;
-  grid-template-columns: minmax(10rem, 15rem) minmax(12rem, 18rem) 1fr auto;
+  grid-template-columns: minmax(12rem, 18rem) 1fr auto;
   align-items: end;
   gap: var(--ds-space-3);
   margin-bottom: var(--ds-space-4);
@@ -87,7 +87,6 @@
 
 .table-workspace__content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, 23rem); align-items: start; gap: var(--ds-space-5); }
 .table-workspace__floor-plan { min-width: 0; grid-column: 1 / -1; }
-.table-workspace__content--list .table-grid { grid-template-columns: 1fr; }
 .table-workspace__area-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-3); margin-bottom: var(--ds-space-3); }
 .table-workspace__area-heading > div { display: flex; align-items: baseline; gap: .6rem; }
 .table-workspace__area-heading strong { font-size: 1.05rem; }
@@ -118,7 +117,7 @@
 .table-card:hover { transform: translateY(-2px); box-shadow: var(--ds-shadow-raised); }
 .table-card.is-selected { border-color: var(--ds-color-focus); box-shadow: 0 0 0 3px rgb(0 108 189 / 16%), var(--ds-shadow-raised); }
 .table-card--occupied { border-top-color: var(--ds-color-accent); }
-.table-card--reserved { border-top-color: #b98200; }
+.table-card--reserved { border-top-color: var(--ds-color-warning); }
 .table-card--cleaning { border-top-color: var(--ds-color-info); }
 .table-card--outofservice { border-top-color: var(--ds-color-danger); }
 .table-card__select {
@@ -226,3 +225,29 @@
 @media (prefers-reduced-motion: reduce) {
   .table-card { transition-duration: .01ms; }
 }
+
+/* Table plan: zone tabs, attention strip and the status cues. Every state carries an icon and a pattern as well as a
+   colour so it stays readable for colour-blind staff and on dim screens. */
+.table-zone-tabs { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--ds-space-2); align-items: center; }
+.table-zone-tabs button { min-height: var(--ds-target-min); border: 1px solid var(--ds-color-line); border-radius: 999px; padding: 0 var(--ds-space-4); color: var(--ds-color-muted); background: var(--ds-color-surface-subtle); font-weight: 800; }
+.table-zone-tabs button.is-active { color: var(--ds-color-surface); border-color: var(--ds-color-brand); background: var(--ds-color-brand); }
+
+.table-attention { display: flex; flex-wrap: wrap; gap: var(--ds-space-2); margin-bottom: var(--ds-space-4); }
+.table-attention__chip { min-height: var(--ds-target-min); border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-4); font-weight: 800; color: var(--ds-color-ink); background: var(--ds-color-surface); }
+.table-attention__chip--ask { border-color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+.table-attention__chip--pay { border-color: var(--table-pay); background: var(--table-pay-soft); }
+.table-attention__unavailable { margin: 0; align-self: center; color: var(--ds-color-warning); font-weight: 800; }
+
+.table-card__icon { font-size: 1rem; line-height: 1; }
+.table-card__amount { font-size: 1.25rem; font-weight: 900; letter-spacing: -.03em; }
+.table-card__meta { color: var(--table-muted); font-size: .8rem; }
+.table-card--plan-free { border-top-style: dashed; }
+.table-card--plan-ask { border-top-color: var(--ds-color-danger); background-image: repeating-linear-gradient(135deg, transparent 0 10px, rgb(154 37 48 / 14%) 10px 12px); }
+.table-card--plan-ask .table-status { color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+.table-card--plan-pay { border-top-color: var(--table-pay); background-image: repeating-linear-gradient(90deg, transparent 0 10px, rgb(91 58 158 / 14%) 10px 12px); }
+.table-card--plan-pay .table-status { color: var(--table-pay); background: var(--table-pay-soft); }
+.table-card--plan-clean { border-top-color: var(--ds-color-info); background-image: repeating-linear-gradient(0deg, transparent 0 10px, rgb(11 93 141 / 14%) 10px 12px); }
+.table-card--plan-off { background-color: var(--ds-color-surface-subtle); background-image: repeating-linear-gradient(45deg, transparent 0 8px, rgb(18 32 43 / 12%) 8px 10px); }
+.table-workspace { --table-pay: #5b3a9e; --table-pay-soft: #efe9fa; }
+.table-workspace__legend { flex-wrap: wrap; gap: .25rem .75rem; }
+.table-card__meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

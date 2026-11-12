@@ -1231,6 +1231,18 @@ export const backupStatusLabels: Record<KitchenBackup["status"], string> = {
   Failed: "Başarısız",
 };
 
+export const tablePlanText = {
+  ask: "Hesap istedi",
+  pay: "Ödeme bekliyor",
+  attentionAsk: "Hesap isteyen",
+  attentionPay: "Ödeme bekleyen",
+  allZones: "Tüm bölgeler",
+  zonesLabel: "Bölgeler",
+  attentionLabel: "Dikkat gerektiren masalar",
+  guests: "kişi",
+  checksUnavailable: "Hesap isteyen masalar bilgisi alınamadı; Yenile'ye basın.",
+} as const;
+
 export const tableStatusLabels: Record<TableStatus, string> = {
   Available: "Müsait",
   Occupied: "Dolu",

@@ -8,7 +8,7 @@ import {
   TextField,
   ValidationSummary,
 } from "../../design-system";
-import { commonActions, stateText } from "../../strings";
+import { commonActions, stateText, tablePlanText } from "../../strings";
 import {
   actionNeedsReason,
   isClientExecutableAction,
@@ -20,12 +20,15 @@ import {
   type UpdateZoneInput,
   type TableAction,
   type TableRecord,
+  type TableZone,
   type TableWorkspaceProps,
   type TableView,
 } from "./models";
 import { FloorPlanWorkspace } from "./FloorPlanWorkspace";
 import { TableManagementApiError } from "./tableApi";
 import { foldSearch } from "../../search";
+import { formatMoney } from "../../format";
+import { attentionGroups, planLegend, planStatus, type PlanStatus } from "./tablePlanModel";
 import "./tables.css";
 
 type Feedback = { tone: "success" | "error" | "conflict"; message: string } | null;
@@ -135,8 +138,11 @@ export function TableWorkspace({
   errorMessage: suppliedError,
   refreshError,
   lastUpdated,
+  awaitingCheckTableIds,
+  awaitingChecksUnavailable,
 }: TableWorkspaceProps) {
-  const [view, setView] = useState<TableView>("map");
+  // The grid opens first: it carries the amounts, waiters and attention cues the floor plan drawing does not.
+  const [view, setView] = useState<TableView>("list");
   const [internalZoneFilter, setInternalZoneFilter] = useState("all");
   const zoneFilter = selectedZoneId !== undefined ? selectedZoneId : internalZoneFilter;
   const setZoneFilter = (z: string) => {
@@ -390,10 +396,7 @@ export function TableWorkspace({
       {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conflict" ? "alert" : "status"} aria-live="polite"><span>{feedback.message}</span><button data-telemetry-id="b.tables.tableworkspace.9" type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
 
       <div className="table-workspace__filters" role="group" aria-label="Masa filtreleri">
-        <SelectField label="Bölge" value={zoneFilter} onChange={(event) => setZoneFilter(event.target.value)}>
-          <option value="all">Tüm bölgeler</option>
-          {zones.filter((zone) => zone.active).map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}
-        </SelectField>
+        <ZoneTabs zones={zones} value={zoneFilter} onChange={setZoneFilter} />
         <label className="table-workspace__search">Masa ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Örn. S-09" aria-label="Masa ara" /></label>
         <div className="table-workspace__status-filter" role="group" aria-label="Masa durumuna göre filtrele">
           {statusOptions.map((status) => <button data-telemetry-id="b.tables.tableworkspace.10" key={status} type="button" className={statusFilter === status ? "is-active" : ""} aria-pressed={statusFilter === status} onClick={() => setStatusFilter(status)}>{status === "all" ? "Tümü" : tableStatusLabels[status]}</button>)}
@@ -410,6 +413,8 @@ export function TableWorkspace({
         <Stat label="Dolu" value={tables.filter((table) => table.status === "Occupied").length} tone="accent" />
         <Stat label="Rezervasyon" value={tables.filter((table) => table.status === "Reserved").length} tone="warning" />
       </div>
+
+      <AttentionStrip tables={tables} awaitingCheckTableIds={awaitingCheckTableIds} unavailable={awaitingChecksUnavailable} onSelect={onSelectTable} />
 
       {state === "empty" || filteredTables.length === 0 ? (
         <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? "Yönetici olarak ilk bölgeyi ve masayı ekleyerek başlayın." : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button data-telemetry-id="b.tables.tableworkspace.13" onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
@@ -430,12 +435,12 @@ export function TableWorkspace({
             />
           </div> : <>
             <div className="table-workspace__table-area">
-              <div className="table-workspace__area-heading"><div><strong>{selectedZone?.name ?? "Tüm bölgeler"}</strong><span>{filteredTables.length} masa</span></div><span className="table-workspace__legend"><i className="legend-dot legend-dot--available" /> Müsait <i className="legend-dot legend-dot--occupied" /> Dolu <i className="legend-dot legend-dot--reserved" /> Rezerve</span></div>
+              <div className="table-workspace__area-heading"><div><strong>{selectedZone?.name ?? "Tüm bölgeler"}</strong><span>{filteredTables.length} masa</span></div><span className="table-workspace__legend">{planLegend.map((entry) => <span key={entry.key}><span aria-hidden="true">{entry.icon}</span> {entry.label}</span>)}</span></div>
               <div className="table-grid">
-                {filteredTables.map((table) => <TableCard key={table.tableId} table={table} selected={table.tableId === selectedTable?.tableId} onSelect={() => onSelectTable(table.tableId)} onAction={(nextAction) => openAction(nextAction, table)} />)}
+                {filteredTables.map((table) => <TableCard key={table.tableId} table={table} plan={planStatus(table, awaitingCheckTableIds)} selected={table.tableId === selectedTable?.tableId} onSelect={() => onSelectTable(table.tableId)} onAction={(nextAction) => openAction(nextAction, table)} />)}
               </div>
             </div>
-            {selectedTable && <TableDetails table={selectedTable} zoneName={selectedZone?.name} onAction={openAction} />}
+            {selectedTable && <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction} />}
           </>}
         </div>
       )}
@@ -519,22 +524,44 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
   return <div className={`table-stat table-stat--${tone}`}><span>{label}</span><strong>{value}</strong></div>;
 }
 
-function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord; selected: boolean; onSelect: () => void; onAction: (action: TableAction) => void }) {
+function TableCard({ table, plan, selected, onSelect, onAction }: { table: TableRecord; plan: PlanStatus; selected: boolean; onSelect: () => void; onAction: (action: TableAction) => void }) {
   const command = table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isClientExecutableAction(value as TableAction, table));
-  return <article className={`table-card table-card--${table.status.toLowerCase()} ${selected ? "is-selected" : ""}`}>
-    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${tableStatusLabels[table.status]}`} aria-pressed={selected} onClick={onSelect}>
-      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-status">{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
-      <span className="table-card__capacity">◉ {table.capacity} kişilik</span>
-      <span className="table-card__context">{table.currentOrderId ? `Sipariş #${table.currentOrderId.slice(0, 8)}` : table.currentBillId ? `Hesap #${table.currentBillId.slice(0, 8)}` : "Sipariş yok"}</span>
+  const total = table.currentOrderTotal ?? 0;
+  const meta = [
+    table.servingWaiterName || null,
+    table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null,
+  ].filter(Boolean).join(" · ");
+  return <article className={`table-card table-card--${table.status.toLowerCase()} table-card--plan-${plan.key} ${selected ? "is-selected" : ""}`}>
+    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${plan.label}${total > 0 ? `, ${formatMoney(total)}` : ""}`} aria-pressed={selected} onClick={onSelect}>
+      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-card__icon" aria-hidden="true">{plan.icon}</span><span className="table-status">{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
+      {total > 0 && <span className="table-card__amount">{formatMoney(total)}</span>}
+      {meta && <span className="table-card__meta">{meta}</span>}
+      {plan.key === "free" && <span className="table-card__capacity">◉ {table.capacity} kişilik</span>}
     </button>
     <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : ""}</span>{command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
   </article>;
 }
 
-function TableDetails({ table, zoneName, onAction }: { table: TableRecord; zoneName?: string; onAction: (action: TableAction) => void }) {
+function ZoneTabs({ zones, value, onChange }: { zones: readonly TableZone[]; value: string; onChange: (zoneId: string) => void }) {
+  const entries = [{ id: "all", name: tablePlanText.allZones }, ...zones.filter((zone) => zone.active).map((zone) => ({ id: zone.zoneId, name: zone.name }))];
+  return <div className="table-zone-tabs" role="group" aria-label={tablePlanText.zonesLabel}>
+    {entries.map((entry) => <button data-telemetry-id="b.tables.tableworkspace.zone-tab" key={entry.id} type="button" className={value === entry.id ? "is-active" : ""} aria-pressed={value === entry.id} onClick={() => onChange(entry.id)}>{entry.name}</button>)}
+  </div>;
+}
+
+function AttentionStrip({ tables, awaitingCheckTableIds, unavailable, onSelect }: { tables: readonly TableRecord[]; awaitingCheckTableIds?: ReadonlySet<string>; unavailable?: boolean; onSelect: (tableId: string) => void }) {
+  const groups = attentionGroups(tables, awaitingCheckTableIds);
+  if (groups.length === 0 && !unavailable) return null;
+  return <div className="table-attention" role="group" aria-label={tablePlanText.attentionLabel}>
+    {unavailable && <p className="table-attention__unavailable" role="status">{tablePlanText.checksUnavailable}</p>}
+    {groups.flatMap((group) => group.tables.map((table) => <button data-telemetry-id="b.tables.tableworkspace.attention" key={`${group.key}-${table.tableId}`} type="button" className={`table-attention__chip table-attention__chip--${group.key}`} onClick={() => onSelect(table.tableId)}><span aria-hidden="true">{group.icon}</span> {group.label} · {table.tableNumber}</button>))}
+  </div>;
+}
+
+function TableDetails({ table, plan, zoneName, onAction }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void }) {
   const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
-    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
+    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
     <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
     <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Açık sipariş var</strong></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Açık hesap var</strong></p>}</div>
     {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}

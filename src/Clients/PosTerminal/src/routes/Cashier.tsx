@@ -508,6 +508,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       setCapabilities(result.capabilities ?? []);
       setPassword("");
       await reload();
+      if (currentPath === "/" && result.capabilities?.includes("tables.status")) navigate("/tables");
     } catch (reason) {
       setSession("anonymous");
       setFeedbackKind(reason instanceof ApiError && reason.status === 401 ? "unauthorized" : "error");

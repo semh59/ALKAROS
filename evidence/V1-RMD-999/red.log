@@ -1,0 +1,133 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/tables/TableWorkspace.test.tsx (37 tests | 6 failed) 1447ms
+     × names a table whose bill is open as waiting for payment, with icon and pattern as well as colour 33ms
+     × marks a table whose check was sent to the till as asking for the bill, only when the till list says so 18ms
+     × shows amount, age, waiter and party size on a busy card and no placeholder text on an empty one 18ms
+     × lists the attention groups and selects the first table of a group on tap 23ms
+     × filters by zone with tabs instead of a dropdown 21ms
+     × opens on the table grid even when a floor plan exists 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > names a table whose bill is open as waiting for payment, with icon and pattern as well as colour
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:117:61
+    115|
+    116|     const card = [...document.querySelectorAll<HTMLElement>(".table-ca…
+    117|     expect(card.classList.contains("table-card--plan-pay")).toBe(true);
+       |                                                             ^
+    118|     expect(card.querySelector(".table-card__icon")?.textContent).toBe(…
+    119|     expect(card.querySelector(".table-status")?.textContent).toBe("Öde…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > marks a table whose check was sent to the till as asking for the bill, only when the till list says so
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ src/features/tables/TableWorkspace.test.tsx:127:17
+    125|     await render(<TableWorkspace {...baseProps({ selectedTableId: null…
+    126|     const card = document.querySelector<HTMLElement>(".table-card--pla…
+    127|     expect(card.textContent).toContain("Hesap istedi");
+       |                 ^
+    128|     expect(card.querySelector(".table-card__icon")?.textContent).toBe(…
+    129|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > shows amount, age, waiter and party size on a busy card and no placeholder text on an empty one
+AssertionError: expected undefined to be '₺245,50' // Object.is equality
+
+- Expected:
+"₺245,50"
+
++ Received:
+undefined
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:140:68
+    138|
+    139|     const card = [...document.querySelectorAll<HTMLElement>(".table-ca…
+    140|     expect(card.querySelector(".table-card__amount")?.textContent).toB…
+       |                                                                    ^
+    141|     expect(card.querySelector(".table-card__meta")?.textContent).toBe(…
+    142|     const empty = [...document.querySelectorAll<HTMLElement>(".table-c…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > lists the attention groups and selects the first table of a group on tap
+AssertionError: expected [] to deeply equal [ '⚠ Hesap isteyen 1 · S-13', …(1) ]
+
+- Expected
++ Received
+
+- [
+-   "⚠ Hesap isteyen 1 · S-13",
+-   "₺ Ödeme bekleyen 1 · S-10",
+- ]
++ []
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:153:51
+    151|
+    152|     const chips = [...document.querySelectorAll<HTMLButtonElement>(".t…
+    153|     expect(chips.map((chip) => chip.textContent)).toEqual(["⚠ Hesap is…
+       |                                                   ^
+    154|     await click(chips[0]);
+    155|     expect(onSelectTable).toHaveBeenCalledWith("s-13");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > filters by zone with tabs instead of a dropdown
+AssertionError: expected [] to deeply equal [ 'Tümü', 'Salon', 'Teras' ]
+
+- Expected
++ Received
+
+- [
+-   "Tümü",
+-   "Salon",
+-   "Teras",
+- ]
++ []
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:168:48
+    166|
+    167|     const tabs = [...document.querySelectorAll<HTMLButtonElement>('.ta…
+    168|     expect(tabs.map((tab) => tab.textContent)).toEqual(["Tümü", "Salon…
+       |                                                ^
+    169|     expect(tabs[0].getAttribute("aria-pressed")).toBe("true");
+    170|     await click(tabs[2]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > opens on the table grid even when a floor plan exists
+AssertionError: expected  to have a length of 2 but got +0
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:177:54
+    175|   it("opens on the table grid even when a floor plan exists", async ()…
+    176|     await render(<TableWorkspace {...baseProps({ selectedTableId: null…
+    177|     expect(document.querySelectorAll(".table-card")).toHaveLength(2);
+       |                                                      ^
+    178|     expect(document.querySelector(".table-workspace__view-toggle butto…
+    179|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 31 passed (37)
+   Start at  10:01:34
+   Duration  4.52s (transform 308ms, setup 0ms, import 546ms, tests 1.45s, environment 1.87s)
+

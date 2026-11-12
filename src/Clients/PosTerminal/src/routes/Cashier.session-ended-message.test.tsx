@@ -130,3 +130,49 @@ describe("Cashier tells the operator why they landed back on the login form", ()
     expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
   });
 });
+
+describe("Cashier lands on the table plan after signing in", () => {
+  async function signIn(capabilities: string[]) {
+    let signedIn = false;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/auth/login")) {
+        signedIn = true;
+        return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal", capabilities });
+      }
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      if (!signedIn) return jsonResponse({ message: "Unauthorized" }, 401);
+      if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal", capabilities });
+      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/orders/active")) return jsonResponse(null);
+      return jsonResponse([]);
+    }));
+    window.history.replaceState(null, "", "/");
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider } = await import("../router");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    const usernameInput = document.querySelector("input[autocomplete='username']") as HTMLInputElement;
+    const passwordInput = document.querySelector("input[type='password']") as HTMLInputElement;
+    await act(async () => {
+      usernameInput.value = "deniz";
+      usernameInput.dispatchEvent(new Event("input", { bubbles: true }));
+      passwordInput.value = "secret";
+      passwordInput.dispatchEvent(new Event("input", { bubbles: true }));
+      usernameInput.closest("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    });
+    for (let i = 0; i < 4; i++) await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+  }
+
+  it("opens the table plan for an operator who may see tables", async () => {
+    await signIn(["orders.create", "tables.status"]);
+    expect(window.location.pathname).toBe("/tables");
+  });
+
+  it("stays on the sale screen for an operator without table access", async () => {
+    await signIn(["orders.create"]);
+    expect(window.location.pathname).toBe("/");
+  });
+});

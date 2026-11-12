@@ -1,0 +1,42 @@
+M1 ask never derived: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  4 failed | 58 passed (62) -> changed
+  restored
+M2 bill does not outrank ask: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  5 failed | 57 passed (62) -> changed
+  restored
+M3 default view map: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 36 passed (37) -> changed
+  restored
+M4 zone tabs ignore selection: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 36 passed (37) -> changed
+  restored
+M5 amount hidden: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 36 passed (37) -> changed
+  restored
+M6 route ignores bill condition: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44) -> changed
+  restored
+M7 landing removed: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 3 passed (4) -> changed
+  restored
+M8 attention chip selects nothing: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 36 passed (37) -> changed
+  restored
+M9 always asks the till list: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44) -> changed
+  restored
+M10 unavailable warning dropped: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 39 passed (40)
+  restored
+M11 capacity always shown: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 39 passed (40)
+  restored
+M12 details keep old status label: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 39 passed (40)
+  restored
+M13 route never flags unavailable: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44)
+  restored
+M14 route flags even without permission: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44)
+  restored
