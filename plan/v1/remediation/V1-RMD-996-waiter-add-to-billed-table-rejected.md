@@ -22,6 +22,7 @@ Hesabı açılmış masanın siparişine garson masa taslağı yolundan ürün e
   - tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
   - tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
+  - tests/Architecture/ModuleBoundaries/HostForeignWriteLockTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
