@@ -96,7 +96,7 @@ export function TableOrderBridge({
     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : bill && <>
         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{line.status === "Draft" && <small className="table-order-bridge__unsent"> · {kitchenlessText.notSent}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
         </ul>
         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
       </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}

@@ -1,0 +1,2 @@
+qa-frontend: sunucu GET /orders/table/{tableId} alani doldurur (OrderDtoAssembler.cs:262). Duzeltildi: Draft + kasada eklenen kalemde cift not -> tek not (test+mutant). Kabul (dusuk): sunucu sozlesme testi yok; ayni css sinifi.
+qa-ux-tasarim: gorunurluk yeterli; ilk goruntude not satiri kesikti -> goruntu notlu satira kaydirilarak yenilendi. Oneri (urun karari, uygulanmadi): taslaktaki kisa "· kasada eklendi" metni ve sonuk stil; mevcut metin (strings.ts addedAtTill) odeme/bolme/Bekleyen ekranlariyla ayni oldugu icin korundu.

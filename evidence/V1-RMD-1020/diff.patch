@@ -1,0 +1,58 @@
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index 6d5fe51c..783558f2 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -271,5 +271,6 @@ export interface TableOrder {
+     unitPrice: number;
+     totalPrice: number;
+     status: string;
++    addedWithoutKitchenReason?: string | null;
+   }[];
+ }
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index d221490f..3fd622e9 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -252,6 +252,29 @@ describe("TableOrderBridge", () => {
+     expect(onSent).toHaveBeenCalledTimes(1);
+   });
+ 
++  it("marks a line the cashier added at the till without a kitchen ticket", async () => {
++    stubFetch(undefined, { ...tableOrder, items: [
++      tableOrder.items[0],
++      { itemId: "i4", productName: "Simit", quantity: 1, unitPrice: 25, totalPrice: 25, status: "Active", kitchenState: "NotSent", addedWithoutKitchenReason: "waiter-forgot" },
++    ] });
++    render();
++    await flush();
++
++    expect([...document.querySelectorAll(".table-order-bridge__lines li")].map((li) => li.textContent?.includes("Kasada eklendi (mutfağa gitmedi)"))).toEqual([false, true]);
++  });
++
++  it("names an unsent line that was also added at the till only once", async () => {
++    stubFetch(undefined, { ...tableOrder, status: "Draft", items: [
++      { itemId: "i5", productName: "Simit", quantity: 1, unitPrice: 25, totalPrice: 25, status: "Draft", kitchenState: "NotSent", addedWithoutKitchenReason: "waiter-forgot" },
++    ] });
++    render();
++    await flush();
++
++    const line = document.querySelector(".table-order-bridge__lines li")!;
++    expect(line.querySelectorAll("small")).toHaveLength(1);
++    expect(line.textContent).toContain("Mutfağa gönderilmedi");
++  });
++
+   it("shows the server's refusal when sending fails and does not report the order as sent", async () => {
+     stubFetch(() => reply(409, { error: { code: "STALE", message: "Sipariş başka yerde değişti." } }), draftOrder);
+     const { onSent } = render();
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index 570090ca..e0d53485 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -96,7 +96,7 @@ export function TableOrderBridge({
+     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+       : bill && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{line.status === "Draft" && <small className="table-order-bridge__unsent"> · {kitchenlessText.notSent}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
++          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+         </ul>
+         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
+       </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}

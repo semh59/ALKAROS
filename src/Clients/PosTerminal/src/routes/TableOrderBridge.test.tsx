@@ -252,6 +252,29 @@ describe("TableOrderBridge", () => {
     expect(onSent).toHaveBeenCalledTimes(1);
   });
 
+  it("marks a line the cashier added at the till without a kitchen ticket", async () => {
+    stubFetch(undefined, { ...tableOrder, items: [
+      tableOrder.items[0],
+      { itemId: "i4", productName: "Simit", quantity: 1, unitPrice: 25, totalPrice: 25, status: "Active", kitchenState: "NotSent", addedWithoutKitchenReason: "waiter-forgot" },
+    ] });
+    render();
+    await flush();
+
+    expect([...document.querySelectorAll(".table-order-bridge__lines li")].map((li) => li.textContent?.includes("Kasada eklendi (mutfağa gitmedi)"))).toEqual([false, true]);
+  });
+
+  it("names an unsent line that was also added at the till only once", async () => {
+    stubFetch(undefined, { ...tableOrder, status: "Draft", items: [
+      { itemId: "i5", productName: "Simit", quantity: 1, unitPrice: 25, totalPrice: 25, status: "Draft", kitchenState: "NotSent", addedWithoutKitchenReason: "waiter-forgot" },
+    ] });
+    render();
+    await flush();
+
+    const line = document.querySelector(".table-order-bridge__lines li")!;
+    expect(line.querySelectorAll("small")).toHaveLength(1);
+    expect(line.textContent).toContain("Mutfağa gönderilmedi");
+  });
+
   it("shows the server's refusal when sending fails and does not report the order as sent", async () => {
     stubFetch(() => reply(409, { error: { code: "STALE", message: "Sipariş başka yerde değişti." } }), draftOrder);
     const { onSent } = render();

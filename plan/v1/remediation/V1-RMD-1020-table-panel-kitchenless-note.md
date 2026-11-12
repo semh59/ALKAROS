@@ -1,7 +1,7 @@
 # V1-RMD-1020 - Masa panelinde mutfaksız eklenen kalem işaretlenir
 
 - Task ID: V1-RMD-1020
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
