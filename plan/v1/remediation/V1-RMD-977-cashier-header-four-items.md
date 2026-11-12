@@ -1,7 +1,7 @@
 # V1-RMD-977 - Kasiyer üst başlığı en çok 4 öğe
 
 - Task ID: V1-RMD-977
-- Status: Planned
+- Status: NotApplicable
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
@@ -44,4 +44,4 @@ Kasiyer ana ekranının üst başlığı en çok dört öğe taşımalı: Masala
 
 ## Handoff
 
-- None
+- Kapsam V1-RMD-1000 görevinde tamamlandı (başlık çalışması orada uygulandı).
