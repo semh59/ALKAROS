@@ -451,6 +451,7 @@ describe("workspace /tables route marks tables whose check waits at the till", (
     const labels = () => [...document.querySelectorAll(".table-workspace__toolbar-actions button")].map((button) => button.textContent);
     await open(() => json([]));
     expect(labels()).toEqual(["Hızlı satış", "Yenile"]);
+    expect(document.querySelector(".production-shell__workspace-heading p")).toBeNull();
     expect(document.querySelector(".table-order-bridge")).not.toBeNull();
 
     await act(async () => root!.unmount());

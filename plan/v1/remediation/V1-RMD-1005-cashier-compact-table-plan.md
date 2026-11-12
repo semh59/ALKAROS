@@ -1,7 +1,7 @@
 # V1-RMD-1005 - Kasiyer masa planı tek satırlık araç çubuğu ve kartlarla taslağa uyar
 
 - Task ID: V1-RMD-1005
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

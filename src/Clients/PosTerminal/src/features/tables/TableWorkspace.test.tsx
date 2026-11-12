@@ -194,6 +194,31 @@ describe("table workspace", () => {
     expect(cards[1].querySelector(".table-card__select")?.getAttribute("aria-label")).toBe("S-14 masasını seç, Dolu, ₺80,00");
   });
 
+  const cashierProps = (overrides: Partial<ComponentProps<typeof TableWorkspace>> = {}) => baseProps({
+    selectedTableId: null, onCreateZone: undefined, onCreateTable: undefined, onUpdateZone: undefined, onDeleteZone: undefined, onUpdateTable: undefined, onSaveFloorPlan: undefined, ...overrides,
+  });
+
+  it("keeps the till view to one toolbar row: no status filters, no counters, no per-card buttons", async () => {
+    await render(<TableWorkspace {...cashierProps()} />);
+
+    expect(document.querySelector(".table-workspace__status-filter")).toBeNull();
+    expect(document.querySelector(".table-workspace__stats")).toBeNull();
+    expect(document.querySelector(".table-card__quick-action")).toBeNull();
+    expect(document.querySelectorAll(".table-card")).toHaveLength(2);
+    expect(document.querySelector(".table-workspace__filters .table-zone-tabs")).not.toBeNull();
+    expect(document.querySelector(".table-workspace__filters .table-workspace__search")).not.toBeNull();
+  });
+
+  it("shows the status filters and counters to someone who configures the layout, and the card button only when asked", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null })} />);
+    expect(document.querySelector(".table-workspace__status-filter")).not.toBeNull();
+    expect(document.querySelector(".table-workspace__stats")).not.toBeNull();
+    expect(document.querySelector(".table-card__quick-action")).toBeNull();
+
+    await render(<TableWorkspace {...cashierProps({ cardActions: true })} />);
+    expect(document.querySelector(".table-card__quick-action")).not.toBeNull();
+  });
+
   it("tells someone who cannot add tables that none are defined yet, and offers no add button", async () => {
     await render(<TableWorkspace {...baseProps({ state: "empty", tables: [], zones: [], onCreateZone: undefined, onCreateTable: undefined })} />);
     expect(document.querySelector(".table-workspace__empty")?.textContent).toContain("Müdürünüze bildirin");
@@ -252,7 +277,8 @@ describe("table workspace", () => {
     const props = baseProps({ selectedTableId: null });
     await render(<TableWorkspace {...props} />);
 
-    expect(document.querySelector("h2")?.textContent).toBe("Masa düzeni");
+    expect(document.querySelector(".table-workspace__heading")).toBeNull();
+    expect(document.querySelector<HTMLInputElement>('input[aria-label="Masa ara"]')?.placeholder).toBe("Masa ara (örn. 12)");
     expect(document.body.textContent).toContain("S-09");
     expect(document.body.textContent).toContain("S-10");
     expect(document.body.textContent).toContain("30 dk");
@@ -277,7 +303,7 @@ describe("table workspace", () => {
 
   it("exposes table selection and quick action as independent keyboard controls", async () => {
     const onSelectTable = vi.fn();
-    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onSelectTable })} />);
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onSelectTable, cardActions: true })} />);
 
     const card = [...document.querySelectorAll<HTMLElement>(".table-card")].find((element) => element.textContent?.includes("S-09"))!;
     const selectButton = card.querySelector<HTMLButtonElement>(".table-card__select")!;

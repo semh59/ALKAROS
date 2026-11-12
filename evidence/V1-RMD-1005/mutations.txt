@@ -1,0 +1,6 @@
+killed counters for all
+killed card button for all
+killed placeholder
+killed tables description back
+killed updated text off
+killed reservation station loses card button

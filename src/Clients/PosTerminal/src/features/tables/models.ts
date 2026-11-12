@@ -199,6 +199,8 @@ export interface TableWorkspaceProps {
   awaitingChecksUnavailable?: boolean;
   /** Opens the quick sale screen; absent for an operator who may not sell. */
   onQuickSale?: () => void;
+  /** Draws a quick action button on every card (the reservation station); the till opens a table by touching its card. */
+  cardActions?: boolean;
   /** The selected table's bill and actions, drawn under its details; `openAction` opens the table action form. */
   billPanel?: (table: TableRecord, openAction: (action: TableAction) => void) => ReactNode;
   onRefresh: () => void | Promise<void>;
