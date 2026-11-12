@@ -91,7 +91,7 @@ export function TableOrderBridge({
   return <section className="table-order-bridge" aria-label="Masa hesabı">
     <p id="table-order-bridge-note" className="table-order-bridge__note">{!canManage
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
-      : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için 'Öde' ile açılan ekranda 'Hesabı iptal et' deyin; ödeme alındıysa önce iade gerekir."
+      : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir."
         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : bill && <>

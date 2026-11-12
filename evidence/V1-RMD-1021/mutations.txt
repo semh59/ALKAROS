@@ -1,0 +1,1 @@
+killed note still points to the Ode screen instead of the Iptal / iade button

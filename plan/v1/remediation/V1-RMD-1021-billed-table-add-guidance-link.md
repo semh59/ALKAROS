@@ -1,7 +1,7 @@
 # V1-RMD-1021 - Ürün ekle pasifken hesap ekranına yönlendiren bağlantı
 
 - Task ID: V1-RMD-1021
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

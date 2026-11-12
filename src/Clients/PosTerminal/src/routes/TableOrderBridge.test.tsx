@@ -124,7 +124,8 @@ describe("TableOrderBridge", () => {
     expect(button("Ürün ekle")?.disabled).toBe(true);
     expect(document.querySelector(".table-order-bridge")?.textContent).toContain("ürün eklenemez");
     expect(document.querySelector(".table-order-bridge button.secondary")?.getAttribute("aria-describedby")).toBe("table-order-bridge-note");
-    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Hesabı iptal et");
+    expect(document.querySelector("#table-order-bridge-note")?.textContent).toContain("'İptal / iade' düğmesiyle hesabı iptal edin");
+    expect(button("İptal / iade")).toBeDefined();
     expect(button("Öde")).toBeDefined();
     expect(onStartOrder).not.toHaveBeenCalled();
   });
