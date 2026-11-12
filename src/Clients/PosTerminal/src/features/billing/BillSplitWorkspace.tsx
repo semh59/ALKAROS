@@ -41,6 +41,8 @@ function initialDraft(design: BillSplitDesign) {
   return { equalOwners, itemDraft, amountDraft };
 }
 
+const maxPeopleAtOnce = 20;
+
 export function BillSplitWorkspace({ state, design: suppliedDesign, owners: savedOwners, canMutate, onRefresh, onSave, onClear, errorMessage, lastUpdated }: BillSplitWorkspaceProps) {
   const [design, setDesign] = useState(suppliedDesign);
   const [mode, setMode] = useState<SplitMode>(suppliedDesign?.mode === "ByItem" || suppliedDesign?.mode === "ByAmount" ? suppliedDesign.mode : "EqualByPerson");
@@ -54,10 +56,13 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners: save
     ...savedOwners,
     ...addedPeople.filter((person) => !savedOwners.some((owner) => ownerKey(owner) === ownerKey(person))),
   ].map((owner) => owner.kind === "Person" ? { ...owner, label: `${++personNumber}. Kişi` } : owner);
-  const addPerson = () => {
-    const ownerId = crypto.randomUUID();
-    setAddedPeople((people) => [...people, { kind: "Person", ownerId, label: "" }]);
-    setEqualOwners((selected) => [...selected, `Person:${ownerId}`]);
+  const [personCount, setPersonCount] = useState("1");
+  const addPeople = () => {
+    const count = Math.min(maxPeopleAtOnce, Math.max(1, Math.trunc(Number(personCount)) || 1));
+    const added = Array.from({ length: count }, () => crypto.randomUUID());
+    setAddedPeople((people) => [...people, ...added.map((ownerId): SplitOwnerOption => ({ kind: "Person", ownerId, label: "" }))]);
+    setEqualOwners((selected) => [...selected, ...added.map((ownerId) => `Person:${ownerId}`)]);
+    setPersonCount("1");
     setDirty(true);
   };
   const [busy, setBusy] = useState(false);
@@ -145,7 +150,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners: save
     <div className="bill-split__modes" role="tablist" tabIndex={-1} aria-label="Dağıtım modu" onKeyDown={moveBetweenTabs}>{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" tabIndex={mode === option ? 0 : -1} aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">
       <main className="bill-split__editor">
-        {canMutate && mutableState && <Button data-telemetry-id="b.billing.billsplitworkspace.9" variant="secondary" onClick={addPerson}>Kişi ekle</Button>}
+        {canMutate && mutableState && <div className="bill-split__add-people"><label>Eklenecek kişi sayısı<input type="number" inputMode="numeric" min={1} max={maxPeopleAtOnce} aria-label="Eklenecek kişi sayısı" value={personCount} onFocus={(event) => event.target.select()} onChange={(event) => setPersonCount(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addPeople(); }} /></label><Button data-telemetry-id="b.billing.billsplitworkspace.9" variant="secondary" onClick={addPeople}>Kişi ekle</Button></div>}
         {mode === "EqualByPerson" && <OwnerPicker owners={owners} selected={equalOwners} onChange={(next) => { setEqualOwners(next); setDirty(true); }} />}
         {mode === "ByItem" && <ItemEditor design={design} owners={owners} draft={itemDraft} onChange={(next) => { setItemDraft(next); setDirty(true); }} />}
         {mode === "ByAmount" && <AmountEditor design={design} owners={owners} draft={amountDraft} onChange={(next) => { setAmountDraft(next); setDirty(true); }} />}

@@ -1,0 +1,2 @@
+qa-frontend: odakta "1" secili degildi ("13" kisi riski) -> onFocus select; Enter islevsizdi -> Enter ekler; esit bolmede yeni kisilerin secili oldugu test edilmiyordu -> test+mutant. Kabul (dusuk): 99 yazilinca sessiz 20 siniri; label ve aria-label ayni metin.
+qa-ux-tasarim: "Kisi sayisi" toplam sanilabilir -> "Eklenecek kisi sayisi". Kabul/acik (urun karari): 2/3/4/5 hizli secim veya +/- dugmeleri, kisi yokken varsayilan 2, kisi kartinda tekrar eden "Kisi" alt yazisi.

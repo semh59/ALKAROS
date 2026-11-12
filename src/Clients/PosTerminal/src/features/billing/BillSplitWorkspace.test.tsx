@@ -57,6 +57,46 @@ describe("bill split workspace", () => {
     expect(document.querySelector(".bill-split__added")).toBeNull();
   });
 
+  it("adds as many people as the person count says with one tap on Kişi ekle", async () => {
+    await render(<BillSplitWorkspace {...props({ owners: [] })} />);
+    const count = document.querySelector<HTMLInputElement>('input[aria-label="Eklenecek kişi sayısı"]')!;
+    const add = [...document.querySelectorAll("button")].find((b) => b.textContent === "Kişi ekle")!;
+
+    await input(count, "3");
+    await click(add);
+
+    expect(["1. Kişi", "2. Kişi", "3. Kişi"].every((label) => document.body.textContent?.includes(label))).toBe(true);
+    expect(document.body.textContent).not.toContain("4. Kişi");
+  });
+
+  it("selects the new people for the equal split, adds on Enter and selects the count when it is focused", async () => {
+    await render(<BillSplitWorkspace {...props({ owners: [] })} />);
+    const count = document.querySelector<HTMLInputElement>('input[aria-label="Eklenecek kişi sayısı"]')!;
+    const select = vi.spyOn(count, "select");
+
+    await act(async () => { count.dispatchEvent(new FocusEvent("focusin", { bubbles: true })); });
+    expect(select).toHaveBeenCalled();
+    await input(count, "2");
+    await act(async () => { count.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); });
+
+    const boxes = [...document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')];
+    expect(boxes).toHaveLength(2);
+    expect(boxes.every((box) => box.checked)).toBe(true);
+  });
+
+  it("adds one person when the count is left alone, and never more than 20 at once", async () => {
+    await render(<BillSplitWorkspace {...props({ owners: [] })} />);
+    const add = [...document.querySelectorAll("button")].find((b) => b.textContent === "Kişi ekle")!;
+    await click(add);
+    expect(document.body.textContent).toContain("1. Kişi");
+    expect(document.body.textContent).not.toContain("2. Kişi");
+
+    await input(document.querySelector<HTMLInputElement>('input[aria-label="Eklenecek kişi sayısı"]')!, "99");
+    await click(add);
+    expect(document.body.textContent).toContain("21. Kişi");
+    expect(document.body.textContent).not.toContain("22. Kişi");
+  });
+
   it("keeps only the selected mode tab in the tab order, and moves that stop with the selection", async () => {
     await render(<BillSplitWorkspace {...props()} />);
     const tabStops = () => [...document.querySelectorAll<HTMLElement>('[role="tab"]')].filter((tab) => tab.tabIndex === 0);

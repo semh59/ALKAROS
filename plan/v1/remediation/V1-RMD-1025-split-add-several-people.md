@@ -1,7 +1,7 @@
 # V1-RMD-1025 - Hesap bölmede Kişi ekle sayıyla birden çok kişi ekler
 
 - Task ID: V1-RMD-1025
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

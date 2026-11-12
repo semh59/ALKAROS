@@ -1,0 +1,103 @@
+diff --git a/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx
+index b287319f..e1e2e8ef 100644
+--- a/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx
+@@ -57,6 +57,46 @@ describe("bill split workspace", () => {
+     expect(document.querySelector(".bill-split__added")).toBeNull();
+   });
+ 
++  it("adds as many people as the person count says with one tap on Kişi ekle", async () => {
++    await render(<BillSplitWorkspace {...props({ owners: [] })} />);
++    const count = document.querySelector<HTMLInputElement>('input[aria-label="Eklenecek kişi sayısı"]')!;
++    const add = [...document.querySelectorAll("button")].find((b) => b.textContent === "Kişi ekle")!;
++
++    await input(count, "3");
++    await click(add);
++
++    expect(["1. Kişi", "2. Kişi", "3. Kişi"].every((label) => document.body.textContent?.includes(label))).toBe(true);
++    expect(document.body.textContent).not.toContain("4. Kişi");
++  });
++
++  it("selects the new people for the equal split, adds on Enter and selects the count when it is focused", async () => {
++    await render(<BillSplitWorkspace {...props({ owners: [] })} />);
++    const count = document.querySelector<HTMLInputElement>('input[aria-label="Eklenecek kişi sayısı"]')!;
++    const select = vi.spyOn(count, "select");
++
++    await act(async () => { count.dispatchEvent(new FocusEvent("focusin", { bubbles: true })); });
++    expect(select).toHaveBeenCalled();
++    await input(count, "2");
++    await act(async () => { count.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); });
++
++    const boxes = [...document.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')];
++    expect(boxes).toHaveLength(2);
++    expect(boxes.every((box) => box.checked)).toBe(true);
++  });
++
++  it("adds one person when the count is left alone, and never more than 20 at once", async () => {
++    await render(<BillSplitWorkspace {...props({ owners: [] })} />);
++    const add = [...document.querySelectorAll("button")].find((b) => b.textContent === "Kişi ekle")!;
++    await click(add);
++    expect(document.body.textContent).toContain("1. Kişi");
++    expect(document.body.textContent).not.toContain("2. Kişi");
++
++    await input(document.querySelector<HTMLInputElement>('input[aria-label="Eklenecek kişi sayısı"]')!, "99");
++    await click(add);
++    expect(document.body.textContent).toContain("21. Kişi");
++    expect(document.body.textContent).not.toContain("22. Kişi");
++  });
++
+   it("keeps only the selected mode tab in the tab order, and moves that stop with the selection", async () => {
+     await render(<BillSplitWorkspace {...props()} />);
+     const tabStops = () => [...document.querySelectorAll<HTMLElement>('[role="tab"]')].filter((tab) => tab.tabIndex === 0);
+diff --git a/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx b/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx
+index 7e4f937a..75acb370 100644
+--- a/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx
+@@ -41,6 +41,8 @@ function initialDraft(design: BillSplitDesign) {
+   return { equalOwners, itemDraft, amountDraft };
+ }
+ 
++const maxPeopleAtOnce = 20;
++
+ export function BillSplitWorkspace({ state, design: suppliedDesign, owners: savedOwners, canMutate, onRefresh, onSave, onClear, errorMessage, lastUpdated }: BillSplitWorkspaceProps) {
+   const [design, setDesign] = useState(suppliedDesign);
+   const [mode, setMode] = useState<SplitMode>(suppliedDesign?.mode === "ByItem" || suppliedDesign?.mode === "ByAmount" ? suppliedDesign.mode : "EqualByPerson");
+@@ -54,10 +56,13 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners: save
+     ...savedOwners,
+     ...addedPeople.filter((person) => !savedOwners.some((owner) => ownerKey(owner) === ownerKey(person))),
+   ].map((owner) => owner.kind === "Person" ? { ...owner, label: `${++personNumber}. Kişi` } : owner);
+-  const addPerson = () => {
+-    const ownerId = crypto.randomUUID();
+-    setAddedPeople((people) => [...people, { kind: "Person", ownerId, label: "" }]);
+-    setEqualOwners((selected) => [...selected, `Person:${ownerId}`]);
++  const [personCount, setPersonCount] = useState("1");
++  const addPeople = () => {
++    const count = Math.min(maxPeopleAtOnce, Math.max(1, Math.trunc(Number(personCount)) || 1));
++    const added = Array.from({ length: count }, () => crypto.randomUUID());
++    setAddedPeople((people) => [...people, ...added.map((ownerId): SplitOwnerOption => ({ kind: "Person", ownerId, label: "" }))]);
++    setEqualOwners((selected) => [...selected, ...added.map((ownerId) => `Person:${ownerId}`)]);
++    setPersonCount("1");
+     setDirty(true);
+   };
+   const [busy, setBusy] = useState(false);
+@@ -145,7 +150,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners: save
+     <div className="bill-split__modes" role="tablist" tabIndex={-1} aria-label="Dağıtım modu" onKeyDown={moveBetweenTabs}>{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" tabIndex={mode === option ? 0 : -1} aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
+     <div className="bill-split__layout">
+       <main className="bill-split__editor">
+-        {canMutate && mutableState && <Button data-telemetry-id="b.billing.billsplitworkspace.9" variant="secondary" onClick={addPerson}>Kişi ekle</Button>}
++        {canMutate && mutableState && <div className="bill-split__add-people"><label>Eklenecek kişi sayısı<input type="number" inputMode="numeric" min={1} max={maxPeopleAtOnce} aria-label="Eklenecek kişi sayısı" value={personCount} onFocus={(event) => event.target.select()} onChange={(event) => setPersonCount(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") addPeople(); }} /></label><Button data-telemetry-id="b.billing.billsplitworkspace.9" variant="secondary" onClick={addPeople}>Kişi ekle</Button></div>}
+         {mode === "EqualByPerson" && <OwnerPicker owners={owners} selected={equalOwners} onChange={(next) => { setEqualOwners(next); setDirty(true); }} />}
+         {mode === "ByItem" && <ItemEditor design={design} owners={owners} draft={itemDraft} onChange={(next) => { setItemDraft(next); setDirty(true); }} />}
+         {mode === "ByAmount" && <AmountEditor design={design} owners={owners} draft={amountDraft} onChange={(next) => { setAmountDraft(next); setDirty(true); }} />}
+diff --git a/src/Clients/PosTerminal/src/features/billing/billing.css b/src/Clients/PosTerminal/src/features/billing/billing.css
+index feff4855..7085058e 100644
+--- a/src/Clients/PosTerminal/src/features/billing/billing.css
++++ b/src/Clients/PosTerminal/src/features/billing/billing.css
+@@ -84,3 +84,7 @@
+ .refund-panel__check input { width: 24px; height: 24px; flex: none; margin: 0; }
+ .refund-panel__check > div { display: grid; gap: var(--ds-space-1); }
+ .refund-panel__check small { color: var(--ds-color-muted); }
++
++.bill-split__add-people { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
++.bill-split__add-people label { display: flex; align-items: center; gap: .5rem; font-weight: 700; }
++.bill-split__add-people input { width: 5rem; min-height: 48px; font-size: 1rem; text-align: center; }

@@ -1,0 +1,5 @@
+killed Kisi ekle always adds one
+killed no 20-person cap
+killed Enter does not add
+killed count not selected on focus
+killed new people not selected for the equal split
