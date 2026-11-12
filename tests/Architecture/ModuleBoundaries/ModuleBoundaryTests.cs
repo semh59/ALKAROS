@@ -301,7 +301,9 @@ public static class ModuleBoundaryTests
             // Areas added when the list was widened to every Host namespace: each is pinned to the modules it
             // used on that day, so a new module reference anywhere in the Host fails here.
             ["ALKAROS.Host.Experience.Authorization"] =
-                ["ALKAROS.Identity"],
+                ["ALKAROS.Audit", "ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.CustomerAging"] =
+                ["ALKAROS.CustomerAccounts", "ALKAROS.Identity", "ALKAROS.Reporting"],
             ["ALKAROS.Host.Experience.Catalog"] =
                 ["ALKAROS.Audit", "ALKAROS.Catalog", "ALKAROS.Identity"],
             ["ALKAROS.Host.Experience.CustomerCredit"] =
