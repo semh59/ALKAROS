@@ -215,6 +215,7 @@ jobs:
         run: |
           set -euo pipefail
           node --test tools/tests/run_e2e_browser_test.test.js
+          node --test tools/client-build-gate/clientBuildGate.test.js
       - name: Python architecture tests
         shell: bash
         run: |

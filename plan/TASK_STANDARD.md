@@ -159,6 +159,8 @@ Bir görev şu üçü sağlanmadan Done olamaz:
 1. `dotnet build` ve ilgili testler exit code 0 ile geçer; komutların gerçek
    çıktısı `evidence/<Task-ID>/` altına kaydedilir (ör. `tests.log`) ve final
    cevapta özetlenir.
+   `src/Clients/**` değişen görevde ayrıca üretim derlemesi (lint `--max-warnings=0`, tip denetimi, `vite build`)
+   `node tools/client-build-gate/clientBuildGate.js --base <başlangıç commit'i>` ile exit code 0 geçer; lint hatası vitest ve tsc'den geçebilir.
 2. Migration varsa ileri/geri (up/down) ikisi de boş veritabanında denenir.
 3. Semih'in elle deneyebileceği en az bir gerçek senaryo tarif edilir
    (örn. "masaya sipariş al, mutfağa gönder, öde, kapat").

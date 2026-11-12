@@ -1,7 +1,7 @@
 # V1-RMD-997 - Önceki görevlerin yeni dosyaları sahiplenir ve istemci derleme kuralı commit edilir
 
 - Task ID: V1-RMD-997
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

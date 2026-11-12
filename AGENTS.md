@@ -78,6 +78,9 @@ Görev `Done` yapılmadan önce:
   karşılaştırılır.
 - Allowlist dışındaki tek bir değişiklik bile görevi başarısız yapar.
 - Görevdeki acceptance komutları ve ilgili testler gerçek exit code ile çalıştırılır.
+- `src/Clients/**` altında bir istemci değişmişse üretim derlemesi (lint `--max-warnings=0`, tip denetimi, `vite build`)
+  exit code 0 ile geçer; yalnız test ve tip denetimi yetmez. Komut: `node tools/client-build-gate/clientBuildGate.js --base <görev başlangıç commit'i>`,
+  çıktısı `evidence/<Task-ID>/` altına yazılır. CI aynı üç adımı `pnpm build` ile koşar.
 - Migration varsa ileri/geri kanıtı; dış entegrasyon varsa gerçek sandbox/device transcript'i bulunur.
 - `evidence/<Task-ID>/**` altında komut, exit code, ilgili hash ve sonuç kaydedilir; bu, `Done` için zorunludur
   (`plan/TASK_STANDARD.md` "Kabul kanıtı" ile aynı kural, V1-RMD-433).
