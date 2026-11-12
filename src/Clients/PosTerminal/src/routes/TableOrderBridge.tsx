@@ -4,6 +4,7 @@ import type { TableOrder } from "../contracts";
 import { formatMoney } from "../format";
 import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
+import { collectionHref } from "../features/pending-checks/pendingChecksApi";
 import { kitchenlessText } from "../strings";
 
 interface BridgeTable {
@@ -91,7 +92,7 @@ export function TableOrderBridge({
   return <section className="table-order-bridge" aria-label="Masa hesabı">
     <p id="table-order-bridge-note" className="table-order-bridge__note">{!canManage
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
-      : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir."
+      : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : bill && <>
@@ -122,7 +123,7 @@ export function TableOrderBridge({
     {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
       {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>Böl</button>}
       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
-      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>İptal / iade</button>}
+      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
     </div>}
     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}

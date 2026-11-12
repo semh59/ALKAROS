@@ -130,6 +130,13 @@ describe("TableOrderBridge", () => {
     expect(onStartOrder).not.toHaveBeenCalled();
   });
 
+  it("does not point to a button the cashier does not have", () => {
+    render({ canCollect: false, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+
+    expect(document.querySelector("#table-order-bridge-note")?.textContent).toBe("Hesap açıldığı için ürün eklenemez.");
+    expect(button("İptal / iade")).toBeUndefined();
+  });
+
   it("keeps the continue button open on a table with an order and no bill", () => {
     render();
 
@@ -196,12 +203,12 @@ describe("TableOrderBridge", () => {
     expect(panel.querySelector(".table-order-bridge__total")).toBeNull();
   });
 
-  it("Böl and İptal / iade open the billing screen on the table's bill, or on its order when it has no bill yet", async () => {
+  it("Böl opens the split screen on the table's bill or order, and İptal / iade opens the payment screen with the refund section open", async () => {
     const withBill = render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
     await click("Böl");
     expect(withBill.navigateTo).toHaveBeenCalledWith("/billing?billId=b-1");
     await click("İptal / iade");
-    expect(withBill.navigateTo).toHaveBeenLastCalledWith("/billing?billId=b-1");
+    expect(withBill.navigateTo).toHaveBeenLastCalledWith("/cashier/payments/split-payment/index.html?billId=b-1&open=refund");
 
     const withoutBill = render();
     await click("Böl");

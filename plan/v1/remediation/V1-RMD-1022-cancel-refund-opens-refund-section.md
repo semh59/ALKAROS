@@ -1,7 +1,7 @@
 # V1-RMD-1022 - İptal / iade düğmesi iade bölümü açık ekrana gider
 
 - Task ID: V1-RMD-1022
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

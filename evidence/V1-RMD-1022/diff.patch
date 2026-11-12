@@ -1,0 +1,124 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 5d882842..33fc21d8 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -137,6 +137,7 @@
+     resetKeyReason: null,
+     resetNotice: null,
+     resetError: null,
++    showRefund: false,
+   };
+ 
+   function enterPaid() {
+@@ -397,6 +398,8 @@
+ 
+   function bootstrap() {
+     state.billId = queryParam('billId');
++    // The table panel's Iptal / iade button lands here with the refund section already open.
++    if (queryParam('open') === 'refund') { state.folds.refund = state.folds.refundPaid = true; state.showRefund = true; }
+     if (!state.billId) {
+       state.phase = 'missingBill';
+       render();
+@@ -2168,6 +2171,13 @@
+     return !!(state.refundError || state.refundNotice || state.confirmKey || (state.refundRequests && state.refundRequests.length > 0));
+   }
+ 
++  // The refund fold sits at the bottom of the page: keep it in view while the screen is still loading and redrawing, until the cashier touches anything.
++  function showRefundInView(foldName) {
++    if (!state.showRefund) return;
++    var fold = document.getElementById('fold-' + foldName);
++    if (fold && fold.scrollIntoView) fold.scrollIntoView({ block: 'start' });
++  }
++
+   function bindFolds() {
+     document.querySelectorAll('details.sp-fold > summary').forEach(function (summary) {
+       summary.addEventListener('click', function () {
+@@ -2252,6 +2262,7 @@
+       '</div>';
+ 
+     bindFolds();
++    showRefundInView('refund');
+ 
+     document.querySelectorAll('[role="radiogroup"]').forEach(function (group) {
+       group.addEventListener('keydown', function (event) { moveWithinGroup(event, 'radio'); });
+@@ -2496,6 +2507,7 @@
+       '<div class="sp-card">' + renderFold('refundPaid', 'İade', renderRefundSection(false), refundNeedsAttention()) + '</div>' +
+       renderReceiptReset();
+     bindFolds();
++    showRefundInView('refundPaid');
+   }
+ 
+   // The error box sits at the top of the page while the pay button is sticky at the bottom: bring an error into view, also the
+@@ -2530,6 +2542,9 @@
+     }
+   }
+ 
++  ['click', 'change', 'input', 'keydown', 'focusin'].forEach(function (name) {
++    app.addEventListener(name, function () { state.showRefund = false; }, true);
++  });
+   app.addEventListener('click', onRefundClick);
+   app.addEventListener('input', onRefundInput);
+   app.addEventListener('change', onReasonChange);
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index cf865e2b..9c200299 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -130,6 +130,13 @@ describe("TableOrderBridge", () => {
+     expect(onStartOrder).not.toHaveBeenCalled();
+   });
+ 
++  it("does not point to a button the cashier does not have", () => {
++    render({ canCollect: false, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++
++    expect(document.querySelector("#table-order-bridge-note")?.textContent).toBe("Hesap açıldığı için ürün eklenemez.");
++    expect(button("İptal / iade")).toBeUndefined();
++  });
++
+   it("keeps the continue button open on a table with an order and no bill", () => {
+     render();
+ 
+@@ -196,12 +203,12 @@ describe("TableOrderBridge", () => {
+     expect(panel.querySelector(".table-order-bridge__total")).toBeNull();
+   });
+ 
+-  it("Böl and İptal / iade open the billing screen on the table's bill, or on its order when it has no bill yet", async () => {
++  it("Böl opens the split screen on the table's bill or order, and İptal / iade opens the payment screen with the refund section open", async () => {
+     const withBill = render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+     await click("Böl");
+     expect(withBill.navigateTo).toHaveBeenCalledWith("/billing?billId=b-1");
+     await click("İptal / iade");
+-    expect(withBill.navigateTo).toHaveBeenLastCalledWith("/billing?billId=b-1");
++    expect(withBill.navigateTo).toHaveBeenLastCalledWith("/cashier/payments/split-payment/index.html?billId=b-1&open=refund");
+ 
+     const withoutBill = render();
+     await click("Böl");
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index bbfb39d0..839dc639 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -4,6 +4,7 @@ import type { TableOrder } from "../contracts";
+ import { formatMoney } from "../format";
+ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
++import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+ import { kitchenlessText } from "../strings";
+ 
+ interface BridgeTable {
+@@ -91,7 +92,7 @@ export function TableOrderBridge({
+   return <section className="table-order-bridge" aria-label="Masa hesabı">
+     <p id="table-order-bridge-note" className="table-order-bridge__note">{!canManage
+       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
+-      : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir."
++      : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
+         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
+     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+       : bill && <>
+@@ -122,7 +123,7 @@ export function TableOrderBridge({
+     {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
+       {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>Böl</button>}
+       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
+-      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>İptal / iade</button>}
++      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
+     </div>}
+     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
+     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}

@@ -1,0 +1,5 @@
+killed paid screen refund fold not opened by the mark
+killed panel button drops the open=refund mark
+killed scroll never stops after a tap
+killed ready screen not scrolled to the fold
+killed note points to a button the cashier lacks (canCollect=false)

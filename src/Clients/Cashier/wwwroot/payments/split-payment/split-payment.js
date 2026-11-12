@@ -137,6 +137,7 @@
     resetKeyReason: null,
     resetNotice: null,
     resetError: null,
+    showRefund: false,
   };
 
   function enterPaid() {
@@ -397,6 +398,8 @@
 
   function bootstrap() {
     state.billId = queryParam('billId');
+    // The table panel's Iptal / iade button lands here with the refund section already open.
+    if (queryParam('open') === 'refund') { state.folds.refund = state.folds.refundPaid = true; state.showRefund = true; }
     if (!state.billId) {
       state.phase = 'missingBill';
       render();
@@ -2168,6 +2171,13 @@
     return !!(state.refundError || state.refundNotice || state.confirmKey || (state.refundRequests && state.refundRequests.length > 0));
   }
 
+  // The refund fold sits at the bottom of the page: keep it in view while the screen is still loading and redrawing, until the cashier touches anything.
+  function showRefundInView(foldName) {
+    if (!state.showRefund) return;
+    var fold = document.getElementById('fold-' + foldName);
+    if (fold && fold.scrollIntoView) fold.scrollIntoView({ block: 'start' });
+  }
+
   function bindFolds() {
     document.querySelectorAll('details.sp-fold > summary').forEach(function (summary) {
       summary.addEventListener('click', function () {
@@ -2252,6 +2262,7 @@
       '</div>';
 
     bindFolds();
+    showRefundInView('refund');
 
     document.querySelectorAll('[role="radiogroup"]').forEach(function (group) {
       group.addEventListener('keydown', function (event) { moveWithinGroup(event, 'radio'); });
@@ -2496,6 +2507,7 @@
       '<div class="sp-card">' + renderFold('refundPaid', 'İade', renderRefundSection(false), refundNeedsAttention()) + '</div>' +
       renderReceiptReset();
     bindFolds();
+    showRefundInView('refundPaid');
   }
 
   // The error box sits at the top of the page while the pay button is sticky at the bottom: bring an error into view, also the
@@ -2530,6 +2542,9 @@
     }
   }
 
+  ['click', 'change', 'input', 'keydown', 'focusin'].forEach(function (name) {
+    app.addEventListener(name, function () { state.showRefund = false; }, true);
+  });
   app.addEventListener('click', onRefundClick);
   app.addEventListener('input', onRefundInput);
   app.addEventListener('change', onReasonChange);
