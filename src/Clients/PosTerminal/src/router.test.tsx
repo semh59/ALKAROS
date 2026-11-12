@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { act } from "react";
+import { act, useEffect } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { RouterProvider, isPlainClick, useRouter } from "./router";
@@ -11,8 +11,9 @@ let root: Root | null = null;
 let seen: { path: string; navigate: (to: string) => void } | null = null;
 
 function Probe() {
-  seen = useRouter();
-  return <span>{seen.path}</span>;
+  const router = useRouter();
+  useEffect(() => { seen = router; });
+  return <span>{router.path}</span>;
 }
 
 beforeEach(() => {

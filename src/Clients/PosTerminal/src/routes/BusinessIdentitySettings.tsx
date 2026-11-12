@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { focusOnMount } from "../focusOnMount";
 import { ApiError, api } from "../api";
 import type { AccentPaletteEntry } from "../contracts";
 import { savedId } from "../storage";
@@ -268,7 +269,7 @@ export function BusinessIdentitySettings() {
           </div>
           <label>
             Kullanıcı adı
-            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" ref={focusOnMount} />
           </label>
           <label>
             Parola

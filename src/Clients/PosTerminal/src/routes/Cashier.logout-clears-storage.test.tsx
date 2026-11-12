@@ -49,7 +49,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
   it('removes "alkaros.current-bill-id" when the cashier logs out', async () => {
     localStorage.setItem("alkaros.current-bill-id", "11111111-1111-1111-1111-111111111111");
 
-    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
       if (path.includes("/auth/logout")) return jsonResponse(null);
       if (path.includes("/auth/session")) {

@@ -1,0 +1,8 @@
+M1 focus never taken -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M2 dialog key handler not attached -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M3 drawer key handler not attached ->       Tests  3 passed (3)
+restored
+M3 rerun drawer key handler not attached -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored

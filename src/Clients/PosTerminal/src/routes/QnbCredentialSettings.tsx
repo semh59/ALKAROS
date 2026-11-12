@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { focusOnMount } from "../focusOnMount";
 import { ApiError, api } from "../api";
 import type { QnbConnectionTestResult, QnbCredentialStatus } from "../contracts";
 import { SellerProfileCard } from "../features/invoice-settings";
@@ -156,7 +157,7 @@ export function QnbCredentialSettings() {
           </div>
           <label>
             Kullanıcı adı
-            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" ref={focusOnMount} />
           </label>
           <label>
             Parola

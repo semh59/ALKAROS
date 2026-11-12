@@ -105,9 +105,9 @@ export function StateMessage({ tone, title, children, actions }: { tone: StateTo
   );
 }
 
-function trapFocus(event: KeyboardEvent<HTMLElement>) {
+function trapFocus(event: globalThis.KeyboardEvent) {
   if (event.key !== "Tab") return;
-  const controls = [...event.currentTarget.querySelectorAll<HTMLElement>(focusableSelector)];
+  const controls = [...(event.currentTarget as HTMLElement).querySelectorAll<HTMLElement>(focusableSelector)];
   if (controls.length === 0) return;
   const first = controls[0];
   const last = controls[controls.length - 1];
@@ -133,13 +133,21 @@ export function ModalDialog({ open, title, onClose, children, initialFocusRef }:
     return () => returnFocusRef.current?.focus();
   }, [initialFocusRef, open]);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!open || !dialog) return;
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); onClose(); return; }
+      trapFocus(event);
+    };
+    dialog.addEventListener("keydown", onKeyDown);
+    return () => dialog.removeEventListener("keydown", onKeyDown);
+  }, [onClose, open]);
+
   if (!open) return null;
   return (
     <div className="ds-dialog-backdrop">
-      <div ref={dialogRef} className="ds-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={(event) => {
-        if (event.key === "Escape") { event.preventDefault(); onClose(); return; }
-        trapFocus(event);
-      }}>
+      <div ref={dialogRef} className="ds-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <header className="ds-dialog__header"><h2 id={titleId} className="ds-dialog__title">{title}</h2><button type="button" className="ds-dialog__close" onClick={onClose} aria-label="Pencereyi kapat">×</button></header>
         {children}
       </div>
@@ -158,11 +166,19 @@ export function ContextDrawer({ presentation, title, onClose, children }: { pres
     return () => returnFocus?.focus();
   }, [presentation]);
 
-  return (
-    <aside ref={drawerRef} className={`ds-drawer ds-drawer--${presentation}`} aria-labelledby={titleId} aria-modal={presentation === "sheet" ? true : undefined} role={presentation === "sheet" ? "dialog" : undefined} onKeyDown={presentation === "sheet" ? (event) => {
+  useEffect(() => {
+    const drawer = drawerRef.current;
+    if (presentation !== "sheet" || !drawer) return;
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape" && onClose) { event.preventDefault(); onClose(); return; }
       trapFocus(event);
-    } : undefined}>
+    };
+    drawer.addEventListener("keydown", onKeyDown);
+    return () => drawer.removeEventListener("keydown", onKeyDown);
+  }, [onClose, presentation]);
+
+  return (
+    <aside ref={drawerRef} className={`ds-drawer ds-drawer--${presentation}`} aria-labelledby={titleId} aria-modal={presentation === "sheet" ? true : undefined} role={presentation === "sheet" ? "dialog" : undefined}>
       <header className="ds-drawer__header">
         <h2 id={titleId} className="ds-drawer__title">{title}</h2>
         {presentation === "sheet" && onClose && <button type="button" className="ds-drawer__close" onClick={onClose} aria-label="Bağlam panelini kapat">×</button>}

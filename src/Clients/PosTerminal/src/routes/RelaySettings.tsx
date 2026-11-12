@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { focusOnMount } from "../focusOnMount";
 import { ApiError, api } from "../api";
 import type { RelayCredentialStatus } from "../contracts";
 import { savedId } from "../storage";
@@ -176,7 +177,7 @@ export function RelaySettings() {
           </div>
           <label>
             Kullanıcı adı
-            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" ref={focusOnMount} />
           </label>
           <label>
             Parola

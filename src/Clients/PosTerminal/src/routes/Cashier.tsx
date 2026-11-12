@@ -11,6 +11,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
+import { focusOnMount } from "../focusOnMount";
 import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
@@ -573,8 +574,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               onChange={(event) => setUsername(event.target.value)}
               autoComplete="username"
               // The sign-in screen has one purpose and this is its first field.
-              // oxlint-disable-next-line jsx-a11y/no-autofocus
-              autoFocus
+              ref={focusOnMount}
             />
           </label>
           <label>

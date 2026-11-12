@@ -4,7 +4,7 @@ import { act, createRef, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary, moveBetweenTabs } from "./index";
+import { Button, ContextDrawer, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary, moveBetweenTabs } from "./index";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -83,5 +83,25 @@ describe("design-system primitives", () => {
 
     await act(async () => root!.render(<ModalDialog open={false} title="Silme onayı" onClose={close}><StateMessage tone="warning" title="Uyarı" /></ModalDialog>));
     expect(document.activeElement?.id).toBe("trigger");
+  });
+
+  it("closes a context sheet on Escape and keeps Tab inside it, while a persistent drawer ignores both", async () => {
+    const close = vi.fn();
+    await render(<ContextDrawer presentation="sheet" title="Bağlam" onClose={close}><Button id="first">Bir</Button><Button id="last">İki</Button></ContextDrawer>);
+    const sheet = document.querySelector<HTMLElement>('[role="dialog"]')!;
+    const last = document.getElementById("last")!;
+    last.focus();
+
+    const tab = new KeyboardEvent("keydown", { key: "Tab", bubbles: true, cancelable: true });
+    sheet.dispatchEvent(tab);
+    sheet.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+
+    expect(tab.defaultPrevented).toBe(true);
+    expect(document.activeElement?.id).not.toBe("last");
+    expect(close).toHaveBeenCalledOnce();
+
+    await act(async () => root!.render(<ContextDrawer presentation="persistent" title="Bağlam" onClose={close}><Button>Bir</Button></ContextDrawer>));
+    document.querySelector("aside")!.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    expect(close).toHaveBeenCalledOnce();
   });
 });

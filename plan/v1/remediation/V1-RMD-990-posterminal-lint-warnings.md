@@ -1,7 +1,7 @@
 # V1-RMD-990 - PosTerminal lint uyarıları sıfırlanır
 
 - Task ID: V1-RMD-990
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
@@ -15,6 +15,7 @@ oxlint çıktısındaki 12 uyarı tek tek giderilir; pnpm build sıfır uyarıyl
 - `evidence/V1-RMD-990/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/focusOnMount.ts
+  - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/ReservationStation.tsx
   - src/Clients/PosTerminal/src/routes/RelaySettings.tsx
   - src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx
@@ -23,6 +24,7 @@ oxlint çıktısındaki 12 uyarı tek tek giderilir; pnpm build sıfır uyarıyl
   - src/Clients/PosTerminal/src/routes/SecurityAdministration.tsx
   - src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx
   - src/Clients/PosTerminal/src/design-system/primitives.tsx
+  - src/Clients/PosTerminal/src/design-system/primitives.test.tsx
   - src/Clients/PosTerminal/src/router.test.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
   - src/Clients/PosTerminal/src/routes/loginFocus.test.tsx

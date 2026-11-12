@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { focusOnMount } from "../focusOnMount";
 import { ApiError, api } from "../api";
 import { RecoveryPanel } from "../features/management-security-system";
 import { savedId } from "../storage";
@@ -95,7 +96,7 @@ export function SecurityAdministration() {
           </div>
           <label>
             Kullanıcı adı
-            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+            <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" ref={focusOnMount} />
           </label>
           <label>
             Parola
