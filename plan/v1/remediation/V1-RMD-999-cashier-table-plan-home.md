@@ -13,9 +13,9 @@ Masalar ekranı (kasiyerin açılış ekranı) taslak v4'e göre masa planıdır
 ## Owned surface
 
 - `evidence/V1-RMD-999/**`
-- `src/Clients/PosTerminal/src/features/tables/tablePlanModel.ts`
-- `src/Clients/PosTerminal/src/features/tables/tablePlanModel.test.ts`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - src/Clients/PosTerminal/src/features/tables/tablePlanModel.ts
+  - src/Clients/PosTerminal/src/features/tables/tablePlanModel.test.ts
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
   - src/Clients/PosTerminal/src/features/tables/models.ts
