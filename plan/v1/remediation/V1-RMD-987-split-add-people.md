@@ -1,7 +1,7 @@
 # V1-RMD-987 - Hesap bölmede kişiler önceden kayıtlı olmak zorunda değil
 
 - Task ID: V1-RMD-987
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
@@ -16,6 +16,8 @@ Kasiyer hesap bölme ekranında Kişi ekle düğmesiyle kişi ekler ve ürün, t
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx
   - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.recovery.test.tsx
+  - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx
+  - src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

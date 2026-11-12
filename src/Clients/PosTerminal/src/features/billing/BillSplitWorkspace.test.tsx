@@ -137,7 +137,7 @@ describe("bill split workspace", () => {
     expect(document.body.textContent).toContain("Henüz güncellenmedi");
     expect(document.body.textContent).not.toMatch(/v7|Person|Seat/);
     await click([...document.querySelectorAll('[role="tab"]')].find((tab) => tab.textContent === "Tutar gir")!);
-    const guest = [...document.querySelectorAll(".bill-split__amounts label")].find((label) => label.textContent?.includes("Misafir 1"))!;
+    const guest = [...document.querySelectorAll(".bill-split__amounts label")].find((label) => label.textContent?.includes("1. Kişi"))!;
     expect(guest.querySelector("small")?.textContent).toBe("Kişi");
     expect(document.body.textContent).not.toMatch(/Person|Seat/);
   });

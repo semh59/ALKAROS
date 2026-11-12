@@ -1,0 +1,46 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx (10 tests | 2 failed) 310ms
+     × says so when nobody is added yet instead of showing an empty editor 17ms
+     × splits by item between people added on the spot, with no seats registered 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.recovery.test.tsx > bill split workspace recovery and empty states > says so when nobody is added yet instead of showing an empty editor
+AssertionError: expected 'Bu hesap için kayıtlı sandalye veya k…' to contain 'Kişi ekle'
+
+Expected: "Kişi ekle"
+Received: "Bu hesap için kayıtlı sandalye veya kişi yok. Önce masaya sandalye ya da kişi ekleyin."
+
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx:121:71
+    119|     await mount(<BillSplitWorkspace {...props({ owners: [] })} />);
+    120|
+    121|     expect(document.querySelector(".bill-split__empty")?.textContent).…
+       |                                                                       ^
+    122|     expect(button("Dağıtımı kaydet").disabled).toBe(true);
+    123|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.recovery.test.tsx > bill split workspace recovery and empty states > splits by item between people added on the spot, with no seats registered
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx:43:80
+     41|   async function rerender(element: ReactElement) { await act(async () …
+     42|   const button = (text: string) => [...document.querySelectorAll("butt…
+     43|   const click = (element: Element) => act(async () => (element as HTML…
+       |                                                                                ^
+     44|   async function input(element: HTMLInputElement, value: string) {
+     45|     await act(async () => {
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/billing/BillSplitWorkspace.recovery.test.tsx:43:39
+ ❯ src/features/billing/BillSplitWorkspace.recovery.test.tsx:128:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 8 passed (10)
+   Start at  07:49:27
+   Duration  2.14s (transform 214ms, setup 0ms, import 315ms, tests 310ms, environment 1.24s)
+

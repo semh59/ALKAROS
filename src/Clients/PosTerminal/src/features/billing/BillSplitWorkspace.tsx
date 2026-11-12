@@ -41,13 +41,25 @@ function initialDraft(design: BillSplitDesign) {
   return { equalOwners, itemDraft, amountDraft };
 }
 
-export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canMutate, onRefresh, onSave, onClear, errorMessage, lastUpdated }: BillSplitWorkspaceProps) {
+export function BillSplitWorkspace({ state, design: suppliedDesign, owners: savedOwners, canMutate, onRefresh, onSave, onClear, errorMessage, lastUpdated }: BillSplitWorkspaceProps) {
   const [design, setDesign] = useState(suppliedDesign);
   const [mode, setMode] = useState<SplitMode>(suppliedDesign?.mode === "ByItem" || suppliedDesign?.mode === "ByAmount" ? suppliedDesign.mode : "EqualByPerson");
   const seeded = initialDraft(suppliedDesign ?? emptyDesign);
   const [equalOwners, setEqualOwners] = useState<string[]>(seeded.equalOwners);
   const [itemDraft, setItemDraft] = useState<ItemDraft>(seeded.itemDraft);
   const [amountDraft, setAmountDraft] = useState<AmountDraft>(seeded.amountDraft);
+  const [addedPeople, setAddedPeople] = useState<readonly SplitOwnerOption[]>([]);
+  let personNumber = 0;
+  const owners = [
+    ...savedOwners,
+    ...addedPeople.filter((person) => !savedOwners.some((owner) => ownerKey(owner) === ownerKey(person))),
+  ].map((owner) => owner.kind === "Person" ? { ...owner, label: `${++personNumber}. Kişi` } : owner);
+  const addPerson = () => {
+    const ownerId = crypto.randomUUID();
+    setAddedPeople((people) => [...people, { kind: "Person", ownerId, label: "" }]);
+    setEqualOwners((selected) => [...selected, `Person:${ownerId}`]);
+    setDirty(true);
+  };
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
@@ -72,7 +84,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   const validation = (() => {
     const errors: string[] = [];
     if (!mutableState) errors.push(`${billStatusLabels[design.billStatus] ?? "Bilinmiyor"} durumundaki hesap değiştirilemez.`);
-    if (owners.length === 0) errors.push("Bu hesap için kayıtlı sandalye veya kişi yok; önce masaya sandalye ya da kişi ekleyin.");
+    if (owners.length === 0) errors.push("Önce Kişi ekle düğmesiyle kişileri ekleyin.");
     if (mode === "EqualByPerson" && selectedOwners.length < 2) errors.push("Eşit bölme için en az iki sandalye veya kişi seçin.");
     if (mode === "ByAmount" && Object.values(amountDraft).some((amount) => amount <= 0)) errors.push("Girilen her tutar sıfırdan büyük olmalı.");
     if (mode === "ByAmount" && round(allocated) !== round(design.payableAmount)) errors.push("Dağıtılan tutar, ödenecek tutara tam eşit olmalı.");
@@ -133,6 +145,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
     <div className="bill-split__modes" role="tablist" tabIndex={-1} aria-label="Dağıtım modu" onKeyDown={moveBetweenTabs}>{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" tabIndex={mode === option ? 0 : -1} aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">
       <main className="bill-split__editor">
+        {canMutate && mutableState && <Button data-telemetry-id="b.billing.billsplitworkspace.9" variant="secondary" onClick={addPerson}>Kişi ekle</Button>}
         {mode === "EqualByPerson" && <OwnerPicker owners={owners} selected={equalOwners} onChange={(next) => { setEqualOwners(next); setDirty(true); }} />}
         {mode === "ByItem" && <ItemEditor design={design} owners={owners} draft={itemDraft} onChange={(next) => { setItemDraft(next); setDirty(true); }} />}
         {mode === "ByAmount" && <AmountEditor design={design} owners={owners} draft={amountDraft} onChange={(next) => { setAmountDraft(next); setDirty(true); }} />}
@@ -158,7 +171,7 @@ function OwnerPicker({ owners, selected, onChange }: { owners: readonly SplitOwn
 }
 
 function NoOwners() {
-  return <p className="bill-split__empty" role="status">Bu hesap için kayıtlı sandalye veya kişi yok. Önce masaya sandalye ya da kişi ekleyin.</p>;
+  return <p className="bill-split__empty" role="status">Henüz kimse yok. Kişi ekle düğmesiyle kişileri ekleyin.</p>;
 }
 
 function setCell<T>(draft: Record<string, T>, key: string, raw: string, parse: (value: string) => T): Record<string, T> {

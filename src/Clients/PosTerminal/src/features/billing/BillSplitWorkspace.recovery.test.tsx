@@ -115,11 +115,53 @@ describe("bill split workspace recovery and empty states", () => {
     expect(document.body.textContent).not.toContain("sıfırdan büyük olmalı");
   });
 
-  it("says so when the bill has no seats or people instead of showing an empty editor", async () => {
+  it("says so when nobody is added yet instead of showing an empty editor", async () => {
     await mount(<BillSplitWorkspace {...props({ owners: [] })} />);
 
-    expect(document.querySelector(".bill-split__empty")?.textContent).toContain("kayıtlı sandalye veya kişi yok");
+    expect(document.querySelector(".bill-split__empty")?.textContent).toContain("Kişi ekle");
     expect(button("Dağıtımı kaydet").disabled).toBe(true);
+  });
+
+  it("splits by item between people added on the spot, with no seats registered", async () => {
+    const onSave = vi.fn().mockResolvedValue(design);
+    await mount(<BillSplitWorkspace {...props({ owners: [], onSave })} />);
+    await click(button("Kişi ekle")); await click(button("Kişi ekle"));
+    await tab("Ürün / miktar");
+    const fields = [...document.querySelectorAll<HTMLInputElement>(".bill-split__items input")];
+    await input(fields[0], "1"); await input(fields[1], "1");
+
+    await click(button("Dağıtımı kaydet"));
+
+    const [request] = onSave.mock.calls[0];
+    expect(request.mode).toBe("ByItem");
+    expect(request.targets.map((t: { owner: { kind: string } }) => t.owner.kind)).toEqual(["Person", "Person"]);
+    expect(new Set(request.targets.map((t: { owner: { ownerId: string } }) => t.owner.ownerId)).size).toBe(2);
+    expect(document.body.textContent).toContain("1. Kişi");
+    expect(document.body.textContent).toContain("2. Kişi");
+  });
+
+  it("never shows two people under the same label, even when the server numbers people itself", async () => {
+    const onSave = vi.fn().mockResolvedValue(design);
+    await mount(<BillSplitWorkspace {...props({ owners: [], onSave })} />);
+    await click(button("Kişi ekle")); await click(button("Kişi ekle"));
+
+    await rerender(<BillSplitWorkspace {...props({ owners: [{ kind: "Person", ownerId: "unrelated", label: "1. Kişi" }] })} />);
+
+    const labels = [...document.querySelectorAll(".bill-split__owner-picker label")].map((l) => l.getAttribute("aria-label"));
+    expect(labels).toEqual(["1. Kişi", "2. Kişi", "3. Kişi"]);
+  });
+
+  it("selects a person added in the equal split at once", async () => {
+    await mount(<BillSplitWorkspace {...props({ owners: [] })} />);
+    await click(button("Kişi ekle")); await click(button("Kişi ekle"));
+
+    expect([...document.querySelectorAll<HTMLInputElement>(".bill-split__owner-picker input")].every((c) => c.checked)).toBe(true);
+  });
+
+  it("does not offer to add people to a bill that cannot be changed", async () => {
+    await mount(<BillSplitWorkspace {...props({ canMutate: false })} />);
+
+    expect(document.body.textContent).not.toContain("Kişi ekle");
   });
 
   it("asks before wiping a saved split", async () => {
