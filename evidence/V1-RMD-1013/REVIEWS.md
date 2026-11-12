@@ -1,0 +1,2 @@
+qa-frontend: yan etki/olu kod yok; sunucudaki masa siparisi etkilenmez. Duzeltildi: masa sepeti yokken tiklama gereksiz activeOrder istegi atiyordu (erken donus eklendi). Kabul edildi (dusuk): busy sirasinda tiklama ve oturum hazir degilken tiklama; ucusta eylemin kendi yeniden okumasi zaten sepeti dusurur, sunucu etkilenmez.
+qa-ux-tasarim: Masalar sekmesi masa sepetinde secili olmali -> duzeltildi (aria-current, test, mutant). Acik dusuk: sepet sessizce Yeni satis'a doner, "siparis masada duruyor" bilgisi yok; urun karari olarak ayrica ele alinmadi.

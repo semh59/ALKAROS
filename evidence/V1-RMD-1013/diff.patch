@@ -1,0 +1,64 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
+index b181acc7..8f9a2916 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
+@@ -124,6 +124,31 @@ describe("a table order and the quick sale cart", () => {
+     expect([...document.querySelectorAll("button")].some((b) => b.textContent === "Hızlı satışa geç")).toBe(false);
+   });
+ 
++  it("does not mark the quick-sale tab as current while the table cart is open", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    await openTill();
++
++    const tab = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Hızlı satış")!;
++    expect(tab.getAttribute("aria-current")).toBeNull();
++    const tables = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Masalar")!;
++    expect(tables.getAttribute("aria-current")).toBe("page");
++  });
++
++  it("leaves the table cart for a clean quick sale when the quick-sale tab is tapped", async () => {
++    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
++    const calls = await openTill();
++    const tab = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Hızlı satış")!;
++
++    await act(async () => { tab.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 })); });
++    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++    expect(document.body.textContent).not.toContain("Çay");
++    expect(tab.getAttribute("aria-current")).toBe("page");
++    await tapProduct("Su");
++
++    expect(calls).toContain("POST /orders");
++    expect(calls.some((call) => call.includes("order-table"))).toBe(false);
++  });
++
+   it("shows the table order, named by its table, when it was opened from the tables screen", async () => {
+     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 62c4ce29..63be4235 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -638,6 +638,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     );
+   };
+ 
++  const leaveTableCart = () => {
++    if (!activeOrder?.tableNumber) return;
++    tableCartRef.current = null;
++    void reloadOrder().catch(() => undefined);
++  };
++
+   // The till can already hold an order this screen has not seen yet (a table order opened elsewhere): continue with it instead of failing.
+   const openOrder = async () => {
+     try {
+@@ -749,8 +755,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+         <div className={`system-state connection-state ${backendStatus}`} role="status"><span aria-hidden="true" />{connectionStateText[backendStatus]}</div>
+         <div className="pos-header-actions">
+           <nav className="view-switch" aria-label="Çalışma alanı">
+-            <a href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
+-            <a href="/" aria-current="page" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/"); } }}>Hızlı satış</a>
++            <a href="/tables" aria-current={activeOrder?.tableNumber ? "page" : undefined} onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
++            <a href="/" aria-current={activeOrder?.tableNumber ? undefined : "page"} onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); leaveTableCart(); } }}>Hızlı satış</a>
+           </nav>
+           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
+           {cashSession && <CashSessionLink status={cashSession} />}

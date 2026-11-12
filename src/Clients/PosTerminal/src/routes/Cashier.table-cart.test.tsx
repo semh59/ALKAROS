@@ -124,6 +124,31 @@ describe("a table order and the quick sale cart", () => {
     expect([...document.querySelectorAll("button")].some((b) => b.textContent === "Hızlı satışa geç")).toBe(false);
   });
 
+  it("does not mark the quick-sale tab as current while the table cart is open", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    await openTill();
+
+    const tab = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Hızlı satış")!;
+    expect(tab.getAttribute("aria-current")).toBeNull();
+    const tables = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Masalar")!;
+    expect(tables.getAttribute("aria-current")).toBe("page");
+  });
+
+  it("leaves the table cart for a clean quick sale when the quick-sale tab is tapped", async () => {
+    sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+    const calls = await openTill();
+    const tab = [...document.querySelectorAll(".view-switch a")].find((a) => a.textContent === "Hızlı satış")!;
+
+    await act(async () => { tab.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 })); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    expect(document.body.textContent).not.toContain("Çay");
+    expect(tab.getAttribute("aria-current")).toBe("page");
+    await tapProduct("Su");
+
+    expect(calls).toContain("POST /orders");
+    expect(calls.some((call) => call.includes("order-table"))).toBe(false);
+  });
+
   it("shows the table order, named by its table, when it was opened from the tables screen", async () => {
     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
 

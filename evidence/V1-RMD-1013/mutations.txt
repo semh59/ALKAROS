@@ -1,0 +1,3 @@
+killed aria-current always on quick-sale tab
+killed tab only navigates (table cart kept)
+killed Masalar tab not current in table cart

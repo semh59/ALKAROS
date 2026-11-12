@@ -1,7 +1,7 @@
 # V1-RMD-1013 - Hızlı satış sekmesi masa sepetini bırakır, seçili sekme doğru
 
 - Task ID: V1-RMD-1013
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

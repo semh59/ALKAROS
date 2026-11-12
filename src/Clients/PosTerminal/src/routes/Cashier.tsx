@@ -638,6 +638,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     );
   };
 
+  const leaveTableCart = () => {
+    if (!activeOrder?.tableNumber) return;
+    tableCartRef.current = null;
+    void reloadOrder().catch(() => undefined);
+  };
+
   // The till can already hold an order this screen has not seen yet (a table order opened elsewhere): continue with it instead of failing.
   const openOrder = async () => {
     try {
@@ -749,8 +755,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         <div className={`system-state connection-state ${backendStatus}`} role="status"><span aria-hidden="true" />{connectionStateText[backendStatus]}</div>
         <div className="pos-header-actions">
           <nav className="view-switch" aria-label="Çalışma alanı">
-            <a href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
-            <a href="/" aria-current="page" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/"); } }}>Hızlı satış</a>
+            <a href="/tables" aria-current={activeOrder?.tableNumber ? "page" : undefined} onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
+            <a href="/" aria-current={activeOrder?.tableNumber ? undefined : "page"} onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); leaveTableCart(); } }}>Hızlı satış</a>
           </nav>
           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
           {cashSession && <CashSessionLink status={cashSession} />}
