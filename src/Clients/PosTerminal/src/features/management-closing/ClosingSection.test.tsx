@@ -12,13 +12,13 @@ import { ManagementApiError } from "../management/http";
 
 const openDay: BusinessDay = {
   businessDayId: "d1", businessDate: "2026-09-29", openedAt: "2026-09-29T06:00:00Z", closedAt: null, status: "Open",
-  totalRevenue: 1250, totalOrdersCount: 14, totalCancelledItemsCount: 0, totalPrintFailuresCount: 0,
+  totalRevenue: 1250, totalOrdersCount: 14, totalCancelledItemsCount: 0, kitchenlessAddedCount: 3, totalPrintFailuresCount: 0,
   totalTipsAmount: 0, openCashSessionsCount: 0, openBillsCount: 0, unsettledPaymentsCount: 0, openItemsAcknowledged: false,
   tableBreakdown: [], cashReconciliation: null,
 };
 
 const cleanPreflight: ClosePreflight = {
-  businessDate: "2026-09-29", revenue: 1250, tips: 80, orders: 14, cancelledItems: 2, printFailures: 1,
+  businessDate: "2026-09-29", revenue: 1250, tips: 80, orders: 14, cancelledItems: 2, kitchenlessAddedCount: 4, printFailures: 1,
   openCashSessions: 0, openBills: 0, unsettledPayments: 0, requiresAcknowledgement: false,
 };
 const openItemsPreflight: ClosePreflight = { ...cleanPreflight, openCashSessions: 1, openBills: 2, unsettledPayments: 3, requiresAcknowledgement: true };
@@ -64,6 +64,14 @@ describe("closing and reconciliation section", () => {
   it("a permitted session sees the action buttons", async () => {
     await render(<ClosingSection client={fakeClient()} capabilities={new Set(["reports.view", "reports.close-day", "reconciliation.manage"])} />);
     expect(buttons()).toEqual(expect.arrayContaining(["İş gününü kapat", "Ödeme taraması yap", "İncelemeye al", "Çözüldü olarak kapat"]));
+  });
+
+  it("shows the items added at the till without a kitchen ticket apart from cancelled items, on the day and on the close preview", async () => {
+    await render(<ClosingSection client={fakeClient()} capabilities={new Set(["reports.view", "reports.close-day", "reconciliation.manage"])} />);
+
+    const facts = [...document.querySelectorAll("dl.closing__facts")].map((list) => list.textContent ?? "");
+    expect(facts.some((text) => text.includes("Mutfağa gitmeden eklenen kalem3"))).toBe(true);
+    expect(facts.some((text) => text.includes("Mutfağa gitmeden eklenen kalem4"))).toBe(true);
   });
 
   it("a view-only session sees data but no action buttons", async () => {

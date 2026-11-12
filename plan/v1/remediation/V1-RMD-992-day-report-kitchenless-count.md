@@ -1,7 +1,7 @@
-# V1-RMD-992 - Gün sonu raporunda kasada eklenen ürün sayısı ayrı görünür
+# V1-RMD-992 - Gün sonu raporunda mutfağa gitmeden eklenen kalem sayısı ayrı görünür
 
 - Task ID: V1-RMD-992
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

@@ -123,6 +123,36 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ItemsAddedAtTheTillWithoutAKitchenTicketAreCountedApartOnPreflightAndTheDayReport()
+    {
+        var businessDate = new DateOnly(2026, 1, 8);
+        var windowStart = new DateTimeOffset(2026, 1, 8, 3, 0, 0, TimeSpan.Zero);
+        var order = Guid.NewGuid();
+        await _database.SeedAuditAsync("order.item-added-without-kitchen", order, windowStart.AddHours(2));
+        await _database.SeedAuditAsync("order.item-added-without-kitchen", order, windowStart.AddHours(9));
+        await _database.SeedAuditAsync("order.item-added-without-kitchen", order, windowStart.AddDays(1).AddMinutes(1));
+        await _database.SeedAuditAsync("order.item-added-without-kitchen", order, windowStart.AddMinutes(-1));
+        await _database.SeedAuditAsync("Order.ItemVoided", order, windowStart.AddHours(3));
+        using var client = CreateClient(EndOfDayTestDatabase.ManagerToken);
+        using (var opened = await client.PostAsJsonAsync(
+            "/api/v1/management/reporting/business-day/open", new OpenBusinessDayV1(businessDate)))
+            Assert.Equal(HttpStatusCode.Created, opened.StatusCode);
+
+        var preflight = await client.GetFromJsonAsync<BusinessDayPreflightV1>($"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close-preflight");
+        using var closed = await client.PostAsJsonAsync(
+            $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close", new CloseBusinessDayV1(AcknowledgeOpenItems: true));
+        var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
+        var later = await client.GetFromJsonAsync<BusinessDayV1>($"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}");
+        var full = await client.GetFromJsonAsync<BusinessDayReportV1>($"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/full-report");
+
+        Assert.Equal(2, preflight!.KitchenlessAddedCount);
+        Assert.Equal(2, report!.BusinessDay.KitchenlessAddedCount);
+        Assert.Equal(2, later!.KitchenlessAddedCount);
+        Assert.Equal(2, full!.BusinessDay.KitchenlessAddedCount);
+        Assert.Equal(1, report.BusinessDay.TotalCancelledItemsCount);
+    }
+
+    [Fact]
     public async Task CloseCountsTableAndQrOrdersButNotPlatformOrders()
     {
         var businessDate = new DateOnly(2026, 1, 6);

@@ -7,6 +7,7 @@ export interface BusinessDay {
   totalRevenue: number;
   totalOrdersCount: number;
   totalCancelledItemsCount: number;
+  kitchenlessAddedCount: number;
   totalPrintFailuresCount: number;
   totalTipsAmount: number;
   openCashSessionsCount: number;
@@ -35,6 +36,7 @@ export interface ClosePreflight {
   tips: number;
   orders: number;
   cancelledItems: number;
+  kitchenlessAddedCount: number;
   printFailures: number;
   openCashSessions: number;
   openBills: number;

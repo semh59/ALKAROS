@@ -1,0 +1,8 @@
+M1 window end ignored -> Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored
+M2 wrong event name -> Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored
+M3 preview row removed -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored
+M4 day row removed -> ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+restored

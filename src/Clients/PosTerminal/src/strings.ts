@@ -97,6 +97,7 @@ export const managementText = {
     revenue: "Ciro (bahşiş hariç)",
     orders: "Sipariş sayısı",
     cancelled: "İptal edilen kalem",
+    kitchenless: "Mutfağa gitmeden eklenen kalem",
     printFailed: "Yazdırma hatası",
     waiters: "Garson performansı",
     waiter: "Garson",

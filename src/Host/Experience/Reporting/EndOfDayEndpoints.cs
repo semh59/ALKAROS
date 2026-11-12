@@ -42,6 +42,7 @@ public static class EndOfDayEndpoints
         services.TryAddScoped<IOperationalReportRepository, PostgresOperationalReportRepository>();
         services.TryAddScoped<IOperationalReportService, OperationalReportService>();
         services.TryAddScoped<IBusinessDayTotalsReader, PostgresBusinessDayTotalsReader>();
+        services.TryAddSingleton<KitchenlessAddedCounter>();
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
@@ -76,6 +77,7 @@ public static class EndOfDayEndpoints
             DateOnly businessDate,
             CloseBusinessDayV1? request,
             IOperationalReportService reports,
+            KitchenlessAddedCounter kitchenless,
             IAuditEventStore audit,
             IAuthorizationService authorization,
             HttpContext context,
@@ -101,39 +103,43 @@ public static class EndOfDayEndpoints
                         }, AuditJson)),
                     (NpgsqlConnection)connection, (NpgsqlTransaction)transaction, token),
                 cancellationToken);
-            return Results.Ok(BusinessDayReportV1.From(result));
+            return Results.Ok(BusinessDayReportV1.From(result).WithKitchenless(await kitchenless.CountAsync(businessDate, cancellationToken)));
         });
 
         group.MapGet("/{businessDate}/close-preflight", async (
             DateOnly businessDate,
             IOperationalReportService reports,
+            KitchenlessAddedCounter kitchenless,
             CancellationToken cancellationToken) =>
         {
             var day = await reports.GetBusinessDayByDateAsync(businessDate, cancellationToken)
                 ?? throw new BusinessDayNotFoundException(businessDate);
             if (day.Status == BusinessDayStatus.Closed)
                 throw new InvalidBusinessDayOperationException($"Business day '{businessDate:yyyy-MM-dd}' is already closed.");
-            return Results.Ok(BusinessDayPreflightV1.From(businessDate, await reports.PreviewCloseAsync(businessDate, cancellationToken)));
+            return Results.Ok(BusinessDayPreflightV1.From(businessDate, await reports.PreviewCloseAsync(businessDate, cancellationToken))
+                with { KitchenlessAddedCount = await kitchenless.CountAsync(businessDate, cancellationToken) });
         });
 
         group.MapGet("/{businessDate}", async (
             DateOnly businessDate,
             IOperationalReportService reports,
+            KitchenlessAddedCounter kitchenless,
             CancellationToken cancellationToken) =>
         {
             var day = await reports.GetBusinessDayByDateAsync(businessDate, cancellationToken)
                 ?? throw new BusinessDayNotFoundException(businessDate);
-            return Results.Ok(BusinessDayV1.From(day));
+            return Results.Ok(BusinessDayV1.From(day) with { KitchenlessAddedCount = await kitchenless.CountAsync(businessDate, cancellationToken) });
         });
 
         group.MapGet("/{businessDate}/full-report", async (
             DateOnly businessDate,
             IOperationalReportService reports,
+            KitchenlessAddedCounter kitchenless,
             CancellationToken cancellationToken) =>
         {
             var result = await reports.GetFullDailyReportAsync(businessDate, cancellationToken)
                 ?? throw new BusinessDayNotFoundException(businessDate);
-            return Results.Ok(BusinessDayReportV1.From(result));
+            return Results.Ok(BusinessDayReportV1.From(result).WithKitchenless(await kitchenless.CountAsync(businessDate, cancellationToken)));
         });
 
         return group;
@@ -151,7 +157,8 @@ public sealed record CloseBusinessDayV1(bool AcknowledgeOpenItems = false);
 /// <summary>What closing this business date would store and warn about right now.</summary>
 public sealed record BusinessDayPreflightV1(
     DateOnly BusinessDate, decimal Revenue, decimal Tips, int Orders, int CancelledItems, int PrintFailures,
-    int OpenCashSessions, int OpenBills, int UnsettledPayments, bool RequiresAcknowledgement)
+    int OpenCashSessions, int OpenBills, int UnsettledPayments, bool RequiresAcknowledgement,
+    int KitchenlessAddedCount = 0)
 {
     public static BusinessDayPreflightV1 From(DateOnly businessDate, BusinessDayFigures figures)
         => new(businessDate, figures.Revenue, figures.Tips, figures.OrderCount, figures.CancelledItems, figures.PrintFailures,
@@ -162,7 +169,8 @@ public sealed record BusinessDayV1(
     Guid BusinessDayId, DateOnly BusinessDate, DateTimeOffset OpenedAt, DateTimeOffset? ClosedAt,
     string Status, decimal TotalRevenue, int TotalOrdersCount, int TotalCancelledItemsCount, int TotalPrintFailuresCount,
     decimal TotalTipsAmount, int OpenCashSessionsCount, int OpenBillsCount, int UnsettledPaymentsCount,
-    bool OpenItemsAcknowledged, IReadOnlyList<TableFigure> TableBreakdown, CashReconciliationFigure? CashReconciliation)
+    bool OpenItemsAcknowledged, IReadOnlyList<TableFigure> TableBreakdown, CashReconciliationFigure? CashReconciliation,
+    int KitchenlessAddedCount = 0)
 {
     public static BusinessDayV1 From(BusinessDayRecord record)
         => new(record.BusinessDayId, record.BusinessDate, record.OpenedAt, record.ClosedAt, record.Status.ToString(),
@@ -191,6 +199,8 @@ public sealed record BusinessDayReportV1(
     IReadOnlyList<WaiterPerformanceResultV1> WaiterSummaries,
     IReadOnlyList<PrintErrorSummaryResultV1> PrintSummaries)
 {
+    public BusinessDayReportV1 WithKitchenless(int count) => this with { BusinessDay = BusinessDay with { KitchenlessAddedCount = count } };
+
     public static BusinessDayReportV1 From(BusinessDayReportResult result)
         => new(BusinessDayV1.From(result.BusinessDay),
             result.WaiterSummaries.Select(WaiterPerformanceResultV1.From).ToArray(),

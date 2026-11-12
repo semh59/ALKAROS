@@ -115,6 +115,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
             {current.status === "Closed" && <div><dt>{t.tips}</dt><dd>{formatMoney(current.totalTipsAmount)}</dd></div>}
             <div><dt>{t.orders}</dt><dd>{current.totalOrdersCount}</dd></div>
             <div><dt>{t.cancelled}</dt><dd>{current.totalCancelledItemsCount}</dd></div>
+            <div><dt>{t.kitchenless}</dt><dd>{current.kitchenlessAddedCount}</dd></div>
             <div><dt>{t.printFailed}</dt><dd>{current.totalPrintFailuresCount}</dd></div>
             {current.status === "Closed" && <>
               <div><dt>{t.openCashSessions}</dt><dd>{current.openCashSessionsCount}</dd></div>
@@ -137,6 +138,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
                 <div><dt>{t.tips}</dt><dd>{formatMoney(preflight.data.tips)}</dd></div>
                 <div><dt>{t.orders}</dt><dd>{preflight.data.orders}</dd></div>
                 <div><dt>{t.cancelled}</dt><dd>{preflight.data.cancelledItems}</dd></div>
+                <div><dt>{t.kitchenless}</dt><dd>{preflight.data.kitchenlessAddedCount}</dd></div>
                 <div><dt>{t.printFailed}</dt><dd>{preflight.data.printFailures}</dd></div>
                 <div><dt>{t.openCashSessions}</dt><dd>{preflight.data.openCashSessions}</dd></div>
                 <div><dt>{t.openBills}</dt><dd>{preflight.data.openBills}</dd></div>
