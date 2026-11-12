@@ -15,13 +15,12 @@ Hesabı açılmış masanın siparişine garson masa taslağı yolundan ürün e
 - `evidence/V1-RMD-996/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Orders/TableDraft/TableDraftService.cs
-  - src/Host/Experience/Orders/TableDraft/TableBillOpenException.cs
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs
   - src/Host/DualScreen/DualScreenStore.Orders.cs
   - src/Modules/Tables/TableRelease/PostgresTableReleasePort.cs
-  - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftHttpTests.cs
-  - tests/Host/Experience/Orders/TableDraft/OrderManagementTableDraftTestDatabase.cs
-  - tests/Host/DualScreen/DualScreenStoreTests.cs
+  - tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs
+  - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+  - tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
