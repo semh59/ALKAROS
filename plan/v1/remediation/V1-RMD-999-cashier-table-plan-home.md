@@ -20,6 +20,8 @@ Masalar ekranı (kasiyerin açılış ekranı) taslak v4'e göre masa planıdır
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
   - src/Clients/PosTerminal/src/features/tables/models.ts
   - src/Clients/PosTerminal/src/features/tables/tables.css
+  - src/Clients/PosTerminal/src/routes/Cashier.tsx
+  - src/Clients/PosTerminal/src/routes/Cashier.session-ended-message.test.tsx
   - src/Clients/PosTerminal/src/routes/workspace.tsx
   - src/Clients/PosTerminal/src/routes/workspace.test.tsx
   - src/Clients/PosTerminal/src/strings.ts
