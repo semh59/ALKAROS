@@ -251,6 +251,26 @@ describe("table workspace", () => {
     expect(document.querySelector(".probe-panel")).toBeNull();
   });
 
+  it("keeps the selected table in one box: name, status, the till panel, and the management actions folded into Diğer işlemler", async () => {
+    const billPanel = () => <button type="button" className="probe-panel">Panel</button>;
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", billPanel })} />);
+
+    expect(document.querySelectorAll(".table-details")).toHaveLength(1);
+    const box = document.querySelector(".table-details")!;
+    expect(box.querySelector("h2")?.textContent).toBe("S-10");
+    expect(box.querySelector(".probe-panel")).not.toBeNull();
+    expect(box.textContent).not.toMatch(/KAPASİTE|Kapasite|AKTİF BAĞLAM|SEÇİLİ MASA/);
+    const more = box.querySelector<HTMLDetailsElement>("details.table-details__more")!;
+    expect(more.open).toBe(false);
+    expect([...more.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Müsait yap", "Masaları birleştir"]);
+  });
+
+  it("keeps Masa taşı in the menu when no till panel carries it", async () => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
+
+    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Masa değiştir");
+  });
+
   it("marks a table asking for the bill on the floor plan drawing too", async () => {
     const floorPlan = {
       zoneId: "zone-salon", zoneCode: "SALON", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1,

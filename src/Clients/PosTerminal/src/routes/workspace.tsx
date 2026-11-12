@@ -165,7 +165,7 @@ export function ExperiencePage({
     </>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} />}
+    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
@@ -188,7 +188,7 @@ export function ExperiencePage({
 // Exported for the standalone Reservation Station screen (V1-CUI-006),
 // which reuses this exact table-fetching + floor-plan wiring rather than
 // duplicating it.
-export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; reservationOnly?: boolean }) {
+export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, canAddWithoutKitchen = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; canAddWithoutKitchen?: boolean; reservationOnly?: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
@@ -306,13 +306,13 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
       setFloorPlanBusy(false);
     }
   };
-  const startTableOrder = async (table: TableRecord) => {
+  const startTableOrder = async (table: TableRecord, withoutKitchen = false) => {
     if (!canManage || !canStartTableOrder(table)) return;
     setOrderBusy(true);
     setOrderError(undefined);
     try {
       const started = await api.startTableOrder(terminalId, table.tableId, table.rowVersion);
-      markTableCart(started.orderId);
+      markTableCart(started.orderId, withoutKitchen);
       navigate("/");
     } catch (reason) {
       setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");
@@ -357,9 +357,12 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
         canManage={canManage}
         canCollect={canCollect}
         canReadLines={canSeeChecks}
+        canAddWithoutKitchen={canAddWithoutKitchen}
         busy={orderBusy}
         error={orderError}
         onStartOrder={() => void startTableOrder(table)}
+        onAddWithoutKitchen={() => void startTableOrder(table, true)}
+        onSent={() => void load(true)}
         onTransfer={table.allowedCommands.includes("Transfer") ? () => openAction("Transfer") : undefined}
       />}
     />

@@ -415,12 +415,14 @@ describe("workspace /tables route marks tables whose check waits at the till", (
   };
   const json = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
 
-  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"], withPlan = false) {
-    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"], withPlan = false, extra?: (path: string, init?: RequestInit) => Response | undefined, shown: Record<string, unknown> = table) {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       const path = String(input);
+      const handled = extra?.(path, init);
+      if (handled) return handled;
       if (withPlan && path.includes("/floor-plans/")) return json({ zoneId: "z1", zoneCode: "Z", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1, tables: [] });
       if (path.includes("/table-management/zones")) return json(withPlan ? [{ zoneId: "z1", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }] : []);
-      if (path.includes("/table-management/tables")) return json([table]);
+      if (path.includes("/table-management/tables")) return json([shown]);
       if (path.includes("awaiting-payment") && awaiting) return awaiting();
       throw new Error(`unexpected fetch: ${path}`);
     }));
@@ -457,6 +459,47 @@ describe("workspace /tables route marks tables whose check waits at the till", (
     await act(async () => root!.unmount());
     await open(() => json([]), ["tables.status", "orders.create", "floorplan.manage"]);
     expect(labels()).toEqual(expect.arrayContaining(["+ Bölge ekle", "+ Masa ekle", "Bölgeleri yönet"]));
+  });
+
+  it("sends the unsent lines of the table's order from the panel and reads the tables again", async () => {
+    const calls: string[] = [];
+    const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
+    const order = { orderId: "o-1", orderNumber: "1", status: "Draft", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Draft", kitchenState: "NotSent" }] };
+    const extra = (path: string, init?: RequestInit) => {
+      calls.push(`${init?.method ?? "GET"} ${path.replace(/^.*\/api\/v1/, "")}`);
+      if (path.includes("/orders/table/")) return json(order);
+      if (path.endsWith("/orders/table")) return json({ orderId: "o-1", orderNumber: "1", revision: 7, rowVersion: 5 });
+      if (path.endsWith("/submit")) return json({ orderId: "o-1", orderNumber: "1", revision: 8, rowVersion: 6 });
+      return undefined;
+    };
+    await open(() => json([]), ["tables.status", "orders.create"], false, extra, busy);
+    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+    const tablesReads = () => calls.filter((call) => call.includes("/table-management/tables")).length;
+    const before = tablesReads();
+
+    await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Mutfağa gönder (1)")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+
+    expect(calls.some((call) => call.startsWith("POST") && call.endsWith("/orders/o-1/submit"))).toBe(true);
+    expect(tablesReads()).toBeGreaterThan(before);
+  });
+
+  it("opens the till with the kitchen-less reason picker when the panel asks for it", async () => {
+    const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
+    const order = { orderId: "o-1", orderNumber: "1", status: "Submitted", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Sent" }] };
+    const extra = (path: string) => path.includes("/orders/table/") ? json(order) : path.endsWith("/orders/table") ? json({ orderId: "o-1", orderNumber: "1", revision: 7, rowVersion: 5 }) : undefined;
+    sessionStorage.clear();
+    await open(() => json([]), ["tables.status", "orders.create", "orders.add-without-kitchen"], false, extra, busy);
+    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+
+    await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Mutfağa göndermeden hesaba ekle")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+
+    expect(window.location.pathname).toBe("/");
+    expect(sessionStorage.getItem("alkaros.table-cart-order")).toBe("o-1");
+    expect(sessionStorage.getItem("alkaros.table-cart-without-kitchen")).toBe("1");
   });
 
   it("offers Planı düzenle on the floor plan only to someone who holds floorplan.manage", async () => {

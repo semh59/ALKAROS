@@ -1,0 +1,19 @@
+killed unsent counts Active lines
+killed unsent counts lines not quantity
+killed send button on zero unsent
+killed kitchenless shown on billed
+killed kitchenless shown on draft
+killed primary swapped
+killed submit with wrong revision
+killed onSent not called
+killed send count total
+killed intent ignored
+killed intent not passed
+killed tables not reloaded
+killed flag not stored
+killed transfer duplicated
+killed menu open
+killed backend Unsent always false
+killed unsent tag on wrong status
+killed send-first note never
+killed stale intent kept

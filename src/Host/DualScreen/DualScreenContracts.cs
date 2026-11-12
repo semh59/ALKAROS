@@ -144,7 +144,8 @@ public sealed record CustomerDisplayLineDto(
     decimal LineTotal,
     decimal DiscountAmount,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] Guid ProductId = default,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false);
 
 /// <remarks>
 /// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and

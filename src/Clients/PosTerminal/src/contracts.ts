@@ -154,6 +154,8 @@ export interface DisplayLine {
   /** What the line was made from, so a removed line can be put back; absent on a line built from a bill. */
   productId?: string;
   modifierIds?: string[];
+  /** Added at the till and not yet sent to the kitchen. */
+  unsent?: boolean;
 }
 
 export interface DisplaySnapshot {

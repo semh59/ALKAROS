@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { ApiError } from "../../api";
 import {
   Button,
@@ -441,8 +441,9 @@ export function TableWorkspace({
               </div>
             </div>
             {selectedTable && <div className="table-workspace__side">
-              <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction} />
-              {billPanel && <BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} />}
+              <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction}>
+                {billPanel && <BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} />}
+              </TableDetails>
             </div>}
           </>}
           {view === "map" && floorPlan && selectedTable && billPanel && <div className="table-workspace__side table-workspace__side--map"><BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} /></div>}
@@ -566,12 +567,13 @@ function BillPanelSlot({ render, table, openAction }: { render: NonNullable<Tabl
   return <>{render(table, openAction)}</>;
 }
 
-function TableDetails({ table, plan, zoneName, onAction }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void }) {
-  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
+function TableDetails({ table, plan, zoneName, onAction, children }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void; children?: ReactNode }) {
+  const hasCheck = Boolean(table.currentOrderId || table.currentBillId);
+  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && !(value === "Transfer" && hasCheck && children));
+  const meta = [zoneName ?? "Bölge atanmamış", table.servingWaiterName || null, table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null, table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : null].filter(Boolean).join(" · ");
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
-    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h2>{table.tableNumber}</h2><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
-    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
-    <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Açık sipariş var</strong></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Açık hesap var</strong></p>}</div>
-    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
+    <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
+    {children}
+    {commands.length > 0 && <details className="table-details__more"><summary>Diğer işlemler ▾</summary><div className="table-details__actions">{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant="secondary" disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div></details>}
   </section>;
 }

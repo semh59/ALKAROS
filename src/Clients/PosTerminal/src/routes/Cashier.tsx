@@ -12,7 +12,7 @@ import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } fr
 import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
-import { takeTableCart } from "../tableCart";
+import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
 import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
@@ -108,7 +108,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [session, setSession] = useState<CashierSession>("checking");
   const sessionRef = useRef<CashierSession>("checking");
   const tableCartRef = useRef<string | null>(null);
-  useEffect(() => { tableCartRef.current = takeTableCart(); }, []);
+  const withoutKitchenIntent = useRef(false);
+  useEffect(() => { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }, []);
   useEffect(() => { sessionRef.current = session; }, [session]);
   const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
@@ -136,7 +137,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
   const kitchenlessOrderId = order?.orderId;
   const kitchenlessEditable = order?.editable;
-  useEffect(() => { setKitchenlessReason(null); setKitchenlessPicking(false); }, [kitchenlessOrderId, kitchenlessEditable]);
+  useEffect(() => {
+    setKitchenlessReason(null);
+    const wanted = withoutKitchenIntent.current && !!kitchenlessOrderId && !kitchenlessEditable;
+    if (wanted) withoutKitchenIntent.current = false;
+    setKitchenlessPicking(wanted);
+  }, [kitchenlessOrderId, kitchenlessEditable]);
   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
@@ -205,7 +211,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   useEffect(() => {
     const cameBack = currentPath === "/" && previousPath.current !== "/";
     previousPath.current = currentPath;
-    if (cameBack) tableCartRef.current = takeTableCart();
+    if (cameBack) { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }
     if (cameBack && sessionRef.current === "ready") void reloadOrder().catch(() => undefined);
   }, [currentPath, reloadOrder]);
 
@@ -616,6 +622,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       || foldSearch(product.name).includes(normalizedSearch)
       || foldSearch(product.sku).includes(normalizedSearch)));
   const itemCount = activeOrder?.lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0;
+  const unsentCount = activeOrder?.lines.reduce((sum, line) => sum + (line.unsent ? line.quantity : 0), 0) ?? 0;
 
   // A line with its own discount cannot be rebuilt (the discount is not recreated), nor can one whose product left the catalog.
   const canPutBack = (line: DisplayLine) =>
@@ -990,7 +997,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                     () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
                     activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
                   )}
-                >{`Mutfağa gönder (${formatQuantity(itemCount)})`}</button>
+                >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
               ) : (
                 <div className="submitted-state">
                   <span>✓</span>

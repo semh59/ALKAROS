@@ -664,6 +664,9 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
             "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id AND status = 'Draft';", ("order_id", first.OrderId)));
         var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
         Assert.True(snapshot.Editable);
+        var tillLines = (await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true)).Lines;
+        Assert.Equal([false, true], tillLines.Select(line => line.Unsent));
+        Assert.All(snapshot.Lines, line => Assert.False(line.Unsent));
     }
 
     [Fact]

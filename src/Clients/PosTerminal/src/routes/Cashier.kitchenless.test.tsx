@@ -2,6 +2,7 @@
 
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { markTableCart } from "../tableCart";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -134,5 +135,27 @@ describe("Cashier adds an item to the open check without a kitchen ticket", () =
     await openTill(["orders.create", "orders.add-without-kitchen"], { ...sentOrder, editable: true });
 
     expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+  });
+
+  it("opens the reason picker straight away when the table panel asked for the kitchen-less path", async () => {
+    markTableCart("order-1", true);
+    await openTill(["orders.create", "orders.add-without-kitchen"]);
+
+    expect(button("Garson unuttu")).toBeDefined();
+  });
+
+  it("does not open the picker on a plain entry, even after an earlier kitchen-less entry that was never used", async () => {
+    markTableCart("order-1", true);
+    markTableCart("order-1");
+    await openTill(["orders.create", "orders.add-without-kitchen"]);
+
+    expect(button("Garson unuttu")).toBeUndefined();
+  });
+
+  it("counts only the unsent lines on the send button", async () => {
+    const line = (n: number, unsent: boolean) => ({ itemId: `i-${n}`, name: `Ürün ${n}`, quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0, ...(unsent ? { unsent } : {}) });
+    await openTill(["orders.create"], { ...sentOrder, editable: true, lines: [line(1, false), line(2, false), line(3, true)] });
+
+    expect(button("Mutfağa gönder (1)")).toBeDefined();
   });
 });

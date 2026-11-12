@@ -13,13 +13,13 @@ const reply = (status: number, body: unknown) => new Response(JSON.stringify(bod
 const tableOrder = {
   orderId: "o-1", tableId: "tb-4", tableNumber: "T-4", status: "Submitted", rowVersion: 3, totalAmount: 150, createdAt: "2026-11-12T10:00:00Z",
   items: [
-    { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Active" },
-    { itemId: "i2", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active" },
-    { itemId: "i3", productName: "Yanlış ürün", quantity: 1, unitPrice: 9, totalPrice: 9, status: "Cancelled" },
+    { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Active", kitchenState: "Sent" },
+    { itemId: "i2", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active", kitchenState: "Sent" },
+    { itemId: "i3", productName: "Yanlış ürün", quantity: 1, unitPrice: 9, totalPrice: 9, status: "Cancelled", kitchenState: "NotSent" },
   ],
 };
-const stubFetch = (other: () => Response = () => reply(500, {})) => {
-  const mock = vi.fn(async (url: string) => String(url).includes("/orders/table/") ? reply(200, tableOrder) : other());
+const stubFetch = (other: () => Response = () => reply(500, {}), order: unknown = tableOrder) => {
+  const mock = vi.fn(async (url: string, init?: RequestInit) => String(url).includes("/orders/table/") && init?.method !== "POST" ? reply(200, order) : other());
   vi.stubGlobal("fetch", mock);
   return mock;
 };
@@ -34,15 +34,17 @@ afterEach(() => {
 
 const render = (props: Partial<Parameters<typeof TableOrderBridge>[0]> = {}) => {
   const onStartOrder = vi.fn();
+  const onAddWithoutKitchen = vi.fn();
+  const onSent = vi.fn();
   const onTransfer = vi.fn();
   const navigateTo = vi.fn();
   document.body.innerHTML = '<div id="root"></div>';
   root = createRoot(document.getElementById("root")!);
   act(() => root!.render(createElement(TableOrderBridge, {
     terminalId: "t-1", table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: null, rowVersion: 1 },
-    orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, busy: false, onStartOrder, onTransfer, navigateTo, ...props,
+    orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false, onStartOrder, onAddWithoutKitchen, onSent, onTransfer, navigateTo, ...props,
   })));
-  return { onStartOrder, onTransfer, navigateTo };
+  return { onStartOrder, onAddWithoutKitchen, onSent, onTransfer, navigateTo };
 };
 const button = (label: string) => [...document.querySelectorAll("button")].find((b) => b.textContent === label);
 
@@ -97,7 +99,7 @@ describe("TableOrderBridge", () => {
     expect(button("Ürün ekle")).toBeUndefined();
     expect(button("Sipariş al")).toBeUndefined();
     expect(button("Öde")).toBeDefined();
-    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masadaki hesabı alın.");
+    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masadaki hesabı ödeme ekranından alın.");
     expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("devam edin");
   });
 
@@ -157,7 +159,7 @@ describe("TableOrderBridge", () => {
     await flush();
 
     const panel = document.querySelector(".table-order-bridge")!;
-    expect(panel.querySelector("h4")?.textContent).toBe("T-4");
+    expect(panel.querySelector("h4")).toBeNull();
     expect(panel.textContent).toContain("Çay");
     expect(panel.textContent).toContain("Köfte");
     expect(panel.textContent).not.toContain("Yanlış ürün");
@@ -214,7 +216,7 @@ describe("TableOrderBridge", () => {
     expect(reads()).toBe(1);
     await act(async () => root!.render(createElement(TableOrderBridge, {
       terminalId: "t-1", table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: null, rowVersion: 2, currentOrderTotal: 200 },
-      orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, busy: false, onStartOrder: vi.fn(),
+      orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false, onStartOrder: vi.fn(), onAddWithoutKitchen: vi.fn(), onSent: vi.fn(),
     })));
     await flush();
     expect(reads()).toBe(2);
@@ -224,6 +226,68 @@ describe("TableOrderBridge", () => {
     await flush();
     expect(blocked).not.toHaveBeenCalled();
     expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("alınamadı");
+  });
+
+  const draftOrder = { ...tableOrder, status: "Draft", items: [
+    { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Draft", kitchenState: "NotSent" },
+    { itemId: "i2", productName: "Su", quantity: 1, unitPrice: 10, totalPrice: 10, status: "Draft", kitchenState: "NotSent" },
+    { itemId: "i3", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active", kitchenState: "Sent" },
+    { itemId: "i4", productName: "Kolsuz", quantity: 1, unitPrice: 5, totalPrice: 5, status: "Active", kitchenState: "NotSent" },
+  ] };
+
+  it("counts only the lines not yet sent on Mutfağa gönder and sends the table's order to the kitchen", async () => {
+    const fetchMock = stubFetch(() => reply(200, { orderId: "o-1", orderNumber: "1", revision: 9, rowVersion: 10 }), draftOrder);
+    const { onSent } = render();
+    await flush();
+
+    expect(button("Mutfağa gönder (3)")).toBeDefined();
+    expect([...document.querySelectorAll(".table-order-bridge__lines li")].map((li) => li.textContent?.includes("Mutfağa gönderilmedi"))).toEqual([true, true, false, false]);
+    expect(document.querySelector("#table-order-bridge-note")?.textContent).toContain("Gönderilmemiş ürünler var");
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+    await click("Mutfağa gönder (3)");
+
+    const calls = otherCalls(fetchMock).map(([url, init]) => `${init?.method} ${String(url).replace(/^.*terminals\/[^/]+/, "")}`);
+    expect(calls).toEqual(["POST /orders/table", "POST /orders/o-1/submit"]);
+    expect(JSON.parse(String(otherCalls(fetchMock)[1][1]!.body))).toMatchObject({ expectedRevision: 9 });
+    expect(onSent).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the server's refusal when sending fails and does not report the order as sent", async () => {
+    stubFetch(() => reply(409, { error: { code: "STALE", message: "Sipariş başka yerde değişti." } }), draftOrder);
+    const { onSent } = render();
+    await flush();
+
+    await click("Mutfağa gönder (3)");
+
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Sipariş başka yerde değişti.");
+    expect(onSent).not.toHaveBeenCalled();
+  });
+
+  it("offers Mutfağa göndermeden hesaba ekle only on a sent, unbilled order, and only with the permission", async () => {
+    const { onAddWithoutKitchen } = render();
+    await flush();
+    expect(button("Mutfağa gönder (0)")).toBeUndefined();
+    await click("Mutfağa göndermeden hesaba ekle");
+    expect(onAddWithoutKitchen).toHaveBeenCalledTimes(1);
+
+    render({ canAddWithoutKitchen: false });
+    await flush();
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+  });
+
+  it("puts Böl, Masa taşı and İptal / iade in one mini row under the main buttons, and Sipariş al is the only filled button of an empty table", async () => {
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+    expect([...document.querySelectorAll(".table-order-bridge__mini button")].map((b) => b.textContent)).toEqual(["Böl", "Masa taşı", "İptal / iade"]);
+
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 1 } });
+    await flush();
+    expect([...document.querySelectorAll(".table-order-bridge button.primary")].map((b) => b.textContent)).toEqual(["Sipariş al"]);
+    expect(document.querySelector(".table-order-bridge__mini")).toBeNull();
   });
 
   it("Masa taşı hands over to the table move form and is closed when the table cannot be moved", async () => {

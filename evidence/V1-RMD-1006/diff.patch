@@ -1,0 +1,688 @@
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index 7390fd26..ac4408b4 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -154,6 +154,8 @@ export interface DisplayLine {
+   /** What the line was made from, so a removed line can be put back; absent on a line built from a bill. */
+   productId?: string;
+   modifierIds?: string[];
++  /** Added at the till and not yet sent to the kitchen. */
++  unsent?: boolean;
+ }
+ 
+ export interface DisplaySnapshot {
+@@ -269,5 +271,6 @@ export interface TableOrder {
+     unitPrice: number;
+     totalPrice: number;
+     status: string;
++    kitchenState: string;
+   }[];
+ }
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+index bbfd3559..44adc92e 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+@@ -251,6 +251,26 @@ describe("table workspace", () => {
+     expect(document.querySelector(".probe-panel")).toBeNull();
+   });
+ 
++  it("keeps the selected table in one box: name, status, the till panel, and the management actions folded into Diğer işlemler", async () => {
++    const billPanel = () => <button type="button" className="probe-panel">Panel</button>;
++    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", billPanel })} />);
++
++    expect(document.querySelectorAll(".table-details")).toHaveLength(1);
++    const box = document.querySelector(".table-details")!;
++    expect(box.querySelector("h2")?.textContent).toBe("S-10");
++    expect(box.querySelector(".probe-panel")).not.toBeNull();
++    expect(box.textContent).not.toMatch(/KAPASİTE|Kapasite|AKTİF BAĞLAM|SEÇİLİ MASA/);
++    const more = box.querySelector<HTMLDetailsElement>("details.table-details__more")!;
++    expect(more.open).toBe(false);
++    expect([...more.querySelectorAll("button")].map((b) => b.textContent)).toEqual(["Müsait yap", "Masaları birleştir"]);
++  });
++
++  it("keeps Masa taşı in the menu when no till panel carries it", async () => {
++    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
++
++    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Masa değiştir");
++  });
++
+   it("marks a table asking for the bill on the floor plan drawing too", async () => {
+     const floorPlan = {
+       zoneId: "zone-salon", zoneCode: "SALON", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1,
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+index bc3fa231..c0b782c9 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+@@ -1,4 +1,4 @@
+-import { useMemo, useRef, useState, type FormEvent } from "react";
++import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+ import { ApiError } from "../../api";
+ import {
+   Button,
+@@ -441,8 +441,9 @@ export function TableWorkspace({
+               </div>
+             </div>
+             {selectedTable && <div className="table-workspace__side">
+-              <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction} />
+-              {billPanel && <BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} />}
++              <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction}>
++                {billPanel && <BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} />}
++              </TableDetails>
+             </div>}
+           </>}
+           {view === "map" && floorPlan && selectedTable && billPanel && <div className="table-workspace__side table-workspace__side--map"><BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} /></div>}
+@@ -566,12 +567,13 @@ function BillPanelSlot({ render, table, openAction }: { render: NonNullable<Tabl
+   return <>{render(table, openAction)}</>;
+ }
+ 
+-function TableDetails({ table, plan, zoneName, onAction }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void }) {
+-  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
++function TableDetails({ table, plan, zoneName, onAction, children }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void; children?: ReactNode }) {
++  const hasCheck = Boolean(table.currentOrderId || table.currentBillId);
++  const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && !(value === "Transfer" && hasCheck && children));
++  const meta = [zoneName ?? "Bölge atanmamış", table.servingWaiterName || null, table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null, table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : null].filter(Boolean).join(" · ");
+   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
+-    <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h2>{table.tableNumber}</h2><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
+-    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
+-    <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Açık sipariş var</strong></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Açık hesap var</strong></p>}</div>
+-    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
++    <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
++    {children}
++    {commands.length > 0 && <details className="table-details__more"><summary>Diğer işlemler</summary><div className="table-details__actions">{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant="secondary" disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div></details>}
+   </section>;
+ }
+diff --git a/src/Clients/PosTerminal/src/features/tables/tables.css b/src/Clients/PosTerminal/src/features/tables/tables.css
+index f5e629bd..48d92dba 100644
+--- a/src/Clients/PosTerminal/src/features/tables/tables.css
++++ b/src/Clients/PosTerminal/src/features/tables/tables.css
+@@ -173,7 +173,8 @@
+ .table-details__pointer p { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; margin: 0; font-size: .8rem; }
+ .table-details__pointer code { max-width: 12rem; overflow: hidden; color: var(--table-muted); text-overflow: ellipsis; }
+ .table-details__pointer .is-muted { color: var(--table-muted); }
+-.table-details__actions { display: grid; gap: var(--ds-space-2); }
++.table-details__actions { display: grid; gap: var(--ds-space-2); padding-top: var(--ds-space-2); }
++.table-details__more > summary { min-height: 44px; display: flex; align-items: center; color: var(--table-muted); font-weight: 800; cursor: pointer; }
+ .table-details__authority { margin: 0; color: var(--table-muted); font-size: .75rem; line-height: 1.45; }
+ 
+ .table-workspace__empty { max-width: 38rem; margin: var(--ds-space-6) auto; }
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.kitchenless.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.kitchenless.test.tsx
+index d777480c..4ada3703 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.kitchenless.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.kitchenless.test.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { act, createElement } from "react";
+ import { createRoot, type Root } from "react-dom/client";
++import { markTableCart } from "../tableCart";
+ import { afterEach, describe, expect, it, vi } from "vitest";
+ 
+ (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+@@ -135,4 +136,25 @@ describe("Cashier adds an item to the open check without a kitchen ticket", () =
+ 
+     expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+   });
++
++  it("opens the reason picker straight away when the table panel asked for the kitchen-less path", async () => {
++    markTableCart("order-1", true);
++    await openTill(["orders.create", "orders.add-without-kitchen"]);
++
++    expect(button("Garson unuttu")).toBeDefined();
++  });
++
++  it("does not open the picker on a plain entry", async () => {
++    markTableCart("order-1");
++    await openTill(["orders.create", "orders.add-without-kitchen"]);
++
++    expect(button("Garson unuttu")).toBeUndefined();
++  });
++
++  it("counts only the unsent lines on the send button", async () => {
++    const line = (n: number, unsent: boolean) => ({ itemId: `i-${n}`, name: `Ürün ${n}`, quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0, ...(unsent ? { unsent } : {}) });
++    await openTill(["orders.create"], { ...sentOrder, editable: true, lines: [line(1, false), line(2, false), line(3, true)] });
++
++    expect(button("Mutfağa gönder (1)")).toBeDefined();
++  });
+ });
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 41046e16..b0eef4ee 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -12,7 +12,7 @@ import { ApiError, api, notifySessionExpired, registerSessionExpiredHandler } fr
+ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
+ import { isPlainClick, useRouter } from "../router";
+ import { focusOnMount } from "../focusOnMount";
+-import { takeTableCart } from "../tableCart";
++import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
+ import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
+ import { formatDateTime, formatMoney, formatQuantity } from "../format";
+ import { savedId } from "../storage";
+@@ -108,7 +108,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const [session, setSession] = useState<CashierSession>("checking");
+   const sessionRef = useRef<CashierSession>("checking");
+   const tableCartRef = useRef<string | null>(null);
+-  useEffect(() => { tableCartRef.current = takeTableCart(); }, []);
++  const withoutKitchenIntent = useRef(false);
++  useEffect(() => { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }, []);
+   useEffect(() => { sessionRef.current = session; }, [session]);
+   const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
+   const [busy, setBusy] = useState(false);
+@@ -136,7 +137,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
+   const kitchenlessOrderId = order?.orderId;
+   const kitchenlessEditable = order?.editable;
+-  useEffect(() => { setKitchenlessReason(null); setKitchenlessPicking(false); }, [kitchenlessOrderId, kitchenlessEditable]);
++  useEffect(() => {
++    setKitchenlessReason(null);
++    const wanted = withoutKitchenIntent.current && !!kitchenlessOrderId && !kitchenlessEditable;
++    if (wanted) withoutKitchenIntent.current = false;
++    setKitchenlessPicking(wanted);
++  }, [kitchenlessOrderId, kitchenlessEditable]);
+   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
+   const [confirmRevoke, setConfirmRevoke] = useState(false);
+   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
+@@ -205,7 +211,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   useEffect(() => {
+     const cameBack = currentPath === "/" && previousPath.current !== "/";
+     previousPath.current = currentPath;
+-    if (cameBack) tableCartRef.current = takeTableCart();
++    if (cameBack) { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }
+     if (cameBack && sessionRef.current === "ready") void reloadOrder().catch(() => undefined);
+   }, [currentPath, reloadOrder]);
+ 
+@@ -616,6 +622,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       || foldSearch(product.name).includes(normalizedSearch)
+       || foldSearch(product.sku).includes(normalizedSearch)));
+   const itemCount = activeOrder?.lines.reduce((sum, line) => sum + line.quantity, 0) ?? 0;
++  const unsentCount = activeOrder?.lines.reduce((sum, line) => sum + (line.unsent ? line.quantity : 0), 0) ?? 0;
+ 
+   // A line with its own discount cannot be rebuilt (the discount is not recreated), nor can one whose product left the catalog.
+   const canPutBack = (line: DisplayLine) =>
+@@ -990,7 +997,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+                     () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
+                     activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
+                   )}
+-                >{`Mutfağa gönder (${formatQuantity(itemCount)})`}</button>
++                >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
+               ) : (
+                 <div className="submitted-state">
+                   <span>✓</span>
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 69331e75..45d4b3e4 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -13,13 +13,13 @@ const reply = (status: number, body: unknown) => new Response(JSON.stringify(bod
+ const tableOrder = {
+   orderId: "o-1", tableId: "tb-4", tableNumber: "T-4", status: "Submitted", rowVersion: 3, totalAmount: 150, createdAt: "2026-11-12T10:00:00Z",
+   items: [
+-    { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Active" },
+-    { itemId: "i2", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active" },
+-    { itemId: "i3", productName: "Yanlış ürün", quantity: 1, unitPrice: 9, totalPrice: 9, status: "Cancelled" },
++    { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Active", kitchenState: "Sent" },
++    { itemId: "i2", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active", kitchenState: "Sent" },
++    { itemId: "i3", productName: "Yanlış ürün", quantity: 1, unitPrice: 9, totalPrice: 9, status: "Cancelled", kitchenState: "NotSent" },
+   ],
+ };
+-const stubFetch = (other: () => Response = () => reply(500, {})) => {
+-  const mock = vi.fn(async (url: string) => String(url).includes("/orders/table/") ? reply(200, tableOrder) : other());
++const stubFetch = (other: () => Response = () => reply(500, {}), order: unknown = tableOrder) => {
++  const mock = vi.fn(async (url: string, init?: RequestInit) => String(url).includes("/orders/table/") && init?.method !== "POST" ? reply(200, order) : other());
+   vi.stubGlobal("fetch", mock);
+   return mock;
+ };
+@@ -34,15 +34,17 @@ afterEach(() => {
+ 
+ const render = (props: Partial<Parameters<typeof TableOrderBridge>[0]> = {}) => {
+   const onStartOrder = vi.fn();
++  const onAddWithoutKitchen = vi.fn();
++  const onSent = vi.fn();
+   const onTransfer = vi.fn();
+   const navigateTo = vi.fn();
+   document.body.innerHTML = '<div id="root"></div>';
+   root = createRoot(document.getElementById("root")!);
+   act(() => root!.render(createElement(TableOrderBridge, {
+     terminalId: "t-1", table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: null, rowVersion: 1 },
+-    orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, busy: false, onStartOrder, onTransfer, navigateTo, ...props,
++    orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false, onStartOrder, onAddWithoutKitchen, onSent, onTransfer, navigateTo, ...props,
+   })));
+-  return { onStartOrder, onTransfer, navigateTo };
++  return { onStartOrder, onAddWithoutKitchen, onSent, onTransfer, navigateTo };
+ };
+ const button = (label: string) => [...document.querySelectorAll("button")].find((b) => b.textContent === label);
+ 
+@@ -97,7 +99,7 @@ describe("TableOrderBridge", () => {
+     expect(button("Ürün ekle")).toBeUndefined();
+     expect(button("Sipariş al")).toBeUndefined();
+     expect(button("Öde")).toBeDefined();
+-    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masadaki hesabı alın.");
++    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masadaki hesabı ödeme ekranından alın.");
+     expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("devam edin");
+   });
+ 
+@@ -157,7 +159,7 @@ describe("TableOrderBridge", () => {
+     await flush();
+ 
+     const panel = document.querySelector(".table-order-bridge")!;
+-    expect(panel.querySelector("h4")?.textContent).toBe("T-4");
++    expect(panel.querySelector("h4")).toBeNull();
+     expect(panel.textContent).toContain("Çay");
+     expect(panel.textContent).toContain("Köfte");
+     expect(panel.textContent).not.toContain("Yanlış ürün");
+@@ -214,7 +216,7 @@ describe("TableOrderBridge", () => {
+     expect(reads()).toBe(1);
+     await act(async () => root!.render(createElement(TableOrderBridge, {
+       terminalId: "t-1", table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: null, rowVersion: 2, currentOrderTotal: 200 },
+-      orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, busy: false, onStartOrder: vi.fn(),
++      orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false, onStartOrder: vi.fn(), onAddWithoutKitchen: vi.fn(), onSent: vi.fn(),
+     })));
+     await flush();
+     expect(reads()).toBe(2);
+@@ -226,6 +228,66 @@ describe("TableOrderBridge", () => {
+     expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("alınamadı");
+   });
+ 
++  const draftOrder = { ...tableOrder, status: "Draft", items: [
++    { itemId: "i1", productName: "Çay", quantity: 2, unitPrice: 25, totalPrice: 50, status: "Draft", kitchenState: "NotSent" },
++    { itemId: "i2", productName: "Su", quantity: 1, unitPrice: 10, totalPrice: 10, status: "Draft", kitchenState: "NotSent" },
++    { itemId: "i3", productName: "Köfte", quantity: 1, unitPrice: 100, totalPrice: 100, status: "Active", kitchenState: "Sent" },
++    { itemId: "i4", productName: "Kolsuz", quantity: 1, unitPrice: 5, totalPrice: 5, status: "Active", kitchenState: "NotSent" },
++  ] };
++
++  it("counts only the lines not yet sent on Mutfağa gönder and sends the table's order to the kitchen", async () => {
++    const fetchMock = stubFetch(() => reply(200, { orderId: "o-1", orderNumber: "1", revision: 9, rowVersion: 10 }), draftOrder);
++    const { onSent } = render();
++    await flush();
++
++    expect(button("Mutfağa gönder (3)")).toBeDefined();
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
++    await click("Mutfağa gönder (3)");
++
++    const calls = otherCalls(fetchMock).map(([url, init]) => `${init?.method} ${String(url).replace(/^.*terminals\/[^/]+/, "")}`);
++    expect(calls).toEqual(["POST /orders/table", "POST /orders/o-1/submit"]);
++    expect(JSON.parse(String(otherCalls(fetchMock)[1][1]!.body))).toMatchObject({ expectedRevision: 9 });
++    expect(onSent).toHaveBeenCalledTimes(1);
++  });
++
++  it("shows the server's refusal when sending fails and does not report the order as sent", async () => {
++    stubFetch(() => reply(409, { error: { code: "STALE", message: "Sipariş başka yerde değişti." } }), draftOrder);
++    const { onSent } = render();
++    await flush();
++
++    await click("Mutfağa gönder (3)");
++
++    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Sipariş başka yerde değişti.");
++    expect(onSent).not.toHaveBeenCalled();
++  });
++
++  it("offers Mutfağa göndermeden hesaba ekle only on a sent, unbilled order, and only with the permission", async () => {
++    const { onAddWithoutKitchen } = render();
++    await flush();
++    expect(button("Mutfağa gönder (0)")).toBeUndefined();
++    await click("Mutfağa göndermeden hesaba ekle");
++    expect(onAddWithoutKitchen).toHaveBeenCalledTimes(1);
++
++    render({ canAddWithoutKitchen: false });
++    await flush();
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
++
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
++  });
++
++  it("puts Böl, Masa taşı and İptal / iade in one mini row under the main buttons, and Sipariş al is the only filled button of an empty table", async () => {
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++    expect([...document.querySelectorAll(".table-order-bridge__mini button")].map((b) => b.textContent)).toEqual(["Böl", "Masa taşı", "İptal / iade"]);
++
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 1 } });
++    await flush();
++    expect([...document.querySelectorAll(".table-order-bridge button.primary")].map((b) => b.textContent)).toEqual(["Sipariş al"]);
++    expect(document.querySelector(".table-order-bridge__mini")).toBeNull();
++  });
++
+   it("Masa taşı hands over to the table move form and is closed when the table cannot be moved", async () => {
+     const movable = render();
+     await click("Masa taşı");
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index 36275158..aa7ece58 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -1,9 +1,10 @@
+ import { useEffect, useState } from "react";
+-import { api, notifySessionExpired } from "../api";
++import { api, ApiError, notifySessionExpired } from "../api";
+ import type { TableOrder } from "../contracts";
+ import { formatMoney } from "../format";
+ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
++import { kitchenlessText } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -23,9 +24,14 @@ interface TableOrderBridgeProps {
+   canCollect: boolean;
+   /** Reading the bill lines needs the order permission, which the bill permission does not imply. */
+   canReadLines: boolean;
++  /** Adding a line at the till without a kitchen ticket. */
++  canAddWithoutKitchen: boolean;
+   busy: boolean;
+   error?: string;
+   onStartOrder: () => void;
++  onAddWithoutKitchen: () => void;
++  /** Called after the unsent lines were sent to the kitchen, so the table list is read again. */
++  onSent: () => void;
+   /** Opens the table move form; absent when the table cannot be moved. */
+   onTransfer?: () => void;
+   navigateTo?: (href: string) => void;
+@@ -33,11 +39,13 @@ interface TableOrderBridgeProps {
+ 
+ /** What the cashier can do with the selected table: take or continue its order, and collect its check. */
+ export function TableOrderBridge({
+-  terminalId, table, orderAllowed, canManage, canCollect, canReadLines, busy, error, onStartOrder, onTransfer,
++  terminalId, table, orderAllowed, canManage, canCollect, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
+   navigateTo = (href: string) => window.location.assign(href),
+ }: TableOrderBridgeProps) {
+   const [collecting, setCollecting] = useState(false);
+   const [collectError, setCollectError] = useState<string>();
++  const [sending, setSending] = useState(false);
++  const [sendError, setSendError] = useState<string>();
+   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
+   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
+   const billed = table.currentBillId !== null;
+@@ -53,6 +61,21 @@ export function TableOrderBridge({
+   }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal]);
+   const billingHref = table.currentBillId ? `/billing?billId=${encodeURIComponent(table.currentBillId)}` : `/billing?orderId=${encodeURIComponent(table.currentOrderId ?? "")}`;
+   const lines = bill && bill !== "failed" ? bill.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
++  const unsent = bill && bill !== "failed" ? bill.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
++  const sentOrder = bill !== null && bill !== "failed" && bill.status !== "Draft";
++  const send = async () => {
++    setSending(true);
++    setSendError(undefined);
++    try {
++      const started = await api.startTableOrder(terminalId, tableId, table.rowVersion);
++      await api.submitOrder(terminalId, started.orderId, started.revision);
++      onSent();
++    } catch (reason) {
++      setSendError(reason instanceof ApiError ? reason.message : "Sipariş mutfağa gönderilemedi.");
++    } finally {
++      setSending(false);
++    }
++  };
+   const collect = async () => {
+     if (!table.currentOrderId && !table.currentBillId) return;
+     setCollecting(true);
+@@ -66,14 +89,10 @@ export function TableOrderBridge({
+     }
+   };
+   return <section className="table-order-bridge" aria-label="Masa hesabı">
+-    <div>
+-      <span className="table-order-bridge__kicker">MASA HESABI</span>
+-      <h4>{table.tableNumber}</h4>
+-      <p id="table-order-bridge-note">{!canManage
+-        ? hasCheck && canCollect ? "Bu masadaki hesabı alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
+-        : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için 'Hesabı al' ile açılan ekranda 'Hesabı iptal et' deyin; ödeme alındıysa önce iade gerekir."
+-          : table.currentOrderId ? "Bu masadaki siparişe devam edin ya da hesabını alın." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
+-    </div>
++    <p id="table-order-bridge-note" className="table-order-bridge__note">{!canManage
++      ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
++      : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için 'Öde' ile açılan ekranda 'Hesabı iptal et' deyin; ödeme alındıysa önce iade gerekir."
++        : table.currentOrderId ? "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
+     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+       : bill && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+@@ -90,18 +109,22 @@ export function TableOrderBridge({
+         onClick={() => void collect()}
+       >{collecting ? "Hesap açılıyor…" : "Öde"}</button>}
+       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.1"
+-        className="secondary"
++        className={hasCheck ? "secondary" : "primary"}
+         type="button"
+         disabled={!orderAllowed || busy || billed}
+         aria-busy={busy}
+         aria-describedby="table-order-bridge-note"
+         onClick={onStartOrder}
+       >{busy ? "Sipariş hazırlanıyor…" : table.currentOrderId ? "Ürün ekle" : "Sipariş al"}</button>}
+-      {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>Böl</button>}
+-      {hasCheck && canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
+-      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>İptal / iade</button>}
++      {unsent > 0 && canManage && !billed && <button data-telemetry-id="b.routes.tableorderbridge.send" className="secondary" type="button" disabled={busy || sending || collecting} aria-busy={sending} onClick={() => void send()}>{sending ? "Gönderiliyor…" : `Mutfağa gönder (${unsent})`}</button>}
++      {sentOrder && canAddWithoutKitchen && !billed && <button data-telemetry-id="b.routes.tableorderbridge.kitchenless" className="secondary" type="button" disabled={busy || sending || collecting} onClick={onAddWithoutKitchen}>{kitchenlessText.open}</button>}
+     </div>
+-    {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu masa kartından değiştirin.</small>}
+-    {(error ?? collectError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError}</p>}
++    {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
++      {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>Böl</button>}
++      {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
++      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>İptal / iade</button>}
++    </div>}
++    {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
++    {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
+   </section>;
+ }
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index 2a76ef6b..23021aa9 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -415,12 +415,14 @@ describe("workspace /tables route marks tables whose check waits at the till", (
+   };
+   const json = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+ 
+-  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"], withPlan = false) {
+-    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
++  async function open(awaiting: (() => Response) | null, capabilities = ["tables.status", "orders.create"], withPlan = false, extra?: (path: string, init?: RequestInit) => Response | undefined, shown: Record<string, unknown> = table) {
++    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+       const path = String(input);
++      const handled = extra?.(path, init);
++      if (handled) return handled;
+       if (withPlan && path.includes("/floor-plans/")) return json({ zoneId: "z1", zoneCode: "Z", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1, tables: [] });
+       if (path.includes("/table-management/zones")) return json(withPlan ? [{ zoneId: "z1", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }] : []);
+-      if (path.includes("/table-management/tables")) return json([table]);
++      if (path.includes("/table-management/tables")) return json([shown]);
+       if (path.includes("awaiting-payment") && awaiting) return awaiting();
+       throw new Error(`unexpected fetch: ${path}`);
+     }));
+@@ -459,6 +461,47 @@ describe("workspace /tables route marks tables whose check waits at the till", (
+     expect(labels()).toEqual(expect.arrayContaining(["+ Bölge ekle", "+ Masa ekle", "Bölgeleri yönet"]));
+   });
+ 
++  it("sends the unsent lines of the table's order from the panel and reads the tables again", async () => {
++    const calls: string[] = [];
++    const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
++    const order = { orderId: "o-1", orderNumber: "1", status: "Draft", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Draft", kitchenState: "NotSent" }] };
++    const extra = (path: string, init?: RequestInit) => {
++      calls.push(`${init?.method ?? "GET"} ${path.replace(/^.*\/api\/v1/, "")}`);
++      if (path.includes("/orders/table/")) return json(order);
++      if (path.endsWith("/orders/table")) return json({ orderId: "o-1", orderNumber: "1", revision: 7, rowVersion: 5 });
++      if (path.endsWith("/submit")) return json({ orderId: "o-1", orderNumber: "1", revision: 8, rowVersion: 6 });
++      return undefined;
++    };
++    await open(() => json([]), ["tables.status", "orders.create"], false, extra, busy);
++    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
++    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
++    const tablesReads = () => calls.filter((call) => call.includes("/table-management/tables")).length;
++    const before = tablesReads();
++
++    await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Mutfağa gönder (1)")!.click(); });
++    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
++
++    expect(calls.some((call) => call.startsWith("POST") && call.endsWith("/orders/o-1/submit"))).toBe(true);
++    expect(tablesReads()).toBeGreaterThan(before);
++  });
++
++  it("opens the till with the kitchen-less reason picker when the panel asks for it", async () => {
++    const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
++    const order = { orderId: "o-1", orderNumber: "1", status: "Submitted", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Sent" }] };
++    const extra = (path: string) => path.includes("/orders/table/") ? json(order) : path.endsWith("/orders/table") ? json({ orderId: "o-1", orderNumber: "1", revision: 7, rowVersion: 5 }) : undefined;
++    sessionStorage.clear();
++    await open(() => json([]), ["tables.status", "orders.create", "orders.add-without-kitchen"], false, extra, busy);
++    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
++    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
++
++    await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Mutfağa göndermeden hesaba ekle")!.click(); });
++    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
++
++    expect(window.location.pathname).toBe("/");
++    expect(sessionStorage.getItem("alkaros.table-cart-order")).toBe("o-1");
++    expect(sessionStorage.getItem("alkaros.table-cart-without-kitchen")).toBe("1");
++  });
++
+   it("offers Planı düzenle on the floor plan only to someone who holds floorplan.manage", async () => {
+     const editButton = () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Planı düzenle");
+     const showPlan = async () => { await act(async () => { [...document.querySelectorAll(".table-workspace__view-toggle button")].find((button) => button.textContent === "Salon planı")!.dispatchEvent(new MouseEvent("click", { bubbles: true })); }); };
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index 008388de..574e332a 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -165,7 +165,7 @@ export function ExperiencePage({
+     </>}
+   >
+     {cashSession && <CashSessionBand status={cashSession} />}
+-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} />}
++    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} />}
+     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
+     {onlineTab !== null && (
+@@ -188,7 +188,7 @@ export function ExperiencePage({
+ // Exported for the standalone Reservation Station screen (V1-CUI-006),
+ // which reuses this exact table-fetching + floor-plan wiring rather than
+ // duplicating it.
+-export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; reservationOnly?: boolean }) {
++export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, canAddWithoutKitchen = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; canAddWithoutKitchen?: boolean; reservationOnly?: boolean }) {
+   const { navigate } = useRouter();
+   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
+   const [state, setState] = useState<TableWorkspaceState>("loading");
+@@ -306,13 +306,13 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
+       setFloorPlanBusy(false);
+     }
+   };
+-  const startTableOrder = async (table: TableRecord) => {
++  const startTableOrder = async (table: TableRecord, withoutKitchen = false) => {
+     if (!canManage || !canStartTableOrder(table)) return;
+     setOrderBusy(true);
+     setOrderError(undefined);
+     try {
+       const started = await api.startTableOrder(terminalId, table.tableId, table.rowVersion);
+-      markTableCart(started.orderId);
++      markTableCart(started.orderId, withoutKitchen);
+       navigate("/");
+     } catch (reason) {
+       setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");
+@@ -357,9 +357,12 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
+         canManage={canManage}
+         canCollect={canCollect}
+         canReadLines={canSeeChecks}
++        canAddWithoutKitchen={canAddWithoutKitchen}
+         busy={orderBusy}
+         error={orderError}
+         onStartOrder={() => void startTableOrder(table)}
++        onAddWithoutKitchen={() => void startTableOrder(table, true)}
++        onSent={() => void load(true)}
+         onTransfer={table.allowedCommands.includes("Transfer") ? () => openAction("Transfer") : undefined}
+       />}
+     />
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index f03ec917..de71355b 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -186,9 +186,8 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .experience-header-link:focus-visible, .experience-header-button:focus-visible { outline: 3px solid #71c6ff; outline-offset: 2px; }
+ .experience-not-found { border: 1px solid var(--line); border-radius: 12px; padding: 2rem; background: var(--surface); color: var(--muted); }
+ .table-route { display: grid; gap: 1rem; }
+-.table-order-bridge { display: grid; gap: .8rem; border: 1px solid #e2cfc8; border-radius: 16px; padding: 1rem 1.2rem; background: linear-gradient(135deg, #fffaf7, #fff); box-shadow: 0 10px 24px rgba(26, 35, 44, .06); }
+-.table-order-bridge__kicker { display: block; color: var(--navy); font-size: .75rem; font-weight: 900; letter-spacing: .14em; }
+-.table-order-bridge h4 { margin: .25rem 0 0; font-size: 1.4rem; }
++.table-order-bridge { display: grid; gap: .8rem; }
++.table-workspace__side--map > .table-order-bridge { border: 1px solid #e2cfc8; border-radius: 16px; padding: 1rem 1.2rem; background: #fffaf7; }
+ .table-order-bridge__lines { display: grid; gap: .3rem; max-height: 14rem; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+ .table-order-bridge__lines li, .table-order-bridge__total { display: flex; justify-content: space-between; gap: .6rem; font-size: .88rem; }
+ .table-order-bridge__total { margin: 0; border-top: 1px solid var(--line); padding-top: .5rem; font-size: 1rem; }
+@@ -198,6 +197,9 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .table-order-bridge__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+ .table-order-bridge__actions .primary { grid-column: 1 / -1; }
+ .table-order-bridge__actions button { min-height: 48px; }
++.table-order-bridge__actions .primary { min-height: 56px; font-size: 1.1rem; }
++.table-order-bridge__mini { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: .5rem; }
++.table-order-bridge__mini button { width: 100%; min-height: 44px; padding-inline: .4rem; font-size: .85rem; }
+ .submitted-state__hint { margin: 0 1.2rem .75rem; color: var(--muted); font-size: .84rem; }
+ .table-order-bridge__reason { color: #795b18; }
+ .table-order-bridge__error { color: #922c36 !important; border-radius: 9px; padding: .65rem .8rem; background: #fff0f1; font-weight: 750; }
+diff --git a/src/Clients/PosTerminal/src/tableCart.ts b/src/Clients/PosTerminal/src/tableCart.ts
+index 65fe64d5..ec955ad5 100644
+--- a/src/Clients/PosTerminal/src/tableCart.ts
++++ b/src/Clients/PosTerminal/src/tableCart.ts
+@@ -1,8 +1,21 @@
+ const key = "alkaros.table-cart-order";
++const withoutKitchenKey = "alkaros.table-cart-without-kitchen";
+ 
+ /** The cashier opened this table order from the tables screen on purpose: the sales screen may show it as the cart. */
+-export function markTableCart(orderId: string): void {
+-  try { sessionStorage.setItem(key, orderId); } catch { /* storage unavailable: the order is then not shown as the cart */ }
++export function markTableCart(orderId: string, withoutKitchen = false): void {
++  try {
++    sessionStorage.setItem(key, orderId);
++    if (withoutKitchen) sessionStorage.setItem(withoutKitchenKey, "1");
++  } catch { /* storage unavailable: the order is then not shown as the cart */ }
++}
++
++/** True once when the cashier chose to add to the table without a kitchen ticket: the sales screen then opens the reason picker. */
++export function takeWithoutKitchenIntent(): boolean {
++  try {
++    const wanted = sessionStorage.getItem(withoutKitchenKey) !== null;
++    sessionStorage.removeItem(withoutKitchenKey);
++    return wanted;
++  } catch { return false; }
+ }
+ 
+ /** Reads and clears the mark; the sales screen asks once each time it is entered. */
+diff --git a/src/Host/DualScreen/DualScreenContracts.cs b/src/Host/DualScreen/DualScreenContracts.cs
+index 36aee5be..755201e7 100644
+--- a/src/Host/DualScreen/DualScreenContracts.cs
++++ b/src/Host/DualScreen/DualScreenContracts.cs
+@@ -144,7 +144,8 @@ public sealed record CustomerDisplayLineDto(
+     decimal LineTotal,
+     decimal DiscountAmount,
+     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] Guid ProductId = default,
+-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null);
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null,
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false);
+ 
+ /// <remarks>
+ /// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and
+diff --git a/src/Host/DualScreen/DualScreenStore.Display.cs b/src/Host/DualScreen/DualScreenStore.Display.cs
+index d971c04e..c5b1d7c7 100644
+--- a/src/Host/DualScreen/DualScreenStore.Display.cs
++++ b/src/Host/DualScreen/DualScreenStore.Display.cs
+@@ -273,7 +273,8 @@ public sealed partial class DualScreenStore
+                    i.product_id,
+                    COALESCE((SELECT array_agg(m.modifier_id ORDER BY m.modifier_id)
+                              FROM orders.order_item_modifiers m
+-                             WHERE m.order_item_id = i.order_item_id), ARRAY[]::uuid[])
++                             WHERE m.order_item_id = i.order_item_id), ARRAY[]::uuid[]),
++                   status = 'Draft'
+             FROM orders.order_items i
+             WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
+             ORDER BY created_at, order_item_id;
+@@ -300,7 +301,8 @@ public sealed partial class DualScreenStore
+                     reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal,
+                     complimentary ? lineTotal : storedDiscount,
+                     includeLineIds ? reader.GetGuid(8) : default,
+-                    includeLineIds ? reader.GetFieldValue<Guid[]>(9) : null));
++                    includeLineIds ? reader.GetFieldValue<Guid[]>(9) : null,
++                    includeLineIds && reader.GetBoolean(10)));
+             }
+         }
+ 
+diff --git a/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs b/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+index da0dd3d3..f45f9bdd 100644
+--- a/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+@@ -664,6 +664,9 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
+             "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id AND status = 'Draft';", ("order_id", first.OrderId)));
+         var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+         Assert.True(snapshot.Editable);
++        var tillLines = (await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true)).Lines;
++        Assert.Equal([false, true], tillLines.Select(line => line.Unsent));
++        Assert.All(snapshot.Lines, line => Assert.False(line.Unsent));
+     }
+ 
+     [Fact]

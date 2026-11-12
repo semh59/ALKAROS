@@ -1,7 +1,7 @@
 # V1-RMD-1006 - Masa planında tek sağ panel: masa, kalemler, ana eylem, mutfak ve ikincil eylemler
 
 - Task ID: V1-RMD-1006
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
