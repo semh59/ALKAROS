@@ -201,17 +201,16 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .toast-message {
   position: fixed;
   z-index: 20;
-  top: 84px;
-  left: 50%;
+  bottom: 1.25rem;
+  left: calc(128px + 1rem);
   min-width: 320px;
-  max-width: min(620px, calc(100vw - 2rem));
+  max-width: min(620px, calc(100vw - 128px - clamp(410px, 31vw, 520px) - 2rem));
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   border-radius: 12px;
   padding: .85rem 1rem;
-  transform: translateX(-50%);
   box-shadow: var(--shadow);
   font-weight: 800;
 }
@@ -547,7 +546,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
   .mobile-ticket-bar span { color: #9facb7; font-size: .75rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
   .mobile-ticket-bar strong { overflow: hidden; font-size: 1.15rem; text-overflow: ellipsis; white-space: nowrap; }
   .mobile-ticket-bar button { min-width: 112px; min-height: 48px; padding-inline: .75rem; }
-  .toast-message { top: 148px; min-width: 0; width: calc(100vw - 1rem); }
+  .toast-message { bottom: calc(88px + env(safe-area-inset-bottom)); left: .5rem; min-width: 0; max-width: none; width: calc(100vw - 1rem); }
   .display-order-grid { grid-template-columns: 1fr; }
   .display-total-card { order: -1; }
   .active-display { height: auto; display: block; overflow: auto; padding: clamp(1rem, 4vw, 2rem); }

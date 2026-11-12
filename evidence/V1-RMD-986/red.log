@@ -1,0 +1,49 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/touchTargets.test.ts (17 tests | 1 failed) 22ms
+     × is anchored to the bottom of the screen, on wide and narrow screens 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/touchTargets.test.ts > the notice box stays off the header > is anchored to the bottom of the screen, on wide and narrow screens
+AssertionError: expected '.toast-message {\n  position: fixed;\…' to match /bottom:/
+
+- Expected:
+/bottom:/
+
++ Received:
+".toast-message {
+  position: fixed;
+  z-index: 20;
+  top: 84px;
+  left: 50%;
+  min-width: 320px;
+  max-width: min(620px, calc(100vw - 2rem));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  transform: translateX(-50%);
+  box-shadow: var(--shadow);
+  font-weight: 800;
+"
+
+ ❯ src/touchTargets.test.ts:50:29
+     48|     for (const opening of [".toast-message {", "  .toast-message {"]) {
+     49|       expect(css.indexOf(opening), `${opening} not found`).toBeGreater…
+     50|       expect(rule(opening)).toMatch(/bottom:/);
+       |                             ^
+     51|       expect(rule(opening)).not.toMatch(/(?<![-\w])top:/);
+     52|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed (17)
+   Start at  07:47:06
+   Duration  359ms (transform 29ms, setup 0ms, import 51ms, tests 22ms, environment 0ms)
+

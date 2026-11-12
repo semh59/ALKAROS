@@ -39,3 +39,32 @@ describe("touch targets", () => {
     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(MINIMUM_PX);
   });
 });
+
+describe("the notice box stays off the header", () => {
+  const css = read("./styles.css");
+  const narrowStart = css.indexOf("@media (max-width: 900px)");
+  const wide = css.slice(0, narrowStart);
+  const narrow = css.slice(narrowStart);
+  const rule = (text: string, opening: string) => {
+    const start = text.indexOf(opening);
+    expect(start, `${opening} not found`).toBeGreaterThanOrEqual(0);
+    return text.slice(start, text.indexOf("}", start));
+  };
+  const placement = (body: string) => ({
+    bottom: body.match(/(?<![-\w])bottom:\s*(?:calc\()?([\d.]+)(px|rem)/),
+    top: /(?<![-\w])(?:top|inset[-\w]*):/.test(body),
+  });
+
+  it("is anchored to the bottom on a wide screen", () => {
+    const { bottom, top } = placement(rule(wide, ".toast-message {"));
+    expect(bottom).not.toBeNull();
+    expect(top).toBe(false);
+  });
+
+  it("sits above the 72 px ticket bar on a narrow screen", () => {
+    expect(narrowStart).toBeGreaterThanOrEqual(0);
+    const { bottom, top } = placement(rule(narrow, ".toast-message {"));
+    expect(top).toBe(false);
+    expect(Number(bottom![1]) * (bottom![2] === "rem" ? 16 : 1)).toBeGreaterThanOrEqual(80);
+  });
+});
