@@ -29,6 +29,7 @@
   - src/Clients/PosTerminal/src/features/billing/billing.css
   - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
   - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx
   - src/Clients/PosTerminal/src/features/pending-checks/pendingChecksApi.ts
   - src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
   - src/Clients/PosTerminal/src/strings.ts
