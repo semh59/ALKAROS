@@ -44,13 +44,40 @@ public sealed partial class DualScreenStore
         var resumesOwnTableOrder = false;
         if (activeOrderId is { } existingId)
         {
-            await using var statusCommand = CreateCommand(connection, transaction,
-                "SELECT status, table_id FROM orders.orders WHERE order_id = @order_id;");
-            statusCommand.Parameters.AddWithValue("order_id", existingId);
-            await using var statusReader = await statusCommand.ExecuteReaderAsync(cancellationToken);
-            var found = await statusReader.ReadAsync(cancellationToken);
-            var status = found ? statusReader.GetString(0) : null;
-            var activeOrderTableId = found && !statusReader.IsDBNull(1) ? statusReader.GetGuid(1) : (Guid?)null;
+            string? status;
+            Guid? activeOrderTableId;
+            await using (var statusCommand = CreateCommand(connection, transaction,
+                "SELECT status, table_id FROM orders.orders WHERE order_id = @order_id;"))
+            {
+                statusCommand.Parameters.AddWithValue("order_id", existingId);
+                await using var statusReader = await statusCommand.ExecuteReaderAsync(cancellationToken);
+                var found = await statusReader.ReadAsync(cancellationToken);
+                status = found ? statusReader.GetString(0) : null;
+                activeOrderTableId = found && !statusReader.IsDBNull(1) ? statusReader.GetGuid(1) : null;
+            }
+
+            // A quick-sale draft the cashier emptied is no work to protect: it is dropped so it cannot block the next order.
+            if (status == "Draft" && activeOrderTableId is null)
+            {
+                await using (var discard = CreateCommand(connection, transaction,
+                    """
+                    WITH discarded AS (
+                        UPDATE orders.orders
+                        SET status = 'Cancelled', row_version = row_version + 1, cancelled_at = now(), updated_at = now()
+                        WHERE order_id = @order_id AND status = 'Draft' AND table_id IS NULL
+                          AND NOT EXISTS (SELECT 1 FROM orders.order_items i
+                                          WHERE i.order_id = @order_id AND i.status IN ('Draft', 'Active', 'Complimentary'))
+                        RETURNING order_id)
+                    INSERT INTO orders.order_status_history (order_status_history_id, order_id, old_status, new_status, reason, changed_by, changed_at)
+                    SELECT gen_random_uuid(), order_id, 'Draft', 'Cancelled', 'Boş taslak yeni sipariş açılırken bırakıldı.', @actor, now() FROM discarded;
+                    """))
+                {
+                    discard.Parameters.AddWithValue("order_id", existingId);
+                    discard.Parameters.AddWithValue("actor", servingUserId);
+                    if (await discard.ExecuteNonQueryAsync(cancellationToken) == 1)
+                        status = "Cancelled";
+                }
+            }
             // The till's own draft for the very table being asked for is resumed below, not refused.
             resumesOwnTableOrder = request.TableId is not null && activeOrderTableId == request.TableId && status is "Draft" or "Submitted";
             if (status is not ("Submitted" or "Completed" or "Cancelled" or "Rejected") && !resumesOwnTableOrder)
@@ -225,7 +252,7 @@ public sealed partial class DualScreenStore
         return new StartOrderResponse(orderId, orderNumber, 1);
     }
 
-    private const string TerminalHoldsDraftMessage = "Bu kasada başka bir siparişin taslağı açık; önce onu gönderin veya iptal edin.";
+    private const string TerminalHoldsDraftMessage = "Bu kasada başka bir siparişin taslağı açık; önce satış ekranında onu gönderin ya da içindeki ürünleri kaldırın.";
 
     private static readonly TimeZoneInfo RestaurantTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
 

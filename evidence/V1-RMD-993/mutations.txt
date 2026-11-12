@@ -1,0 +1,8 @@
+M1 draft with items discarded too -> Başarısız! - Başarısız:     1, Başarılı:    42, Atlanan:     
+restored
+M3 table drafts discarded too -> Başarısız! - Başarısız:     3, Başarılı:    40, Atlanan:     
+restored
+M2 discard result ignored -> Başarısız! - Başarısız:     1, Başarılı:    42, Atlanan:     
+restored
+M4 cancelled_at not written -> Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored

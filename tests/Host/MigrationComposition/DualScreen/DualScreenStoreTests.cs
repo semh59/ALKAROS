@@ -752,6 +752,38 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnEmptyQuickDraftIsDiscardedWhenATableOrderIsStarted()
+    {
+        var terminalId = Guid.NewGuid();
+        var emptyDraft = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var tableId = await SeedTableAsync("S-EMPTY-DRAFT", "Available", 1);
+
+        var tableOrder = await _store.StartOrderAsync(terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None);
+
+        Assert.NotEqual(emptyDraft.OrderId, tableOrder.OrderId);
+        Assert.Equal("Cancelled", await ScalarAsync<string>("SELECT status FROM orders.orders WHERE order_id = @order_id;", ("order_id", emptyDraft.OrderId)));
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM orders.orders WHERE order_id = @order_id AND cancelled_at IS NOT NULL;", ("order_id", emptyDraft.OrderId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_status_history WHERE order_id = @order_id AND old_status = 'Draft' AND new_status = 'Cancelled';", ("order_id", emptyDraft.OrderId)));
+        Assert.Equal(tableOrder.OrderId, await ScalarAsync<Guid>("SELECT current_order_id FROM table_mgmt.tables WHERE table_id = @table_id;", ("table_id", tableId)));
+    }
+
+    [Fact]
+    public async Task AQuickDraftWithAnItemStillBlocksATableOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var draft = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        await _store.AddItemAsync(terminalId, draft.OrderId, new AddOrderItemRequest(_productId, 1m, draft.Revision), CancellationToken.None);
+        var tableId = await SeedTableAsync("S-ITEM-DRAFT", "Available", 1);
+
+        var refused = await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.StartOrderAsync(
+            terminalId, Guid.NewGuid(), new StartOrderRequest(tableId, 1), CancellationToken.None));
+
+        Assert.Contains("taslağı açık", refused.UserMessage, StringComparison.Ordinal);
+        Assert.Equal("Draft", await ScalarAsync<string>("SELECT status FROM orders.orders WHERE order_id = @order_id;", ("order_id", draft.OrderId)));
+    }
+
+    [Fact]
     public async Task ADraftThatTheTableDoesNotPointAtIsNotResumedAndLeavesNoSecondOrder()
     {
         var terminalId = Guid.NewGuid();

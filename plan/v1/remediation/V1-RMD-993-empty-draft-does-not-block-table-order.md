@@ -1,7 +1,7 @@
 # V1-RMD-993 - Boş taslak masa siparişini engellemez
 
 - Task ID: V1-RMD-993
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
