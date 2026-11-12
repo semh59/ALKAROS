@@ -85,6 +85,12 @@ function useNarrowScreen(): boolean {
   return narrow;
 }
 
+// A finished order (completed, cancelled or fully paid) is no cart: the till opens clean.
+const openCheckOnly = (snapshot: DisplaySnapshot | null): DisplaySnapshot | null =>
+  snapshot && (snapshot.state === "Completed" || snapshot.state === "Idle" || (snapshot.paidTotal > 0 && snapshot.remainingTotal === 0))
+    ? { ...snapshot, orderId: null, lines: [] }
+    : snapshot;
+
 export function Cashier({ navigateToPage = (href: string) => window.location.assign(href) }: { navigateToPage?: (href: string) => void }) {
   const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
@@ -179,7 +185,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     setTerminalName(session.terminalName ?? null);
     setCapabilities(session.capabilities ?? []);
     setCatalog(products);
-    setOrder(active);
+    setOrder(openCheckOnly(active));
     setCustomerDisplayUrl(config?.customerDisplayUrl ?? "");
     setReservationStationEnabled(config?.reservationStationEnabled ?? false);
     setSession("ready");
@@ -192,7 +198,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     const load = ++orderLoads.current;
     const loaded = await api.activeOrder(terminalId);
     // A slower, older answer must not overwrite what a newer read already showed.
-    if (load === orderLoads.current) setOrder(loaded);
+    if (load === orderLoads.current) setOrder(openCheckOnly(loaded));
     setBackendStatus("online");
   }, [terminalId]);
 

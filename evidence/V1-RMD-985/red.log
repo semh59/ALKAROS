@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+stderr | src/routes/Cashier.stale-order.test.tsx > Cashier cart never keeps a finished order > opens clean for a completed order
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `div`. It was passed a child from Cashier. See https://react.dev/link/warning-keys for more information.
+
+ ❯ src/routes/Cashier.stale-order.test.tsx (4 tests | 3 failed) 3246ms
+     × opens clean for a completed order 2932ms
+     × opens clean for a cancelled order 110ms
+     × opens clean for a fully paid order 109ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.stale-order.test.tsx > Cashier cart never keeps a finished order > opens clean for a completed order
+ FAIL  src/routes/Cashier.stale-order.test.tsx > Cashier cart never keeps a finished order > opens clean for a cancelled order
+ FAIL  src/routes/Cashier.stale-order.test.tsx > Cashier cart never keeps a finished order > opens clean for a fully paid order
+AssertionError: expected 'AALKAROSKasa satışSunucu hazırBekleye…' not to contain 'Eski Ayran'
+
+Expected: "Eski Ayran"
+Received: "AALKAROSKasa satışSunucu hazırBekleyen hesaplarMüşteri ekranıMasalarMutfakMüşteri ekranını eşleştirDeniz KayaKasiyerÇıkışToplam₺20,00⌂Tümü0HIZLI SİPARİŞTüm ürünler⌕Satılabilir ürün yok. Yönetici Menü ekranında ürün, fiyat ve satış durumunu kontrol etmeli.AKTİF SİPARİŞSipariş 71ürünEski Ayran₺20,00 × 1 · KDV dahil₺20,00−1+KaldırAra toplam₺20,00İçindeki KDV₺0,00Toplam₺20,00✓Sipariş gönderildiBu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin."
+
+ ❯ src/routes/Cashier.stale-order.test.tsx:68:43
+     66|     await openTill(active);
+     67|
+     68|     expect(document.body.textContent).not.toContain("Eski Ayran");
+       |                                           ^
+     69|   });
+     70|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  07:42:14
+   Duration  6.24s (transform 2.29s, setup 0ms, import 263ms, tests 3.25s, environment 2.13s)
+
