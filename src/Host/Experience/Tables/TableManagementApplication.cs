@@ -142,11 +142,15 @@ public static class TableManagementApplication
             var tables = await store.GetAllAsync(zoneId, cancellationToken);
             var reservedIds = tables.Where(row => row.Table.State == TableState.Reserved).Select(row => row.Table.Id).ToArray();
             var activeReservations = await reservations.GetActiveByTableIdsAsync(reservedIds, cancellationToken);
+            var serviceInfo = await store.GetServiceInfoAsync(tables.Select(row => row.Table.Id).ToArray(), cancellationToken);
             var dtos = new List<TableDto>(tables.Count);
             foreach (var (table, currentOrderTotal, currentOrderOpenedAt, statusChangedAt) in tables)
             {
                 activeReservations.TryGetValue(table.Id, out var activeReservation);
-                dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt));
+                var dto = TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt);
+                dtos.Add(serviceInfo.TryGetValue(table.Id, out var service)
+                    ? dto with { ServingWaiterName = service.WaiterName, PartySize = service.PartySize }
+                    : dto);
             }
             return Results.Ok(dtos);
         }).RequireRateLimiting("terminal-read");

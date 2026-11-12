@@ -1,0 +1,10 @@
+M1 waiter join dropped: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored
+M2 party size dropped: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored
+M3 info not applied: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored
+M4 status filter removed: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     
+restored
+M5 merge resolution removed: Başarısız! - Başarısız:     1, Başarılı:     1, Atlanan:     
+restored

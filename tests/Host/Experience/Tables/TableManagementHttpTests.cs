@@ -220,6 +220,75 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
         }
     }
 
+    [Fact]
+    public async Task TableListNamesTheServingWaiterAndPartySizeOfTheCurrentOrderAndNothingForAnEmptyTable()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var busy = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-CARD", null, 4));
+        var empty = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-CARD-EMPTY", null, 2));
+        var orderId = await _database.SeedCurrentOrderWithItemsAsync(busy.TableId, (60.00m, "Active"));
+        await _database.AssignWaiterAndPartyAsync(orderId, "Ayşe Garson", 3);
+
+        using var list = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie));
+        var tables = (await list.Content.ReadFromJsonAsync<TableDto[]>())!;
+
+        var card = Assert.Single(tables, candidate => candidate.TableId == busy.TableId);
+        Assert.Equal("Ayşe Garson", card.ServingWaiterName);
+        Assert.Equal(3, card.PartySize);
+        var none = Assert.Single(tables, candidate => candidate.TableId == empty.TableId);
+        Assert.Null(none.ServingWaiterName);
+        Assert.Null(none.PartySize);
+    }
+
+    [Fact]
+    public async Task TableListShowsThePrimaryTablesWaiterOnAMergedTableAndKeepsPartySizeWhenNoWaiterIsSet()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var primary = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-PRIM", null, 4));
+        var merged = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-MRG", null, 4));
+        var orderId = await _database.SeedCurrentOrderWithItemsAsync(primary.TableId, (60.00m, "Active"));
+        await _database.AssignWaiterAndPartyAsync(orderId, "Can Garson", 5);
+        await _database.MergeTablesAsync(primary.TableId, merged.TableId);
+
+        using var list = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie));
+        var tables = (await list.Content.ReadFromJsonAsync<TableDto[]>())!;
+
+        var card = Assert.Single(tables, candidate => candidate.TableId == merged.TableId);
+        Assert.Equal("Can Garson", card.ServingWaiterName);
+        Assert.Equal(5, card.PartySize);
+
+        await _database.ClearWaiterAsync(orderId);
+        using var again = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie));
+        var withoutWaiter = Assert.Single((await again.Content.ReadFromJsonAsync<TableDto[]>())!, candidate => candidate.TableId == primary.TableId);
+        Assert.Null(withoutWaiter.ServingWaiterName);
+        Assert.Equal(5, withoutWaiter.PartySize);
+    }
+
+    [Fact]
+    public async Task TableListShowsNoWaiterWhenTheCurrentOrderIsAlreadyCancelled()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var table = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-CANC", null, 4));
+        var orderId = await _database.SeedCurrentOrderWithItemsAsync(table.TableId, (60.00m, "Active"));
+        await _database.AssignWaiterAndPartyAsync(orderId, "Eski Garson", 2);
+        await _database.Source.CreateCommand("UPDATE orders.orders SET status = 'Cancelled' WHERE order_id = '" + orderId.ToString("D") + "';").ExecuteNonQueryAsync();
+
+        using var list = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie));
+        var card = Assert.Single((await list.Content.ReadFromJsonAsync<TableDto[]>())!, candidate => candidate.TableId == table.TableId);
+
+        Assert.Null(card.ServingWaiterName);
+        Assert.Null(card.PartySize);
+    }
+
     /// <summary>V1-WTR-019: garson-karsilastirma idea #7, "masa yaşlanma göstergesi".</summary>
     [Fact]
     public async Task TableListReportsWhenTheCurrentOrderWasOpenedAndNullWhenThereIsNone()
@@ -836,6 +905,38 @@ internal sealed class TableManagementTestDatabase
         }
 
         return orderId;
+    }
+
+    public async Task AssignWaiterAndPartyAsync(Guid orderId, string waiterName, int partySize)
+    {
+        var userId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', @name, true);
+            UPDATE orders.orders SET serving_user_id = @user_id, party_size = @party WHERE order_id = @order_id;
+            """,
+            ("user_id", userId), ("username", "waiter-" + userId.ToString("N")), ("name", waiterName),
+            ("party", partySize), ("order_id", orderId));
+    }
+
+    public async Task ClearWaiterAsync(Guid orderId)
+    {
+        await ExecuteAsync(DataSource, "UPDATE orders.orders SET serving_user_id = NULL WHERE order_id = @order_id;", ("order_id", orderId));
+    }
+
+    public async Task MergeTablesAsync(Guid primaryTableId, Guid mergedTableId)
+    {
+        await ExecuteAsync(
+            DataSource,
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO table_mgmt.table_merges
+                (table_merge_id, merge_group_id, primary_table_id, merged_table_id, status, reason, merged_by, merged_at)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @primary, @merged, 'Active', 'test', gen_random_uuid(), now());
+            """,
+            ("primary", primaryTableId), ("merged", mergedTableId));
     }
 
     public async Task<T> ScalarAsync<T>(string sql)

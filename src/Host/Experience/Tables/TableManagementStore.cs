@@ -105,6 +105,32 @@ public sealed class TableManagementStore
         return tables;
     }
 
+    public async Task<IReadOnlyDictionary<Guid, (string? WaiterName, int? PartySize)>> GetServiceInfoAsync(
+        IReadOnlyCollection<Guid> tableIds, CancellationToken cancellationToken = default)
+    {
+        var info = new Dictionary<Guid, (string?, int?)>();
+        if (tableIds.Count == 0)
+            return info;
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT t.table_id, u.display_name, o.party_size
+            FROM table_mgmt.tables t
+            JOIN table_mgmt.tables pt ON pt.table_id = COALESCE(
+                (SELECT m.primary_table_id FROM table_mgmt.table_merges m
+                 WHERE m.merged_table_id = t.table_id AND m.status = 'Active'),
+                t.table_id)
+            JOIN orders.orders o ON o.order_id = pt.current_order_id
+                AND o.status NOT IN ('Completed', 'Cancelled', 'Rejected')
+            LEFT JOIN identity.users u ON u.user_id = o.serving_user_id
+            WHERE t.table_id = ANY(@table_ids);
+            """);
+        command.Parameters.Add("table_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = tableIds.ToArray();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            info[reader.GetGuid(0)] = (reader.IsDBNull(1) ? null : reader.GetString(1), reader.IsDBNull(2) ? null : reader.GetInt32(2));
+        return info;
+    }
+
     public async Task<Table> CreateAsync(
         CreateTableRequest request,
         CancellationToken cancellationToken = default)

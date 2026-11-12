@@ -1,7 +1,7 @@
 # V1-RMD-998 - Masa listesi garson adı ve kişi sayısını taşır
 
 - Task ID: V1-RMD-998
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

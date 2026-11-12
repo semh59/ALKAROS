@@ -149,7 +149,11 @@ public sealed record TableDto(
     // (Semih: a manual "mark as cleaning" step would add workload, not
     // reduce it). Always present (not nullable) since every row has had a
     // real value since the column's own migration default.
-    DateTimeOffset StatusChangedAt = default);
+    DateTimeOffset StatusChangedAt = default,
+    // Display name of the user serving the table's current order and that order's party size; both null on a
+    // table with no current order. Filled by the list endpoint only.
+    string? ServingWaiterName = null,
+    int? PartySize = null);
 
 public sealed record CreateTableReservationRequest(
     Guid TableId,
