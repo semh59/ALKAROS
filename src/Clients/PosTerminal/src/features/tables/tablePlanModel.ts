@@ -24,7 +24,7 @@ const labels: Record<PlanKey, string> = {
 export const planLegend = (Object.keys(icons) as PlanKey[]).map((key) => ({ key, icon: icons[key], label: labels[key] }));
 
 /** A table is "asking" only when the till's own list holds a check sent from it that has no bill yet. */
-export function planStatus(table: TableRecord, awaitingCheckTableIds?: ReadonlySet<string>): PlanStatus {
+export function planStatus(table: Pick<TableRecord, "tableId" | "active" | "status" | "currentBillId">, awaitingCheckTableIds?: ReadonlySet<string>): PlanStatus {
   const status = (key: PlanKey): PlanStatus => ({ key, label: labels[key], icon: icons[key] });
   if (!table.active || table.status === "OutOfService") return status("off");
   if (table.status === "Reserved") return status("rez");

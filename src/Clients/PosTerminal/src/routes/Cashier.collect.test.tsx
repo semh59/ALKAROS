@@ -83,7 +83,7 @@ describe("Cashier collection entry on the sales screen", () => {
     await openTill(["bills.split", "orders.create"], snapshot("order-open", { editable: true, lines: [{ lineId: "l", productId: "p-ayran", name: "Ayran", quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0 }], total: 20 }));
 
     expect(button("Tahsil et")).toBeUndefined();
-    expect(button("Siparişi gönder")).toBeDefined();
+    expect(button("Mutfağa gönder (1)")).toBeDefined();
   });
 
   it("without the permission to open a bill the button is not offered and the reason is shown", async () => {

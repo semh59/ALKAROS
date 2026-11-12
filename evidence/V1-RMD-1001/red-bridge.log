@@ -1,0 +1,260 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (19 tests | 15 failed) 112ms
+     × Öde opens the order's bill and goes to the payment page 37ms
+     × Öde goes straight to a bill the table already has 6ms
+     × a refused bill opening shows a Turkish message and stays on the screen 5ms
+     × a session that ended while opening the bill is reported to the session handler 4ms
+     × draws no order button for someone who may not open orders, and keeps Öde 5ms
+     × closes the continue button on a table whose bill is open and says why and how to get out 5ms
+     × keeps the continue button open on a table with an order and no bill 3ms
+     × offers no collection for an empty table 3ms
+     × names the table and lists the open bill's lines and total, leaving cancelled lines out 4ms
+     × reads no bill for an empty table and offers Sipariş al without Öde 6ms
+     × makes Öde the only filled button, with Ürün ekle and the other actions secondary 6ms
+     × says a failed bill read could not be loaded instead of drawing an empty bill 6ms
+     × Böl and İptal / iade open the billing screen on the table's bill, or on its order when it has no bill yet 3ms
+     × Masa taşı hands over to the table move form and is closed when the table cannot be moved 2ms
+     × draws Böl, Masa taşı and İptal / iade only for those who may use them 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Öde opens the order's bill and goes to the payment page
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:51:67
+     49| describe("TableOrderBridge", () => {
+     50|   const flush = () => act(async () => { await Promise.resolve(); });
+     51|   const click = (label: string) => act(async () => { button(label)!.di…
+       |                                                                   ^
+     52|
+     53|   it("Öde opens the order's bill and goes to the payment page", async …
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/TableOrderBridge.test.tsx:51:36
+ ❯ src/routes/TableOrderBridge.test.tsx:57:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Öde goes straight to a bill the table already has
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:51:67
+     49| describe("TableOrderBridge", () => {
+     50|   const flush = () => act(async () => { await Promise.resolve(); });
+     51|   const click = (label: string) => act(async () => { button(label)!.di…
+       |                                                                   ^
+     52|
+     53|   it("Öde opens the order's bill and goes to the payment page", async …
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/TableOrderBridge.test.tsx:51:36
+ ❯ src/routes/TableOrderBridge.test.tsx:66:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > a refused bill opening shows a Turkish message and stays on the screen
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:51:67
+     49| describe("TableOrderBridge", () => {
+     50|   const flush = () => act(async () => { await Promise.resolve(); });
+     51|   const click = (label: string) => act(async () => { button(label)!.di…
+       |                                                                   ^
+     52|
+     53|   it("Öde opens the order's bill and goes to the payment page", async …
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/TableOrderBridge.test.tsx:51:36
+ ❯ src/routes/TableOrderBridge.test.tsx:76:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > a session that ended while opening the bill is reported to the session handler
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:51:67
+     49| describe("TableOrderBridge", () => {
+     50|   const flush = () => act(async () => { await Promise.resolve(); });
+     51|   const click = (label: string) => act(async () => { button(label)!.di…
+       |                                                                   ^
+     52|
+     53|   it("Öde opens the order's bill and goes to the payment page", async …
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/TableOrderBridge.test.tsx:51:36
+ ❯ src/routes/TableOrderBridge.test.tsx:88:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > draws no order button for someone who may not open orders, and keeps Öde
+AssertionError: expected undefined to be defined
+ ❯ src/routes/TableOrderBridge.test.tsx:99:27
+     97|     expect(button("Ürün ekle")).toBeUndefined();
+     98|     expect(button("Sipariş al")).toBeUndefined();
+     99|     expect(button("Öde")).toBeDefined();
+       |                           ^
+    100|     expect(document.querySelector(".table-order-bridge")?.textContent)…
+    101|     expect(document.querySelector(".table-order-bridge")?.textContent)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > closes the continue button on a table whose bill is open and says why and how to get out
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:122:43
+    120|     const { onStartOrder } = render({ table: { tableId: "tb-4", tableN…
+    121|
+    122|     expect(button("Ürün ekle")?.disabled).toBe(true);
+       |                                           ^
+    123|     expect(document.querySelector(".table-order-bridge")?.textContent)…
+    124|     expect(document.querySelector(".table-order-bridge button.primary"…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > keeps the continue button open on a table with an order and no bill
+AssertionError: expected undefined to be false // Object.is equality
+
+- Expected:
+false
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:133:43
+    131|     render();
+    132|
+    133|     expect(button("Ürün ekle")?.disabled).toBe(false);
+       |                                           ^
+    134|   });
+    135|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > offers no collection for an empty table
+AssertionError: expected undefined to be defined
+ ❯ src/routes/TableOrderBridge.test.tsx:140:34
+    138|
+    139|     expect(button("Öde")).toBeUndefined();
+    140|     expect(button("Sipariş al")).toBeDefined();
+       |                                  ^
+    141|   });
+    142|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > names the table and lists the open bill's lines and total, leaving cancelled lines out
+AssertionError: expected undefined to be 'T-4' // Object.is equality
+
+- Expected:
+"T-4"
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:160:52
+    158|
+    159|     const panel = document.querySelector(".table-order-bridge")!;
+    160|     expect(panel.querySelector("h3")?.textContent).toBe("T-4");
+       |                                                    ^
+    161|     expect(panel.textContent).toContain("Çay");
+    162|     expect(panel.textContent).toContain("Köfte");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > reads no bill for an empty table and offers Sipariş al without Öde
+AssertionError: expected undefined to be defined
+ ❯ src/routes/TableOrderBridge.test.tsx:173:34
+    171|
+    172|     expect(fetchMock).not.toHaveBeenCalled();
+    173|     expect(button("Sipariş al")).toBeDefined();
+       |                                  ^
+    174|     expect(button("Öde")).toBeUndefined();
+    175|     expect(document.querySelector(".table-order-bridge")?.textContent)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > makes Öde the only filled button, with Ürün ekle and the other actions secondary
+AssertionError: expected [ 'Siparişe devam et' ] to deeply equal [ 'Öde' ]
+
+- Expected
++ Received
+
+  [
+-   "Öde",
++   "Siparişe devam et",
+  ]
+
+ ❯ src/routes/TableOrderBridge.test.tsx:182:108
+    180|     await flush();
+    181|
+    182|     expect([...document.querySelectorAll(".table-order-bridge button.p…
+       |                                                                                                            ^
+    183|     for (const label of ["Ürün ekle", "Böl", "Masa taşı", "İptal / iad…
+    184|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > says a failed bill read could not be loaded instead of drawing an empty bill
+AssertionError: expected 'SİPARİŞ BAĞLAMIT-4Bu masadaki sipariş…' to contain 'Hesap kalemleri alınamadı'
+
+Expected: "Hesap kalemleri alınamadı"
+Received: "SİPARİŞ BAĞLAMIT-4Bu masadaki siparişe devam edin ya da hesabını alın.Siparişe devam etHesabı al"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:192:31
+    190|
+    191|     const panel = document.querySelector(".table-order-bridge")!;
+    192|     expect(panel.textContent).toContain("Hesap kalemleri alınamadı");
+       |                               ^
+    193|     expect(panel.querySelector(".table-order-bridge__total")).toBeNull…
+    194|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Böl and İptal / iade open the billing screen on the table's bill, or on its order when it has no bill yet
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:51:67
+     49| describe("TableOrderBridge", () => {
+     50|   const flush = () => act(async () => { await Promise.resolve(); });
+     51|   const click = (label: string) => act(async () => { button(label)!.di…
+       |                                                                   ^
+     52|
+     53|   it("Öde opens the order's bill and goes to the payment page", async …
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/TableOrderBridge.test.tsx:51:36
+ ❯ src/routes/TableOrderBridge.test.tsx:198:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Masa taşı hands over to the table move form and is closed when the table cannot be moved
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/TableOrderBridge.test.tsx:51:67
+     49| describe("TableOrderBridge", () => {
+     50|   const flush = () => act(async () => { await Promise.resolve(); });
+     51|   const click = (label: string) => act(async () => { button(label)!.di…
+       |                                                                   ^
+     52|
+     53|   it("Öde opens the order's bill and goes to the payment page", async …
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/routes/TableOrderBridge.test.tsx:51:36
+ ❯ src/routes/TableOrderBridge.test.tsx:210:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/15]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > draws Böl, Masa taşı and İptal / iade only for those who may use them
+AssertionError: expected undefined to be defined
+ ❯ src/routes/TableOrderBridge.test.tsx:221:27
+    219|
+    220|     for (const label of ["Böl", "Masa taşı", "İptal / iade"]) expect(b…
+    221|     expect(button("Öde")).toBeDefined();
+       |                           ^
+    222|   });
+    223| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/15]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  15 failed | 4 passed (19)
+   Start at  13:57:08
+   Duration  1.97s (transform 229ms, setup 0ms, import 344ms, tests 112ms, environment 1.17s)
+

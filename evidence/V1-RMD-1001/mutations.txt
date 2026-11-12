@@ -1,0 +1,15 @@
+M1 killed Ode loses filled style
+M2 killed cancelled lines listed
+M3 killed billing href ignores bill id
+M4 killed Masa tasi enabled without handler
+M5 killed bill read for table without order
+M6 killed refund shown without a bill
+M14 killed no refresh on version change
+M15 killed read without order permission
+M7 killed no panel in map view
+M8 killed no panel in list view
+M9 killed send count dropped
+M10 killed footer wrapper renamed
+M11 killed footer shrinks
+M12 killed plan icon dropped
+M13 killed awaiting set not passed to plan

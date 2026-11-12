@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { ApiError } from "../../api";
 import { Button, SelectField, TextField } from "../../design-system";
+import { planStatus } from "./tablePlanModel";
 import {
   tableStatusLabels,
   isClientExecutableAction,
@@ -39,6 +40,8 @@ interface FloorPlanWorkspaceProps {
   busy?: boolean;
   error?: string;
   lastUpdated?: string;
+  /** Tables with a check waiting at the till without a bill yet. */
+  awaitingCheckTableIds?: ReadonlySet<string>;
   onSelectTable: (tableId: string) => void;
   onOpenAction?: (action: TableAction, table: TableRecord) => void;
   onSave?: (zoneId: string, input: SaveFloorPlanInput) => SaveFloorPlanResult | Promise<SaveFloorPlanResult>;
@@ -196,6 +199,7 @@ export function FloorPlanWorkspace({
   busy = false,
   error,
   lastUpdated,
+  awaitingCheckTableIds,
   onSelectTable,
   onOpenAction,
   onSave,
@@ -353,6 +357,7 @@ export function FloorPlanWorkspace({
             {draft.tables.map((table) => {
               const authoritative = tableRecords.get(table.tableId);
               const selectedState = table.tableId === selected?.tableId;
+              const status = planStatus(table, awaitingCheckTableIds);
               return <div
                 key={table.tableId}
                 className="floor-plan-table-wrap"
@@ -366,7 +371,7 @@ export function FloorPlanWorkspace({
                 <button data-telemetry-id="b.tables.floorplanworkspace.4"
                   type="button"
                   className={`floor-plan-table floor-plan-table--${table.status.toLowerCase()} floor-plan-table--${table.shape.toLowerCase()} ${selectedState ? "is-selected" : ""}`}
-                  aria-label={`${table.tableNumber}, ${tableStatusLabels[table.status]}, ${contextLabel(table)}${mode === "setup" ? ", ok tuşlarıyla taşı" : ""}`}
+                  aria-label={`${table.tableNumber}, ${status.label}, ${contextLabel(table)}${mode === "setup" ? ", ok tuşlarıyla taşı" : ""}`}
                   aria-pressed={selectedState}
                   onClick={() => onSelectTable(table.tableId)}
                   onKeyDown={(event) => onTableKeyDown(event, table)}
@@ -377,7 +382,7 @@ export function FloorPlanWorkspace({
                   style={{ transform: `rotate(${table.rotationDegrees}deg)` }}
                 >
                   <span className="floor-plan-table__number">{table.tableNumber}</span>
-                  <span className="floor-plan-table__state">{tableStatusLabels[table.status]}</span>
+                  <span className="floor-plan-table__state"><span aria-hidden="true">{status.icon}</span> {status.label}</span>
                   <span className="floor-plan-table__context">{contextLabel(table)}</span>
                   {table.mergeGroupId && <span className="floor-plan-table__badge">{table.isMergePrimary ? "Birleşim lideri" : "Birleşik"}</span>}
                   {table.activeReservationId && <span className="floor-plan-table__badge">Rezerve</span>}

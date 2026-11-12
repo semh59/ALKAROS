@@ -16,6 +16,7 @@ import type {
   RelayCredentialStatus,
   RuntimeConfiguration,
   SettingRecord,
+  TableOrder,
   TokenTerminalCredentialStatus,
   UserLookupResult,
 } from "./contracts";
@@ -206,6 +207,8 @@ export const api = {
         body: JSON.stringify({ tableId, expectedTableRowVersion }),
       },
     ),
+  tableOrder: (terminalId: string, tableId: string) =>
+    request<TableOrder>(`/api/v1/terminals/${terminalId}/orders/table/${tableId}`),
   addItem: (
     terminalId: string,
     orderId: string,

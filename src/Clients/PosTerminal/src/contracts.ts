@@ -253,3 +253,21 @@ export interface SettingRecord {
   updatedAt: string;
   rowVersion: number;
 }
+
+/** The open order of a table as the order service reports it. */
+export interface TableOrder {
+  orderId: string;
+  tableId: string;
+  tableNumber: string;
+  status: string;
+  rowVersion: number;
+  totalAmount: number;
+  items: readonly {
+    itemId: string;
+    productName: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+    status: string;
+  }[];
+}

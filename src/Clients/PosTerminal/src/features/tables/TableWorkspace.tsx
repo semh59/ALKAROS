@@ -141,6 +141,7 @@ export function TableWorkspace({
   awaitingCheckTableIds,
   awaitingChecksUnavailable,
   onQuickSale,
+  billPanel,
 }: TableWorkspaceProps) {
   // The grid opens first: it carries the amounts, waiters and attention cues the floor plan drawing does not.
   const [view, setView] = useState<TableView>("list");
@@ -426,6 +427,7 @@ export function TableWorkspace({
             <FloorPlanWorkspace
               plan={floorPlan}
               tables={tables}
+              awaitingCheckTableIds={awaitingCheckTableIds}
               selectedTableId={selectedTable?.tableId}
               canManage={canManage}
               busy={floorPlanBusy}
@@ -442,8 +444,12 @@ export function TableWorkspace({
                 {filteredTables.map((table) => <TableCard key={table.tableId} table={table} plan={planStatus(table, awaitingCheckTableIds)} selected={table.tableId === selectedTable?.tableId} onSelect={() => onSelectTable(table.tableId)} onAction={(nextAction) => openAction(nextAction, table)} />)}
               </div>
             </div>
-            {selectedTable && <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction} />}
+            {selectedTable && <div className="table-workspace__side">
+              <TableDetails table={selectedTable} plan={planStatus(selectedTable, awaitingCheckTableIds)} zoneName={selectedZone?.name} onAction={openAction} />
+              {billPanel && <BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} />}
+            </div>}
           </>}
+          {view === "map" && floorPlan && selectedTable && billPanel && <div className="table-workspace__side table-workspace__side--map"><BillPanelSlot render={billPanel} table={selectedTable} openAction={openAction} /></div>}
         </div>
       )}
 
@@ -558,6 +564,10 @@ function AttentionStrip({ tables, awaitingCheckTableIds, unavailable, onSelect }
     {unavailable && <p className="table-attention__unavailable" role="status">{tablePlanText.checksUnavailable}</p>}
     {groups.flatMap((group) => group.tables.map((table) => <button data-telemetry-id="b.tables.tableworkspace.attention" key={`${group.key}-${table.tableId}`} type="button" className={`table-attention__chip table-attention__chip--${group.key}`} onClick={() => onSelect(table.tableId)}><span aria-hidden="true">{group.icon}</span> {group.label} · {table.tableNumber}</button>))}
   </div>;
+}
+
+function BillPanelSlot({ render, table, openAction }: { render: NonNullable<TableWorkspaceProps["billPanel"]>; table: TableRecord; openAction: (action: TableAction) => void }) {
+  return <>{render(table, openAction)}</>;
 }
 
 function TableDetails({ table, plan, zoneName, onAction }: { table: TableRecord; plan: PlanStatus; zoneName?: string; onAction: (action: TableAction) => void }) {

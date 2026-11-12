@@ -1,0 +1,52 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.ticket-footer.test.tsx (3 tests | 3 failed) 2207ms
+     × keeps Tahsil et and the kitchen-less button outside the scrolling line list of a long sent order 2106ms
+     × counts what the send button sends and names the table in the ticket heading 96ms
+     × lets only the line list shrink and scroll 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.ticket-footer.test.tsx > the order ticket keeps its actions in a fixed footer > keeps Tahsil et and the kitchen-less button outside the scrolling line list of a long sent order
+AssertionError: expected null not to be null
+ ❯ src/routes/Cashier.ticket-footer.test.tsx:68:24
+     66|
+     67|     const footer = document.querySelector(".ticket-panel > .ticket-foo…
+     68|     expect(footer).not.toBeNull();
+       |                        ^
+     69|     expect(document.querySelectorAll(".ticket-lines .ticket-line")).to…
+     70|     expect(footer.contains(button("Tahsil et")!)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/Cashier.ticket-footer.test.tsx > the order ticket keeps its actions in a fixed footer > counts what the send button sends and names the table in the ticket heading
+AssertionError: expected undefined to be defined
+ ❯ src/routes/Cashier.ticket-footer.test.tsx:78:42
+     76|     await openTill(order({ editable: true, tableNumber: "T-4", lines: …
+     77|
+     78|     expect(button("Mutfağa gönder (3)")).toBeDefined();
+       |                                          ^
+     79|     expect(button("Siparişi gönder")).toBeUndefined();
+     80|     expect(document.querySelector(".ticket-heading h2")?.textContent).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/routes/Cashier.ticket-footer.test.tsx > the order ticket keeps its actions in a fixed footer > lets only the line list shrink and scroll
+TypeError: The URL must be of scheme file
+ ❯ src/routes/Cashier.ticket-footer.test.tsx:85:17
+     83|
+     84|   it("lets only the line list shrink and scroll", () => {
+     85|     const css = readFileSync(new URL("../styles.css", import.meta.url)…
+       |                 ^
+     86|     expect(css).toMatch(/\.ticket-lines \{[^}]*overflow-y: auto/);
+     87|     expect(css).toMatch(/\.ticket-footer \{[^}]*flex: none/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  13:59:29
+   Duration  3.52s (transform 1.57s, setup 0ms, import 122ms, tests 2.21s, environment 932ms)
+

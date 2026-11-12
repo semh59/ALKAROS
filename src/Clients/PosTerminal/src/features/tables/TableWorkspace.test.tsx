@@ -206,6 +206,36 @@ describe("table workspace", () => {
     expect(document.querySelector(".table-quick-sale")).toBeNull();
   });
 
+  it("draws the selected table's bill panel in the side column in both views and lets it open the move form", async () => {
+    const billPanel = vi.fn((table: TableRecord, openAction: (action: "Transfer") => void) => <button type="button" className="probe-panel" data-table={table.tableId} onClick={() => openAction("Transfer")}>Panel</button>);
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", billPanel, floorPlan: { zoneId: "zone-salon", rowVersion: 1, tables: [] } as never })} />);
+    expect(document.querySelector(".table-workspace__side .probe-panel")?.getAttribute("data-table")).toBe("table-10");
+    await click(document.querySelector(".probe-panel")!);
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Hedef masa");
+
+    await click(document.querySelector(".table-workspace__view-toggle button:first-child")!);
+    expect(document.querySelector(".table-workspace__side--map .probe-panel")).not.toBeNull();
+
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
+    expect(document.querySelector(".probe-panel")).toBeNull();
+  });
+
+  it("marks a table asking for the bill on the floor plan drawing too", async () => {
+    const floorPlan = {
+      zoneId: "zone-salon", zoneCode: "SALON", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1,
+      tables: [{
+        tableId: "table-09", tableNumber: "S-09", capacity: 4, active: true, status: "Available", currentOrderId: null, currentBillId: null,
+        tableRowVersion: 3, x: 100, y: 100, width: 160, height: 96, shape: "Rectangle", rotationDegrees: 0, layoutRowVersion: 1,
+        activeReservationId: null, reservationPartySize: null, reservedAt: null, reservationExpiresAt: null, mergeGroupId: null, isMergePrimary: false,
+        seats: [], allowedCommands: [],
+      }],
+    };
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-09", floorPlan: floorPlan as never, awaitingCheckTableIds: new Set(["table-09"]) })} />);
+    await click(document.querySelector(".table-workspace__view-toggle button:first-child")!);
+
+    expect(document.querySelector(".floor-plan-table__state")?.textContent).toBe("⚠ Hesap istedi");
+  });
+
   it("opens on the table grid even when a floor plan exists", async () => {
     await render(<TableWorkspace {...baseProps({ selectedTableId: null, floorPlan: { zoneId: "zone-salon", rowVersion: 1, tables: [] } as never })} />);
     expect(document.querySelectorAll(".table-card")).toHaveLength(2);

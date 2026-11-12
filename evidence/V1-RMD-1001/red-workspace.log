@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/tables/TableWorkspace.test.tsx (42 tests | 1 failed) 1473ms
+     × draws the selected table's bill panel in the side column in both views and lets it open the move form 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > draws the selected table's bill panel in the side column in both views and lets it open the move form
+AssertionError: expected null not to be null
+ ❯ src/features/tables/TableWorkspace.test.tsx:212:79
+    210|     const billPanel = vi.fn((openAction: (action: "Transfer") => void)…
+    211|     await render(<TableWorkspace {...baseProps({ selectedTableId: "tab…
+    212|     expect(document.querySelector(".table-workspace__side .probe-panel…
+       |                                                                               ^
+    213|     await click(document.querySelector(".probe-panel")!);
+    214|     expect(document.querySelector('[role="dialog"]')?.textContent).toC…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 41 passed (42)
+   Start at  13:57:42
+   Duration  3.12s (transform 271ms, setup 0ms, import 447ms, tests 1.47s, environment 953ms)
+

@@ -973,6 +973,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                   </div>
                 ))}
               </div>
+              <div className="ticket-footer">
               <div className="ticket-totals">
                 <div><span>Ara toplam</span><span>{formatMoney(activeOrder.subtotal)}</span></div>
                 {activeOrder.discountTotal > 0 && (
@@ -989,7 +990,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                     () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
                     activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
                   )}
-                >Siparişi gönder</button>
+                >{`Mutfağa gönder (${formatQuantity(itemCount)})`}</button>
               ) : (
                 <div className="submitted-state">
                   <span>✓</span>
@@ -1031,6 +1032,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                   )}
                 </div>
               )}
+              </div>
             </>
           )}
 

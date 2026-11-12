@@ -8,7 +8,7 @@ import { managementText, navLabels, roleLabels } from "../strings";
 import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
-import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
+import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableRecord, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace, usePendingChecksAlert } from "../features/pending-checks";
 import { loadPendingChecks } from "../features/pending-checks/pendingChecksApi";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
@@ -306,14 +306,12 @@ export function TableRoute({ terminalId, canManage, canCollect = false, canSeeCh
       setFloorPlanBusy(false);
     }
   };
-  const selectedTable = tables.find((table) => table.tableId === selectedTableId) ?? null;
-  const tableOrderAllowed = canStartTableOrder(selectedTable);
-  const startTableOrder = async () => {
-    if (!selectedTable || !canManage || !tableOrderAllowed) return;
+  const startTableOrder = async (table: TableRecord) => {
+    if (!canManage || !canStartTableOrder(table)) return;
     setOrderBusy(true);
     setOrderError(undefined);
     try {
-      const started = await api.startTableOrder(terminalId, selectedTable.tableId, selectedTable.rowVersion);
+      const started = await api.startTableOrder(terminalId, table.tableId, table.rowVersion);
       markTableCart(started.orderId);
       navigate("/");
     } catch (reason) {
@@ -350,17 +348,20 @@ export function TableRoute({ terminalId, canManage, canCollect = false, canSeeCh
       awaitingCheckTableIds={awaitingCheckTableIds}
       awaitingChecksUnavailable={canSeeChecks && awaitingCheckTableIds === undefined}
       onQuickSale={canSeeChecks ? () => navigate("/") : undefined}
+      billPanel={reservationOnly ? undefined : (table, openAction) => <TableOrderBridge
+        key={table.tableId}
+        terminalId={terminalId}
+        table={table}
+        orderAllowed={canStartTableOrder(table)}
+        canManage={canManage}
+        canCollect={canCollect}
+        canReadLines={canSeeChecks}
+        busy={orderBusy}
+        error={orderError}
+        onStartOrder={() => void startTableOrder(table)}
+        onTransfer={table.allowedCommands.includes("Transfer") ? () => openAction("Transfer") : undefined}
+      />}
     />
-    {selectedTable && state === "ready" && !reservationOnly && <TableOrderBridge
-      terminalId={terminalId}
-      table={selectedTable}
-      orderAllowed={tableOrderAllowed}
-      canManage={canManage}
-      canCollect={canCollect}
-      busy={orderBusy}
-      error={orderError}
-      onStartOrder={() => void startTableOrder()}
-    />}
   </div>;
 }
 

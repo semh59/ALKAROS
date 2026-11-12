@@ -107,6 +107,14 @@ describe("floor plan workspace", () => {
     vi.restoreAllMocks();
   });
 
+  it("draws each table with the shape cue and name of its plan status, asking and awaiting payment included", async () => {
+    await render(<FloorPlanWorkspace plan={plan} tables={tables} canManage onSelectTable={vi.fn()} awaitingCheckTableIds={new Set(["table-b"])} />);
+
+    const states = [...document.querySelectorAll(".floor-plan-table__state")].map((node) => node.textContent);
+    expect(states).toEqual(["₺ Ödeme bekliyor", "⚠ Hesap istedi"]);
+    expect(document.querySelector('.floor-plan-table[aria-label^="A-02"]')?.getAttribute("aria-label")).toContain("Hesap istedi");
+  });
+
   it("renders authoritative geometry, seats and operational context", async () => {
     const onOpenAction = vi.fn();
     await render(<FloorPlanWorkspace plan={plan} tables={tables} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={onOpenAction} onSave={vi.fn()} lastUpdated="08:00" />);
