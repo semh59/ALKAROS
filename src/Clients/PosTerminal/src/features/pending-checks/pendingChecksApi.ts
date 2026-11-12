@@ -14,6 +14,8 @@ export interface PendingCheck {
   /** Already collected on the bill; the cashier resumes a part-paid check where it stopped. */
   paidAmount: number;
   itemPreview: string | null;
+  /** How many of the lines the cashier added without a kitchen ticket. */
+  addedWithoutKitchenCount: number;
   /** Where the check came from; lets the till send a mistakenly sent check back. */
   tableId: string | null;
 }

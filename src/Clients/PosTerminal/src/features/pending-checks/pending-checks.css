@@ -8,6 +8,7 @@
 .pending-checks__amount { grid-row: 1 / span 2; grid-column: 2; font-weight: 800; font-size: 1.15rem; text-align: right; }
 .pending-checks__amount small { display: block; font-weight: 500; color: #61727a; }
 .pending-checks__meta, .pending-checks__preview { color: #61727a; }
+.pending-checks__added { color: #9a4a00; font-weight: 800; }
 .pending-checks__opening { grid-column: 1 / -1; color: #61727a; }
 .pending-checks__empty { color: #61727a; }
 .pending-checks__offline, .pending-checks__stale { border: 1px solid #c58a00; border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: #5c4100; background: #fff6dc; margin: 0; }

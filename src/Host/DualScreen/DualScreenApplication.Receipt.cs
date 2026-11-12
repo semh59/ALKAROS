@@ -15,7 +15,7 @@ namespace ALKAROS.Host.DualScreen;
 
 public sealed record BillReceiptItemV1(
     string Name, decimal Quantity, decimal UnitPrice, decimal Amount, Guid BillItemId, decimal RefundedQuantity,
-    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m);
+    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m, string? AddedWithoutKitchenReason = null);
 
 public sealed record BillReceiptTaxLineV1(decimal RatePercent, decimal Net, decimal Tax, decimal Gross);
 
@@ -39,7 +39,8 @@ public sealed record BillReceiptV1(
     IReadOnlyList<BillReceiptPaymentV1> Payments,
     IReadOnlyList<BillReceiptTaxLineV1>? TaxLines = null,
     DateTimeOffset? OriginalPrintedAt = null,
-    bool IsCopy = false);
+    bool IsCopy = false,
+    string? TableNumber = null);
 
 public sealed record BillReceiptOriginalResetRequestV1(string? Reason, Guid IdempotencyKey);
 
@@ -275,6 +276,7 @@ public static partial class DualScreenApplication
         var refunded = await RefundedQuantitiesAsync(dataSource, billId, cancellationToken);
         var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
         var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
+        var withoutKitchen = await BillOrderNotes.WithoutKitchenReasonsAsync(dataSource, bill.Items.Select(i => i.OrderItemId), cancellationToken);
 
         return new BillReceiptV1(
             bill.Id,
@@ -286,7 +288,7 @@ public static partial class DualScreenApplication
             bill.Items
                 .Select(i => new BillReceiptItemV1(
                     i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
-                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount))
+                    completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount, withoutKitchen.GetValueOrDefault(i.OrderItemId)))
                 .ToList(),
             adjustments
                 .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))
@@ -310,7 +312,8 @@ public static partial class DualScreenApplication
                 .Select(line => new BillReceiptTaxLineV1(line.RatePercent, line.Net, line.Tax, line.Gross))
                 .ToList(),
             originalPrintedAt,
-            isCopy);
+            isCopy,
+            await BillOrderNotes.TableNumberAsync(dataSource, bill.TableId, cancellationToken));
     }
 
     private static async Task<Dictionary<Guid, decimal>> RefundedAmountsAsync(

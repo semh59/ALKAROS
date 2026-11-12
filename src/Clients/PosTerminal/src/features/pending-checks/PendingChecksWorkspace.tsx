@@ -4,7 +4,7 @@ import { notifySessionExpired } from "../../api";
 import { BillingSplitApiError, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
-import { cancelOrderText, cancelReasonText, mergeChecksText, openBillDeniedText } from "../../strings";
+import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText } from "../../strings";
 import { collectionHrefForOrder } from "../../collectOrder";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
@@ -238,6 +238,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
                 <span className="pending-checks__number">{checkTitle(check)}</span>
                 <span className="pending-checks__meta">{check.itemCount} kalem · {check.orderNumber}</span>
                 {check.itemPreview && <span className="pending-checks__preview">{check.itemPreview}</span>}
+                {check.addedWithoutKitchenCount > 0 && <span className="pending-checks__added">{kitchenlessText.addedCount(check.addedWithoutKitchenCount)}</span>}
                 <span className="pending-checks__amount">
                   {check.paidAmount > 0
                     ? <>Kalan {formatMoney(remaining)} <small>(toplam {formatMoney(check.total)})</small></>

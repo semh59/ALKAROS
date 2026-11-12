@@ -190,6 +190,9 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
     {
         var merged = await SeedMergedAsync();
         await Exec("UPDATE table_mgmt.tables SET current_order_id = NULL WHERE table_id = @id;", ("id", merged.TableId));
+        await Exec(
+            "UPDATE orders.order_items SET without_kitchen_reason_code = 'other', added_without_kitchen_by = gen_random_uuid() WHERE order_id = @id;",
+            ("id", merged.SecondOrderId));
         var store = new CashierHandoffStore(_source);
 
         var whileOpen = await store.GetChecksAwaitingPaymentAsync();
@@ -201,6 +204,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         Assert.Equal(2, check.ItemCount);
         Assert.Equal(200m, check.Total);
         Assert.Equal("Dish, Dish", check.ItemPreview);
+        Assert.Equal(1, check.AddedWithoutKitchenCount);
         Assert.DoesNotContain(afterPaid, c => c.OrderId == merged.FirstOrderId || c.OrderId == merged.SecondOrderId);
     }
 

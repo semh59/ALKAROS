@@ -43,6 +43,20 @@ describe("bill split workspace", () => {
     expect(document.body.textContent).toContain("tahsilat veya ödeme yürütmez");
   });
 
+  it("names the table of the bill and marks the lines the cashier added without the kitchen", async () => {
+    const withNote: BillSplitDesign = { ...design, tableNumber: "T-4", items: [design.items[0], { ...design.items[1], addedWithoutKitchenReason: "waiter-forgot" }] };
+    await render(<BillSplitWorkspace {...props({ design: withNote })} />);
+    expect(document.querySelector(".bill-split__table")?.textContent).toBe("Masa T-4");
+    await click([...document.querySelectorAll('[role="tab"]')].find((tab) => tab.textContent === "Ürün / miktar")!);
+    const notes = [...document.querySelectorAll(".bill-split__added")];
+    expect(notes.map((note) => note.textContent)).toEqual(["Kasada eklendi (mutfağa gitmedi)"]);
+    expect(notes[0].closest("article")?.textContent).toContain("Ayran");
+
+    await render(<BillSplitWorkspace {...props()} />);
+    expect(document.querySelector(".bill-split__table")).toBeNull();
+    expect(document.querySelector(".bill-split__added")).toBeNull();
+  });
+
   it("keeps only the selected mode tab in the tab order, and moves that stop with the selection", async () => {
     await render(<BillSplitWorkspace {...props()} />);
     const tabStops = () => [...document.querySelectorAll<HTMLElement>('[role="tab"]')].filter((tab) => tab.tabIndex === 0);

@@ -119,13 +119,12 @@ describe("split-payment.js page hierarchy", () => {
     expect(Boolean($("submit-tender").compareDocumentPosition(lines) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
   });
 
-  it("folds the equal-split helper above the method chips, so the form under the summary stays short", async () => {
+  it("folds the equal-split helper below the pay button, so the form under the summary stays short", async () => {
     await open();
 
     expect(fold("split").open).toBe(false);
     expect(fold("split").querySelector("summary").textContent).toBe("Eşit bölüştür");
-    const chips = document.querySelector(".sp-method-chip");
-    expect(Boolean(fold("split").compareDocumentPosition(chips) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    expect(Boolean($("submit-tender").compareDocumentPosition(fold("split")) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
   });
 
   it("limits the equal split to 50 people in the field and in the maths", async () => {

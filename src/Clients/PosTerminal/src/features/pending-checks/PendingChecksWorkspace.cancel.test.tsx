@@ -19,7 +19,7 @@ vi.mock("@microsoft/signalr", () => ({
 
 const check = (orderId: string, paidAmount: number) => ({
   orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T11:32:00Z",
-  billId: paidAmount > 0 ? `b-${orderId}` : null, paidAmount, itemPreview: "Çay", tableId: "tb-5",
+  billId: paidAmount > 0 ? `b-${orderId}` : null, paidAmount, itemPreview: "Çay", addedWithoutKitchenCount: 0, tableId: "tb-5",
 });
 const ok = (body: unknown) => ({ ok: true, status: 200, json: async () => body });
 const refused = (status: number, code: string) => ({ ok: false, status, json: async () => ({ error: { code, message: "raw server text" } }) });

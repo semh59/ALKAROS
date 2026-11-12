@@ -1,7 +1,7 @@
 # V1-RMD-1002 - Ödeme ekranı masa adı, kasada eklendi notu ve kısa ilk ekran
 
 - Task ID: V1-RMD-1002
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

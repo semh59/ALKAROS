@@ -1016,19 +1016,11 @@ public sealed class BillingSplitStore
         CancellationToken cancellationToken = default)
     {
         var design = Map(bill, allocations, canMutate, billRowVersion, adjustment);
-        if (_dataSource is null || bill.Items.Count == 0)
+        if (_dataSource is null)
             return design;
 
-        var reasons = new Dictionary<Guid, string>();
-        await using (var command = _dataSource.CreateCommand(
-            "SELECT order_item_id, without_kitchen_reason_code FROM orders.order_items WHERE order_item_id = ANY(@ids) AND without_kitchen_reason_code IS NOT NULL;"))
-        {
-            command.Parameters.Add("ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Uuid).Value = bill.Items.Select(i => i.OrderItemId).ToArray();
-            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-            while (await reader.ReadAsync(cancellationToken))
-                reasons[reader.GetGuid(0)] = reader.GetString(1);
-        }
-
+        design = design with { TableNumber = await BillOrderNotes.TableNumberAsync(_dataSource, bill.TableId, cancellationToken) };
+        var reasons = await BillOrderNotes.WithoutKitchenReasonsAsync(_dataSource, bill.Items.Select(i => i.OrderItemId), cancellationToken);
         if (reasons.Count == 0)
             return design;
         var orderItemByBillItem = bill.Items.ToDictionary(i => i.Id, i => i.OrderItemId);
@@ -1092,6 +1084,35 @@ public sealed class BillingSplitStore
                 item.TaxAmount,
                 item.RowVersion)).ToList(),
             parsed);
+    }
+}
+
+/// <summary>What the cashier must see next to a bill: which table it belongs to and which lines skipped the kitchen.</summary>
+internal static class BillOrderNotes
+{
+    public static async Task<string?> TableNumberAsync(NpgsqlDataSource dataSource, Guid? tableId, CancellationToken cancellationToken)
+    {
+        if (tableId is null)
+            return null;
+        await using var command = dataSource.CreateCommand("SELECT table_number FROM table_mgmt.tables WHERE table_id = @id;");
+        command.Parameters.Add("id", NpgsqlTypes.NpgsqlDbType.Uuid).Value = tableId.Value;
+        return await command.ExecuteScalarAsync(cancellationToken) as string;
+    }
+
+    public static async Task<Dictionary<Guid, string>> WithoutKitchenReasonsAsync(
+        NpgsqlDataSource dataSource, IEnumerable<Guid> orderItemIds, CancellationToken cancellationToken)
+    {
+        var reasons = new Dictionary<Guid, string>();
+        var ids = orderItemIds.ToArray();
+        if (ids.Length == 0)
+            return reasons;
+        await using var command = dataSource.CreateCommand(
+            "SELECT order_item_id, without_kitchen_reason_code FROM orders.order_items WHERE order_item_id = ANY(@ids) AND without_kitchen_reason_code IS NOT NULL;");
+        command.Parameters.Add("ids", NpgsqlTypes.NpgsqlDbType.Array | NpgsqlTypes.NpgsqlDbType.Uuid).Value = ids;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            reasons[reader.GetGuid(0)] = reader.GetString(1);
+        return reasons;
     }
 }
 

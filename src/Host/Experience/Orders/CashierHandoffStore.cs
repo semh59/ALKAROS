@@ -247,7 +247,8 @@ public sealed class CashierHandoffStore
                           FROM orders.order_items pi
                           WHERE pi.order_id = o.order_id AND pi.status = 'Active'
                           ORDER BY pi.created_at, pi.order_item_id
-                          LIMIT 3) preview) AS item_preview
+                          LIMIT 3) preview) AS item_preview,
+                   COUNT(i.order_item_id) FILTER (WHERE i.status = 'Active' AND i.without_kitchen_reason_code IS NOT NULL) AS without_kitchen_count
             FROM orders.orders o
             LEFT JOIN orders.order_items i ON i.order_id = o.order_id
             LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
@@ -290,7 +291,8 @@ public sealed class CashierHandoffStore
                 reader.IsDBNull(7) ? null : reader.GetGuid(7),
                 reader.GetDecimal(8),
                 reader.IsDBNull(9) ? null : reader.GetString(9),
-                reader.IsDBNull(6) ? null : reader.GetGuid(6)));
+                reader.IsDBNull(6) ? null : reader.GetGuid(6),
+                (int)reader.GetInt64(10)));
         }
 
         // A bill merged from several orders is one check at the till: the oldest order stands for it (rows come oldest first).
@@ -301,6 +303,7 @@ public sealed class CashierHandoffStore
                 : group.First() with
                 {
                     ItemCount = group.Sum(row => row.ItemCount),
+                    AddedWithoutKitchenCount = group.Sum(row => row.AddedWithoutKitchenCount),
                     Total = group.Sum(row => row.Total),
                     ItemPreview = string.Join(", ", group.Select(row => row.ItemPreview).Where(preview => preview is not null)),
                 })

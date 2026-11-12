@@ -118,6 +118,7 @@
     refundListFailed: false,
     refundAllowance: null,
     billItems: [],
+    billTable: null,
     itemQty: {},
     itemPayment: '',
     itemStock: '',
@@ -1449,9 +1450,11 @@
   function loadBillItems() {
     return api(billBase() + '/receipt').then(function (result) {
       state.billItems = result.ok && result.body && Array.isArray(result.body.items) ? result.body.items : [];
+      state.billTable = result.ok && result.body && result.body.tableNumber ? result.body.tableNumber : null;
       render();
     }).catch(function () {
       state.billItems = [];
+      state.billTable = null;
     });
   }
 
@@ -2048,10 +2051,11 @@
       '<h1>Bilgi Fişi</h1>' +
       (isCopy ? '<p class="sp-receipt-copy">KOPYA</p>' : '') +
       '<p class="sp-receipt-note">Bu belge mali fiş değildir.</p>' +
-      '<p>Hesap: ' + escapeHtml(receipt.billNumber) + '<br>' + escapeHtml(opened) + '</p>' +
+      '<p>Hesap: ' + escapeHtml(receipt.billNumber) + (receipt.tableNumber ? '<br>Masa: ' + escapeHtml(receipt.tableNumber) : '') + '<br>' + escapeHtml(opened) + '</p>' +
       '<table>' +
       receipt.items.map(function (item) {
         return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
+          (item.addedWithoutKitchenReason ? '<tr class="sp-receipt-refund"><td>Kasada eklendi</td><td></td></tr>' : '') +
           (item.lineDiscount > 0
             ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
             : '') +
@@ -2157,13 +2161,24 @@
       '<summary id="fold-' + name + '-summary">' + title + '</summary>' + body + '</details>';
   }
 
+  // Which table the bill belongs to, and the lines the cashier added without a kitchen ticket.
+  function renderBillContext() {
+    var added = state.billItems.filter(function (item) { return item.addedWithoutKitchenReason; });
+    return (state.billTable ? '<p class="sp-place">Masa ' + escapeHtml(state.billTable) + '</p>' : '') +
+      (added.length
+        ? '<p class="sp-kitchenless-note">Kasada eklendi (mutfağa gitmedi): ' +
+          added.slice(0, 2).map(function (item) { return escapeHtml(item.name); }).join(', ') +
+          (added.length > 2 ? ' ve ' + (added.length - 2) + ' kalem daha' : '') + '</p>'
+        : '');
+  }
+
   function renderReady() {
     var s = state.summary;
     var remaining = remainingAmount();
     app.innerHTML =
       '<div class="sp-card">' +
       '<div><span class="sp-eyebrow">Hesap Ödeme</span>' +
-      '<h1 class="sp-title">Tahsilat</h1></div>' +
+      '<h1 class="sp-title">Tahsilat</h1>' + renderBillContext() + '</div>' +
       errorAlert() +
       (state.locked
         ? '<div class="sp-alert sp-alert-warning" role="alert"><span class="sp-alert-icon">!</span>' +
@@ -2182,12 +2197,6 @@
       '<span>Kalan</span><span class="value">' + formatMoney(remaining) + '</span></div>' +
       '<div class="sp-divider"></div>' +
       (state.locked ? '' :
-        renderFold('split', 'Eşit bölüştür',
-          '<div class="sp-row">' +
-          '<input class="sp-input" type="number" min="2" max="' + MAX_SPLIT_PEOPLE + '" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
-          '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
-          '</div>' + renderSavedShares(), state.savedShares.length > 0) +
-        '<a class="sp-btn sp-btn-secondary" id="split-by-item" href="/billing?billId=' + encodeURIComponent(state.billId) + '">Ürüne veya kişiye göre böl</a>' +
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
@@ -2210,7 +2219,13 @@
         (submitTenderHint() ? '<p class="sp-hint" id="submit-hint" role="status">' + submitTenderHint() + '</p>' : '') +
         '<button class="sp-btn sp-btn-primary" id="submit-tender" ' + (submitTenderHint() ? 'aria-describedby="submit-hint" ' : '') +
         (submitTenderDisabled() ? 'disabled' : '') + '>' +
-        (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>') +
+        (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>' +
+        renderFold('split', 'Eşit bölüştür',
+          '<div class="sp-row">' +
+          '<input class="sp-input" type="number" min="2" max="' + MAX_SPLIT_PEOPLE + '" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
+          '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
+          '</div>' + renderSavedShares(), state.savedShares.length > 0) +
+        '<a class="sp-btn sp-btn-secondary" id="split-by-item" href="/billing?billId=' + encodeURIComponent(state.billId) + '">Ürüne veya kişiye göre böl</a>') +
       renderAdjustmentList() +
       renderAllocationLines() +
       (state.locked ? '' : renderFold('discount-tip', 'İndirim ve bahşiş', renderDiscountForm() + renderTipForm(),
@@ -2452,6 +2467,7 @@
       '<span class="sp-icon-circle success">✓</span>' +
       '<h1 class="sp-title">' + heading.title + '</h1>' +
       '<p class="sp-subtitle">' + heading.text + '</p>' +
+      renderBillContext() +
       renderChangeDue() +
       (state.receiptError
         ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'

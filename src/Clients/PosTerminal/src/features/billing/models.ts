@@ -16,6 +16,8 @@ export interface BillSplitItem {
   grossAmount: number;
   taxAmount: number;
   rowVersion: number;
+  /** Reason code when the cashier added this line without a kitchen ticket. */
+  addedWithoutKitchenReason?: string | null;
 }
 
 export interface BillSplitAllocation {
@@ -44,6 +46,7 @@ export interface BillSplitDesign {
   allowedCommands: readonly string[];
   items: readonly BillSplitItem[];
   allocations: readonly BillSplitAllocation[];
+  tableNumber?: string | null;
 }
 
 export interface SplitOwnerRequest { kind: SplitOwnerKind; ownerId: string }

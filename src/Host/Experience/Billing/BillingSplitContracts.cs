@@ -84,7 +84,8 @@ public sealed record BillSplitDesignDto(
     string ExecutionState,
     IReadOnlyList<string> AllowedCommands,
     IReadOnlyList<BillSplitItemDto> Items,
-    IReadOnlyList<BillSplitAllocationDto> Allocations);
+    IReadOnlyList<BillSplitAllocationDto> Allocations,
+    string? TableNumber = null);
 
 public sealed record BillingSplitErrorEnvelope(
     [property: JsonPropertyName("error")] BillingSplitError Error);

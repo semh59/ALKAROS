@@ -36,8 +36,8 @@ const hubUrls: string[] = [];
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const sample = [
-  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran", tableId: "tb-5" },
-  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay", tableId: "tb-5" },
+  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran", addedWithoutKitchenCount: 0, tableId: "tb-5" },
+  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay", addedWithoutKitchenCount: 0, tableId: "tb-5" },
 ];
 
 describe("PendingChecksWorkspace", () => {
@@ -95,6 +95,13 @@ describe("PendingChecksWorkspace", () => {
     expect(text).toContain("Köfte, Ayran");
     expect(text).toContain("Kalan"); // the part-paid one shows what is left
     expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
+  });
+
+  it("says how many lines of a check were added at the till, and nothing for a check without any", async () => {
+    fetchMock.mockResolvedValue(ok([{ ...sample[0], addedWithoutKitchenCount: 2 }, sample[1]]));
+    await render();
+
+    expect([...document.querySelectorAll(".pending-checks__added")].map((node) => node.textContent)).toEqual(["2 kalem kasada eklendi (mutfağa gitmedi)"]);
   });
 
   it("shows no Tahsil et on a card the cashier may not open", async () => {
@@ -310,7 +317,7 @@ describe("PendingChecksWorkspace", () => {
 
   describe("merging several checks of one table into one bill", () => {
     const row = (orderId: string, tableId: string, createdAt: string, extra: object = {}) =>
-      ({ orderId, orderNumber: `S-${orderId}`, tableNumber: tableId.slice(-1), itemCount: 1, total: 100, createdAt, billId: null, paidAmount: 0, itemPreview: null, tableId, ...extra });
+      ({ orderId, orderNumber: `S-${orderId}`, tableNumber: tableId.slice(-1), itemCount: 1, total: 100, createdAt, billId: null, paidAmount: 0, itemPreview: null, addedWithoutKitchenCount: 0, tableId, ...extra });
     const merge = [
       row("o-1", "tb-5", "2026-09-24T11:32:00Z"),
       row("o-3", "tb-5", "2026-09-24T11:40:00Z"),

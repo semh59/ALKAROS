@@ -1429,4 +1429,6 @@ export const kitchenlessText = {
   done: "Normal eklemeye dön",
   added: "Ürün mutfağa gitmeden hesaba eklendi.",
   needsOptions: "Seçenekli ürün mutfağa göndermeden eklenemez. Önce normal eklemeye dönün.",
+  addedAtTill: "Kasada eklendi (mutfağa gitmedi)",
+  addedCount: (count: number) => `${count} kalem kasada eklendi (mutfağa gitmedi)`,
 } as const;

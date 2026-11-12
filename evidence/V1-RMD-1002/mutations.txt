@@ -1,0 +1,14 @@
+J1 killed payment screen table name dropped
+J2 killed table line off
+J3 killed payment note off
+J4 killed receipt table off
+J5 killed receipt note off
+J6 killed split controls stay above the button
+J7 killed card not tightened
+T1 killed split table name off
+T2 killed split note off
+T3 killed pending note off
+N1 killed design table number dropped
+N2 killed receipt line reason dropped
+N3 killed pending count off
+done

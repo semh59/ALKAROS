@@ -216,6 +216,38 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheReceiptAndTheSplitDesignNameTheTableAndMarkTheLinesTheCashierAddedWithoutTheKitchen()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-table-note", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using (var seed = _database.DataSource.CreateCommand(
+            "UPDATE orders.order_items SET without_kitchen_reason_code = 'waiter-forgot', added_without_kitchen_by = gen_random_uuid() WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @bill);"))
+        {
+            seed.Parameters.AddWithValue("bill", billId);
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        string tableNumber;
+        await using (var read = _database.DataSource.CreateCommand(
+            "SELECT t.table_number FROM billing.bills b JOIN table_mgmt.tables t ON t.table_id = b.table_id WHERE b.bill_id = @bill;"))
+        {
+            read.Parameters.AddWithValue("bill", billId);
+            tableNumber = (string)(await read.ExecuteScalarAsync())!;
+        }
+
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var receipt = await (await GetAsync(client, ReceiptPath(terminalId, billId), cookie)).Content.ReadFromJsonAsync<JsonElement>();
+        var design = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/split-design", cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal(tableNumber, receipt.GetProperty("tableNumber").GetString());
+        Assert.Equal("waiter-forgot", Assert.Single(receipt.GetProperty("items").EnumerateArray()).GetProperty("addedWithoutKitchenReason").GetString());
+        Assert.Equal(tableNumber, design.GetProperty("tableNumber").GetString());
+    }
+
+    [Fact]
     public async Task TheReceiptFootsAndCarriesTheTaxPerRateAfterALineDiscountAndABillDiscount()
     {
         var terminalId = Guid.NewGuid();
