@@ -111,9 +111,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [session, setSession] = useState<CashierSession>("checking");
   const sessionRef = useRef<CashierSession>("checking");
   useEffect(() => { sessionRef.current = session; }, [session]);
-  const kitchenlessOrderId = order?.orderId;
-  const kitchenlessEditable = order?.editable;
-  useEffect(() => { setKitchenlessReason(null); setKitchenlessPicking(false); }, [kitchenlessOrderId, kitchenlessEditable]);
   const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -139,6 +136,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
   const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
+  const kitchenlessOrderId = order?.orderId;
+  const kitchenlessEditable = order?.editable;
+  useEffect(() => { setKitchenlessReason(null); setKitchenlessPicking(false); }, [kitchenlessOrderId, kitchenlessEditable]);
   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
