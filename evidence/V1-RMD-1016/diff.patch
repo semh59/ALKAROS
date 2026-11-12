@@ -1,0 +1,32 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+index c939dab1..92f20101 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.logout-clears-storage.test.tsx
+@@ -49,6 +49,7 @@ afterEach(() => {
+ describe("Cashier logout clears session-scoped localStorage", () => {
+   it('removes "alkaros.current-bill-id" when the cashier logs out', async () => {
+     localStorage.setItem("alkaros.current-bill-id", "11111111-1111-1111-1111-111111111111");
++    localStorage.setItem("alkaros.selected-table", "table-prev");
+ 
+     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+       const path = String(input);
+@@ -87,6 +88,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
+     });
+ 
+     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
++    expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
+   });
+ 
+   it("posts the logout even when the browser applies the menu's own close between the menu and the page handlers", async () => {
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 63be4235..c4f167f1 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -542,6 +542,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       // cleared it, so a shift change let the NEXT cashier's session land straight on the PREVIOUS
+       // cashier's open split-payment view for whatever bill happened to be last on this device.
+       localStorage.removeItem("alkaros.current-bill-id");
++      localStorage.removeItem("alkaros.selected-table");
+     } catch (reason) {
+       setError(reason instanceof ApiError ? reason.message : "Oturum kapatılamadı.");
+     } finally {

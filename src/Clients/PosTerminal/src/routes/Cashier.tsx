@@ -542,6 +542,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       // cleared it, so a shift change let the NEXT cashier's session land straight on the PREVIOUS
       // cashier's open split-payment view for whatever bill happened to be last on this device.
       localStorage.removeItem("alkaros.current-bill-id");
+      localStorage.removeItem("alkaros.selected-table");
     } catch (reason) {
       setError(reason instanceof ApiError ? reason.message : "Oturum kapatılamadı.");
     } finally {

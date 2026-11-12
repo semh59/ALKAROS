@@ -1,0 +1,1 @@
+killed sales-screen logout keeps the remembered table

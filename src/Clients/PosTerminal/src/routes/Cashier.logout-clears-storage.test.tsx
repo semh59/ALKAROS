@@ -49,6 +49,7 @@ afterEach(() => {
 describe("Cashier logout clears session-scoped localStorage", () => {
   it('removes "alkaros.current-bill-id" when the cashier logs out', async () => {
     localStorage.setItem("alkaros.current-bill-id", "11111111-1111-1111-1111-111111111111");
+    localStorage.setItem("alkaros.selected-table", "table-prev");
 
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
@@ -87,6 +88,7 @@ describe("Cashier logout clears session-scoped localStorage", () => {
     });
 
     expect(localStorage.getItem("alkaros.current-bill-id")).toBeNull();
+    expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
   });
 
   it("posts the logout even when the browser applies the menu's own close between the menu and the page handlers", async () => {
