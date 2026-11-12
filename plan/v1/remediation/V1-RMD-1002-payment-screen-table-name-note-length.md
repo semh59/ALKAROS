@@ -13,7 +13,6 @@
 ## Owned surface
 
 - `evidence/V1-RMD-1002/**`
-- `tests/Clients/StaticApps/split-payment-table-note.test.js`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Billing/BillingSplitContracts.cs
   - src/Host/Experience/Billing/BillingSplitStore.cs
@@ -35,6 +34,7 @@
   - src/Clients/PosTerminal/src/strings.ts
   - tests/Clients/StaticApps/split-payment-receipt.test.js
   - tests/Clients/StaticApps/split-payment-hierarchy.test.js
+  - tests/Clients/StaticApps/split-payment-table-note.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
