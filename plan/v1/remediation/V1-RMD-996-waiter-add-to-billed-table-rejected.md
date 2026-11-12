@@ -16,6 +16,7 @@ Hesabı açılmış masanın siparişine garson masa taslağı yolundan ürün e
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Orders/TableDraft/TableDraftService.cs
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs
+  - src/Host/Experience/Orders/KitchenlessAdd/KitchenlessAddStore.cs
   - src/Host/DualScreen/DualScreenStore.Orders.cs
   - src/Modules/Tables/TableRelease/PostgresTableReleasePort.cs
   - tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs
