@@ -12,7 +12,7 @@
     "build": "pnpm run lint && tsc --noEmit && vite build",
     "build:nfc-standalone": "vite build --config vite.nfc.config.ts && node -e \"require('fs').renameSync('dist-nfc/nfc.html','dist-nfc/index.html')\"",
     "test": "vitest run",
-    "lint": "oxlint -c .oxlintrc.json --max-warnings=20 src"
+    "lint": "oxlint -c .oxlintrc.json --max-warnings=0 src"
   },
   "dependencies": {
     "@microsoft/signalr": "10.0.0",

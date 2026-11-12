@@ -1,7 +1,7 @@
 # V1-RMD-991 - İstemci üretim derlemesi kapanış şartı olur
 
 - Task ID: V1-RMD-991
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

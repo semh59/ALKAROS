@@ -1,0 +1,14 @@
+✔ a client folder with a package.json is picked up by any file under it (2.131ms)
+✔ a Windows style path is picked up too (0.3165ms)
+✔ a folder without a package.json and a path outside src/Clients are not clients (0.2971ms)
+✔ the production lint script allows no warning at all (0.3744ms)
+✔ the production lint step rejects a hook that reads state declared after it (1487.2127ms)
+✔ the same component with the state declared first passes the lint step (1412.3148ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3009.3207

@@ -1,0 +1,12 @@
+M1 paths outside src/Clients counted -> ℹ fail 0
+restored
+M2 folder without package.json counted -> ℹ fail 1
+restored
+M3 immutability rule switched off -> ℹ fail 1
+restored
+M1 rerun paths outside src/Clients counted -> ℹ fail 1
+restored
+M4 warning cap back to 20 -> ℹ fail 2
+restored
+M5 backslash normalisation removed -> ℹ fail 1
+M5 rerun backslash normalisation removed -> ℹ fail 1

@@ -1,0 +1,8 @@
+[src/Clients/PosTerminal] npm run lint
+
+> @alkaros/pos-terminal@1.0.0 lint
+> oxlint -c .oxlintrc.json --max-warnings=0 src
+
+src/zzBroken.tsx:4:21: error react(immutability): Cannot access variable while it is being initialized help: `setReason` is read while its declaration is still being initialized. Move the access after initialization. For a recursive callback, use a named function expression or restructure the callback so it does not capture itself during initialization
+FAILED: src/Clients/PosTerminal: npm run lint (exit 1)
+gate exit 1
