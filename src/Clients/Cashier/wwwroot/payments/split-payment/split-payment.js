@@ -119,6 +119,7 @@
     refundAllowance: null,
     billItems: [],
     billTable: null,
+    billRead: false,
     itemQty: {},
     itemPayment: '',
     itemStock: '',
@@ -1451,10 +1452,12 @@
     return api(billBase() + '/receipt').then(function (result) {
       state.billItems = result.ok && result.body && Array.isArray(result.body.items) ? result.body.items : [];
       state.billTable = result.ok && result.body && result.body.tableNumber ? result.body.tableNumber : null;
+      state.billRead = !!result.ok;
       render();
     }).catch(function () {
       state.billItems = [];
       state.billTable = null;
+      state.billRead = false;
     });
   }
 
@@ -2177,7 +2180,7 @@
   // Which table the bill belongs to, and the lines the cashier added without a kitchen ticket.
   function renderBillContext() {
     var added = state.billItems.filter(function (item) { return item.addedWithoutKitchenReason; });
-    return (state.billTable ? '<p class="sp-place">Masa ' + escapeHtml(state.billTable) + '</p>' : '') +
+    return (state.billTable ? '<p class="sp-place">Masa ' + escapeHtml(state.billTable) + '</p>' : state.billRead ? '<p class="sp-place">Hızlı satış</p>' : '') +
       (added.length
         ? '<p class="sp-kitchenless-note">Kasada eklendi (mutfağa gitmedi): ' +
           added.slice(0, 2).map(function (item) { return escapeHtml(item.name); }).join(', ') +

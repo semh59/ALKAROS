@@ -24,7 +24,7 @@ const receipt = (extra = {}) => ({
   adjustments: [], subtotal: 100, payableAmount: 100, taxTotal: 0, payments: [], ...extra,
 });
 
-async function open(summary, receiptBody) {
+async function open(summary, receiptBody, receiptStatus = 200) {
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   installFetchRouter([
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
@@ -33,7 +33,7 @@ async function open(summary, receiptBody) {
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
     { test: (url) => url.endsWith("/show-on-display"), status: 204 },
-    { test: (url) => url.endsWith("/receipt"), body: receiptBody },
+    { test: (url) => url.endsWith("/receipt"), body: receiptBody, status: receiptStatus },
     { test: (url) => url.endsWith("/receipt/print"), body: receiptBody },
   ]);
   await loadApp(htmlPath, scriptPath);
@@ -65,13 +65,25 @@ describe("split-payment.js table name and kitchen-less note", () => {
     await vi.waitFor(() => expect(document.querySelector(".sp-kitchenless-note")?.textContent).toBe("Kasada eklendi (mutfağa gitmedi): A, B ve 2 kalem daha"));
   });
 
-  it("shows neither line for a quick sale with every line sent to the kitchen", async () => {
+  it("names a quick sale and shows no kitchen-less line when every line went to the kitchen", async () => {
     await open(unpaid, receipt({ items: [{ name: "Köfte", quantity: 1, unitPrice: 80, amount: 80 }] }));
+
+    await vi.waitFor(() => expect(document.querySelector(".sp-place")?.textContent).toBe("Hızlı satış"));
+    expect(document.querySelector(".sp-kitchenless-note")).toBeNull();
+  });
+
+  it("names no place when the bill details could not be read", async () => {
+    await open(unpaid, { error: { code: "X", message: "x" } }, 500);
 
     await vi.waitFor(() => expect(document.querySelector(".sp-summary-row")).not.toBeNull());
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(document.querySelector(".sp-place")).toBeNull();
-    expect(document.querySelector(".sp-kitchenless-note")).toBeNull();
+  });
+
+  it("names a quick sale on the paid screen too", async () => {
+    await open(settled, receipt({ items: [{ name: "Köfte", quantity: 1, unitPrice: 80, amount: 80 }] }));
+
+    await vi.waitFor(() => expect(document.querySelector(".sp-place")?.textContent).toBe("Hızlı satış"));
   });
 
   it("names the table and the note on the paid screen too", async () => {
