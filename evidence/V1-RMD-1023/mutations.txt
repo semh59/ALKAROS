@@ -1,0 +1,2 @@
+killed rail links not stacked (no flex-direction column)
+killed label shrunk below 11px

@@ -1,0 +1,44 @@
+diff --git a/src/Clients/PosTerminal/src/shell/shell.css b/src/Clients/PosTerminal/src/shell/shell.css
+index be0040b4..ad0735d0 100644
+--- a/src/Clients/PosTerminal/src/shell/shell.css
++++ b/src/Clients/PosTerminal/src/shell/shell.css
+@@ -144,8 +144,9 @@
+       / var(--ds-shell-compact-rail-width) minmax(0, 1fr);
+   }
+   .production-shell__nav { padding-inline: var(--ds-space-2); }
+-  .production-shell__nav-link { justify-content: center; padding-inline: var(--ds-space-2); }
+-  .production-shell__nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
++  .production-shell__nav-link { flex-direction: column; justify-content: center; gap: 2px; padding-inline: var(--ds-space-1); text-align: center; }
++  .production-shell__nav-label { font-size: .75rem; line-height: 1.15; overflow-wrap: break-word; }
++  .production-shell__nav-badge { position: absolute; top: 2px; right: 2px; margin-left: 0; }
+   .production-shell__identity-item:first-child { display: none; }
+ }
+ 
+diff --git a/src/Clients/PosTerminal/src/shell/shellStyle.test.ts b/src/Clients/PosTerminal/src/shell/shellStyle.test.ts
+new file mode 100644
+index 00000000..213c7bc1
+--- /dev/null
++++ b/src/Clients/PosTerminal/src/shell/shellStyle.test.ts
+@@ -0,0 +1,22 @@
++import { readFileSync } from "node:fs";
++import { describe, expect, it } from "vitest";
++
++const css = readFileSync(new URL("./shell.css", import.meta.url), "utf8");
++const start = css.indexOf("@media (min-width: 768px) and (max-width: 1279px)");
++const compact = css.slice(start, css.indexOf("@media (max-width: 767px)", start));
++const rule = (selector: string) => compact.match(new RegExp(String.raw`${selector.replaceAll(".", String.raw`\.`)}\s*\{([^}]*)\}`))?.[1] ?? "";
++
++describe("the compact side rail (768 to 1279 px)", () => {
++  it("keeps the menu labels visible under the icons", () => {
++    const label = rule(".production-shell__nav-label");
++
++    expect(label).not.toMatch(/clip|width:\s*1px|height:\s*1px/);
++    expect(label).toMatch(/font-size:\s*\.?\d+(\.\d+)?rem/);
++  });
++
++  it("stacks the icon over the label and keeps labels at least 11px", () => {
++    expect(rule(".production-shell__nav-link")).toMatch(/flex-direction:\s*column/);
++    const size = Number(rule(".production-shell__nav-label").match(/font-size:\s*(\.?\d+(?:\.\d+)?)rem/)?.[1]);
++    expect(size * 16).toBeGreaterThanOrEqual(11);
++  });
++});

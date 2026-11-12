@@ -144,8 +144,9 @@
       / var(--ds-shell-compact-rail-width) minmax(0, 1fr);
   }
   .production-shell__nav { padding-inline: var(--ds-space-2); }
-  .production-shell__nav-link { justify-content: center; padding-inline: var(--ds-space-2); }
-  .production-shell__nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .production-shell__nav-link { flex-direction: column; justify-content: center; gap: 2px; padding-inline: var(--ds-space-1); text-align: center; }
+  .production-shell__nav-label { font-size: .75rem; line-height: 1.15; overflow-wrap: break-word; }
+  .production-shell__nav-badge { position: absolute; top: 2px; right: 2px; margin-left: 0; }
   .production-shell__identity-item:first-child { display: none; }
 }
 

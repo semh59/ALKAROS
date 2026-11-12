@@ -1,0 +1,2 @@
+qa-frontend: kural cakismasi yok; rozet erisilebilir adi korunuyor (etiket + "N bekleyen"). Kabul (dusuk): rozet 99 ustu ve iki haneli sayida genisleyebilir; regex ile CSS ayristirma kirilgan ama bos dilim testi kirmizi yapar; tasma jsdom'da olculemez, tarayici olcumu: 59 px baglanti, etiket scrollWidth = clientWidth (tasma yok).
+qa-ux-tasarim: yon dogru. Duzeltildi: 11.5 px -> 12 px, anywhere -> break-word; yeniden olculdu, goruntuler yenilendi. Acik, bu gorev disinda: 768x1024'te "Salon plani / Liste" satiri kesik; iki haneli rozet.
