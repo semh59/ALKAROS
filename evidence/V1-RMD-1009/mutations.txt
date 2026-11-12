@@ -1,0 +1,2 @@
+killed method handler bound to share chips
+killed share tap clears method

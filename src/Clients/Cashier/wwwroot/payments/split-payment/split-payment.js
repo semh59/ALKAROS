@@ -2247,7 +2247,7 @@
       group.addEventListener('keydown', function (event) { moveWithinGroup(event, 'radio'); });
     });
 
-    document.querySelectorAll('.sp-method-chip').forEach(function (button) {
+    document.querySelectorAll('.sp-method-chip[data-method]').forEach(function (button) {
       button.addEventListener('click', function () {
         if (button.disabled) return;
         var method = button.getAttribute('data-method');

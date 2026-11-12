@@ -1,7 +1,7 @@
 # V1-RMD-1009 - Kişi başı tutar düğmesi ödeme yöntemini sıfırlamaz
 
 - Task ID: V1-RMD-1009
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
