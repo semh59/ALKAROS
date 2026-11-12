@@ -30,6 +30,7 @@ export function TableOrderBridge({
   const [collecting, setCollecting] = useState(false);
   const [collectError, setCollectError] = useState<string>();
   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
+  const billed = table.currentBillId !== null;
   const collect = async () => {
     if (!table.currentOrderId && !table.currentBillId) return;
     setCollecting(true);
@@ -46,16 +47,18 @@ export function TableOrderBridge({
     <div>
       <span className="table-order-bridge__kicker">SİPARİŞ BAĞLAMI</span>
       <strong>{table.tableNumber}</strong>
-      <p>{!canManage
+      <p id="table-order-bridge-note">{!canManage
         ? hasCheck && canCollect ? "Bu masadaki hesabı alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
-        : table.currentOrderId ? "Bu masadaki siparişe devam edin ya da hesabını alın." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
+        : billed ? "Hesap açıldığı için ürün eklenemez. Eklemek için 'Hesabı al' ile açılan ekranda 'Hesabı iptal et' deyin; ödeme alındıysa önce iade gerekir."
+          : table.currentOrderId ? "Bu masadaki siparişe devam edin ya da hesabını alın." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
     </div>
     <div className="table-order-bridge__actions">
       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.1"
         className="primary"
         type="button"
-        disabled={!orderAllowed || busy}
+        disabled={!orderAllowed || busy || billed}
         aria-busy={busy}
+        aria-describedby="table-order-bridge-note"
         onClick={onStartOrder}
       >{busy ? "Sipariş hazırlanıyor…" : table.currentOrderId ? "Siparişe devam et" : "Masada sipariş aç"}</button>}
       {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"

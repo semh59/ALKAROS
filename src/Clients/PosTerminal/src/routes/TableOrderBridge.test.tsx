@@ -99,6 +99,23 @@ describe("TableOrderBridge", () => {
     expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Bu masada sizin yapabileceğiniz bir işlem yok.");
   });
 
+  it("closes the continue button on a table whose bill is open and says why and how to get out", () => {
+    const { onStartOrder } = render({ table: { tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1" } });
+
+    expect(button("Siparişe devam et")?.disabled).toBe(true);
+    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("ürün eklenemez");
+    expect(document.querySelector(".table-order-bridge button.primary")?.getAttribute("aria-describedby")).toBe("table-order-bridge-note");
+    expect(document.querySelector(".table-order-bridge")?.textContent).toContain("Hesabı iptal et");
+    expect(button("Hesabı al")).toBeDefined();
+    expect(onStartOrder).not.toHaveBeenCalled();
+  });
+
+  it("keeps the continue button open on a table with an order and no bill", () => {
+    render();
+
+    expect(button("Siparişe devam et")?.disabled).toBe(false);
+  });
+
   it("offers no collection for an empty table", () => {
     render({ table: { tableNumber: "T-4", currentOrderId: null, currentBillId: null } });
 
