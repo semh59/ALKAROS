@@ -1,0 +1,2 @@
+qa-frontend: vardiya degisiminde eski masa kalma riski (orta) -> Diger menusu cikisinda silme eklendi. Acik (dusuk, kapsam disi): satis ekranindaki Cikis (Cashier.tsx) silmiyor -> V1-RMD-1016; kayitli masa baska bolge filtresinde gorunmez kalabilir (onceden var olan TableWorkspace davranisi); depolama kapaliyken guvenli (ilk masa).
+qa-ux-tasarim: son masanin kalmasi dogru; yeni girisle eski secim riski (orta) -> cikista silme ile azaltildi; masa durumu degismis olsa da secili kalir (dusuk) kabul.

@@ -1,0 +1,89 @@
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index 23021aa9..db5ea274 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -398,10 +398,12 @@ describe("workspace header for the cashier", () => {
+ 
+   it("signs out from the Diğer menu", async () => {
+     const onLogout = vi.fn(async () => {});
++    localStorage.setItem("alkaros.selected-table", "tbl-prev");
+     await open(onLogout);
+     await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
+     await act(async () => [...document.querySelectorAll<HTMLButtonElement>(".production-shell__more button")].find((button) => button.textContent === "Çıkış")!.click());
+     expect(onLogout).toHaveBeenCalledTimes(1);
++    expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
+   });
+ });
+ 
+@@ -449,6 +451,26 @@ describe("workspace /tables route marks tables whose check waits at the till", (
+     expect(document.querySelector(".table-card--plan-ask")?.textContent).toContain("Hesap istedi");
+   });
+ 
++  it("keeps the table the cashier chose selected when the tables screen opens again, and falls back to the first when it is gone", async () => {
++    const two = [table, { ...table, tableId: "tbl-two", tableNumber: "M-4" }];
++    const extra = (path: string) => path.includes("/table-management/tables") ? json(two) : undefined;
++    const selectedLabel = () => document.querySelector(".table-card.is-selected .table-card__top strong")?.textContent;
++    localStorage.removeItem("alkaros.selected-table");
++    await open(() => json([]), ["tables.status", "orders.create"], false, extra);
++    expect(selectedLabel()).toBe("M-3");
++    await act(async () => { document.querySelectorAll<HTMLButtonElement>(".table-card__select")[1]!.click(); });
++    expect(selectedLabel()).toBe("M-4");
++
++    await act(async () => root!.unmount());
++    await open(() => json([]), ["tables.status", "orders.create"], false, extra);
++    expect(selectedLabel()).toBe("M-4");
++
++    await act(async () => root!.unmount());
++    await open(() => json([]), ["tables.status", "orders.create"], false, (path: string) => path.includes("/table-management/tables") ? json([table]) : undefined);
++    expect(selectedLabel()).toBe("M-3");
++    localStorage.removeItem("alkaros.selected-table");
++  });
++
+   it("draws the layout configuration buttons only for someone who holds floorplan.manage", async () => {
+     const labels = () => [...document.querySelectorAll(".table-workspace__toolbar-actions button")].map((button) => button.textContent);
+     await open(() => json([]));
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index 574e332a..ef616158 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -21,6 +21,13 @@ import { ManagementArea } from "../features/management";
+ import { CashSessionBand, CashSessionLink, type CashSessionStatus } from "../features/cash-session-status";
+ import { markTableCart } from "../tableCart";
+ 
++const selectedTableKey = "alkaros.selected-table";
++
++// The next cashier on this device must not open the screen with the previous cashier's table already selected.
++const forgetSelectedTable = () => {
++  try { localStorage.removeItem(selectedTableKey); } catch { /* storage unavailable: nothing was remembered */ }
++};
++
+ export type BackendStatus = "checking" | "online" | "offline";
+ 
+ export function ExperiencePage({
+@@ -161,7 +168,7 @@ export function ExperiencePage({
+     headerActions={cashSession ? <CashSessionLink status={cashSession} className="experience-header-link" /> : undefined}
+     moreActions={(close) => <>
+       <a className="production-shell__nav-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display" onClick={close}>Müşteri ekranı</a>
+-      <button data-telemetry-id="b.routes.workspace.1" type="button" onClick={() => { close(); void onLogout(); }}>Çıkış</button>
++      <button data-telemetry-id="b.routes.workspace.1" type="button" onClick={() => { close(); forgetSelectedTable(); void onLogout(); }}>Çıkış</button>
+     </>}
+   >
+     {cashSession && <CashSessionBand status={cashSession} />}
+@@ -201,7 +208,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
+   const [errorMessage, setErrorMessage] = useState<string>();
+   const [lastUpdated, setLastUpdated] = useState<string>();
+   const [refreshError, setRefreshError] = useState<string>();
+-  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
++  const [selectedTableId, setSelectedTableId] = useState<string | null>(() => tryGetItem(selectedTableKey));
+   // Absent when the till list could not be read: a table is then never shown as asking for the bill.
+   const [awaitingCheckTableIds, setAwaitingCheckTableIds] = useState<ReadonlySet<string> | undefined>();
+   const [orderBusy, setOrderBusy] = useState(false);
+@@ -328,7 +335,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
+       tables={tables}
+       canManage={canManage}
+       selectedTableId={selectedTableId}
+-      onSelectTable={(tableId) => { setSelectedTableId(tableId); setOrderError(undefined); }}
++      onSelectTable={(tableId) => { setSelectedTableId(tableId); trySetItem(selectedTableKey, tableId); setOrderError(undefined); }}
+       selectedZoneId={selectedZoneId}
+       onSelectZone={handleSelectZone}
+       onRefresh={() => load()}

@@ -398,10 +398,12 @@ describe("workspace header for the cashier", () => {
 
   it("signs out from the Diğer menu", async () => {
     const onLogout = vi.fn(async () => {});
+    localStorage.setItem("alkaros.selected-table", "tbl-prev");
     await open(onLogout);
     await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
     await act(async () => [...document.querySelectorAll<HTMLButtonElement>(".production-shell__more button")].find((button) => button.textContent === "Çıkış")!.click());
     expect(onLogout).toHaveBeenCalledTimes(1);
+    expect(localStorage.getItem("alkaros.selected-table")).toBeNull();
   });
 });
 
@@ -447,6 +449,26 @@ describe("workspace /tables route marks tables whose check waits at the till", (
   it("shows Hesap istedi for a sent check without a bill", async () => {
     await open(() => json([{ orderId: "o1", orderNumber: "1", tableNumber: "M-3", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tbl-ask" }]));
     expect(document.querySelector(".table-card--plan-ask")?.textContent).toContain("Hesap istedi");
+  });
+
+  it("keeps the table the cashier chose selected when the tables screen opens again, and falls back to the first when it is gone", async () => {
+    const two = [table, { ...table, tableId: "tbl-two", tableNumber: "M-4" }];
+    const extra = (path: string) => path.includes("/table-management/tables") ? json(two) : undefined;
+    const selectedLabel = () => document.querySelector(".table-card.is-selected .table-card__top strong")?.textContent;
+    localStorage.removeItem("alkaros.selected-table");
+    await open(() => json([]), ["tables.status", "orders.create"], false, extra);
+    expect(selectedLabel()).toBe("M-3");
+    await act(async () => { document.querySelectorAll<HTMLButtonElement>(".table-card__select")[1]!.click(); });
+    expect(selectedLabel()).toBe("M-4");
+
+    await act(async () => root!.unmount());
+    await open(() => json([]), ["tables.status", "orders.create"], false, extra);
+    expect(selectedLabel()).toBe("M-4");
+
+    await act(async () => root!.unmount());
+    await open(() => json([]), ["tables.status", "orders.create"], false, (path: string) => path.includes("/table-management/tables") ? json([table]) : undefined);
+    expect(selectedLabel()).toBe("M-3");
+    localStorage.removeItem("alkaros.selected-table");
   });
 
   it("draws the layout configuration buttons only for someone who holds floorplan.manage", async () => {

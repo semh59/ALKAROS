@@ -1,7 +1,7 @@
 # V1-RMD-1015 - Masalar ekranına dönünce son seçilen masa seçili kalır
 
 - Task ID: V1-RMD-1015
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

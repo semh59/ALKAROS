@@ -21,6 +21,13 @@ import { ManagementArea } from "../features/management";
 import { CashSessionBand, CashSessionLink, type CashSessionStatus } from "../features/cash-session-status";
 import { markTableCart } from "../tableCart";
 
+const selectedTableKey = "alkaros.selected-table";
+
+// The next cashier on this device must not open the screen with the previous cashier's table already selected.
+const forgetSelectedTable = () => {
+  try { localStorage.removeItem(selectedTableKey); } catch { /* storage unavailable: nothing was remembered */ }
+};
+
 export type BackendStatus = "checking" | "online" | "offline";
 
 export function ExperiencePage({
@@ -161,7 +168,7 @@ export function ExperiencePage({
     headerActions={cashSession ? <CashSessionLink status={cashSession} className="experience-header-link" /> : undefined}
     moreActions={(close) => <>
       <a className="production-shell__nav-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display" onClick={close}>Müşteri ekranı</a>
-      <button data-telemetry-id="b.routes.workspace.1" type="button" onClick={() => { close(); void onLogout(); }}>Çıkış</button>
+      <button data-telemetry-id="b.routes.workspace.1" type="button" onClick={() => { close(); forgetSelectedTable(); void onLogout(); }}>Çıkış</button>
     </>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
@@ -201,7 +208,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
   const [errorMessage, setErrorMessage] = useState<string>();
   const [lastUpdated, setLastUpdated] = useState<string>();
   const [refreshError, setRefreshError] = useState<string>();
-  const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
+  const [selectedTableId, setSelectedTableId] = useState<string | null>(() => tryGetItem(selectedTableKey));
   // Absent when the till list could not be read: a table is then never shown as asking for the bill.
   const [awaitingCheckTableIds, setAwaitingCheckTableIds] = useState<ReadonlySet<string> | undefined>();
   const [orderBusy, setOrderBusy] = useState(false);
@@ -328,7 +335,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
       tables={tables}
       canManage={canManage}
       selectedTableId={selectedTableId}
-      onSelectTable={(tableId) => { setSelectedTableId(tableId); setOrderError(undefined); }}
+      onSelectTable={(tableId) => { setSelectedTableId(tableId); trySetItem(selectedTableKey, tableId); setOrderError(undefined); }}
       selectedZoneId={selectedZoneId}
       onSelectZone={handleSelectZone}
       onRefresh={() => load()}

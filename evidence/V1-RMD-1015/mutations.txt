@@ -1,0 +1,3 @@
+killed selection not read at start
+killed selection not written on tap
+killed logout keeps remembered table (Diger menu)
