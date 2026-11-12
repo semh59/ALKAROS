@@ -33,6 +33,10 @@ Seçili masa için tek kutu: masa adı, durum, kalemler, toplam; boş masada Sip
   - src/Clients/PosTerminal/src/api.ts
   - src/Clients/PosTerminal/src/api.test.ts
   - src/Clients/PosTerminal/src/contracts.ts
+  - src/Clients/PosTerminal/src/routes/Cashier.ticket-footer.test.tsx
+  - src/Host/DualScreen/DualScreenContracts.cs
+  - src/Host/DualScreen/DualScreenStore.Display.cs
+  - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
