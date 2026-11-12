@@ -1,7 +1,7 @@
 # V1-RMD-1012 - Masa sepetinde Hızlı satışa geç düğmesi yok
 
 - Task ID: V1-RMD-1012
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

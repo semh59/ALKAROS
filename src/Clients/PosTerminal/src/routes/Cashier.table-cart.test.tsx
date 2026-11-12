@@ -116,18 +116,12 @@ describe("a table order and the quick sale cart", () => {
     expect(document.body.textContent).toContain("Masalar ekranından devam edin");
   });
 
-  it("lets the cashier leave the table order for a quick sale with one tap", async () => {
+  it("does not offer a quick-sale switch inside the table cart", async () => {
     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
-    const calls = await openTill();
-    const leave = [...document.querySelectorAll("button")].find((b) => b.textContent === "Hızlı satışa geç")!;
+    await openTill();
 
-    await act(async () => { leave.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
-    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
-    await tapProduct("Su");
-
-    expect(document.body.textContent).not.toContain("Çay");
-    expect(calls).toContain("POST /orders");
-    expect(calls.some((call) => call.includes("order-table"))).toBe(false);
+    expect(document.body.textContent).toContain("Çay");
+    expect([...document.querySelectorAll("button")].some((b) => b.textContent === "Hızlı satışa geç")).toBe(false);
   });
 
   it("shows the table order, named by its table, when it was opened from the tables screen", async () => {

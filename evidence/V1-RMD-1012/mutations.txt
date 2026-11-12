@@ -1,0 +1,1 @@
+killed re-added quick-sale switch button in the table cart

@@ -639,11 +639,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   };
 
   // The till can already hold an order this screen has not seen yet (a table order opened elsewhere): continue with it instead of failing.
-  const leaveTableCart = () => {
-    tableCartRef.current = null;
-    void reloadOrder().catch(() => undefined);
-  };
-
   const openOrder = async () => {
     try {
       return await api.startOrder(terminalId);
@@ -916,7 +911,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               <span className="eyebrow dark">AKTİF SİPARİŞ</span>
               <h2>{activeOrder ? `${activeOrder.tableNumber ? `Masa ${activeOrder.tableNumber} · ` : ""}${orderTitle(activeOrder.orderNumber)}` : "Yeni satış"}</h2>
             </div>
-            {activeOrder?.tableNumber && <button data-telemetry-id="b.routes.cashier.table-cart.leave" className="secondary" disabled={busy} onClick={leaveTableCart}>Hızlı satışa geç</button>}
             <div className="ticket-meta"><strong>{formatQuantity(itemCount)}</strong><span>ürün</span></div>
           </div>
 

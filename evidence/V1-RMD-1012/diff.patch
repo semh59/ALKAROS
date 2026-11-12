@@ -1,0 +1,51 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
+index 6d9ded14..b181acc7 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.table-cart.test.tsx
+@@ -116,18 +116,12 @@ describe("a table order and the quick sale cart", () => {
+     expect(document.body.textContent).toContain("Masalar ekranından devam edin");
+   });
+ 
+-  it("lets the cashier leave the table order for a quick sale with one tap", async () => {
++  it("does not offer a quick-sale switch inside the table cart", async () => {
+     sessionStorage.setItem("alkaros.table-cart-order", "order-table");
+-    const calls = await openTill();
+-    const leave = [...document.querySelectorAll("button")].find((b) => b.textContent === "Hızlı satışa geç")!;
+-
+-    await act(async () => { leave.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+-    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+-    await tapProduct("Su");
++    await openTill();
+ 
+-    expect(document.body.textContent).not.toContain("Çay");
+-    expect(calls).toContain("POST /orders");
+-    expect(calls.some((call) => call.includes("order-table"))).toBe(false);
++    expect(document.body.textContent).toContain("Çay");
++    expect([...document.querySelectorAll("button")].some((b) => b.textContent === "Hızlı satışa geç")).toBe(false);
+   });
+ 
+   it("shows the table order, named by its table, when it was opened from the tables screen", async () => {
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 564bc2d4..62c4ce29 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -639,11 +639,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   };
+ 
+   // The till can already hold an order this screen has not seen yet (a table order opened elsewhere): continue with it instead of failing.
+-  const leaveTableCart = () => {
+-    tableCartRef.current = null;
+-    void reloadOrder().catch(() => undefined);
+-  };
+-
+   const openOrder = async () => {
+     try {
+       return await api.startOrder(terminalId);
+@@ -916,7 +911,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+               <span className="eyebrow dark">AKTİF SİPARİŞ</span>
+               <h2>{activeOrder ? `${activeOrder.tableNumber ? `Masa ${activeOrder.tableNumber} · ` : ""}${orderTitle(activeOrder.orderNumber)}` : "Yeni satış"}</h2>
+             </div>
+-            {activeOrder?.tableNumber && <button data-telemetry-id="b.routes.cashier.table-cart.leave" className="secondary" disabled={busy} onClick={leaveTableCart}>Hızlı satışa geç</button>}
+             <div className="ticket-meta"><strong>{formatQuantity(itemCount)}</strong><span>ürün</span></div>
+           </div>
+ 
