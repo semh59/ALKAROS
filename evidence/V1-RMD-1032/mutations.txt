@@ -1,0 +1,2 @@
+killed panel stacks under the list at 768px
+killed bill lines drawn above the action buttons again

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (30 tests | 1 failed) 305ms
+     × draws the action buttons above the bill lines, so a long bill never pushes them off a short screen 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > draws the action buttons above the bill lines, so a long bill never pushes them off a short screen
+AssertionError: expected +0 to be truthy
+
+- Expected:
+true
+
++ Received:
+0
+
+ ❯ src/routes/TableOrderBridge.test.tsx:355:115
+    353|     const lines = document.querySelector(".table-order-bridge__lines")…
+    354|     for (const selector of [".table-order-bridge__actions", ".table-or…
+    355|       expect(document.querySelector(selector)!.compareDocumentPosition…
+       |                                                                                                                   ^
+    356|     }
+    357|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 29 passed (30)
+   Start at  10:52:09
+   Duration  1.93s (transform 244ms, setup 0ms, import 354ms, tests 305ms, environment 994ms)
+

@@ -1,0 +1,2 @@
+qa-frontend: 768-820 px arasinda panelin static kalmasi (ayni kabukta sticky zaten islemiyor: workspace overflow:auto kaydirma kabugu, olculdu); tablesStyle regex kirilgan, gercek yerlesim olcumu evidence'ta (kabul); hata/ders sirasi dogru.
+qa-ux-tasarim: "aşağıdaki Iptal / iade" metni dogru kaldi (not dugmelerin ustunde). Acik: Toplam dugmelerin altinda (Ode dugmesinde tutar urun karari); mini dugmeler dar panelde iki satira sariliyor; 431-767 px telefon duzeni (urun karari); kart sutunu olcumu eklenmedi.

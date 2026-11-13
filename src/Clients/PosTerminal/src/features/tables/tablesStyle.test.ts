@@ -9,6 +9,12 @@ describe("table screens style rules", () => {
     expect(sizes.filter((size) => size < 11)).toEqual([]);
   });
 
+  it("keeps the table list and the side panel in two columns down to 768px wide, and stacks them only below that", () => {
+    const rules = css("tables.css");
+    expect(rules).toMatch(/@media \(max-width: 820px\) \{\s*\.table-workspace__content \{ grid-template-columns: minmax\(0, 1fr\) minmax\(15rem, 17rem\); \}/);
+    expect(rules).toMatch(/@media \(max-width: 767px\) \{[^@]*\.table-workspace__content \{ grid-template-columns: 1fr; \}/);
+  });
+
   it("never sets text in the light accent colour, which has about 1.85:1 contrast on white", () => {
     const lines = [...css("tables.css").split("\n"), ...css("floorPlan.css").split("\n")]
       .filter((line) => /(^|[\s;{])color:\s*var\(--ds-color-accent(-hover)?\)/.test(line));

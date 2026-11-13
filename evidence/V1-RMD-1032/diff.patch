@@ -1,0 +1,83 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/tables.css b/src/Clients/PosTerminal/src/features/tables/tables.css
+index 2dc2d9d4..7c277222 100644
+--- a/src/Clients/PosTerminal/src/features/tables/tables.css
++++ b/src/Clients/PosTerminal/src/features/tables/tables.css
+@@ -183,7 +183,7 @@
+ }
+ 
+ @media (max-width: 820px) {
+-  .table-workspace__content { grid-template-columns: 1fr; }
++  .table-workspace__content { grid-template-columns: minmax(0, 1fr) minmax(15rem, 17rem); }
+   .table-workspace__side { position: static; }
+ }
+ 
+diff --git a/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts b/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
+index 7bc870a1..d065e5ba 100644
+--- a/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
++++ b/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
+@@ -9,6 +9,12 @@ describe("table screens style rules", () => {
+     expect(sizes.filter((size) => size < 11)).toEqual([]);
+   });
+ 
++  it("keeps the table list and the side panel in two columns down to 768px wide, and stacks them only below that", () => {
++    const rules = css("tables.css");
++    expect(rules).toMatch(/@media \(max-width: 820px\) \{\s*\.table-workspace__content \{ grid-template-columns: minmax\(0, 1fr\) minmax\(15rem, 17rem\); \}/);
++    expect(rules).toMatch(/@media \(max-width: 767px\) \{[^@]*\.table-workspace__content \{ grid-template-columns: 1fr; \}/);
++  });
++
+   it("never sets text in the light accent colour, which has about 1.85:1 contrast on white", () => {
+     const lines = [...css("tables.css").split("\n"), ...css("floorPlan.css").split("\n")]
+       .filter((line) => /(^|[\s;{])color:\s*var\(--ds-color-accent(-hover)?\)/.test(line));
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index f0f050b7..ef36d989 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -345,6 +345,17 @@ describe("TableOrderBridge", () => {
+     expect(document.body.textContent).not.toContain("Bu hesap başka bir kasada açık");
+   });
+ 
++  it("draws the action buttons above the bill lines, so a long bill never pushes them off a short screen", async () => {
++    stubFetch(() => reply(200, {}));
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++
++    const lines = document.querySelector(".table-order-bridge__lines")!;
++    for (const selector of [".table-order-bridge__actions", ".table-order-bridge__mini"]) {
++      expect(document.querySelector(selector)!.compareDocumentPosition(lines) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
++    }
++  });
++
+   it("draws Böl, Masa taşı and İptal / iade only for those who may use them", () => {
+     render({ canCollect: false, canManage: false, onTransfer: undefined });
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index c5ee0c53..c63b7c8f 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -96,13 +96,6 @@ export function TableOrderBridge({
+       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
+       : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
+         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
+-    {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+-      : bill && <>
+-        <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+-        </ul>
+-        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
+-      </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
+     <div className="table-order-bridge__actions">
+       {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
+         className="primary"
+@@ -129,5 +122,12 @@ export function TableOrderBridge({
+     </div>}
+     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
+     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
++    {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
++      : bill && <>
++        <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
++          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
++        </ul>
++        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
++      </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
+   </section>;
+ }

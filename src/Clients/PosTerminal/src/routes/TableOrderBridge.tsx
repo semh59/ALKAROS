@@ -96,13 +96,6 @@ export function TableOrderBridge({
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
       : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
-    {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
-      : bill && <>
-        <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
-        </ul>
-        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
-      </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
     <div className="table-order-bridge__actions">
       {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
         className="primary"
@@ -129,5 +122,12 @@ export function TableOrderBridge({
     </div>}
     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
+    {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+      : bill && <>
+        <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+        </ul>
+        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
+      </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
   </section>;
 }

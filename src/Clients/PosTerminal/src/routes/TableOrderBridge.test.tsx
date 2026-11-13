@@ -345,6 +345,17 @@ describe("TableOrderBridge", () => {
     expect(document.body.textContent).not.toContain("Bu hesap başka bir kasada açık");
   });
 
+  it("draws the action buttons above the bill lines, so a long bill never pushes them off a short screen", async () => {
+    stubFetch(() => reply(200, {}));
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+
+    const lines = document.querySelector(".table-order-bridge__lines")!;
+    for (const selector of [".table-order-bridge__actions", ".table-order-bridge__mini"]) {
+      expect(document.querySelector(selector)!.compareDocumentPosition(lines) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    }
+  });
+
   it("draws Böl, Masa taşı and İptal / iade only for those who may use them", () => {
     render({ canCollect: false, canManage: false, onTransfer: undefined });
 

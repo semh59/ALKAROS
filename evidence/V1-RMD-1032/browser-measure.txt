@@ -1,0 +1,5 @@
+Real Chromium (Playwright), built bundle of this task served by vite preview, API mocked with page.route (table M-02, Occupied, bill, 6 lines, cash session closed banner). getBoundingClientRect top-bottom in px:
+BEFORE (old code, same fixture): 1024x768: Ode 764-820, Bol/Masa tasi/Iptal 891-953 (screen 768); 768x1024: Ode 1244-1300, Bol 1370-1418 (screen 1024).
+AFTER: 1024x768: Ode 563-619, Bol/Tasi/Iptal 689-751 (screen 768), scrollWidth 1009 <= 1024
+       768x1024: Ode 612-668, Bol/Tasi/Iptal 758-820 (screen 1024), scrollWidth 753 <= 768
+       1366x768: Ode 545-601, Bol/Tasi/Iptal 671-719 (screen 768), scrollWidth 1351 <= 1366
