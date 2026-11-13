@@ -1,7 +1,7 @@
 # V1-RMD-1028 - Bölme ekranı başlığı fatura kodu yerine masayı gösterir
 
 - Task ID: V1-RMD-1028
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

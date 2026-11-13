@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx (16 tests | 1 failed) 593ms
+     × names the table of the bill and marks the lines the cashier added without the kitchen 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/BillSplitWorkspace.test.tsx > bill split workspace > names the table of the bill and marks the lines the cashier added without the kitchen
+AssertionError: expected 'H-1042' to be 'Masa T-4' // Object.is equality
+
+Expected: "Masa T-4"
+Received: "H-1042"
+
+ ❯ src/features/billing/BillSplitWorkspace.test.tsx:49:75
+     47|     const withNote: BillSplitDesign = { ...design, tableNumber: "T-4",…
+     48|     await render(<BillSplitWorkspace {...props({ design: withNote })} …
+     49|     expect(document.querySelector(".bill-split__header h2")?.textConte…
+       |                                                                           ^
+     50|     expect(document.querySelector(".bill-split__header p")?.textConten…
+     51|     await click([...document.querySelectorAll('[role="tab"]')].find((t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  10:31:36
+   Duration  2.14s (transform 206ms, setup 0ms, import 364ms, tests 593ms, environment 936ms)
+

@@ -46,14 +46,16 @@ describe("bill split workspace", () => {
   it("names the table of the bill and marks the lines the cashier added without the kitchen", async () => {
     const withNote: BillSplitDesign = { ...design, tableNumber: "T-4", items: [design.items[0], { ...design.items[1], addedWithoutKitchenReason: "waiter-forgot" }] };
     await render(<BillSplitWorkspace {...props({ design: withNote })} />);
-    expect(document.querySelector(".bill-split__table")?.textContent).toBe("Masa T-4");
+    expect(document.querySelector(".bill-split__header h2")?.textContent).toBe("Masa T-4");
+    expect(document.querySelector(".bill-split__header h2")?.textContent).not.toContain("H-1042");
+    expect(document.querySelector(".bill-split__header p")?.textContent).toContain("Hesap no H-1042");
     await click([...document.querySelectorAll('[role="tab"]')].find((tab) => tab.textContent === "Ürün / miktar")!);
     const notes = [...document.querySelectorAll(".bill-split__added")];
     expect(notes.map((note) => note.textContent)).toEqual(["Kasada eklendi (mutfağa gitmedi)"]);
     expect(notes[0].closest("article")?.textContent).toContain("Ayran");
 
     await render(<BillSplitWorkspace {...props()} />);
-    expect(document.querySelector(".bill-split__table")).toBeNull();
+    expect(document.querySelector(".bill-split__header h2")?.textContent).toBe("Hesap");
     expect(document.querySelector(".bill-split__added")).toBeNull();
   });
 
