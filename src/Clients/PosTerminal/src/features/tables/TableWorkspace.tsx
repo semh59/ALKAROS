@@ -508,7 +508,7 @@ export function TableWorkspace({
           <ValidationSummary title="İşlem bilgilerini kontrol edin" errors={formErrors} />
           {actionTable && <p className="table-form__context"><strong>{actionTable.tableNumber}</strong> · {tableStatusLabels[actionTable.status]}</p>}
           {action === "Transfer" && (transferTargets.length === 0
-            ? <p className="table-form__context">Şu anda boş masa yok; masa değiştirilemez.</p>
+            ? <p className="table-form__context">Şu anda boş masa yok; masa taşınamaz.</p>
             : <SelectField label="Hedef masa" value={targetTableId} onChange={(event) => setTargetTableId(event.target.value)}><option value="">Hedef seçin</option>{transferTargets.map((table) => <option key={table.tableId} value={table.tableId}>{table.tableNumber}</option>)}</SelectField>)}
           {action === "Reserve" && <TextField label="Kişi sayısı" type="number" min={1} max={50} value={partySize} onChange={(event) => setPartySize(Math.max(1, Number(event.target.value)))} />}
           {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{mergeTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}

@@ -1264,7 +1264,7 @@ export const tableActionLabels: Partial<Record<TableAction, string>> = {
   Reserve: "Rezervasyon al",
   CancelReservation: "Rezervasyonu iptal et",
   ClaimReservation: "Rezervasyonu sahiplen",
-  Transfer: "Masa değiştir",
+  Transfer: "Masa taşı",
   Merge: "Masaları birleştir",
   Unmerge: "Birleşimi ayır",
   SetCleaning: "Temizliğe al",

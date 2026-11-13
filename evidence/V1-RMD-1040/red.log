@@ -1,0 +1,229 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx (8 tests | 3 failed) 490ms
+     × renders authoritative geometry, seats and operational context 23ms
+     × closes Masa taşı on the map and says why when another till holds the bill 21ms
+     × does not offer Müsait yap for a table with an open order or bill 18ms
+ ❯ src/features/tables/TableWorkspace.test.tsx (52 tests | 9 failed) 1610ms
+     × never puts Müsait yap on the card of a table with an open order 24ms
+     × keeps Masa taşı in the menu when no till panel carries it 14ms
+     × renders a dense zone-filtered map, authoritative context and capability actions 26ms
+     × names the move Masa taşı in the dialog title and in the notice after it 13ms
+     × requires transfer target and reason, then preserves context after a stale conflict 14ms
+     × offers a prepared reason and asks for free text only for 'Diğer' 19ms
+     × offers only free tables as transfer targets and only free or busy ones for a merge 16ms
+     × says so when there is no free table to transfer to 12ms
+     × shows the backend's own message for an unsettled-payment rejection, not the generic retry text or the stale-conflict text 12ms
+ ❯ src/routes/Cashier.login-focus.test.tsx (1 test | 1 failed) 2200ms
+     × puts the cursor in the username field, the only thing a cashier does first 2199ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.login-focus.test.tsx > till sign-in screen > puts the cursor in the username field, the only thing a cashier does first
+AssertionError: expected 'Kasayı aç' to be 'Giriş yap' // Object.is equality
+
+Expected: "Giriş yap"
+Received: "Kasayı aç"
+
+ ❯ src/routes/Cashier.login-focus.test.tsx:40:75
+     38|     expect(username).not.toBeNull();
+     39|     expect(document.activeElement).toBe(username);
+     40|     expect(document.querySelector(".login-card-heading h2")?.textConte…
+       |                                                                           ^
+     41|   });
+     42| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  src/features/tables/FloorPlanWorkspace.test.tsx > floor plan workspace > renders authoritative geometry, seats and operational context
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx:101:52
+     99|
+    100|   async function click(element: Element) {
+    101|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+    102|   }
+    103|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/FloorPlanWorkspace.test.tsx:101:11
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx:130:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  src/features/tables/FloorPlanWorkspace.test.tsx > floor plan workspace > closes Masa taşı on the map and says why when another till holds the bill
+TypeError: Cannot read properties of undefined (reading 'disabled')
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx:140:17
+    138|
+    139|     const move = [...document.querySelectorAll("button")].find((button…
+    140|     expect(move.disabled).toBe(true);
+       |                 ^
+    141|     expect(move.title).toBe("Bu hesap başka bir kasada açık; masa taşı…
+    142|     await click(move);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  src/features/tables/FloorPlanWorkspace.test.tsx > floor plan workspace > does not offer Müsait yap for a table with an open order or bill
+AssertionError: expected [ 'Masa değiştir' ] to deeply equal [ 'Masa taşı' ]
+
+- Expected
++ Received
+
+  [
+-   "Masa taşı",
++   "Masa değiştir",
+  ]
+
+ ❯ src/features/tables/FloorPlanWorkspace.test.tsx:152:20
+    150|
+    151|     const labels = [...document.querySelectorAll(".floor-plan-inspecto…
+    152|     expect(labels).toEqual(["Masa taşı"]);
+       |                    ^
+    153|   });
+    154|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > never puts Müsait yap on the card of a table with an open order
+AssertionError: expected 'Masa değiştir' to be 'Masa taşı' // Object.is equality
+
+Expected: "Masa taşı"
+Received: "Masa değiştir"
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:225:78
+    223|     await render(<TableWorkspace {...cashierProps({ cardActions: true,…
+    224|
+    225|     expect(document.querySelector(".table-card__quick-action")?.textCo…
+       |                                                                              ^
+    226|   });
+    227|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > keeps Masa taşı in the menu when no till panel carries it
+AssertionError: expected [ 'Masa değiştir', …(1) ] to include 'Masa taşı'
+ ❯ src/features/tables/TableWorkspace.test.tsx:291:101
+    289|     await render(<TableWorkspace {...baseProps({ selectedTableId: "tab…
+    290|
+    291|     expect([...document.querySelectorAll(".table-details__more button"…
+       |                                                                                                     ^
+    292|   });
+    293|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > renders a dense zone-filtered map, authoritative context and capability actions
+AssertionError: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:339:26
+    337|     await click(document.querySelector(".table-card__select")!);
+    338|     const actionButton = [...document.querySelectorAll(".table-details…
+    339|     expect(actionButton).toBeTruthy();
+       |                          ^
+    340|     await click(actionButton);
+    341|     expect(document.querySelector('[role="dialog"]')?.textContent).toC…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > names the move Masa taşı in the dialog title and in the notice after it
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/TableWorkspace.test.tsx:91:52
+     89|
+     90|   async function click(element: Element) {
+     91|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+     92|   }
+     93|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/TableWorkspace.test.tsx:91:11
+ ❯ src/features/tables/TableWorkspace.test.tsx:347:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > requires transfer target and reason, then preserves context after a stale conflict
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/TableWorkspace.test.tsx:91:52
+     89|
+     90|   async function click(element: Element) {
+     91|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+     92|   }
+     93|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/TableWorkspace.test.tsx:91:11
+ ❯ src/features/tables/TableWorkspace.test.tsx:419:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > offers a prepared reason and asks for free text only for 'Diğer'
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/TableWorkspace.test.tsx:91:52
+     89|
+     90|   async function click(element: Element) {
+     91|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+     92|   }
+     93|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/TableWorkspace.test.tsx:91:11
+ ❯ src/features/tables/TableWorkspace.test.tsx:442:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > offers only free tables as transfer targets and only free or busy ones for a merge
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/TableWorkspace.test.tsx:91:52
+     89|
+     90|   async function click(element: Element) {
+     91|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+     92|   }
+     93|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/TableWorkspace.test.tsx:91:11
+ ❯ src/features/tables/TableWorkspace.test.tsx:468:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > says so when there is no free table to transfer to
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/TableWorkspace.test.tsx:91:52
+     89|
+     90|   async function click(element: Element) {
+     91|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+     92|   }
+     93|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/TableWorkspace.test.tsx:91:11
+ ❯ src/features/tables/TableWorkspace.test.tsx:480:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > shows the backend's own message for an unsettled-payment rejection, not the generic retry text or the stale-conflict text
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/tables/TableWorkspace.test.tsx:91:52
+     89|
+     90|   async function click(element: Element) {
+     91|     await act(async () => (element as HTMLElement).click());
+       |                                                    ^
+     92|   }
+     93|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ click src/features/tables/TableWorkspace.test.tsx:91:11
+ ❯ src/features/tables/TableWorkspace.test.tsx:500:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
+
+
+ Test Files  3 failed | 3 passed (6)
+      Tests  13 failed | 69 passed (82)
+   Start at  17:17:54
+   Duration  3.80s (transform 2.19s, setup 0ms, import 1.25s, tests 4.33s, environment 4.55s)
+

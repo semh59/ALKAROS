@@ -1,0 +1,9 @@
+M1 move label back to Masa degistir
+      Tests  12 failed | 70 passed (82)
+restored
+M2 login heading back to Kasayi ac
+      Tests  1 failed | 81 passed (82)
+restored
+M3 empty-target sentence back to the old term (red proof)
+      Tests  1 failed | 51 passed (52)
+restored

@@ -127,16 +127,16 @@ describe("floor plan workspace", () => {
     expect(document.body.textContent).toContain("Hesap bill-123");
     expect(document.body.textContent).toContain("Sunucunun izin verdiği işlemler");
     expect(document.body.textContent).not.toMatch(/\bv\d|tablo v|yerleşim v/);
-    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir")!);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Masa taşı")!);
     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
   });
 
-  it("closes Masa değiştir on the map and says why when another till holds the bill", async () => {
+  it("closes Masa taşı on the map and says why when another till holds the bill", async () => {
     const onOpenAction = vi.fn();
     const records = tables.map((table, index) => index === 0 ? { ...table, billOnOtherTerminal: true } : table);
     await render(<FloorPlanWorkspace plan={plan} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={onOpenAction} onSave={vi.fn()} />);
 
-    const move = [...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir") as HTMLButtonElement;
+    const move = [...document.querySelectorAll("button")].find((button) => button.textContent === "Masa taşı") as HTMLButtonElement;
     expect(move.disabled).toBe(true);
     expect(move.title).toBe("Bu hesap başka bir kasada açık; masa taşınamaz.");
     await click(move);
@@ -149,7 +149,7 @@ describe("floor plan workspace", () => {
     await render(<FloorPlanWorkspace plan={withRelease} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={vi.fn()} onSave={vi.fn()} />);
 
     const labels = [...document.querySelectorAll(".floor-plan-inspector__command-buttons button")].map((button) => button.textContent);
-    expect(labels).toEqual(["Masa değiştir"]);
+    expect(labels).toEqual(["Masa taşı"]);
   });
 
   it("offers the unmerge action only when the server sends it for the merge leader", async () => {

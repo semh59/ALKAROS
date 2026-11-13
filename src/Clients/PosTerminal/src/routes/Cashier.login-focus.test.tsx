@@ -37,5 +37,6 @@ describe("till sign-in screen", () => {
     const username = document.querySelector<HTMLInputElement>('input[autocomplete="username"]');
     expect(username).not.toBeNull();
     expect(document.activeElement).toBe(username);
+    expect(document.querySelector(".login-card-heading h2")?.textContent).toBe("Giriş yap");
   });
 });

@@ -1,0 +1,201 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
+index 6655d59f..7abe2771 100644
+--- a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
+@@ -127,16 +127,16 @@ describe("floor plan workspace", () => {
+     expect(document.body.textContent).toContain("Hesap bill-123");
+     expect(document.body.textContent).toContain("Sunucunun izin verdiği işlemler");
+     expect(document.body.textContent).not.toMatch(/\bv\d|tablo v|yerleşim v/);
+-    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir")!);
++    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Masa taşı")!);
+     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
+   });
+ 
+-  it("closes Masa değiştir on the map and says why when another till holds the bill", async () => {
++  it("closes Masa taşı on the map and says why when another till holds the bill", async () => {
+     const onOpenAction = vi.fn();
+     const records = tables.map((table, index) => index === 0 ? { ...table, billOnOtherTerminal: true } : table);
+     await render(<FloorPlanWorkspace plan={plan} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={onOpenAction} onSave={vi.fn()} />);
+ 
+-    const move = [...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir") as HTMLButtonElement;
++    const move = [...document.querySelectorAll("button")].find((button) => button.textContent === "Masa taşı") as HTMLButtonElement;
+     expect(move.disabled).toBe(true);
+     expect(move.title).toBe("Bu hesap başka bir kasada açık; masa taşınamaz.");
+     await click(move);
+@@ -149,7 +149,7 @@ describe("floor plan workspace", () => {
+     await render(<FloorPlanWorkspace plan={withRelease} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={vi.fn()} onSave={vi.fn()} />);
+ 
+     const labels = [...document.querySelectorAll(".floor-plan-inspector__command-buttons button")].map((button) => button.textContent);
+-    expect(labels).toEqual(["Masa değiştir"]);
++    expect(labels).toEqual(["Masa taşı"]);
+   });
+ 
+   it("offers the unmerge action only when the server sends it for the merge leader", async () => {
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+index ada85e82..378b9d71 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+@@ -222,7 +222,7 @@ describe("table workspace", () => {
+   it("never puts Müsait yap on the card of a table with an open order", async () => {
+     await render(<TableWorkspace {...cashierProps({ cardActions: true, selectedTableId: null, tables: [tables[1]] })} />);
+ 
+-    expect(document.querySelector(".table-card__quick-action")?.textContent).toBe("Masa değiştir");
++    expect(document.querySelector(".table-card__quick-action")?.textContent).toBe("Masa taşı");
+   });
+ 
+   it("offers no Müsait yap when only a bill is open", async () => {
+@@ -288,7 +288,7 @@ describe("table workspace", () => {
+   it("keeps Masa taşı in the menu when no till panel carries it", async () => {
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
+ 
+-    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Masa değiştir");
++    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Masa taşı");
+   });
+ 
+   it("marks a table asking for the bill on the floor plan drawing too", async () => {
+@@ -335,12 +335,25 @@ describe("table workspace", () => {
+     expect(document.querySelector(".table-card")?.textContent).toContain("S-10");
+ 
+     await click(document.querySelector(".table-card__select")!);
+-    const actionButton = [...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!;
++    const actionButton = [...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!;
+     expect(actionButton).toBeTruthy();
+     await click(actionButton);
+     expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Hedef masa");
+   });
+ 
++  it("names the move Masa taşı in the dialog title and in the notice after it", async () => {
++    const onAction = vi.fn().mockResolvedValue(undefined);
++    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
++    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
++    const dialog = document.querySelector('[role="dialog"]')!;
++    expect(dialog.textContent).toContain("Masa taşı");
++    const targetSelect = dialog.querySelector("select") as HTMLSelectElement;
++    await act(async () => { targetSelect.value = "table-09"; targetSelect.dispatchEvent(new Event("change", { bubbles: true })); });
++    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!);
++
++    expect(document.querySelector(".table-workspace__feedback")?.textContent).toContain("Masa taşı tamamlandı.");
++  });
++
+   it("exposes table selection and quick action as independent keyboard controls", async () => {
+     const onSelectTable = vi.fn();
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onSelectTable, cardActions: true })} />);
+@@ -403,7 +416,7 @@ describe("table workspace", () => {
+     // ApiError and matched on the message text, which never happens for real).
+     const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."));
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
++    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+     const dialog = document.querySelector('[role="dialog"]')!;
+     const confirm = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!;
+     await click(confirm);
+@@ -426,7 +439,7 @@ describe("table workspace", () => {
+   it("offers a prepared reason and asks for free text only for 'Diğer'", async () => {
+     const onAction = vi.fn().mockResolvedValue(undefined);
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
++    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+     const dialog = document.querySelector('[role="dialog"]')!;
+     const [targetSelect, reasonSelect] = [...dialog.querySelectorAll("select")] as HTMLSelectElement[];
+     await act(async () => { targetSelect.value = "table-09"; targetSelect.dispatchEvent(new Event("change", { bubbles: true })); });
+@@ -452,7 +465,7 @@ describe("table workspace", () => {
+       { ...tables[0], tableId: "t-inactive", tableNumber: "I-1", status: "Available", active: false },
+     ];
+     await render(<TableWorkspace {...baseProps({ tables: mixed, selectedTableId: "table-10" })} />);
+-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
++    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+     const transferOptions = [...document.querySelectorAll('[role="dialog"] select')[0].querySelectorAll("option")].map((option) => option.textContent);
+     expect(transferOptions).toEqual(["Hedef seçin", "F-1"]);
+ 
+@@ -464,8 +477,8 @@ describe("table workspace", () => {
+ 
+   it("says so when there is no free table to transfer to", async () => {
+     await render(<TableWorkspace {...baseProps({ tables: [tables[1]], selectedTableId: "table-10" })} />);
+-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+-    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Şu anda boş masa yok");
++    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
++    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Şu anda boş masa yok; masa taşınamaz.");
+   });
+ 
+   it("shows why an action is dimmed as text, not only as a tooltip", async () => {
+@@ -484,7 +497,7 @@ describe("table workspace", () => {
+     const message = "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez.";
+     const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "PAYMENT_UNSETTLED", message));
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
++    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+     const dialog = document.querySelector('[role="dialog"]')!;
+     const confirm = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!;
+     const select = dialog.querySelector("select") as HTMLSelectElement;
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+index 50a7be92..69e68cdc 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+@@ -508,7 +508,7 @@ export function TableWorkspace({
+           <ValidationSummary title="İşlem bilgilerini kontrol edin" errors={formErrors} />
+           {actionTable && <p className="table-form__context"><strong>{actionTable.tableNumber}</strong> · {tableStatusLabels[actionTable.status]}</p>}
+           {action === "Transfer" && (transferTargets.length === 0
+-            ? <p className="table-form__context">Şu anda boş masa yok; masa değiştirilemez.</p>
++            ? <p className="table-form__context">Şu anda boş masa yok; masa taşınamaz.</p>
+             : <SelectField label="Hedef masa" value={targetTableId} onChange={(event) => setTargetTableId(event.target.value)}><option value="">Hedef seçin</option>{transferTargets.map((table) => <option key={table.tableId} value={table.tableId}>{table.tableNumber}</option>)}</SelectField>)}
+           {action === "Reserve" && <TextField label="Kişi sayısı" type="number" min={1} max={50} value={partySize} onChange={(event) => setPartySize(Math.max(1, Number(event.target.value)))} />}
+           {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{mergeTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.login-focus.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.login-focus.test.tsx
+index eacf9de2..1e64044f 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.login-focus.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.login-focus.test.tsx
+@@ -37,5 +37,6 @@ describe("till sign-in screen", () => {
+     const username = document.querySelector<HTMLInputElement>('input[autocomplete="username"]');
+     expect(username).not.toBeNull();
+     expect(document.activeElement).toBe(username);
++    expect(document.querySelector(".login-card-heading h2")?.textContent).toBe("Giriş yap");
+   });
+ });
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 07dd0ec6..f090dbe2 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -586,7 +586,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+         <form className="login-card" onSubmit={login} aria-busy={busy || session === "checking"}>
+           <div className="login-card-heading">
+             <span>Personel girişi</span>
+-            <h2>Kasayı aç</h2>
++            <h2>Giriş yap</h2>
+             <p>Yetkili kullanıcı hesabınızla devam edin.</p>
+           </div>
+           <div className={`system-state login-state ${backendStatus}`} role="status">
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 98225e3e..c7e45c99 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1264,7 +1264,7 @@ export const tableActionLabels: Partial<Record<TableAction, string>> = {
+   Reserve: "Rezervasyon al",
+   CancelReservation: "Rezervasyonu iptal et",
+   ClaimReservation: "Rezervasyonu sahiplen",
+-  Transfer: "Masa değiştir",
++  Transfer: "Masa taşı",
+   Merge: "Masaları birleştir",
+   Unmerge: "Birleşimi ayır",
+   SetCleaning: "Temizliğe al",
+diff --git a/tests/E2E/Cashier/specs/11-cross-client-payment-aware-transfer.spec.js b/tests/E2E/Cashier/specs/11-cross-client-payment-aware-transfer.spec.js
+index d1837f10..2a06005f 100644
+--- a/tests/E2E/Cashier/specs/11-cross-client-payment-aware-transfer.spec.js
++++ b/tests/E2E/Cashier/specs/11-cross-client-payment-aware-transfer.spec.js
+@@ -56,7 +56,7 @@ test.describe('Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258)
+     // PosTerminal: müdür aynı masayı başka masaya taşımaya çalışır.
+     await page.goto('/tables');
+     await page.getByRole('button', { name: new RegExp(`^${source.tableNumber} masasını seç`) }).click();
+-    await page.getByRole('button', { name: 'Masa değiştir', exact: true }).click();
++    await page.getByRole('button', { name: 'Masa taşı', exact: true }).click();
+     await pickTarget(page, target.tableNumber);
+     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
+ 
+@@ -99,7 +99,7 @@ test.describe('Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258)
+ 
+     await page.goto('/tables');
+     await page.getByRole('button', { name: new RegExp(`^${source.tableNumber} masasını seç`) }).click();
+-    await page.getByRole('button', { name: 'Masa değiştir', exact: true }).click();
++    await page.getByRole('button', { name: 'Masa taşı', exact: true }).click();
+     await pickTarget(page, target.tableNumber);
+     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
+     await expect(page.getByText(/tamamlandı/)).toBeVisible({ timeout: 10_000 });

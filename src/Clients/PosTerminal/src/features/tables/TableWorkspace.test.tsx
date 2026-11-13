@@ -222,7 +222,7 @@ describe("table workspace", () => {
   it("never puts Müsait yap on the card of a table with an open order", async () => {
     await render(<TableWorkspace {...cashierProps({ cardActions: true, selectedTableId: null, tables: [tables[1]] })} />);
 
-    expect(document.querySelector(".table-card__quick-action")?.textContent).toBe("Masa değiştir");
+    expect(document.querySelector(".table-card__quick-action")?.textContent).toBe("Masa taşı");
   });
 
   it("offers no Müsait yap when only a bill is open", async () => {
@@ -288,7 +288,7 @@ describe("table workspace", () => {
   it("keeps Masa taşı in the menu when no till panel carries it", async () => {
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
 
-    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Masa değiştir");
+    expect([...document.querySelectorAll(".table-details__more button")].map((b) => b.textContent)).toContain("Masa taşı");
   });
 
   it("marks a table asking for the bill on the floor plan drawing too", async () => {
@@ -335,10 +335,23 @@ describe("table workspace", () => {
     expect(document.querySelector(".table-card")?.textContent).toContain("S-10");
 
     await click(document.querySelector(".table-card__select")!);
-    const actionButton = [...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!;
+    const actionButton = [...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!;
     expect(actionButton).toBeTruthy();
     await click(actionButton);
     expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Hedef masa");
+  });
+
+  it("names the move Masa taşı in the dialog title and in the notice after it", async () => {
+    const onAction = vi.fn().mockResolvedValue(undefined);
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain("Masa taşı");
+    const targetSelect = dialog.querySelector("select") as HTMLSelectElement;
+    await act(async () => { targetSelect.value = "table-09"; targetSelect.dispatchEvent(new Event("change", { bubbles: true })); });
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!);
+
+    expect(document.querySelector(".table-workspace__feedback")?.textContent).toContain("Masa taşı tamamlandı.");
   });
 
   it("exposes table selection and quick action as independent keyboard controls", async () => {
@@ -403,7 +416,7 @@ describe("table workspace", () => {
     // ApiError and matched on the message text, which never happens for real).
     const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."));
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
     const dialog = document.querySelector('[role="dialog"]')!;
     const confirm = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!;
     await click(confirm);
@@ -426,7 +439,7 @@ describe("table workspace", () => {
   it("offers a prepared reason and asks for free text only for 'Diğer'", async () => {
     const onAction = vi.fn().mockResolvedValue(undefined);
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
     const dialog = document.querySelector('[role="dialog"]')!;
     const [targetSelect, reasonSelect] = [...dialog.querySelectorAll("select")] as HTMLSelectElement[];
     await act(async () => { targetSelect.value = "table-09"; targetSelect.dispatchEvent(new Event("change", { bubbles: true })); });
@@ -452,7 +465,7 @@ describe("table workspace", () => {
       { ...tables[0], tableId: "t-inactive", tableNumber: "I-1", status: "Available", active: false },
     ];
     await render(<TableWorkspace {...baseProps({ tables: mixed, selectedTableId: "table-10" })} />);
-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
     const transferOptions = [...document.querySelectorAll('[role="dialog"] select')[0].querySelectorAll("option")].map((option) => option.textContent);
     expect(transferOptions).toEqual(["Hedef seçin", "F-1"]);
 
@@ -464,8 +477,8 @@ describe("table workspace", () => {
 
   it("says so when there is no free table to transfer to", async () => {
     await render(<TableWorkspace {...baseProps({ tables: [tables[1]], selectedTableId: "table-10" })} />);
-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
-    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Şu anda boş masa yok");
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Şu anda boş masa yok; masa taşınamaz.");
   });
 
   it("shows why an action is dimmed as text, not only as a tooltip", async () => {
@@ -484,7 +497,7 @@ describe("table workspace", () => {
     const message = "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez.";
     const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "PAYMENT_UNSETTLED", message));
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
-    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
     const dialog = document.querySelector('[role="dialog"]')!;
     const confirm = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!;
     const select = dialog.querySelector("select") as HTMLSelectElement;

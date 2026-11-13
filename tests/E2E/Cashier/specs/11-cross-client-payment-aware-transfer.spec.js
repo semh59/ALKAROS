@@ -56,7 +56,7 @@ test.describe('Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258)
     // PosTerminal: müdür aynı masayı başka masaya taşımaya çalışır.
     await page.goto('/tables');
     await page.getByRole('button', { name: new RegExp(`^${source.tableNumber} masasını seç`) }).click();
-    await page.getByRole('button', { name: 'Masa değiştir', exact: true }).click();
+    await page.getByRole('button', { name: 'Masa taşı', exact: true }).click();
     await pickTarget(page, target.tableNumber);
     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
 
@@ -99,7 +99,7 @@ test.describe('Masa devri + ödeme kilidi, iki istemci (V13-TBL-001, V1-RMD-258)
 
     await page.goto('/tables');
     await page.getByRole('button', { name: new RegExp(`^${source.tableNumber} masasını seç`) }).click();
-    await page.getByRole('button', { name: 'Masa değiştir', exact: true }).click();
+    await page.getByRole('button', { name: 'Masa taşı', exact: true }).click();
     await pickTarget(page, target.tableNumber);
     await page.getByRole('button', { name: 'Onayla', exact: true }).click();
     await expect(page.getByText(/tamamlandı/)).toBeVisible({ timeout: 10_000 });

@@ -586,7 +586,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         <form className="login-card" onSubmit={login} aria-busy={busy || session === "checking"}>
           <div className="login-card-heading">
             <span>Personel girişi</span>
-            <h2>Kasayı aç</h2>
+            <h2>Giriş yap</h2>
             <p>Yetkili kullanıcı hesabınızla devam edin.</p>
           </div>
           <div className={`system-state login-state ${backendStatus}`} role="status">
