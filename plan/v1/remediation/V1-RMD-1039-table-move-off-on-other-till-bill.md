@@ -1,7 +1,7 @@
 # V1-RMD-1039 - Başka kasada açık hesabı olan masada Masa taşı pasif olur
 
 - Task ID: V1-RMD-1039
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

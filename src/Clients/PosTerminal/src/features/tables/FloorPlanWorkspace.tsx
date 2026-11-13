@@ -433,8 +433,8 @@ export function FloorPlanWorkspace({
                       .map((command) => <Button data-telemetry-id="b.tables.floorplanworkspace.6"
                         key={command}
                         variant={command === "SetOutOfService" ? "secondary" : "primary"}
-                        disabled={!onOpenAction || !selectedRecord || !isClientExecutableAction(command, selectedRecord)}
-                        title={!selectedRecord || isClientExecutableAction(command, selectedRecord) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."}
+                        disabled={!onOpenAction || !selectedRecord || !isClientExecutableAction(command, selectedRecord) || (command === "Transfer" && selectedRecord.billOnOtherTerminal === true)}
+                        title={!selectedRecord ? undefined : command === "Transfer" && selectedRecord.billOnOtherTerminal === true ? "Bu hesap başka bir kasada açık; masa taşınamaz." : isClientExecutableAction(command, selectedRecord) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."}
                         onClick={() => {
                           if (selectedRecord) onOpenAction?.(command, selectedRecord);
                         }}

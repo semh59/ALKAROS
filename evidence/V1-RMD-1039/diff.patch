@@ -1,0 +1,79 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
+index 076b98ff..6655d59f 100644
+--- a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
+@@ -131,6 +131,18 @@ describe("floor plan workspace", () => {
+     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
+   });
+ 
++  it("closes Masa değiştir on the map and says why when another till holds the bill", async () => {
++    const onOpenAction = vi.fn();
++    const records = tables.map((table, index) => index === 0 ? { ...table, billOnOtherTerminal: true } : table);
++    await render(<FloorPlanWorkspace plan={plan} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={onOpenAction} onSave={vi.fn()} />);
++
++    const move = [...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir") as HTMLButtonElement;
++    expect(move.disabled).toBe(true);
++    expect(move.title).toBe("Bu hesap başka bir kasada açık; masa taşınamaz.");
++    await click(move);
++    expect(onOpenAction).not.toHaveBeenCalled();
++  });
++
+   it("does not offer Müsait yap for a table with an open order or bill", async () => {
+     const withRelease = { ...plan, tables: [{ ...plan.tables[0], allowedCommands: ["SetAvailable", "Transfer"] } as FloorPlan["tables"][number], plan.tables[1]] };
+     const records = tables.map((table, index) => index === 0 ? { ...table, allowedCommands: ["SetAvailable", "Transfer"] } : table);
+diff --git a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
+index e647374b..b538a52e 100644
+--- a/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
+@@ -433,8 +433,8 @@ export function FloorPlanWorkspace({
+                       .map((command) => <Button data-telemetry-id="b.tables.floorplanworkspace.6"
+                         key={command}
+                         variant={command === "SetOutOfService" ? "secondary" : "primary"}
+-                        disabled={!onOpenAction || !selectedRecord || !isClientExecutableAction(command, selectedRecord)}
+-                        title={!selectedRecord || isClientExecutableAction(command, selectedRecord) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."}
++                        disabled={!onOpenAction || !selectedRecord || !isClientExecutableAction(command, selectedRecord) || (command === "Transfer" && selectedRecord.billOnOtherTerminal === true)}
++                        title={!selectedRecord ? undefined : command === "Transfer" && selectedRecord.billOnOtherTerminal === true ? "Bu hesap başka bir kasada açık; masa taşınamaz." : isClientExecutableAction(command, selectedRecord) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."}
+                         onClick={() => {
+                           if (selectedRecord) onOpenAction?.(command, selectedRecord);
+                         }}
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 49063a90..52f78994 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -348,18 +348,18 @@ describe("TableOrderBridge", () => {
+     expect(button("Masa taşı")?.disabled).toBe(true);
+   });
+ 
+-  it("closes Öde, Böl and İptal / iade and says why when another till holds the bill", () => {
++  it("closes Öde, Böl, Masa taşı and İptal / iade and says why when another till holds the bill", () => {
+     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: true } });
+ 
+-    for (const label of ["Öde", "Böl", "İptal / iade"]) expect(button(label)?.disabled).toBe(true);
+-    expect(button("Masa taşı")?.disabled).toBe(false);
++    for (const label of ["Öde", "Böl", "Masa taşı", "İptal / iade"]) expect(button(label)?.disabled).toBe(true);
++    expect(button("Masa taşı")?.title).toContain("Bu hesap başka bir kasada açık");
+     expect(document.body.textContent).toContain("Bu hesap başka bir kasada açık");
+   });
+ 
+-  it("keeps Öde, Böl and İptal / iade open for a bill this till may handle", () => {
++  it("keeps Öde, Böl, Masa taşı and İptal / iade open for a bill this till may handle", () => {
+     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: false } });
+ 
+-    for (const label of ["Öde", "Böl", "İptal / iade"]) expect(button(label)?.disabled).toBe(false);
++    for (const label of ["Öde", "Böl", "Masa taşı", "İptal / iade"]) expect(button(label)?.disabled).toBe(false);
+     expect(document.body.textContent).not.toContain("Bu hesap başka bir kasada açık");
+   });
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index 1c7b3e51..44e5855a 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -120,7 +120,7 @@ export function TableOrderBridge({
+     </div>
+     {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
+       {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(billingHref)}>Böl</button>}
+-      {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
++      {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || otherTill || !onTransfer} title={otherTill ? billOnOtherTillText : undefined} onClick={onTransfer}>Masa taşı</button>}
+       {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
+     </div>}
+     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}

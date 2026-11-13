@@ -131,6 +131,18 @@ describe("floor plan workspace", () => {
     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
   });
 
+  it("closes Masa değiştir on the map and says why when another till holds the bill", async () => {
+    const onOpenAction = vi.fn();
+    const records = tables.map((table, index) => index === 0 ? { ...table, billOnOtherTerminal: true } : table);
+    await render(<FloorPlanWorkspace plan={plan} tables={records} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={onOpenAction} onSave={vi.fn()} />);
+
+    const move = [...document.querySelectorAll("button")].find((button) => button.textContent === "Masa değiştir") as HTMLButtonElement;
+    expect(move.disabled).toBe(true);
+    expect(move.title).toBe("Bu hesap başka bir kasada açık; masa taşınamaz.");
+    await click(move);
+    expect(onOpenAction).not.toHaveBeenCalled();
+  });
+
   it("does not offer Müsait yap for a table with an open order or bill", async () => {
     const withRelease = { ...plan, tables: [{ ...plan.tables[0], allowedCommands: ["SetAvailable", "Transfer"] } as FloorPlan["tables"][number], plan.tables[1]] };
     const records = tables.map((table, index) => index === 0 ? { ...table, allowedCommands: ["SetAvailable", "Transfer"] } : table);

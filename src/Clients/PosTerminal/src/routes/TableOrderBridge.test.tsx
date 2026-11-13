@@ -348,18 +348,18 @@ describe("TableOrderBridge", () => {
     expect(button("Masa taşı")?.disabled).toBe(true);
   });
 
-  it("closes Öde, Böl and İptal / iade and says why when another till holds the bill", () => {
+  it("closes Öde, Böl, Masa taşı and İptal / iade and says why when another till holds the bill", () => {
     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: true } });
 
-    for (const label of ["Öde", "Böl", "İptal / iade"]) expect(button(label)?.disabled).toBe(true);
-    expect(button("Masa taşı")?.disabled).toBe(false);
+    for (const label of ["Öde", "Böl", "Masa taşı", "İptal / iade"]) expect(button(label)?.disabled).toBe(true);
+    expect(button("Masa taşı")?.title).toContain("Bu hesap başka bir kasada açık");
     expect(document.body.textContent).toContain("Bu hesap başka bir kasada açık");
   });
 
-  it("keeps Öde, Böl and İptal / iade open for a bill this till may handle", () => {
+  it("keeps Öde, Böl, Masa taşı and İptal / iade open for a bill this till may handle", () => {
     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: false } });
 
-    for (const label of ["Öde", "Böl", "İptal / iade"]) expect(button(label)?.disabled).toBe(false);
+    for (const label of ["Öde", "Böl", "Masa taşı", "İptal / iade"]) expect(button(label)?.disabled).toBe(false);
     expect(document.body.textContent).not.toContain("Bu hesap başka bir kasada açık");
   });
 
