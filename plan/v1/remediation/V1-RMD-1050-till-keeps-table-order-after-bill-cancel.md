@@ -1,7 +1,7 @@
 # V1-RMD-1050 - Hesabı iptal edilmiş masa siparişi kasa satış ekranında "Ürün ekle" ile kendi masasında açılır, Hızlı satışa düşmez
 
 - Task ID: V1-RMD-1050
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
