@@ -1,0 +1,8 @@
+killed M1 client ignores other cashier session
+killed M2 own session also blocked
+killed M3 foreign session reported as plain closed
+killed M4 chip reason text dropped
+killed M5 manager hint dropped
+killed M6 server owner check removed
+killed M7 server check inverted
+killed M8 dictionary line renamed (409 sentence test)

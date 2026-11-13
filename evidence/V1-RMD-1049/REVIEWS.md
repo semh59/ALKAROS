@@ -1,0 +1,2 @@
+qa-test-kalitesi: orta bulgu (409 istemci eslemesi testsiz) kapatildi: yeni istemci testi + M8 mutanti; userId bos iken istemci kontrolu atlanir, sunucu 409 son savunma (gercek yanitlarda iki alan hep dolu); yonetici/idempotency senaryolari urun karari.
+qa-uctan-uca-akis: orta, urun karari: account-receipts ayni kurala baglanmadi; yonetici gecisi; mesaj yonlendirmesi duzeltildi ("sahibi kapatinca kendi oturumunuzu acin").

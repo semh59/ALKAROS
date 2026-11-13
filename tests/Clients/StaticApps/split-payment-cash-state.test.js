@@ -21,9 +21,10 @@ const chip = (method) => document.querySelector(`.sp-method-chip[data-method="${
 const checkedChips = () => [...document.querySelectorAll('.sp-method-chip[aria-checked="true"]')];
 
 /** `cashRoute` is the answer of GET .../cash-sessions/active; `reject` makes that call fail at the network level. */
-async function open({ cashRoute = { status: 404 }, reject = false } = {}) {
+async function open({ cashRoute = { status: 404 }, reject = false, extra = [] } = {}) {
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   const routes = [
+    ...extra,
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
     { test: (url) => url.includes("/cash-sessions/active"), ...cashRoute },
@@ -55,6 +56,36 @@ describe("split-payment.js cash session state", () => {
 
     expect(chip("Cash").disabled).toBe(false);
     expect(checkedChips().map((c) => c.dataset.method)).toEqual(["Cash"]);
+    expect(document.getElementById("cash-state-notice")).toBeNull();
+  });
+
+  it("another cashier's open session: cash is off and the cashier is told to open their own drawer first", async () => {
+    await open({ cashRoute: { body: { cashSessionId: SESSION_ID, cashierUserId: "someone-else" } } });
+
+    expect(chip("Cash").disabled).toBe(true);
+    expect(checkedChips()).toEqual([]);
+    const notice = document.getElementById("cash-state-notice");
+    expect(notice.textContent).toContain("Önce kasayı açın");
+    expect(notice.textContent).toContain("size ait değil");
+    expect(notice.textContent).toContain("önce kapatmalı");
+    expect(chip("Cash").textContent).toContain("kasa size ait değil");
+  });
+
+  it("a server refusal for someone else's session shows the open-your-drawer sentence", async () => {
+    await open({
+      cashRoute: { body: { cashSessionId: SESSION_ID, cashierUserId: "u1" } },
+      extra: [{ test: (url, init) => url.endsWith("/cash-tender") && init?.method === "POST", status: 409, body: { error: { code: "CASH_SESSION_NOT_OWNED", message: "x" } } }],
+    });
+
+    document.getElementById("submit-tender").click();
+
+    await vi.waitFor(() => expect(text()).toContain("Önce kasayı açın: terminalde tek kasa oturumu olur"));
+  });
+
+  it("the cashier's own open session keeps cash selectable", async () => {
+    await open({ cashRoute: { body: { cashSessionId: SESSION_ID, cashierUserId: "u1" } } });
+
+    expect(chip("Cash").disabled).toBe(false);
     expect(document.getElementById("cash-state-notice")).toBeNull();
   });
 

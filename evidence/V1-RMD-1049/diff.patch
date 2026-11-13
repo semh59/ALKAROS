@@ -1,0 +1,172 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 7fec00fda..e56d75580 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -169,6 +169,7 @@
+     BILL_HAS_SERVED_ITEMS: 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.',
+     BILL_NOT_FOUND: 'Hesap bulunamadı.',
+     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
++    CASH_SESSION_NOT_OWNED: 'Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın.',
+     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+     CONCURRENT_MODIFICATION: 'Hesap bölme tasarımı başka bir işlem tarafından değiştirildi.',
+     CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
+@@ -471,8 +472,9 @@
+   // Only a 404 means "no open drawer"; anything else that is not a success is a failed read, never "closed".
+   // Cash is never swapped for another method on the cashier's behalf: it is just left unselected.
+   function applyCashSession(result) {
+-    state.cashSessionId = result.ok ? result.body.cashSessionId : null;
+-    state.cashState = result.ok ? 'open' : result.status === 404 ? 'closed' : result.status === 403 ? 'forbidden' : 'unknown';
++    var othersSession = result.ok && state.userId && result.body.cashierUserId && result.body.cashierUserId !== state.userId;
++    state.cashSessionId = result.ok && !othersSession ? result.body.cashSessionId : null;
++    state.cashState = othersSession ? 'notOwned' : result.ok ? 'open' : result.status === 404 ? 'closed' : result.status === 403 ? 'forbidden' : 'unknown';
+     state.cashStateMessage = state.cashState === 'unknown'
+       ? (result.status === 0 ? 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.' : describeHttpFailure(result.status, result.body))
+       : '';
+@@ -497,6 +499,12 @@
+         '<div class="sp-alert-title">Nakit tahsilat için kasa izniniz yok</div>' +
+         '<div class="sp-alert-body">Kart, EFT veya cari hesapla devam edebilirsiniz; nakit için kasa izni olan bir kullanıcı gerekir.</div></div></div>';
+     }
++    if (state.cashState === 'notOwned') {
++      return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
++        '<div class="sp-alert-title">Önce kasayı açın</div>' +
++        '<div class="sp-alert-body">Bir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil (açan kişi, ör. yönetici, önce kapatmalı); sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.</div>' +
++        '<div class="sp-notice-actions"><a class="sp-btn sp-btn-secondary" href="/cashier/payments/cash-session/index.html">Kasa oturumu</a></div></div></div>';
++    }
+     var closed = state.cashState === 'closed';
+     return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
+       '<div class="sp-alert-title">' + (closed ? 'Kasa oturumu kapalı' : 'Kasa durumu okunamadı') + '</div>' +
+@@ -1177,7 +1185,7 @@
+       methods.map(function (method) {
+         var disabled = method === 'Cash' && state.cashState !== 'open';
+         var active = state.selectedMethod === method;
+-        var reason = !disabled ? '' : state.cashState === 'closed' ? ' (kasa kapalı)' : state.cashState === 'forbidden' ? ' (kasa izni yok)' : ' (kasa durumu bilinmiyor)';
++        var reason = !disabled ? '' : state.cashState === 'closed' ? ' (kasa kapalı)' : state.cashState === 'notOwned' ? ' (kasa size ait değil)' : state.cashState === 'forbidden' ? ' (kasa izni yok)' : ' (kasa durumu bilinmiyor)';
+         return (
+           '<button type="button" class="sp-method-chip' + (active ? ' is-active' : '') + '" ' +
+           'role="radio" aria-checked="' + active + '" ' +
+diff --git a/src/Host/Composition/Errors/ApiErrorCatalog.cs b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+index 5d3b7661a..d5aec0c0b 100644
+--- a/src/Host/Composition/Errors/ApiErrorCatalog.cs
++++ b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+@@ -740,6 +740,7 @@ public static class ApiErrorCatalog
+             CashSessionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+             CashTenderBillNotFoundException => (404, "BILL_NOT_FOUND", "Hesap bulunamadı."),
+             ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
++            CashTenderSessionNotOwnedException => (409, "CASH_SESSION_NOT_OWNED", "Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın."),
+             InsufficientCashTenderException => (400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor."),
+             // V1-RMD-409 (V1-RMD-393 F-04, F-07) and V1-RMD-415 (F-12): the same codes the card/EFT tender route
+             // already returns.
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index 23cd05d5a..2ff0b1bc2 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -259,9 +259,12 @@ public static partial class DualScreenApplication
+             CancellationToken cancellationToken) =>
+         {
+             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+             // V1-RMD-401: a cash tender is a payment too — cash.drawer (the money enters the drawer) and payments.take.
+             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
++            // The cash goes into the drawer of the cashier who takes it, the same terminal-and-requester key a cash refund pays out of.
++            if (session.Snapshot.CashierUserId != principal.UserId)
++                throw new CashTenderSessionNotOwnedException();
+             await billAccess.RequireAsync(context, terminalId, request.BillId, cancellationToken, claim: false);
+             CashTenderResult result;
+             try
+@@ -340,6 +343,10 @@ public static partial class DualScreenApplication
+             context, terminalId, store, authorization, ApplicationPermissions.CashDrawer, cancellationToken);
+ }
+ 
++/// <summary>A cash tender named a drawer session that belongs to another cashier.</summary>
++public sealed class CashTenderSessionNotOwnedException()
++    : Exception("A cash tender can only be posted to the caller's own open cash session.");
++
+ /// <summary>V13-CSH-004: request/response DTOs for the CashSession/cash-tender HTTP surface.</summary>
+ public sealed record SuggestedOpeningBalanceResponseV1(decimal? SuggestedOpeningBalance);
+ 
+diff --git a/tests/Clients/StaticApps/split-payment-cash-state.test.js b/tests/Clients/StaticApps/split-payment-cash-state.test.js
+index dbbb41b44..7f455392b 100644
+--- a/tests/Clients/StaticApps/split-payment-cash-state.test.js
++++ b/tests/Clients/StaticApps/split-payment-cash-state.test.js
+@@ -21,9 +21,10 @@ const chip = (method) => document.querySelector(`.sp-method-chip[data-method="${
+ const checkedChips = () => [...document.querySelectorAll('.sp-method-chip[aria-checked="true"]')];
+ 
+ /** `cashRoute` is the answer of GET .../cash-sessions/active; `reject` makes that call fail at the network level. */
+-async function open({ cashRoute = { status: 404 }, reject = false } = {}) {
++async function open({ cashRoute = { status: 404 }, reject = false, extra = [] } = {}) {
+   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+   const routes = [
++    ...extra,
+     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
+     { test: (url) => url.includes("/cash-sessions/active"), ...cashRoute },
+@@ -58,6 +59,36 @@ describe("split-payment.js cash session state", () => {
+     expect(document.getElementById("cash-state-notice")).toBeNull();
+   });
+ 
++  it("another cashier's open session: cash is off and the cashier is told to open their own drawer first", async () => {
++    await open({ cashRoute: { body: { cashSessionId: SESSION_ID, cashierUserId: "someone-else" } } });
++
++    expect(chip("Cash").disabled).toBe(true);
++    expect(checkedChips()).toEqual([]);
++    const notice = document.getElementById("cash-state-notice");
++    expect(notice.textContent).toContain("Önce kasayı açın");
++    expect(notice.textContent).toContain("size ait değil");
++    expect(notice.textContent).toContain("önce kapatmalı");
++    expect(chip("Cash").textContent).toContain("kasa size ait değil");
++  });
++
++  it("a server refusal for someone else's session shows the open-your-drawer sentence", async () => {
++    await open({
++      cashRoute: { body: { cashSessionId: SESSION_ID, cashierUserId: "u1" } },
++      extra: [{ test: (url, init) => url.endsWith("/cash-tender") && init?.method === "POST", status: 409, body: { error: { code: "CASH_SESSION_NOT_OWNED", message: "x" } } }],
++    });
++
++    document.getElementById("submit-tender").click();
++
++    await vi.waitFor(() => expect(text()).toContain("Önce kasayı açın: terminalde tek kasa oturumu olur"));
++  });
++
++  it("the cashier's own open session keeps cash selectable", async () => {
++    await open({ cashRoute: { body: { cashSessionId: SESSION_ID, cashierUserId: "u1" } } });
++
++    expect(chip("Cash").disabled).toBe(false);
++    expect(document.getElementById("cash-state-notice")).toBeNull();
++  });
++
+   it("closed session: cash is off, no method is chosen for the cashier, the way to open the drawer is offered", async () => {
+     await open({ cashRoute: { status: 404 } });
+ 
+diff --git a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+index 989028324..714cf8f61 100644
+--- a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+@@ -268,6 +268,27 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
+         Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+     }
+ 
++    [Fact]
++    public async Task CashTenderIntoAnotherCashiersOpenSessionIsRefusedAndPostsNothing()
++    {
++        var terminalId = Guid.NewGuid();
++        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, "own-session-owner");
++        var otherCookie = await _database.SeedCashierSessionAsync(terminalId, "own-session-other");
++        var billId = await _database.SeedBillAsync(payable: 80m);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
++        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
++
++        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", otherCookie,
++            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "own-session-refused" });
++
++        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
++        Assert.Equal("Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın.", await ErrorMessage(tender));
++        await using var payments = _database.DataSource.CreateCommand("SELECT count(*) FROM payments.payments;");
++        Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
++    }
++
+     [Fact]
+     public async Task CashTenderBelowTheAmountDueIsRejected()
+     {

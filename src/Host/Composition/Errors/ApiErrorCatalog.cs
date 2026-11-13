@@ -740,6 +740,7 @@ public static class ApiErrorCatalog
             CashSessionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             CashTenderBillNotFoundException => (404, "BILL_NOT_FOUND", "Hesap bulunamadı."),
             ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
+            CashTenderSessionNotOwnedException => (409, "CASH_SESSION_NOT_OWNED", "Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın."),
             InsufficientCashTenderException => (400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor."),
             // V1-RMD-409 (V1-RMD-393 F-04, F-07) and V1-RMD-415 (F-12): the same codes the card/EFT tender route
             // already returns.

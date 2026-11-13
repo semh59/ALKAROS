@@ -269,6 +269,27 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CashTenderIntoAnotherCashiersOpenSessionIsRefusedAndPostsNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, "own-session-owner");
+        var otherCookie = await _database.SeedCashierSessionAsync(terminalId, "own-session-other");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", otherCookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "own-session-refused" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        Assert.Equal("Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın.", await ErrorMessage(tender));
+        await using var payments = _database.DataSource.CreateCommand("SELECT count(*) FROM payments.payments;");
+        Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
+    }
+
+    [Fact]
     public async Task CashTenderBelowTheAmountDueIsRejected()
     {
         var terminalId = Guid.NewGuid();

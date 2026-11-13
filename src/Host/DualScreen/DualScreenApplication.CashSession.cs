@@ -259,9 +259,12 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
             // V1-RMD-401: a cash tender is a payment too — cash.drawer (the money enters the drawer) and payments.take.
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
+            // The cash goes into the drawer of the cashier who takes it, the same terminal-and-requester key a cash refund pays out of.
+            if (session.Snapshot.CashierUserId != principal.UserId)
+                throw new CashTenderSessionNotOwnedException();
             await billAccess.RequireAsync(context, terminalId, request.BillId, cancellationToken, claim: false);
             CashTenderResult result;
             try
@@ -339,6 +342,10 @@ public static partial class DualScreenApplication
         => RequireCashierPermissionAsync(
             context, terminalId, store, authorization, ApplicationPermissions.CashDrawer, cancellationToken);
 }
+
+/// <summary>A cash tender named a drawer session that belongs to another cashier.</summary>
+public sealed class CashTenderSessionNotOwnedException()
+    : Exception("A cash tender can only be posted to the caller's own open cash session.");
 
 /// <summary>V13-CSH-004: request/response DTOs for the CashSession/cash-tender HTTP surface.</summary>
 public sealed record SuggestedOpeningBalanceResponseV1(decimal? SuggestedOpeningBalance);

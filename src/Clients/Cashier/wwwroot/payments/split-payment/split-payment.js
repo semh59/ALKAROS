@@ -169,6 +169,7 @@
     BILL_HAS_SERVED_ITEMS: 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.',
     BILL_NOT_FOUND: 'Hesap bulunamadı.',
     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
+    CASH_SESSION_NOT_OWNED: 'Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın.',
     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
     CONCURRENT_MODIFICATION: 'Hesap bölme tasarımı başka bir işlem tarafından değiştirildi.',
     CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
@@ -471,8 +472,9 @@
   // Only a 404 means "no open drawer"; anything else that is not a success is a failed read, never "closed".
   // Cash is never swapped for another method on the cashier's behalf: it is just left unselected.
   function applyCashSession(result) {
-    state.cashSessionId = result.ok ? result.body.cashSessionId : null;
-    state.cashState = result.ok ? 'open' : result.status === 404 ? 'closed' : result.status === 403 ? 'forbidden' : 'unknown';
+    var othersSession = result.ok && state.userId && result.body.cashierUserId && result.body.cashierUserId !== state.userId;
+    state.cashSessionId = result.ok && !othersSession ? result.body.cashSessionId : null;
+    state.cashState = othersSession ? 'notOwned' : result.ok ? 'open' : result.status === 404 ? 'closed' : result.status === 403 ? 'forbidden' : 'unknown';
     state.cashStateMessage = state.cashState === 'unknown'
       ? (result.status === 0 ? 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.' : describeHttpFailure(result.status, result.body))
       : '';
@@ -496,6 +498,12 @@
       return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
         '<div class="sp-alert-title">Nakit tahsilat için kasa izniniz yok</div>' +
         '<div class="sp-alert-body">Kart, EFT veya cari hesapla devam edebilirsiniz; nakit için kasa izni olan bir kullanıcı gerekir.</div></div></div>';
+    }
+    if (state.cashState === 'notOwned') {
+      return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
+        '<div class="sp-alert-title">Önce kasayı açın</div>' +
+        '<div class="sp-alert-body">Bir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil (açan kişi, ör. yönetici, önce kapatmalı); sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.</div>' +
+        '<div class="sp-notice-actions"><a class="sp-btn sp-btn-secondary" href="/cashier/payments/cash-session/index.html">Kasa oturumu</a></div></div></div>';
     }
     var closed = state.cashState === 'closed';
     return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
@@ -1177,7 +1185,7 @@
       methods.map(function (method) {
         var disabled = method === 'Cash' && state.cashState !== 'open';
         var active = state.selectedMethod === method;
-        var reason = !disabled ? '' : state.cashState === 'closed' ? ' (kasa kapalı)' : state.cashState === 'forbidden' ? ' (kasa izni yok)' : ' (kasa durumu bilinmiyor)';
+        var reason = !disabled ? '' : state.cashState === 'closed' ? ' (kasa kapalı)' : state.cashState === 'notOwned' ? ' (kasa size ait değil)' : state.cashState === 'forbidden' ? ' (kasa izni yok)' : ' (kasa durumu bilinmiyor)';
         return (
           '<button type="button" class="sp-method-chip' + (active ? ' is-active' : '') + '" ' +
           'role="radio" aria-checked="' + active + '" ' +
