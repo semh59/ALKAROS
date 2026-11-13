@@ -1,0 +1,9 @@
+killed M1 Ready tickets not split off the active list
+killed M2 Ready heading dropped
+killed M3 Ready section rendered before active ones
+killed M4 open item count includes Ready tickets
+killed M5 live sync flag ignored (never includes Ready)
+killed M6 live sync flag ignored (always includes Ready)
+killed M7 served Ready ticket stays on the board
+killed M8 empty message when only Ready tickets exist
+killed M9 all-day totals include Ready tickets

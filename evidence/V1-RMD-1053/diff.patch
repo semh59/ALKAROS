@@ -1,0 +1,268 @@
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+index 2994fd463..b01efa0c2 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx
+@@ -61,6 +61,52 @@ describe("kitchen operations workspace", () => {
+     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
+   });
+ 
++  it("lists a Ready ticket under its own heading after the active ones, lets its item be served, and leaves it out of the open counts", async () => {
++    const readyTicket = {
++      ...data.tickets[0], id: "ticket-2", orderId: "order-2", ticketNumber: "KT-002", status: "Ready" as const,
++      items: [{ ...data.tickets[0].items[0], id: "item-2", productName: "Köfte", status: "Ready" as const }],
++    };
++    const onTransitionItem = vi.fn();
++    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [...data.tickets, readyTicket] }, onTransitionItem })} />);
++
++    const heading = document.getElementById("kitchen-ready-heading")!;
++    expect(heading.textContent).toBe("Hazır, servis bekliyor");
++    const cards = [...document.querySelectorAll(".kitchen-order")];
++    expect(cards).toHaveLength(2);
++    expect(cards[0].textContent).toContain("KT-001");
++    expect(cards[1].textContent).toContain("KT-002");
++    expect(heading.compareDocumentPosition(cards[1]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
++    expect(heading.compareDocumentPosition(cards[0]) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
++    expect(document.body.textContent).toContain("Açık masa/sipariş1");
++
++    await click(cards[1].querySelector<HTMLButtonElement>(".kitchen-step.is-next")!);
++    expect(onTransitionItem).toHaveBeenCalledWith(readyTicket, readyTicket.items[0], "Served");
++  });
++
++  it("does not count items of Ready tickets towards the automatic dense mode", async () => {
++    const readyTicket = { ...data.tickets[0], id: "ticket-2", orderId: "order-2", status: "Ready" as const, items: [{ ...data.tickets[0].items[0], id: "item-2", status: "Ready" as const }] };
++    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, denseModeThreshold: 2, tickets: [...data.tickets, readyTicket] } })} />);
++
++    expect(document.querySelector(".kitchen-workspace")!.classList.contains("is-dense")).toBe(false);
++  });
++
++  it("shows a board that holds only Ready tickets instead of the empty message, and keeps them out of the all-day totals", async () => {
++    const readyTicket = { ...data.tickets[0], status: "Ready" as const, items: [{ ...data.tickets[0].items[0], status: "Ready" as const }] };
++    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [readyTicket] } })} />);
++
++    expect(document.getElementById("kitchen-ready-heading")).not.toBeNull();
++    expect(document.body.textContent).not.toContain("Aktif ticket yok");
++
++    const alldayButton = [...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Tüm Gün")!;
++    await click(alldayButton);
++    expect(document.querySelectorAll(".kitchen-allday-row")).toHaveLength(0);
++  });
++
++  it("shows no Ready heading when no Ready ticket is on the board", async () => {
++    await render(<KitchenOperationsWorkspace {...baseProps()} />);
++    expect(document.getElementById("kitchen-ready-heading")).toBeNull();
++  });
++
+   it("shows the real table number instead of the order id when the order has a table", async () => {
+     const withTable: KitchenData = {
+       ...data,
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+index 34cfc854b..b876586f3 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx
+@@ -221,15 +221,19 @@ export function KitchenOperationsWorkspace({
+     return () => { cancelled = true; };
+   }, [viewMode, onLoadPerformanceReport]);
+ 
++  // With live sync on, the server also sends Ready tickets that still wait to be served; they sit in their own section.
++  const activeTickets = useMemo(() => data.tickets.filter((ticket) => ticket.status !== "Ready"), [data.tickets]);
++  const readyTickets = useMemo(() => data.tickets.filter((ticket) => ticket.status === "Ready"), [data.tickets]);
+   const openItemCount = useMemo(
+-    () => data.tickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
+-    [data.tickets],
++    () => activeTickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
++    [activeTickets],
+   );
+   const autoDense = openItemCount >= data.denseModeThreshold;
+   const density: Density = densityOverride === "auto" ? (autoDense ? "dense" : "sparse") : densityOverride;
+   const isDense = density === "dense";
+ 
+-  const orderGroups = useMemo(() => groupByTable(data.tickets), [data.tickets]);
++  const orderGroups = useMemo(() => groupByTable(activeTickets), [activeTickets]);
++  const readyGroups = useMemo(() => groupByTable(readyTickets), [readyTickets]);
+   const overallHealth = worstHealth(data.health);
+ 
+   // V1-KDS-002: the Goal's own scope - products from open tickets, not
+@@ -245,7 +249,7 @@ export function KitchenOperationsWorkspace({
+   const allDayGroups = useMemo(() => {
+     const totals = new Map<string, { productName: string; quantity: number }>();
+     const order: string[] = [];
+-    for (const ticket of data.tickets) {
++    for (const ticket of activeTickets) {
+       for (const item of ticket.items) {
+         if (item.status === "Cancelled" || item.status === "Served") continue;
+         const existing = totals.get(item.productId);
+@@ -254,15 +258,28 @@ export function KitchenOperationsWorkspace({
+       }
+     }
+     return order.map((productId) => ({ productId, ...totals.get(productId)! })).sort((a, b) => b.quantity - a.quantity);
+-  }, [data.tickets]);
++  }, [activeTickets]);
+ 
+   const openProducts = useMemo(() => {
+     const seen = new Map<string, string>();
+-    for (const ticket of data.tickets)
++    for (const ticket of activeTickets)
+       for (const item of ticket.items)
+         if (item.status !== "Cancelled" && !seen.has(item.productId)) seen.set(item.productId, item.productName);
+     return Array.from(seen, ([productId, productName]) => ({ productId, productName }));
+-  }, [data.tickets]);
++  }, [activeTickets]);
++
++  const renderGroup = (group: { groupKey: string; tickets: KitchenTicket[] }) => <OrderGroupCard
++    key={group.groupKey}
++    groupKey={group.groupKey}
++    tickets={group.tickets}
++    now={now}
++    canAdvance={canAdvance}
++    canOperate={canOperate}
++    busyKey={busyKey}
++    onItemTransition={executeItemTransition}
++    onUndoItem={onUndoItem ? executeUndoItem : undefined}
++    onCancel={openCancelPrompt}
++  />;
+ 
+   const executeItemTransition = async (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => {
+     if (!onTransitionItem) return;
+@@ -494,18 +511,11 @@ export function KitchenOperationsWorkspace({
+           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
+             {allDayGroups.map((group) => <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></li>)}
+           </ul>
+-        ) : state === "empty" || orderGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : orderGroups.map((group) => <OrderGroupCard
+-          key={group.groupKey}
+-          groupKey={group.groupKey}
+-          tickets={group.tickets}
+-          now={now}
+-          canAdvance={canAdvance}
+-          canOperate={canOperate}
+-          busyKey={busyKey}
+-          onItemTransition={executeItemTransition}
+-          onUndoItem={onUndoItem ? executeUndoItem : undefined}
+-          onCancel={openCancelPrompt}
+-        />)}
++        ) : state === "empty" || (orderGroups.length === 0 && readyGroups.length === 0) ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : <>
++          {orderGroups.map(renderGroup)}
++          {readyGroups.length > 0 && <h3 id="kitchen-ready-heading">Hazır, servis bekliyor</h3>}
++          {readyGroups.map(renderGroup)}
++        </>}
+       </div>
+       <aside className="kitchen-workspace__rail" aria-label="Mutfak operasyon uyarıları">
+         <HealthPanel health={data.health} backups={data.backups} />
+diff --git a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+index a57e81eb7..ec131a30d 100644
+--- a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
++++ b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+@@ -106,7 +106,8 @@ public sealed class KitchenOperationsStore
+         CancellationToken cancellationToken)
+     {
+         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
+-        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, cancellationToken);
++        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
++        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
+         // V1-KIT-012: one batched query for every distinct order on this
+         // station's board, not one query per ticket — several tickets
+         // (different stations) can share the same orderId.
+diff --git a/src/Modules/Kitchen/TicketLifecycle/IKitchenTicketRepository.cs b/src/Modules/Kitchen/TicketLifecycle/IKitchenTicketRepository.cs
+index d383bd0d5..3728ce8f1 100644
+--- a/src/Modules/Kitchen/TicketLifecycle/IKitchenTicketRepository.cs
++++ b/src/Modules/Kitchen/TicketLifecycle/IKitchenTicketRepository.cs
+@@ -6,7 +6,9 @@ public interface IKitchenTicketRepository
+ {
+     Task<KitchenTicket?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+     Task<IReadOnlyList<KitchenTicket>> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
+-    Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default);
++    /// <param name="includeReadyAwaitingService">Also returns Ready tickets that still have a Ready (not yet served) item.</param>
++    Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(
++        string stationId, bool includeReadyAwaitingService = false, CancellationToken cancellationToken = default);
+     Task AddAsync(KitchenTicket ticket, CancellationToken cancellationToken = default);
+     Task AddAsync(
+         KitchenTicket ticket,
+diff --git a/src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs b/src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs
+index 5352c699c..7226abb39 100644
+--- a/src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs
++++ b/src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs
+@@ -8,6 +8,10 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
+     // fewer rows. Hitting this means the filter is too broad, or the relation
+     // outgrew its assumption — fail loud, do not load unboundedly.
+     private const int MaxUnpagedRows = 5000;
++    private const string ActivePredicate = "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')";
++    private const string ActiveOrReadyAwaitingServicePredicate =
++        "t.station_id = @filter AND (t.status NOT IN ('Ready', 'Cancelled') OR (t.status = 'Ready' AND EXISTS " +
++        "(SELECT 1 FROM kitchen.kitchen_ticket_items AS r WHERE r.ticket_id = t.id AND r.status = 'Ready')))";
+ 
+     private readonly NpgsqlDataSource _dataSource;
+ 
+@@ -113,13 +117,14 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
+             .ConfigureAwait(false);
+     }
+ 
+-    public async Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default)
++    public async Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(
++        string stationId, bool includeReadyAwaitingService = false, CancellationToken cancellationToken = default)
+     {
+         ArgumentException.ThrowIfNullOrWhiteSpace(stationId);
+         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+         return await LoadTicketGraphAsync(
+             connection,
+-            "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')",
++            includeReadyAwaitingService ? ActiveOrReadyAwaitingServicePredicate : ActivePredicate,
+             stationId,
+             cancellationToken).ConfigureAwait(false);
+     }
+@@ -443,7 +448,8 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
+         var allowedPredicates = new HashSet<string>(StringComparer.Ordinal)
+         {
+             "t.order_id = @filter",
+-            "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')",
++            ActivePredicate,
++            ActiveOrReadyAwaitingServicePredicate,
+         };
+         if (!allowedPredicates.Contains(predicate))
+             throw new ArgumentException("Unsupported kitchen ticket query predicate.", nameof(predicate));
+diff --git a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+index e2f948d0b..9f855260b 100644
+--- a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
++++ b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+@@ -184,6 +184,43 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
+         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
+     }
+ 
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task ATicketWhoseItemsAreAllReadyStaysOnTheBoardUntilServedOnlyWithLiveSync(bool liveSync)
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
++        var seed = await _database.SeedKitchenGraphAsync();
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
++        if (liveSync)
++        {
++            var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
++            var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
++            await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
++        }
++        var board = Prefix(terminalId) + "/tickets?stationId=hot-line";
++
++        var preparing = await PostAsync<KitchenTicketV1>(
++            client, $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition", cookie,
++            new TransitionKitchenItemV1("Preparing", 1, 1));
++        var ready = await PostAsync<KitchenTicketV1>(
++            client, $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition", cookie,
++            new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
++        Assert.Equal("Ready", ready.Status);
++
++        var afterReady = await GetAsync<KitchenTicketV1[]>(client, board, cookie);
++        Assert.Equal(liveSync ? new[] { seed.TicketId } : Array.Empty<Guid>(), afterReady!.Select(ticket => ticket.Id));
++
++        var served = await PostAsync<KitchenTicketV1>(
++            client, $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition", cookie,
++            new TransitionKitchenItemV1("Served", ready.RowVersion, Assert.Single(ready.Items).RowVersion));
++        Assert.Equal("Served", Assert.Single(served.Items).Status);
++        Assert.Empty((await GetAsync<KitchenTicketV1[]>(client, board, cookie))!);
++    }
++
+     // V1-KIT-009: undo is a forward-step correction, not a cancel — a
+     // kitchen-staff-only (kitchen.advance) session must be able to fix its
+     // own misclick without needing orders.send.

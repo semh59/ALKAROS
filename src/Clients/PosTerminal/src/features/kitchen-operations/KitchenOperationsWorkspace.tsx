@@ -221,15 +221,19 @@ export function KitchenOperationsWorkspace({
     return () => { cancelled = true; };
   }, [viewMode, onLoadPerformanceReport]);
 
+  // With live sync on, the server also sends Ready tickets that still wait to be served; they sit in their own section.
+  const activeTickets = useMemo(() => data.tickets.filter((ticket) => ticket.status !== "Ready"), [data.tickets]);
+  const readyTickets = useMemo(() => data.tickets.filter((ticket) => ticket.status === "Ready"), [data.tickets]);
   const openItemCount = useMemo(
-    () => data.tickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
-    [data.tickets],
+    () => activeTickets.reduce((sum, ticket) => sum + ticket.items.filter((item) => item.status !== "Cancelled" && item.status !== "Served").length, 0),
+    [activeTickets],
   );
   const autoDense = openItemCount >= data.denseModeThreshold;
   const density: Density = densityOverride === "auto" ? (autoDense ? "dense" : "sparse") : densityOverride;
   const isDense = density === "dense";
 
-  const orderGroups = useMemo(() => groupByTable(data.tickets), [data.tickets]);
+  const orderGroups = useMemo(() => groupByTable(activeTickets), [activeTickets]);
+  const readyGroups = useMemo(() => groupByTable(readyTickets), [readyTickets]);
   const overallHealth = worstHealth(data.health);
 
   // V1-KDS-002: the Goal's own scope - products from open tickets, not
@@ -245,7 +249,7 @@ export function KitchenOperationsWorkspace({
   const allDayGroups = useMemo(() => {
     const totals = new Map<string, { productName: string; quantity: number }>();
     const order: string[] = [];
-    for (const ticket of data.tickets) {
+    for (const ticket of activeTickets) {
       for (const item of ticket.items) {
         if (item.status === "Cancelled" || item.status === "Served") continue;
         const existing = totals.get(item.productId);
@@ -254,15 +258,28 @@ export function KitchenOperationsWorkspace({
       }
     }
     return order.map((productId) => ({ productId, ...totals.get(productId)! })).sort((a, b) => b.quantity - a.quantity);
-  }, [data.tickets]);
+  }, [activeTickets]);
 
   const openProducts = useMemo(() => {
     const seen = new Map<string, string>();
-    for (const ticket of data.tickets)
+    for (const ticket of activeTickets)
       for (const item of ticket.items)
         if (item.status !== "Cancelled" && !seen.has(item.productId)) seen.set(item.productId, item.productName);
     return Array.from(seen, ([productId, productName]) => ({ productId, productName }));
-  }, [data.tickets]);
+  }, [activeTickets]);
+
+  const renderGroup = (group: { groupKey: string; tickets: KitchenTicket[] }) => <OrderGroupCard
+    key={group.groupKey}
+    groupKey={group.groupKey}
+    tickets={group.tickets}
+    now={now}
+    canAdvance={canAdvance}
+    canOperate={canOperate}
+    busyKey={busyKey}
+    onItemTransition={executeItemTransition}
+    onUndoItem={onUndoItem ? executeUndoItem : undefined}
+    onCancel={openCancelPrompt}
+  />;
 
   const executeItemTransition = async (ticket: KitchenTicket, item: KitchenTicketItem, target: KitchenTicketItem["status"]) => {
     if (!onTransitionItem) return;
@@ -494,18 +511,11 @@ export function KitchenOperationsWorkspace({
           allDayGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif kalem yok"><p>Bu istasyona henüz aktif kalem gelmedi.</p></StateMessage></div> : <ul className="kitchen-allday-list" aria-label="Tüm gün toplamı">
             {allDayGroups.map((group) => <li key={group.productId} className="kitchen-allday-row"><span className="kitchen-allday-row__qty">{group.quantity}×</span><span className="kitchen-allday-row__name">{group.productName}</span></li>)}
           </ul>
-        ) : state === "empty" || orderGroups.length === 0 ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : orderGroups.map((group) => <OrderGroupCard
-          key={group.groupKey}
-          groupKey={group.groupKey}
-          tickets={group.tickets}
-          now={now}
-          canAdvance={canAdvance}
-          canOperate={canOperate}
-          busyKey={busyKey}
-          onItemTransition={executeItemTransition}
-          onUndoItem={onUndoItem ? executeUndoItem : undefined}
-          onCancel={openCancelPrompt}
-        />)}
+        ) : state === "empty" || (orderGroups.length === 0 && readyGroups.length === 0) ? <div className="kitchen-workspace__empty"><StateMessage tone="info" title="Aktif ticket yok"><p>Bu istasyona henüz aktif ticket gelmedi.</p></StateMessage></div> : <>
+          {orderGroups.map(renderGroup)}
+          {readyGroups.length > 0 && <h3 id="kitchen-ready-heading">Hazır, servis bekliyor</h3>}
+          {readyGroups.map(renderGroup)}
+        </>}
       </div>
       <aside className="kitchen-workspace__rail" aria-label="Mutfak operasyon uyarıları">
         <HealthPanel health={data.health} backups={data.backups} />

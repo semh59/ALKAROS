@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx (63 tests | 1 failed) 1655ms
+     × lists a Ready ticket under its own heading after the active ones, lets its item be served, and leaves it out of the open counts 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx > kitchen operations workspace > lists a Ready ticket under its own heading after the active ones, lets its item be served, and leaves it out of the open counts
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:73:20
+     71|
+     72|     const heading = document.getElementById("kitchen-ready-heading")!;
+     73|     expect(heading.textContent).toBe("Hazır, servis bekliyor");
+       |                    ^
+     74|     const cards = [...document.querySelectorAll(".kitchen-order")];
+     75|     expect(cards).toHaveLength(2);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 62 passed (63)
+   Start at  02:04:05
+   Duration  3.37s (transform 256ms, setup 0ms, import 434ms, tests 1.65s, environment 1.01s)
+
+exit=1

@@ -106,7 +106,8 @@ public sealed class KitchenOperationsStore
         CancellationToken cancellationToken)
     {
         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
-        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, cancellationToken);
+        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
         // V1-KIT-012: one batched query for every distinct order on this
         // station's board, not one query per ticket — several tickets
         // (different stations) can share the same orderId.

@@ -184,6 +184,43 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ATicketWhoseItemsAreAllReadyStaysOnTheBoardUntilServedOnlyWithLiveSync(bool liveSync)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        if (liveSync)
+        {
+            var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
+            var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
+            await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
+        }
+        var board = Prefix(terminalId) + "/tickets?stationId=hot-line";
+
+        var preparing = await PostAsync<KitchenTicketV1>(
+            client, $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition", cookie,
+            new TransitionKitchenItemV1("Preparing", 1, 1));
+        var ready = await PostAsync<KitchenTicketV1>(
+            client, $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition", cookie,
+            new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
+        Assert.Equal("Ready", ready.Status);
+
+        var afterReady = await GetAsync<KitchenTicketV1[]>(client, board, cookie);
+        Assert.Equal(liveSync ? new[] { seed.TicketId } : Array.Empty<Guid>(), afterReady!.Select(ticket => ticket.Id));
+
+        var served = await PostAsync<KitchenTicketV1>(
+            client, $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition", cookie,
+            new TransitionKitchenItemV1("Served", ready.RowVersion, Assert.Single(ready.Items).RowVersion));
+        Assert.Equal("Served", Assert.Single(served.Items).Status);
+        Assert.Empty((await GetAsync<KitchenTicketV1[]>(client, board, cookie))!);
+    }
+
     // V1-KIT-009: undo is a forward-step correction, not a cancel — a
     // kitchen-staff-only (kitchen.advance) session must be able to fix its
     // own misclick without needing orders.send.

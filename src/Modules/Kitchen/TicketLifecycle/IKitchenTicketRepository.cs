@@ -6,7 +6,9 @@ public interface IKitchenTicketRepository
 {
     Task<KitchenTicket?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<KitchenTicket>> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);
-    Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default);
+    /// <param name="includeReadyAwaitingService">Also returns Ready tickets that still have a Ready (not yet served) item.</param>
+    Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(
+        string stationId, bool includeReadyAwaitingService = false, CancellationToken cancellationToken = default);
     Task AddAsync(KitchenTicket ticket, CancellationToken cancellationToken = default);
     Task AddAsync(
         KitchenTicket ticket,

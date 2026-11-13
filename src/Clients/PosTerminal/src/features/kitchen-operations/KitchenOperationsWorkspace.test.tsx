@@ -61,6 +61,52 @@ describe("kitchen operations workspace", () => {
     expect(onTransitionItem).toHaveBeenCalledWith(data.tickets[0], data.tickets[0].items[0], "Ready");
   });
 
+  it("lists a Ready ticket under its own heading after the active ones, lets its item be served, and leaves it out of the open counts", async () => {
+    const readyTicket = {
+      ...data.tickets[0], id: "ticket-2", orderId: "order-2", ticketNumber: "KT-002", status: "Ready" as const,
+      items: [{ ...data.tickets[0].items[0], id: "item-2", productName: "Köfte", status: "Ready" as const }],
+    };
+    const onTransitionItem = vi.fn();
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [...data.tickets, readyTicket] }, onTransitionItem })} />);
+
+    const heading = document.getElementById("kitchen-ready-heading")!;
+    expect(heading.textContent).toBe("Hazır, servis bekliyor");
+    const cards = [...document.querySelectorAll(".kitchen-order")];
+    expect(cards).toHaveLength(2);
+    expect(cards[0].textContent).toContain("KT-001");
+    expect(cards[1].textContent).toContain("KT-002");
+    expect(heading.compareDocumentPosition(cards[1]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(heading.compareDocumentPosition(cards[0]) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy();
+    expect(document.body.textContent).toContain("Açık masa/sipariş1");
+
+    await click(cards[1].querySelector<HTMLButtonElement>(".kitchen-step.is-next")!);
+    expect(onTransitionItem).toHaveBeenCalledWith(readyTicket, readyTicket.items[0], "Served");
+  });
+
+  it("does not count items of Ready tickets towards the automatic dense mode", async () => {
+    const readyTicket = { ...data.tickets[0], id: "ticket-2", orderId: "order-2", status: "Ready" as const, items: [{ ...data.tickets[0].items[0], id: "item-2", status: "Ready" as const }] };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, denseModeThreshold: 2, tickets: [...data.tickets, readyTicket] } })} />);
+
+    expect(document.querySelector(".kitchen-workspace")!.classList.contains("is-dense")).toBe(false);
+  });
+
+  it("shows a board that holds only Ready tickets instead of the empty message, and keeps them out of the all-day totals", async () => {
+    const readyTicket = { ...data.tickets[0], status: "Ready" as const, items: [{ ...data.tickets[0].items[0], status: "Ready" as const }] };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: { ...data, tickets: [readyTicket] } })} />);
+
+    expect(document.getElementById("kitchen-ready-heading")).not.toBeNull();
+    expect(document.body.textContent).not.toContain("Aktif ticket yok");
+
+    const alldayButton = [...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Tüm Gün")!;
+    await click(alldayButton);
+    expect(document.querySelectorAll(".kitchen-allday-row")).toHaveLength(0);
+  });
+
+  it("shows no Ready heading when no Ready ticket is on the board", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect(document.getElementById("kitchen-ready-heading")).toBeNull();
+  });
+
   it("shows the real table number instead of the order id when the order has a table", async () => {
     const withTable: KitchenData = {
       ...data,

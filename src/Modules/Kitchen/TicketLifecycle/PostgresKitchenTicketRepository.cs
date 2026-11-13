@@ -8,6 +8,10 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
     // fewer rows. Hitting this means the filter is too broad, or the relation
     // outgrew its assumption — fail loud, do not load unboundedly.
     private const int MaxUnpagedRows = 5000;
+    private const string ActivePredicate = "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')";
+    private const string ActiveOrReadyAwaitingServicePredicate =
+        "t.station_id = @filter AND (t.status NOT IN ('Ready', 'Cancelled') OR (t.status = 'Ready' AND EXISTS " +
+        "(SELECT 1 FROM kitchen.kitchen_ticket_items AS r WHERE r.ticket_id = t.id AND r.status = 'Ready')))";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -113,13 +117,14 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
             .ConfigureAwait(false);
     }
 
-    public async Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(string stationId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<KitchenTicket>> GetActiveByStationAsync(
+        string stationId, bool includeReadyAwaitingService = false, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(stationId);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         return await LoadTicketGraphAsync(
             connection,
-            "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')",
+            includeReadyAwaitingService ? ActiveOrReadyAwaitingServicePredicate : ActivePredicate,
             stationId,
             cancellationToken).ConfigureAwait(false);
     }
@@ -443,7 +448,8 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         var allowedPredicates = new HashSet<string>(StringComparer.Ordinal)
         {
             "t.order_id = @filter",
-            "t.station_id = @filter AND t.status NOT IN ('Ready', 'Cancelled')",
+            ActivePredicate,
+            ActiveOrReadyAwaitingServicePredicate,
         };
         if (!allowedPredicates.Contains(predicate))
             throw new ArgumentException("Unsupported kitchen ticket query predicate.", nameof(predicate));
