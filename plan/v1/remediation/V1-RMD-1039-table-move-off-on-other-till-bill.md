@@ -16,6 +16,8 @@ Masa panelinde başka bir kasanın açık hesabı olan masada Öde, Böl ve İpt
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+  - src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx
+  - src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
