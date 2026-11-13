@@ -1,7 +1,7 @@
 # V1-RMD-1038 - Hesap iptalinden sonra sipariş masada kaldıysa ödeme ekranı masaya dönüş düğmesi verir
 
 - Task ID: V1-RMD-1038
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

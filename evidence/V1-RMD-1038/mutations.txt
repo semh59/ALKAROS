@@ -1,0 +1,12 @@
+M1 link shown even when the order was cancelled
+      Tests  1 failed | 12 passed (13)
+restored
+M2 link never shown
+      Tests  1 failed | 12 passed (13)
+restored
+M3 link points to pending checks
+      Tests  1 failed | 12 passed (13)
+restored
+M4 Masaya don not primary
+      Tests  1 failed | 12 passed (13)
+restored

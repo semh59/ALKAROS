@@ -1,0 +1,85 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index d60345d0..2a0eaa3d 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2143,9 +2143,12 @@
+       '</div>';
+   }
+ 
+-  var BACK_LINK =
+-    '<a class="sp-btn sp-btn-secondary" href="/pending-checks" ' +
+-    'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Bekleyen hesaplara dön</a>';
++  function backLink(href, label, primary) {
++    return '<a class="sp-btn ' + (primary ? 'sp-btn-primary' : 'sp-btn-secondary') + '" href="' + href + '" ' +
++      'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">' + label + '</a>';
++  }
++
++  var BACK_LINK = backLink('/pending-checks', 'Bekleyen hesaplara dön');
+ 
+   function renderCancelled() {
+     app.innerHTML =
+@@ -2155,6 +2158,7 @@
+       '<p class="sp-subtitle">' + (state.orderCancelled
+         ? 'Hesap ve sipariş iptal edildi; masa boşaldı.'
+         : 'Bu hesap iptal edildi. Sipariş için gerekirse yeni hesap açılabilir.') + '</p>' +
++      (state.billTable && !state.orderCancelled ? backLink('/tables', 'Masaya dön', true) : '') +
+       BACK_LINK +
+       '</div>';
+   }
+diff --git a/tests/Clients/StaticApps/split-payment-cancel-order.test.js b/tests/Clients/StaticApps/split-payment-cancel-order.test.js
+index 032fb79e..a21d2370 100644
+--- a/tests/Clients/StaticApps/split-payment-cancel-order.test.js
++++ b/tests/Clients/StaticApps/split-payment-cancel-order.test.js
+@@ -10,8 +10,9 @@ const TERMINAL_ID = "11111111-1111-1111-1111-111111111111";
+ const BILL_ID = "22222222-2222-2222-2222-222222222222";
+ const unpaid = { billId: BILL_ID, payableAmount: 100, allocatedTotal: 0, remainingAmount: 100, allocations: [], unsettledPayment: null };
+ 
+-function routes(cancel) {
++function routes(cancel, receipt) {
+   return [
++    ...(receipt ? [{ test: (url) => url.endsWith("/receipt"), body: receipt }] : []),
+     { test: (url, init) => url.endsWith("/cancel") && init?.method === "POST", ...cancel },
+     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
+@@ -21,9 +22,9 @@ function routes(cancel) {
+   ];
+ }
+ 
+-async function open(cancel) {
++async function open(cancel, receipt) {
+   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+-  const fetchMock = installFetchRouter(routes(cancel));
++  const fetchMock = installFetchRouter(routes(cancel, receipt));
+   await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
+   await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
+   return fetchMock;
+@@ -93,6 +94,29 @@ describe("cancelling the order together with the bill on the payment page", () =
+     expect(app().textContent).not.toContain("masa boşaldı");
+   });
+ 
++  it("leads back to the table when the order stays there, and not when it was cancelled with the bill", async () => {
++    await open({ body: { orderCancelled: false } }, { tableNumber: "M-01", items: [] });
++    await vi.waitFor(() => expect(document.querySelector('.sp-place').textContent).toBe("Masa M-01"));
++    chooseReason();
++    confirmCancel();
++
++    await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
++    expect([...document.querySelectorAll("a.sp-btn")].map((link) => [link.textContent, link.getAttribute("href"), link.classList.contains("sp-btn-primary")])).toEqual([
++      ["Masaya dön", "/tables", true], ["Bekleyen hesaplara dön", "/pending-checks", false],
++    ]);
++
++    await open({ body: { orderCancelled: true } }, { tableNumber: "M-01", items: [] });
++    await vi.waitFor(() => expect(document.querySelector('.sp-place').textContent).toBe("Masa M-01"));
++    chooseReason();
++    const box = document.getElementById("cancel-order");
++    box.checked = true;
++    box.dispatchEvent(new Event("change", { bubbles: true }));
++    confirmCancel();
++
++    await vi.waitFor(() => expect(app().textContent).toContain("masa boşaldı"));
++    expect([...document.querySelectorAll("a.sp-btn")].map((link) => link.textContent)).toEqual(["Bekleyen hesaplara dön"]);
++  });
++
+   it("sends cancelOrder when the box is checked and says the order was cancelled too", async () => {
+     const fetchMock = await open({ body: { orderCancelled: true } });
+ 

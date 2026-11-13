@@ -2143,9 +2143,12 @@
       '</div>';
   }
 
-  var BACK_LINK =
-    '<a class="sp-btn sp-btn-secondary" href="/pending-checks" ' +
-    'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Bekleyen hesaplara dön</a>';
+  function backLink(href, label, primary) {
+    return '<a class="sp-btn ' + (primary ? 'sp-btn-primary' : 'sp-btn-secondary') + '" href="' + href + '" ' +
+      'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">' + label + '</a>';
+  }
+
+  var BACK_LINK = backLink('/pending-checks', 'Bekleyen hesaplara dön');
 
   function renderCancelled() {
     app.innerHTML =
@@ -2155,6 +2158,7 @@
       '<p class="sp-subtitle">' + (state.orderCancelled
         ? 'Hesap ve sipariş iptal edildi; masa boşaldı.'
         : 'Bu hesap iptal edildi. Sipariş için gerekirse yeni hesap açılabilir.') + '</p>' +
+      (state.billTable && !state.orderCancelled ? backLink('/tables', 'Masaya dön', true) : '') +
       BACK_LINK +
       '</div>';
   }

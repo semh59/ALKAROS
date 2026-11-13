@@ -10,8 +10,9 @@ const TERMINAL_ID = "11111111-1111-1111-1111-111111111111";
 const BILL_ID = "22222222-2222-2222-2222-222222222222";
 const unpaid = { billId: BILL_ID, payableAmount: 100, allocatedTotal: 0, remainingAmount: 100, allocations: [], unsettledPayment: null };
 
-function routes(cancel) {
+function routes(cancel, receipt) {
   return [
+    ...(receipt ? [{ test: (url) => url.endsWith("/receipt"), body: receipt }] : []),
     { test: (url, init) => url.endsWith("/cancel") && init?.method === "POST", ...cancel },
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
@@ -21,9 +22,9 @@ function routes(cancel) {
   ];
 }
 
-async function open(cancel) {
+async function open(cancel, receipt) {
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
-  const fetchMock = installFetchRouter(routes(cancel));
+  const fetchMock = installFetchRouter(routes(cancel, receipt));
   await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
   await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
   return fetchMock;
@@ -91,6 +92,29 @@ describe("cancelling the order together with the bill on the payment page", () =
     await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
     expect(cancelBody(fetchMock)).toEqual({ reason: "Müşteri vazgeçti" });
     expect(app().textContent).not.toContain("masa boşaldı");
+  });
+
+  it("leads back to the table when the order stays there, and not when it was cancelled with the bill", async () => {
+    await open({ body: { orderCancelled: false } }, { tableNumber: "M-01", items: [] });
+    await vi.waitFor(() => expect(document.querySelector('.sp-place').textContent).toBe("Masa M-01"));
+    chooseReason();
+    confirmCancel();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
+    expect([...document.querySelectorAll("a.sp-btn")].map((link) => [link.textContent, link.getAttribute("href"), link.classList.contains("sp-btn-primary")])).toEqual([
+      ["Masaya dön", "/tables", true], ["Bekleyen hesaplara dön", "/pending-checks", false],
+    ]);
+
+    await open({ body: { orderCancelled: true } }, { tableNumber: "M-01", items: [] });
+    await vi.waitFor(() => expect(document.querySelector('.sp-place').textContent).toBe("Masa M-01"));
+    chooseReason();
+    const box = document.getElementById("cancel-order");
+    box.checked = true;
+    box.dispatchEvent(new Event("change", { bubbles: true }));
+    confirmCancel();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("masa boşaldı"));
+    expect([...document.querySelectorAll("a.sp-btn")].map((link) => link.textContent)).toEqual(["Bekleyen hesaplara dön"]);
   });
 
   it("sends cancelOrder when the box is checked and says the order was cancelled too", async () => {
