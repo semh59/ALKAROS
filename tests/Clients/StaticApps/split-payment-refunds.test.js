@@ -33,10 +33,10 @@ function request(status, extra = {}) {
   };
 }
 
-function routes({ summary, requests = [], post = {} }) {
+function routes({ summary, requests = [], post = {}, approver = false }) {
   const base = `/api/v1/terminals/${TERMINAL_ID}/billing`;
   return [
-    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u2" } },
+    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u2", capabilities: approver ? ["payments.refund.approve"] : [] } },
     { test: (url) => url.endsWith("/tenders/"), body: summary },
     { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
@@ -315,6 +315,107 @@ describe("split-payment.js cancel and refund", () => {
 
     await vi.waitFor(() => expect(posted(fetchMock, "/complete")).not.toBeNull());
     expect(posted(fetchMock, "/complete").body).toEqual({ slipNumber: "POS-4471", note: null });
+  });
+
+  function pickReason(key, value) {
+    const select = document.querySelector('[data-reason-select="' + key + '"]');
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  const cancelApproved = () => document.querySelector('[data-refund-action="cancel-approved"]');
+
+  it.each(["Card", "Eft"])("lets an approver cancel an approved %s refund with a reason and a second tap", async (method) => {
+    const fetchMock = await open(routes({ summary: paidSummary, approver: true, requests: [request("AwaitingManualRefund", { method })] }));
+    await vi.waitFor(() => expect(cancelApproved()).not.toBeNull());
+    expect(cancelApproved().disabled).toBe(true);
+
+    pickReason("note:" + REQUEST_ID, "İkram");
+    expect(cancelApproved().disabled).toBe(false);
+    cancelApproved().click();
+    expect(posted(fetchMock, "/reject")).toBeNull();
+    expect(app().textContent).toContain("Evet, onaylı iadeyi iptal et");
+    cancelApproved().click();
+
+    await vi.waitFor(() => expect(posted(fetchMock, "/reject")).not.toBeNull());
+    expect(posted(fetchMock, "/reject").body).toEqual({ note: "İkram" });
+    await vi.waitFor(() => expect(app().textContent).toContain("Onaylı iade iptal edildi; para iade edilmedi. Hesap yeniden kapatılabilir."));
+  });
+
+  it("sends a reason typed under Diğer and enables the cancel only while it is filled", async () => {
+    const fetchMock = await open(routes({ summary: paidSummary, approver: true, requests: [request("AwaitingManualRefund", { method: "Card" })] }));
+    await vi.waitFor(() => expect(cancelApproved()).not.toBeNull());
+
+    type(`[data-refund-note="${REQUEST_ID}"]`, "Elle yazılan neden");
+    expect(cancelApproved().disabled).toBe(false);
+    type(`[data-refund-note="${REQUEST_ID}"]`, "  ");
+    expect(cancelApproved().disabled).toBe(true);
+    type(`[data-refund-note="${REQUEST_ID}"]`, "Elle yazılan neden");
+    clickTwice('[data-refund-action="cancel-approved"]');
+
+    await vi.waitFor(() => expect(posted(fetchMock, "/reject")).not.toBeNull());
+    expect(posted(fetchMock, "/reject").body).toEqual({ note: "Elle yazılan neden" });
+  });
+
+  it("drops the second-tap question when a typed reason changes", async () => {
+    const fetchMock = await open(routes({ summary: paidSummary, approver: true, requests: [request("AwaitingManualRefund", { method: "Card" })] }));
+    await vi.waitFor(() => expect(cancelApproved()).not.toBeNull());
+    type(`[data-refund-note="${REQUEST_ID}"]`, "Birinci neden");
+    cancelApproved().click();
+    expect(app().textContent).toContain("Evet, onaylı iadeyi iptal et");
+
+    type(`[data-refund-note="${REQUEST_ID}"]`, "İkinci neden");
+
+    expect(app().textContent).not.toContain("Evet, onaylı iadeyi iptal et");
+    expect(document.querySelector(`[data-refund-note="${REQUEST_ID}"]`).value).toBe("İkinci neden");
+    expect(posted(fetchMock, "/reject")).toBeNull();
+  });
+
+  it("does not carry the reason chosen for a rejection over to the cancel of the same request once it was approved", async () => {
+    const requests = [request("Requested", { method: "Card" })];
+    await open(routes({ summary: paidSummary, approver: true, requests, post: { approve: { body: request("AwaitingManualRefund", { method: "Card" }) } } }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
+    pickReason("note:" + REQUEST_ID, "İkram");
+    requests[0] = request("AwaitingManualRefund", { method: "Card" });
+    clickTwice('[data-refund-action="approve"]');
+
+    await vi.waitFor(() => expect(cancelApproved()).not.toBeNull());
+    expect(cancelApproved().disabled).toBe(true);
+    expect(document.querySelector('[data-reason-select="note:' + REQUEST_ID + '"]').value).toBe("");
+  });
+
+  it("drops the second-tap question when the reason changes", async () => {
+    const fetchMock = await open(routes({ summary: paidSummary, approver: true, requests: [request("AwaitingManualRefund", { method: "Card" })] }));
+    await vi.waitFor(() => expect(cancelApproved()).not.toBeNull());
+    pickReason("note:" + REQUEST_ID, "İkram");
+    cancelApproved().click();
+    expect(app().textContent).toContain("Evet, onaylı iadeyi iptal et");
+
+    pickReason("note:" + REQUEST_ID, "");
+
+    expect(app().textContent).not.toContain("Evet, onaylı iadeyi iptal et");
+    expect(cancelApproved().disabled).toBe(true);
+    expect(posted(fetchMock, "/reject")).toBeNull();
+  });
+
+  it("offers no cancel of an approved refund without the approve permission, to someone who must not decide it, or once it is completed", async () => {
+    await open(routes({ summary: paidSummary, requests: [request("AwaitingManualRefund", { method: "Card" })] }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="complete"]')).not.toBeNull());
+    expect(cancelApproved()).toBeNull();
+    expect(app().textContent).not.toContain("Onaylı iadeyi iptal et");
+
+    document.body.innerHTML = "";
+    vi.resetModules();
+    await open(routes({ summary: paidSummary, approver: true, requests: [request("AwaitingManualRefund", { method: "Card", mayDecide: false })] }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="complete"]')).not.toBeNull());
+    expect(cancelApproved()).toBeNull();
+    expect(app().textContent).toContain("Başka bir yetkili onaylamalı.");
+
+    document.body.innerHTML = "";
+    vi.resetModules();
+    await open(routes({ summary: paidSummary, approver: true, requests: [request("Completed", { method: "Card" })] }));
+    await vi.waitFor(() => expect(app().textContent).toContain("Tamamlandı"));
+    expect(cancelApproved()).toBeNull();
   });
 
   it("completes a transfer refund without a slip field and sends no slip number", async () => {

@@ -104,7 +104,7 @@
     selectedCustomerId: null,
     // İptal ve iade: kasiyerin gerekçeyle hesabı iptal etmesi, ödemeyi iade istemesi ve (yetkiliyse) isteği onaylaması.
     cancelReason: '',
-    canResetReceipt: false,
+    canApproveRefund: false,
     cancelOrder: false,
     orderCancelled: false,
     refundRequests: null,
@@ -419,7 +419,7 @@
       }
       state.terminalId = result.body.terminalId;
       state.userId = result.body.userId || null;
-      state.canResetReceipt = Array.isArray(result.body.capabilities) && result.body.capabilities.indexOf('payments.refund.approve') !== -1;
+      state.canApproveRefund = Array.isArray(result.body.capabilities) && result.body.capabilities.indexOf('payments.refund.approve') !== -1;
       loadEverything();
     }).catch(function () {
       state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
@@ -1552,6 +1552,7 @@
     if (!key) return;
     state.reasonChoices[key] = el.value;
     setReasonValue(key, el.value === REASON_OTHER ? '' : el.value);
+    state.confirmKey = null;
     render();
   }
 
@@ -1690,6 +1691,19 @@
     );
   }
 
+  // Yalnız payments.refund.approve yetkisi olan kullanıcı, onaylanmış ama tamamlanmamış iadeyi iptal edebilir.
+  function renderCancelApproved(row, id, disabled) {
+    if (!state.canApproveRefund) return '';
+    if (row.mayDecide === false) return '<span class="sp-alert-body">Başka bir yetkili onaylamalı.</span>';
+    return (
+      '<span class="sp-alert-body">Fiş ya da havale gerçekten yapılmadıysa iptal edin; yapıldıysa iadeyi tamamlayın.</span>' +
+      renderReasonField('note:' + row.requestId, 'İade iptal gerekçesi') +
+      confirmButtons(
+        'cancel-approved', id, 'Onaylı iadeyi iptal et', 'Evet, onaylı iadeyi iptal et',
+        disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled'), 'sp-btn-secondary')
+    );
+  }
+
   function renderRefundRequests() {
     var rows = state.refundRequests || [];
     if (rows.length === 0) return '';
@@ -1712,14 +1726,15 @@
           actions =
             '<span class="sp-alert-body">Havale / EFT iadesi için fiş numarası gerekmez; parayı gönderince onaylayın.</span>' +
             '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="complete" data-request-id="' + id + '"' +
-            disabled + '>Havale gönderildi</button>';
+            disabled + '>Havale gönderildi</button>' + renderCancelApproved(row, id, disabled);
         } else if (row.status === 'AwaitingManualRefund') {
           actions =
             '<input class="sp-input" type="text" maxlength="50" data-refund-slip="' + id + '" aria-label="İade fiş numarası" ' +
             'placeholder="Fiş numarası" value="' + escapeHtml(state.refundSlips[row.requestId] || '') + '">' +
             '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="complete" data-request-id="' + id + '"' +
             ' data-disabled-reason="İadeyi tamamlamak için fiş numarasını yazın."' +
-            (disabled || (String(state.refundSlips[row.requestId] || '').trim() ? '' : ' disabled')) + '>İadeyi tamamla</button>';
+            (disabled || (String(state.refundSlips[row.requestId] || '').trim() ? '' : ' disabled')) + '>İadeyi tamamla</button>' +
+            renderCancelApproved(row, id, disabled);
         }
         return (
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(row.amount) + ' · ' +
@@ -1768,7 +1783,7 @@
       render();
       return;
     }
-    if (action === 'cancel' || action === 'approve') {
+    if (action === 'cancel' || action === 'approve' || action === 'cancel-approved') {
       var key = action + ':' + (requestId || '');
       if (state.confirmKey !== key) {
         state.confirmKey = key;
@@ -1787,7 +1802,7 @@
       call = requestRefundCall({ paymentId: state.itemPayment, reason: state.itemReason, items: chosenItems() || [] });
     } else if (action === 'approve') {
       call = api(refundsBase() + '/' + requestId + '/approve', { method: 'POST' });
-    } else if (action === 'reject') {
+    } else if (action === 'reject' || action === 'cancel-approved') {
       call = api(refundsBase() + '/' + requestId + '/reject', {
         method: 'POST', body: { note: state.refundNotes[requestId] || '' },
       });
@@ -1805,6 +1820,10 @@
     call.then(function (result) {
       state.refundBusy = false;
       if (result.ok) state.refundRequestKey = null;
+      if (result.ok && action === 'approve') {
+        delete state.refundNotes[requestId];
+        delete state.reasonChoices['note:' + requestId];
+      }
       if (!result.ok) {
         state.refundError = describeHttpFailure(result.status, result.body);
         render();
@@ -1827,6 +1846,7 @@
             : 'İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.')
         : asksRefund ? 'İade isteği gönderildi; onay bekliyor.'
         : action === 'reject' ? 'İade isteği reddedildi.'
+        : action === 'cancel-approved' ? 'Onaylı iade iptal edildi; para iade edilmedi. Hesap yeniden kapatılabilir.'
         : action === 'approve' ? 'İade isteği onaylandı.' : 'İade tamamlandı.';
       if (action === 'request-items') {
         if (result.body && result.body.amount != null) {
@@ -1956,7 +1976,17 @@
     var noteFor = el.getAttribute && el.getAttribute('data-refund-note');
     if (noteFor) {
       state.refundNotes[noteFor] = el.value;
+      if (state.confirmKey === 'cancel-approved:' + noteFor) {
+        state.confirmKey = null;
+        render();
+        var box = app.querySelector('[data-refund-note="' + noteFor + '"]');
+        if (box) {
+          box.focus();
+          box.setSelectionRange(box.value.length, box.value.length);
+        }
+      }
       toggle('[data-refund-action="reject"][data-request-id="' + noteFor + '"]');
+      toggle('[data-refund-action="cancel-approved"][data-request-id="' + noteFor + '"]');
     }
   }
 
@@ -2485,7 +2515,7 @@
   }
 
   function renderReceiptReset() {
-    if (!state.canResetReceipt) return '';
+    if (!state.canApproveRefund) return '';
     return '<div class="sp-card"><span class="sp-field-label">Orijinal fişi sıfırla (yönetici)</span>' +
       (state.resetNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.resetNotice) + '</div>' : '') +
       (state.resetError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.resetError) + '</div>' : '') +

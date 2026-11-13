@@ -1,0 +1,11 @@
+killed M1 permission gate removed
+killed M2 mayDecide ignored
+killed M3 enabled without reason
+killed M4 no second tap
+killed M5 cancel posts nothing to reject
+killed M6 confirm kept after select change
+killed M7 no success notice
+killed M8 transfer row has no cancel
+killed M9 typed reason never enables the button
+killed M10 approved request keeps the rejection reason
+killed M11 typed reason keeps the confirm question
