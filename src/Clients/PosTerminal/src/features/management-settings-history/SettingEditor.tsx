@@ -3,7 +3,7 @@ import { Button, SelectField, TextField } from "../../design-system";
 import { managementText } from "../../strings";
 import { ManagementApiError } from "../management/http";
 import type { SettingsClient } from "./api";
-import { durationToMinutes, editRule, minutesToDuration, settingLabel, type SettingRecord } from "./models";
+import { durationToMinutes, editRule, minutesToDuration, settingDescription, settingLabel, type SettingRecord } from "./models";
 
 const t = managementText.settingsHistory;
 const MaxReasonLength = 500;
@@ -50,7 +50,7 @@ export function SettingEditor({ client, setting, onSaved, onConflict, onCancel }
   return <form className="msh__form" aria-label={`${t.editHeading}: ${settingLabel(setting.key)}`} onSubmit={submit}>
     <h4>{`${t.editHeading}: ${settingLabel(setting.key)}`}</h4>
     {rule.kind === "toggle"
-      ? <SelectField label={t.newValue} value={value} onChange={(event) => setValue(event.target.value)}>
+      ? <SelectField label={t.newValue} hint={settingDescription(setting.key)} value={value} onChange={(event) => setValue(event.target.value)}>
         <option value="true">{t.yes}</option><option value="false">{t.no}</option>
       </SelectField>
       : <TextField label={rule.kind === "minutes" ? t.newValueMinutes : t.newValue} hint={rule.hint} inputMode="numeric"

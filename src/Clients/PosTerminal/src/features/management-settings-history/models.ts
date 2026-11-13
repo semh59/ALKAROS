@@ -28,6 +28,12 @@ const labels: Record<string, string> = {
   "garson.voluntary_tip_enabled": "İsteğe bağlı bahşiş",
 };
 
+const descriptions: Record<string, string> = {
+  "kitchen.live_sync_enabled": "Mutfak ekranı (KDS) kullanıyorsanız açın. Açıkken kalemin durumu (Hazırlanıyor, Hazır, Servis edildi) siparişe yansır ve garsona hazır bildirimi gider. Hazır biletler servis edilene kadar panoda ayrı bölümde durur. Kapalıyken bu bölüm kalkar ve sipariş durumu değişmez.",
+};
+
+export const settingDescription = (key: string): string | undefined => descriptions[key];
+
 export const settingLabel = (key: string) => labels[key] ?? "Tanımsız ayar";
 
 /** How the screen lets a manager change a setting; the server enforces the same ranges. */

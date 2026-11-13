@@ -1,0 +1,3 @@
+killed M1 hint not passed to the toggle field
+killed M2 description keyed to another setting
+killed M3 off-behaviour sentence dropped

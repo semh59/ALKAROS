@@ -153,6 +153,17 @@ describe("settings history section", () => {
     expect(client.update).toHaveBeenCalledWith("qr_ordering.pending_confirmation_timeout", "01:30:00", 2, "Uzun bekleme");
   });
 
+  it("explains the kitchen live sync switch in its edit form", async () => {
+    await render(<SettingsHistorySection client={fakeClient()} />);
+
+    await press("Düzenle");
+
+    const form = document.querySelector('form[aria-label="Ayarı değiştir: Mutfak canlı eşitleme"]')!;
+    expect(form.textContent).toContain("Mutfak ekranı (KDS) kullanıyorsanız açın");
+    expect(form.textContent).toContain("Hazır biletler servis edilene kadar panoda ayrı bölümde durur");
+    expect(form.textContent).toContain("Kapalıyken bu bölüm kalkar");
+  });
+
   it("changes a toggle with the Evet and Hayır choice", async () => {
     const client = fakeClient();
     await render(<SettingsHistorySection client={client} />);

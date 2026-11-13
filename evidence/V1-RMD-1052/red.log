@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (27 tests | 1 failed) 441ms
+     × explains the kitchen live sync switch in its edit form 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > explains the kitchen live sync switch in its edit form
+AssertionError: expected 'Ayarı değiştir: Mutfak canlı eşitleme…' to contain 'mutfak ekranı (KDS) kullanılan işletm…'
+
+Expected: "mutfak ekranı (KDS) kullanılan işletmeler içindir"
+Received: "Ayarı değiştir: Mutfak canlı eşitlemeYeni değerEvetHayırDeğişiklik gerekçesiNeden değiştirdiğinizi yazın; geçmişte görünür.KaydetVazgeç"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:162:30
+    160|
+    161|     const form = document.querySelector('form[aria-label="Ayarı değişt…
+    162|     expect(form.textContent).toContain("mutfak ekranı (KDS) kullanılan…
+       |                              ^
+    163|     expect(form.textContent).toContain("Hazır biletler servis edilene …
+    164|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 26 passed (27)
+   Start at  01:49:44
+   Duration  3.01s (transform 909ms, setup 0ms, import 1.24s, tests 441ms, environment 1.03s)
+
+exit=1
