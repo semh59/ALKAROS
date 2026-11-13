@@ -1,0 +1,20 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:730:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+
+ Test Files  19 passed (19)
+      Tests  107 passed (107)
+   Start at  10:13:15
+   Duration  10.46s (transform 15.89s, setup 0ms, import 4.39s, tests 53.84s, environment 37.25s)
+

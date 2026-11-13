@@ -1,7 +1,7 @@
 # V1-RMD-1026 - Gönderilmemiş sepet varken de mutfaksız ekleme seçilebilir
 
 - Task ID: V1-RMD-1026
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

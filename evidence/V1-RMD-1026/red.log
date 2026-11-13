@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.kitchenless.test.tsx (11 tests | 2 failed) 3092ms
+     × keeps the button when an unsent cart sits on a table order that already has sent lines 68ms
+     × opens the picker for the table panel's request although an unsent cart is present 90ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.kitchenless.test.tsx > Cashier adds an item to the open check without a kitchen ticket > keeps the button when an unsent cart sits on a table order that already has sent lines
+AssertionError: expected undefined to be defined
+ ❯ src/routes/Cashier.kitchenless.test.tsx:145:55
+    143|     await openTill(["orders.create", "orders.add-without-kitchen"], { …
+    144|
+    145|     expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
+       |                                                       ^
+    146|   });
+    147|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.kitchenless.test.tsx > Cashier adds an item to the open check without a kitchen ticket > opens the picker for the table panel's request although an unsent cart is present
+AssertionError: expected undefined to be defined
+ ❯ src/routes/Cashier.kitchenless.test.tsx:152:37
+    150|     await openTill(["orders.create", "orders.add-without-kitchen"], { …
+    151|
+    152|     expect(button("Garson unuttu")).toBeDefined();
+       |                                     ^
+    153|   });
+    154|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  10:09:56
+   Duration  4.44s (transform 1.61s, setup 0ms, import 204ms, tests 3.09s, environment 897ms)
+

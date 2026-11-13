@@ -38,6 +38,8 @@ const sentOrder = {
   lines: [], subtotal: 0, discountTotal: 0, taxTotal: 0, total: 0, currency: "TRY", serverTimestamp: "", message: "",
 };
 
+const mixedLine = (n: number, unsent: boolean) => ({ itemId: `i-${n}`, name: `Ürün ${n}`, quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0, ...(unsent ? { unsent } : {}) });
+
 let root: Root | null = null;
 afterEach(() => {
   if (root) act(() => root!.unmount());
@@ -132,9 +134,48 @@ describe("Cashier adds an item to the open check without a kitchen ticket", () =
     expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
   });
   it("hides the button while the order is still an unsent draft", async () => {
-    await openTill(["orders.create", "orders.add-without-kitchen"], { ...sentOrder, editable: true });
+    await openTill(["orders.create", "orders.add-without-kitchen"], { ...sentOrder, editable: true, lines: [mixedLine(1, true), mixedLine(2, true)] });
 
     expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+  });
+
+  it("keeps the button when an unsent cart sits on a table order that already has sent lines", async () => {
+    await openTill(["orders.create", "orders.add-without-kitchen"], { ...sentOrder, editable: true, lines: [mixedLine(1, false), mixedLine(2, true)] });
+
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
+  });
+
+  it("sends a tapped product to the kitchen-less endpoint while an unsent cart is present", async () => {
+    const calls = await openTill(["orders.create", "orders.add-without-kitchen"], { ...sentOrder, editable: true, lines: [mixedLine(1, false), mixedLine(2, true)] });
+    await tap(button("Mutfağa göndermeden hesaba ekle")!);
+    await tap(button("Garson unuttu")!);
+
+    await tap(card("Ayran"));
+    await settle();
+
+    expect(calls.some((c) => c.call === "POST /orders/order-1/items/without-kitchen")).toBe(true);
+    expect(calls.some((c) => c.call.endsWith("/items"))).toBe(false);
+  });
+
+  it("leaves the kitchen-less mode once the unsent cart is sent to the kitchen", async () => {
+    const order = { ...sentOrder, editable: true, lines: [mixedLine(1, false), mixedLine(2, true)] };
+    await openTill(["orders.create", "orders.add-without-kitchen"], order);
+    await tap(button("Mutfağa göndermeden hesaba ekle")!);
+    await tap(button("Garson unuttu")!);
+    expect(document.body.textContent).toContain("Dokunduğunuz ürünler mutfağa gönderilmeden");
+
+    order.editable = false;
+    await tap(button("Mutfağa gönder (1)")!);
+    await settle();
+
+    expect(document.body.textContent).not.toContain("Dokunduğunuz ürünler mutfağa gönderilmeden");
+  });
+
+  it("opens the picker for the table panel's request although an unsent cart is present", async () => {
+    markTableCart("order-1", true);
+    await openTill(["orders.create", "orders.add-without-kitchen"], { ...sentOrder, editable: true, lines: [mixedLine(1, false), mixedLine(2, true)] });
+
+    expect(button("Garson unuttu")).toBeDefined();
   });
 
   it("opens the reason picker straight away when the table panel asked for the kitchen-less path", async () => {
@@ -153,8 +194,7 @@ describe("Cashier adds an item to the open check without a kitchen ticket", () =
   });
 
   it("counts only the unsent lines on the send button", async () => {
-    const line = (n: number, unsent: boolean) => ({ itemId: `i-${n}`, name: `Ürün ${n}`, quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0, ...(unsent ? { unsent } : {}) });
-    await openTill(["orders.create"], { ...sentOrder, editable: true, lines: [line(1, false), line(2, false), line(3, true)] });
+    await openTill(["orders.create"], { ...sentOrder, editable: true, lines: [mixedLine(1, false), mixedLine(2, false), mixedLine(3, true)] });
 
     expect(button("Mutfağa gönder (1)")).toBeDefined();
   });

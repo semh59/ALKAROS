@@ -144,13 +144,14 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
   const kitchenlessOrderId = order?.orderId;
-  const kitchenlessEditable = order?.editable;
+  // A draft that never reached the kitchen has nothing to add to; an order with a sent line takes the kitchen-less path even while a new unsent cart sits on it.
+  const kitchenlessAvailable = !!kitchenlessOrderId && (!order?.editable || order.lines.some((line) => !line.unsent));
   useEffect(() => {
     setKitchenlessReason(null);
-    const wanted = withoutKitchenIntent.current && !!kitchenlessOrderId && !kitchenlessEditable;
+    const wanted = withoutKitchenIntent.current && kitchenlessAvailable;
     if (wanted) withoutKitchenIntent.current = false;
     setKitchenlessPicking(wanted);
-  }, [kitchenlessOrderId, kitchenlessEditable]);
+  }, [kitchenlessOrderId, kitchenlessAvailable, order?.editable]);
   const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
   const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
@@ -1026,7 +1027,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               ) : (
                 <p className="submitted-state__hint">{openBillDeniedText}</p>
               ))}
-              {capabilities.includes("orders.add-without-kitchen") && activeOrder.orderId && !activeOrder.editable && (
+              {capabilities.includes("orders.add-without-kitchen") && kitchenlessAvailable && (
                 <div className="kitchenless">
                   {kitchenlessReason ? (
                     <div className="kitchenless__active" role="status">

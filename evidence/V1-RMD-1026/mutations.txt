@@ -1,0 +1,4 @@
+killed unsent cart hides the button again
+killed never-sent draft shows the button
+killed panel request ignored with an unsent cart
+killed mode survives sending the cart

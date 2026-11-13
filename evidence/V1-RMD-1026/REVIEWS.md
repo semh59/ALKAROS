@@ -1,0 +1,2 @@
+qa-frontend: sepet gonderilince mod acik kaliyordu -> efekt bagimliligina editable + test + mutant. Tum-gonderilmemis taslak testi gercekci satirlarla; urune dokununca without-kitchen cagrisi testi eklendi. Kabul (dusuk): niyet bayragi taslakta tuketilmeden kalabilir (eski davranis); ikram satiri gonderilmis sayilir.
+qa-ux-tasarim: Mutfaga gonder dugmesi mod aciksken birincil (urun karari); modda secenekli urun engeli (urun karari); "hesaba ekle" ifadesi belirsiz olabilir (urun karari); gonderim sonrasi mod acik kalmasi duzeltildi.
