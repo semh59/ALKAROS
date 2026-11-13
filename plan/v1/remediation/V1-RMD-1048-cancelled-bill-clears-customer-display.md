@@ -1,7 +1,7 @@
 # V1-RMD-1048 - Hesap iptal edilince müşteri ekranı gönderilmemiş kalemli sipariş olsa da hemen boşalır
 
 - Task ID: V1-RMD-1048
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

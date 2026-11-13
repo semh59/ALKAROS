@@ -231,11 +231,21 @@ public sealed class CustomerDisplayStatementTests
     }
 
     [Fact]
-    public void AnOrderStillBeingEditedIsNotClearedByACancelledBill()
+    public void ACancelledBillClearsTheDisplayEvenWhileTheOrderStillHasUnsentItems()
+    {
+        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(editable: true), [], anyBillCancelled: true);
+
+        Assert.Equal("Idle", result.State);
+        Assert.Equal(CustomerDisplayPaymentProgress.BillCancelledMessage, result.Message);
+        Assert.Empty(result.Lines);
+    }
+
+    [Fact]
+    public void AnOrderBeingEditedWithoutAnyCancelledBillIsLeftAlone()
     {
         var editing = Snapshot(editable: true);
 
-        Assert.Equal(editing, CustomerDisplayPaymentProgress.Apply(editing, [], anyBillCancelled: true));
+        Assert.Equal(editing, CustomerDisplayPaymentProgress.Apply(editing, []));
     }
 
     [Fact]

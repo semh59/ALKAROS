@@ -1454,13 +1454,13 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ACancelledBillWhoseOrderStillHasUnsentItemsKeepsShowingTheOrderBeingEdited()
+    public async Task ACancelledBillWhoseOrderStillHasUnsentItemsAlsoReturnsTheDisplayToIdle()
     {
         var snapshot = await CancelBillOnDisplayAsync("g6-cancel-draft", orderSentToKitchen: false);
 
-        Assert.Equal("Active", snapshot.GetProperty("state").GetString());
-        Assert.Single(snapshot.GetProperty("lines").EnumerateArray());
-        Assert.Equal(200m, snapshot.GetProperty("total").GetDecimal());
+        Assert.Equal("Idle", snapshot.GetProperty("state").GetString());
+        Assert.Empty(snapshot.GetProperty("lines").EnumerateArray());
+        Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
     }
 
     private async Task<JsonElement> CancelBillOnDisplayAsync(string deviceKey, bool orderSentToKitchen)

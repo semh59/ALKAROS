@@ -59,8 +59,8 @@ public static class CustomerDisplayPaymentProgress
 
     /// <param name="live">The order's bills that are not cancelled.</param>
     /// <param name="anyBillCancelled">
-    /// Whether the order also has a cancelled bill. An order that is no longer being edited and has only cancelled
-    /// bills has nothing left to pay, so the display returns to idle instead of keeping "order received" up.
+    /// Whether the order also has a cancelled bill. An order whose bills are all cancelled has nothing left to pay,
+    /// even when it still has unsent items, so the display returns to idle at once.
     /// </param>
     public static CustomerDisplaySnapshotDto Apply(
         CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false)
@@ -69,7 +69,7 @@ public static class CustomerDisplayPaymentProgress
             return snapshot;
 
         if (live.Count == 0)
-            return anyBillCancelled && snapshot.State == ActiveState && !snapshot.Editable ? Cleared(snapshot) : snapshot;
+            return anyBillCancelled && snapshot.State == ActiveState ? Cleared(snapshot) : snapshot;
 
         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
         var lines = live

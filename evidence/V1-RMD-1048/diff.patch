@@ -1,0 +1,74 @@
+diff --git a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+index 92a535e24..ccb8ca4e5 100644
+--- a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
++++ b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+@@ -59,8 +59,8 @@ public static class CustomerDisplayPaymentProgress
+ 
+     /// <param name="live">The order's bills that are not cancelled.</param>
+     /// <param name="anyBillCancelled">
+-    /// Whether the order also has a cancelled bill. An order that is no longer being edited and has only cancelled
+-    /// bills has nothing left to pay, so the display returns to idle instead of keeping "order received" up.
++    /// Whether the order also has a cancelled bill. An order whose bills are all cancelled has nothing left to pay,
++    /// even when it still has unsent items, so the display returns to idle at once.
+     /// </param>
+     public static CustomerDisplaySnapshotDto Apply(
+         CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false)
+@@ -69,7 +69,7 @@ public static class CustomerDisplayPaymentProgress
+             return snapshot;
+ 
+         if (live.Count == 0)
+-            return anyBillCancelled && snapshot.State == ActiveState && !snapshot.Editable ? Cleared(snapshot) : snapshot;
++            return anyBillCancelled && snapshot.State == ActiveState ? Cleared(snapshot) : snapshot;
+ 
+         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
+         var lines = live
+diff --git a/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs b/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
+index f71b189a1..be2607608 100644
+--- a/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
++++ b/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
+@@ -1454,13 +1454,13 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
+     }
+ 
+     [Fact]
+-    public async Task ACancelledBillWhoseOrderStillHasUnsentItemsKeepsShowingTheOrderBeingEdited()
++    public async Task ACancelledBillWhoseOrderStillHasUnsentItemsAlsoReturnsTheDisplayToIdle()
+     {
+         var snapshot = await CancelBillOnDisplayAsync("g6-cancel-draft", orderSentToKitchen: false);
+ 
+-        Assert.Equal("Active", snapshot.GetProperty("state").GetString());
+-        Assert.Single(snapshot.GetProperty("lines").EnumerateArray());
+-        Assert.Equal(200m, snapshot.GetProperty("total").GetDecimal());
++        Assert.Equal("Idle", snapshot.GetProperty("state").GetString());
++        Assert.Empty(snapshot.GetProperty("lines").EnumerateArray());
++        Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
+     }
+ 
+     private async Task<JsonElement> CancelBillOnDisplayAsync(string deviceKey, bool orderSentToKitchen)
+diff --git a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+index 49b703f3a..fd21f9dc0 100644
+--- a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+@@ -231,11 +231,21 @@ public sealed class CustomerDisplayStatementTests
+     }
+ 
+     [Fact]
+-    public void AnOrderStillBeingEditedIsNotClearedByACancelledBill()
++    public void ACancelledBillClearsTheDisplayEvenWhileTheOrderStillHasUnsentItems()
++    {
++        var result = CustomerDisplayPaymentProgress.Apply(Snapshot(editable: true), [], anyBillCancelled: true);
++
++        Assert.Equal("Idle", result.State);
++        Assert.Equal(CustomerDisplayPaymentProgress.BillCancelledMessage, result.Message);
++        Assert.Empty(result.Lines);
++    }
++
++    [Fact]
++    public void AnOrderBeingEditedWithoutAnyCancelledBillIsLeftAlone()
+     {
+         var editing = Snapshot(editable: true);
+ 
+-        Assert.Equal(editing, CustomerDisplayPaymentProgress.Apply(editing, [], anyBillCancelled: true));
++        Assert.Equal(editing, CustomerDisplayPaymentProgress.Apply(editing, []));
+     }
+ 
+     [Fact]

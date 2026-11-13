@@ -1,0 +1,4 @@
+killed M1 unit: editable order is kept again
+killed M1 http: editable order is kept again
+killed M2 cancelled flag ignored (always clears)
+killed M3 completed order cleared too
