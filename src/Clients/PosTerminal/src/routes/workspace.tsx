@@ -23,6 +23,11 @@ import { markTableCart } from "../tableCart";
 
 const selectedTableKey = "alkaros.selected-table";
 
+// A zone nobody has laid out has no plan and the server answers 404 for it. Learning that once per page load is enough: the
+// screen is opened again and again, and each repeat would put the same 404 in the console. Picking a zone or pressing
+// "Yenile" asks again.
+const zonesWithoutPlan = new Set<string>();
+
 // The next cashier on this device must not open the screen with the previous cashier's table already selected.
 const forgetSelectedTable = () => {
   try { localStorage.removeItem(selectedTableKey); } catch { /* storage unavailable: nothing was remembered */ }
@@ -214,21 +219,20 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
-  // A zone nobody has laid out has no plan and the server answers 404 for it. Background refreshes do not
-  // ask again; picking the zone or pressing "Yenile" does.
-  const zonesWithoutPlan = useRef(new Set<string>());
   const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>, silent = false) => {
     const targetZoneId = (zoneId === "all" && currentZones.length > 0) ? currentZones[0].zoneId : zoneId;
     if (!targetZoneId || targetZoneId === "all") {
       setFloorPlan(undefined);
       return;
     }
-    if (silent && zonesWithoutPlan.current.has(targetZoneId)) return;
+    if (zonesWithoutPlan.has(targetZoneId)) {
+      if (!silent) setFloorPlan(undefined);
+      return;
+    }
     try {
       setFloorPlan(await client.getFloorPlan(targetZoneId));
-      zonesWithoutPlan.current.delete(targetZoneId);
     } catch (reason) {
-      if ((reason as { status?: number }).status === 404) zonesWithoutPlan.current.add(targetZoneId);
+      if ((reason as { status?: number }).status === 404) zonesWithoutPlan.add(targetZoneId);
       if (!silent) setFloorPlan(undefined);
     }
   }, [client]);
@@ -293,6 +297,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
   }, [state, load]);
 
   const handleSelectZone = (zoneId: string) => {
+    zonesWithoutPlan.clear();
     setSelectedZoneId(zoneId);
   };
 
@@ -302,7 +307,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
     setFloorPlanError(undefined);
     try {
       const result = await client.saveFloorPlan(zoneId, input);
-      zonesWithoutPlan.current.delete(zoneId);
+      zonesWithoutPlan.delete(zoneId);
       setFloorPlan(result.floorPlan);
       return result;
     } catch (reason) {
@@ -338,7 +343,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
       onSelectTable={(tableId) => { setSelectedTableId(tableId); trySetItem(selectedTableKey, tableId); setOrderError(undefined); }}
       selectedZoneId={selectedZoneId}
       onSelectZone={handleSelectZone}
-      onRefresh={() => load()}
+      onRefresh={() => { zonesWithoutPlan.clear(); return load(); }}
       onCreateZone={canConfigure && !reservationOnly ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
       onCreateTable={canConfigure && !reservationOnly ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
       onUpdateZone={canConfigure && !reservationOnly ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}

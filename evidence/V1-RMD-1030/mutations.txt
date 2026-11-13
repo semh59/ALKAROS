@@ -1,0 +1,5 @@
+killed known no-plan zone asked again
+killed Yenile does not ask again
+killed zone pick does not ask again
+killed any plan read failure marks the zone as having no plan
+SURVIVED saved plan keeps the zone marked (not covered by a test)

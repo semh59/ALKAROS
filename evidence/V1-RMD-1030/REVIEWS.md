@@ -1,0 +1,2 @@
+qa-frontend: modul duzeyi kume cikis-giriste (SPA) temizlenmez ve baska kasada cizilen plan Yenile/bolge secimi/sayfa yenilemesine kadar gorunmez (kabul, gorev amacinin bedeli, acik); yaris kosulu eski (kapsam disi); clear() tum kumeyi siler.
+qa-test-kalitesi: 404 disi hata testi eklendi (mutant killed); testler benzersiz bolge kimligi kullanir (sizinti yok, el ile korunur); kayit sonrasi delete icin test yok (acik); mutasyon gunlugu genisletildi.

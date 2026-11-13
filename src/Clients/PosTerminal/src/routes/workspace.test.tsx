@@ -1218,6 +1218,72 @@ describe("workspace /tables route background refresh", () => {
     expect(planCalls).toBe(2);
   });
 
+  it("does not ask again for the plan of a zone known to have none when the screen is opened again", async () => {
+    let planCalls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/floor-plans/")) {
+        planCalls += 1;
+        return jsonResponse({ error: { code: "FLOOR_PLAN_NOT_FOUND", message: "Kat planı bulunamadı." } }, 404);
+      }
+      if (path.includes("/zones")) return jsonResponse([{ zoneId: "zone-reopen", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }]);
+      return jsonResponse([{ ...tableJson, zoneId: "zone-reopen" }]);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    expect(planCalls).toBe(1);
+
+    await act(async () => root!.unmount());
+    await renderRoute();
+
+    expect(planCalls).toBe(1);
+  });
+
+  it("asks again for a zone without a plan when the cashier picks it", async () => {
+    const asked: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/floor-plans/")) {
+        asked.push(path.split("/floor-plans/")[1]);
+        return path.endsWith("zone-pick-b")
+          ? jsonResponse({ zoneId: "zone-pick-b", zoneCode: "T", zoneName: "Teras", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1, tables: [] })
+          : jsonResponse({ error: { code: "FLOOR_PLAN_NOT_FOUND", message: "Kat planı bulunamadı." } }, 404);
+      }
+      if (path.includes("/zones")) return jsonResponse([
+        { zoneId: "zone-pick-a", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 },
+        { zoneId: "zone-pick-b", code: "T", name: "Teras", sortOrder: 2, active: true, rowVersion: 1 },
+      ]);
+      return jsonResponse([{ ...tableJson, zoneId: "zone-pick-a" }]);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    const pick = (name: string) => act(async () => [...document.querySelectorAll<HTMLButtonElement>(".table-zone-tabs button")].find((tab) => tab.textContent === name)!.click());
+
+    await pick("Teras");
+    await pick("Salon");
+
+    expect(asked.filter((zone) => zone === "zone-pick-a")).toHaveLength(2);
+  });
+
+  it("asks again after a plan read failed for another reason than a missing plan", async () => {
+    let planCalls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/floor-plans/")) {
+        planCalls += 1;
+        return jsonResponse({ error: { code: "X", message: "Sunucu hatası." } }, 500);
+      }
+      if (path.includes("/zones")) return jsonResponse([{ zoneId: "zone-error", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }]);
+      return jsonResponse([{ ...tableJson, zoneId: "zone-error" }]);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    await act(async () => root!.unmount());
+    await renderRoute();
+
+    expect(planCalls).toBe(2);
+  });
+
   it("asks for the floor plan once when a zone is picked, not twice", async () => {
     const planPaths: string[] = [];
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {

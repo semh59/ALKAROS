@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/workspace.test.tsx (53 tests | 1 failed) 1659ms
+     × does not ask again for the plan of a zone known to have none when the screen is opened again 54ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /tables route background refresh > does not ask again for the plan of a zone known to have none when the screen is opened again
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/routes/workspace.test.tsx:1239:23
+    1237|     await renderRoute();
+    1238|
+    1239|     expect(planCalls).toBe(1);
+       |                       ^
+    1240|   });
+    1241|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 52 passed (53)
+   Start at  10:39:21
+   Duration  5.29s (transform 1.70s, setup 0ms, import 2.30s, tests 1.66s, environment 1.01s)
+
