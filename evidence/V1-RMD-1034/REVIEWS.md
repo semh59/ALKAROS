@@ -1,0 +1,3 @@
+qa-frontend: bulgu yok. Fis cizen tek yer receiptHtml; baska musteri yuzeyinde sizinti yok; kasiyer tarafi (renderBillContext, BillSplitWorkspace, TableOrderBridge, PendingChecks) dokunulmadi; test fixture'i notu gercekten uretiyor. Dusuk: /receipt cevabi neden kodunu tasiyor (veri minimizasyonu, kapsam disi).
+qa-uctan-uca-akis: bulgu yok. Musteri ekrani, QR canli hesap, NFC siparis, fis, ic rapor (KitchenlessAddedCounter) incelendi; ic rapor bozulmadi. Dusuk: ayni alan fis API cevabinda; kasa ekrani notu bu endpoint'e dayandigi icin birakildi.
+Dogrulama turu: bulgu duzeltmesi gerekmedi; testler ve mutantlar son durumda kosuldu.

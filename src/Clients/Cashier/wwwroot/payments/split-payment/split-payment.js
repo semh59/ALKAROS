@@ -2062,7 +2062,6 @@
       '<table>' +
       receipt.items.map(function (item) {
         return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
-          (item.addedWithoutKitchenReason ? '<tr class="sp-receipt-refund"><td>Kasada eklendi</td><td></td></tr>' : '') +
           (item.lineDiscount > 0
             ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
             : '') +

@@ -1,0 +1,37 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index fccc7c13..3303d34f 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2062,7 +2062,6 @@
+       '<table>' +
+       receipt.items.map(function (item) {
+         return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
+-          (item.addedWithoutKitchenReason ? '<tr class="sp-receipt-refund"><td>Kasada eklendi</td><td></td></tr>' : '') +
+           (item.lineDiscount > 0
+             ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
+             : '') +
+diff --git a/tests/Clients/StaticApps/split-payment-table-note.test.js b/tests/Clients/StaticApps/split-payment-table-note.test.js
+index efb070a7..91727a5c 100644
+--- a/tests/Clients/StaticApps/split-payment-table-note.test.js
++++ b/tests/Clients/StaticApps/split-payment-table-note.test.js
+@@ -104,7 +104,7 @@ describe("split-payment.js table name and kitchen-less note", () => {
+     expect(document.querySelector(".sp-back")?.getAttribute("href")).toBe("/");
+   });
+ 
+-  it("prints the table and a Kasada eklendi row under the line on the receipt", async () => {
++  it("prints the table but never the Kasada eklendi note on the customer receipt", async () => {
+     await open(settled, receipt({ tableNumber: "T-4" }));
+     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+ 
+@@ -116,8 +116,9 @@ describe("split-payment.js table name and kitchen-less note", () => {
+     expect(sheet.textContent).toContain("Masa: T-4");
+     const rows = [...sheet.querySelectorAll("tr")].map((row) => row.textContent);
+     expect(rows[1]).toContain("Ayran <b>");
+-    expect(rows[2]).toContain("Kasada eklendi");
+-    expect(rows.filter((row) => row.includes("Kasada eklendi"))).toHaveLength(1);
++    expect(rows[2]).toContain("Ara toplam");
++    expect(sheet.textContent.toLowerCase()).not.toContain("kasada eklendi");
++    expect(sheet.textContent.toLowerCase()).not.toContain("mutfağa gitmedi");
+   });
+ 
+   it("puts the split controls after Ödemeyi Ekle in page order, so focus order matches what is drawn", async () => {

@@ -104,7 +104,7 @@ describe("split-payment.js table name and kitchen-less note", () => {
     expect(document.querySelector(".sp-back")?.getAttribute("href")).toBe("/");
   });
 
-  it("prints the table and a Kasada eklendi row under the line on the receipt", async () => {
+  it("prints the table but never the Kasada eklendi note on the customer receipt", async () => {
     await open(settled, receipt({ tableNumber: "T-4" }));
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
@@ -116,8 +116,9 @@ describe("split-payment.js table name and kitchen-less note", () => {
     expect(sheet.textContent).toContain("Masa: T-4");
     const rows = [...sheet.querySelectorAll("tr")].map((row) => row.textContent);
     expect(rows[1]).toContain("Ayran <b>");
-    expect(rows[2]).toContain("Kasada eklendi");
-    expect(rows.filter((row) => row.includes("Kasada eklendi"))).toHaveLength(1);
+    expect(rows[2]).toContain("Ara toplam");
+    expect(sheet.textContent.toLowerCase()).not.toContain("kasada eklendi");
+    expect(sheet.textContent.toLowerCase()).not.toContain("mutfağa gitmedi");
   });
 
   it("puts the split controls after Ödemeyi Ekle in page order, so focus order matches what is drawn", async () => {
