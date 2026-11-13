@@ -17,6 +17,7 @@
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
   - src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
   - src/Clients/PosTerminal/src/features/tables/tables.css
+  - src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
