@@ -15,6 +15,7 @@ Masa taşıma işlemi düğmede "Masa taşı", pencere başlığında ve bildiri
 - `evidence/V1-RMD-1040/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/strings.ts
+  - src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.login-focus.test.tsx
   - src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
