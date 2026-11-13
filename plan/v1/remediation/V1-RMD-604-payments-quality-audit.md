@@ -1,7 +1,7 @@
 # V1-RMD-604 - Payments modülünün bağımsız test ve kalite denetimi
 
 - Task ID: V1-RMD-604
-- Status: InProgress
+- Status: Blocked
 - Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: validation
 - Surface state: Planned
@@ -49,6 +49,10 @@ Payments modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar b
 - V1-RMD-736
 - V1-RMD-737
 - V1-RMD-738
+
+## Blocker
+
+- Bu görevi başlatan eski oturum kapandı ve denetim yürütülmedi. Görev ancak bir oturum Payments denetimini ayrılmış zamanla yeniden üstlenip kendi oturum kimliğini atadığında açılır; o zamana kadar kapsam bekçisini kilitlememesi için Blocked tutulur.
 
 ## Acceptance evidence
 
