@@ -1,0 +1,153 @@
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index 783558f2..33d749e2 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -271,6 +271,7 @@ export interface TableOrder {
+     unitPrice: number;
+     totalPrice: number;
+     status: string;
++    kitchenState?: string;
+     addedWithoutKitchenReason?: string | null;
+   }[];
+ }
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 52f78994..e253e786 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -27,6 +27,7 @@ const otherCalls = (mock: ReturnType<typeof stubFetch>) => mock.mock.calls.filte
+ beforeEach(() => { stubFetch(); });
+ afterEach(() => {
+   vi.unstubAllGlobals();
++  vi.useRealTimers();
+   if (root) act(() => root!.unmount());
+   root = null;
+   document.body.innerHTML = "";
+@@ -301,6 +302,60 @@ describe("TableOrderBridge", () => {
+     expect(line.textContent).toContain("Mutfağa gönderilmedi");
+   });
+ 
++  it("names a line the kitchen has marked ready or served, and leaves preparing and sent lines unmarked", async () => {
++    stubFetch(undefined, { ...tableOrder, items: [
++      { itemId: "k1", productName: "Çorba", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Ready" },
++      { itemId: "k2", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" },
++      { itemId: "k3", productName: "Salata", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Preparing" },
++      { itemId: "k4", productName: "Ayran", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Sent" },
++    ] });
++    render();
++    await flush();
++
++    expect([...document.querySelectorAll(".table-order-bridge__lines li small")].map((note) => note.textContent)).toEqual([" · Hazır", " · Servis edildi"]);
++  });
++
++  it("reads the lines again while the panel stays open, so a line the kitchen marks ready appears without reselecting the table", async () => {
++    vi.useFakeTimers();
++    let order: unknown = tableOrder;
++    vi.stubGlobal("fetch", vi.fn(async () => reply(200, order)));
++    render();
++    await flush();
++    expect(document.querySelectorAll(".table-order-bridge__lines li small")).toHaveLength(0);
++
++    order = { ...tableOrder, items: [{ ...tableOrder.items[0], kitchenState: "Ready" }, tableOrder.items[1]] };
++    await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
++
++    expect([...document.querySelectorAll(".table-order-bridge__lines li small")].map((note) => note.textContent)).toEqual([" · Hazır"]);
++  });
++
++  it("stops re-reading the lines once the panel is closed", async () => {
++    vi.useFakeTimers();
++    const fetchMock = vi.fn(async () => reply(200, tableOrder));
++    vi.stubGlobal("fetch", fetchMock);
++    render();
++    await flush();
++    act(() => root!.unmount());
++    root = null;
++    const calls = fetchMock.mock.calls.length;
++    await act(async () => { await vi.advanceTimersByTimeAsync(60_000); });
++
++    expect(fetchMock.mock.calls.length).toBe(calls);
++  });
++
++  it("keeps the lines on screen when a background re-read fails", async () => {
++    vi.useFakeTimers();
++    let fail = false;
++    vi.stubGlobal("fetch", vi.fn(async () => (fail ? reply(500, {}) : reply(200, tableOrder))));
++    render();
++    await flush();
++    fail = true;
++    await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
++
++    expect(document.querySelectorAll(".table-order-bridge__lines li")).toHaveLength(2);
++    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("alınamadı");
++  });
++
+   it("shows the server's refusal when sending fails and does not report the order as sent", async () => {
+     stubFetch(() => reply(409, { error: { code: "STALE", message: "Sipariş başka yerde değişti." } }), draftOrder);
+     const { onSent } = render();
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index 44e5855a..2adb491e 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -5,7 +5,7 @@ import { formatMoney } from "../format";
+ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
+ import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+-import { billOnOtherTillText, kitchenlessText } from "../strings";
++import { billOnOtherTillText, kitchenStateNotes, kitchenlessText } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -39,6 +39,13 @@ interface TableOrderBridgeProps {
+   navigateTo?: (href: string) => void;
+ }
+ 
++const lineRefreshMs = 15_000;
++
++function lineNote(line: TableOrder["items"][number]) {
++  if (line.status === "Draft") return kitchenlessText.notSent;
++  return line.addedWithoutKitchenReason ? kitchenlessText.addedAtTill : kitchenStateNotes[line.kitchenState ?? ""];
++}
++
+ /** What the cashier can do with the selected table: take or continue its order, and collect its check. */
+ export function TableOrderBridge({
+   terminalId, table, orderAllowed, canManage, canCollect, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
+@@ -58,11 +65,14 @@ export function TableOrderBridge({
+   useEffect(() => {
+     if (!currentOrderId || !canReadLines) return;
+     let current = true;
+-    api.tableOrder(terminalId, tableId).then(
++    const read = (quiet: boolean) => api.tableOrder(terminalId, tableId).then(
+       (order) => { if (current) setBill(order); },
+-      () => { if (current) setBill("failed"); },
++      () => { if (current && !quiet) setBill("failed"); },
+     );
+-    return () => { current = false; };
++    void read(false);
++    // The kitchen marks lines ready or served without touching the table row, so the lines are read again on a timer.
++    const timer = window.setInterval(() => void read(true), lineRefreshMs);
++    return () => { current = false; window.clearInterval(timer); };
+   }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal, sentCount]);
+   const billingHref = table.currentBillId ? `/billing?billId=${encodeURIComponent(table.currentBillId)}` : `/billing?orderId=${encodeURIComponent(table.currentOrderId ?? "")}`;
+   const lines = bill && bill !== "failed" ? bill.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
+@@ -128,7 +138,7 @@ export function TableOrderBridge({
+     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+       : bill && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
++          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+         </ul>
+         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
+       </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index c7e45c99..220831fb 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1424,6 +1424,9 @@ export const kitchenlessReasons = [
+ 
+ export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
+ 
++/** What the kitchen has done with a sent line, shown only once it matters to the cashier (cancelling a served line is refused). */
++export const kitchenStateNotes: Readonly<Record<string, string>> = { Ready: itemStatusLabels.Ready, Served: itemStatusLabels.Served };
++
+ export const kitchenlessText = {
+   open: "Mutfağa göndermeden hesaba ekle",
+   pickReason: "Mutfağa neden gönderilmiyor?",

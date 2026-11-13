@@ -27,6 +27,7 @@ const otherCalls = (mock: ReturnType<typeof stubFetch>) => mock.mock.calls.filte
 beforeEach(() => { stubFetch(); });
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.useRealTimers();
   if (root) act(() => root!.unmount());
   root = null;
   document.body.innerHTML = "";
@@ -299,6 +300,60 @@ describe("TableOrderBridge", () => {
     const line = document.querySelector(".table-order-bridge__lines li")!;
     expect(line.querySelectorAll("small")).toHaveLength(1);
     expect(line.textContent).toContain("Mutfağa gönderilmedi");
+  });
+
+  it("names a line the kitchen has marked ready or served, and leaves preparing and sent lines unmarked", async () => {
+    stubFetch(undefined, { ...tableOrder, items: [
+      { itemId: "k1", productName: "Çorba", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Ready" },
+      { itemId: "k2", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" },
+      { itemId: "k3", productName: "Salata", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Preparing" },
+      { itemId: "k4", productName: "Ayran", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Sent" },
+    ] });
+    render();
+    await flush();
+
+    expect([...document.querySelectorAll(".table-order-bridge__lines li small")].map((note) => note.textContent)).toEqual([" · Hazır", " · Servis edildi"]);
+  });
+
+  it("reads the lines again while the panel stays open, so a line the kitchen marks ready appears without reselecting the table", async () => {
+    vi.useFakeTimers();
+    let order: unknown = tableOrder;
+    vi.stubGlobal("fetch", vi.fn(async () => reply(200, order)));
+    render();
+    await flush();
+    expect(document.querySelectorAll(".table-order-bridge__lines li small")).toHaveLength(0);
+
+    order = { ...tableOrder, items: [{ ...tableOrder.items[0], kitchenState: "Ready" }, tableOrder.items[1]] };
+    await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
+
+    expect([...document.querySelectorAll(".table-order-bridge__lines li small")].map((note) => note.textContent)).toEqual([" · Hazır"]);
+  });
+
+  it("stops re-reading the lines once the panel is closed", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn(async () => reply(200, tableOrder));
+    vi.stubGlobal("fetch", fetchMock);
+    render();
+    await flush();
+    act(() => root!.unmount());
+    root = null;
+    const calls = fetchMock.mock.calls.length;
+    await act(async () => { await vi.advanceTimersByTimeAsync(60_000); });
+
+    expect(fetchMock.mock.calls.length).toBe(calls);
+  });
+
+  it("keeps the lines on screen when a background re-read fails", async () => {
+    vi.useFakeTimers();
+    let fail = false;
+    vi.stubGlobal("fetch", vi.fn(async () => (fail ? reply(500, {}) : reply(200, tableOrder))));
+    render();
+    await flush();
+    fail = true;
+    await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
+
+    expect(document.querySelectorAll(".table-order-bridge__lines li")).toHaveLength(2);
+    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("alınamadı");
   });
 
   it("shows the server's refusal when sending fails and does not report the order as sent", async () => {

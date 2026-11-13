@@ -1424,6 +1424,9 @@ export const kitchenlessReasons = [
 
 export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
 
+/** What the kitchen has done with a sent line, shown only once it matters to the cashier (cancelling a served line is refused). */
+export const kitchenStateNotes: Readonly<Record<string, string>> = { Ready: itemStatusLabels.Ready, Served: itemStatusLabels.Served };
+
 export const kitchenlessText = {
   open: "Mutfağa göndermeden hesaba ekle",
   pickReason: "Mutfağa neden gönderilmiyor?",

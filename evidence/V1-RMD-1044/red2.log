@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (34 tests | 1 failed) 293ms
+     × reads the lines again while the panel stays open, so a line the kitchen marks ready appears without reselecting the table 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > reads the lines again while the panel stays open, so a line the kitchen marks ready appears without reselecting the table
+AssertionError: expected [] to deeply equal [ ' · Hazır' ]
+
+- Expected
++ Received
+
+- [
+-   " · Hazır",
+- ]
++ []
+
+ ❯ src/routes/TableOrderBridge.test.tsx:329:115
+    327|     await act(async () => { await vi.advanceTimersByTimeAsync(15_000);…
+    328|
+    329|     expect([...document.querySelectorAll(".table-order-bridge__lines l…
+       |                                                                                                                   ^
+    330|   });
+    331|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 33 passed (34)
+   Start at  18:33:03
+   Duration  1.81s (transform 225ms, setup 0ms, import 331ms, tests 293ms, environment 933ms)
+

@@ -5,7 +5,7 @@ import { formatMoney } from "../format";
 import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
 import { collectionHref } from "../features/pending-checks/pendingChecksApi";
-import { billOnOtherTillText, kitchenlessText } from "../strings";
+import { billOnOtherTillText, kitchenStateNotes, kitchenlessText } from "../strings";
 
 interface BridgeTable {
   tableId: string;
@@ -39,6 +39,13 @@ interface TableOrderBridgeProps {
   navigateTo?: (href: string) => void;
 }
 
+const lineRefreshMs = 15_000;
+
+function lineNote(line: TableOrder["items"][number]) {
+  if (line.status === "Draft") return kitchenlessText.notSent;
+  return line.addedWithoutKitchenReason ? kitchenlessText.addedAtTill : kitchenStateNotes[line.kitchenState ?? ""];
+}
+
 /** What the cashier can do with the selected table: take or continue its order, and collect its check. */
 export function TableOrderBridge({
   terminalId, table, orderAllowed, canManage, canCollect, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
@@ -58,11 +65,14 @@ export function TableOrderBridge({
   useEffect(() => {
     if (!currentOrderId || !canReadLines) return;
     let current = true;
-    api.tableOrder(terminalId, tableId).then(
+    const read = (quiet: boolean) => api.tableOrder(terminalId, tableId).then(
       (order) => { if (current) setBill(order); },
-      () => { if (current) setBill("failed"); },
+      () => { if (current && !quiet) setBill("failed"); },
     );
-    return () => { current = false; };
+    void read(false);
+    // The kitchen marks lines ready or served without touching the table row, so the lines are read again on a timer.
+    const timer = window.setInterval(() => void read(true), lineRefreshMs);
+    return () => { current = false; window.clearInterval(timer); };
   }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal, sentCount]);
   const billingHref = table.currentBillId ? `/billing?billId=${encodeURIComponent(table.currentBillId)}` : `/billing?orderId=${encodeURIComponent(table.currentOrderId ?? "")}`;
   const lines = bill && bill !== "failed" ? bill.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
@@ -128,7 +138,7 @@ export function TableOrderBridge({
     {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : bill && <>
         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
-          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{(line.status === "Draft" || line.addedWithoutKitchenReason) && <small className="table-order-bridge__unsent"> · {line.status === "Draft" ? kitchenlessText.notSent : kitchenlessText.addedAtTill}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+          {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
         </ul>
         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
       </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}

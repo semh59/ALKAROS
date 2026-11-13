@@ -271,6 +271,7 @@ export interface TableOrder {
     unitPrice: number;
     totalPrice: number;
     status: string;
+    kitchenState?: string;
     addedWithoutKitchenReason?: string | null;
   }[];
 }

@@ -1,0 +1,8 @@
+killed M1 ready note removed
+killed M2 served wording changed
+killed M3 unsent note lost
+killed M4 kitchen state ignored
+killed M5 added-at-till note lost
+killed M6 no periodic re-read
+killed M7 failed background read blanks the lines
+killed M8 timer never cleared

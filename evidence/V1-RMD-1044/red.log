@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (32 tests | 1 failed) 275ms
+     × names a line the kitchen has marked ready or served, and leaves preparing and sent lines unmarked 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > names a line the kitchen has marked ready or served, and leaves preparing and sent lines unmarked
+AssertionError: expected [] to deeply equal [ ' · Hazır', ' · Servis edildi' ]
+
+- Expected
++ Received
+
+- [
+-   " · Hazır",
+-   " · Servis edildi",
+- ]
++ []
+
+ ❯ src/routes/TableOrderBridge.test.tsx:314:115
+    312|     await flush();
+    313|
+    314|     expect([...document.querySelectorAll(".table-order-bridge__lines l…
+       |                                                                                                                   ^
+    315|   });
+    316|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 31 passed (32)
+   Start at  18:31:05
+   Duration  1.77s (transform 224ms, setup 0ms, import 330ms, tests 275ms, environment 918ms)
+
