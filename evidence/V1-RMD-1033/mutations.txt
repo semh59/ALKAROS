@@ -1,0 +1,10 @@
+M1 per-order rounding, no running share (shares stop adding up): Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:
+restored
+M2 running share does not drop the own weight: Başarısız! - Başarısız:     4, Başarılı:     9, Atlanan:     0, Toplam:
+restored
+M3 no equal fallback for zero-value orders (division by zero): Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:
+restored
+M5 equal weights instead of order value: Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:
+M4 merged bill lines ignored (own order_id only): Başarısız! - Başarısız:     3, Başarılı:    10, Atlanan:     0, Toplam:
+restored
+M5 restored (cmp ok)

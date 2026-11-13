@@ -1,0 +1,3 @@
+qa-backend: bulgu B1 (Orta): tum siparisler 0 tutarliysa sifira bolme raporu dusurur -> DUZELTILDI (esit dagitim) + test + mutant M3. Diger kenar durumlar (tek siparisli hesap, birden cok iade/odeme, UNION cift sayim, pencere disi siparis, kanal disi pay, indeks budamasi) temiz.
+qa-test-kalitesi: dort kabul kosulu kanitli, fixture refactoru davranisi degistirmedi. Bosluklar: sifir toplam (duzeltildi), `<=`/cikarma mutantlari (M1/M2 ile eklendi), kendi order_id'li hesap + baska siparis kalemi, bir hesapta birden cok odeme (kod UNION/sum ile kilitli, test eklenmedi: kabul).
+Dogrulama turu: duzeltme sonrasi testler 13/13, 5 mutant killed, host testi 2/2.

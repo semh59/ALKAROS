@@ -75,26 +75,64 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
     public async Task SeedRefundsAsync(Guid orderId, decimal paid, params decimal[] refunds)
     {
         var billId = Guid.NewGuid();
-        var paymentId = Guid.NewGuid();
         await ExecAsync(
             $"""
             INSERT INTO billing.bills (bill_id, bill_number, order_id, status, subtotal, payable_amount, opened_at, created_at, updated_at)
-            VALUES ('{billId}', 'B-{billId:N}', '{orderId}', 'Paid', {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)},
-                    {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, now(), now(), now());
+            VALUES ('{billId}', 'B-{billId:N}', '{orderId}', 'Paid', {Invariant(paid)}, {Invariant(paid)}, now(), now(), now());
+            """);
+        await PayAndRefundAsync(billId, paid, refunds);
+    }
+
+    /// <summary>A bill merged from several orders (no order_id of its own; one line per order) with one approved payment and the given refunds.</summary>
+    public async Task SeedMergedBillRefundsAsync(IReadOnlyList<Guid> orderIds, decimal paid, params decimal[] refunds)
+    {
+        var billId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        await ExecAsync(
+            $"""
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES ('{productId}', 'SKU-{productId:N}', 'Item', 1, 1, 1);
+            INSERT INTO billing.bills (bill_id, bill_number, status, subtotal, payable_amount, opened_at, created_at, updated_at)
+            VALUES ('{billId}', 'B-{billId:N}', 'Paid', {Invariant(paid)}, {Invariant(paid)}, now(), now(), now());
+            """);
+        foreach (var orderId in orderIds)
+        {
+            var orderItemId = Guid.NewGuid();
+            await ExecAsync(
+                $"""
+                INSERT INTO orders.order_items
+                    (order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, net_amount, gross_amount,
+                     status, kitchen_state, portion_reservation_status, created_at, updated_at)
+                VALUES ('{orderItemId}', '{orderId}', '{productId}', 'Item', 1, 1, 20, 1, 1, 'Active', 'Served', 'NotApplicable', now(), now());
+                INSERT INTO billing.bill_items
+                    (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, net_amount, gross_amount,
+                     line_type, created_at, updated_at)
+                VALUES (gen_random_uuid(), '{billId}', '{orderItemId}', '{productId}', 'Item', 1, 1, 20, 1, 1, 'Sale', now(), now());
+                """);
+        }
+
+        await PayAndRefundAsync(billId, paid, refunds);
+    }
+
+    private async Task PayAndRefundAsync(Guid billId, decimal paid, decimal[] refunds)
+    {
+        var paymentId = Guid.NewGuid();
+        await ExecAsync(
+            $"""
             INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, created_at, updated_at)
-            VALUES ('{paymentId}', '{billId}', 'PartiallyRefunded', {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)},
-                    {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, now(), now(), now());
+            VALUES ('{paymentId}', '{billId}', 'PartiallyRefunded', {Invariant(paid)}, {Invariant(paid)}, {Invariant(paid)}, now(), now(), now());
             """);
         foreach (var amount in refunds)
         {
             await ExecAsync(
                 $"""
                 INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
-                VALUES (gen_random_uuid(), '{paymentId}', 'PartialRefund', {amount.ToString(System.Globalization.CultureInfo.InvariantCulture)},
-                        'test', gen_random_uuid(), 'k-' || gen_random_uuid(), now());
+                VALUES (gen_random_uuid(), '{paymentId}', 'PartialRefund', {Invariant(amount)}, 'test', gen_random_uuid(), 'k-' || gen_random_uuid(), now());
                 """);
         }
     }
+
+    private static string Invariant(decimal value) => value.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
     public async Task SeedInboxAsync(string externalOrderId, string outcome, DateTimeOffset receivedAt, string provider = "yemeksepeti")
     {

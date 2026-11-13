@@ -75,6 +75,46 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
     }
 
     [Fact]
+    public async Task MoneyPaidBackOnAMergedBillIsSharedByOrderValueAndTheShareOfAnOrderOfAnotherChannelIsNotCounted()
+    {
+        var day = new DateOnly(2031, 8, 4);
+        var qr = await _database.SeedOrderAsync("Qr", "Accepted", 60m, Utc(2031, 8, 4, 9, 0));
+        var cashier = await _database.SeedOrderAsync("Cashier", "Accepted", 40m, Utc(2031, 8, 4, 10, 0));
+        await _database.SeedMergedBillRefundsAsync([qr, cashier], 100m, 10m);
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day, ChannelSource.Qr));
+
+        report.Days.Should().ContainSingle().Which.RefundedValue.Should().Be(6m);
+    }
+
+    [Fact]
+    public async Task TheSharesOfAMergedBillRefundAddUpToTheExactRefundWhateverTheRounding()
+    {
+        var first = await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2031, 8, 5, 9, 0));
+        var second = await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2031, 8, 6, 9, 0));
+        var third = await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2031, 8, 7, 9, 0));
+        await _database.SeedMergedBillRefundsAsync([first, second, third], 30m, 10m);
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(new DateOnly(2031, 8, 5), new DateOnly(2031, 8, 7), ChannelSource.Qr));
+
+        report.Days.Select(row => row.RefundedValue).Should().OnlyContain(share => share == 3.33m || share == 3.34m);
+        report.Days.Sum(row => row.RefundedValue).Should().Be(10m);
+    }
+
+    [Fact]
+    public async Task AMergedBillOfOrdersWorthNothingSharesItsRefundEquallyInsteadOfBreakingTheReport()
+    {
+        var day = new DateOnly(2031, 8, 8);
+        var qr = await _database.SeedOrderAsync("Qr", "Accepted", 0m, Utc(2031, 8, 8, 9, 0));
+        var cashier = await _database.SeedOrderAsync("Cashier", "Accepted", 0m, Utc(2031, 8, 8, 10, 0));
+        await _database.SeedMergedBillRefundsAsync([qr, cashier], 10m, 10m);
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day, ChannelSource.Qr));
+
+        report.Days.Should().ContainSingle().Which.RefundedValue.Should().Be(5m);
+    }
+
+    [Fact]
     public async Task TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger()
     {
         await SeedGoldenDatasetAsync();

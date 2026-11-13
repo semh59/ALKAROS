@@ -1,0 +1,199 @@
+diff --git a/src/Modules/Reporting/Channels/ChannelReportService.cs b/src/Modules/Reporting/Channels/ChannelReportService.cs
+index db3fbfa6..3c160382 100644
+--- a/src/Modules/Reporting/Channels/ChannelReportService.cs
++++ b/src/Modules/Reporting/Channels/ChannelReportService.cs
+@@ -59,6 +59,48 @@ public sealed class PostgresChannelReportService : IChannelReportService
+     {
+         await using var command = _dataSource.CreateCommand(
+             $"""
++            WITH channel_orders AS (
++                SELECT order_id FROM orders.orders
++                WHERE source IN ('Qr', 'Online') AND created_at >= $1 AND created_at < $2
++            ),
++            -- Bills with money paid back that are made of a channel order: a bill opened from one order carries its id,
++            -- a bill merged from several carries none, so its orders are the ones its lines come from.
++            refunded_bills AS (
++                SELECT p.bill_id, sum(r.amount) AS refunded
++                FROM payments.payments p
++                JOIN payments.payment_reversals r ON r.payment_id = p.payment_id
++                WHERE p.bill_id IN (
++                    SELECT bill_id FROM billing.bills WHERE order_id IN (SELECT order_id FROM channel_orders)
++                    UNION
++                    SELECT bli.bill_id FROM billing.bill_items bli
++                    JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
++                    WHERE oli.order_id IN (SELECT order_id FROM channel_orders))
++                GROUP BY p.bill_id
++            ),
++            bill_orders AS (
++                SELECT rb.bill_id, rb.refunded, b.order_id
++                FROM refunded_bills rb JOIN billing.bills b ON b.bill_id = rb.bill_id
++                WHERE b.order_id IS NOT NULL
++                UNION
++                SELECT rb.bill_id, rb.refunded, oli.order_id
++                FROM refunded_bills rb
++                JOIN billing.bill_items bli ON bli.bill_id = rb.bill_id
++                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
++            ),
++            -- A bill's refund is shared over its orders by order value (equally when they are all worth nothing, e.g. complimentary);
++            -- rounding the running share keeps the shares adding up to the refund.
++            weighted AS (
++                SELECT bo.bill_id, bo.order_id, bo.refunded,
++                       CASE WHEN sum(o.total) OVER (PARTITION BY bo.bill_id) = 0 THEN 1 ELSE o.total END AS weight
++                FROM bill_orders bo JOIN orders.orders o ON o.order_id = bo.order_id
++            ),
++            order_refunds AS (
++                SELECT order_id,
++                       round(refunded * sum(weight) OVER running / sum(weight) OVER whole, 2)
++                       - round(refunded * (sum(weight) OVER running - weight) / sum(weight) OVER whole, 2) AS share
++                FROM weighted
++                WINDOW running AS (PARTITION BY bill_id ORDER BY order_id), whole AS (PARTITION BY bill_id)
++            )
+             SELECT ((o.created_at AT TIME ZONE $3) - interval '{BusinessDayWindow.StartHour} hours')::date AS business_date, o.source, l.provider,
+                    count(*)::int,
+                    count(*) FILTER (WHERE o.status IN ({AwaitingStatuses}))::int,
+@@ -72,15 +114,9 @@ public sealed class PostgresChannelReportService : IChannelReportService
+                    COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0),
+                    COALESCE(sum(rf.refunded), 0)
+             FROM orders.orders o
+-            -- Money paid back for the order's bill, once per order, on the order's own day.
++            -- Money paid back for the order's bills, once per order, on the order's own day.
+             LEFT JOIN (
+-                SELECT b.order_id, sum(r.amount) AS refunded
+-                FROM billing.bills b
+-                JOIN payments.payments p ON p.bill_id = b.bill_id
+-                JOIN payments.payment_reversals r ON r.payment_id = p.payment_id
+-                WHERE b.order_id IN (SELECT order_id FROM orders.orders
+-                                     WHERE source IN ('Qr', 'Online') AND created_at >= $1 AND created_at < $2)
+-                GROUP BY b.order_id
++                SELECT order_id, sum(share) AS refunded FROM order_refunds GROUP BY order_id
+             ) rf ON rf.order_id = o.order_id
+             -- V12-REC-002: an online order's platform comes from its V12-ONL-006 link.
+             LEFT JOIN online_ordering.online_orders l ON l.order_id = o.order_id
+diff --git a/tests/Modules/Reporting/Channels/ChannelReportTests.cs b/tests/Modules/Reporting/Channels/ChannelReportTests.cs
+index b879605c..a91d9f4a 100644
+--- a/tests/Modules/Reporting/Channels/ChannelReportTests.cs
++++ b/tests/Modules/Reporting/Channels/ChannelReportTests.cs
+@@ -74,6 +74,46 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
+         report.Check.IsBalanced.Should().BeTrue();
+     }
+ 
++    [Fact]
++    public async Task MoneyPaidBackOnAMergedBillIsSharedByOrderValueAndTheShareOfAnOrderOfAnotherChannelIsNotCounted()
++    {
++        var day = new DateOnly(2031, 8, 4);
++        var qr = await _database.SeedOrderAsync("Qr", "Accepted", 60m, Utc(2031, 8, 4, 9, 0));
++        var cashier = await _database.SeedOrderAsync("Cashier", "Accepted", 40m, Utc(2031, 8, 4, 10, 0));
++        await _database.SeedMergedBillRefundsAsync([qr, cashier], 100m, 10m);
++
++        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day, ChannelSource.Qr));
++
++        report.Days.Should().ContainSingle().Which.RefundedValue.Should().Be(6m);
++    }
++
++    [Fact]
++    public async Task TheSharesOfAMergedBillRefundAddUpToTheExactRefundWhateverTheRounding()
++    {
++        var first = await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2031, 8, 5, 9, 0));
++        var second = await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2031, 8, 6, 9, 0));
++        var third = await _database.SeedOrderAsync("Qr", "Accepted", 10m, Utc(2031, 8, 7, 9, 0));
++        await _database.SeedMergedBillRefundsAsync([first, second, third], 30m, 10m);
++
++        var report = await _reports.GetReportAsync(new ChannelReportFilter(new DateOnly(2031, 8, 5), new DateOnly(2031, 8, 7), ChannelSource.Qr));
++
++        report.Days.Select(row => row.RefundedValue).Should().OnlyContain(share => share == 3.33m || share == 3.34m);
++        report.Days.Sum(row => row.RefundedValue).Should().Be(10m);
++    }
++
++    [Fact]
++    public async Task AMergedBillOfOrdersWorthNothingSharesItsRefundEquallyInsteadOfBreakingTheReport()
++    {
++        var day = new DateOnly(2031, 8, 8);
++        var qr = await _database.SeedOrderAsync("Qr", "Accepted", 0m, Utc(2031, 8, 8, 9, 0));
++        var cashier = await _database.SeedOrderAsync("Cashier", "Accepted", 0m, Utc(2031, 8, 8, 10, 0));
++        await _database.SeedMergedBillRefundsAsync([qr, cashier], 10m, 10m);
++
++        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day, ChannelSource.Qr));
++
++        report.Days.Should().ContainSingle().Which.RefundedValue.Should().Be(5m);
++    }
++
+     [Fact]
+     public async Task TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger()
+     {
+diff --git a/tests/Modules/Reporting/Channels/Fixtures/ChannelReportTestDatabase.cs b/tests/Modules/Reporting/Channels/Fixtures/ChannelReportTestDatabase.cs
+index 17f9e187..b2913305 100644
+--- a/tests/Modules/Reporting/Channels/Fixtures/ChannelReportTestDatabase.cs
++++ b/tests/Modules/Reporting/Channels/Fixtures/ChannelReportTestDatabase.cs
+@@ -75,27 +75,65 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
+     public async Task SeedRefundsAsync(Guid orderId, decimal paid, params decimal[] refunds)
+     {
+         var billId = Guid.NewGuid();
+-        var paymentId = Guid.NewGuid();
+         await ExecAsync(
+             $"""
+             INSERT INTO billing.bills (bill_id, bill_number, order_id, status, subtotal, payable_amount, opened_at, created_at, updated_at)
+-            VALUES ('{billId}', 'B-{billId:N}', '{orderId}', 'Paid', {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+-                    {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, now(), now(), now());
++            VALUES ('{billId}', 'B-{billId:N}', '{orderId}', 'Paid', {Invariant(paid)}, {Invariant(paid)}, now(), now(), now());
++            """);
++        await PayAndRefundAsync(billId, paid, refunds);
++    }
++
++    /// <summary>A bill merged from several orders (no order_id of its own; one line per order) with one approved payment and the given refunds.</summary>
++    public async Task SeedMergedBillRefundsAsync(IReadOnlyList<Guid> orderIds, decimal paid, params decimal[] refunds)
++    {
++        var billId = Guid.NewGuid();
++        var productId = Guid.NewGuid();
++        await ExecAsync(
++            $"""
++            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
++            VALUES ('{productId}', 'SKU-{productId:N}', 'Item', 1, 1, 1);
++            INSERT INTO billing.bills (bill_id, bill_number, status, subtotal, payable_amount, opened_at, created_at, updated_at)
++            VALUES ('{billId}', 'B-{billId:N}', 'Paid', {Invariant(paid)}, {Invariant(paid)}, now(), now(), now());
++            """);
++        foreach (var orderId in orderIds)
++        {
++            var orderItemId = Guid.NewGuid();
++            await ExecAsync(
++                $"""
++                INSERT INTO orders.order_items
++                    (order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, net_amount, gross_amount,
++                     status, kitchen_state, portion_reservation_status, created_at, updated_at)
++                VALUES ('{orderItemId}', '{orderId}', '{productId}', 'Item', 1, 1, 20, 1, 1, 'Active', 'Served', 'NotApplicable', now(), now());
++                INSERT INTO billing.bill_items
++                    (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, net_amount, gross_amount,
++                     line_type, created_at, updated_at)
++                VALUES (gen_random_uuid(), '{billId}', '{orderItemId}', '{productId}', 'Item', 1, 1, 20, 1, 1, 'Sale', now(), now());
++                """);
++        }
++
++        await PayAndRefundAsync(billId, paid, refunds);
++    }
++
++    private async Task PayAndRefundAsync(Guid billId, decimal paid, decimal[] refunds)
++    {
++        var paymentId = Guid.NewGuid();
++        await ExecAsync(
++            $"""
+             INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, created_at, updated_at)
+-            VALUES ('{paymentId}', '{billId}', 'PartiallyRefunded', {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+-                    {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, now(), now(), now());
++            VALUES ('{paymentId}', '{billId}', 'PartiallyRefunded', {Invariant(paid)}, {Invariant(paid)}, {Invariant(paid)}, now(), now(), now());
+             """);
+         foreach (var amount in refunds)
+         {
+             await ExecAsync(
+                 $"""
+                 INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+-                VALUES (gen_random_uuid(), '{paymentId}', 'PartialRefund', {amount.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+-                        'test', gen_random_uuid(), 'k-' || gen_random_uuid(), now());
++                VALUES (gen_random_uuid(), '{paymentId}', 'PartialRefund', {Invariant(amount)}, 'test', gen_random_uuid(), 'k-' || gen_random_uuid(), now());
+                 """);
+         }
+     }
+ 
++    private static string Invariant(decimal value) => value.ToString(System.Globalization.CultureInfo.InvariantCulture);
++
+     public async Task SeedInboxAsync(string externalOrderId, string outcome, DateTimeOffset receivedAt, string provider = "yemeksepeti")
+     {
+         var inboxId = Guid.NewGuid();

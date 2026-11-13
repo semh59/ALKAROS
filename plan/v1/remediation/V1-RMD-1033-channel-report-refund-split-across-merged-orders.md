@@ -1,7 +1,7 @@
 # V1-RMD-1033 - Birleşik hesaptaki iade kanal raporunda siparişlere tutarı oranında dağıtılır
 
 - Task ID: V1-RMD-1033
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

@@ -59,6 +59,48 @@ public sealed class PostgresChannelReportService : IChannelReportService
     {
         await using var command = _dataSource.CreateCommand(
             $"""
+            WITH channel_orders AS (
+                SELECT order_id FROM orders.orders
+                WHERE source IN ('Qr', 'Online') AND created_at >= $1 AND created_at < $2
+            ),
+            -- Bills with money paid back that are made of a channel order: a bill opened from one order carries its id,
+            -- a bill merged from several carries none, so its orders are the ones its lines come from.
+            refunded_bills AS (
+                SELECT p.bill_id, sum(r.amount) AS refunded
+                FROM payments.payments p
+                JOIN payments.payment_reversals r ON r.payment_id = p.payment_id
+                WHERE p.bill_id IN (
+                    SELECT bill_id FROM billing.bills WHERE order_id IN (SELECT order_id FROM channel_orders)
+                    UNION
+                    SELECT bli.bill_id FROM billing.bill_items bli
+                    JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
+                    WHERE oli.order_id IN (SELECT order_id FROM channel_orders))
+                GROUP BY p.bill_id
+            ),
+            bill_orders AS (
+                SELECT rb.bill_id, rb.refunded, b.order_id
+                FROM refunded_bills rb JOIN billing.bills b ON b.bill_id = rb.bill_id
+                WHERE b.order_id IS NOT NULL
+                UNION
+                SELECT rb.bill_id, rb.refunded, oli.order_id
+                FROM refunded_bills rb
+                JOIN billing.bill_items bli ON bli.bill_id = rb.bill_id
+                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
+            ),
+            -- A bill's refund is shared over its orders by order value (equally when they are all worth nothing, e.g. complimentary);
+            -- rounding the running share keeps the shares adding up to the refund.
+            weighted AS (
+                SELECT bo.bill_id, bo.order_id, bo.refunded,
+                       CASE WHEN sum(o.total) OVER (PARTITION BY bo.bill_id) = 0 THEN 1 ELSE o.total END AS weight
+                FROM bill_orders bo JOIN orders.orders o ON o.order_id = bo.order_id
+            ),
+            order_refunds AS (
+                SELECT order_id,
+                       round(refunded * sum(weight) OVER running / sum(weight) OVER whole, 2)
+                       - round(refunded * (sum(weight) OVER running - weight) / sum(weight) OVER whole, 2) AS share
+                FROM weighted
+                WINDOW running AS (PARTITION BY bill_id ORDER BY order_id), whole AS (PARTITION BY bill_id)
+            )
             SELECT ((o.created_at AT TIME ZONE $3) - interval '{BusinessDayWindow.StartHour} hours')::date AS business_date, o.source, l.provider,
                    count(*)::int,
                    count(*) FILTER (WHERE o.status IN ({AwaitingStatuses}))::int,
@@ -72,15 +114,9 @@ public sealed class PostgresChannelReportService : IChannelReportService
                    COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0),
                    COALESCE(sum(rf.refunded), 0)
             FROM orders.orders o
-            -- Money paid back for the order's bill, once per order, on the order's own day.
+            -- Money paid back for the order's bills, once per order, on the order's own day.
             LEFT JOIN (
-                SELECT b.order_id, sum(r.amount) AS refunded
-                FROM billing.bills b
-                JOIN payments.payments p ON p.bill_id = b.bill_id
-                JOIN payments.payment_reversals r ON r.payment_id = p.payment_id
-                WHERE b.order_id IN (SELECT order_id FROM orders.orders
-                                     WHERE source IN ('Qr', 'Online') AND created_at >= $1 AND created_at < $2)
-                GROUP BY b.order_id
+                SELECT order_id, sum(share) AS refunded FROM order_refunds GROUP BY order_id
             ) rf ON rf.order_id = o.order_id
             -- V12-REC-002: an online order's platform comes from its V12-ONL-006 link.
             LEFT JOIN online_ordering.online_orders l ON l.order_id = o.order_id
