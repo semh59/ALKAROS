@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (31 tests | 1 failed) 368ms
+     × reads the bill lines again after the send, so no line stays marked as not sent 28ms
+ ❯ src/routes/workspace.test.tsx (58 tests | 1 failed) 1916ms
+     × reads the tables once more after the send, because the server finishes the table state a moment after its answer 58ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > reads the bill lines again after the send, so no line stays marked as not sent
+AssertionError: expected '2 × Çay · Mutfağa gönderilmedi₺50,001…' not to contain 'Mutfağa gönderilmedi'
+
+Expected: "Mutfağa gönderilmedi"
+Received: "2 × Çay · Mutfağa gönderilmedi₺50,001 × Su · Mutfağa gönderilmedi₺10,001 × Köfte₺100,001 × Kolsuz₺5,00"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:277:83
+    275|     await flush();
+    276|
+    277|     expect(document.querySelector(".table-order-bridge__lines")?.textC…
+       |                                                                                   ^
+    278|     expect([...document.querySelectorAll("button")].some((b) => b.text…
+    279|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /tables route marks tables whose check waits at the till > reads the tables once more after the send, because the server finishes the table state a moment after its answer
+AssertionError: expected 2 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ src/routes/workspace.test.tsx:565:27
+    563|
+    564|     await act(async () => { await vi.advanceTimersByTimeAsync(1_500); …
+    565|     expect(tablesReads()).toBe(before + 2);
+       |                           ^
+    566|   });
+    567|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 87 passed (89)
+   Start at  15:53:55
+   Duration  7.37s (transform 2.32s, setup 0ms, import 3.25s, tests 2.28s, environment 4.23s)
+

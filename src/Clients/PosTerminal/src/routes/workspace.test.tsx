@@ -539,6 +539,97 @@ describe("workspace /tables route marks tables whose check waits at the till", (
     expect(tablesReads()).toBeGreaterThan(before);
   });
 
+  it("reads the tables once more after the send, because the server finishes the table state a moment after its answer", async () => {
+    const calls: string[] = [];
+    const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
+    const order = { orderId: "o-1", orderNumber: "1", status: "Draft", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Draft", kitchenState: "NotSent" }] };
+    const extra = (path: string, init?: RequestInit) => {
+      calls.push(`${init?.method ?? "GET"} ${path}`);
+      if (path.includes("/orders/table/")) return json(order);
+      if (path.endsWith("/orders/table")) return json({ orderId: "o-1", orderNumber: "1", revision: 7, rowVersion: 5 });
+      if (path.endsWith("/submit")) return json({ orderId: "o-1", orderNumber: "1", revision: 8, rowVersion: 6 });
+      return undefined;
+    };
+    vi.useFakeTimers();
+    await open(() => json([]), ["tables.status", "orders.create"], false, extra, busy);
+    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+    const tablesReads = () => calls.filter((call) => call.includes("/table-management/tables")).length;
+    const before = tablesReads();
+
+    await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Mutfağa gönder (1)")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+    expect(tablesReads()).toBe(before + 1);
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_500); });
+    expect(tablesReads()).toBe(before + 2);
+  });
+
+  it("keeps one pending settle read for two quick sends and none after the screen is closed", async () => {
+    const calls: string[] = [];
+    const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
+    const order = { orderId: "o-1", orderNumber: "1", status: "Draft", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Draft", kitchenState: "NotSent" }] };
+    const extra = (path: string, init?: RequestInit) => {
+      calls.push(`${init?.method ?? "GET"} ${path}`);
+      if (path.includes("/orders/table/")) return json(order);
+      if (path.endsWith("/orders/table")) return json({ orderId: "o-1", orderNumber: "1", revision: 7, rowVersion: 5 });
+      if (path.endsWith("/submit")) return json({ orderId: "o-1", orderNumber: "1", revision: 8, rowVersion: 6 });
+      return undefined;
+    };
+    vi.useFakeTimers();
+    await open(() => json([]), ["tables.status", "orders.create"], false, extra, busy);
+    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+    const tablesReads = () => calls.filter((call) => call.includes("/table-management/tables")).length;
+    const send = async () => { await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Mutfağa gönder (1)")!.click(); }); for (let i = 0; i < 6; i++) await act(async () => Promise.resolve()); };
+    const before = tablesReads();
+
+    await send();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_000); });
+    await send();
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_500); });
+    expect(tablesReads()).toBe(before + 3);
+
+    await send();
+    await act(async () => root!.unmount());
+    root = null;
+    const afterClose = tablesReads();
+    await act(async () => { await vi.advanceTimersByTimeAsync(2_000); });
+    expect(tablesReads()).toBe(afterClose);
+  });
+
+  it("reads the tables once more after a table move, because the order follows the table a moment after the server's answer", async () => {
+    const calls: string[] = [];
+    const source = { ...table, tableId: "tbl-src", tableNumber: "M-11", status: "Occupied", currentOrderId: "o-1", rowVersion: 4, allowedCommands: ["Transfer"] };
+    const target = { ...table, tableId: "tbl-dst", tableNumber: "M-01", status: "Available", rowVersion: 2, allowedCommands: [] };
+    const order = { orderId: "o-1", orderNumber: "1", status: "Submitted", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Sent" }] };
+    const extra = (path: string, init?: RequestInit) => {
+      calls.push(`${init?.method ?? "GET"} ${path}`);
+      if (path.includes("/orders/table/")) return json(order);
+      if (path.endsWith("/table-management/transfers")) return json({});
+      if (path.endsWith("/table-management/tables")) return json([source, target]);
+      return undefined;
+    };
+    vi.useFakeTimers();
+    await open(() => json([]), ["tables.status", "orders.create"], false, extra, source);
+    await act(async () => { document.querySelector<HTMLButtonElement>(".table-card__select")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+    const tablesReads = () => calls.filter((call) => call.startsWith("GET") && call.endsWith("/table-management/tables")).length;
+    await act(async () => { [...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Masa taşı")!.click(); });
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const select = dialog.querySelector("select") as HTMLSelectElement;
+    await act(async () => { select.value = "tbl-dst"; select.dispatchEvent(new Event("change", { bubbles: true })); });
+    const before = tablesReads();
+
+    await act(async () => { [...dialog.querySelectorAll("button")].find((b) => b.textContent === "Onayla")!.click(); });
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+    expect(calls.some((call) => call.startsWith("POST") && call.endsWith("/table-management/transfers"))).toBe(true);
+    expect(tablesReads()).toBe(before + 1);
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(1_500); });
+    expect(tablesReads()).toBe(before + 2);
+  });
+
   it("opens the till with the kitchen-less reason picker when the panel asks for it", async () => {
     const busy = { ...table, status: "Occupied", currentOrderId: "o-1", currentBillId: null, rowVersion: 4, allowedCommands: [] };
     const order = { orderId: "o-1", orderNumber: "1", status: "Submitted", total: 20, items: [{ itemId: "i1", productName: "Çay", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Sent" }] };

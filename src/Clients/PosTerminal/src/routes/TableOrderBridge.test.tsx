@@ -260,6 +260,24 @@ describe("TableOrderBridge", () => {
     expect(onSent).toHaveBeenCalledTimes(1);
   });
 
+  it("reads the bill lines again after the send, so no line stays marked as not sent", async () => {
+    const sentOrder = { ...draftOrder, status: "Submitted", items: draftOrder.items.map((item) => ({ ...item, status: "Active", kitchenState: "Sent" })) };
+    let submitted = false;
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      const path = String(url);
+      if (path.includes("/orders/table/")) return reply(200, submitted ? sentOrder : draftOrder);
+      if (path.endsWith("/submit")) submitted = true;
+      return reply(200, { orderId: "o-1", orderNumber: "1", revision: 9, rowVersion: 10 });
+    }));
+    render();
+    await flush();
+    await click("Mutfağa gönder (3)");
+    await flush();
+
+    expect(document.querySelector(".table-order-bridge__lines")?.textContent).not.toContain("Mutfağa gönderilmedi");
+    expect([...document.querySelectorAll("button")].some((b) => b.textContent?.startsWith("Mutfağa gönder ("))).toBe(false);
+  });
+
   it("marks a line the cashier added at the till without a kitchen ticket", async () => {
     stubFetch(undefined, { ...tableOrder, items: [
       tableOrder.items[0],

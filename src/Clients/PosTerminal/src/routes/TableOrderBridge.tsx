@@ -48,6 +48,8 @@ export function TableOrderBridge({
   const [collectError, setCollectError] = useState<string>();
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string>();
+  // Sending changes the lines but not the table row, so the effect below needs its own cue to read them again.
+  const [sentCount, setSentCount] = useState(0);
   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
   const billed = table.currentBillId !== null;
@@ -61,7 +63,7 @@ export function TableOrderBridge({
       () => { if (current) setBill("failed"); },
     );
     return () => { current = false; };
-  }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal]);
+  }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal, sentCount]);
   const billingHref = table.currentBillId ? `/billing?billId=${encodeURIComponent(table.currentBillId)}` : `/billing?orderId=${encodeURIComponent(table.currentOrderId ?? "")}`;
   const lines = bill && bill !== "failed" ? bill.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
   const unsent = bill && bill !== "failed" ? bill.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
@@ -72,6 +74,7 @@ export function TableOrderBridge({
     try {
       const started = await api.startTableOrder(terminalId, tableId, table.rowVersion);
       await api.submitOrder(terminalId, started.orderId, started.revision);
+      setSentCount((count) => count + 1);
       onSent();
     } catch (reason) {
       setSendError(reason instanceof ApiError ? reason.message : "Sipariş mutfağa gönderilemedi.");

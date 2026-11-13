@@ -28,6 +28,10 @@ const selectedTableKey = "alkaros.selected-table";
 // "Yenile" asks again.
 const zonesWithoutPlan = new Set<string>();
 
+// A table move or a send to the kitchen is answered before the server has moved the order's table link (an outbox
+// consumer does that, about a second later), so the first read can still show the old table state: read once more.
+const TABLE_SETTLE_MS = 1_500;
+
 // The next cashier on this device must not open the screen with the previous cashier's table already selected.
 const forgetSelectedTable = () => {
   try { localStorage.removeItem(selectedTableKey); } catch { /* storage unavailable: nothing was remembered */ }
@@ -304,7 +308,14 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
     setSelectedZoneId(zoneId);
   };
 
-  const mutate = async (action: () => Promise<unknown>) => { try { await action(); } finally { await load(true); } };
+  const settleTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(settleTimer.current), []);
+  const refreshSettled = async () => {
+    await load(true);
+    window.clearTimeout(settleTimer.current);
+    settleTimer.current = window.setTimeout(() => void load(true), TABLE_SETTLE_MS);
+  };
+  const mutate = async (action: () => Promise<unknown>) => { try { await action(); } finally { await refreshSettled(); } };
   const handleSaveFloorPlan = async (zoneId: string, input: SaveFloorPlanInput): Promise<SaveFloorPlanResult> => {
     setFloorPlanBusy(true);
     setFloorPlanError(undefined);
@@ -377,7 +388,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
         error={orderError}
         onStartOrder={() => void startTableOrder(table)}
         onAddWithoutKitchen={() => void startTableOrder(table, true)}
-        onSent={() => void load(true)}
+        onSent={() => void refreshSettled()}
         onTransfer={table.allowedCommands.includes("Transfer") ? () => openAction("Transfer") : undefined}
       />}
     />

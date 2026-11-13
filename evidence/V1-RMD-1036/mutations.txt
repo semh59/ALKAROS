@@ -1,0 +1,18 @@
+M1 mutate uses plain load(true)
+      Tests  1 failed | 89 passed (90)
+restored
+M2 onSent uses plain load(true)
+      Tests  1 failed | 89 passed (90)
+restored
+M3 second settle read removed (timer scheduling deleted)
+      Tests  2 failed | 88 passed (90)
+restored
+M4 bridge ignores sentCount
+      Tests  1 failed | 89 passed (90)
+restored
+M5 unmount cleanup removed
+      Tests  1 failed | 59 passed (60)
+restored
+M6 earlier timer not cancelled on a second action
+      Tests  1 failed | 59 passed (60)
+restored
