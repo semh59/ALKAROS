@@ -1,7 +1,7 @@
 # V1-RMD-1049 - Nakit tahsilat yalnız kasiyerin kendi açık kasa oturumuna alınır; yoksa "Önce kasayı açın" yönlendirmesi çıkar
 
 - Task ID: V1-RMD-1049
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
