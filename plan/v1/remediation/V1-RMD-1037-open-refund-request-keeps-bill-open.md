@@ -21,6 +21,7 @@ Hesapta durumu "Requested" (onay bekliyor) olan bir iade isteği varken hesap ka
   - tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+  - tests/Clients/StaticApps/split-payment-item-refund.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
