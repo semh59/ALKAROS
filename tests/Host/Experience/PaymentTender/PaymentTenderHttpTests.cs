@@ -1446,9 +1446,30 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
     [Fact]
     public async Task ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay()
     {
+        var snapshot = await CancelBillOnDisplayAsync("g6-cancel", orderSentToKitchen: true);
+
+        Assert.Equal("Idle", snapshot.GetProperty("state").GetString());
+        Assert.Empty(snapshot.GetProperty("lines").EnumerateArray());
+        Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ACancelledBillWhoseOrderStillHasUnsentItemsKeepsShowingTheOrderBeingEdited()
+    {
+        var snapshot = await CancelBillOnDisplayAsync("g6-cancel-draft", orderSentToKitchen: false);
+
+        Assert.Equal("Active", snapshot.GetProperty("state").GetString());
+        Assert.Single(snapshot.GetProperty("lines").EnumerateArray());
+        Assert.Equal(200m, snapshot.GetProperty("total").GetDecimal());
+    }
+
+    private async Task<JsonElement> CancelBillOnDisplayAsync(string deviceKey, bool orderSentToKitchen)
+    {
         var terminalId = Guid.NewGuid();
-        var cookie = await _database.SeedCashierSessionAsync(terminalId, "g6-cancel", true, "bills.cancel");
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, deviceKey, true, "bills.cancel");
         var billId = await _database.SeedBillAsync(payable: 200m);
+        if (orderSentToKitchen)
+            await _database.MarkOrderItemsSentAsync(billId);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
@@ -1458,10 +1479,7 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, (await PostAsync(client,
             $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/cancel", cookie, new { Reason = "Müşteri vazgeçti" })).StatusCode);
 
-        var snapshot = await DisplaySnapshotAsync(client, displayId, displayCookie);
-        Assert.Equal("Idle", snapshot.GetProperty("state").GetString());
-        Assert.Empty(snapshot.GetProperty("lines").EnumerateArray());
-        Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
+        return await DisplaySnapshotAsync(client, displayId, displayCookie);
     }
 
     [Fact]
@@ -1903,6 +1921,11 @@ internal sealed class PaymentTenderHttpTestDatabase
 
     public Task MarkBillCancelledAsync(Guid billId)
         => DataSource.CreateCommand("UPDATE billing.bills SET status = 'Cancelled', cancelled_at = now() WHERE bill_id = '" + billId + "';").ExecuteNonQueryAsync();
+
+    public Task MarkOrderItemsSentAsync(Guid billId)
+        => DataSource.CreateCommand(
+            "UPDATE orders.order_items SET status = 'Active' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = '" + billId + "');")
+            .ExecuteNonQueryAsync();
 
     /// <summary>Copies the order item of <paramref name="billId"/> and opens a new bill holding just the copy.</summary>
     public async Task<(Guid BillId, Guid ItemId)> SeedReplacementBillAsync(Guid billId)

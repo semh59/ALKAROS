@@ -1,0 +1,3 @@
+qa-test-kalitesi: kok neden dogru (Editable=false siparis bosalir; Draft kalemli siparis duzenleniyor sayilir), uretim hatasi gizlenmiyor, test gevsetilmedi. Dusuk: mutant basina test logu yok (kabul: mutations.txt + red.log), masasiz/paket dali HTTP testsiz (kapsam disi).
+qa-backend: gercek akista (kalemler Active) ekran bosaliyor. Dusuk/urun: iptalden sonra siparis yeniden mutfaga gidip yeni hesap acilmazsa ekran Idle kalir (hesap acilinca duzelir) -> urun karari, RESULT'ta acik birakildi. Orta (dogrulanamadi): Draft kalemde masa isaretcisi temizlenmemis olursa -> projector iptal hesabi saymiyor, kod okumayla temiz.
+Dogrulama turu: duzeltmeden sonra PaymentTender.Tests tam proje 125/125 (mutasyonsuz derlemeyle yeniden kosuldu).

@@ -1,0 +1,4 @@
+killed M1 an order with unsent items is cleared too
+killed M2 cancelled bill never clears the display
+killed M3 cleared snapshot keeps the Active state
+killed M4 cancelled bill counted as live

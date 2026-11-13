@@ -1,7 +1,7 @@
 # V1-RMD-1041 - Müşteri ekranı iptal testi eski varsayımda kalmıştı: hesap iptali siparişi masada bırakır, siparişle iptal ekranı boşaltır
 
 - Task ID: V1-RMD-1041
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

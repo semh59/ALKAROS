@@ -1,0 +1,12 @@
+[xUnit.net 00:00:11.56]     ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay [FAIL]
+  Başarısız ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay [7 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "Idle"
+Actual:   "Active"
+           ↑ (pos 0)
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay() in D:\PROJECT\ALKAROS\tests\Host\Experience\PaymentTender\PaymentTenderHttpTests.cs:line 1462
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 7 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
