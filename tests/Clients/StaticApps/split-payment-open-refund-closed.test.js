@@ -43,6 +43,14 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.");
   });
 
+  it("says the approved refund still needs its slip or transfer confirmation before the bill closes", async () => {
+    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }]);
+
+    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
+    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(false);
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.");
+  });
+
   it("shows the paid heading when the request was already decided", async () => {
     await openPaid([{ ...pending, status: "Rejected" }]);
 

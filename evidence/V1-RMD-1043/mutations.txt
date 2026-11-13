@@ -1,0 +1,6 @@
+killed M1 awaiting-slip refund no longer blocks
+killed M2 undecided request no longer blocks
+killed M3 completed refund keeps blocking
+killed M4 awaiting-slip status shows paid heading
+killed M5 approved refund shows the approval-waiting text
+killed M6 approved-refund sentence promises closing

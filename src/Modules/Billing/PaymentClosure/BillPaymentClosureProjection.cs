@@ -17,7 +17,7 @@ public enum BillClosureBlocker
     /// <summary>At least one Payment on the Bill is Unknown (a provider timeout awaiting reconciliation, CORR:C29).</summary>
     HasUnknownPayment,
 
-    /// <summary>A refund request of the Bill still waits for a manager's decision, so the Bill stays open until it is approved or rejected.</summary>
+    /// <summary>A refund request of the Bill is still open (awaiting a manager's decision, or approved but not yet completed with its slip), so the Bill stays open until it is rejected or completed.</summary>
     HasOpenRefundRequest,
 }
 

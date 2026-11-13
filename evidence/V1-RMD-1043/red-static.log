@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-open-refund-closed.test.js (3 tests | 1 failed) 422ms
+     × says the approved refund still needs its slip or transfer confirmation before the bill closes 129ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > says the approved refund still needs its slip or transfer confirmation before the bill closes
+AssertionError: expected 'Hesap Ödendi' to be 'Tahsilat Tamam, Hesap Açık' // Object.is equality
+
+Expected: "Tahsilat Tamam, Hesap Açık"
+Received: "Hesap Ödendi"
+
+ ❯ split-payment-open-refund-closed.test.js:49:61
+     47|     await openPaid([{ ...pending, status: "AwaitingManualRefund", meth…
+     48|
+     49|     expect(document.querySelector(".sp-title").textContent).toBe("Tahs…
+       |                                                             ^
+     50|     expect(document.querySelector(".sp-icon-circle").classList.contain…
+     51|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  18:10:47
+   Duration  1.71s (transform 199ms, setup 23ms, import 50ms, tests 422ms, environment 969ms)
+

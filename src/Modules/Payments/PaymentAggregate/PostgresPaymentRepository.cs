@@ -54,7 +54,7 @@ public sealed class PostgresPaymentRepository : IPaymentRepository
     public async Task<bool> HasOpenRefundRequestAsync(Guid billId, CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(
-            "SELECT EXISTS (SELECT 1 FROM payments.refund_requests WHERE bill_id = @bill AND status = 'Requested');");
+            "SELECT EXISTS (SELECT 1 FROM payments.refund_requests WHERE bill_id = @bill AND status IN ('Requested', 'AwaitingManualRefund'));");
         command.Parameters.AddWithValue("bill", billId);
         return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }

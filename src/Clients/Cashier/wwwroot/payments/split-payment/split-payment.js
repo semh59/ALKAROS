@@ -2429,9 +2429,16 @@
   };
 
   function closedHeading() {
-    var refundWaiting = (state.refundRequests || []).some(function (row) { return row.status === 'Requested'; });
-    if (refundWaiting)
-      return { title: 'Tahsilat Tamam, Hesap Açık', text: 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.', waiting: true };
+    var refunds = state.refundRequests || [];
+    var awaitingDecision = refunds.some(function (row) { return row.status === 'Requested'; });
+    if (awaitingDecision || refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; }))
+      return {
+        title: 'Tahsilat Tamam, Hesap Açık',
+        text: awaitingDecision
+          ? 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.'
+          : 'İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.',
+        waiting: true,
+      };
     var collected = !!state.summary && Number(state.summary.allocatedTotal) > 0.004;
     var deductions = state.adjustmentItems.filter(function (item) { return item.isDeduction; });
     var comps = deductions.filter(function (item) { return !!COMP_REASON_LABELS[item.reason]; }).length;

@@ -1,7 +1,7 @@
 # V1-RMD-1043 - Onaylanmış ama fişi girilmemiş kart/havale iadesi olan hesap "Ödendi" olmaz; ekran nedenini Türkçe söyler
 
 - Task ID: V1-RMD-1043
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

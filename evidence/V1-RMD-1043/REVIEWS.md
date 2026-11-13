@@ -1,0 +1,3 @@
+qa-backend: baska Paid yolu yok, yaris yok (ayni bill-settlement kilidi). Orta (urun karari): AwaitingManualRefund'da takilirsa iptal/yok sayma yolu yok -> RESULT'ta acik birakildi. Dusuk: fis sonrasi kapanis supurucuyle gecikmeli. Kismi iade senaryolari kodda dogru; ek test onerisi kabul edilmedi (kapsam disi).
+ui-turkce-metin-uzmani: Orta (yonlendirme eksik; Iade bolumu sayfa altinda), Dusuk (havale icin "fis" yaniltici) -> DUZELTILDI: metin Iade bolumunu, "Iadeyi tamamla" ve "Havale gonderildi" dugme adlarini soyler, test kilitli (M6). "Yonetici onayi" ifadesi kabul edilmedi (1037 metni, kapsam disi).
+Dogrulama turu: duzeltmeden sonra StaticApps 550/550, M6 killed.

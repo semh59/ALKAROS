@@ -1,0 +1,124 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 2a0eaa3d..1c99af44 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2429,9 +2429,16 @@
+   };
+ 
+   function closedHeading() {
+-    var refundWaiting = (state.refundRequests || []).some(function (row) { return row.status === 'Requested'; });
+-    if (refundWaiting)
+-      return { title: 'Tahsilat Tamam, Hesap Açık', text: 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.', waiting: true };
++    var refunds = state.refundRequests || [];
++    var awaitingDecision = refunds.some(function (row) { return row.status === 'Requested'; });
++    if (awaitingDecision || refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; }))
++      return {
++        title: 'Tahsilat Tamam, Hesap Açık',
++        text: awaitingDecision
++          ? 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.'
++          : 'İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.',
++        waiting: true,
++      };
+     var collected = !!state.summary && Number(state.summary.allocatedTotal) > 0.004;
+     var deductions = state.adjustmentItems.filter(function (item) { return item.isDeduction; });
+     var comps = deductions.filter(function (item) { return !!COMP_REASON_LABELS[item.reason]; }).length;
+diff --git a/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs b/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs
+index a32668e9..a91e6a14 100644
+--- a/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs
++++ b/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs
+@@ -17,7 +17,7 @@ public enum BillClosureBlocker
+     /// <summary>At least one Payment on the Bill is Unknown (a provider timeout awaiting reconciliation, CORR:C29).</summary>
+     HasUnknownPayment,
+ 
+-    /// <summary>A refund request of the Bill still waits for a manager's decision, so the Bill stays open until it is approved or rejected.</summary>
++    /// <summary>A refund request of the Bill is still open (awaiting a manager's decision, or approved but not yet completed with its slip), so the Bill stays open until it is rejected or completed.</summary>
+     HasOpenRefundRequest,
+ }
+ 
+diff --git a/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs b/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs
+index 1ba50395..20de8b04 100644
+--- a/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs
++++ b/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs
+@@ -15,7 +15,7 @@ public interface IPaymentRepository
+     /// <summary>Loads every Payment recorded against a Bill.</summary>
+     Task<IReadOnlyList<Payment>> GetByBillIdAsync(Guid billId, CancellationToken cancellationToken = default);
+ 
+-    /// <summary>Whether a refund request of the Bill still waits for its approval decision.</summary>
++    /// <summary>Whether a refund request of the Bill is still open: awaiting its approval decision, or approved and awaiting the slip or transfer confirmation.</summary>
+     Task<bool> HasOpenRefundRequestAsync(Guid billId, CancellationToken cancellationToken = default);
+ 
+     /// <summary>Inserts a new Payment inside its own transaction.</summary>
+diff --git a/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs b/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs
+index bce9ca91..585fa1da 100644
+--- a/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs
++++ b/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs
+@@ -54,7 +54,7 @@ public sealed class PostgresPaymentRepository : IPaymentRepository
+     public async Task<bool> HasOpenRefundRequestAsync(Guid billId, CancellationToken cancellationToken = default)
+     {
+         await using var command = _dataSource.CreateCommand(
+-            "SELECT EXISTS (SELECT 1 FROM payments.refund_requests WHERE bill_id = @bill AND status = 'Requested');");
++            "SELECT EXISTS (SELECT 1 FROM payments.refund_requests WHERE bill_id = @bill AND status IN ('Requested', 'AwaitingManualRefund'));");
+         command.Parameters.AddWithValue("bill", billId);
+         return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
+     }
+diff --git a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+index 95581d54..7595d19d 100644
+--- a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
++++ b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+@@ -43,6 +43,14 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
+     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.");
+   });
+ 
++  it("says the approved refund still needs its slip or transfer confirmation before the bill closes", async () => {
++    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }]);
++
++    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
++    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(false);
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.");
++  });
++
+   it("shows the paid heading when the request was already decided", async () => {
+     await openPaid([{ ...pending, status: "Rejected" }]);
+ 
+diff --git a/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs b/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs
+index 44a275c6..c3504eb6 100644
+--- a/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs
++++ b/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs
+@@ -1,4 +1,6 @@
++using System.Net;
+ using ALKAROS.Billing.PaymentClosure;
++using ALKAROS.Payments.PaymentAggregate;
+ using Microsoft.Extensions.DependencyInjection;
+ using Xunit;
+ 
+@@ -28,4 +30,30 @@ public sealed partial class PaymentRefundHttpTests
+         Assert.Equal(BillClosureOutcome.Closed, released.Outcome);
+         Assert.Equal("Paid", await Scalar<string>("SELECT status FROM billing.bills WHERE bill_id = @p", seeded.BillId));
+     }
++
++    [Fact]
++    public async Task AFullyPaidBillStaysOpenWhileAnApprovedCardRefundWaitsForItsSlip()
++    {
++        var seeded = await _database.SeedBillAsync();
++        var paymentId = await CardPaymentAsync(seeded.BillId, 250m);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var closure = app.Services.GetRequiredService<IBillClosureService>();
++        var payments = app.Services.GetRequiredService<IPaymentRepository>();
++        var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
++        var approved = await DecideAsync(client, request.RequestId, "approve", _managerCookie);
++        Assert.Equal("AwaitingManualRefund", approved.Status);
++
++        var held = await closure.TryCloseAsync(seeded.BillId);
++
++        Assert.Equal(BillClosureOutcome.NotSatisfied, held.Outcome);
++        Assert.Equal([BillClosureBlocker.HasOpenRefundRequest], held.Blockers);
++        Assert.NotEqual("Paid", await Scalar<string>("SELECT status FROM billing.bills WHERE bill_id = @p", seeded.BillId));
++        Assert.True(await payments.HasOpenRefundRequestAsync(seeded.BillId));
++
++        using var complete = await client.SendAsync(
++            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1("POS-4471", null)));
++        Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
++        Assert.False(await payments.HasOpenRefundRequestAsync(seeded.BillId));
++    }
+ }
