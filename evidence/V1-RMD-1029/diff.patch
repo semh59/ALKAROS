@@ -1,0 +1,34 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 33fc21d8..fccc7c13 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -1455,6 +1455,7 @@
+     return api(billBase() + '/receipt').then(function (result) {
+       state.billItems = result.ok && result.body && Array.isArray(result.body.items) ? result.body.items : [];
+       state.billTable = result.ok && result.body && result.body.tableNumber ? result.body.tableNumber : null;
++      document.querySelector('.sp-back').setAttribute('href', state.billTable ? '/tables' : '/');
+       state.billRead = !!result.ok;
+       render();
+     }).catch(function () {
+diff --git a/tests/Clients/StaticApps/split-payment-table-note.test.js b/tests/Clients/StaticApps/split-payment-table-note.test.js
+index c5dfc131..efb070a7 100644
+--- a/tests/Clients/StaticApps/split-payment-table-note.test.js
++++ b/tests/Clients/StaticApps/split-payment-table-note.test.js
+@@ -93,6 +93,17 @@ describe("split-payment.js table name and kitchen-less note", () => {
+     expect(document.querySelector(".sp-kitchenless-note")).not.toBeNull();
+   });
+ 
++  it("sends the back link to the table plan for a table bill and to the sales screen for a quick sale", async () => {
++    await open(settled, receipt({ tableNumber: "T-4" }));
++    await vi.waitFor(() => expect(document.querySelector(".sp-back")?.getAttribute("href")).toBe("/tables"));
++
++    document.body.innerHTML = "";
++    vi.resetModules();
++    await open(settled, receipt({ items: [{ name: "Köfte", quantity: 1, unitPrice: 80, amount: 80 }] }));
++    await vi.waitFor(() => expect(document.querySelector(".sp-place")?.textContent).toBe("Hızlı satış"));
++    expect(document.querySelector(".sp-back")?.getAttribute("href")).toBe("/");
++  });
++
+   it("prints the table and a Kasada eklendi row under the line on the receipt", async () => {
+     await open(settled, receipt({ tableNumber: "T-4" }));
+     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());

@@ -93,6 +93,17 @@ describe("split-payment.js table name and kitchen-less note", () => {
     expect(document.querySelector(".sp-kitchenless-note")).not.toBeNull();
   });
 
+  it("sends the back link to the table plan for a table bill and to the sales screen for a quick sale", async () => {
+    await open(settled, receipt({ tableNumber: "T-4" }));
+    await vi.waitFor(() => expect(document.querySelector(".sp-back")?.getAttribute("href")).toBe("/tables"));
+
+    document.body.innerHTML = "";
+    vi.resetModules();
+    await open(settled, receipt({ items: [{ name: "Köfte", quantity: 1, unitPrice: 80, amount: 80 }] }));
+    await vi.waitFor(() => expect(document.querySelector(".sp-place")?.textContent).toBe("Hızlı satış"));
+    expect(document.querySelector(".sp-back")?.getAttribute("href")).toBe("/");
+  });
+
   it("prints the table and a Kasada eklendi row under the line on the receipt", async () => {
     await open(settled, receipt({ tableNumber: "T-4" }));
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());

@@ -1455,6 +1455,7 @@
     return api(billBase() + '/receipt').then(function (result) {
       state.billItems = result.ok && result.body && Array.isArray(result.body.items) ? result.body.items : [];
       state.billTable = result.ok && result.body && result.body.tableNumber ? result.body.tableNumber : null;
+      document.querySelector('.sp-back').setAttribute('href', state.billTable ? '/tables' : '/');
       state.billRead = !!result.ok;
       render();
     }).catch(function () {

@@ -1,7 +1,7 @@
 # V1-RMD-1029 - Masa hesabında Kasaya dön bağlantısı masa planına gider
 
 - Task ID: V1-RMD-1029
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

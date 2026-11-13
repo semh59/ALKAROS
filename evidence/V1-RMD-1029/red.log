@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-table-note.test.js (11 tests | 1 failed) 2175ms
+     × sends the back link to the table plan for a table bill and to the sales screen for a quick sale 1069ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-table-note.test.js > split-payment.js table name and kitchen-less note > sends the back link to the table plan for a table bill and to the sales screen for a quick sale
+AssertionError: expected '/' to be '/tables' // Object.is equality
+
+Expected: "/tables"
+Received: "/"
+
+ ❯ split-payment-table-note.test.js:98:93
+     96|   it("sends the back link to the table plan for a table bill and to th…
+     97|     await open(settled, receipt({ tableNumber: "T-4" }));
+     98|     await vi.waitFor(() => expect(document.querySelector(".sp-back")?.…
+       |                                                                                             ^
+     99|
+    100|     document.body.innerHTML = "";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  10:35:45
+   Duration  3.45s (transform 472ms, setup 25ms, import 52ms, tests 2.17s, environment 946ms)
+
