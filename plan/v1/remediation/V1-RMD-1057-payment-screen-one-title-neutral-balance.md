@@ -12,11 +12,11 @@ Hesap Ödeme ekranında üç başlık üst üste duruyor (HESAP ÖDEME / Tahsila
 
 ## Owned surface
 
-- `tests/Clients/StaticApps/split-payment-cashier-rules.test.js`
 - `evidence/V1-RMD-1057/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+  - tests/Clients/StaticApps/split-payment-cashier-rules.test.js
   - tests/Clients/StaticApps/split-payment-hierarchy.test.js
   - tests/Clients/StaticApps/split-payment-quick-cash.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.

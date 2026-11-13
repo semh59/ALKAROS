@@ -28,7 +28,7 @@ Masa panelinde Böl, Masa taşı ve İptal / iade üç düğme yan yana 8-9 piks
 
 ## Out of scope
 
-- Listede olmayan ekranlar ve dosyalar; masa planı kartları (V1-RMD-1056)
+- Listede olmayan ekranlar ve dosyalar; masa planı kartları (V1-RMD-1056); ödeme sayfası ve iade formu (V1-RMD-1057, V1-RMD-1059)
 
 ## Dependencies
 
