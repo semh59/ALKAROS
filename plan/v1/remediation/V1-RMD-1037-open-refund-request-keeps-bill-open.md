@@ -1,7 +1,7 @@
 # V1-RMD-1037 - Onay bekleyen iade isteği olan hesap, kalan tutar ödense bile kapanmaz; ekran nedenini Türkçe söyler
 
 - Task ID: V1-RMD-1037
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

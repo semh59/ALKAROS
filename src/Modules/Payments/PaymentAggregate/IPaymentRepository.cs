@@ -15,6 +15,9 @@ public interface IPaymentRepository
     /// <summary>Loads every Payment recorded against a Bill.</summary>
     Task<IReadOnlyList<Payment>> GetByBillIdAsync(Guid billId, CancellationToken cancellationToken = default);
 
+    /// <summary>Whether a refund request of the Bill still waits for its approval decision.</summary>
+    Task<bool> HasOpenRefundRequestAsync(Guid billId, CancellationToken cancellationToken = default);
+
     /// <summary>Inserts a new Payment inside its own transaction.</summary>
     Task AddAsync(Payment payment, CancellationToken cancellationToken = default);
 

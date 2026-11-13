@@ -1,0 +1,205 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 4f6e04df..d60345d0 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2425,6 +2425,9 @@
+   };
+ 
+   function closedHeading() {
++    var refundWaiting = (state.refundRequests || []).some(function (row) { return row.status === 'Requested'; });
++    if (refundWaiting)
++      return { title: 'Tahsilat Tamam, Hesap Açık', text: 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.', waiting: true };
+     var collected = !!state.summary && Number(state.summary.allocatedTotal) > 0.004;
+     var deductions = state.adjustmentItems.filter(function (item) { return item.isDeduction; });
+     var comps = deductions.filter(function (item) { return !!COMP_REASON_LABELS[item.reason]; }).length;
+@@ -2486,7 +2489,7 @@
+     var heading = closedHeading();
+     app.innerHTML =
+       '<div class="sp-card sp-center-text">' +
+-      '<span class="sp-icon-circle success">✓</span>' +
++      (heading.waiting ? '<span class="sp-icon-circle">…</span>' : '<span class="sp-icon-circle success">✓</span>') +
+       '<h1 class="sp-title">' + heading.title + '</h1>' +
+       '<p class="sp-subtitle">' + heading.text + '</p>' +
+       renderBillContext() +
+diff --git a/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs b/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs
+index e71a373c..a32668e9 100644
+--- a/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs
++++ b/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjection.cs
+@@ -16,6 +16,9 @@ public enum BillClosureBlocker
+ 
+     /// <summary>At least one Payment on the Bill is Unknown (a provider timeout awaiting reconciliation, CORR:C29).</summary>
+     HasUnknownPayment,
++
++    /// <summary>A refund request of the Bill still waits for a manager's decision, so the Bill stays open until it is approved or rejected.</summary>
++    HasOpenRefundRequest,
+ }
+ 
+ /// <summary>
+diff --git a/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs b/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs
+index 2538e852..64a63bb5 100644
+--- a/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs
++++ b/src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs
+@@ -46,6 +46,9 @@ public sealed class BillPaymentClosureProjector : IBillPaymentClosureProjector
+         var allocations = await _allocationRepository.GetByBillIdAsync(billId, cancellationToken);
+         var adjustments = await _adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
+ 
+-        return BillPaymentClosureCalculator.Compute(bill, payments, allocations, adjustments);
++        var projection = BillPaymentClosureCalculator.Compute(bill, payments, allocations, adjustments);
++        return await _paymentRepository.HasOpenRefundRequestAsync(billId, cancellationToken)
++            ? projection with { Blockers = [.. projection.Blockers, BillClosureBlocker.HasOpenRefundRequest] }
++            : projection;
+     }
+ }
+diff --git a/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs b/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs
+index 7c470a1a..1ba50395 100644
+--- a/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs
++++ b/src/Modules/Payments/PaymentAggregate/IPaymentRepository.cs
+@@ -15,6 +15,9 @@ public interface IPaymentRepository
+     /// <summary>Loads every Payment recorded against a Bill.</summary>
+     Task<IReadOnlyList<Payment>> GetByBillIdAsync(Guid billId, CancellationToken cancellationToken = default);
+ 
++    /// <summary>Whether a refund request of the Bill still waits for its approval decision.</summary>
++    Task<bool> HasOpenRefundRequestAsync(Guid billId, CancellationToken cancellationToken = default);
++
+     /// <summary>Inserts a new Payment inside its own transaction.</summary>
+     Task AddAsync(Payment payment, CancellationToken cancellationToken = default);
+ 
+diff --git a/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs b/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs
+index d076599a..bce9ca91 100644
+--- a/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs
++++ b/src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs
+@@ -51,6 +51,14 @@ public sealed class PostgresPaymentRepository : IPaymentRepository
+         return result;
+     }
+ 
++    public async Task<bool> HasOpenRefundRequestAsync(Guid billId, CancellationToken cancellationToken = default)
++    {
++        await using var command = _dataSource.CreateCommand(
++            "SELECT EXISTS (SELECT 1 FROM payments.refund_requests WHERE bill_id = @bill AND status = 'Requested');");
++        command.Parameters.AddWithValue("bill", billId);
++        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
++    }
++
+     public async Task AddAsync(Payment payment, CancellationToken cancellationToken = default)
+     {
+         ArgumentNullException.ThrowIfNull(payment);
+diff --git a/tests/Clients/StaticApps/split-payment-item-refund.test.js b/tests/Clients/StaticApps/split-payment-item-refund.test.js
+index 7c588c4b..90eba6bc 100644
+--- a/tests/Clients/StaticApps/split-payment-item-refund.test.js
++++ b/tests/Clients/StaticApps/split-payment-item-refund.test.js
+@@ -235,7 +235,7 @@ describe("split-payment.js item based refund", () => {
+ 
+   it("offers no item refund while a request for the payment is still open", async () => {
+     await open({ requests: [row()] });
+-    await vi.waitFor(() => expect(app().textContent).toContain("Hesap Ödendi"));
++    await vi.waitFor(() => expect(app().textContent).toContain("Tahsilat Tamam, Hesap Açık"));
+     await new Promise((done) => setTimeout(done, 50));
+ 
+     expect(document.getElementById("item-refund")).toBeNull();
+diff --git a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+new file mode 100644
+index 00000000..95581d54
+--- /dev/null
++++ b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+@@ -0,0 +1,52 @@
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { fileURLToPath } from "node:url";
++import { dirname, resolve } from "node:path";
++import { loadApp } from "./support/loadApp.js";
++import { installFetchRouter } from "./support/fetchRouter.js";
++
++const here = dirname(fileURLToPath(import.meta.url));
++const pageDir = resolve(here, "..", "..", "..", "src/Clients/Cashier/wwwroot/payments/split-payment");
++const htmlPath = resolve(pageDir, "index.html");
++const scriptPath = resolve(pageDir, "split-payment.js");
++
++const TERMINAL_ID = "11111111-1111-1111-1111-111111111111";
++const BILL_ID = "22222222-2222-2222-2222-222222222222";
++const settled = { billId: BILL_ID, payableAmount: 110, allocatedTotal: 110, remainingAmount: 0, unsettledPayment: null,
++  allocations: [{ paymentId: "p1", amount: 110, method: "Cash", paymentStatus: "Approved" }] };
++const pending = {
++  requestId: "r1", billId: BILL_ID, paymentId: "p1", amount: 110, method: "Cash", reason: "Yanlış tutar", status: "Requested",
++  requestedBy: "u1", requestedAt: "2026-10-13T10:00:00Z", decidedBy: null, decidedAt: null, slipNumber: null, billCancelled: false, mayDecide: false,
++};
++
++async function openPaid(requests) {
++  window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
++  installFetchRouter([
++    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
++    { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: settled },
++    { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
++    { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
++    { test: (url) => url.endsWith("/refund-requests"), body: requests },
++    { test: (url) => url.endsWith("/show-on-display"), body: {} },
++  ]);
++  await loadApp(htmlPath, scriptPath);
++  await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
++}
++
++afterEach(() => { document.body.innerHTML = ""; });
++
++describe("a fully paid bill with a refund request waiting is not shown as paid", () => {
++  it("says why the bill stays open instead of 'Hesap Ödendi'", async () => {
++    await openPaid([pending]);
++
++    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
++    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(false);
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.");
++  });
++
++  it("shows the paid heading when the request was already decided", async () => {
++    await openPaid([{ ...pending, status: "Rejected" }]);
++
++    expect(document.querySelector(".sp-title").textContent).toBe("Hesap Ödendi");
++    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(true);
++  });
++});
+diff --git a/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs b/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs
+new file mode 100644
+index 00000000..44a275c6
+--- /dev/null
++++ b/tests/Host/Experience/Billing/PaymentRefundOpenRequestClosureHttpTests.cs
+@@ -0,0 +1,31 @@
++using ALKAROS.Billing.PaymentClosure;
++using Microsoft.Extensions.DependencyInjection;
++using Xunit;
++
++namespace ALKAROS.Host.Experience.Billing.Tests;
++
++public sealed partial class PaymentRefundHttpTests
++{
++    [Fact]
++    public async Task AFullyPaidBillStaysOpenWhileARefundRequestWaitsAndClosesOnceTheManagerRejectsIt()
++    {
++        var seeded = await _database.SeedBillAsync();
++        var paymentId = await CashPaymentAsync(seeded.BillId, 250m);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var closure = app.Services.GetRequiredService<IBillClosureService>();
++        var request = await RequestAsync(client, seeded.BillId, paymentId, "Yanlış tutar");
++
++        var held = await closure.TryCloseAsync(seeded.BillId);
++
++        Assert.Equal(BillClosureOutcome.NotSatisfied, held.Outcome);
++        Assert.Equal([BillClosureBlocker.HasOpenRefundRequest], held.Blockers);
++        Assert.NotEqual("Paid", await Scalar<string>("SELECT status FROM billing.bills WHERE bill_id = @p", seeded.BillId));
++
++        await DecideAsync(client, request.RequestId, "reject", _managerCookie, new RefundDecisionInputV1("Gerekçe yetersiz"));
++        var released = await closure.TryCloseAsync(seeded.BillId);
++
++        Assert.Equal(BillClosureOutcome.Closed, released.Outcome);
++        Assert.Equal("Paid", await Scalar<string>("SELECT status FROM billing.bills WHERE bill_id = @p", seeded.BillId));
++    }
++}
+diff --git a/tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj b/tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj
+index 09960bcb..5af0edf0 100644
+--- a/tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj
++++ b/tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj
+@@ -39,6 +39,7 @@
+     <None Include="..\..\..\..\database\migrations\V13\V13-PAY-001\120-payments.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+     <None Include="..\..\..\..\database\migrations\V1\V1-RMD-230\121-payments-cross-field-invariants.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+     <None Include="..\..\..\..\database\migrations\V13\V13-ALC-001\123-payment-allocations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
++    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-508\183-refund-requests.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+   </ItemGroup>
+ 
+ </Project>

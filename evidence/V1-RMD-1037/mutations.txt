@@ -1,0 +1,15 @@
+M3 client ignores waiting request
+      Tests  2 failed | 10 passed (12)
+restored
+M4 client treats any request as waiting
+      Tests  1 failed | 11 passed (12)
+restored
+M5 waiting bill keeps the green tick
+      Tests  1 failed | 1 passed (2)
+restored
+M1 projector ignores the open request
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S�
+restored
+M2 repository looks for decided requests
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, S�
+restored

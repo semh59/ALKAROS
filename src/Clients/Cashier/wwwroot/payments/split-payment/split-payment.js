@@ -2425,6 +2425,9 @@
   };
 
   function closedHeading() {
+    var refundWaiting = (state.refundRequests || []).some(function (row) { return row.status === 'Requested'; });
+    if (refundWaiting)
+      return { title: 'Tahsilat Tamam, Hesap Açık', text: 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.', waiting: true };
     var collected = !!state.summary && Number(state.summary.allocatedTotal) > 0.004;
     var deductions = state.adjustmentItems.filter(function (item) { return item.isDeduction; });
     var comps = deductions.filter(function (item) { return !!COMP_REASON_LABELS[item.reason]; }).length;
@@ -2486,7 +2489,7 @@
     var heading = closedHeading();
     app.innerHTML =
       '<div class="sp-card sp-center-text">' +
-      '<span class="sp-icon-circle success">✓</span>' +
+      (heading.waiting ? '<span class="sp-icon-circle">…</span>' : '<span class="sp-icon-circle success">✓</span>') +
       '<h1 class="sp-title">' + heading.title + '</h1>' +
       '<p class="sp-subtitle">' + heading.text + '</p>' +
       renderBillContext() +

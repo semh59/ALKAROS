@@ -46,6 +46,9 @@ public sealed class BillPaymentClosureProjector : IBillPaymentClosureProjector
         var allocations = await _allocationRepository.GetByBillIdAsync(billId, cancellationToken);
         var adjustments = await _adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
 
-        return BillPaymentClosureCalculator.Compute(bill, payments, allocations, adjustments);
+        var projection = BillPaymentClosureCalculator.Compute(bill, payments, allocations, adjustments);
+        return await _paymentRepository.HasOpenRefundRequestAsync(billId, cancellationToken)
+            ? projection with { Blockers = [.. projection.Blockers, BillClosureBlocker.HasOpenRefundRequest] }
+            : projection;
     }
 }

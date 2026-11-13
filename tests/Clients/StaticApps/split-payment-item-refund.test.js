@@ -235,7 +235,7 @@ describe("split-payment.js item based refund", () => {
 
   it("offers no item refund while a request for the payment is still open", async () => {
     await open({ requests: [row()] });
-    await vi.waitFor(() => expect(app().textContent).toContain("Hesap Ödendi"));
+    await vi.waitFor(() => expect(app().textContent).toContain("Tahsilat Tamam, Hesap Açık"));
     await new Promise((done) => setTimeout(done, 50));
 
     expect(document.getElementById("item-refund")).toBeNull();

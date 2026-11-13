@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-open-refund-closed.test.js (2 tests | 1 failed) 385ms
+     × says why the bill stays open instead of 'Hesap Ödendi' 211ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > says why the bill stays open instead of 'Hesap Ödendi'
+AssertionError: expected 'Hesap Ödendi' to be 'Ödeme Tamamlandı' // Object.is equality
+
+Expected: "Ödeme Tamamlandı"
+Received: "Hesap Ödendi"
+
+ ❯ split-payment-open-refund-closed.test.js:41:61
+     39|     await openPaid([pending]);
+     40|
+     41|     expect(document.querySelector(".sp-title").textContent).toBe("Ödem…
+       |                                                             ^
+     42|     expect(document.querySelector(".sp-subtitle").textContent).toBe("O…
+     43|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  16:02:46
+   Duration  1.73s (transform 198ms, setup 25ms, import 52ms, tests 385ms, environment 1.01s)
+
