@@ -1,7 +1,7 @@
 # V1-RMD-1055 - Kasa arayüz kuralları belgesi yazılır ve bir testle koda bağlanır
 
 - Task ID: V1-RMD-1055
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: documentation
 - Surface state: Planned
