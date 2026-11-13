@@ -1,0 +1,77 @@
+diff --git a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+index ccb8ca4e5..9a9de35b2 100644
+--- a/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
++++ b/src/Host/DualScreen/CustomerDisplayPaymentProgress.cs
+@@ -62,6 +62,10 @@ public static class CustomerDisplayPaymentProgress
+     /// Whether the order also has a cancelled bill. An order whose bills are all cancelled has nothing left to pay,
+     /// even when it still has unsent items, so the display returns to idle at once.
+     /// </param>
++    /// <remarks>
++    /// Only the cashier's own read carries a table number. A table order outlives its cancelled bill (the table keeps it
++    /// and takes new lines), so there it stays; a quick sale and the customer display are cleared.
++    /// </remarks>
+     public static CustomerDisplaySnapshotDto Apply(
+         CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false)
+     {
+@@ -69,7 +73,7 @@ public static class CustomerDisplayPaymentProgress
+             return snapshot;
+ 
+         if (live.Count == 0)
+-            return anyBillCancelled && snapshot.State == ActiveState ? Cleared(snapshot) : snapshot;
++            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot) : snapshot;
+ 
+         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
+         var lines = live
+diff --git a/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs b/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
+index be2607608..e379a3b0a 100644
+--- a/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
++++ b/tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
+@@ -1463,6 +1463,27 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
+         Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
+     }
+ 
++    [Fact]
++    public async Task ACancelledBillLeavesTheTillItsTableOrderWithItsLines()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionAsync(terminalId, "till-keeps-table-order", true, "bills.cancel");
++        var billId = await _database.SeedBillAsync(payable: 200m);
++        await _database.MarkOrderItemsSentAsync(billId);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
++        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { })).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client,
++            $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/cancel", cookie, new { Reason = "Müşteri vazgeçti" })).StatusCode);
++
++        var till = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/orders/active", cookie)).Content.ReadFromJsonAsync<JsonElement>();
++
++        Assert.Equal("Active", till.GetProperty("state").GetString());
++        Assert.NotEmpty(till.GetProperty("lines").EnumerateArray());
++        Assert.Equal("Idle", (await DisplaySnapshotAsync(client, displayId, displayCookie)).GetProperty("state").GetString());
++    }
++
+     private async Task<JsonElement> CancelBillOnDisplayAsync(string deviceKey, bool orderSentToKitchen)
+     {
+         var terminalId = Guid.NewGuid();
+diff --git a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+index fd21f9dc0..03ce7b531 100644
+--- a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayStatementTests.cs
+@@ -240,6 +240,16 @@ public sealed class CustomerDisplayStatementTests
+         Assert.Empty(result.Lines);
+     }
+ 
++    [Fact]
++    public void ATableOrderWhoseBillWasCancelledIsKeptButAnOrderWithoutATableIsCleared()
++    {
++        var table = Snapshot(editable: true) with { TableNumber = "M-01" };
++        var quickSale = Snapshot(editable: true);
++
++        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true));
++        Assert.Equal("Idle", CustomerDisplayPaymentProgress.Apply(quickSale, [], anyBillCancelled: true).State);
++    }
++
+     [Fact]
+     public void AnOrderBeingEditedWithoutAnyCancelledBillIsLeftAlone()
+     {

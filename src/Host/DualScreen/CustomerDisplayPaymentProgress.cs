@@ -62,6 +62,10 @@ public static class CustomerDisplayPaymentProgress
     /// Whether the order also has a cancelled bill. An order whose bills are all cancelled has nothing left to pay,
     /// even when it still has unsent items, so the display returns to idle at once.
     /// </param>
+    /// <remarks>
+    /// Only the cashier's own read carries a table number. A table order outlives its cancelled bill (the table keeps it
+    /// and takes new lines), so there it stays; a quick sale and the customer display are cleared.
+    /// </remarks>
     public static CustomerDisplaySnapshotDto Apply(
         CustomerDisplaySnapshotDto snapshot, IReadOnlyCollection<BillStatement> live, bool anyBillCancelled = false)
     {
@@ -69,7 +73,7 @@ public static class CustomerDisplayPaymentProgress
             return snapshot;
 
         if (live.Count == 0)
-            return anyBillCancelled && snapshot.State == ActiveState ? Cleared(snapshot) : snapshot;
+            return anyBillCancelled && snapshot.State == ActiveState && snapshot.TableNumber is null ? Cleared(snapshot) : snapshot;
 
         var summaries = live.Select(s => AdjustmentCalculator.Calculate(s.Bill, s.Adjustments)).ToList();
         var lines = live

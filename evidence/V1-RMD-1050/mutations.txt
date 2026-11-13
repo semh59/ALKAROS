@@ -1,0 +1,4 @@
+killed M1 table condition dropped (always clears)
+killed M2 table condition inverted
+killed M3 state guard dropped
+killed M4 table condition always keeps

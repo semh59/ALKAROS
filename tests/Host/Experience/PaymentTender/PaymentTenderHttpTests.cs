@@ -1463,6 +1463,27 @@ public sealed partial class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(0m, snapshot.GetProperty("total").GetDecimal());
     }
 
+    [Fact]
+    public async Task ACancelledBillLeavesTheTillItsTableOrderWithItsLines()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "till-keeps-table-order", true, "bills.cancel");
+        var billId = await _database.SeedBillAsync(payable: 200m);
+        await _database.MarkOrderItemsSentAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cookie);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, ShowOnDisplayPath(terminalId, billId), cookie, new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/cancel", cookie, new { Reason = "Müşteri vazgeçti" })).StatusCode);
+
+        var till = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/orders/active", cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Equal("Active", till.GetProperty("state").GetString());
+        Assert.NotEmpty(till.GetProperty("lines").EnumerateArray());
+        Assert.Equal("Idle", (await DisplaySnapshotAsync(client, displayId, displayCookie)).GetProperty("state").GetString());
+    }
+
     private async Task<JsonElement> CancelBillOnDisplayAsync(string deviceKey, bool orderSentToKitchen)
     {
         var terminalId = Guid.NewGuid();

@@ -241,6 +241,16 @@ public sealed class CustomerDisplayStatementTests
     }
 
     [Fact]
+    public void ATableOrderWhoseBillWasCancelledIsKeptButAnOrderWithoutATableIsCleared()
+    {
+        var table = Snapshot(editable: true) with { TableNumber = "M-01" };
+        var quickSale = Snapshot(editable: true);
+
+        Assert.Equal(table, CustomerDisplayPaymentProgress.Apply(table, [], anyBillCancelled: true));
+        Assert.Equal("Idle", CustomerDisplayPaymentProgress.Apply(quickSale, [], anyBillCancelled: true).State);
+    }
+
+    [Fact]
     public void AnOrderBeingEditedWithoutAnyCancelledBillIsLeftAlone()
     {
         var editing = Snapshot(editable: true);

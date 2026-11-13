@@ -1,0 +1,2 @@
+qa-test-kalitesi: orta bulgular islendi (mutant listesi M1-M4 genisletildi; forTill mutanti denendi, bayragin gereksiz oldugu ortaya cikti ve kaldirildi); TableNumber'in yalniz kasa okumasinda dolu olmasi unit+HTTP testlerle sabit.
+qa-uctan-uca-akis: akis kodda tutarli (Urun ekle -> Active sepet -> kalem eklenir -> gonder), Hizli satis ve musteri ekrani regresyonu yok; urun karari A (eski kalemler sepette) ve B (musteri ekrani Idle) listelenir.
