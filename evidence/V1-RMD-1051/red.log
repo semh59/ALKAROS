@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (36 tests | 1 failed) 331ms
+     × drops the lines and the order buttons of a table that is freed while the panel stays open 14ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > drops the lines and the order buttons of a table that is freed while the panel stays open
+AssertionError: expected <button …(3)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  class="secondary"
+  data-telemetry-id="b.routes.tableorderbridge.kitchenless"
+  type="button"
+>
+  Mutfağa göndermeden hesaba ekle
+</button>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:450:55
+    448|     await flush();
+    449|
+    450|     expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+       |                                                       ^
+    451|     expect(button("Sipariş al")).toBeDefined();
+    452|     expect(document.querySelector(".table-order-bridge__lines")).toBeN…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 35 passed (36)
+   Start at  01:42:25
+   Duration  2.41s (transform 286ms, setup 0ms, import 452ms, tests 331ms, environment 1.34s)
+
+exit=1

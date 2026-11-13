@@ -1,0 +1,5 @@
+killed M1 unreadable lines keep the stale read
+killed M2 another order keeps the stale read
+killed M3 freed table keeps the stale read
+killed M4 failed read hidden
+killed M5 unsent count from stale read

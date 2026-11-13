@@ -1,7 +1,7 @@
 # V1-RMD-1051 - Boşalan masanın panelinde önceki siparişin "Mutfağa göndermeden hesaba ekle" düğmesi kalmaz
 
 - Task ID: V1-RMD-1051
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,96 @@
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index e253e7867..3a4846303 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -434,4 +434,56 @@ describe("TableOrderBridge", () => {
+ 
+     for (const label of ["Öde", "Böl", "Masa taşı", "İptal / iade"]) expect(button(label)).toBeUndefined();
+   });
++
++  it("drops the lines and the order buttons of a table that is freed while the panel stays open", async () => {
++    render();
++    await flush();
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
++
++    act(() => root!.render(createElement(TableOrderBridge, {
++      terminalId: "t-1", table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 2 },
++      orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false,
++      onStartOrder: vi.fn(), onAddWithoutKitchen: vi.fn(), onSent: vi.fn(), onTransfer: vi.fn(), navigateTo: vi.fn(),
++    })));
++    await flush();
++
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
++    expect(button("Sipariş al")).toBeDefined();
++    expect(document.querySelector(".table-order-bridge__lines")).toBeNull();
++    expect(document.body.textContent).toContain("Bu masada açık hesap yok.");
++  });
++
++  const rerender = (table: Parameters<typeof TableOrderBridge>[0]["table"], props: Partial<Parameters<typeof TableOrderBridge>[0]> = {}) => act(() => root!.render(createElement(TableOrderBridge, {
++    terminalId: "t-1", table, orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false,
++    onStartOrder: vi.fn(), onAddWithoutKitchen: vi.fn(), onSent: vi.fn(), onTransfer: vi.fn(), navigateTo: vi.fn(), ...props,
++  })));
++
++  it("shows nothing of the previous order, and no send button, until the table's new order is read", async () => {
++    stubFetch(() => reply(500, {}), draftOrder);
++    render();
++    await flush();
++    expect(button("Mutfağa gönder (3)")).toBeDefined();
++
++    rerender({ tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-2", currentBillId: null, rowVersion: 2 });
++
++    expect(button("Mutfağa gönder (3)")).toBeUndefined();
++    expect(document.querySelector(".table-order-bridge__lines")).toBeNull();
++  });
++
++  it("offers no order-line buttons once the lines may no longer be read", async () => {
++    render();
++    await flush();
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
++
++    rerender({ tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: null, rowVersion: 1 }, { canReadLines: false });
++
++    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
++  });
++
++  it("does not report a failed bill read for a table that has a bill but no order to read", async () => {
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++
++    expect(document.body.textContent).not.toContain("Hesap kalemleri alınamadı");
++  });
+ });
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index 2adb491e4..febabe865 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -75,9 +75,11 @@ export function TableOrderBridge({
+     return () => { current = false; window.clearInterval(timer); };
+   }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal, sentCount]);
+   const billingHref = table.currentBillId ? `/billing?billId=${encodeURIComponent(table.currentBillId)}` : `/billing?orderId=${encodeURIComponent(table.currentOrderId ?? "")}`;
+-  const lines = bill && bill !== "failed" ? bill.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
+-  const unsent = bill && bill !== "failed" ? bill.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
+-  const sentOrder = bill !== null && bill !== "failed" && bill.status !== "Draft";
++  // What was read belongs to one order: once the table has another order, none, or the lines may not be read, it is stale.
++  const read = !canReadLines || (bill !== "failed" && bill?.orderId !== currentOrderId) ? null : bill;
++  const lines = read && read !== "failed" ? read.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
++  const unsent = read && read !== "failed" ? read.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
++  const sentOrder = read !== null && read !== "failed" && read.status !== "Draft";
+   const send = async () => {
+     setSending(true);
+     setSendError(undefined);
+@@ -135,12 +137,12 @@ export function TableOrderBridge({
+     </div>}
+     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
+     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
+-    {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+-      : bill && <>
++    {hasCheck ? !canReadLines ? null : read === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
++      : read && <>
+         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
+           {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
+         </ul>
+-        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
++        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(read.totalAmount)}</strong></p>
+       </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
+   </section>;
+ }

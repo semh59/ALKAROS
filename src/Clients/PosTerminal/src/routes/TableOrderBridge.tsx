@@ -75,9 +75,11 @@ export function TableOrderBridge({
     return () => { current = false; window.clearInterval(timer); };
   }, [terminalId, tableId, currentOrderId, canReadLines, table.currentBillId, table.rowVersion, table.currentOrderTotal, sentCount]);
   const billingHref = table.currentBillId ? `/billing?billId=${encodeURIComponent(table.currentBillId)}` : `/billing?orderId=${encodeURIComponent(table.currentOrderId ?? "")}`;
-  const lines = bill && bill !== "failed" ? bill.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
-  const unsent = bill && bill !== "failed" ? bill.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
-  const sentOrder = bill !== null && bill !== "failed" && bill.status !== "Draft";
+  // What was read belongs to one order: once the table has another order, none, or the lines may not be read, it is stale.
+  const read = !canReadLines || (bill !== "failed" && bill?.orderId !== currentOrderId) ? null : bill;
+  const lines = read && read !== "failed" ? read.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
+  const unsent = read && read !== "failed" ? read.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
+  const sentOrder = read !== null && read !== "failed" && read.status !== "Draft";
   const send = async () => {
     setSending(true);
     setSendError(undefined);
@@ -135,12 +137,12 @@ export function TableOrderBridge({
     </div>}
     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
-    {hasCheck ? !canReadLines ? null : bill === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
-      : bill && <>
+    {hasCheck ? !canReadLines ? null : read === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
+      : read && <>
         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">
           {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
         </ul>
-        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(bill.totalAmount)}</strong></p>
+        <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(read.totalAmount)}</strong></p>
       </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
   </section>;
 }

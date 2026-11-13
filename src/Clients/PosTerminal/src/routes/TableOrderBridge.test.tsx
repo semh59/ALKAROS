@@ -434,4 +434,56 @@ describe("TableOrderBridge", () => {
 
     for (const label of ["Öde", "Böl", "Masa taşı", "İptal / iade"]) expect(button(label)).toBeUndefined();
   });
+
+  it("drops the lines and the order buttons of a table that is freed while the panel stays open", async () => {
+    render();
+    await flush();
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
+
+    act(() => root!.render(createElement(TableOrderBridge, {
+      terminalId: "t-1", table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 2 },
+      orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false,
+      onStartOrder: vi.fn(), onAddWithoutKitchen: vi.fn(), onSent: vi.fn(), onTransfer: vi.fn(), navigateTo: vi.fn(),
+    })));
+    await flush();
+
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+    expect(button("Sipariş al")).toBeDefined();
+    expect(document.querySelector(".table-order-bridge__lines")).toBeNull();
+    expect(document.body.textContent).toContain("Bu masada açık hesap yok.");
+  });
+
+  const rerender = (table: Parameters<typeof TableOrderBridge>[0]["table"], props: Partial<Parameters<typeof TableOrderBridge>[0]> = {}) => act(() => root!.render(createElement(TableOrderBridge, {
+    terminalId: "t-1", table, orderAllowed: true, canManage: true, canCollect: true, canReadLines: true, canAddWithoutKitchen: true, busy: false,
+    onStartOrder: vi.fn(), onAddWithoutKitchen: vi.fn(), onSent: vi.fn(), onTransfer: vi.fn(), navigateTo: vi.fn(), ...props,
+  })));
+
+  it("shows nothing of the previous order, and no send button, until the table's new order is read", async () => {
+    stubFetch(() => reply(500, {}), draftOrder);
+    render();
+    await flush();
+    expect(button("Mutfağa gönder (3)")).toBeDefined();
+
+    rerender({ tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-2", currentBillId: null, rowVersion: 2 });
+
+    expect(button("Mutfağa gönder (3)")).toBeUndefined();
+    expect(document.querySelector(".table-order-bridge__lines")).toBeNull();
+  });
+
+  it("offers no order-line buttons once the lines may no longer be read", async () => {
+    render();
+    await flush();
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeDefined();
+
+    rerender({ tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: null, rowVersion: 1 }, { canReadLines: false });
+
+    expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
+  });
+
+  it("does not report a failed bill read for a table that has a bill but no order to read", async () => {
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+
+    expect(document.body.textContent).not.toContain("Hesap kalemleri alınamadı");
+  });
 });
