@@ -8,7 +8,7 @@
 
 ## Goal
 
-Masa panelindeki kalem listesi yalnız "Mutfağa gönderilmedi" ve "Kasada eklendi" notunu gösteriyordu; kasiyer kalemin hazır ya da servis edilmiş olduğunu görmediği için iptalin neden reddedilebileceğini önceden bilemiyordu. Sipariş okuma uç noktası kalem başına kitchenState alanını zaten döndürür; panel bu alanı okur ve Ready için "Hazır", Served için "Servis edildi" notunu kalem satırında gösterir. Yeni sunucu alanı veya uç nokta yoktur. Kaynak: kasiyer denemesi 6, sorun 2.
+Masa panelindeki kalem listesi yalnız "Mutfağa gönderilmedi" ve "Kasada eklendi" notunu gösteriyordu; kasiyer kalemin hazır ya da servis edilmiş olduğunu görmediği için iptalin neden reddedilebileceğini önceden bilemiyordu. Sipariş okuma uç noktası kalem başına kitchenState alanını zaten döndürür; panel bu alanı okur ve Ready için "Hazır", Served için "Servis edildi" notunu kalem satırında gösterir. Mutfak durumu masa satırının sürümünü değiştirmediği için panel, açıkken kalem listesini 15 saniyede bir sessizce yeniden okur (başarısız bir arka plan okuması listeyi bozmaz). Yeni sunucu alanı veya uç nokta yoktur. Kaynak: kasiyer denemesi 6, sorun 2.
 
 ## Owned surface
 
