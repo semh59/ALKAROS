@@ -54,6 +54,13 @@ describe("production shell", () => {
     vi.restoreAllMocks();
   });
 
+  it("leaves the Terminal item out when the identity carries no terminal name", async () => {
+    await render(<ProductionShell {...baseProps} session={{ status: "authenticated", identity: { ...identity, terminalName: null } }} />);
+
+    const labels = [...document.querySelectorAll(".production-shell__identity-item > span")].map((element) => element.textContent);
+    expect(labels).toEqual(["Şube", "Kullanıcı", "Rol"]);
+  });
+
   it("filters navigation by capability and preserves the active route contract", async () => {
     await render(<ProductionShell {...baseProps} />);
 

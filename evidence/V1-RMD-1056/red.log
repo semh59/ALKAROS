@@ -1,0 +1,200 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/tables/tablesStyle.test.ts (6 tests | 3 failed) 23ms
+     × has no table plan text smaller than 14px, the smallest size docs/CASHIER_UI_RULES.md allows 10ms
+     × draws each status once, with the text and background tokens of its row in docs/CASHIER_UI_RULES.md 3ms
+     × draws a pattern only on a table that needs attention: asking for the bill or open too long 2ms
+ ❯ src/shell/ProductionShell.test.tsx (19 tests | 1 failed) 601ms
+     × leaves the Terminal item out when the identity carries no terminal name 77ms
+ ❯ src/features/tables/TableWorkspace.test.tsx (54 tests | 3 failed) 2130ms
+     × summarises the attention groups as counts instead of repeating every table as a button 50ms
+     × flags a table open past 45 minutes with the words Uzun süre açık and a pattern class, and leaves fresh tables plain 24ms
+     × explains every status icon in the legend and names the plan status in the details panel 17ms
+ ❯ src/routes/workspace.test.tsx (60 tests | 1 failed) 2218ms
+     × shows no Terminal item in the header while the terminal has no name, instead of a raw id 38ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /authorization route > shows no Terminal item in the header while the terminal has no name, instead of a raw id
+AssertionError: expected [ 'Terminal', 'Kullanıcı', 'Rol' ] to not include 'Terminal'
+ ❯ src/routes/workspace.test.tsx:106:24
+    104|     const labels = [...document.querySelectorAll(".production-shell__i…
+    105|     expect(labels).toContain("Kullanıcı");
+    106|     expect(labels).not.toContain("Terminal");
+       |                        ^
+    107|     expect(document.querySelector(".production-shell__identity")?.text…
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/shell/ProductionShell.test.tsx > production shell > leaves the Terminal item out when the identity carries no terminal name
+AssertionError: expected [ 'Şube', 'Terminal', …(2) ] to deeply equal [ 'Şube', 'Kullanıcı', 'Rol' ]
+
+- Expected
++ Received
+
+  [
+    "Şube",
++   "Terminal",
+    "Kullanıcı",
+    "Rol",
+  ]
+
+ ❯ src/shell/ProductionShell.test.tsx:61:20
+     59|
+     60|     const labels = [...document.querySelectorAll(".production-shell__i…
+     61|     expect(labels).toEqual(["Şube", "Kullanıcı", "Rol"]);
+       |                    ^
+     62|   });
+     63|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/features/tables/tablesStyle.test.ts > table screens style rules > has no table plan text smaller than 14px, the smallest size docs/CASHIER_UI_RULES.md allows
+AssertionError: expected [ 12, 12.8, 12.8, 12.8, 12.8, …(12) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   12,
++   12.8,
++   12.8,
++   12.8,
++   12.8,
++   12,
++   13.6,
++   12.8,
++   11.2,
++   11.2,
++   12.8,
++   12,
++   13.12,
++   12,
++   12,
++   12.8,
++   12.8,
++ ]
+
+ ❯ src/features/tables/tablesStyle.test.ts:16:68
+     14|
+     15|   it("has no table plan text smaller than 14px, the smallest size docs…
+     16|     expect(sizesIn(css("tables.css")).filter((size) => size < 14)).toE…
+       |                                                                    ^
+     17|   });
+     18|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/features/tables/tablesStyle.test.ts > table screens style rules > draws each status once, with the text and background tokens of its row in docs/CASHIER_UI_RULES.md
+AssertionError: free: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/features/tables/tablesStyle.test.ts:37:25
+     35|     for (const [key, , , text, background] of rows) {
+     36|       const rule = all.filter((block) => block.selector === `.table-st…
+     37|       expect(rule, key).toHaveLength(1);
+       |                         ^
+     38|       expect(rule[0].body).toContain(`--plan-text: var(${text});`);
+     39|       expect(rule[0].body).toContain(`--plan-bg: var(${background});`);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/features/tables/tablesStyle.test.ts > table screens style rules > draws a pattern only on a table that needs attention: asking for the bill or open too long
+AssertionError: expected [ '.table-card--plan-ask', …(3) ] to deeply equal [ '.table-card--plan-ask', …(1) ]
+
+- Expected
++ Received
+
+  [
+    ".table-card--plan-ask",
+-   ".table-card--stale",
++   ".table-card--plan-pay",
++   ".table-card--plan-clean",
++   ".table-card--plan-off",
+  ]
+
+ ❯ src/features/tables/tablesStyle.test.ts:47:23
+     45|   it("draws a pattern only on a table that needs attention: asking for…
+     46|     const patterned = blocks(css("tables.css")).filter((block) => /gra…
+     47|     expect(patterned).toEqual([".table-card--plan-ask", ".table-card--…
+       |                       ^
+     48|   });
+     49| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > summarises the attention groups as counts instead of repeating every table as a button
+AssertionError: expected [] to deeply equal [ '⚠ Hesap isteyen: 1', …(1) ]
+
+- Expected
++ Received
+
+- [
+-   "⚠ Hesap isteyen: 1",
+-   "₺ Ödeme bekleyen: 2",
+- ]
++ []
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:154:102
+    152|
+    153|     const strip = document.querySelector(".table-attention")!;
+    154|     expect([...strip.querySelectorAll(".table-attention__count")].map(…
+       |                                                                                                      ^
+    155|     expect(strip.querySelector("button")).toBeNull();
+    156|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > flags a table open past 45 minutes with the words Uzun süre açık and a pattern class, and leaves fresh tables plain
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:164:62
+    162|
+    163|     const cards = [...document.querySelectorAll<HTMLElement>(".table-c…
+    164|     expect(cards[0].classList.contains("table-card--stale")).toBe(true…
+       |                                                              ^
+    165|     expect(cards[0].querySelector(".table-card__stale")?.textContent).…
+    166|     expect(cards[1].classList.contains("table-card--stale")).toBe(fals…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  src/features/tables/TableWorkspace.test.tsx > table workspace > explains every status icon in the legend and names the plan status in the details panel
+AssertionError: expected undefined to be 'Ödeme bekliyor' // Object.is equality
+
+- Expected:
+"Ödeme bekliyor"
+
++ Received:
+undefined
+
+ ❯ src/features/tables/TableWorkspace.test.tsx:197:32
+    195|     for (const label of ["Müsait", "Dolu", "Hesap istedi", "Ödeme bekl…
+    196|     const badge = document.querySelector(".table-details .table-status…
+    197|     expect(badge?.textContent).toBe("Ödeme bekliyor");
+       |                                ^
+    198|     expect(badge?.classList.contains("table-status--pay")).toBe(true);
+    199|     expect(document.querySelector(".table-details__status")).toBeNull(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  8 failed | 131 passed (139)
+   Start at  02:35:09
+   Duration  6.14s (transform 2.30s, setup 0ms, import 3.51s, tests 4.97s, environment 3.34s)
+
+exit=1

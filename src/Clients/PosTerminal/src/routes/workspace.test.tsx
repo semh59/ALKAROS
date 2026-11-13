@@ -91,7 +91,7 @@ describe("workspace /authorization route", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it("names the terminal once in the header: the label says Terminal, the value is only the short id", async () => {
+  it("shows no Terminal item in the header while the terminal has no name, instead of a raw id", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(emptyAuthorizationData.delegations)));
 
     window.history.replaceState({}, "", "/authorization");
@@ -101,11 +101,13 @@ describe("workspace /authorization route", () => {
       </RouterProvider>,
     );
 
-    const item = [...document.querySelectorAll(".production-shell__identity-item")].find((element) => element.querySelector("span")!.textContent === "Terminal")!;
-    expect(item.querySelector("strong")!.textContent).toBe("D60B3DF9");
+    const labels = [...document.querySelectorAll(".production-shell__identity-item > span")].map((element) => element.textContent);
+    expect(labels).toContain("Kullanıcı");
+    expect(labels).not.toContain("Terminal");
+    expect(document.querySelector(".production-shell__identity")?.textContent).not.toContain("D60B3DF9");
   });
 
-  it("shows the name a manager gave the terminal in place of the short id", async () => {
+  it("shows the name a manager gave the terminal", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(emptyAuthorizationData.delegations)));
 
     window.history.replaceState({}, "", "/authorization");

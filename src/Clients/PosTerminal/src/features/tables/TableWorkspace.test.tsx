@@ -145,15 +145,38 @@ describe("table workspace", () => {
     expect(empty.querySelector(".table-card__meta")).toBeNull();
   });
 
-  it("lists the attention groups and selects the first table of a group on tap", async () => {
-    const onSelectTable = vi.fn();
+  it("summarises the attention groups as counts instead of repeating every table as a button", async () => {
     const asking = busyTable("s-13", { status: "Cleaning", currentOrderId: null });
-    await render(<TableWorkspace {...baseProps({ selectedTableId: null, onSelectTable, tables: [tables[0], tables[1], asking], awaitingCheckTableIds: new Set(["s-13"]) })} />);
+    const second = busyTable("s-15", { currentBillId: "bill-15" });
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0], tables[1], second, asking], awaitingCheckTableIds: new Set(["s-13"]) })} />);
 
-    const chips = [...document.querySelectorAll<HTMLButtonElement>(".table-attention button")];
-    expect(chips.map((chip) => chip.textContent)).toEqual(["⚠ Hesap isteyen · S-13", "₺ Ödeme bekleyen · S-10"]);
-    await click(chips[0]);
-    expect(onSelectTable).toHaveBeenCalledWith("s-13");
+    const strip = document.querySelector(".table-attention")!;
+    expect([...strip.querySelectorAll(".table-attention__count")].map((count) => count.textContent)).toEqual(["⚠ Hesap isteyen: 1", "₺ Ödeme bekleyen: 2"]);
+    expect(strip.querySelector("button")).toBeNull();
+  });
+
+  it("flags a table open past 45 minutes with the words Uzun süre açık and a pattern class, and leaves fresh tables plain", async () => {
+    const stale = busyTable("s-16", { occupiedSince: new Date(Date.now() - 95 * 60_000).toISOString() });
+    const fresh = busyTable("s-17", { occupiedSince: new Date(Date.now() - 30 * 60_000).toISOString() });
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [stale, fresh] })} />);
+
+    const cards = [...document.querySelectorAll<HTMLElement>(".table-card")];
+    expect(cards[0].classList.contains("table-card--stale")).toBe(true);
+    expect(cards[0].querySelector(".table-card__stale")?.textContent).toBe("Uzun süre açık");
+    expect(cards[1].classList.contains("table-card--stale")).toBe(false);
+    expect(cards[1].querySelector(".table-card__stale")).toBeNull();
+    expect(cards[0].querySelector(".table-card__select")?.getAttribute("aria-label")).toContain("Uzun süre açık");
+  });
+
+  it.each([[44, false], [45, true]])("flags a table occupied for %i minutes as long open: %s", async (minutes, flagged) => {
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [busyTable("s-18", { occupiedSince: new Date(Date.now() - minutes * 60_000).toISOString() })] })} />);
+    expect(document.querySelector(".table-card--stale") !== null).toBe(flagged);
+  });
+
+  it("never flags a table that is not occupied, whatever it still shows as since-time", async () => {
+    const free = { ...tables[0], occupiedSince: new Date(Date.now() - 95 * 60_000).toISOString() };
+    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [free] })} />);
+    expect(document.querySelector(".table-card--stale")).toBeNull();
   });
 
   it("shows the attention strip only when a group has tables", async () => {
@@ -182,7 +205,14 @@ describe("table workspace", () => {
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
     const legend = document.querySelector(".table-workspace__legend")?.textContent ?? "";
     for (const label of ["Müsait", "Dolu", "Hesap istedi", "Ödeme bekliyor", "Rezerve", "Toplanıyor", "Servis dışı"]) expect(legend).toContain(label);
-    expect(document.querySelector(".table-details__status")?.textContent).toBe("Ödeme bekliyor");
+    const badge = document.querySelector(".table-details .table-status");
+    expect(badge?.textContent).toBe("Ödeme bekliyor");
+    expect(badge?.classList.contains("table-status--pay")).toBe(true);
+    expect(document.querySelector(".table-details__status")).toBeNull();
+    const cardBadge = [...document.querySelectorAll(".table-card")].find((card) => card.textContent?.includes("S-10"))!.querySelector(".table-status")!;
+    expect(cardBadge.className).toBe(badge!.className);
+    expect(document.querySelectorAll(".table-details .table-status")).toHaveLength(1);
+    expect(document.querySelectorAll(".table-card .table-status")).toHaveLength(2);
   });
 
   it("shows the capacity only on a free table and puts the amount in the card's accessible name", async () => {

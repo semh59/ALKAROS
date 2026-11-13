@@ -1,0 +1,435 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+index f37c12cf8..919b679fd 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+@@ -145,15 +145,38 @@ describe("table workspace", () => {
+     expect(empty.querySelector(".table-card__meta")).toBeNull();
+   });
+ 
+-  it("lists the attention groups and selects the first table of a group on tap", async () => {
+-    const onSelectTable = vi.fn();
++  it("summarises the attention groups as counts instead of repeating every table as a button", async () => {
+     const asking = busyTable("s-13", { status: "Cleaning", currentOrderId: null });
+-    await render(<TableWorkspace {...baseProps({ selectedTableId: null, onSelectTable, tables: [tables[0], tables[1], asking], awaitingCheckTableIds: new Set(["s-13"]) })} />);
++    const second = busyTable("s-15", { currentBillId: "bill-15" });
++    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [tables[0], tables[1], second, asking], awaitingCheckTableIds: new Set(["s-13"]) })} />);
++
++    const strip = document.querySelector(".table-attention")!;
++    expect([...strip.querySelectorAll(".table-attention__count")].map((count) => count.textContent)).toEqual(["⚠ Hesap isteyen: 1", "₺ Ödeme bekleyen: 2"]);
++    expect(strip.querySelector("button")).toBeNull();
++  });
++
++  it("flags a table open past 45 minutes with the words Uzun süre açık and a pattern class, and leaves fresh tables plain", async () => {
++    const stale = busyTable("s-16", { occupiedSince: new Date(Date.now() - 95 * 60_000).toISOString() });
++    const fresh = busyTable("s-17", { occupiedSince: new Date(Date.now() - 30 * 60_000).toISOString() });
++    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [stale, fresh] })} />);
++
++    const cards = [...document.querySelectorAll<HTMLElement>(".table-card")];
++    expect(cards[0].classList.contains("table-card--stale")).toBe(true);
++    expect(cards[0].querySelector(".table-card__stale")?.textContent).toBe("Uzun süre açık");
++    expect(cards[1].classList.contains("table-card--stale")).toBe(false);
++    expect(cards[1].querySelector(".table-card__stale")).toBeNull();
++    expect(cards[0].querySelector(".table-card__select")?.getAttribute("aria-label")).toContain("Uzun süre açık");
++  });
++
++  it.each([[44, false], [45, true]])("flags a table occupied for %i minutes as long open: %s", async (minutes, flagged) => {
++    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [busyTable("s-18", { occupiedSince: new Date(Date.now() - minutes * 60_000).toISOString() })] })} />);
++    expect(document.querySelector(".table-card--stale") !== null).toBe(flagged);
++  });
+ 
+-    const chips = [...document.querySelectorAll<HTMLButtonElement>(".table-attention button")];
+-    expect(chips.map((chip) => chip.textContent)).toEqual(["⚠ Hesap isteyen · S-13", "₺ Ödeme bekleyen · S-10"]);
+-    await click(chips[0]);
+-    expect(onSelectTable).toHaveBeenCalledWith("s-13");
++  it("never flags a table that is not occupied, whatever it still shows as since-time", async () => {
++    const free = { ...tables[0], occupiedSince: new Date(Date.now() - 95 * 60_000).toISOString() };
++    await render(<TableWorkspace {...baseProps({ selectedTableId: null, tables: [free] })} />);
++    expect(document.querySelector(".table-card--stale")).toBeNull();
+   });
+ 
+   it("shows the attention strip only when a group has tables", async () => {
+@@ -182,7 +205,14 @@ describe("table workspace", () => {
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10" })} />);
+     const legend = document.querySelector(".table-workspace__legend")?.textContent ?? "";
+     for (const label of ["Müsait", "Dolu", "Hesap istedi", "Ödeme bekliyor", "Rezerve", "Toplanıyor", "Servis dışı"]) expect(legend).toContain(label);
+-    expect(document.querySelector(".table-details__status")?.textContent).toBe("Ödeme bekliyor");
++    const badge = document.querySelector(".table-details .table-status");
++    expect(badge?.textContent).toBe("Ödeme bekliyor");
++    expect(badge?.classList.contains("table-status--pay")).toBe(true);
++    expect(document.querySelector(".table-details__status")).toBeNull();
++    const cardBadge = [...document.querySelectorAll(".table-card")].find((card) => card.textContent?.includes("S-10"))!.querySelector(".table-status")!;
++    expect(cardBadge.className).toBe(badge!.className);
++    expect(document.querySelectorAll(".table-details .table-status")).toHaveLength(1);
++    expect(document.querySelectorAll(".table-card .table-status")).toHaveLength(2);
+   });
+ 
+   it("shows the capacity only on a free table and puts the amount in the card's accessible name", async () => {
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+index 69e68cdcd..636f98cc3 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx
+@@ -415,7 +415,7 @@ export function TableWorkspace({
+       </div>
+       </>}
+ 
+-      <AttentionStrip tables={tables} awaitingCheckTableIds={awaitingCheckTableIds} unavailable={awaitingChecksUnavailable} onSelect={onSelectTable} />
++      <AttentionStrip tables={tables} awaitingCheckTableIds={awaitingCheckTableIds} unavailable={awaitingChecksUnavailable} />
+ 
+       {state === "empty" || filteredTables.length === 0 ? (
+         <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? (canCreate ? "Yönetici olarak ilk bölgeyi ve masayı ekleyerek başlayın." : "Henüz masa tanımlanmamış. Müdürünüze bildirin.") : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button data-telemetry-id="b.tables.tableworkspace.13" onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
+@@ -538,14 +538,15 @@ function TableCard({ table, plan, selected, onSelect, onAction }: { table: Table
+     table.servingWaiterName || null,
+     table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null,
+   ].filter(Boolean).join(" · ");
+-  return <article className={`table-card table-card--${table.status.toLowerCase()} table-card--plan-${plan.key} ${selected ? "is-selected" : ""}`}>
+-    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${plan.label}${total > 0 ? `, ${formatMoney(total)}` : ""}`} aria-pressed={selected} onClick={onSelect}>
+-      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-card__icon" aria-hidden="true">{plan.icon}</span><span className="table-status">{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
++  const stale = table.status === "Occupied" && occupancyTone(table.occupiedSince) === "crit";
++  return <article className={`table-card table-card--${table.status.toLowerCase()} table-card--plan-${plan.key} ${stale ? "table-card--stale" : ""} ${selected ? "is-selected" : ""}`}>
++    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${plan.label}${stale ? `, ${tablePlanText.longOpen}` : ""}${total > 0 ? `, ${formatMoney(total)}` : ""}`} aria-pressed={selected} onClick={onSelect}>
++      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-card__icon" aria-hidden="true">{plan.icon}</span><span className={`table-status table-status--${plan.key}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
+       {total > 0 && <span className="table-card__amount">{formatMoney(total)}</span>}
+       {meta && <span className="table-card__meta">{meta}</span>}
+       {plan.key === "free" && <span className="table-card__capacity">◉ {table.capacity} kişilik</span>}
+     </button>
+-    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : ""}</span>{onAction && command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
++    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : ""}</span>{stale && <span className="table-card__stale">{tablePlanText.longOpen}</span>}{onAction && command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
+   </article>;
+ }
+ 
+@@ -556,12 +557,12 @@ function ZoneTabs({ zones, value, onChange }: { zones: readonly TableZone[]; val
+   </div>;
+ }
+ 
+-function AttentionStrip({ tables, awaitingCheckTableIds, unavailable, onSelect }: { tables: readonly TableRecord[]; awaitingCheckTableIds?: ReadonlySet<string>; unavailable?: boolean; onSelect: (tableId: string) => void }) {
++function AttentionStrip({ tables, awaitingCheckTableIds, unavailable }: { tables: readonly TableRecord[]; awaitingCheckTableIds?: ReadonlySet<string>; unavailable?: boolean }) {
+   const groups = attentionGroups(tables, awaitingCheckTableIds);
+   if (groups.length === 0 && !unavailable) return null;
+   return <div className="table-attention" role="group" aria-label={tablePlanText.attentionLabel}>
+     {unavailable && <p className="table-attention__unavailable" role="status">{tablePlanText.checksUnavailable}</p>}
+-    {groups.flatMap((group) => group.tables.map((table) => <button data-telemetry-id="b.tables.tableworkspace.attention" key={`${group.key}-${table.tableId}`} type="button" className={`table-attention__chip table-attention__chip--${group.key}`} onClick={() => onSelect(table.tableId)}><span aria-hidden="true">{group.icon}</span> {group.label} · {table.tableNumber}</button>))}
++    {groups.map((group) => <span key={group.key} className="table-attention__count"><span aria-hidden="true">{group.icon}</span> {group.label}: {group.tables.length}</span>)}
+   </div>;
+ }
+ 
+@@ -574,7 +575,7 @@ function TableDetails({ table, plan, zoneName, onAction, children }: { table: Ta
+   const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && isOfferedAction(value, table) && !(value === "Transfer" && hasCheck && children));
+   const meta = [zoneName ?? "Bölge atanmamış", table.servingWaiterName || null, table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null, table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : null].filter(Boolean).join(" · ");
+   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
+-    <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
++    <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-status table-status--${plan.key}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
+     {children}
+     {commands.length > 0 && <details className="table-details__more"><summary>Diğer işlemler ▾</summary><div className="table-details__actions">{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant="secondary" disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div></details>}
+   </section>;
+diff --git a/src/Clients/PosTerminal/src/features/tables/tables.css b/src/Clients/PosTerminal/src/features/tables/tables.css
+index 7c277222d..b98f395f1 100644
+--- a/src/Clients/PosTerminal/src/features/tables/tables.css
++++ b/src/Clients/PosTerminal/src/features/tables/tables.css
+@@ -14,9 +14,9 @@
+   padding: var(--ds-space-6);
+ }
+ 
+-.table-workspace__kicker { color: var(--table-accent-text, #00627a); font-size: .75rem; font-weight: 900; letter-spacing: .15em; }
++.table-workspace__kicker { color: var(--table-accent-text, #00627a); font-size: .875rem; font-weight: 900; letter-spacing: .15em; }
+ .table-workspace__toolbar-actions { display: flex; flex-wrap: wrap; gap: var(--ds-space-2); }
+-.table-workspace__updated { margin-left: auto; color: var(--table-muted); font-size: .8rem; white-space: nowrap; }
++.table-workspace__updated { margin-left: auto; color: var(--table-muted); font-size: .875rem; white-space: nowrap; }
+ 
+ .table-workspace__feedback {
+   display: flex;
+@@ -59,7 +59,7 @@
+   padding: .5rem .7rem;
+   color: var(--table-muted);
+   background: var(--ds-color-surface-subtle);
+-  font-size: .8rem;
++  font-size: .875rem;
+   font-weight: 800;
+ }
+ .table-workspace__status-filter button:hover,
+@@ -70,7 +70,7 @@
+ .table-workspace__status-filter { margin-bottom: var(--ds-space-3); }
+ .table-workspace__stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--ds-space-3); margin-bottom: var(--ds-space-5); }
+ .table-stat { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-3); border-left: 4px solid var(--ds-color-brand); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3) var(--ds-space-4); background: var(--ds-color-surface); box-shadow: 0 4px 16px rgb(18 32 43 / 7%); }
+-.table-stat span { color: var(--table-muted); font-size: .8rem; font-weight: 800; }
++.table-stat span { color: var(--table-muted); font-size: .875rem; font-weight: 800; }
+ .table-stat strong { font-size: 1.65rem; letter-spacing: -.04em; }
+ .table-stat--success { border-left-color: var(--ds-color-success); }
+ .table-stat--accent { border-left-color: var(--ds-color-accent); }
+@@ -81,8 +81,8 @@
+ .table-workspace__area-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-3); margin-bottom: var(--ds-space-3); }
+ .table-workspace__area-heading > div { display: flex; align-items: baseline; gap: .6rem; }
+ .table-workspace__area-heading strong { font-size: 1.05rem; }
+-.table-workspace__area-heading span { color: var(--table-muted); font-size: .8rem; }
+-.table-workspace__legend { display: flex; align-items: center; gap: .45rem; font-size: .75rem; }
++.table-workspace__area-heading span { color: var(--table-muted); font-size: .875rem; }
++.table-workspace__legend { display: flex; align-items: center; gap: .45rem; font-size: .875rem; }
+ .legend-dot { width: .6rem; height: .6rem; border-radius: 50%; }
+ .legend-dot--available { background: var(--ds-color-success); }
+ .legend-dot--occupied { background: var(--ds-color-accent); }
+@@ -96,7 +96,7 @@
+   align-content: start;
+   gap: .3rem;
+   border: 2px solid transparent;
+-  border-top-color: var(--ds-color-success);
++  border-top-color: var(--plan-text, var(--ds-color-success));
+   border-radius: var(--ds-radius-md);
+   padding: var(--ds-space-3);
+   color: var(--table-ink);
+@@ -107,10 +107,6 @@
+ }
+ .table-card:hover { transform: translateY(-2px); box-shadow: var(--ds-shadow-raised); }
+ .table-card.is-selected { border-color: var(--ds-color-focus); box-shadow: 0 0 0 3px rgb(0 108 189 / 16%), var(--ds-shadow-raised); }
+-.table-card--occupied { border-top-color: var(--ds-color-accent); }
+-.table-card--reserved { border-top-color: var(--ds-color-warning); }
+-.table-card--cleaning { border-top-color: var(--ds-color-info); }
+-.table-card--outofservice { border-top-color: var(--ds-color-danger); }
+ .table-card__select {
+   min-width: 0;
+   display: grid;
+@@ -126,23 +122,29 @@
+ .table-card__select:focus-visible,
+ .table-card__quick-action:focus-visible { outline: 3px solid var(--ds-color-focus); outline-offset: 3px; }
+ .table-card__top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+-.table-workspace__refresh-error { margin: .3rem 0 0; color: #8d3b45; font-size: .85rem; font-weight: 800; }
+-.table-details__disabled-reason { display: block; margin-top: .4rem; color: var(--table-muted); font-size: .8rem; }
++.table-workspace__refresh-error { margin: .3rem 0 0; color: #8d3b45; font-size: .875rem; font-weight: 800; }
++.table-details__disabled-reason { display: block; margin-top: .4rem; color: var(--table-muted); font-size: .875rem; }
+ .table-card__top strong { font-size: 1.35rem; letter-spacing: -.035em; white-space: nowrap; }
+ .table-card__status-group { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
+-.table-status { width: fit-content; border-radius: 999px; padding: .25rem .5rem; color: var(--ds-color-success); background: var(--ds-color-success-soft); font-size: .7rem; font-weight: 900; }
+-.table-card--occupied .table-status { color: var(--table-accent-text, #00627a); background: #fff0eb; }
+-.table-card--reserved .table-status { color: var(--ds-color-warning); background: var(--ds-color-warning-soft); }
+-.table-card--outofservice .table-status { color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
++/* One badge for the card and the panel. docs/CASHIER_UI_RULES.md section 4 holds the table of text and background
++   tokens and tablesStyle.test.ts reads it, so these seven rules are the only place a status gets its colours. */
++.table-status--free, .table-card--plan-free { --plan-text: var(--ds-color-success); --plan-bg: var(--ds-color-success-soft); }
++.table-status--busy, .table-card--plan-busy { --plan-text: var(--ds-color-ink); --plan-bg: var(--ds-color-surface-subtle); }
++.table-status--ask, .table-card--plan-ask { --plan-text: var(--ds-color-warning); --plan-bg: var(--ds-color-warning-soft); }
++.table-status--pay, .table-card--plan-pay { --plan-text: var(--ds-color-info); --plan-bg: var(--ds-color-info-soft); }
++.table-status--rez, .table-card--plan-rez { --plan-text: var(--ds-color-brand); --plan-bg: var(--ds-color-surface-subtle); }
++.table-status--clean, .table-card--plan-clean { --plan-text: var(--ds-color-muted); --plan-bg: var(--ds-color-surface-subtle); }
++.table-status--off, .table-card--plan-off { --plan-text: var(--ds-color-disabled-ink); --plan-bg: var(--ds-color-surface-subtle); }
++.table-status { width: fit-content; border-radius: 999px; padding: .25rem .625rem; color: var(--plan-text); background: var(--plan-bg); font-size: .875rem; font-weight: 700; }
+ /* V1-TBL-009: a passive, informational hint — never the accent/warning/
+    danger hues those already mean something else (occupied dwell-time
+    heat, out-of-service). Fades away on its own once the window in
+    TableWorkspace.tsx's RECENTLY_VACATED_MINUTES passes; nothing to
+    dismiss. */
+-.table-card__recently-vacated { width: fit-content; border-radius: 999px; padding: .25rem .5rem; color: var(--ds-color-info); background: var(--ds-color-info-soft); font-size: .7rem; font-weight: 900; white-space: nowrap; }
+-.table-card__capacity, .table-card__context { color: var(--table-muted); font-size: .8rem; }
++.table-card__recently-vacated { width: fit-content; border-radius: 999px; padding: .25rem .5rem; color: var(--ds-color-info); background: var(--ds-color-info-soft); font-size: .875rem; font-weight: 900; white-space: nowrap; }
++.table-card__capacity, .table-card__context { color: var(--table-muted); font-size: .875rem; }
+ .table-card__context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+-.table-card__footer { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; margin-top: auto; color: var(--table-muted); font-size: .75rem; }
++.table-card__footer { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem; margin-top: auto; color: var(--table-muted); font-size: .875rem; }
+ .table-card__elapsed { font-variant-numeric: tabular-nums; }
+ /* V1-RMD-114: tokens.css already defined --ds-heat-fresh/-active/-stale for
+    exactly this dwell-time heat ring (independent audit, 2026-09-06: "3
+@@ -161,20 +163,17 @@
+ .table-details__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ds-space-3); padding-bottom: var(--ds-space-3); border-bottom: 1px solid var(--table-line); }
+ .table-details__status-group { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
+ .table-details h2 { margin: .2rem 0 .25rem; font-size: 2rem; letter-spacing: -.05em; }
+-.table-details__header > div > span:last-child { color: var(--table-muted); font-size: .82rem; }
+-.table-details__status { border-radius: 999px; padding: .35rem .6rem; color: var(--ds-color-success); background: var(--ds-color-success-soft); font-size: .75rem; font-weight: 900; }
+-.table-details__status--occupied { color: var(--table-accent-text, #00627a); background: #fff0eb; }
+-.table-details__status--reserved { color: var(--ds-color-warning); background: var(--ds-color-warning-soft); }
++.table-details__header > div > span:last-child { color: var(--table-muted); font-size: .875rem; }
+ .table-details__actions { display: grid; gap: var(--ds-space-2); padding-top: var(--ds-space-2); }
+ .table-details__more > summary { min-height: 48px; display: flex; align-items: center; color: var(--table-muted); font-weight: 800; cursor: pointer; }
+-.table-details__authority { margin: 0; color: var(--table-muted); font-size: .75rem; line-height: 1.45; }
++.table-details__authority { margin: 0; color: var(--table-muted); font-size: .875rem; line-height: 1.45; }
+ 
+ .table-workspace__empty { max-width: 38rem; margin: var(--ds-space-6) auto; }
+ .table-form { display: grid; gap: var(--ds-space-4); }
+ .table-form__context { margin: 0; color: var(--table-muted); }
+ .table-form__actions { display: flex; justify-content: flex-end; gap: var(--ds-space-2); padding-top: var(--ds-space-2); }
+ .table-form__checklist { display: grid; gap: var(--ds-space-2); margin: 0; border: 1px solid var(--table-line); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); }
+-.table-form__checklist legend { padding: 0 .35rem; color: var(--table-muted); font-size: .8rem; font-weight: 800; }
++.table-form__checklist legend { padding: 0 .35rem; color: var(--table-muted); font-size: .875rem; font-weight: 800; }
+ .table-form__checklist label { min-height: var(--ds-target-min); display: flex; align-items: center; gap: .5rem; font-weight: 600; }
+ .table-form__checklist input { width: 1.25rem; height: 1.25rem; accent-color: var(--ds-color-accent); }
+ 
+@@ -216,23 +215,19 @@
+ .table-zone-tabs button { min-height: var(--ds-target-min); border: 1px solid var(--ds-color-line); border-radius: 999px; padding: 0 var(--ds-space-4); color: var(--ds-color-muted); background: var(--ds-color-surface-subtle); font-weight: 800; }
+ .table-zone-tabs button.is-active { color: var(--ds-color-surface); border-color: var(--ds-color-brand); background: var(--ds-color-brand); }
+ 
+-.table-attention { display: flex; flex-wrap: wrap; gap: var(--ds-space-2); margin-bottom: var(--ds-space-4); }
+-.table-attention__chip { min-height: var(--ds-target-min); border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-4); font-weight: 800; color: var(--ds-color-ink); background: var(--ds-color-surface); }
+-.table-attention__chip--ask { border-color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+-.table-attention__chip--pay { border-color: var(--table-pay); background: var(--table-pay-soft); }
++.table-attention { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ds-space-2) var(--ds-space-4); margin-bottom: var(--ds-space-4); }
++.table-attention__count { color: var(--ds-color-ink); font-size: .875rem; font-weight: 800; }
+ .table-attention__unavailable { margin: 0; align-self: center; color: var(--ds-color-warning); font-weight: 800; }
+ 
+ .table-quick-sale { border: 2px solid var(--ds-color-brand); }
+ .table-card__icon { font-size: 1rem; line-height: 1; }
+ .table-card__amount { font-size: 1.25rem; font-weight: 900; letter-spacing: -.03em; }
+-.table-card__meta { color: var(--table-muted); font-size: .8rem; }
++.table-card__meta { color: var(--table-muted); font-size: .875rem; }
+ .table-card--plan-free { border-top-style: dashed; }
+-.table-card--plan-ask { border-top-color: var(--ds-color-danger); background-image: repeating-linear-gradient(135deg, transparent 0 10px, rgb(154 37 48 / 14%) 10px 12px); }
+-.table-card--plan-ask .table-status { color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+-.table-card--plan-pay { border-top-color: var(--table-pay); background-image: repeating-linear-gradient(90deg, transparent 0 10px, rgb(91 58 158 / 14%) 10px 12px); }
+-.table-card--plan-pay .table-status { color: var(--table-pay); background: var(--table-pay-soft); }
+-.table-card--plan-clean { border-top-color: var(--ds-color-info); background-image: repeating-linear-gradient(0deg, transparent 0 10px, rgb(11 93 141 / 14%) 10px 12px); }
+-.table-card--plan-off { background-color: var(--ds-color-surface-subtle); background-image: repeating-linear-gradient(45deg, transparent 0 8px, rgb(18 32 43 / 12%) 8px 10px); }
+-.table-workspace { --table-pay: #5b3a9e; --table-pay-soft: #efe9fa; }
++.table-card--plan-off { background-color: var(--ds-color-surface-subtle); }
++/* A pattern marks the two cases that need a person: the guest asked for the bill, or the table has been open too long. */
++.table-card--plan-ask { background-image: repeating-linear-gradient(135deg, transparent 0 10px, rgb(115 84 0 / 14%) 10px 12px); }
++.table-card--stale { background-image: repeating-linear-gradient(135deg, transparent 0 10px, rgb(154 37 48 / 14%) 10px 12px); }
++.table-card__stale { color: var(--ds-color-danger); font-size: .875rem; font-weight: 700; }
+ .table-workspace__legend { flex-wrap: wrap; gap: .25rem .75rem; }
+ .table-card__meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+diff --git a/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts b/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
+index d065e5ba9..2b5a921ef 100644
+--- a/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
++++ b/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
+@@ -2,11 +2,20 @@ import { readFileSync } from "node:fs";
+ import { describe, expect, it } from "vitest";
+ 
+ const css = (name: string) => readFileSync(new URL(`./${name}`, import.meta.url), "utf8");
++const rulesDoc = readFileSync(new URL("../../../../../../docs/CASHIER_UI_RULES.md", import.meta.url), "utf8");
++const remPx = (value: string, unit: string) => Number(value) * (unit === "rem" ? 16 : 1);
++const sizesIn = (source: string) => [...source.matchAll(/font(?:-size)?:\s*(?:[\d.]+\s+)?(?:clamp\()?(\.?\d+(?:\.\d+)?)(rem|px)/g)].map((match) => remPx(match[1], match[2]));
++const blocks = (source: string) => [...source.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((match) => ({ selector: match[1].replace(/\s+/g, " ").trim(), body: match[2] }));
+ 
+ describe("table screens style rules", () => {
+-  it.each(["tables.css", "floorPlan.css"])("%s has no text smaller than 11px", (file) => {
+-    const sizes = [...css(file).matchAll(/font-size:\s*(?:clamp\()?(\.?\d+(?:\.\d+)?)rem/g)].map((match) => Number(match[1]) * 16);
+-    expect(sizes.filter((size) => size < 11)).toEqual([]);
++  it("has no live floor plan text smaller than 11px", () => {
++    expect(sizesIn(css("floorPlan.css")).filter((size) => size < 11)).toEqual([]);
++  });
++
++  it("has no table plan text smaller than 14px, the smallest size docs/CASHIER_UI_RULES.md allows", () => {
++    const sizes = sizesIn(css("tables.css"));
++    expect(sizes.length).toBeGreaterThan(20);
++    expect(sizes.filter((size) => size < 14)).toEqual([]);
+   });
+ 
+   it("keeps the table list and the side panel in two columns down to 768px wide, and stacks them only below that", () => {
+@@ -20,4 +29,24 @@ describe("table screens style rules", () => {
+       .filter((line) => /(^|[\s;{])color:\s*var\(--ds-color-accent(-hover)?\)/.test(line));
+     expect(lines).toEqual([]);
+   });
++
++  it("draws each status once, with the text and background tokens of its row in docs/CASHIER_UI_RULES.md", () => {
++    const rows = rulesDoc.split("\n").filter((line) => /^\| `\w+` \|/.test(line)).map((line) => line.split("|").slice(1, -1).map((cell) => cell.trim().replaceAll("`", "")));
++    expect(rows).toHaveLength(7);
++    const all = blocks(css("tables.css"));
++    for (const [key, , , text, background] of rows) {
++      const rule = all.filter((block) => block.selector === `.table-status--${key}, .table-card--plan-${key}`);
++      expect(rule, key).toHaveLength(1);
++      expect(rule[0].body).toContain(`--plan-text: var(${text});`);
++      expect(rule[0].body).toContain(`--plan-bg: var(${background});`);
++    }
++    expect(all.filter((block) => /--plan-(text|bg):/.test(block.body))).toHaveLength(rows.length);
++    expect(all.filter((block) => /\.table-status\b/.test(block.selector) && /color:/.test(block.body) && !/--plan/.test(block.body)).map((block) => block.selector)).toEqual([]);
++    expect(css("tables.css")).not.toMatch(/\.table-details__status(?!-)|#5b3a9e|#fff0eb|--table-pay/);
++  });
++
++  it("draws a pattern only on a table that needs attention: asking for the bill or open too long", () => {
++    const patterned = blocks(css("tables.css")).filter((block) => /gradient|url\(|background-image/.test(block.body)).map((block) => block.selector);
++    expect(patterned).toEqual([".table-card--plan-ask", ".table-card--stale"]);
++  });
+ });
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index f391ef2dc..444ab06ca 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -91,7 +91,7 @@ describe("workspace /authorization route", () => {
+     expect(fetch).not.toHaveBeenCalled();
+   });
+ 
+-  it("names the terminal once in the header: the label says Terminal, the value is only the short id", async () => {
++  it("shows no Terminal item in the header while the terminal has no name, instead of a raw id", async () => {
+     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(emptyAuthorizationData.delegations)));
+ 
+     window.history.replaceState({}, "", "/authorization");
+@@ -101,11 +101,13 @@ describe("workspace /authorization route", () => {
+       </RouterProvider>,
+     );
+ 
+-    const item = [...document.querySelectorAll(".production-shell__identity-item")].find((element) => element.querySelector("span")!.textContent === "Terminal")!;
+-    expect(item.querySelector("strong")!.textContent).toBe("D60B3DF9");
++    const labels = [...document.querySelectorAll(".production-shell__identity-item > span")].map((element) => element.textContent);
++    expect(labels).toContain("Kullanıcı");
++    expect(labels).not.toContain("Terminal");
++    expect(document.querySelector(".production-shell__identity")?.textContent).not.toContain("D60B3DF9");
+   });
+ 
+-  it("shows the name a manager gave the terminal in place of the short id", async () => {
++  it("shows the name a manager gave the terminal", async () => {
+     vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(emptyAuthorizationData.delegations)));
+ 
+     window.history.replaceState({}, "", "/authorization");
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index 01fe1f590..f2ee3a895 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -111,7 +111,7 @@ export function ExperiencePage({
+     identity: {
+       // Branch (Sube) is omitted until there is a real multi-branch model;
+       // a placeholder string would read as data. (deep-analysis finding F-5)
+-      terminalName: terminalName ?? terminalId.slice(0, 8).toUpperCase(),
++      terminalName,
+       userName: displayName,
+       roleLabel,
+       capabilities: capabilitySet,
+diff --git a/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx b/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
+index a26851059..9d1ef51ac 100644
+--- a/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
++++ b/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
+@@ -54,6 +54,13 @@ describe("production shell", () => {
+     vi.restoreAllMocks();
+   });
+ 
++  it("leaves the Terminal item out when the identity carries no terminal name", async () => {
++    await render(<ProductionShell {...baseProps} session={{ status: "authenticated", identity: { ...identity, terminalName: null } }} />);
++
++    const labels = [...document.querySelectorAll(".production-shell__identity-item > span")].map((element) => element.textContent);
++    expect(labels).toEqual(["Şube", "Kullanıcı", "Rol"]);
++  });
++
+   it("filters navigation by capability and preserves the active route contract", async () => {
+     await render(<ProductionShell {...baseProps} />);
+ 
+diff --git a/src/Clients/PosTerminal/src/shell/ProductionShell.tsx b/src/Clients/PosTerminal/src/shell/ProductionShell.tsx
+index d85a49f3a..4820c3f8f 100644
+--- a/src/Clients/PosTerminal/src/shell/ProductionShell.tsx
++++ b/src/Clients/PosTerminal/src/shell/ProductionShell.tsx
+@@ -107,7 +107,7 @@ export function ProductionShell(props: ProductionShellProps) {
+         </div>
+         {identity && <div className="production-shell__identity" role="group" aria-label="Aktif çalışma bağlamı">
+           {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} />}
+-          <IdentityItem label="Terminal" value={identity.terminalName} />
++          {identity.terminalName && <IdentityItem label="Terminal" value={identity.terminalName} />}
+           <IdentityItem label="Kullanıcı" value={identity.userName} />
+           <IdentityItem label="Rol" value={identity.roleLabel} />
+         </div>}
+diff --git a/src/Clients/PosTerminal/src/shell/models.ts b/src/Clients/PosTerminal/src/shell/models.ts
+index f30b8dab3..f7c748034 100644
+--- a/src/Clients/PosTerminal/src/shell/models.ts
++++ b/src/Clients/PosTerminal/src/shell/models.ts
+@@ -11,7 +11,7 @@ export function classifyViewport(width: number): ViewportMode {
+ export interface ShellIdentity {
+   /** Omitted until a real multi-branch model exists (finding F-5). */
+   branchName?: string;
+-  terminalName: string;
++  terminalName: string | null;
+   userName: string;
+   roleLabel: string;
+   capabilities: ReadonlySet<string>;
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index d84defbf4..124534ae5 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1239,6 +1239,7 @@ export const tablePlanText = {
+   allZones: "Tüm bölgeler",
+   zonesLabel: "Bölgeler",
+   attentionLabel: "Dikkat gerektiren masalar",
++  longOpen: "Uzun süre açık",
+   guests: "kişi",
+   checksUnavailable: "Hesap isteyen masalar bilgisi alınamadı; Yenile'ye basın.",
+ } as const;

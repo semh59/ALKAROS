@@ -1,0 +1,19 @@
+killed M1 pay badge uses another token than the rules table
+killed M2 small text returns
+killed M3 pattern on a pay table
+killed M6 stale from the warning band
+killed M7 never stale
+killed M8 attention count off by one
+killed M9 stale words dropped
+killed M10 terminal item always drawn
+killed M11 raw terminal id fallback back
+killed M12 stale wording changed
+killed M13 attention strip drawn when empty
+killed M4 card badge without the status key
+killed M5 panel badge from the table state instead of the plan key
+killed M14 long-open threshold off by one
+killed M15 long-open missing from the accessible name
+killed M16 long-open flagged on a free table
+killed M17 second colour override for a status
+killed M18 background image on another card
+killed M19 second badge drawn in the panel

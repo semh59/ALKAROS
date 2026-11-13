@@ -1239,6 +1239,7 @@ export const tablePlanText = {
   allZones: "Tüm bölgeler",
   zonesLabel: "Bölgeler",
   attentionLabel: "Dikkat gerektiren masalar",
+  longOpen: "Uzun süre açık",
   guests: "kişi",
   checksUnavailable: "Hesap isteyen masalar bilgisi alınamadı; Yenile'ye basın.",
 } as const;

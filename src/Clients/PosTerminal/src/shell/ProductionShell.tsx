@@ -107,7 +107,7 @@ export function ProductionShell(props: ProductionShellProps) {
         </div>
         {identity && <div className="production-shell__identity" role="group" aria-label="Aktif çalışma bağlamı">
           {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} />}
-          <IdentityItem label="Terminal" value={identity.terminalName} />
+          {identity.terminalName && <IdentityItem label="Terminal" value={identity.terminalName} />}
           <IdentityItem label="Kullanıcı" value={identity.userName} />
           <IdentityItem label="Rol" value={identity.roleLabel} />
         </div>}

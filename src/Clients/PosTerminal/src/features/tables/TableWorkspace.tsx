@@ -415,7 +415,7 @@ export function TableWorkspace({
       </div>
       </>}
 
-      <AttentionStrip tables={tables} awaitingCheckTableIds={awaitingCheckTableIds} unavailable={awaitingChecksUnavailable} onSelect={onSelectTable} />
+      <AttentionStrip tables={tables} awaitingCheckTableIds={awaitingCheckTableIds} unavailable={awaitingChecksUnavailable} />
 
       {state === "empty" || filteredTables.length === 0 ? (
         <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? (canCreate ? "Yönetici olarak ilk bölgeyi ve masayı ekleyerek başlayın." : "Henüz masa tanımlanmamış. Müdürünüze bildirin.") : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button data-telemetry-id="b.tables.tableworkspace.13" onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
@@ -538,14 +538,15 @@ function TableCard({ table, plan, selected, onSelect, onAction }: { table: Table
     table.servingWaiterName || null,
     table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null,
   ].filter(Boolean).join(" · ");
-  return <article className={`table-card table-card--${table.status.toLowerCase()} table-card--plan-${plan.key} ${selected ? "is-selected" : ""}`}>
-    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${plan.label}${total > 0 ? `, ${formatMoney(total)}` : ""}`} aria-pressed={selected} onClick={onSelect}>
-      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-card__icon" aria-hidden="true">{plan.icon}</span><span className="table-status">{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
+  const stale = table.status === "Occupied" && occupancyTone(table.occupiedSince) === "crit";
+  return <article className={`table-card table-card--${table.status.toLowerCase()} table-card--plan-${plan.key} ${stale ? "table-card--stale" : ""} ${selected ? "is-selected" : ""}`}>
+    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${plan.label}${stale ? `, ${tablePlanText.longOpen}` : ""}${total > 0 ? `, ${formatMoney(total)}` : ""}`} aria-pressed={selected} onClick={onSelect}>
+      <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-card__icon" aria-hidden="true">{plan.icon}</span><span className={`table-status table-status--${plan.key}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
       {total > 0 && <span className="table-card__amount">{formatMoney(total)}</span>}
       {meta && <span className="table-card__meta">{meta}</span>}
       {plan.key === "free" && <span className="table-card__capacity">◉ {table.capacity} kişilik</span>}
     </button>
-    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : ""}</span>{onAction && command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
+    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : ""}</span>{stale && <span className="table-card__stale">{tablePlanText.longOpen}</span>}{onAction && command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
   </article>;
 }
 
@@ -556,12 +557,12 @@ function ZoneTabs({ zones, value, onChange }: { zones: readonly TableZone[]; val
   </div>;
 }
 
-function AttentionStrip({ tables, awaitingCheckTableIds, unavailable, onSelect }: { tables: readonly TableRecord[]; awaitingCheckTableIds?: ReadonlySet<string>; unavailable?: boolean; onSelect: (tableId: string) => void }) {
+function AttentionStrip({ tables, awaitingCheckTableIds, unavailable }: { tables: readonly TableRecord[]; awaitingCheckTableIds?: ReadonlySet<string>; unavailable?: boolean }) {
   const groups = attentionGroups(tables, awaitingCheckTableIds);
   if (groups.length === 0 && !unavailable) return null;
   return <div className="table-attention" role="group" aria-label={tablePlanText.attentionLabel}>
     {unavailable && <p className="table-attention__unavailable" role="status">{tablePlanText.checksUnavailable}</p>}
-    {groups.flatMap((group) => group.tables.map((table) => <button data-telemetry-id="b.tables.tableworkspace.attention" key={`${group.key}-${table.tableId}`} type="button" className={`table-attention__chip table-attention__chip--${group.key}`} onClick={() => onSelect(table.tableId)}><span aria-hidden="true">{group.icon}</span> {group.label} · {table.tableNumber}</button>))}
+    {groups.map((group) => <span key={group.key} className="table-attention__count"><span aria-hidden="true">{group.icon}</span> {group.label}: {group.tables.length}</span>)}
   </div>;
 }
 
@@ -574,7 +575,7 @@ function TableDetails({ table, plan, zoneName, onAction, children }: { table: Ta
   const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels && isOfferedAction(value, table) && !(value === "Transfer" && hasCheck && children));
   const meta = [zoneName ?? "Bölge atanmamış", table.servingWaiterName || null, table.partySize ? `${table.partySize} ${tablePlanText.guests}` : null, table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : null].filter(Boolean).join(" · ");
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
-    <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
+    <div className="table-details__header"><div><h2>{table.tableNumber}</h2><span>{meta}</span></div><div className="table-details__status-group"><span className={`table-status table-status--${plan.key}`}>{plan.label}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
     {children}
     {commands.length > 0 && <details className="table-details__more"><summary>Diğer işlemler ▾</summary><div className="table-details__actions">{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant="secondary" disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div></details>}
   </section>;
