@@ -90,6 +90,7 @@ export function describeRefundFailure(error: unknown): string {
     if (code === "REFUND_ITEM_QUANTITY") return "Seçilen adet iade edilebilir adedi aşıyor. Güncel veriyi alıp yeniden deneyin.";
     if (code === "REFUND_AMOUNT_EXCEEDS_PAYMENT") return "İade tutarı seçilen ödemenin kalan tutarını aşıyor. Başka ödeme seçin.";
     if (code === "ACCOUNT_REFUND_UNSUPPORTED") return "Cari hesaba yazılan ödeme buradan iade edilemez.";
+    if (code === "BILL_HAS_SERVED_ITEMS") return 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.';
     if (code === "ORDER_HAS_PAYMENT") return "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli.";
     if (code === "ORDER_HAS_SERVED_ITEMS") return "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın.";
     if (code === "ORDER_CANCEL_NOT_ALLOWED") return "Sipariş bu durumda iptal edilemez.";

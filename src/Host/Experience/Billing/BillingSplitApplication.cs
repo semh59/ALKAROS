@@ -308,6 +308,7 @@ public static class BillingSplitApplication
             CancelBillRequestV1 request,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
+            IRoleRepository roles,
             BillCancellationStore store,
             ICashierQueueAnnouncer queueAnnouncer,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
@@ -317,8 +318,11 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.BillsCancel, cancellationToken);
+            var mayCancelServed = (await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken))
+                .Contains(ApplicationPermissions.PaymentsRefundApprove, StringComparer.Ordinal);
+
             var result = await store.CancelAsync(
-                billId, request.Reason, request.CancelOrder, principal.UserId, context.TraceIdentifier, cancellationToken);
+                billId, request.Reason, request.CancelOrder, principal.UserId, mayCancelServed, context.TraceIdentifier, cancellationToken);
             foreach (var cancelledOrderId in result.CancelledOrderIds ?? [])
                 await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", cancelledOrderId, null, cancellationToken);
             await DualScreenApplication.NotifyCustomerDisplayAsync(
@@ -839,6 +843,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         AdjustmentUndoBelowCollectedException => (409, "ADJUSTMENT_UNDO_BELOW_COLLECTED", "Geri alınırsa ödenecek tutar, hesaptan şimdiye kadar alınan tutarın altına iniyor; geri alınamaz."),
         SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "Ek ücret veya bahşiş eklenmiş hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
         BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
+        BillCancelHasServedItemsException => (409, "BILL_HAS_SERVED_ITEMS", "Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa \"İade iste\" ile yönetici onaylı iade başlatabilirsiniz."),
         BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
         RefundInputException refundInput => (
             400, refundInput.Code, refundInput.UserMessage ?? "İade bilgisi geçersiz."),

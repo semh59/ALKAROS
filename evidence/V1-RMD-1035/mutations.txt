@@ -1,0 +1,7 @@
+M1 served check removed: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, S�
+restored
+M2 voided served lines also block: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, S�
+restored
+M3 refund approver check ignored (cashier treated as approver): Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, S�
+restored
+Istemci mutantlari: kirmizi kosu (red-static.log, red-posterminal.log) kaynaklari geri alinmis haliyle 3+2 testi kirdi (sozluk cumlesi, kutu aciklamasi, sozluk kilidi).

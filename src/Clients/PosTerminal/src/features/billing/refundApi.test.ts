@@ -36,6 +36,7 @@ describe("billing refund client", () => {
   });
 
   it.each([
+    [409, "BILL_HAS_SERVED_ITEMS", 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.'],
     [409, "ORDER_HAS_PAYMENT", "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli."],
     [409, "ORDER_HAS_SERVED_ITEMS", "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın."],
     [409, "ORDER_CANCEL_NOT_ALLOWED", "Sipariş bu durumda iptal edilemez."],

@@ -1302,7 +1302,7 @@ export const refundText = {
   cancelled: "Hesap iptal edildi.",
   cancelledWithOrder: "Hesap ve sipariş iptal edildi; masa boşaldı.",
   cancelOrderLabel: "Siparişi de iptal et",
-  cancelOrderHint: "Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.",
+  cancelOrderHint: "İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.",
   refundHeading: "İade iste",
   refundReasonLabel: "İade gerekçesi",
   refundAction: "İade iste",

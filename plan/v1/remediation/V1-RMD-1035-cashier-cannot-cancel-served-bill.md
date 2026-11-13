@@ -1,7 +1,7 @@
 # V1-RMD-1035 - Servis edilmiş ürünlü hesabı kasiyer iptal edemez; iptal bölümü nedenini ve iade yolunu açıkça yazar
 
 - Task ID: V1-RMD-1035
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,92 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ error-dictionary-lock.test.js (4 tests | 1 failed) 17ms
+     × has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server 10ms
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > offers the box unchecked with its explanation and sends no flag when it stays unchecked
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408056-0.12530709516391103:260:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408056-0.12530709516391103:456:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408056-0.12530709516391103:562:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > answers 409 BILL_HAS_SERVED_ITEMS with a fixed Turkish sentence, never the server text or the code
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408585-0.2965948727739557:260:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408585-0.2965948727739557:456:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408585-0.2965948727739557:562:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > answers 409 BILL_HAS_SERVED_ITEMS with a fixed Turkish sentence, never the server text or the code
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408585-0.2965948727739557:260:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408585-0.2965948727739557:456:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794558408585-0.2965948727739557:562:7
+
+ ❯ split-payment-cancel-order.test.js (12 tests | 2 failed) 3356ms
+     × offers the box unchecked with its explanation and sends no flag when it stays unchecked 147ms
+     × answers 409 BILL_HAS_SERVED_ITEMS with a fixed Turkish sentence, never the server text or the code 1159ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  error-dictionary-lock.test.js > payment screen error dictionary > has one sentence for every fixed-text code the tender, refund, split and account endpoints can send, worded exactly like the server
+AssertionError: expected [ 'BILL_HAS_SERVED_ITEMS' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "BILL_HAS_SERVED_ITEMS",
++ ]
+
+ ❯ error-dictionary-lock.test.js:99:21
+     97|       else if (entries.get(code) !== message) different.push(code);
+     98|     }
+     99|     expect(missing).toEqual([]);
+       |                     ^
+    100|     expect(different).toEqual([]);
+    101|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > offers the box unchecked with its explanation and sends no flag when it stays unchecked
+AssertionError: expected 'Hazırlanmış kalemler fire sayılır, ha…' to be 'İşaretlerseniz sipariş de iptal edili…' // Object.is equality
+
+Expected: "İşaretlerseniz sipariş de iptal edilir: hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır; bu geri alınamaz. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır ve yeniden hesap açılabilir."
+Received: "Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır."
+
+ ❯ split-payment-cancel-order.test.js:87:67
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  split-payment-cancel-order.test.js > cancelling the order together with the bill on the payment page > answers 409 BILL_HAS_SERVED_ITEMS with a fixed Turkish sentence, never the server text or the code
+AssertionError: expected 'Hesap ÖdemeTahsilatHesap toplamı₺100,…' to contain 'Bu hesapta servis edilmiş ürün var; k…'
+
+Expected: "Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Ödemeyi aldıktan sonra "İade iste" ile yönetici onaylı iade başlatın ya da bir yöneticiye başvurun."
+Received: "Hesap ÖdemeTahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺Alınan para (isteğe bağlı)₺5 ₺10 ₺20 ₺50 ₺100 ₺200 ₺Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleMüşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltmeYüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekleBahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptal!Hataİşlem, hesabın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Hesabı iptal etGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etHazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-cancel-order.test.js:140:54
+    138|     confirmCancel();
+    139|
+    140|     await vi.waitFor(() => expect(app().textContent).toContain(sentenc…
+       |                                                      ^
+    141|     expect(app().textContent).not.toContain("raw server text");
+    142|     expect(app().textContent).not.toContain(code);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 13 passed (16)
+   Start at  11:26:46
+   Duration  4.88s (transform 713ms, setup 52ms, import 109ms, tests 3.37s, environment 2.32s)
+
+exit 1

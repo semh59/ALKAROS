@@ -1,0 +1,318 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 3303d34f..4f6e04df 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -166,6 +166,7 @@
+     ALLOWANCE_BELOW_USED: 'İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.',
+     BILL_BUSY: 'Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin.',
+     BILL_HAS_PAYMENT: 'Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli.',
++    BILL_HAS_SERVED_ITEMS: 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.',
+     BILL_NOT_FOUND: 'Hesap bulunamadı.',
+     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
+     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+@@ -1575,7 +1576,7 @@
+       '<div class="sp-field" id="cancel-section"><span class="sp-field-label">Hesabı iptal et</span>' +
+       renderReasonField('cancel', 'İptal gerekçesi') +
+       '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
+-      '<span><strong>Siparişi de iptal et</strong><small>Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.</small></span></label>' +
++      '<span><strong>Siparişi de iptal et</strong><small>İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.</small></span></label>' +
+       '<p class="sp-hint" id="cancel-hint" role="status"' + (state.cancelReason.trim() ? ' hidden' : '') + '>Hesabı iptal etmek için bir gerekçe seçin ya da yazın.</p>' +
+       confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary') +
+       '</div>'
+diff --git a/src/Clients/PosTerminal/src/features/billing/RefundPanel.cancel-order.test.tsx b/src/Clients/PosTerminal/src/features/billing/RefundPanel.cancel-order.test.tsx
+index ea4a7ef0..0a701b86 100644
+--- a/src/Clients/PosTerminal/src/features/billing/RefundPanel.cancel-order.test.tsx
++++ b/src/Clients/PosTerminal/src/features/billing/RefundPanel.cancel-order.test.tsx
+@@ -49,7 +49,7 @@ describe("cancel the order together with the bill", () => {
+ 
+     expect(checkbox().checked).toBe(false);
+     expect(document.body.textContent).toContain("Siparişi de iptal et");
+-    expect(document.body.textContent).toContain("fire sayılır");
++    expect(document.querySelector(".refund-panel__check small")!.textContent).toBe('İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.');
+     await chooseReason();
+     await confirmCancel();
+ 
+diff --git a/src/Clients/PosTerminal/src/features/billing/refundApi.test.ts b/src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
+index 7893e6d5..e21d2cf6 100644
+--- a/src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
++++ b/src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
+@@ -36,6 +36,7 @@ describe("billing refund client", () => {
+   });
+ 
+   it.each([
++    [409, "BILL_HAS_SERVED_ITEMS", 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.'],
+     [409, "ORDER_HAS_PAYMENT", "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli."],
+     [409, "ORDER_HAS_SERVED_ITEMS", "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın."],
+     [409, "ORDER_CANCEL_NOT_ALLOWED", "Sipariş bu durumda iptal edilemez."],
+diff --git a/src/Clients/PosTerminal/src/features/billing/refundApi.ts b/src/Clients/PosTerminal/src/features/billing/refundApi.ts
+index 973fe3e9..6a636927 100644
+--- a/src/Clients/PosTerminal/src/features/billing/refundApi.ts
++++ b/src/Clients/PosTerminal/src/features/billing/refundApi.ts
+@@ -90,6 +90,7 @@ export function describeRefundFailure(error: unknown): string {
+     if (code === "REFUND_ITEM_QUANTITY") return "Seçilen adet iade edilebilir adedi aşıyor. Güncel veriyi alıp yeniden deneyin.";
+     if (code === "REFUND_AMOUNT_EXCEEDS_PAYMENT") return "İade tutarı seçilen ödemenin kalan tutarını aşıyor. Başka ödeme seçin.";
+     if (code === "ACCOUNT_REFUND_UNSUPPORTED") return "Cari hesaba yazılan ödeme buradan iade edilemez.";
++    if (code === "BILL_HAS_SERVED_ITEMS") return 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.';
+     if (code === "ORDER_HAS_PAYMENT") return "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli.";
+     if (code === "ORDER_HAS_SERVED_ITEMS") return "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın.";
+     if (code === "ORDER_CANCEL_NOT_ALLOWED") return "Sipariş bu durumda iptal edilemez.";
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 5277af80..98225e3e 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1302,7 +1302,7 @@ export const refundText = {
+   cancelled: "Hesap iptal edildi.",
+   cancelledWithOrder: "Hesap ve sipariş iptal edildi; masa boşaldı.",
+   cancelOrderLabel: "Siparişi de iptal et",
+-  cancelOrderHint: "Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.",
++  cancelOrderHint: "İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.",
+   refundHeading: "İade iste",
+   refundReasonLabel: "İade gerekçesi",
+   refundAction: "İade iste",
+diff --git a/src/Host/Experience/Billing/BillCancellation.cs b/src/Host/Experience/Billing/BillCancellation.cs
+index 34b970b4..df34d0e2 100644
+--- a/src/Host/Experience/Billing/BillCancellation.cs
++++ b/src/Host/Experience/Billing/BillCancellation.cs
+@@ -20,6 +20,10 @@ public sealed record CancelBillResultV1(
+ public sealed class BillCancelHasPaymentException(Guid billId)
+     : Exception($"Bill {billId} has payments; refund them before cancelling.");
+ 
++/// <summary>A line of the bill was already served; only someone who may approve refunds cancels such a bill, everyone else takes payment and asks for a refund.</summary>
++public sealed class BillCancelHasServedItemsException(Guid billId)
++    : Exception($"Bill {billId} has served items; cancelling it needs a refund approver.");
++
+ public sealed class BillCancelNotAllowedException(Guid billId, string status)
+     : Exception($"Bill {billId} in state {status} cannot be cancelled.");
+ 
+@@ -28,7 +32,8 @@ public sealed class BillCancelReasonException() : Exception("A cancellation reas
+ /// <summary>
+ /// Cancels an unpaid bill with a mandatory reason. By default the order stays on its table, so the till can open a
+ /// fresh bill for it (cancelled bills no longer hold the bill number or the order item ids); with
+-/// <c>CancelOrder</c> the order is cancelled in the same transaction.
++/// <c>CancelOrder</c> the order is cancelled in the same transaction. A bill with a served line is cancelled only for an
++/// actor who may approve refunds (<paramref name="actorMayCancelServed"/>).
+ /// </summary>
+ public sealed class BillCancellationStore(
+     NpgsqlDataSource dataSource,
+@@ -40,7 +45,7 @@ public sealed class BillCancellationStore(
+     public const int MaxReasonLength = 500;
+ 
+     public async Task<CancelBillResultV1> CancelAsync(
+-        Guid billId, string? reason, bool cancelOrder, Guid actorId, string correlationId, CancellationToken cancellationToken)
++        Guid billId, string? reason, bool cancelOrder, Guid actorId, bool actorMayCancelServed, string correlationId, CancellationToken cancellationToken)
+     {
+         var trimmed = reason?.Trim();
+         if (string.IsNullOrEmpty(trimmed) || trimmed.Length > MaxReasonLength)
+@@ -82,6 +87,8 @@ public sealed class BillCancellationStore(
+                 throw new BillCancelNotAllowedException(billId, previousStatus);
+             if (previousStatus == "Paid" || await BillMoneyGuard.BillHasMoneyAsync(connection, transaction, billId, cancellationToken))
+                 throw new BillCancelHasPaymentException(billId);
++            if (!actorMayCancelServed && await HasServedItemAsync(connection, transaction, billId, cancellationToken))
++                throw new BillCancelHasServedItemsException(billId);
+ 
+             if (ordersToCancel.Count > 0)
+             {
+@@ -115,4 +122,18 @@ public sealed class BillCancellationStore(
+ 
+         return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled, orderId, orderCancelled ? ordersToCancel : null);
+     }
++
++    private static async Task<bool> HasServedItemAsync(
++        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
++    {
++        await using var command = new NpgsqlCommand(
++            """
++            SELECT EXISTS (
++                SELECT 1 FROM billing.bill_items bli
++                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
++                WHERE bli.bill_id = @bill_id AND oli.status = 'Active' AND oli.kitchen_state = 'Served');
++            """, connection, transaction);
++        command.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
++        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
++    }
+ }
+diff --git a/src/Host/Experience/Billing/BillingSplitApplication.cs b/src/Host/Experience/Billing/BillingSplitApplication.cs
+index 5e0555f9..fc5eb1b0 100644
+--- a/src/Host/Experience/Billing/BillingSplitApplication.cs
++++ b/src/Host/Experience/Billing/BillingSplitApplication.cs
+@@ -308,6 +308,7 @@ public static class BillingSplitApplication
+             CancelBillRequestV1 request,
+             IBillingSplitSessionAuthorizer authorizer,
+             IAuthorizationService authorization,
++            IRoleRepository roles,
+             BillCancellationStore store,
+             ICashierQueueAnnouncer queueAnnouncer,
+             IHubContext<CustomerDisplayHub> customerDisplayHub,
+@@ -317,8 +318,11 @@ public static class BillingSplitApplication
+         {
+             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.BillsCancel, cancellationToken);
++            var mayCancelServed = (await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken))
++                .Contains(ApplicationPermissions.PaymentsRefundApprove, StringComparer.Ordinal);
++
+             var result = await store.CancelAsync(
+-                billId, request.Reason, request.CancelOrder, principal.UserId, context.TraceIdentifier, cancellationToken);
++                billId, request.Reason, request.CancelOrder, principal.UserId, mayCancelServed, context.TraceIdentifier, cancellationToken);
+             foreach (var cancelledOrderId in result.CancelledOrderIds ?? [])
+                 await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", cancelledOrderId, null, cancellationToken);
+             await DualScreenApplication.NotifyCustomerDisplayAsync(
+@@ -839,6 +843,7 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
+         AdjustmentUndoBelowCollectedException => (409, "ADJUSTMENT_UNDO_BELOW_COLLECTED", "Geri alınırsa ödenecek tutar, hesaptan şimdiye kadar alınan tutarın altına iniyor; geri alınamaz."),
+         SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "Ek ücret veya bahşiş eklenmiş hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
+         BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
++        BillCancelHasServedItemsException => (409, "BILL_HAS_SERVED_ITEMS", "Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa \"İade iste\" ile yönetici onaylı iade başlatabilirsiniz."),
+         BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
+         RefundInputException refundInput => (
+             400, refundInput.Code, refundInput.UserMessage ?? "İade bilgisi geçersiz."),
+diff --git a/tests/Clients/StaticApps/split-payment-cancel-order.test.js b/tests/Clients/StaticApps/split-payment-cancel-order.test.js
+index 422e3325..032fb79e 100644
+--- a/tests/Clients/StaticApps/split-payment-cancel-order.test.js
++++ b/tests/Clients/StaticApps/split-payment-cancel-order.test.js
+@@ -84,7 +84,7 @@ describe("cancelling the order together with the bill on the payment page", () =
+     const box = document.getElementById("cancel-order");
+     expect(box.checked).toBe(false);
+     expect(app().textContent).toContain("Siparişi de iptal et");
+-    expect(app().textContent).toContain("fire sayılır");
++    expect(document.querySelector(".sp-check small").textContent).toBe('İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.');
+     chooseReason();
+     confirmCancel();
+ 
+@@ -123,6 +123,7 @@ describe("cancelling the order together with the bill on the payment page", () =
+   });
+ 
+   it.each([
++    [409, "BILL_HAS_SERVED_ITEMS", 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.'],
+     [409, "ORDER_HAS_PAYMENT", "Bu siparişin hesabında ödeme var; iptal etmeden önce ödeme iade edilmeli."],
+     [409, "ORDER_CANCEL_NOT_ALLOWED", "Sipariş bu durumda iptal edilemez."],
+     [409, "ORDER_HAS_SERVED_ITEMS", "Servis edilmiş ürün var; sipariş iptal edilemez, hesabı kapatın."],
+diff --git a/tests/Host/Experience/Billing/BillCancellationHttpTests.cs b/tests/Host/Experience/Billing/BillCancellationHttpTests.cs
+index 716a6a43..43b6440b 100644
+--- a/tests/Host/Experience/Billing/BillCancellationHttpTests.cs
++++ b/tests/Host/Experience/Billing/BillCancellationHttpTests.cs
+@@ -98,7 +98,7 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
+         var store = OrderCancellationStores.CreateBill(source, new FailingAuditEventStore());
+ 
+         await Assert.ThrowsAsync<InvalidOperationException>(
+-            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", false, userId, "corr", CancellationToken.None));
++            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", false, userId, true, "corr", CancellationToken.None));
+ 
+         await using var read = source.CreateCommand(
+             """
+@@ -295,6 +295,77 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
+         Assert.False(await repository.IsOrderItemBilledAsync(orderItemIds[0]));
+     }
+ 
++    [Fact]
++    public async Task ACashierCannotCancelABillWithAServedItemButARefundApproverCan()
++    {
++        var terminalId = Guid.NewGuid();
++        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(
++            terminalId, "cashier", "bills.split", "bills.cancel");
++        var (_, managerCookie) = await _database.SeedSessionWithPermissionsAsync(
++            terminalId, "manager", "bills.split", "bills.cancel", "payments.refund.approve");
++        var seeded = await _database.SeedBillAsync();
++        await ServeItemsAsync(seeded.BillId);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        using var refused = await client.SendAsync(Cancel(terminalId, seeded.BillId, cashierCookie, "Müşteri vazgeçti"));
++
++        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
++        Assert.Equal("BILL_HAS_SERVED_ITEMS", await ErrorCode(refused));
++        Assert.Contains("kasiyer iptal edemez", await refused.Content.ReadAsStringAsync());
++        Assert.NotEqual("Cancelled", await StatusAsync(seeded.BillId));
++
++        using var allowed = await client.SendAsync(Cancel(terminalId, seeded.BillId, managerCookie, "Müşteri vazgeçti"));
++
++        Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
++        Assert.Equal("Cancelled", await StatusAsync(seeded.BillId));
++    }
++
++    [Fact]
++    public async Task APaidBillWithAServedItemStillSendsTheCashierToTheRefundFirst()
++    {
++        var terminalId = Guid.NewGuid();
++        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(
++            terminalId, "cashier", "bills.split", "bills.cancel");
++        var seeded = await _database.SeedBillAsync();
++        await _database.SeedCollectedAsync(seeded.BillId, 100m, userId);
++        await ServeItemsAsync(seeded.BillId);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        using var refused = await client.SendAsync(Cancel(terminalId, seeded.BillId, cookie, "Deneme"));
++
++        Assert.Equal("BILL_HAS_PAYMENT", await ErrorCode(refused));
++    }
++
++    [Fact]
++    public async Task AServedItemThatWasTakenOffTheOrderDoesNotStopTheCashierFromCancelling()
++    {
++        var terminalId = Guid.NewGuid();
++        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
++            terminalId, "cashier", "bills.split", "bills.cancel");
++        var seeded = await _database.SeedBillAsync();
++        await ServeItemsAsync(seeded.BillId);
++        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
++        await Scalar(source,
++            "UPDATE orders.order_items SET status = 'Cancelled' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);",
++            ("id", seeded.BillId));
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        using var cancelled = await client.SendAsync(Cancel(terminalId, seeded.BillId, cookie, "Deneme"));
++
++        Assert.Equal(HttpStatusCode.OK, cancelled.StatusCode);
++    }
++
++    private async Task ServeItemsAsync(Guid billId)
++    {
++        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
++        await Scalar(source,
++            "UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);",
++            ("id", billId));
++    }
++
+     [Fact]
+     public async Task ARoleWithoutTheCancelPermissionIsRefused()
+     {
+diff --git a/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs b/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
+index 737e31a4..276d3d74 100644
+--- a/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
++++ b/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
+@@ -90,7 +90,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
+         await using var app = await StartAsync();
+ 
+         var result = await app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
+-            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, "corr-merged-2", CancellationToken.None);
++            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, true, "corr-merged-2", CancellationToken.None);
+ 
+         Assert.True(result.OrderCancelled);
+         Assert.Equal(new[] { merged.FirstOrderId, merged.SecondOrderId }.Order(), result.CancelledOrderIds!.Order());
+@@ -107,7 +107,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
+         await using var app = await StartAsync();
+ 
+         var result = await app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
+-            merged.BillId, "Hesap iptal", cancelOrder: false, _actor, "corr-merged-3", CancellationToken.None);
++            merged.BillId, "Hesap iptal", cancelOrder: false, _actor, true, "corr-merged-3", CancellationToken.None);
+ 
+         Assert.False(result.OrderCancelled);
+         Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
+@@ -122,7 +122,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
+         await using var app = await StartAsync();
+ 
+         await Assert.ThrowsAsync<BillCancelHasPaymentException>(() => app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
+-            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, "corr-merged-5", CancellationToken.None));
++            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, true, "corr-merged-5", CancellationToken.None));
+         Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
+     }
+ 
+@@ -135,7 +135,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
+         await using var app = await StartAsync();
+ 
+         await Assert.ThrowsAsync<OrderCancelHasServedItemsException>(() => app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
+-            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, "corr-merged-6", CancellationToken.None));
++            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, true, "corr-merged-6", CancellationToken.None));
+ 
+         Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+         Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));

@@ -20,6 +20,10 @@ public sealed record CancelBillResultV1(
 public sealed class BillCancelHasPaymentException(Guid billId)
     : Exception($"Bill {billId} has payments; refund them before cancelling.");
 
+/// <summary>A line of the bill was already served; only someone who may approve refunds cancels such a bill, everyone else takes payment and asks for a refund.</summary>
+public sealed class BillCancelHasServedItemsException(Guid billId)
+    : Exception($"Bill {billId} has served items; cancelling it needs a refund approver.");
+
 public sealed class BillCancelNotAllowedException(Guid billId, string status)
     : Exception($"Bill {billId} in state {status} cannot be cancelled.");
 
@@ -28,7 +32,8 @@ public sealed class BillCancelReasonException() : Exception("A cancellation reas
 /// <summary>
 /// Cancels an unpaid bill with a mandatory reason. By default the order stays on its table, so the till can open a
 /// fresh bill for it (cancelled bills no longer hold the bill number or the order item ids); with
-/// <c>CancelOrder</c> the order is cancelled in the same transaction.
+/// <c>CancelOrder</c> the order is cancelled in the same transaction. A bill with a served line is cancelled only for an
+/// actor who may approve refunds (<paramref name="actorMayCancelServed"/>).
 /// </summary>
 public sealed class BillCancellationStore(
     NpgsqlDataSource dataSource,
@@ -40,7 +45,7 @@ public sealed class BillCancellationStore(
     public const int MaxReasonLength = 500;
 
     public async Task<CancelBillResultV1> CancelAsync(
-        Guid billId, string? reason, bool cancelOrder, Guid actorId, string correlationId, CancellationToken cancellationToken)
+        Guid billId, string? reason, bool cancelOrder, Guid actorId, bool actorMayCancelServed, string correlationId, CancellationToken cancellationToken)
     {
         var trimmed = reason?.Trim();
         if (string.IsNullOrEmpty(trimmed) || trimmed.Length > MaxReasonLength)
@@ -82,6 +87,8 @@ public sealed class BillCancellationStore(
                 throw new BillCancelNotAllowedException(billId, previousStatus);
             if (previousStatus == "Paid" || await BillMoneyGuard.BillHasMoneyAsync(connection, transaction, billId, cancellationToken))
                 throw new BillCancelHasPaymentException(billId);
+            if (!actorMayCancelServed && await HasServedItemAsync(connection, transaction, billId, cancellationToken))
+                throw new BillCancelHasServedItemsException(billId);
 
             if (ordersToCancel.Count > 0)
             {
@@ -114,5 +121,19 @@ public sealed class BillCancellationStore(
         }
 
         return new CancelBillResultV1(billId, "Cancelled", trimmed, now, orderCancelled, orderId, orderCancelled ? ordersToCancel : null);
+    }
+
+    private static async Task<bool> HasServedItemAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM billing.bill_items bli
+                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
+                WHERE bli.bill_id = @bill_id AND oli.status = 'Active' AND oli.kitchen_state = 'Served');
+            """, connection, transaction);
+        command.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 }

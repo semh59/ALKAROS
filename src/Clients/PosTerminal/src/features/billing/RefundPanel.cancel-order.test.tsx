@@ -49,7 +49,7 @@ describe("cancel the order together with the bill", () => {
 
     expect(checkbox().checked).toBe(false);
     expect(document.body.textContent).toContain("Siparişi de iptal et");
-    expect(document.body.textContent).toContain("fire sayılır");
+    expect(document.querySelector(".refund-panel__check small")!.textContent).toBe('İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.');
     await chooseReason();
     await confirmCancel();
 

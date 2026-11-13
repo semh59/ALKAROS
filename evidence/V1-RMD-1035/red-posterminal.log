@@ -1,0 +1,44 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/billing/refundApi.test.ts (22 tests | 1 failed) 34ms
+     × gives 409 BILL_HAS_SERVED_ITEMS a fixed Turkish sentence 11ms
+ ❯ src/features/billing/RefundPanel.cancel-order.test.tsx (5 tests | 1 failed) 150ms
+     × offers the box unchecked, explains what it does and keeps the order when it stays unchecked 60ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/refundApi.test.ts > billing refund client > gives 409 BILL_HAS_SERVED_ITEMS a fixed Turkish sentence
+AssertionError: expected 'Hesap veya iade isteği değişmiş. Günc…' to be 'Bu hesapta servis edilmiş ürün var; k…' // Object.is equality
+
+Expected: "Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Ödemeyi aldıktan sonra "İade iste" ile yönetici onaylı iade başlatın ya da bir yöneticiye başvurun."
+Received: "Hesap veya iade isteği değişmiş. Güncel veriyi alıp yeniden deneyin."
+
+ ❯ src/features/billing/refundApi.test.ts:50:88
+     48|     [400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arası…
+     49|   ])("gives %i %s a fixed Turkish sentence", (status, code, sentence) …
+     50|     expect(describeRefundFailure(new RefundApiError(status, code, "raw…
+       |                                                                                        ^
+     51|   });
+     52|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/billing/RefundPanel.cancel-order.test.tsx > cancel the order together with the bill > offers the box unchecked, explains what it does and keeps the order when it stays unchecked
+AssertionError: expected 'Hazırlanmış kalemler fire sayılır, ha…' to be 'İşaretlerseniz sipariş de iptal edili…' // Object.is equality
+
+Expected: "İşaretlerseniz sipariş de iptal edilir: hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır; bu geri alınamaz. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır ve yeniden hesap açılabilir."
+Received: "Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır."
+
+ ❯ src/features/billing/RefundPanel.cancel-order.test.tsx:52:79
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 25 passed (27)
+   Start at  11:26:53
+   Duration  2.11s (transform 205ms, setup 0ms, import 347ms, tests 184ms, environment 2.59s)
+
+exit 1

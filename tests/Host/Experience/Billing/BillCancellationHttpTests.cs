@@ -98,7 +98,7 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
         var store = OrderCancellationStores.CreateBill(source, new FailingAuditEventStore());
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", false, userId, "corr", CancellationToken.None));
+            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", false, userId, true, "corr", CancellationToken.None));
 
         await using var read = source.CreateCommand(
             """
@@ -293,6 +293,77 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
 
         Assert.Empty(await repository.GetBilledOrderItemIdsAsync(orderItemIds));
         Assert.False(await repository.IsOrderItemBilledAsync(orderItemIds[0]));
+    }
+
+    [Fact]
+    public async Task ACashierCannotCancelABillWithAServedItemButARefundApproverCan()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "cashier", "bills.split", "bills.cancel");
+        var (_, managerCookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "manager", "bills.split", "bills.cancel", "payments.refund.approve");
+        var seeded = await _database.SeedBillAsync();
+        await ServeItemsAsync(seeded.BillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = await client.SendAsync(Cancel(terminalId, seeded.BillId, cashierCookie, "Müşteri vazgeçti"));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal("BILL_HAS_SERVED_ITEMS", await ErrorCode(refused));
+        Assert.Contains("kasiyer iptal edemez", await refused.Content.ReadAsStringAsync());
+        Assert.NotEqual("Cancelled", await StatusAsync(seeded.BillId));
+
+        using var allowed = await client.SendAsync(Cancel(terminalId, seeded.BillId, managerCookie, "Müşteri vazgeçti"));
+
+        Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
+        Assert.Equal("Cancelled", await StatusAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task APaidBillWithAServedItemStillSendsTheCashierToTheRefundFirst()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "cashier", "bills.split", "bills.cancel");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 100m, userId);
+        await ServeItemsAsync(seeded.BillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = await client.SendAsync(Cancel(terminalId, seeded.BillId, cookie, "Deneme"));
+
+        Assert.Equal("BILL_HAS_PAYMENT", await ErrorCode(refused));
+    }
+
+    [Fact]
+    public async Task AServedItemThatWasTakenOffTheOrderDoesNotStopTheCashierFromCancelling()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "cashier", "bills.split", "bills.cancel");
+        var seeded = await _database.SeedBillAsync();
+        await ServeItemsAsync(seeded.BillId);
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        await Scalar(source,
+            "UPDATE orders.order_items SET status = 'Cancelled' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);",
+            ("id", seeded.BillId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var cancelled = await client.SendAsync(Cancel(terminalId, seeded.BillId, cookie, "Deneme"));
+
+        Assert.Equal(HttpStatusCode.OK, cancelled.StatusCode);
+    }
+
+    private async Task ServeItemsAsync(Guid billId)
+    {
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        await Scalar(source,
+            "UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);",
+            ("id", billId));
     }
 
     [Fact]

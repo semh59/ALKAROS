@@ -166,6 +166,7 @@
     ALLOWANCE_BELOW_USED: 'İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.',
     BILL_BUSY: 'Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin.',
     BILL_HAS_PAYMENT: 'Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli.',
+    BILL_HAS_SERVED_ITEMS: 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.',
     BILL_NOT_FOUND: 'Hesap bulunamadı.',
     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
@@ -1575,7 +1576,7 @@
       '<div class="sp-field" id="cancel-section"><span class="sp-field-label">Hesabı iptal et</span>' +
       renderReasonField('cancel', 'İptal gerekçesi') +
       '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
-      '<span><strong>Siparişi de iptal et</strong><small>Hazırlanmış kalemler fire sayılır, hazırlanmamış kalemlerin stoğu geri gelir, masa boşalır.</small></span></label>' +
+      '<span><strong>Siparişi de iptal et</strong><small>İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.</small></span></label>' +
       '<p class="sp-hint" id="cancel-hint" role="status"' + (state.cancelReason.trim() ? ' hidden' : '') + '>Hesabı iptal etmek için bir gerekçe seçin ya da yazın.</p>' +
       confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary') +
       '</div>'

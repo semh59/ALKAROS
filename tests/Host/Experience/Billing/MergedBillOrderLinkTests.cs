@@ -90,7 +90,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         await using var app = await StartAsync();
 
         var result = await app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
-            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, "corr-merged-2", CancellationToken.None);
+            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, true, "corr-merged-2", CancellationToken.None);
 
         Assert.True(result.OrderCancelled);
         Assert.Equal(new[] { merged.FirstOrderId, merged.SecondOrderId }.Order(), result.CancelledOrderIds!.Order());
@@ -107,7 +107,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         await using var app = await StartAsync();
 
         var result = await app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
-            merged.BillId, "Hesap iptal", cancelOrder: false, _actor, "corr-merged-3", CancellationToken.None);
+            merged.BillId, "Hesap iptal", cancelOrder: false, _actor, true, "corr-merged-3", CancellationToken.None);
 
         Assert.False(result.OrderCancelled);
         Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
@@ -122,7 +122,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         await using var app = await StartAsync();
 
         await Assert.ThrowsAsync<BillCancelHasPaymentException>(() => app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
-            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, "corr-merged-5", CancellationToken.None));
+            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, true, "corr-merged-5", CancellationToken.None));
         Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
     }
 
@@ -135,7 +135,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         await using var app = await StartAsync();
 
         await Assert.ThrowsAsync<OrderCancelHasServedItemsException>(() => app.Services.GetRequiredService<BillCancellationStore>().CancelAsync(
-            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, "corr-merged-6", CancellationToken.None));
+            merged.BillId, "Hesap iptal", cancelOrder: true, _actor, true, "corr-merged-6", CancellationToken.None));
 
         Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
         Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
