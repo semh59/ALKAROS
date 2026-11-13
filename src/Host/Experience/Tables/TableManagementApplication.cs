@@ -380,10 +380,15 @@ public static class TableManagementApplication
             TransferTableRequest request,
             ITableManagementSessionAuthorizer authorizer,
             ITableTransferService service,
+            TableManagementStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesTransfer, cancellationToken);
+            if (!principal.Permissions.Contains(ApplicationPermissions.CashSessionOverride)
+                && await store.GetAsync(request.SourceTableId, cancellationToken) is { Table.CurrentBillId: { } billId }
+                && (await store.GetBillsOwnedByOtherTerminalsAsync([billId], terminalId, cancellationToken)).Contains(billId))
+                throw new TableOperationBlockedException("BILL_OTHER_TERMINAL", ALKAROS.Host.Experience.Billing.BillOtherTerminalException.UserMessage);
             return Results.Ok(await service.TransferTableAsync(new TableTransferRequest(
                 request.SourceTableId,
                 TableContractMapper.RequiredVersion(request.ExpectedSourceRowVersion, nameof(request.ExpectedSourceRowVersion)),

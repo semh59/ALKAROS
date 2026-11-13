@@ -656,6 +656,62 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             $"SELECT count(*) FROM table_mgmt.table_reservations WHERE table_id = '{table.TableId:D}';"));
     }
 
+    [Fact]
+    public async Task MovingATableWhoseBillAnotherTerminalOwnsIsRefusedInTurkishAndNothingMoves()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (source, target) = await SeedTransferPairAsync(client, terminalId, cookie, "T-XA", "T-XB", Guid.NewGuid());
+
+        using var response = await client.SendAsync(TransferRequest(terminalId, cookie, source, target));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<TableManagementErrorEnvelope>())!.Error;
+        Assert.Equal("BILL_OTHER_TERMINAL", error.Code);
+        Assert.Equal("Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir.", error.Message);
+        Assert.True(await _database.ScalarAsync<bool>($"SELECT current_bill_id IS NOT NULL FROM table_mgmt.tables WHERE table_id = '{source.TableId:D}';"));
+        Assert.False(await _database.ScalarAsync<bool>($"SELECT current_bill_id IS NOT NULL FROM table_mgmt.tables WHERE table_id = '{target.TableId:D}';"));
+    }
+
+    [Theory]
+    [InlineData("own")]
+    [InlineData("unowned")]
+    [InlineData("override")]
+    public async Task MovingATableIsAllowedWhenTheBillIsOwnUnownedOrTheUserMayOverrideTheCashSession(string owner)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        Guid? billOwner = owner == "own" ? terminalId : owner == "unowned" ? null : Guid.NewGuid();
+        var (source, target) = await SeedTransferPairAsync(client, terminalId, cookie, "T-YA-" + owner, "T-YB-" + owner, billOwner);
+        if (owner == "override")
+            await _database.GrantCashSessionOverrideAsync(terminalId);
+
+        using var response = await client.SendAsync(TransferRequest(terminalId, cookie, source, target));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    private async Task<(TableDto Source, TableDto Target)> SeedTransferPairAsync(
+        HttpClient client, Guid terminalId, string cookie, string sourceNumber, string targetNumber, Guid? billOwner)
+    {
+        var source = await ChangeStatusAsync(client, terminalId, cookie, await CreateTableAsync(client, terminalId, cookie, sourceNumber), "Occupied");
+        await _database.SeedCurrentBillAsync(source.TableId, billOwner);
+        var target = await CreateTableAsync(client, terminalId, cookie, targetNumber);
+        using var read = await client.SendAsync(Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{source.TableId:D}", cookie));
+        return ((await read.Content.ReadFromJsonAsync<TableDto>())!, target);
+    }
+
+    private static HttpRequestMessage TransferRequest(Guid terminalId, string cookie, TableDto source, TableDto target)
+        => JsonRequest(
+            HttpMethod.Post,
+            Prefix(terminalId) + "/transfers",
+            cookie,
+            new TransferTableRequest(source.TableId, source.RowVersion, target.TableId, target.RowVersion, "Move service"));
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });

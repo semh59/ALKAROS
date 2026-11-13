@@ -1,0 +1,106 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+index 378b9d71..f37c12cf 100644
+--- a/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/tables/TableWorkspace.test.tsx
+@@ -493,9 +493,11 @@ describe("table workspace", () => {
+     expect(document.querySelectorAll(".table-card")).toHaveLength(2);
+   });
+ 
+-  it("shows the backend's own message for an unsettled-payment rejection, not the generic retry text or the stale-conflict text", async () => {
+-    const message = "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez.";
+-    const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "PAYMENT_UNSETTLED", message));
++  it.each([
++    ["PAYMENT_UNSETTLED", "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez."],
++    ["BILL_OTHER_TERMINAL", "Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir."],
++  ])("shows the backend's own Turkish message for a %s rejection, not the generic retry text or the stale-conflict text", async (code, message) => {
++    const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, code, message));
+     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+     await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
+     const dialog = document.querySelector('[role="dialog"]')!;
+diff --git a/src/Host/Experience/Tables/TableManagementApplication.cs b/src/Host/Experience/Tables/TableManagementApplication.cs
+index 71b04252..1c717dd2 100644
+--- a/src/Host/Experience/Tables/TableManagementApplication.cs
++++ b/src/Host/Experience/Tables/TableManagementApplication.cs
+@@ -380,10 +380,15 @@ public static class TableManagementApplication
+             TransferTableRequest request,
+             ITableManagementSessionAuthorizer authorizer,
+             ITableTransferService service,
++            TableManagementStore store,
+             HttpContext context,
+             CancellationToken cancellationToken) =>
+         {
+             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesTransfer, cancellationToken);
++            if (!principal.Permissions.Contains(ApplicationPermissions.CashSessionOverride)
++                && await store.GetAsync(request.SourceTableId, cancellationToken) is { Table.CurrentBillId: { } billId }
++                && (await store.GetBillsOwnedByOtherTerminalsAsync([billId], terminalId, cancellationToken)).Contains(billId))
++                throw new TableOperationBlockedException("BILL_OTHER_TERMINAL", ALKAROS.Host.Experience.Billing.BillOtherTerminalException.UserMessage);
+             return Results.Ok(await service.TransferTableAsync(new TableTransferRequest(
+                 request.SourceTableId,
+                 TableContractMapper.RequiredVersion(request.ExpectedSourceRowVersion, nameof(request.ExpectedSourceRowVersion)),
+diff --git a/tests/Host/Experience/Tables/TableManagementHttpTests.cs b/tests/Host/Experience/Tables/TableManagementHttpTests.cs
+index 6ddfadbf..5a57c076 100644
+--- a/tests/Host/Experience/Tables/TableManagementHttpTests.cs
++++ b/tests/Host/Experience/Tables/TableManagementHttpTests.cs
+@@ -656,6 +656,62 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
+             $"SELECT count(*) FROM table_mgmt.table_reservations WHERE table_id = '{table.TableId:D}';"));
+     }
+ 
++    [Fact]
++    public async Task MovingATableWhoseBillAnotherTerminalOwnsIsRefusedInTurkishAndNothingMoves()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var (source, target) = await SeedTransferPairAsync(client, terminalId, cookie, "T-XA", "T-XB", Guid.NewGuid());
++
++        using var response = await client.SendAsync(TransferRequest(terminalId, cookie, source, target));
++
++        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
++        var error = (await response.Content.ReadFromJsonAsync<TableManagementErrorEnvelope>())!.Error;
++        Assert.Equal("BILL_OTHER_TERMINAL", error.Code);
++        Assert.Equal("Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir.", error.Message);
++        Assert.True(await _database.ScalarAsync<bool>($"SELECT current_bill_id IS NOT NULL FROM table_mgmt.tables WHERE table_id = '{source.TableId:D}';"));
++        Assert.False(await _database.ScalarAsync<bool>($"SELECT current_bill_id IS NOT NULL FROM table_mgmt.tables WHERE table_id = '{target.TableId:D}';"));
++    }
++
++    [Theory]
++    [InlineData("own")]
++    [InlineData("unowned")]
++    [InlineData("override")]
++    public async Task MovingATableIsAllowedWhenTheBillIsOwnUnownedOrTheUserMayOverrideTheCashSession(string owner)
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        Guid? billOwner = owner == "own" ? terminalId : owner == "unowned" ? null : Guid.NewGuid();
++        var (source, target) = await SeedTransferPairAsync(client, terminalId, cookie, "T-YA-" + owner, "T-YB-" + owner, billOwner);
++        if (owner == "override")
++            await _database.GrantCashSessionOverrideAsync(terminalId);
++
++        using var response = await client.SendAsync(TransferRequest(terminalId, cookie, source, target));
++
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++    }
++
++    private async Task<(TableDto Source, TableDto Target)> SeedTransferPairAsync(
++        HttpClient client, Guid terminalId, string cookie, string sourceNumber, string targetNumber, Guid? billOwner)
++    {
++        var source = await ChangeStatusAsync(client, terminalId, cookie, await CreateTableAsync(client, terminalId, cookie, sourceNumber), "Occupied");
++        await _database.SeedCurrentBillAsync(source.TableId, billOwner);
++        var target = await CreateTableAsync(client, terminalId, cookie, targetNumber);
++        using var read = await client.SendAsync(Request(HttpMethod.Get, $"{Prefix(terminalId)}/tables/{source.TableId:D}", cookie));
++        return ((await read.Content.ReadFromJsonAsync<TableDto>())!, target);
++    }
++
++    private static HttpRequestMessage TransferRequest(Guid terminalId, string cookie, TableDto source, TableDto target)
++        => JsonRequest(
++            HttpMethod.Post,
++            Prefix(terminalId) + "/transfers",
++            cookie,
++            new TransferTableRequest(source.TableId, source.RowVersion, target.TableId, target.RowVersion, "Move service"));
++
+     private async Task<WebApplication> StartAsync()
+     {
+         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });

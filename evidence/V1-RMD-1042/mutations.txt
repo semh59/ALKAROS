@@ -1,0 +1,5 @@
+killed M1 override holders are refused too
+killed M2 other-till bill never matches
+killed M3 own bill counted as other till
+killed M4 wrong error code
+killed M5 check never runs

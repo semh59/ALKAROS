@@ -493,9 +493,11 @@ describe("table workspace", () => {
     expect(document.querySelectorAll(".table-card")).toHaveLength(2);
   });
 
-  it("shows the backend's own message for an unsettled-payment rejection, not the generic retry text or the stale-conflict text", async () => {
-    const message = "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez.";
-    const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, "PAYMENT_UNSETTLED", message));
+  it.each([
+    ["PAYMENT_UNSETTLED", "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez."],
+    ["BILL_OTHER_TERMINAL", "Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir."],
+  ])("shows the backend's own Turkish message for a %s rejection, not the generic retry text or the stale-conflict text", async (code, message) => {
+    const onAction = vi.fn().mockRejectedValue(new TableManagementApiError(409, code, message));
     await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
     await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa taşı")!);
     const dialog = document.querySelector('[role="dialog"]')!;

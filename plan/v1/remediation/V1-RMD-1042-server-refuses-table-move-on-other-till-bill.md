@@ -1,7 +1,7 @@
 # V1-RMD-1042 - Başka kasanın açık hesabı olan masayı taşımayı sunucu da reddeder; ekran Türkçe nedenini gösterir
 
 - Task ID: V1-RMD-1042
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing
