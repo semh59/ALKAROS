@@ -1,0 +1,137 @@
+diff --git a/src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx b/src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
+index 9397abac..8d87b166 100644
+--- a/src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
++++ b/src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
+@@ -336,6 +336,69 @@ describe("refund panel", () => {
+     expect(document.body.textContent).not.toContain("fiş numarasını girerek");
+   });
+ 
++  it.each(["Card", "Eft"])("lets an approver cancel an approved %s refund that still waits, after a reason and a second tap", async (method) => {
++    const client = makeClient({
++      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method })]),
++    });
++    await render({ client });
++    const cancel = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Onaylı iadeyi iptal et")!;
++    expect(cancel().disabled).toBe(true);
++
++    await pick("İade iptal gerekçesi", "İkram");
++    await click("Onaylı iadeyi iptal et");
++    expect(client.reject).not.toHaveBeenCalled();
++    await click("Evet, onaylı iadeyi iptal et");
++
++    expect(client.reject).toHaveBeenCalledWith("r1", "İkram");
++    expect(document.body.textContent).toContain("Onaylı iade iptal edildi; para iade edilmedi. Hesap yeniden kapatılabilir.");
++    expect(client.listRequests).toHaveBeenCalledTimes(2);
++  });
++
++  it("drops the second-tap question when the reason changes, so an emptied reason cannot be confirmed", async () => {
++    const client = makeClient({
++      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]),
++    });
++    await render({ client });
++    await pick("İade iptal gerekçesi", "İkram");
++    await click("Onaylı iadeyi iptal et");
++    expect(document.body.textContent).toContain("Evet, onaylı iadeyi iptal et");
++
++    await pick("İade iptal gerekçesi", "");
++
++    expect(document.body.textContent).not.toContain("Evet, onaylı iadeyi iptal et");
++    expect(client.reject).not.toHaveBeenCalled();
++  });
++
++  it("offers no cancel of an approved refund without the approve permission or when another approver must decide", async () => {
++    const waiting = request("AwaitingManualRefund", { method: "Card" });
++    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([waiting]) }), canApproveRefund: false });
++    expect(document.body.textContent).not.toContain("Onaylı iadeyi iptal et");
++
++    await act(async () => root!.unmount());
++    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([{ ...waiting, mayDecide: false }]) }) });
++    expect(document.body.textContent).not.toContain("Onaylı iadeyi iptal et");
++    expect(document.body.textContent).toContain("Başka bir yetkili onaylamalı.");
++
++    await act(async () => root!.unmount());
++    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([request("Completed", { method: "Card" })]) }) });
++    expect(document.body.textContent).not.toContain("Onaylı iadeyi iptal et");
++  });
++
++  it("shows a fixed Turkish sentence when cancelling an approved refund is refused", async () => {
++    const client = makeClient({
++      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]),
++      reject: vi.fn().mockRejectedValue(new RefundApiError(409, "REFUND_STATE", "raw 409 text")),
++    });
++    await render({ client });
++
++    await pick("İade iptal gerekçesi", "İkram");
++    await click("Onaylı iadeyi iptal et");
++    await click("Evet, onaylı iadeyi iptal et");
++
++    expect(document.body.textContent).toContain("Güncel veriyi alıp yeniden deneyin");
++    expect(document.body.textContent).not.toMatch(/409|raw/);
++  });
++
+   it("completes a transfer refund without asking for a slip number", async () => {
+     const client = makeClient({
+       listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Eft" })]),
+diff --git a/src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx b/src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx
+index 601f5a3c..d37b861a 100644
+--- a/src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx
++++ b/src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx
+@@ -13,7 +13,7 @@ export interface RefundPanelProps {
+   canApproveRefund: boolean;
+ }
+ 
+-type Action = "cancel" | "request" | "approve" | "reject" | "complete" | "allowance";
++type Action = "cancel" | "request" | "approve" | "reject" | "cancelApproved" | "complete" | "allowance";
+ 
+ const money = (value: number) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(value);
+ const isOpen = (row: RefundRequestRow) => row.status === "Requested" || row.status === "AwaitingManualRefund";
+@@ -39,7 +39,10 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
+   const [texts, setTexts] = useState<Record<string, string>>({});
+   const [choices, setChoices] = useState<Record<string, string>>({});
+   const loaded = useRef(false);
+-  const setText = (key: string, value: string) => setTexts((current) => ({ ...current, [key]: value }));
++  const setText = (key: string, value: string) => {
++    setConfirming(null);
++    setTexts((current) => ({ ...current, [key]: value }));
++  };
+   const choose = (key: string, value: string) => {
+     setChoices((current) => ({ ...current, [key]: value }));
+     setText(key, value === refundText.reasonOther ? "" : value);
+@@ -115,7 +118,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
+           : result.method === "Eft" ? refundText.reservedFromAllowanceTransfer : refundText.reservedFromAllowance)
+         : undefined;
+       const base = fromAllowance ?? {
+-        request: refundText.requested, approve: refundText.approved, reject: refundText.rejected,
++        request: refundText.requested, approve: refundText.approved, reject: refundText.rejected, cancelApproved: refundText.cancelledApproved,
+         complete: refundText.completed, allowance: refundText.allowanceGranted,
+       }[action as Exclude<Action, "cancel">];
+       setNotice(action === "request" && result && result.items?.length
+@@ -274,6 +277,12 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
+             {refundText.complete}
+           </Button>
+         </>}
++        {row.status === "AwaitingManualRefund" && canApproveRefund && row.mayDecide === false && <span>{refundText.mustBeDecidedByAnother}</span>}
++        {row.status === "AwaitingManualRefund" && canApproveRefund && row.mayDecide !== false && <>
++          <span>{refundText.cancelApprovedHint}</span>
++          {reasonField(`cancel:${row.requestId}`, refundText.cancelApprovedLabel)}
++          {guarded(`cancel-approved:${row.requestId}`, refundText.cancelApproved, refundText.cancelApprovedConfirm, "secondary", !filled(texts[`cancel:${row.requestId}`]), "cancelApproved", () => client.reject(row.requestId, texts[`cancel:${row.requestId}`] ?? ""))}
++        </>}
+       </div>)}
+     </div>}
+ 
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 220831fb..d84defbf 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1310,6 +1310,11 @@ export const refundText = {
+   approve: "Onayla",
+   reject: "Reddet",
+   rejectNoteLabel: "Ret gerekçesi",
++  cancelApproved: "Onaylı iadeyi iptal et",
++  cancelApprovedLabel: "İade iptal gerekçesi",
++  cancelApprovedConfirm: "Evet, onaylı iadeyi iptal et",
++  cancelApprovedHint: "Fiş ya da havale gerçekten yapılmadıysa iptal edin; yapıldıysa iadeyi tamamlayın.",
++  cancelledApproved: "Onaylı iade iptal edildi; para iade edilmedi. Hesap yeniden kapatılabilir.",
+   slipLabel: "İade fiş numarası",
+   complete: "İadeyi tamamla",
+   completeSent: "Havale gönderildi",

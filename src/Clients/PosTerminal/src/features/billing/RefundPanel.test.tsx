@@ -336,6 +336,69 @@ describe("refund panel", () => {
     expect(document.body.textContent).not.toContain("fiş numarasını girerek");
   });
 
+  it.each(["Card", "Eft"])("lets an approver cancel an approved %s refund that still waits, after a reason and a second tap", async (method) => {
+    const client = makeClient({
+      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method })]),
+    });
+    await render({ client });
+    const cancel = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Onaylı iadeyi iptal et")!;
+    expect(cancel().disabled).toBe(true);
+
+    await pick("İade iptal gerekçesi", "İkram");
+    await click("Onaylı iadeyi iptal et");
+    expect(client.reject).not.toHaveBeenCalled();
+    await click("Evet, onaylı iadeyi iptal et");
+
+    expect(client.reject).toHaveBeenCalledWith("r1", "İkram");
+    expect(document.body.textContent).toContain("Onaylı iade iptal edildi; para iade edilmedi. Hesap yeniden kapatılabilir.");
+    expect(client.listRequests).toHaveBeenCalledTimes(2);
+  });
+
+  it("drops the second-tap question when the reason changes, so an emptied reason cannot be confirmed", async () => {
+    const client = makeClient({
+      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]),
+    });
+    await render({ client });
+    await pick("İade iptal gerekçesi", "İkram");
+    await click("Onaylı iadeyi iptal et");
+    expect(document.body.textContent).toContain("Evet, onaylı iadeyi iptal et");
+
+    await pick("İade iptal gerekçesi", "");
+
+    expect(document.body.textContent).not.toContain("Evet, onaylı iadeyi iptal et");
+    expect(client.reject).not.toHaveBeenCalled();
+  });
+
+  it("offers no cancel of an approved refund without the approve permission or when another approver must decide", async () => {
+    const waiting = request("AwaitingManualRefund", { method: "Card" });
+    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([waiting]) }), canApproveRefund: false });
+    expect(document.body.textContent).not.toContain("Onaylı iadeyi iptal et");
+
+    await act(async () => root!.unmount());
+    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([{ ...waiting, mayDecide: false }]) }) });
+    expect(document.body.textContent).not.toContain("Onaylı iadeyi iptal et");
+    expect(document.body.textContent).toContain("Başka bir yetkili onaylamalı.");
+
+    await act(async () => root!.unmount());
+    await render({ client: makeClient({ listRequests: vi.fn().mockResolvedValue([request("Completed", { method: "Card" })]) }) });
+    expect(document.body.textContent).not.toContain("Onaylı iadeyi iptal et");
+  });
+
+  it("shows a fixed Turkish sentence when cancelling an approved refund is refused", async () => {
+    const client = makeClient({
+      listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Card" })]),
+      reject: vi.fn().mockRejectedValue(new RefundApiError(409, "REFUND_STATE", "raw 409 text")),
+    });
+    await render({ client });
+
+    await pick("İade iptal gerekçesi", "İkram");
+    await click("Onaylı iadeyi iptal et");
+    await click("Evet, onaylı iadeyi iptal et");
+
+    expect(document.body.textContent).toContain("Güncel veriyi alıp yeniden deneyin");
+    expect(document.body.textContent).not.toMatch(/409|raw/);
+  });
+
   it("completes a transfer refund without asking for a slip number", async () => {
     const client = makeClient({
       listRequests: vi.fn().mockResolvedValue([request("AwaitingManualRefund", { method: "Eft" })]),

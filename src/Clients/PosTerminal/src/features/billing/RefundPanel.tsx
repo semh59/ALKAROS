@@ -13,7 +13,7 @@ export interface RefundPanelProps {
   canApproveRefund: boolean;
 }
 
-type Action = "cancel" | "request" | "approve" | "reject" | "complete" | "allowance";
+type Action = "cancel" | "request" | "approve" | "reject" | "cancelApproved" | "complete" | "allowance";
 
 const money = (value: number) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(value);
 const isOpen = (row: RefundRequestRow) => row.status === "Requested" || row.status === "AwaitingManualRefund";
@@ -39,7 +39,10 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   const [texts, setTexts] = useState<Record<string, string>>({});
   const [choices, setChoices] = useState<Record<string, string>>({});
   const loaded = useRef(false);
-  const setText = (key: string, value: string) => setTexts((current) => ({ ...current, [key]: value }));
+  const setText = (key: string, value: string) => {
+    setConfirming(null);
+    setTexts((current) => ({ ...current, [key]: value }));
+  };
   const choose = (key: string, value: string) => {
     setChoices((current) => ({ ...current, [key]: value }));
     setText(key, value === refundText.reasonOther ? "" : value);
@@ -115,7 +118,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
           : result.method === "Eft" ? refundText.reservedFromAllowanceTransfer : refundText.reservedFromAllowance)
         : undefined;
       const base = fromAllowance ?? {
-        request: refundText.requested, approve: refundText.approved, reject: refundText.rejected,
+        request: refundText.requested, approve: refundText.approved, reject: refundText.rejected, cancelApproved: refundText.cancelledApproved,
         complete: refundText.completed, allowance: refundText.allowanceGranted,
       }[action as Exclude<Action, "cancel">];
       setNotice(action === "request" && result && result.items?.length
@@ -273,6 +276,12 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
           <Button data-telemetry-id="b.billing.refundpanel.10" disabled={busy || !filled(texts[`slip:${row.requestId}`])} onClick={() => void run("complete", () => client.complete(row.requestId, texts[`slip:${row.requestId}`] ?? ""))}>
             {refundText.complete}
           </Button>
+        </>}
+        {row.status === "AwaitingManualRefund" && canApproveRefund && row.mayDecide === false && <span>{refundText.mustBeDecidedByAnother}</span>}
+        {row.status === "AwaitingManualRefund" && canApproveRefund && row.mayDecide !== false && <>
+          <span>{refundText.cancelApprovedHint}</span>
+          {reasonField(`cancel:${row.requestId}`, refundText.cancelApprovedLabel)}
+          {guarded(`cancel-approved:${row.requestId}`, refundText.cancelApproved, refundText.cancelApprovedConfirm, "secondary", !filled(texts[`cancel:${row.requestId}`]), "cancelApproved", () => client.reject(row.requestId, texts[`cancel:${row.requestId}`] ?? ""))}
         </>}
       </div>)}
     </div>}

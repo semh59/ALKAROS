@@ -1,7 +1,7 @@
 # V1-RMD-1046 - Yönetici, "Elle iade bekliyor" iadeyi POS ekranından sebep göstererek iptal eder
 
 - Task ID: V1-RMD-1046
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

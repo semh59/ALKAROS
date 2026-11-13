@@ -1,0 +1,9 @@
+killed M1 permission gate removed
+killed M2 mayDecide ignored
+killed M3 button enabled without reason
+killed M4 completes instead of rejecting
+killed M5 no success notice
+killed M6 shown for every status
+killed M7 reason not sent
+killed M8 reason change keeps the confirm question
+killed M9 no hint when another approver must decide

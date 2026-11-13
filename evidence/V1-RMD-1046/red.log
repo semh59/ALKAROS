@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+ ❯ src/features/billing/RefundPanel.test.tsx (37 tests | 3 failed) 733ms
+     × lets an approver cancel an approved Card refund that still waits, after a reason and a second tap 11ms
+     × lets an approver cancel an approved Eft refund that still waits, after a reason and a second tap 4ms
+     × shows a fixed Turkish sentence when cancelling an approved refund is refused 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/billing/RefundPanel.test.tsx > refund panel > lets an approver cancel an approved Card refund that still waits, after a reason and a second tap
+ FAIL  src/features/billing/RefundPanel.test.tsx > refund panel > lets an approver cancel an approved Eft refund that still waits, after a reason and a second tap
+TypeError: Cannot read properties of undefined (reading 'disabled')
+ ❯ src/features/billing/RefundPanel.test.tsx:345:20
+    343|     await render({ client });
+    344|     const cancel = () => [...document.querySelectorAll("button")].find…
+    345|     expect(cancel().disabled).toBe(true);
+       |                    ^
+    346|
+    347|     await pick("Onaylı iade iptal gerekçesi", "İkram");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/billing/RefundPanel.test.tsx > refund panel > shows a fixed Turkish sentence when cancelling an approved refund is refused
+TypeError: Cannot read properties of undefined (reading 'querySelector')
+ ❯ pick src/features/billing/RefundPanel.test.tsx:58:105
+     56|   }
+     57|   async function pick(label: string, option: string) {
+     58|     const select = [...document.querySelectorAll("label")].find((l) =>…
+       |                                                                                                         ^
+     59|     await act(async () => {
+     60|       select.value = option;
+ ❯ src/features/billing/RefundPanel.test.tsx:378:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 34 passed (37)
+   Start at  19:56:53
+   Duration  2.68s (transform 189ms, setup 0ms, import 353ms, tests 733ms, environment 1.32s)
+
