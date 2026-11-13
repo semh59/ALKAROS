@@ -424,22 +424,33 @@ public sealed class PaymentRefundStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var request = await LoadAsync(connection, transaction, requestId, cancellationToken);
-        if (request.Status != "Requested")
+        if (request.Status is not ("Requested" or "AwaitingManualRefund"))
             throw new RefundStateException(requestId, request.Status);
         EnsureMayDecide(request.RequestedBy, deciderId, selfApprovalAllowed);
         var text = RequireText(note, MaxTextLength, "Rejection note", "Ret notu");
         var selfDecided = request.RequestedBy == deciderId;
+        await LockBillAsync(connection, transaction, request.BillId, cancellationToken);
 
         var now = DateTimeOffset.UtcNow;
         await PostgresRefundRequestRepository.MarkRejectedAsync(
             requestId, deciderId, selfDecided ? "Self" : null, text, now, connection, transaction, cancellationToken);
+        var released = request is { Status: "AwaitingManualRefund", ApprovedFromAllowance: true, TerminalId: { } terminalId, DecidedAt: { } spentAt }
+            && await PostgresRefundAllowanceRepository.ReleaseAsync(
+                request.RequestedBy, terminalId, spentAt, request.Amount, connection, transaction, cancellationToken);
 
         await _audit.AppendAsync(
             new AuditEvent(
                 Guid.NewGuid(), "refund.rejected", "Payment", request.PaymentId, "User", requestId.ToString("N"),
                 deciderId, text,
-                beforeStateJson: JsonSerializer.Serialize(new { status = "Requested" }),
-                afterStateJson: JsonSerializer.Serialize(new { status = "Rejected", requestId, selfApproved = selfDecided })),
+                beforeStateJson: JsonSerializer.Serialize(new
+                {
+                    status = request.Status, decidedBy = request.DecidedBy, decidedAt = request.DecidedAt,
+                    viaAllowance = request.ApprovedFromAllowance,
+                }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    status = "Rejected", requestId, selfApproved = selfDecided, allowanceReleased = released,
+                })),
             connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return request with { Status = "Rejected", DecidedBy = deciderId, DecidedAt = now, SelfApproved = selfDecided };

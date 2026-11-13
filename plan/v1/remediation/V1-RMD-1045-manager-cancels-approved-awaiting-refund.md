@@ -1,7 +1,7 @@
 # V1-RMD-1045 - Yönetici, onaylanmış ama fişi/havalesi girilmemiş iadeyi sebep göstererek iptal eder
 
 - Task ID: V1-RMD-1045
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

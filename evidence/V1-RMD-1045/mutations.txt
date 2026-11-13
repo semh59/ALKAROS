@@ -1,0 +1,9 @@
+killed M1 awaiting no longer cancellable (status check back to Requested only)
+killed M2 allowance never released (ApprovedFromAllowance gate forced false)
+killed M3 release ignores session start (opened_at guard removed)
+killed M4 audit before-state fixed to Requested
+killed M5 release amount zero
+killed M6 any status cancellable (state check removed)
+killed M7 release also for manager approvals (gate forced true)
+killed M8 audit allowanceReleased fixed false
+killed M9 audit before-state loses decidedBy

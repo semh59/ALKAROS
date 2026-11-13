@@ -56,4 +56,24 @@ public static class PostgresRefundAllowanceRepository
         command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = sessionId;
         return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
     }
+
+    /// <summary>
+    /// Gives back what a cancelled approval took, but only to the open session that was already open when it was spent;
+    /// a session opened later never spent it.
+    /// </summary>
+    public static async Task<bool> ReleaseAsync(
+        Guid cashierUserId, Guid terminalId, DateTimeOffset spentAt, decimal amount, NpgsqlConnection connection,
+        NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            UPDATE cash.cash_sessions SET refund_allowance_used = GREATEST(refund_allowance_used - @amount, 0)
+            WHERE cashier_user_id = @user AND terminal_id = @terminal AND status = 'Open' AND opened_at <= @spent;
+            """, connection, transaction);
+        command.Parameters.Add("amount", NpgsqlDbType.Numeric).Value = amount;
+        command.Parameters.Add("user", NpgsqlDbType.Uuid).Value = cashierUserId;
+        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
+        command.Parameters.Add("spent", NpgsqlDbType.TimestampTz).Value = spentAt.UtcDateTime;
+        return await command.ExecuteNonQueryAsync(cancellationToken) == 1;
+    }
 }

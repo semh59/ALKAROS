@@ -143,6 +143,9 @@ public sealed partial class PaymentRefundHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
         await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+        using var complete = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1("POS-7", null)));
+        Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
 
         using var response = await client.SendAsync(
             Post($"refund-requests/{request.RequestId:D}/reject", _managerCookie, new RefundDecisionInputV1(" ")));
