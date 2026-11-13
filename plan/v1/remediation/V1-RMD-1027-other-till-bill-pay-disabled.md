@@ -1,7 +1,7 @@
 # V1-RMD-1027 - Başka kasanın hesabında masa panelinde Öde önceden pasif
 
 - Task ID: V1-RMD-1027
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

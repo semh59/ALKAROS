@@ -131,6 +131,24 @@ public sealed class TableManagementStore
         return info;
     }
 
+    /// <summary>The given bills that another terminal owns, so the calling terminal cannot take payment on them.</summary>
+    public async Task<IReadOnlySet<Guid>> GetBillsOwnedByOtherTerminalsAsync(
+        IReadOnlyCollection<Guid> billIds, Guid terminalId, CancellationToken cancellationToken = default)
+    {
+        var owned = new HashSet<Guid>();
+        if (billIds.Count == 0)
+            return owned;
+        // An unowned bill has a NULL terminal_id, which never satisfies <>.
+        await using var command = _dataSource.CreateCommand(
+            "SELECT bill_id FROM billing.bills WHERE bill_id = ANY(@ids) AND terminal_id <> @terminal;");
+        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = billIds.ToArray();
+        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            owned.Add(reader.GetGuid(0));
+        return owned;
+    }
+
     public async Task<Table> CreateAsync(
         CreateTableRequest request,
         CancellationToken cancellationToken = default)

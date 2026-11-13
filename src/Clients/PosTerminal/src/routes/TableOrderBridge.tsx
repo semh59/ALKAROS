@@ -5,7 +5,7 @@ import { formatMoney } from "../format";
 import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
 import { collectionHref } from "../features/pending-checks/pendingChecksApi";
-import { kitchenlessText } from "../strings";
+import { billOnOtherTillText, kitchenlessText } from "../strings";
 
 interface BridgeTable {
   tableId: string;
@@ -14,6 +14,7 @@ interface BridgeTable {
   currentBillId: string | null;
   rowVersion: number;
   currentOrderTotal?: number;
+  billOnOtherTerminal?: boolean;
 }
 
 interface TableOrderBridgeProps {
@@ -50,6 +51,7 @@ export function TableOrderBridge({
   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
   const billed = table.currentBillId !== null;
+  const otherTill = table.billOnOtherTerminal === true;
   const { tableId, currentOrderId } = table;
   useEffect(() => {
     if (!currentOrderId || !canReadLines) return;
@@ -90,7 +92,7 @@ export function TableOrderBridge({
     }
   };
   return <section className="table-order-bridge" aria-label="Masa hesabı">
-    <p id="table-order-bridge-note" className="table-order-bridge__note">{!canManage
+    <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : !canManage
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
       : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
@@ -105,7 +107,7 @@ export function TableOrderBridge({
       {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
         className="primary"
         type="button"
-        disabled={busy || collecting}
+        disabled={busy || collecting || otherTill}
         aria-busy={collecting}
         onClick={() => void collect()}
       >{collecting ? "Hesap açılıyor…" : "Öde"}</button>}
@@ -121,9 +123,9 @@ export function TableOrderBridge({
       {sentOrder && canAddWithoutKitchen && !billed && <button data-telemetry-id="b.routes.tableorderbridge.kitchenless" className="secondary" type="button" disabled={busy || sending || collecting} onClick={onAddWithoutKitchen}>{kitchenlessText.open}</button>}
     </div>
     {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
-      {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>Böl</button>}
+      {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(billingHref)}>Böl</button>}
       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
-      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
+      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
     </div>}
     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}

@@ -1,0 +1,273 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/models.ts b/src/Clients/PosTerminal/src/features/tables/models.ts
+index 2d077add..204a1690 100644
+--- a/src/Clients/PosTerminal/src/features/tables/models.ts
++++ b/src/Clients/PosTerminal/src/features/tables/models.ts
+@@ -48,6 +48,8 @@ export interface TableRecord {
+   currentOrderTotal?: number;
+   servingWaiterName?: string | null;
+   partySize?: number | null;
++  /** The current bill belongs to another till, so this one cannot take payment on it. */
++  billOnOtherTerminal?: boolean;
+ }
+ 
+ export interface FloorPlanSeat {
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 9c200299..f0f050b7 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -330,6 +330,21 @@ describe("TableOrderBridge", () => {
+     expect(button("Masa taşı")?.disabled).toBe(true);
+   });
+ 
++  it("closes Öde, Böl and İptal / iade and says why when another till holds the bill", () => {
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: true } });
++
++    for (const label of ["Öde", "Böl", "İptal / iade"]) expect(button(label)?.disabled).toBe(true);
++    expect(button("Masa taşı")?.disabled).toBe(false);
++    expect(document.body.textContent).toContain("Bu hesap başka bir kasada açık");
++  });
++
++  it("keeps Öde, Böl and İptal / iade open for a bill this till may handle", () => {
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: false } });
++
++    for (const label of ["Öde", "Böl", "İptal / iade"]) expect(button(label)?.disabled).toBe(false);
++    expect(document.body.textContent).not.toContain("Bu hesap başka bir kasada açık");
++  });
++
+   it("draws Böl, Masa taşı and İptal / iade only for those who may use them", () => {
+     render({ canCollect: false, canManage: false, onTransfer: undefined });
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index 839dc639..c5ee0c53 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -5,7 +5,7 @@ import { formatMoney } from "../format";
+ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
+ import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+-import { kitchenlessText } from "../strings";
++import { billOnOtherTillText, kitchenlessText } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -14,6 +14,7 @@ interface BridgeTable {
+   currentBillId: string | null;
+   rowVersion: number;
+   currentOrderTotal?: number;
++  billOnOtherTerminal?: boolean;
+ }
+ 
+ interface TableOrderBridgeProps {
+@@ -50,6 +51,7 @@ export function TableOrderBridge({
+   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
+   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
+   const billed = table.currentBillId !== null;
++  const otherTill = table.billOnOtherTerminal === true;
+   const { tableId, currentOrderId } = table;
+   useEffect(() => {
+     if (!currentOrderId || !canReadLines) return;
+@@ -90,7 +92,7 @@ export function TableOrderBridge({
+     }
+   };
+   return <section className="table-order-bridge" aria-label="Masa hesabı">
+-    <p id="table-order-bridge-note" className="table-order-bridge__note">{!canManage
++    <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : !canManage
+       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
+       : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
+         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
+@@ -105,7 +107,7 @@ export function TableOrderBridge({
+       {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
+         className="primary"
+         type="button"
+-        disabled={busy || collecting}
++        disabled={busy || collecting || otherTill}
+         aria-busy={collecting}
+         onClick={() => void collect()}
+       >{collecting ? "Hesap açılıyor…" : "Öde"}</button>}
+@@ -121,9 +123,9 @@ export function TableOrderBridge({
+       {sentOrder && canAddWithoutKitchen && !billed && <button data-telemetry-id="b.routes.tableorderbridge.kitchenless" className="secondary" type="button" disabled={busy || sending || collecting} onClick={onAddWithoutKitchen}>{kitchenlessText.open}</button>}
+     </div>
+     {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
+-      {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(billingHref)}>Böl</button>}
++      {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(billingHref)}>Böl</button>}
+       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.transfer" className="secondary" type="button" disabled={busy || collecting || !onTransfer} onClick={onTransfer}>Masa taşı</button>}
+-      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
++      {table.currentBillId && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.cancel" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button>}
+     </div>}
+     {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
+     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 78cfabf1..5277af80 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1357,6 +1357,9 @@ export const refundText = {
+ /** Opening a bill for a check needs the same permission as splitting it. */
+ export const openBillDeniedText = "Bu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin.";
+ 
++/** The till that opened a bill is the only one (besides a manager) that may take payment on it; mirrors the server message. */
++export const billOnOtherTillText = "Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir.";
++
+ export const mergeChecksText = {
+   select: (title: string) => `Birleştirmek için seç: ${title}`,
+   action: "Hesapları birleştir",
+diff --git a/src/Host/Experience/Tables/TableManagementApplication.cs b/src/Host/Experience/Tables/TableManagementApplication.cs
+index 1e71c987..71b04252 100644
+--- a/src/Host/Experience/Tables/TableManagementApplication.cs
++++ b/src/Host/Experience/Tables/TableManagementApplication.cs
+@@ -143,11 +143,17 @@ public static class TableManagementApplication
+             var reservedIds = tables.Where(row => row.Table.State == TableState.Reserved).Select(row => row.Table.Id).ToArray();
+             var activeReservations = await reservations.GetActiveByTableIdsAsync(reservedIds, cancellationToken);
+             var serviceInfo = await store.GetServiceInfoAsync(tables.Select(row => row.Table.Id).ToArray(), cancellationToken);
++            var otherTerminalBills = principal.Permissions.Contains(ApplicationPermissions.CashSessionOverride)
++                ? new HashSet<Guid>()
++                : await store.GetBillsOwnedByOtherTerminalsAsync(
++                    tables.Where(row => row.Table.CurrentBillId is not null).Select(row => row.Table.CurrentBillId!.Value).ToArray(),
++                    terminalId, cancellationToken);
+             var dtos = new List<TableDto>(tables.Count);
+             foreach (var (table, currentOrderTotal, currentOrderOpenedAt, statusChangedAt) in tables)
+             {
+                 activeReservations.TryGetValue(table.Id, out var activeReservation);
+-                var dto = TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt);
++                var dto = TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt)
++                    with { BillOnOtherTerminal = table.CurrentBillId is { } billId && otherTerminalBills.Contains(billId) };
+                 dtos.Add(serviceInfo.TryGetValue(table.Id, out var service)
+                     ? dto with { ServingWaiterName = service.WaiterName, PartySize = service.PartySize }
+                     : dto);
+diff --git a/src/Host/Experience/Tables/TableManagementContracts.cs b/src/Host/Experience/Tables/TableManagementContracts.cs
+index 070cb480..75c05b6d 100644
+--- a/src/Host/Experience/Tables/TableManagementContracts.cs
++++ b/src/Host/Experience/Tables/TableManagementContracts.cs
+@@ -153,7 +153,10 @@ public sealed record TableDto(
+     // Display name of the user serving the table's current order and that order's party size; both null on a
+     // table with no current order. Filled by the list endpoint only.
+     string? ServingWaiterName = null,
+-    int? PartySize = null);
++    int? PartySize = null,
++    // True when the table's current bill belongs to another terminal and the caller lacks cash.session.override, so the
++    // caller's till cannot take payment on it. Filled by the list endpoint only.
++    bool BillOnOtherTerminal = false);
+ 
+ public sealed record CreateTableReservationRequest(
+     Guid TableId,
+diff --git a/src/Host/Experience/Tables/TableManagementStore.cs b/src/Host/Experience/Tables/TableManagementStore.cs
+index d64c536e..9b9dacd3 100644
+--- a/src/Host/Experience/Tables/TableManagementStore.cs
++++ b/src/Host/Experience/Tables/TableManagementStore.cs
+@@ -131,6 +131,24 @@ public sealed class TableManagementStore
+         return info;
+     }
+ 
++    /// <summary>The given bills that another terminal owns, so the calling terminal cannot take payment on them.</summary>
++    public async Task<IReadOnlySet<Guid>> GetBillsOwnedByOtherTerminalsAsync(
++        IReadOnlyCollection<Guid> billIds, Guid terminalId, CancellationToken cancellationToken = default)
++    {
++        var owned = new HashSet<Guid>();
++        if (billIds.Count == 0)
++            return owned;
++        // An unowned bill has a NULL terminal_id, which never satisfies <>.
++        await using var command = _dataSource.CreateCommand(
++            "SELECT bill_id FROM billing.bills WHERE bill_id = ANY(@ids) AND terminal_id <> @terminal;");
++        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = billIds.ToArray();
++        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        while (await reader.ReadAsync(cancellationToken))
++            owned.Add(reader.GetGuid(0));
++        return owned;
++    }
++
+     public async Task<Table> CreateAsync(
+         CreateTableRequest request,
+         CancellationToken cancellationToken = default)
+diff --git a/tests/Host/Experience/Tables/TableManagementHttpTests.cs b/tests/Host/Experience/Tables/TableManagementHttpTests.cs
+index dc732c9b..6ddfadbf 100644
+--- a/tests/Host/Experience/Tables/TableManagementHttpTests.cs
++++ b/tests/Host/Experience/Tables/TableManagementHttpTests.cs
+@@ -289,6 +289,35 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
+         Assert.Null(card.PartySize);
+     }
+ 
++    [Fact]
++    public async Task TableListFlagsABillAnotherTerminalOwnsUnlessTheUserMayOverrideTheCashSession()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var theirs = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-OTHER", null, 4));
++        var mine = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-MINE", null, 4));
++        var unowned = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-FREE", null, 4));
++        await _database.SeedCurrentBillAsync(theirs.TableId, Guid.NewGuid());
++        await _database.SeedCurrentBillAsync(mine.TableId, terminalId);
++        await _database.SeedCurrentBillAsync(unowned.TableId, null);
++
++        async Task<TableDto[]> ListAsync()
++        {
++            using var list = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie));
++            return (await list.Content.ReadFromJsonAsync<TableDto[]>())!;
++        }
++
++        var tables = await ListAsync();
++        Assert.True(Assert.Single(tables, t => t.TableId == theirs.TableId).BillOnOtherTerminal);
++        Assert.False(Assert.Single(tables, t => t.TableId == mine.TableId).BillOnOtherTerminal);
++        Assert.False(Assert.Single(tables, t => t.TableId == unowned.TableId).BillOnOtherTerminal);
++
++        await _database.GrantCashSessionOverrideAsync(terminalId);
++        Assert.False(Assert.Single(await ListAsync(), t => t.TableId == theirs.TableId).BillOnOtherTerminal);
++    }
++
+     /// <summary>V1-WTR-019: garson-karsilastirma idea #7, "masa yaşlanma göstergesi".</summary>
+     [Fact]
+     public async Task TableListReportsWhenTheCurrentOrderWasOpenedAndNullWhenThereIsNone()
+@@ -826,6 +855,52 @@ internal sealed class TableManagementTestDatabase
+         return $"{DualScreenApplication.CashierCookieName}={raw}";
+     }
+ 
++    /// <summary>Gives the table an open bill, owned by <paramref name="ownerTerminalId"/> when given, and points the table at it.</summary>
++    public async Task SeedCurrentBillAsync(Guid tableId, Guid? ownerTerminalId)
++    {
++        var orderId = Guid.NewGuid();
++        var billId = Guid.NewGuid();
++        await ExecuteAsync(
++            DataSource,
++            """
++            INSERT INTO orders.orders (order_id, source, table_id, status, confirmation_status, order_number, created_at, updated_at)
++            VALUES (@order_id, 'Cashier', @table_id, 'Submitted', 'NotRequired', @order_number, now(), now());
++
++            INSERT INTO billing.bills (bill_id, bill_number, table_id, order_id, status, terminal_id, opened_at, created_at, updated_at)
++            VALUES (@bill_id, @bill_number, @table_id, @order_id, 'Open', @terminal_id, now(), now(), now());
++
++            UPDATE table_mgmt.tables SET current_order_id = @order_id, current_bill_id = @bill_id WHERE table_id = @table_id;
++            """,
++            ("order_id", orderId),
++            ("table_id", tableId),
++            ("order_number", "ORD-" + orderId.ToString("N")),
++            ("bill_id", billId),
++            ("bill_number", "BIL-" + billId.ToString("N")),
++            ("terminal_id", (object?)ownerTerminalId ?? DBNull.Value));
++    }
++
++    public async Task GrantCashSessionOverrideAsync(Guid terminalId)
++    {
++        await ExecuteAsync(
++            DataSource,
++            """
++            INSERT INTO identity.permissions (permission_id, code, name)
++            VALUES (gen_random_uuid(), 'cash.session.override', 'cash.session.override') ON CONFLICT (code) DO NOTHING;
++
++            WITH role AS (
++                INSERT INTO identity.roles (role_id, code, name) VALUES (gen_random_uuid(), 'table-override-' || @device, 'Override')
++                RETURNING role_id)
++            INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
++            SELECT gen_random_uuid(), role.role_id, p.permission_id FROM role, identity.permissions p WHERE p.code = 'cash.session.override';
++
++            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
++            SELECT gen_random_uuid(), s.user_id, r.role_id
++            FROM identity.device_sessions s JOIN identity.roles r ON r.code = 'table-override-' || @device
++            WHERE s.device_id = @device;
++            """,
++            ("device", $"cashier:{terminalId:D}"));
++    }
++
+     public async Task SeedOpenOrderAndBillAsync(Guid tableId)
+     {
+         var orderId = Guid.NewGuid();

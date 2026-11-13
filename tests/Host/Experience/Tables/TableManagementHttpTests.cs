@@ -289,6 +289,35 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
         Assert.Null(card.PartySize);
     }
 
+    [Fact]
+    public async Task TableListFlagsABillAnotherTerminalOwnsUnlessTheUserMayOverrideTheCashSession()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, canMutate: true, expired: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var theirs = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-OTHER", null, 4));
+        var mine = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-MINE", null, 4));
+        var unowned = await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, "T-FREE", null, 4));
+        await _database.SeedCurrentBillAsync(theirs.TableId, Guid.NewGuid());
+        await _database.SeedCurrentBillAsync(mine.TableId, terminalId);
+        await _database.SeedCurrentBillAsync(unowned.TableId, null);
+
+        async Task<TableDto[]> ListAsync()
+        {
+            using var list = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/tables", cookie));
+            return (await list.Content.ReadFromJsonAsync<TableDto[]>())!;
+        }
+
+        var tables = await ListAsync();
+        Assert.True(Assert.Single(tables, t => t.TableId == theirs.TableId).BillOnOtherTerminal);
+        Assert.False(Assert.Single(tables, t => t.TableId == mine.TableId).BillOnOtherTerminal);
+        Assert.False(Assert.Single(tables, t => t.TableId == unowned.TableId).BillOnOtherTerminal);
+
+        await _database.GrantCashSessionOverrideAsync(terminalId);
+        Assert.False(Assert.Single(await ListAsync(), t => t.TableId == theirs.TableId).BillOnOtherTerminal);
+    }
+
     /// <summary>V1-WTR-019: garson-karsilastirma idea #7, "masa yaşlanma göstergesi".</summary>
     [Fact]
     public async Task TableListReportsWhenTheCurrentOrderWasOpenedAndNullWhenThereIsNone()
@@ -824,6 +853,52 @@ internal sealed class TableManagementTestDatabase
         }
 
         return $"{DualScreenApplication.CashierCookieName}={raw}";
+    }
+
+    /// <summary>Gives the table an open bill, owned by <paramref name="ownerTerminalId"/> when given, and points the table at it.</summary>
+    public async Task SeedCurrentBillAsync(Guid tableId, Guid? ownerTerminalId)
+    {
+        var orderId = Guid.NewGuid();
+        var billId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO orders.orders (order_id, source, table_id, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES (@order_id, 'Cashier', @table_id, 'Submitted', 'NotRequired', @order_number, now(), now());
+
+            INSERT INTO billing.bills (bill_id, bill_number, table_id, order_id, status, terminal_id, opened_at, created_at, updated_at)
+            VALUES (@bill_id, @bill_number, @table_id, @order_id, 'Open', @terminal_id, now(), now(), now());
+
+            UPDATE table_mgmt.tables SET current_order_id = @order_id, current_bill_id = @bill_id WHERE table_id = @table_id;
+            """,
+            ("order_id", orderId),
+            ("table_id", tableId),
+            ("order_number", "ORD-" + orderId.ToString("N")),
+            ("bill_id", billId),
+            ("bill_number", "BIL-" + billId.ToString("N")),
+            ("terminal_id", (object?)ownerTerminalId ?? DBNull.Value));
+    }
+
+    public async Task GrantCashSessionOverrideAsync(Guid terminalId)
+    {
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.permissions (permission_id, code, name)
+            VALUES (gen_random_uuid(), 'cash.session.override', 'cash.session.override') ON CONFLICT (code) DO NOTHING;
+
+            WITH role AS (
+                INSERT INTO identity.roles (role_id, code, name) VALUES (gen_random_uuid(), 'table-override-' || @device, 'Override')
+                RETURNING role_id)
+            INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+            SELECT gen_random_uuid(), role.role_id, p.permission_id FROM role, identity.permissions p WHERE p.code = 'cash.session.override';
+
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            SELECT gen_random_uuid(), s.user_id, r.role_id
+            FROM identity.device_sessions s JOIN identity.roles r ON r.code = 'table-override-' || @device
+            WHERE s.device_id = @device;
+            """,
+            ("device", $"cashier:{terminalId:D}"));
     }
 
     public async Task SeedOpenOrderAndBillAsync(Guid tableId)

@@ -1,0 +1,2 @@
+qa-backend: kural BillTerminalAccess ile tutarli, SQL dogru. Kabul/acik: birlestirilmis masada yalniz ana masanin current_bill_id degerine bakilir (dusuk-orta); GET /tables/{id} alani doldurmaz (yorum "yalniz liste" diyor); billIds Distinct edilmiyor (kozmetik).
+qa-ux-tasarim: ust not ile "Iptal / iade ile iptal edin" cumlesi celisiyordu -> otherTill iken ust not tek mesajdir, ayri small kaldirildi. Acik (urun karari): Bekleyen hesaplar ekraninda ayni kural yok; Masa tasi baska kasanin hesabinda etkin; kasa adi metne eklensin mi.

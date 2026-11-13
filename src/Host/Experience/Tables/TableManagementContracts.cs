@@ -153,7 +153,10 @@ public sealed record TableDto(
     // Display name of the user serving the table's current order and that order's party size; both null on a
     // table with no current order. Filled by the list endpoint only.
     string? ServingWaiterName = null,
-    int? PartySize = null);
+    int? PartySize = null,
+    // True when the table's current bill belongs to another terminal and the caller lacks cash.session.override, so the
+    // caller's till cannot take payment on it. Filled by the list endpoint only.
+    bool BillOnOtherTerminal = false);
 
 public sealed record CreateTableReservationRequest(
     Guid TableId,

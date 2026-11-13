@@ -48,6 +48,8 @@ export interface TableRecord {
   currentOrderTotal?: number;
   servingWaiterName?: string | null;
   partySize?: number | null;
+  /** The current bill belongs to another till, so this one cannot take payment on it. */
+  billOnOtherTerminal?: boolean;
 }
 
 export interface FloorPlanSeat {

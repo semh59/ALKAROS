@@ -1357,6 +1357,9 @@ export const refundText = {
 /** Opening a bill for a check needs the same permission as splitting it. */
 export const openBillDeniedText = "Bu hesabı açma yetkiniz yok; müdürden hesabı açmasını isteyin.";
 
+/** The till that opened a bill is the only one (besides a manager) that may take payment on it; mirrors the server message. */
+export const billOnOtherTillText = "Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici işlem yapabilir.";
+
 export const mergeChecksText = {
   select: (title: string) => `Birleştirmek için seç: ${title}`,
   action: "Hesapları birleştir",

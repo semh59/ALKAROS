@@ -143,11 +143,17 @@ public static class TableManagementApplication
             var reservedIds = tables.Where(row => row.Table.State == TableState.Reserved).Select(row => row.Table.Id).ToArray();
             var activeReservations = await reservations.GetActiveByTableIdsAsync(reservedIds, cancellationToken);
             var serviceInfo = await store.GetServiceInfoAsync(tables.Select(row => row.Table.Id).ToArray(), cancellationToken);
+            var otherTerminalBills = principal.Permissions.Contains(ApplicationPermissions.CashSessionOverride)
+                ? new HashSet<Guid>()
+                : await store.GetBillsOwnedByOtherTerminalsAsync(
+                    tables.Where(row => row.Table.CurrentBillId is not null).Select(row => row.Table.CurrentBillId!.Value).ToArray(),
+                    terminalId, cancellationToken);
             var dtos = new List<TableDto>(tables.Count);
             foreach (var (table, currentOrderTotal, currentOrderOpenedAt, statusChangedAt) in tables)
             {
                 activeReservations.TryGetValue(table.Id, out var activeReservation);
-                var dto = TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt);
+                var dto = TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt)
+                    with { BillOnOtherTerminal = table.CurrentBillId is { } billId && otherTerminalBills.Contains(billId) };
                 dtos.Add(serviceInfo.TryGetValue(table.Id, out var service)
                     ? dto with { ServingWaiterName = service.WaiterName, PartySize = service.PartySize }
                     : dto);
