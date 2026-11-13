@@ -8,7 +8,7 @@
 
 ## Goal
 
-PaymentTender.Tests "ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay" hesap iptalinden sonra müşteri ekranı "Idle" olmadığı için düşüyordu. Kök neden üretim hatası değildir: V1-RMD-801 ile hesap iptali varsayılan olarak siparişi masada bırakır (yalnız CancelOrder işaretliyse siparişi de iptal eder) ve müşteri ekranı yaşayan siparişi göstermeye devam eder; test eski varsayımla yalnız hesabı iptal ediyordu. Test, siparişle birlikte iptal (CancelOrder) için ekranın boşaldığını kanıtlar; ayrı bir test yalnız hesap iptalinde siparişin satırlarıyla ekranda kaldığını kilitler. Test silinmez ve gevşetilmez.
+PaymentTender.Tests "ACancelledBillNoLongerLeavesOrderReceivedOnTheDisplay" hesap iptalinden sonra müşteri ekranı "Idle" olmadığı için düşüyordu. Kök neden üretim hatası değildir: ekran, hesabı iptal edilmiş ve artık düzenlenmeyen siparişi boşaltır (CustomerDisplayPaymentProgress); test ise siparişi mutfağa gönderilmemiş (Draft kalem) tohumluyordu, bu sipariş hâlâ düzenleniyor sayılır ve ekranda kalması doğrudur. Test mutfağa gönderilmiş siparişle çalışır (kalemler Active) ve boşalmayı kanıtlar; ayrı bir test gönderilmemiş siparişin ekranda kaldığını kilitler. Test silinmez ve gevşetilmez.
 
 ## Owned surface
 
