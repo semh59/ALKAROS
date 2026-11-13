@@ -1,0 +1,212 @@
+diff --git a/docs/CASHIER_UI_RULES.md b/docs/CASHIER_UI_RULES.md
+new file mode 100644
+index 000000000..c0bbd32a4
+--- /dev/null
++++ b/docs/CASHIER_UI_RULES.md
+@@ -0,0 +1,102 @@
++# ALKAROS Kasa Arayüz Kuralları
++
++Bu belge kasa ekranlarının (masa planı, masa paneli, Hesap Ödeme, iade ve iptal) görsel kurallarını
++tek yerde toplar. Dil ve hata metni kuralları [UI_STYLE_GUIDE.md](UI_STYLE_GUIDE.md), renk ve genel
++tasarım temeli [design/foundations.md](design/foundations.md) belgesindedir; burada onlarla çelişen
++kural yoktur, yalnız kasa için daha sıkı sınırlar vardır.
++
++Kasiyer önceliği: ekran hızlı ve ıslak elle kullanılır. Bir kural güzellikle çatışırsa hız, okunurluk
++ve yanlış dokunmayı önleme kazanır. Yeni renk eklenmez; yalnız aşağıda adı geçen jetonlar kullanılır.
++
++İki istemci aynı kuralı uygular: PosTerminal (React) `--ds-*` jetonlarını, Cashier sayfaları
++(`payments/split-payment`, `cashier-app.css`) aynı değerlerin `--color-*` kopyalarını kullanır.
++
++| PosTerminal | Cashier sayfaları | Değer |
++| --- | --- | --- |
++| `--ds-color-ink` | `--color-ink` | `#0b2135` |
++| `--ds-color-brand` | `--color-brand` | `#1b4d7b` |
++| `--ds-color-accent` | `--color-accent` | `#00cfff` |
++| `--ds-color-muted` | `--color-text-muted` | `#4d5c68` |
++| `--ds-color-line` | `--color-border` | `#c8d0d7` |
++| `--ds-color-success` | `--color-success` | `#176548` |
++| `--ds-color-warning` | `--color-warning` | `#735400` |
++| `--ds-color-danger` | `--color-danger` | `#9a2530` |
++| `--ds-target-min` | `--touch-target` | `48px` |
++
++Cashier sayfalarında `-soft` zemin karşılığı yoktur; aynı rengin açık tonu (`rgba`) kullanılır.
++
++## 1. Kapsam
++
++Kasiyerin dokunduğu her ekran: masa planı, masa paneli, Hesap Ödeme, iade ve iptal, hızlı satış.
++Yönetici ekranları bu belgenin dışındadır; ham kimlik gibi teknik bilgi yalnız orada gösterilir.
++Bu belge hedef kuraldır: bir ekran kuraldan ayrışıyorsa ekran düzeltilir, belge değil. Durum tablosu (4) masa planı
++durumlarını kapsar; diğer ekranlar aynı jetonları kullanır.
++
++## 2. Punto
++
++- En küçük yazı 14px (`0.875rem`): rozet, alt not, kart altı, etiket, uyarı. 14px'ten küçük yazı yoktur.
++- Gövde ve düğme yazısı 16px, tutar ve ana değer 20px ve üstü, ekran başlığı 22px ve üstü.
++- Rozet ve etiketler kalın (700) yazılır; renk tek başına anlam taşımaz.
++
++## 3. Dokunma hedefi ve boşluk
++
++- Her dokunulan öğe en az `--ds-target-min` (48px) yüksekliğinde ve genişliğindedir; birincil eylem 56px ve üstü ([design/foundations.md](design/foundations.md) 3).
++- Yan yana ve alt alta iki dokunma hedefi arasında en az 16px (`--ds-space-4`) boşluk bırakılır.
++- Yıkıcı eylem (iptal, iade) başka eylemlerle aynı satırda durmaz; kendi satırında ve kendi stilindedir.
++- Pasif düğmenin yanında neden bir cümleyle yazılır; nedensiz pasif düğme yoktur.
++
++## 4. Durum tablosu
++
++Aynı durum her ekranda aynı rozetle, aynı yazı ve zemin jetonuyla çizilir (kart, panel, liste, rozet).
++Renk yetmez: her durumda ikon ve Türkçe etiket de vardır. Anahtarlar masa planındaki plan anahtarlarıdır.
++
++| Anahtar | Etiket | İkon | Yazı jetonu | Zemin jetonu | Neden |
++| --- | --- | --- | --- | --- | --- |
++| `free` | Müsait | ○ | `--ds-color-success` | `--ds-color-success-soft` | Boş masa, işlem gerekmez |
++| `busy` | Dolu | ● | `--ds-color-ink` | `--ds-color-surface-subtle` | Olağan durum bağırmaz, nötrdür |
++| `ask` | Hesap istedi | ⚠ | `--ds-color-warning` | `--ds-color-warning-soft` | Misafir bekliyor, kasiyer harekete geçer |
++| `pay` | Ödeme bekliyor | ₺ | `--ds-color-info` | `--ds-color-info-soft` | Hesap açık, tahsilat sırada |
++| `rez` | Rezerve | ◔ | `--ds-color-brand` | `--ds-color-surface-subtle` | Planlı, dokunulmaz |
++| `clean` | Toplanıyor | ✦ | `--ds-color-muted` | `--ds-color-surface-subtle` | Bilgi, uyarı değil |
++| `off` | Servis dışı | ⊘ | `--ds-color-disabled-ink` | `--ds-color-surface-subtle` | Kullanılamaz |
++
++- Kırmızı (`--ds-color-danger`) yalnız hata, yıkıcı eylem ve "Uzun süre açık" uyarısı içindir; normal bakiye kırmızı olmaz.
++- Uzun süre açık: masa 45 dakikayı (`--ds-heat-active-max-minutes`) aşınca kart "Uzun süre açık" yazısı taşır ve
++  ayırt edici deseni yalnız o masa (ve hesap isteyen masa) alır. Diğer masalarda desen yoktur.
++- Dikkat şeridi kartları tekrarlamaz; en çok sayı gösterir.
++
++## 5. Düğme hiyerarşisi
++
++| Rol | Görünüm | Kural |
++| --- | --- | --- |
++| Birincil | `--ds-color-accent` dolgu, `--ds-color-ink` yazı | Ekranda en çok bir tane: o ekranın asıl eylemi |
++| İkincil | `--ds-color-surface` zemin, `--ds-color-line` kenar, ink yazı | Yardımcı eylemler |
++| Yıkıcı | surface zemin, `--ds-color-danger` yazı ve kenar | Kendi satırında; tek dokunuşla uygulanmaz |
++| Yıkıcı onay | `--ds-color-danger` dolgu, beyaz yazı | Yalnız onay adımında |
++
++Beyaz yazı yalnız yıkıcı onayda ve koyu dolguda kullanılır; `--ds-color-accent` üzerinde yazı daima ink'tir.
++
++## 6. Para ve rakam biçimi
++
++- Para her ekranda `₺160,00` biçimindedir: simge önde, virgül ondalık, iki hane. `5 ₺` veya `160.00` yazılmaz.
++- Rakamlar `font-variant-numeric: tabular-nums` ile hizalanır.
++- Kalan tutar nötrdür (ink); bakiye tamamen ödendiğinde success. Ödenen, Hesap toplamı ile aynı boyda ve ağırlıktadır.
++
++## 7. Başlık düzeni
++
++- Bir ekranda bir başlık (`h1`) vardır; üst etiket, başlık ve alt başlık aynı şeyi tekrar etmez.
++- Başlık ekranın eylemini söyler ("Tahsilat"); masa adı ("Masa M-03") onun altında tek bağlam satırıdır ve ikinci bir başlık gibi çizilmez.
++- Ham terminal kodu veya kimlik kasa başlığında gösterilmez.
++
++## 8. Yıkıcı işlem onayı
++
++- Onay yalnız geri alınamaz eylemde (iptal, iade, void) istenir; geri alınabilir eylem tek dokunuşla uygulanır ve geri al sunar (foundations 5.2).
++- Onay düğmesi eylemi, masayı ve tutarı adlandırır (ör. "M-03 masasına ₺145,00 iade et").
++- Uyarı metni 14px veya büyük, ink ya da muted renkte, düğmenin hemen üstündedir.
++- Tehlikeli seçenek varsayılan olarak seçili gelmez; her alanın görünür bir etiketi vardır.
++- Ayrıntı için [design/foundations.md](design/foundations.md) 5.2.
++
++## 9. Bildirim
++
++Bir olay tek yerde bildirilir: eylem gerektiriyorsa kalıcı şerit, yalnız bilgi veya başarıysa kendiliğinden kapanan
++bildirim; aynı olay ikisinde birden görünmez (foundations 5.3).
+diff --git a/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts b/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts
+new file mode 100644
+index 000000000..b48db39c9
+--- /dev/null
++++ b/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts
+@@ -0,0 +1,98 @@
++import { existsSync, readFileSync } from "node:fs";
++import { describe, expect, it } from "vitest";
++import { planLegend } from "../features/tables/tablePlanModel";
++
++const repo = (path: string) => new URL(`../../../../../${path}`, import.meta.url);
++const read = (path: string) => readFileSync(repo(path), "utf8");
++
++const doc = read("docs/CASHIER_UI_RULES.md");
++const tokens = read("src/Clients/PosTerminal/src/design-system/tokens.css");
++const vanillaStyles = [
++  read("src/Clients/Cashier/wwwroot/cashier-app.css"),
++  read("src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css"),
++];
++
++const cells = (line: string) => line.split("|").slice(1, -1).map((cell) => cell.trim());
++const section = (heading: string) => {
++  const start = doc.indexOf(`## ${heading}`);
++  expect(start, `${heading} missing`).toBeGreaterThanOrEqual(0);
++  const end = doc.indexOf("\n## ", start + 1);
++  return doc.slice(start, end < 0 ? undefined : end);
++};
++const statusRows = () => section("4. Durum tablosu").split("\n").filter((line) => /^\| `\w+` \|/.test(line)).map(cells);
++const backticked = (pattern: RegExp) => [...new Set([...doc.matchAll(/`(--[\w-]+)`/g)].map((match) => match[1]).filter((name) => pattern.test(name)))];
++
++describe("docs/CASHIER_UI_RULES.md", () => {
++  it("lists every table-plan status once, with the label and icon the table plan draws", () => {
++    const rows = statusRows();
++    expect(rows.map(([key]) => key.replaceAll("`", ""))).toEqual(planLegend.map((entry) => entry.key));
++    rows.forEach(([, label, icon], index) => {
++      expect([label, icon]).toEqual([planLegend[index].label, planLegend[index].icon]);
++    });
++  });
++
++  it("gives every status a text and a background token that tokens.css defines", () => {
++    for (const row of statusRows()) {
++      for (const token of [row[3], row[4]]) {
++        expect(token, `${row[0]} token`).toMatch(/^`--ds-color-[\w-]+`$/);
++        expect(tokens).toContain(`${token.replaceAll("`", "")}:`);
++      }
++    }
++  });
++
++  it("pairs each status text token with its own soft tint, or with the neutral surface", () => {
++    for (const [key, , , text, background] of statusRows()) {
++      expect(background, key).toBeOneOf([`${text.slice(0, -1)}-soft\``, "`--ds-color-surface-subtle`"]);
++    }
++  });
++
++  it("resolves every relative link of the document to an existing file", () => {
++    const links = [...doc.matchAll(/\]\(([^)#]+\.md)\)/g)].map((match) => match[1]);
++    expect(links).toEqual(expect.arrayContaining(["UI_STYLE_GUIDE.md", "design/foundations.md"]));
++    for (const link of links) expect(existsSync(repo(`docs/${link}`)), link).toBe(true);
++  });
++
++  it("states for each shared token the value both stylesheets really carry", () => {
++    const rows = doc.split("\n").filter((line) => /^\| `--ds-[\w-]+` \| `--[\w-]+` \|/.test(line)).map((line) => cells(line).map((cell) => cell.replaceAll("`", "")));
++    expect(rows.length).toBe(9);
++    const valueOf = (css: string, name: string) => new RegExp(`${name}:\\s*([^;]+);`).exec(css)?.[1].trim().toLowerCase();
++    for (const [ds, vanilla, expected] of rows) {
++      expect(valueOf(tokens, ds), ds).toBe(expected);
++      for (const css of vanillaStyles) expect(valueOf(css, vanilla), vanilla).toBe(expected);
++    }
++  });
++
++  it("names only design tokens that exist", () => {
++    const names = backticked(/^--ds-/);
++    expect(names.length).toBeGreaterThan(10);
++    for (const name of names) expect(tokens, name).toContain(`${name}:`);
++  });
++
++  it("names the Cashier page tokens only when both Cashier stylesheets define them", () => {
++    const names = backticked(/^--(color|touch)-/);
++    expect(names.length).toBeGreaterThan(5);
++    for (const name of names) for (const css of vanillaStyles) expect(css, name).toContain(`${name}:`);
++  });
++
++  it("states the touch target, the gap and the long-open threshold the tokens carry", () => {
++    const targetPx = /--ds-target-min:\s*(\d+)px/.exec(tokens)![1];
++    const heatMinutes = /--ds-heat-active-max-minutes:\s*(\d+)/.exec(tokens)![1];
++    expect(tokens).toMatch(/--ds-space-4:\s*1rem;/);
++    expect(section("3. Dokunma hedefi ve boşluk")).toContain(`\`--ds-target-min\` (${targetPx}px)`);
++    expect(section("3. Dokunma hedefi ve boşluk")).toContain("en az 16px (`--ds-space-4`)");
++    expect(section("4. Durum tablosu")).toContain(`${heatMinutes} dakikayı (\`--ds-heat-active-max-minutes\`)`);
++  });
++
++  it("cites only foundations sections that exist", () => {
++    const foundations = read("docs/design/foundations.md");
++    for (const heading of ["## 3. Boşluk ve dokunma hedefleri", "### 5.2 Onay kalıpları", "### 5.3 Bildirim türleri"]) expect(foundations).toContain(heading);
++    expect(doc).toContain("foundations.md) 3).");
++    expect(doc).toContain("(foundations 5.2)");
++    expect(doc).toContain("(foundations 5.3)");
++  });
++
++  it("fixes the smallest text size and the money format", () => {
++    expect(section("2. Punto")).toContain("En küçük yazı 14px");
++    expect(section("6. Para ve rakam biçimi")).toContain("₺160,00");
++  });
++});

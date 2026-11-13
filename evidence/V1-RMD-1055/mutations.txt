@@ -1,0 +1,15 @@
+killed M1 status label changed
+killed M2 status icon changed
+killed M3 unknown ds token
+killed M4 smallest text rule removed
+killed M5 status order swapped
+killed M6 unknown Cashier token
+killed M7 foundations link dropped
+killed M8 long-open threshold changed
+killed M9 touch target changed
+killed M10 money example changed
+killed M11 table hex differs from stylesheets
+killed M12 link to missing document
+killed M13 gap rule changed
+killed M14 foundations section cite broken
+killed M15 status pair swapped

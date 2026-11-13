@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/design-system/cashierUiRules.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/design-system/cashierUiRules.test.ts [ src/design-system/cashierUiRules.test.ts ]
+Error: ENOENT: no such file or directory, open 'D:\PROJECT\ALKAROS\docs\CASHIER_UI_RULES.md'
+ ❯ read src/design-system/cashierUiRules.test.ts:6:32
+      4|
+      5| const repo = (path: string) => new URL(`../../../../../${path}`, impor…
+      6| const read = (path: string) => readFileSync(repo(path), "utf8");
+       |                                ^
+      7|
+      8| const doc = read("docs/CASHIER_UI_RULES.md");
+ ❯ src/design-system/cashierUiRules.test.ts:8:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  02:24:24
+   Duration  380ms (transform 78ms, setup 0ms, import 0ms, tests 0ms, environment 0ms)
+
+exit=1
