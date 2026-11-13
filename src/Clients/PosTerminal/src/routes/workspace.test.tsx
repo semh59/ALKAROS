@@ -225,6 +225,38 @@ describe("workspace route gating uses granular permission codes, not the removed
     expect(document.querySelector('input[type="checkbox"]') !== null).toBe(mergeOffered);
   });
 
+  it("shows the number of listed checks on the menu badge while the till queue is open", async () => {
+    const check = (orderId: string) => ({ orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tb-5" });
+    await renderRoute("/pending-checks", ["orders.create"], (url) => (url.includes("awaiting-payment") ? [check("o-1"), check("o-2"), check("o-3")] : []));
+    await act(async () => Promise.resolve());
+
+    expect(document.querySelector(".production-shell__nav-badge")?.textContent).toContain("3");
+  });
+
+  it("does not show the previous visit's count on the badge when the till queue is opened again", async () => {
+    const check = (orderId: string) => ({ orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tb-5" });
+    let queueAnswer: () => Promise<Response> = async () => jsonResponse([check("o-1"), check("o-2"), check("o-3")]);
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => (String(url).includes("awaiting-payment") ? queueAnswer() : jsonResponse([]))));
+    const show = (path: string) => act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="33333333-3333-3333-3333-333333333333" displayName="Test" capabilities={["orders.create"]} path={path} backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>));
+    window.history.replaceState({}, "", "/pending-checks");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await show("/pending-checks");
+    await act(async () => Promise.resolve());
+    expect(document.querySelector(".production-shell__nav-badge")?.textContent).toContain("3");
+
+    queueAnswer = async () => jsonResponse([]);
+    await show("/tables");
+    await act(async () => Promise.resolve());
+    queueAnswer = () => new Promise<Response>(() => undefined);
+    await show("/pending-checks");
+
+    expect(document.querySelector(".production-shell__nav-badge")).toBeNull();
+  });
+
   it("gives every left-menu entry its own icon", async () => {
     await renderRoute("/", ["orders.create", "tables.status", "bills.split", "kitchen.advance", "catalog.manage", "reports.view"]);
     await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());

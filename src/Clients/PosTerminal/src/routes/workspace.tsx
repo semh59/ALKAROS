@@ -59,7 +59,10 @@ export function ExperiencePage({
 }) {
   const { navigate } = useRouter();
   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
-  const pendingCheckCount = usePendingChecksAlert(terminalId, capabilitySet.has("orders.create") && path !== "/pending-checks");
+  const [listedCheckCount, setListedCheckCount] = useState<number>();
+  const polledCheckCount = usePendingChecksAlert(terminalId, capabilitySet.has("orders.create") && path !== "/pending-checks");
+  useEffect(() => { if (path !== "/pending-checks") setListedCheckCount(undefined); }, [path]);
+  const pendingCheckCount = path === "/pending-checks" && listedCheckCount !== undefined ? listedCheckCount : polledCheckCount;
   // Which capability a route needs is a route->permission map, not a role guess.
   // `pos.cashier.mutate` was dropped from the permission catalog in migration
   // 049 (V1-IAM-024) — every check below used to key off it, so no session
@@ -179,7 +182,7 @@ export function ExperiencePage({
     {cashSession && <CashSessionBand status={cashSession} />}
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
-    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
+    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
       <OnlineFoodHub
         terminalId={terminalId}

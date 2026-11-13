@@ -1,0 +1,103 @@
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx b/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
+index 9df48d5b..c401836d 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
+@@ -33,10 +33,12 @@ function checkTitle(check: PendingCheck): string {
+  * sit at the same table. Tapping a row opens (or creates) its bill and goes straight to collection.
+  * Nothing here touches the table.
+  */
+-export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, navigateTo = (href: string) => window.location.assign(href) }: {
++export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, onCount, navigateTo = (href: string) => window.location.assign(href) }: {
+   terminalId: string;
+   canCancel: boolean;
+   canMerge: boolean;
++  /** Told the number of listed checks after every read, so the menu badge shows the same number. */
++  onCount?: (count: number) => void;
+   navigateTo?: (href: string) => void;
+ }) {
+   const [checks, setChecks] = useState<readonly PendingCheck[] | null>(null);
+@@ -62,6 +64,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
+       if (hasNewCheck(knownIds.current, loaded)) playNewItemChime();
+       knownIds.current = new Set(loaded.map((check) => check.orderId));
+       setChecks(loaded);
++      onCount?.(loaded.length);
+       setSelected((current) => current.filter((id) => loaded.some((row) => row.orderId === id && canMerge(row))));
+       setCancelling((current) => current && loaded.some((row) => row.orderId === current.orderId && row.paidAmount === 0) ? current : undefined);
+       setLoadedAt(new Date());
+@@ -71,7 +74,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
+       if (ticket !== latestLoad.current) return;
+       setError(reason instanceof PendingChecksApiError ? reason.message : "Bekleyen hesaplar okunamadı.");
+     }
+-  }, [terminalId]);
++  }, [terminalId, onCount]);
+ 
+   useEffect(() => {
+     void load();
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index c3937208..cc692514 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -225,6 +225,38 @@ describe("workspace route gating uses granular permission codes, not the removed
+     expect(document.querySelector('input[type="checkbox"]') !== null).toBe(mergeOffered);
+   });
+ 
++  it("shows the number of listed checks on the menu badge while the till queue is open", async () => {
++    const check = (orderId: string) => ({ orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tb-5" });
++    await renderRoute("/pending-checks", ["orders.create"], (url) => (url.includes("awaiting-payment") ? [check("o-1"), check("o-2"), check("o-3")] : []));
++    await act(async () => Promise.resolve());
++
++    expect(document.querySelector(".production-shell__nav-badge")?.textContent).toContain("3");
++  });
++
++  it("does not show the previous visit's count on the badge when the till queue is opened again", async () => {
++    const check = (orderId: string) => ({ orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tb-5" });
++    let queueAnswer: () => Promise<Response> = async () => jsonResponse([check("o-1"), check("o-2"), check("o-3")]);
++    vi.stubGlobal("fetch", vi.fn(async (url: string) => (String(url).includes("awaiting-payment") ? queueAnswer() : jsonResponse([]))));
++    const show = (path: string) => act(async () => root!.render(
++      <RouterProvider>
++        <ExperiencePage terminalId="33333333-3333-3333-3333-333333333333" displayName="Test" capabilities={["orders.create"]} path={path} backendStatus="online" onLogout={async () => {}} />
++      </RouterProvider>));
++    window.history.replaceState({}, "", "/pending-checks");
++    document.body.innerHTML = '<div id="root"></div>';
++    root = createRoot(document.getElementById("root")!);
++    await show("/pending-checks");
++    await act(async () => Promise.resolve());
++    expect(document.querySelector(".production-shell__nav-badge")?.textContent).toContain("3");
++
++    queueAnswer = async () => jsonResponse([]);
++    await show("/tables");
++    await act(async () => Promise.resolve());
++    queueAnswer = () => new Promise<Response>(() => undefined);
++    await show("/pending-checks");
++
++    expect(document.querySelector(".production-shell__nav-badge")).toBeNull();
++  });
++
+   it("gives every left-menu entry its own icon", async () => {
+     await renderRoute("/", ["orders.create", "tables.status", "bills.split", "kitchen.advance", "catalog.manage", "reports.view"]);
+     await act(async () => document.querySelector<HTMLButtonElement>(".production-shell__more-toggle")!.click());
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index 0cfc5777..936d8827 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -59,7 +59,10 @@ export function ExperiencePage({
+ }) {
+   const { navigate } = useRouter();
+   const capabilitySet = useMemo(() => new Set(capabilities), [capabilities]);
+-  const pendingCheckCount = usePendingChecksAlert(terminalId, capabilitySet.has("orders.create") && path !== "/pending-checks");
++  const [listedCheckCount, setListedCheckCount] = useState<number>();
++  const polledCheckCount = usePendingChecksAlert(terminalId, capabilitySet.has("orders.create") && path !== "/pending-checks");
++  useEffect(() => { if (path !== "/pending-checks") setListedCheckCount(undefined); }, [path]);
++  const pendingCheckCount = path === "/pending-checks" && listedCheckCount !== undefined ? listedCheckCount : polledCheckCount;
+   // Which capability a route needs is a route->permission map, not a role guess.
+   // `pos.cashier.mutate` was dropped from the permission catalog in migration
+   // 049 (V1-IAM-024) — every check below used to key off it, so no session
+@@ -179,7 +182,7 @@ export function ExperiencePage({
+     {cashSession && <CashSessionBand status={cashSession} />}
+     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} />}
+     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
+-    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
++    {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
+     {onlineTab !== null && (
+       <OnlineFoodHub
+         terminalId={terminalId}

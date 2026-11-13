@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/workspace.test.tsx (57 tests | 1 failed) 1713ms
+     × does not show the previous visit's count on the badge when the till queue is opened again 44ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > does not show the previous visit's count on the badge when the till queue is opened again
+AssertionError: expected <span …(1)><span …(1)></span></span> to be null
+
+- Expected:
+null
+
++ Received:
+<span
+  class="production-shell__nav-badge"
+>
+  3
+  <span
+    class="production-shell__visually-hidden"
+  >
+     bekleyen
+  </span>
+</span>
+
+ ❯ src/routes/workspace.test.tsx:257:68
+    255|     await show("/pending-checks");
+    256|
+    257|     expect(document.querySelector(".production-shell__nav-badge")).toB…
+       |                                                                    ^
+    258|   });
+    259|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 56 passed (57)
+   Start at  10:47:42
+   Duration  5.26s (transform 1.72s, setup 0ms, import 2.30s, tests 1.71s, environment 977ms)
+

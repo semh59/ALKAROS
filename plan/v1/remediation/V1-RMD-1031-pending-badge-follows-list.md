@@ -1,7 +1,7 @@
 # V1-RMD-1031 - Bekleyen hesaplar rozeti açık liste ile aynı sayıyı gösterir
 
 - Task ID: V1-RMD-1031
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYn5EiQaDrvjG9cpob
 - Work type: implementation
 - Surface state: Existing

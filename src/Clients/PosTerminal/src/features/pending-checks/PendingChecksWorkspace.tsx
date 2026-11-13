@@ -33,10 +33,12 @@ function checkTitle(check: PendingCheck): string {
  * sit at the same table. Tapping a row opens (or creates) its bill and goes straight to collection.
  * Nothing here touches the table.
  */
-export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, navigateTo = (href: string) => window.location.assign(href) }: {
+export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, onCount, navigateTo = (href: string) => window.location.assign(href) }: {
   terminalId: string;
   canCancel: boolean;
   canMerge: boolean;
+  /** Told the number of listed checks after every read, so the menu badge shows the same number. */
+  onCount?: (count: number) => void;
   navigateTo?: (href: string) => void;
 }) {
   const [checks, setChecks] = useState<readonly PendingCheck[] | null>(null);
@@ -62,6 +64,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
       if (hasNewCheck(knownIds.current, loaded)) playNewItemChime();
       knownIds.current = new Set(loaded.map((check) => check.orderId));
       setChecks(loaded);
+      onCount?.(loaded.length);
       setSelected((current) => current.filter((id) => loaded.some((row) => row.orderId === id && canMerge(row))));
       setCancelling((current) => current && loaded.some((row) => row.orderId === current.orderId && row.paidAmount === 0) ? current : undefined);
       setLoadedAt(new Date());
@@ -71,7 +74,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
       if (ticket !== latestLoad.current) return;
       setError(reason instanceof PendingChecksApiError ? reason.message : "Bekleyen hesaplar okunamadı.");
     }
-  }, [terminalId]);
+  }, [terminalId, onCount]);
 
   useEffect(() => {
     void load();

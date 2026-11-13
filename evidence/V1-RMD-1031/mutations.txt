@@ -1,0 +1,4 @@
+killed list never reports its count
+killed badge ignores the list on the queue screen
+killed count callback not wired
+killed previous visit's count stays on the badge
