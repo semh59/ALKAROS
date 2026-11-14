@@ -1,7 +1,7 @@
 # V1-RMD-1059 - İade ve iptal formunda alanlar görünür etiket taşır, yıkıcı onay düğmesi masa adını ve tutarı söyler ve pasif düğmenin nedeni yazılır
 
 - Task ID: V1-RMD-1059
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

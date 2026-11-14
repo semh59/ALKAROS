@@ -1,0 +1,16 @@
+killed M1 payment select label text empty
+killed M2 free text reason field unlabelled
+killed M3 confirm button without the place
+killed M4 confirm button without the amount
+killed M6 approve names the wrong amount
+killed M7 place not escaped on the button
+killed M8 stock select unlabelled
+killed M9 cancel-approved amount dropped
+killed M10 quick sale not named
+killed M5 cancel-approved reason hint dropped
+killed M11 refund slip field unlabelled
+killed M12 reason select label emptied for every field
+killed M13 cancel reason label renamed
+killed M14 reject reason label renamed
+killed M15 cancel-approved reason label renamed
+killed M16 second control inside a label

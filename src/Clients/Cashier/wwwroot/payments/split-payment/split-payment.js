@@ -1529,11 +1529,12 @@
         return '<option value="' + escapeHtml(name) + '"' + (choice === name ? ' selected' : '') + '>' + escapeHtml(name) + '</option>';
       }).join('');
     return (
+      '<label class="sp-field"><span class="sp-field-label">' + escapeHtml(label) + '</span>' +
       '<select class="sp-input" data-reason-select="' + escapeHtml(key) + '" aria-label="' + escapeHtml(label) + '"' +
-      (state.refundBusy ? ' disabled' : '') + '>' + options + '</select>' +
+      (state.refundBusy ? ' disabled' : '') + '>' + options + '</select></label>' +
       (choice === REASON_OTHER
-        ? '<input class="sp-input" type="text" maxlength="500" ' + textAttr + ' aria-label="Gerekçeyi yazın" ' +
-          'placeholder="Gerekçeyi yazın" value="' + escapeHtml(reasonValue(key)) + '">'
+        ? '<label class="sp-field"><span class="sp-field-label">Gerekçeyi yazın</span>' +
+          '<input class="sp-input" type="text" maxlength="500" ' + textAttr + ' aria-label="Gerekçeyi yazın" value="' + escapeHtml(reasonValue(key)) + '"></label>'
         : '')
     );
   }
@@ -1565,13 +1566,14 @@
   }
 
   // Yıkıcı eylemler iki adımlı: ilk dokunuş "Emin misiniz?" gösterir, ikincisi çalıştırır.
-  function confirmButtons(action, id, label, confirmLabel, disabledAttr, variant) {
+  function confirmButtons(action, id, label, confirmLabel, disabledAttr, variant, amount) {
     var key = action + ':' + id;
+    var named = confirmLabel + ' · ' + [billPlace() ? escapeHtml(billPlace()) : '', formatMoney(amount)].filter(Boolean).join(' · ');
     var attrs = ' data-refund-action="' + action + '"' + (id ? ' data-request-id="' + id + '"' : '');
     if (state.confirmKey === key) {
       return (
         '<span class="sp-alert-body" role="alert">Emin misiniz? Bu işlem geri alınamaz.</span>' +
-        '<button class="sp-btn sp-btn-danger" type="button"' + attrs + disabledAttr + '>' + confirmLabel + '</button>' +
+        '<button class="sp-btn sp-btn-danger" type="button"' + attrs + disabledAttr + '>' + named + '</button>' +
         '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="dismiss">Vazgeç</button>'
       );
     }
@@ -1587,7 +1589,7 @@
       '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
       '<span><strong>Siparişi de iptal et</strong><small>İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.</small></span></label>' +
       '<p class="sp-hint" id="cancel-hint" role="status"' + (state.cancelReason.trim() ? ' hidden' : '') + '>Hesabı iptal etmek için bir gerekçe seçin ya da yazın.</p>' +
-      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary') +
+      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary', state.summary.payableAmount) +
       '</div>'
     );
   }
@@ -1666,8 +1668,10 @@
       '<option value="no"' + (state.itemStock === 'no' ? ' selected' : '') + '>Hayır, stoğa dönmesin</option>';
     return (
       '<div class="sp-field" id="item-refund"><span class="sp-field-label">Ürün bazlı iade</span>' + quantities +
-      '<select class="sp-input" data-item-payment="1" aria-label="İadenin düşeceği ödeme"' + disabled + '>' + paymentOptions + '</select>' +
-      '<select class="sp-input" data-item-stock="1" aria-label="Stoğa geri dönüş"' + disabled + '>' + stockOptions + '</select>' +
+      '<label class="sp-field"><span class="sp-field-label">İadenin düşeceği ödeme</span>' +
+      '<select class="sp-input" data-item-payment="1" aria-label="İadenin düşeceği ödeme"' + disabled + '>' + paymentOptions + '</select></label>' +
+      '<label class="sp-field"><span class="sp-field-label">Stoğa geri dönüş</span>' +
+      '<select class="sp-input" data-item-stock="1" aria-label="Stoğa geri dönüş"' + disabled + '>' + stockOptions + '</select></label>' +
       renderReasonField('items', 'İade gerekçesi') +
       '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request-items" data-disabled-reason=""' +
       (state.refundBusy || !itemsReady() ? ' disabled' : '') + '>Seçilen ürünleri iade et</button></div>'
@@ -1708,7 +1712,8 @@
       renderReasonField('note:' + row.requestId, 'İade iptal gerekçesi') +
       confirmButtons(
         'cancel-approved', id, 'Onaylı iadeyi iptal et', 'Evet, onaylı iadeyi iptal et',
-        disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled'), 'sp-btn-secondary')
+        ' data-disabled-reason="İptal etmek için gerekçeyi seçin ya da yazın."' +
+        (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')), 'sp-btn-secondary', row.amount)
     );
   }
 
@@ -1726,7 +1731,7 @@
         } else if (row.status === 'Requested') {
           actions =
             renderReasonField('note:' + row.requestId, 'Ret gerekçesi') +
-            confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary') +
+            confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary', row.amount) +
             '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="reject" data-request-id="' + id + '"' +
             ' data-disabled-reason="Reddetmek için ret gerekçesini seçin ya da yazın."' +
             (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')) + '>Reddet</button>';
@@ -1737,8 +1742,9 @@
             disabled + '>Havale gönderildi</button>' + renderCancelApproved(row, id, disabled);
         } else if (row.status === 'AwaitingManualRefund') {
           actions =
+            '<label class="sp-field"><span class="sp-field-label">İade fiş numarası</span>' +
             '<input class="sp-input" type="text" maxlength="50" data-refund-slip="' + id + '" aria-label="İade fiş numarası" ' +
-            'placeholder="Fiş numarası" value="' + escapeHtml(state.refundSlips[row.requestId] || '') + '">' +
+            'value="' + escapeHtml(state.refundSlips[row.requestId] || '') + '"></label>' +
             '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="complete" data-request-id="' + id + '"' +
             ' data-disabled-reason="İadeyi tamamlamak için fiş numarasını yazın."' +
             (disabled || (String(state.refundSlips[row.requestId] || '').trim() ? '' : ' disabled')) + '>İadeyi tamamla</button>' +
@@ -2231,9 +2237,13 @@
   }
 
   // Which table the bill belongs to, and the lines the cashier added without a kitchen ticket.
+  function billPlace() {
+    return state.billTable ? 'Masa ' + state.billTable : state.billRead ? 'Hızlı satış' : '';
+  }
+
   function renderBillContext() {
     var added = state.billItems.filter(function (item) { return item.addedWithoutKitchenReason; });
-    return (state.billTable ? '<p class="sp-place">Masa ' + escapeHtml(state.billTable) + '</p>' : state.billRead ? '<p class="sp-place">Hızlı satış</p>' : '') +
+    return (billPlace() ? '<p class="sp-place">' + escapeHtml(billPlace()) + '</p>' : '') +
       (added.length
         ? '<p class="sp-kitchenless-note">Kasada eklendi (mutfağa gitmedi): ' +
           added.slice(0, 2).map(function (item) { return escapeHtml(item.name); }).join(', ') +

@@ -1,0 +1,152 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > gives every choice list of the item refund a visible label, not only an aria-label
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182036-0.43642110553456426:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182036-0.43642110553456426:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182036-0.43642110553456426:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > labels the free-text reason field that opens after choosing Diğer
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182242-0.4190525946518442:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182242-0.4190525946518442:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182242-0.4190525946518442:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > names the table and the amount on the button that confirms approving a refund
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182390-0.8705530231251286:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182390-0.8705530231251286:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182390-0.8705530231251286:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > names the table and the whole bill on the button that confirms cancelling the bill, and a quick sale as Hızlı satış
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182521-0.7433210160555389:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182521-0.7433210160555389:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182521-0.7433210160555389:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > names the table and the amount when cancelling an approved refund, and says why that button is closed
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182651-0.34682133285915473:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182651-0.34682133285915473:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794615182651-0.34682133285915473:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refund-rules.test.js (5 tests | 5 failed) 767ms
+     × gives every choice list of the item refund a visible label, not only an aria-label 227ms
+     × labels the free-text reason field that opens after choosing Diğer 148ms
+     × names the table and the amount on the button that confirms approving a refund 131ms
+     × names the table and the whole bill on the button that confirms cancelling the bill, and a quick sale as Hızlı satış 130ms
+     × names the table and the amount when cancelling an approved refund, and says why that button is closed 127ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > gives every choice list of the item refund a visible label, not only an aria-label
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-refund-rules.test.js:64:67
+     62|     const selects = [...app().querySelectorAll("select")];
+     63|     expect(selects.length).toBeGreaterThanOrEqual(3);
+     64|     expect(selects.map(labelOf).every((text) => text.length > 0)).toBe…
+       |                                                                   ^
+     65|     expect(labelOf(document.querySelector("[data-item-payment]"))).toB…
+     66|     expect(labelOf(document.querySelector("[data-item-stock]"))).toBe(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > labels the free-text reason field that opens after choosing Diğer
+AssertionError: expected '' to be 'Gerekçeyi yazın' // Object.is equality
+
+- Expected
++ Received
+
+- Gerekçeyi yazın
+
+ ❯ split-payment-refund-rules.test.js:75:67
+     73|     choose('[data-reason-select="items"]', "Diğer");
+     74|
+     75|     expect(labelOf(document.querySelector("[data-item-reason]"))).toBe…
+       |                                                                   ^
+     76|   });
+     77|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > names the table and the amount on the button that confirms approving a refund
+AssertionError: expected 'Evet, iadeyi onayla' to be 'Evet, iadeyi onayla · Masa M-03 · ₺90…' // Object.is equality
+
+Expected: "Evet, iadeyi onayla · Masa M-03 · ₺90,00"
+Received: "Evet, iadeyi onayla"
+
+ ❯ split-payment-refund-rules.test.js:84:66
+     82|     click('[data-refund-action="approve"]');
+     83|
+     84|     expect(document.querySelector(".sp-btn-danger").textContent).toBe(…
+       |                                                                  ^
+     85|   });
+     86|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > names the table and the whole bill on the button that confirms cancelling the bill, and a quick sale as Hızlı satış
+AssertionError: expected 'Evet, hesabı iptal et' to be 'Evet, hesabı iptal et · Masa M-03 · ₺…' // Object.is equality
+
+Expected: "Evet, hesabı iptal et · Masa M-03 · ₺160,00"
+Received: "Evet, hesabı iptal et"
+
+ ❯ split-payment-refund-rules.test.js:92:66
+     90|     choose('[data-reason-select="cancel"]', "İkram");
+     91|     click('[data-refund-action="cancel"]');
+     92|     expect(document.querySelector(".sp-btn-danger").textContent).toBe(…
+       |                                                                  ^
+     93|
+     94|     document.body.innerHTML = "";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  split-payment-refund-rules.test.js > iade ve iptal formu follows docs/CASHIER_UI_RULES.md > names the table and the amount when cancelling an approved refund, and says why that button is closed
+AssertionError: expected undefined to be 'İptal etmek için gerekçeyi seçin ya d…' // Object.is equality
+
+- Expected:
+"İptal etmek için gerekçeyi seçin ya da yazın."
+
++ Received:
+undefined
+
+ ❯ split-payment-refund-rules.test.js:109:52
+    107|     const closed = document.querySelector('[data-refund-action="cancel…
+    108|     expect(closed.disabled).toBe(true);
+    109|     expect(closed.nextElementSibling?.textContent).toBe("İptal etmek i…
+       |                                                    ^
+    110|
+    111|     choose(`[data-reason-select="note:${REQUEST_ID}"]`, "İkram");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  03:13:00
+   Duration  2.13s (transform 350ms, setup 27ms, import 63ms, tests 767ms, environment 990ms)
+
+exit=1
