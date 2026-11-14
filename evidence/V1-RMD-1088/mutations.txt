@@ -1,0 +1,9 @@
+M1-owner-compare-removed exit 1 restored cmp ok
+M2-session-kept-when-not-owned exit 1 restored cmp ok
+M3-notice-generic exit 1 restored cmp ok
+M4-code-text-dropped exit 1 restored cmp ok
+M5-always-not-owned exit 1 (after adding the no-user test) restored cmp ok
+M6-server-owner-check-removed exit 1 restored cmp ok
+M7-server-manager-exemption exit 1 restored cmp ok
+M8-no-drawer-read-on-show exit 1 restored cmp ok
+M9-no-drawer-read-after-409 exit 1 restored cmp ok

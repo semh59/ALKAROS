@@ -258,6 +258,7 @@ describe("customer-accounts.js", () => {
     ["CUSTOMER_NOT_FOUND", 404, "Müşteri bulunamadı."],
     ["CONCURRENT_UPDATE", 409, "Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin."],
     ["CLOSED_CASH_SESSION", 409, "Kasa oturumu açık değil."],
+    ["CASH_SESSION_NOT_OWNED", 409, "Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait."],
   ])("shows the fixed sentence of %s, not the server's text", async (code, status, sentence) => {
     await open({ routes: { "POST /account-receipts": () => reply(status, { error: { code, message: "raw server text" } }) } });
     type("ca-receipt-amount", "50");
@@ -266,6 +267,54 @@ describe("customer-accounts.js", () => {
 
     await vi.waitFor(() => expect(text()).toContain(sentence));
     expect(text()).not.toContain("raw server text");
+  });
+
+  it("closes cash collection and says to open one's own session when the open session belongs to another user", async () => {
+    await open({ routes: { "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: "u2" }) } });
+    type("ca-receipt-amount", "50");
+
+    expect($("ca-receive").disabled).toBe(true);
+    expect($("ca-receipt-amount").disabled).toBe(true);
+    expect(text()).toContain("Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait.");
+  });
+
+  it("does not close cash collection when the session answer names no user to compare with", async () => {
+    await open({ routes: { "GET /auth/session/current": () => reply(200, { terminalId: TERMINAL, capabilities: ["payments.take", "cash.drawer"] }), "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: "u2" }) } });
+
+    expect($("ca-receive").disabled).toBe(false);
+  });
+
+  it("reads the drawer again when the page is shown again, so a session that changed hands opens or closes collection", async () => {
+    let owner = "u2";
+    await open({ routes: { "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: owner }) } });
+    expect($("ca-receive").disabled).toBe(true);
+
+    owner = "u1";
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+
+    await vi.waitFor(() => expect($("ca-receive").disabled).toBe(false));
+  });
+
+  it("reads the drawer again when the server refuses a receipt as another user's session", async () => {
+    let owner = "u1";
+    await open({ routes: {
+      "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: owner }),
+      "POST /account-receipts": () => { owner = "u2"; return reply(409, { error: { code: "CASH_SESSION_NOT_OWNED", message: "x" } }); },
+    } });
+    type("ca-receipt-amount", "50");
+
+    $("ca-receive").click();
+
+    await vi.waitFor(() => expect(text()).toContain("açık oturum başka bir kullanıcıya ait"));
+    expect($("ca-receive").disabled).toBe(true);
+  });
+
+  it("keeps cash collection open when the open session is the signed-in user's own", async () => {
+    await open({ routes: { "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: "u1" }) } });
+
+    expect($("ca-receive").disabled).toBe(false);
+    expect(text()).not.toContain("başka bir kullanıcıya ait");
   });
 
   it("keeps the server's Turkish sentence for field validation, which names the field to fix", async () => {

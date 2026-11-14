@@ -194,8 +194,11 @@ public static partial class DualScreenApplication
         {
             // The cash enters this terminal's drawer: cash.drawer, payments.take and the session must be this terminal's.
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
+            // Same rule as a cash tender: the cash goes into the drawer of the user who takes it, managers included.
+            if (session.Snapshot.CashierUserId != principal.UserId)
+                throw new CashTenderSessionNotOwnedException();
             try
             {
                 var received = await receiptHandler.ReceiveAsync(

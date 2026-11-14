@@ -1,0 +1,268 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js b/src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js
+index c3456e924..cc67464d5 100644
+--- a/src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js
++++ b/src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js
+@@ -13,6 +13,8 @@
+     phase: 'checking',
+     terminalId: null,
+     cashSessionId: null,
++    cashNotOwned: false,
++    userId: null,
+     search: '',
+     customers: [],
+     selectedId: null,
+@@ -75,10 +77,12 @@
+   // The server's own message is shown only for the codes whose text is written for the cashier to act on
+   // (which field is wrong, why credit is refused, how much is owed); every other code has its sentence here.
+   var SERVER_TEXT_CODES = ['VALIDATION_FAILED', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE'];
++  var NOT_OWNED_TEXT = 'Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait.';
+   var ERROR_TEXT = {
+     CUSTOMER_NOT_FOUND: 'Müşteri bulunamadı.',
+     CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
+     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
++    CASH_SESSION_NOT_OWNED: NOT_OWNED_TEXT,
+     TENDER_IDEMPOTENCY_KEY_REUSED: 'İşlem kimliği başka bir tahsilat için zaten kullanılmış.',
+     BILL_NOT_FOUND: 'Hesap bulunamadı.',
+     TENDER_UNSETTLED_PAYMENT_EXISTS: 'Bu hesapta çözülmemiş bir kart ödemesi var; hesaba yazmadan önce kart ödemesinin sonucu netleştirilmeli.',
+@@ -147,12 +151,13 @@
+         return;
+       }
+       state.terminalId = result.body.terminalId;
++      state.userId = result.body.userId;
+       state.canManageCredit = (result.body.capabilities || []).indexOf('settings.manage') !== -1;
+       return Promise.all([
+         api(base() + '/cash-sessions/active'),
+         loadCustomers(),
+       ]).then(function (results) {
+-        state.cashSessionId = results[0].ok ? results[0].body.cashSessionId : null;
++        applyDrawer(results[0]);
+         state.phase = 'ready';
+         render();
+       });
+@@ -192,6 +197,21 @@
+     if (start != null && again.setSelectionRange) again.setSelectionRange(start, end);
+   }
+ 
++  // Cash is taken only into the signed-in user's own drawer; a drawer of someone else closes collection like no drawer.
++  function applyDrawer(result) {
++    var drawer = result.ok ? result.body : null;
++    state.cashNotOwned = !!(drawer && drawer.cashierUserId && state.userId && drawer.cashierUserId !== state.userId);
++    state.cashSessionId = drawer && !state.cashNotOwned ? drawer.cashSessionId : null;
++  }
++
++  function readDrawer() {
++    api(base() + '/cash-sessions/active').then(function (result) {
++      if (result.status >= 500) return;
++      applyDrawer(result);
++      renderKeepingFocus();
++    }).catch(function (error) { console.error('Kasa oturumu yenilenemedi:', error); });
++  }
++
+   function refreshWhenShown() {
+     if (document.visibilityState !== 'visible' || state.phase !== 'ready' || state.busy) return;
+     var listSeq = ++customersSeq;
+@@ -201,6 +221,7 @@
+       state.customers = result.body;
+       renderKeepingFocus();
+     }).catch(function (error) { console.error('Müşteri bilgisi yenilenemedi:', error); });
++    readDrawer();
+     if (!state.selectedId) return;
+     var openId = state.selectedId;
+     var seq = statementSeq;
+@@ -277,7 +298,11 @@
+     }).then(function (result) {
+       state.busy = false;
+       if (result.status < 500) state.receiptKey = null;
+-      if (!result.ok) { fail(result); return; }
++      if (!result.ok) {
++        fail(result);
++        if (result.body && result.body.error && result.body.error.code === 'CASH_SESSION_NOT_OWNED') readDrawer();
++        return;
++      }
+       var receipt = result.body;
+       return Promise.all([loadCustomers(), openCustomer(state.selectedId)]).then(function () {
+         state.lastReceipt = receipt;
+@@ -395,7 +420,7 @@
+           escapeHtml(state.lastReceipt.receiptNumber) + ' · kalan borç ' + formatMoney(state.lastReceipt.balanceAfter) + '</div>'
+         : '') +
+       (!state.cashSessionId
+-        ? '<div class="sp-alert-body" role="status">Nakit tahsilat için bu terminalde açık bir kasa oturumu gerekir.</div>'
++        ? '<div class="sp-alert-body" role="status">' + (state.cashNotOwned ? NOT_OWNED_TEXT : 'Nakit tahsilat için bu terminalde açık bir kasa oturumu gerekir.') + '</div>'
+         : c.balance <= 0
+           ? '<div class="sp-alert-body" role="status">Müşterinin borcu yok.</div>'
+           : '') +
+diff --git a/src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs b/src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs
+index 8ff1a673c..aedc0a288 100644
+--- a/src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs
++++ b/src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs
+@@ -194,8 +194,11 @@ public static partial class DualScreenApplication
+         {
+             // The cash enters this terminal's drawer: cash.drawer, payments.take and the session must be this terminal's.
+             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
++            // Same rule as a cash tender: the cash goes into the drawer of the user who takes it, managers included.
++            if (session.Snapshot.CashierUserId != principal.UserId)
++                throw new CashTenderSessionNotOwnedException();
+             try
+             {
+                 var received = await receiptHandler.ReceiveAsync(
+diff --git a/tests/Clients/StaticApps/customer-accounts-flows.test.js b/tests/Clients/StaticApps/customer-accounts-flows.test.js
+index 83f39a0e4..8ba72410b 100644
+--- a/tests/Clients/StaticApps/customer-accounts-flows.test.js
++++ b/tests/Clients/StaticApps/customer-accounts-flows.test.js
+@@ -258,6 +258,7 @@ describe("customer-accounts.js", () => {
+     ["CUSTOMER_NOT_FOUND", 404, "Müşteri bulunamadı."],
+     ["CONCURRENT_UPDATE", 409, "Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin."],
+     ["CLOSED_CASH_SESSION", 409, "Kasa oturumu açık değil."],
++    ["CASH_SESSION_NOT_OWNED", 409, "Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait."],
+   ])("shows the fixed sentence of %s, not the server's text", async (code, status, sentence) => {
+     await open({ routes: { "POST /account-receipts": () => reply(status, { error: { code, message: "raw server text" } }) } });
+     type("ca-receipt-amount", "50");
+@@ -268,6 +269,54 @@ describe("customer-accounts.js", () => {
+     expect(text()).not.toContain("raw server text");
+   });
+ 
++  it("closes cash collection and says to open one's own session when the open session belongs to another user", async () => {
++    await open({ routes: { "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: "u2" }) } });
++    type("ca-receipt-amount", "50");
++
++    expect($("ca-receive").disabled).toBe(true);
++    expect($("ca-receipt-amount").disabled).toBe(true);
++    expect(text()).toContain("Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait.");
++  });
++
++  it("does not close cash collection when the session answer names no user to compare with", async () => {
++    await open({ routes: { "GET /auth/session/current": () => reply(200, { terminalId: TERMINAL, capabilities: ["payments.take", "cash.drawer"] }), "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: "u2" }) } });
++
++    expect($("ca-receive").disabled).toBe(false);
++  });
++
++  it("reads the drawer again when the page is shown again, so a session that changed hands opens or closes collection", async () => {
++    let owner = "u2";
++    await open({ routes: { "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: owner }) } });
++    expect($("ca-receive").disabled).toBe(true);
++
++    owner = "u1";
++    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
++    document.dispatchEvent(new Event("visibilitychange"));
++
++    await vi.waitFor(() => expect($("ca-receive").disabled).toBe(false));
++  });
++
++  it("reads the drawer again when the server refuses a receipt as another user's session", async () => {
++    let owner = "u1";
++    await open({ routes: {
++      "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: owner }),
++      "POST /account-receipts": () => { owner = "u2"; return reply(409, { error: { code: "CASH_SESSION_NOT_OWNED", message: "x" } }); },
++    } });
++    type("ca-receipt-amount", "50");
++
++    $("ca-receive").click();
++
++    await vi.waitFor(() => expect(text()).toContain("açık oturum başka bir kullanıcıya ait"));
++    expect($("ca-receive").disabled).toBe(true);
++  });
++
++  it("keeps cash collection open when the open session is the signed-in user's own", async () => {
++    await open({ routes: { "GET /cash-sessions/active": () => reply(200, { cashSessionId: SESSION, cashierUserId: "u1" }) } });
++
++    expect($("ca-receive").disabled).toBe(false);
++    expect(text()).not.toContain("başka bir kullanıcıya ait");
++  });
++
+   it("keeps the server's Turkish sentence for field validation, which names the field to fix", async () => {
+     await open({ routes: { "POST /account-receipts": () => reply(400, { error: { code: "VALIDATION_FAILED", message: "Vergi numarası 10 haneli olmalıdır." } }) } });
+     type("ca-receipt-amount", "50");
+diff --git a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+index 714cf8f61..b12870654 100644
+--- a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+@@ -289,6 +289,46 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
+         Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
+     }
+ 
++    [Fact]
++    public async Task CashTenderByAManagerIntoAnotherUsersOpenSessionIsRefusedLikeACashier()
++    {
++        var terminalId = Guid.NewGuid();
++        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, "mgr-own-owner");
++        var managerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
++            terminalId, "mgr-own-manager", ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashSessionOverride);
++        var billId = await _database.SeedBillAsync(payable: 80m);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
++        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
++
++        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", managerCookie,
++            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "mgr-own-refused" });
++
++        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
++        Assert.Equal("CASH_SESSION_NOT_OWNED", (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
++        await using var payments = _database.DataSource.CreateCommand("SELECT count(*) FROM payments.payments;");
++        Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
++    }
++
++    [Fact]
++    public async Task CashTenderByAManagerIntoTheirOwnOpenSessionSucceeds()
++    {
++        var terminalId = Guid.NewGuid();
++        var managerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
++            terminalId, "mgr-own-session", ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashSessionOverride);
++        var billId = await _database.SeedBillAsync(payable: 80m);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", managerCookie, new { OpeningBalance = 100m });
++        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
++
++        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", managerCookie,
++            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "mgr-own-accepted" });
++
++        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
++    }
++
+     [Fact]
+     public async Task CashTenderBelowTheAmountDueIsRejected()
+     {
+diff --git a/tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs b/tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs
+index 80e5ccccf..722a1964f 100644
+--- a/tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs
++++ b/tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs
+@@ -198,6 +198,35 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
+         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+     }
+ 
++    [Theory]
++    [InlineData(false)]
++    [InlineData(true)]
++    public async Task AReceiptIntoAnotherUsersOpenSessionIsRefusedAndRecordsNothing(bool callerIsManager)
++    {
++        var terminalId = Guid.NewGuid();
++        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, $"own-receipt-owner-{callerIsManager}");
++        var callerCookie = callerIsManager
++            ? await _database.SeedCashierSessionWithPermissionsAsync(
++                terminalId, "own-receipt-manager", ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashSessionOverride)
++            : await _database.SeedCashierSessionAsync(terminalId, "own-receipt-other");
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var customer = await CreateCustomerAsync(client, terminalId, ownerCookie, "Borçlu Müşteri", null);
++        await _database.SetCreditTermsAsync(customer.CustomerId, 500m, 30);
++        var billId = await _database.SeedBillAsync(100m);
++        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/account-charge", ownerCookie,
++            new AccountChargeRequestV1(customer.CustomerId, 100m, Guid.NewGuid().ToString()));
++        var sessionId = await OpenSessionAsync(client, terminalId, ownerCookie);
++
++        var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/account-receipts", callerCookie,
++            new AccountReceiptRequestV1(customer.CustomerId, 60m, Guid.NewGuid().ToString()));
++
++        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
++        Assert.Equal("CASH_SESSION_NOT_OWNED", (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
++        var statement = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/customers/{customer.CustomerId:D}/statement", ownerCookie);
++        Assert.Equal(100m, (await statement.Content.ReadFromJsonAsync<CustomerStatementV1>())!.Customer.Balance);
++    }
++
+     [Fact]
+     public async Task TheCustomerListMasksPhonesAndSearchesByNameOrDigits()
+     {

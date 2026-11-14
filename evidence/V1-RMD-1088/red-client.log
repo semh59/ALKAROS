@@ -1,0 +1,63 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ customer-accounts-flows.test.js (24 tests | 2 failed) 5788ms
+     × shows the fixed sentence of CASH_SESSION_NOT_OWNED, not the server's text 1192ms
+     × closes cash collection and says to open one's own session when the open session belongs to another user 161ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  customer-accounts-flows.test.js > customer-accounts.js > shows the fixed sentence of CASH_SESSION_NOT_OWNED, not the server's text
+AssertionError: expected '\n  ← Kasaya dönMüşteriCari Hesaplar!…' to contain 'Nakit tahsilat için kendi kasa oturum…'
+
+- Expected
++ Received
+
+- Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait.
++
++   ← Kasaya dönMüşteriCari Hesaplar!Hataİşlem, kaydın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.MüşterilerAraAli VeliBorç ₺250,00 · Limit ₺1.000,00Yeni müşteriVergi kimliği yokVKN (şirket)TCKN (şahıs)Müşteri ekleAli VeliBorç₺250,00Kredi limiti₺1.000,00Kullanılabilir₺750,00VadeTanımsızVergi kimliğiTanımsızNakit tahsilatTahsil etKredi limitini ve vadeyi yalnız yönetici oturumu değiştirebilir.Fatura için vergi kimliğiVergi kimliği yokVKN (şirket)TCKN (şahıs)Vergi kimliğini kaydetHareketlerHenüz hareket yok.
++   
++   
++
+
+ ❯ customer-accounts-flows.test.js:268:43
+    266|     $("ca-receive").click();
+    267|
+    268|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    269|     expect(text()).not.toContain("raw server text");
+    270|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  customer-accounts-flows.test.js > customer-accounts.js > closes cash collection and says to open one's own session when the open session belongs to another user
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ customer-accounts-flows.test.js:276:38
+    274|     type("ca-receipt-amount", "50");
+    275|
+    276|     expect($("ca-receive").disabled).toBe(true);
+       |                                      ^
+    277|     expect($("ca-receipt-amount").disabled).toBe(true);
+    278|     expect(text()).toContain("Nakit tahsilat için kendi kasa oturumunu…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 22 passed (24)
+   Start at  00:05:22
+   Duration  10.00s (transform 718ms, setup 71ms, import 104ms, tests 5.79s, environment 3.28s)
+
+npm notice
+npm notice New major version of npm available! 11.17.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+exit 1

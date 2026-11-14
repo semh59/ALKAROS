@@ -1,0 +1,7 @@
+# V1-RMD-1088 sonuc
+Dogrulama (kod): account-receipts ucu yalniz terminal+yetki kontrol ediyordu; baskasinin acik oturumuna nakit yazilabiliyordu (1087 qa bulgusu, 1049 RESULT'ta kapsam disi diye listelenmisti). Cari sayfasi baskasinin oturumunu "acik" sayiyordu.
+Duzeltme: uc, cash-tender ile ayni kurali uygular (CashTenderSessionNotOwnedException -> 409 CASH_SESSION_NOT_OWNED, yonetici muafiyeti yok, hicbir tahsilat yazilmaz). Sayfa session/current userId ile active.cashierUserId'yi karsilastirir; baskasininsa tahsilat alani ve dugme kapanir, "kendi kasa oturumunuzu acin" yazar; sunucu kodu da Turkce karsiligina baglandi.
+Kanit: red-http.log (2 kirmizi: kasiyer + yonetici), red-client.log (2 kirmizi), green-http.log CustomerAccounts 40/40, green-all.log StaticApps 622/622 (customer-accounts-flows 27), client-build-gate.log exit 0 (derlenen istemci degismedi), mutations.txt M1-M9 killed (M5 ilk denemede hayatta kaldi, kullanici yok testi eklenince oldu). qa-frontend RED verdi: oturum degisince sayfa bayat kaliyordu; gorunur olunca ve sunucu 409 verince oturum yeniden okunur (M8, M9).
+PosTerminal kasa rozeti: degisiklik yok; Cashier.tsx baslik baglantisi ve bandi ayni useCashSessionState kaynagindan (1064/1074) okur, sahibi baskasiysa "Kasa: Baska kullanicida" der; baska rozet metni yok (strings.ts cashSessionText tek kaynak).
+Elle senaryo: kasiyer A kasayi acik birakir, kasiyer B Cari hesaplar'a girer: Tahsil et kapali ve aciklama gorunur.
+Acik risk: cash-movements ucu (para giris/cikis) sahip kontrolu yapmiyor; yeni urun karari gerekir.

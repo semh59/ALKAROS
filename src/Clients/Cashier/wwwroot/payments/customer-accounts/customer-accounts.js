@@ -13,6 +13,8 @@
     phase: 'checking',
     terminalId: null,
     cashSessionId: null,
+    cashNotOwned: false,
+    userId: null,
     search: '',
     customers: [],
     selectedId: null,
@@ -75,10 +77,12 @@
   // The server's own message is shown only for the codes whose text is written for the cashier to act on
   // (which field is wrong, why credit is refused, how much is owed); every other code has its sentence here.
   var SERVER_TEXT_CODES = ['VALIDATION_FAILED', 'CREDIT_DENIED', 'RECEIPT_EXCEEDS_BALANCE'];
+  var NOT_OWNED_TEXT = 'Nakit tahsilat için kendi kasa oturumunuzu açın; açık oturum başka bir kullanıcıya ait.';
   var ERROR_TEXT = {
     CUSTOMER_NOT_FOUND: 'Müşteri bulunamadı.',
     CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+    CASH_SESSION_NOT_OWNED: NOT_OWNED_TEXT,
     TENDER_IDEMPOTENCY_KEY_REUSED: 'İşlem kimliği başka bir tahsilat için zaten kullanılmış.',
     BILL_NOT_FOUND: 'Hesap bulunamadı.',
     TENDER_UNSETTLED_PAYMENT_EXISTS: 'Bu hesapta çözülmemiş bir kart ödemesi var; hesaba yazmadan önce kart ödemesinin sonucu netleştirilmeli.',
@@ -147,12 +151,13 @@
         return;
       }
       state.terminalId = result.body.terminalId;
+      state.userId = result.body.userId;
       state.canManageCredit = (result.body.capabilities || []).indexOf('settings.manage') !== -1;
       return Promise.all([
         api(base() + '/cash-sessions/active'),
         loadCustomers(),
       ]).then(function (results) {
-        state.cashSessionId = results[0].ok ? results[0].body.cashSessionId : null;
+        applyDrawer(results[0]);
         state.phase = 'ready';
         render();
       });
@@ -192,6 +197,21 @@
     if (start != null && again.setSelectionRange) again.setSelectionRange(start, end);
   }
 
+  // Cash is taken only into the signed-in user's own drawer; a drawer of someone else closes collection like no drawer.
+  function applyDrawer(result) {
+    var drawer = result.ok ? result.body : null;
+    state.cashNotOwned = !!(drawer && drawer.cashierUserId && state.userId && drawer.cashierUserId !== state.userId);
+    state.cashSessionId = drawer && !state.cashNotOwned ? drawer.cashSessionId : null;
+  }
+
+  function readDrawer() {
+    api(base() + '/cash-sessions/active').then(function (result) {
+      if (result.status >= 500) return;
+      applyDrawer(result);
+      renderKeepingFocus();
+    }).catch(function (error) { console.error('Kasa oturumu yenilenemedi:', error); });
+  }
+
   function refreshWhenShown() {
     if (document.visibilityState !== 'visible' || state.phase !== 'ready' || state.busy) return;
     var listSeq = ++customersSeq;
@@ -201,6 +221,7 @@
       state.customers = result.body;
       renderKeepingFocus();
     }).catch(function (error) { console.error('Müşteri bilgisi yenilenemedi:', error); });
+    readDrawer();
     if (!state.selectedId) return;
     var openId = state.selectedId;
     var seq = statementSeq;
@@ -277,7 +298,11 @@
     }).then(function (result) {
       state.busy = false;
       if (result.status < 500) state.receiptKey = null;
-      if (!result.ok) { fail(result); return; }
+      if (!result.ok) {
+        fail(result);
+        if (result.body && result.body.error && result.body.error.code === 'CASH_SESSION_NOT_OWNED') readDrawer();
+        return;
+      }
       var receipt = result.body;
       return Promise.all([loadCustomers(), openCustomer(state.selectedId)]).then(function () {
         state.lastReceipt = receipt;
@@ -395,7 +420,7 @@
           escapeHtml(state.lastReceipt.receiptNumber) + ' · kalan borç ' + formatMoney(state.lastReceipt.balanceAfter) + '</div>'
         : '') +
       (!state.cashSessionId
-        ? '<div class="sp-alert-body" role="status">Nakit tahsilat için bu terminalde açık bir kasa oturumu gerekir.</div>'
+        ? '<div class="sp-alert-body" role="status">' + (state.cashNotOwned ? NOT_OWNED_TEXT : 'Nakit tahsilat için bu terminalde açık bir kasa oturumu gerekir.') + '</div>'
         : c.balance <= 0
           ? '<div class="sp-alert-body" role="status">Müşterinin borcu yok.</div>'
           : '') +

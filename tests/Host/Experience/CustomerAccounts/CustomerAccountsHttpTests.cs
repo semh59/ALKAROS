@@ -198,6 +198,35 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task AReceiptIntoAnotherUsersOpenSessionIsRefusedAndRecordsNothing(bool callerIsManager)
+    {
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, $"own-receipt-owner-{callerIsManager}");
+        var callerCookie = callerIsManager
+            ? await _database.SeedCashierSessionWithPermissionsAsync(
+                terminalId, "own-receipt-manager", ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashSessionOverride)
+            : await _database.SeedCashierSessionAsync(terminalId, "own-receipt-other");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var customer = await CreateCustomerAsync(client, terminalId, ownerCookie, "Borçlu Müşteri", null);
+        await _database.SetCreditTermsAsync(customer.CustomerId, 500m, 30);
+        var billId = await _database.SeedBillAsync(100m);
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/account-charge", ownerCookie,
+            new AccountChargeRequestV1(customer.CustomerId, 100m, Guid.NewGuid().ToString()));
+        var sessionId = await OpenSessionAsync(client, terminalId, ownerCookie);
+
+        var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/account-receipts", callerCookie,
+            new AccountReceiptRequestV1(customer.CustomerId, 60m, Guid.NewGuid().ToString()));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("CASH_SESSION_NOT_OWNED", (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        var statement = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/customers/{customer.CustomerId:D}/statement", ownerCookie);
+        Assert.Equal(100m, (await statement.Content.ReadFromJsonAsync<CustomerStatementV1>())!.Customer.Balance);
+    }
+
     [Fact]
     public async Task TheCustomerListMasksPhonesAndSearchesByNameOrDigits()
     {

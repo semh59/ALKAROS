@@ -1,7 +1,7 @@
 # V1-RMD-1088 - Cari nakit tahsilat yalnız kasiyerin kendi açık kasa oturumuna alınır
 
 - Task ID: V1-RMD-1088
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
