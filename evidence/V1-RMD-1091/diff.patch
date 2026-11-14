@@ -1,0 +1,98 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 5ab760695..8c1883eb4 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -35,7 +35,12 @@
+     selectedMethod: 'Cash',
+     splitCount: 2,
+     splitLeft: 0,
++    splitTotal: 0,
+     savedShares: [],
++    // The server keeps no payer per payment: the till remembers who paid which line until the page is reloaded.
++    payerLabel: null,
++    payerByPayment: {},
++    payerPending: null,
+     amountDraft: '0.00',
+     noteDraft: '',
+     resolveReason: '',
+@@ -621,6 +626,12 @@
+       }
+       state.summaryStale = false;
+       state.summary = result.body;
++      if (state.payerPending) {
++        state.summary.allocations.forEach(function (line) {
++          if (state.payerPending.before.indexOf(line.paymentId) === -1) state.payerByPayment[line.paymentId] = state.payerPending.label;
++        });
++        state.payerPending = null;
++      }
+       dropUnavailableMethod();
+       // Re-derive the lock from server truth on every refresh, same as
+       // loadEverything() does on initial load (V1-RMD-258/V13-RMD-002) -
+@@ -651,6 +662,12 @@
+       '</div></div>';
+   }
+ 
++  // A tapped saved share names its own person; an equal split counts people off in order.
++  function currentPayer() {
++    if (state.payerLabel) return state.payerLabel;
++    return state.splitLeft > 0 ? 'Kişi ' + (state.splitTotal - state.splitLeft + 1) : null;
++  }
++
+   function nextShare() {
+     if (!(state.splitLeft > 1)) return remainingAmount();
+     return Math.round((remainingAmount() / state.splitLeft) * 100) / 100;
+@@ -659,6 +676,8 @@
+   function submitEqualSplit() {
+     var count = Math.min(MAX_SPLIT_PEOPLE, Math.max(2, Math.round(Number(state.splitCount) || 2)));
+     state.splitLeft = count;
++    state.splitTotal = count;
++    state.payerLabel = null;
+     state.splitCount = count;
+     state.amountDraft = nextShare().toFixed(2);
+     // V1-RMD-314: a recalculated split amount is a genuinely different tender attempt.
+@@ -1103,6 +1122,11 @@
+       state.tenderedDraft = '';
+       state.noteDraft = '';
+       state.eftConfirmed = false;
++      var payer = currentPayer();
++      if (payer) {
++        state.payerPending = { label: payer, before: state.summary.allocations.map(function (line) { return line.paymentId; }) };
++        state.payerLabel = null;
++      }
+       if (state.splitLeft > 0) state.splitLeft -= 1;
+       if (result.body.outcome === 'RequiresReconciliation') {
+         // Bilinmeyen durum kilidi: bu satır onaylanana kadar bu sekmede
+@@ -1240,7 +1264,8 @@
+       '<div class="sp-field"><span class="sp-field-label">Uygulanan tahsilatlar</span>' +
+       allocations.map(function (line) {
+         return (
+-          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(METHOD_NAMES[line.method] || 'Tahsilat') + ' · ' + formatMoney(line.amount) + '</span>' +
++          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(METHOD_NAMES[line.method] || 'Tahsilat') + ' · ' + formatMoney(line.amount) +
++          (state.payerByPayment[line.paymentId] ? ' · ' + escapeHtml(state.payerByPayment[line.paymentId]) : '') + '</span>' +
+           '<span class="sp-line-status' + (line.paymentStatus === 'Approved' ? ' is-approved' : '') + '">' +
+           escapeHtml(PAYMENT_STATUS_LABELS[line.paymentStatus] || 'Bilinmiyor') + '</span></div>'
+         );
+@@ -2298,6 +2323,7 @@
+           ? '<div class="sp-confirm-row"><input type="checkbox" id="eft-confirm"' + (state.eftConfirmed ? ' checked' : '') + '>' +
+             '<label for="eft-confirm">Tutarı işletmenin banka hesap hareketinde gördüm</label></div>'
+           : '') +
++        (currentPayer() ? '<p class="sp-hint" id="payer-hint" role="status">Ödeyen: ' + escapeHtml(currentPayer()) + '</p>' : '') +
+         (submitTenderHint() ? '<p class="sp-hint" id="submit-hint" role="status">' + submitTenderHint() + '</p>' : '') +
+         '<button class="sp-btn sp-btn-primary" id="submit-tender" ' + (submitTenderHint() ? 'aria-describedby="submit-hint" ' : '') +
+         (submitTenderDisabled() ? 'disabled' : '') + '>' +
+@@ -2352,6 +2378,7 @@
+         var share = state.savedShares[Number(button.getAttribute('data-share'))];
+         if (!share) return;
+         state.splitLeft = 0;
++        state.payerLabel = share.label;
+         state.amountDraft = Math.min(share.amount, remainingAmount()).toFixed(2);
+         state.tenderIdempotencyKey = null;
+         render();
+@@ -2361,6 +2388,7 @@
+     if (applySplit) applySplit.addEventListener('click', submitEqualSplit);
+     var amountInput = document.getElementById('amount-draft');
+     if (amountInput) amountInput.addEventListener('input', function () {
++      state.payerLabel = null;
+       state.amountDraft = this.value;
+       // V1-RMD-314: a hand-edited amount is a genuinely different tender attempt - never replay the
+       // previous amount's in-flight key onto this one.

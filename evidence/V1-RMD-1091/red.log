@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-payer-marker.test.js (3 tests | 2 failed) 540ms
+     × names the payer of each equal-split payment, on the form and on the line it created 208ms
+     × uses the saved person's own name when that person's share is tapped 135ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-payer-marker.test.js > split-payment.js payer marker > names the payer of each equal-split payment, on the form and on the line it created
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Ödeyen: Kişi 1'
+
+Expected: "Ödeyen: Kişi 1"
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺Alınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleMüşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltmeYüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekleBahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-payer-marker.test.js:75:20
+     73|     count.dispatchEvent(new Event("input", { bubbles: true }));
+     74|     document.getElementById("apply-split").click();
+     75|     expect(text()).toContain("Ödeyen: Kişi 1");
+       |                    ^
+     76|
+     77|     await payNow(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-payer-marker.test.js > split-payment.js payer marker > uses the saved person's own name when that person's share is tapped
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Ödeyen: Ayşe'
+
+Expected: "Ödeyen: Ayşe"
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺Alınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaKayıtlı dağılım (kişi başı)Ayşe · ₺40,00Can · ₺60,00Ürüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleMüşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltmeYüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekleBahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-payer-marker.test.js:90:20
+     88|     await vi.waitFor(() => expect(document.querySelectorAll("[data-sha…
+     89|     document.querySelector('[data-share="0"]').click();
+     90|     expect(text()).toContain("Ödeyen: Ayşe");
+       |                    ^
+     91|
+     92|     await payNow(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  00:29:07
+   Duration  1.96s (transform 224ms, setup 26ms, import 60ms, tests 540ms, environment 1.07s)
+
+exit 1

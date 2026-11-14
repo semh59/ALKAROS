@@ -1,7 +1,7 @@
 # V1-RMD-1091 - Bölmede her ödeme satırı ödeyen kişiyi söyler
 
 - Task ID: V1-RMD-1091
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
