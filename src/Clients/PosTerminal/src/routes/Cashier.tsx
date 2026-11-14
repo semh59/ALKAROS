@@ -832,7 +832,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         </div>
       )}
 
-      {activeOrder && (
+      {activeOrder && activeOrder.lines.length > 0 && (
         <div className="mobile-ticket-bar" aria-label="Sipariş özeti">
           <div>
             <span>{activeOrder.editable ? "Toplam" : "Gönderildi · Toplam"}</span>
@@ -841,7 +841,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           {activeOrder.editable && (
             <button data-telemetry-id="b.routes.cashier.10"
               className="primary"
-              disabled={busy || activeOrder.lines.length === 0}
+              disabled={busy}
               onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
             >Gönder</button>
           )}
@@ -995,6 +995,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                 ))}
               </div>
               <div className="ticket-footer">
+              {activeOrder.lines.length > 0 && (
               <div className="ticket-totals">
                 <div><span>Ara toplam</span><span>{formatMoney(activeOrder.subtotal)}</span></div>
                 {activeOrder.discountTotal > 0 && (
@@ -1003,13 +1004,14 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                 <div><span>İçindeki KDV</span><span>{formatMoney(activeOrder.taxTotal)}</span></div>
                 <div className="grand-total"><span>Toplam</span><strong>{formatMoney(activeOrder.total)}</strong></div>
               </div>
-              {activeOrder.editable ? (
+              )}
+              {activeOrder.editable ? (activeOrder.lines.length > 0 && (
                 <button data-telemetry-id="b.routes.cashier.19"
                   className="primary submit-order"
-                  disabled={busy || activeOrder.lines.length === 0}
+                  disabled={busy}
                   onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
                 >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
-              ) : (
+              )) : (
                 <div className="submitted-state" role="status">
                   <span>✓</span>
                   <div><strong>Sipariş gönderildi</strong>{!activeOrder.tableNumber && <span>Yeni satış açabilirsiniz.</span>}</div>

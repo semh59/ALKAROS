@@ -1,0 +1,62 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.ticket-footer.test.tsx (5 tests | 1 failed) 2887ms
+     × draws no totals and no send button, only the catalogue hint, while the order has no lines 122ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.ticket-footer.test.tsx > the order ticket keeps its actions in a fixed footer > draws no totals and no send button, only the catalogue hint, while the order has no lines
+AssertionError: expected <div class="ticket-totals">…(3)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="ticket-totals"
+>
+  <div>
+    <span>
+      Ara toplam
+    </span>
+    <span>
+      ₺240,00
+    </span>
+  </div>
+  <div>
+    <span>
+      İçindeki KDV
+    </span>
+    <span>
+      ₺0,00
+    </span>
+  </div>
+  <div
+    class="grand-total"
+  >
+    <span>
+      Toplam
+    </span>
+    <strong>
+      ₺0,00
+    </strong>
+  </div>
+</div>
+
+ ❯ src/routes/Cashier.ticket-footer.test.tsx:88:54
+     86|
+     87|     expect(document.querySelector(".ticket-empty")?.textContent).toBe(…
+     88|     expect(document.querySelector(".ticket-totals")).toBeNull();
+       |                                                      ^
+     89|     expect(button("Mutfağa gönder")).toBeUndefined();
+     90|     expect(document.querySelector(".mobile-ticket-bar")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  12:43:20
+   Duration  4.29s (transform 1.87s, setup 0ms, import 132ms, tests 2.89s, environment 1.00s)
+

@@ -78,7 +78,17 @@ describe("the order ticket keeps its actions in a fixed footer", () => {
 
     expect(button("Mutfağa gönder (3)")).toBeDefined();
     expect(button("Siparişi gönder")).toBeUndefined();
+    expect(document.querySelector(".mobile-ticket-bar")).not.toBeNull();
     expect(document.querySelector(".ticket-panel > .ticket-footer")?.contains(button("Mutfağa gönder (3)")!)).toBe(true);
+  });
+
+  it("draws no totals and no send button, only the catalogue hint, while the order has no lines", async () => {
+    await openTill(order({ editable: true, lines: [], total: 0 }));
+
+    expect(document.querySelector(".ticket-empty")?.textContent).toBe("Soldaki katalogdan ürün seçin.");
+    expect(document.querySelector(".ticket-totals")).toBeNull();
+    expect(button("Mutfağa gönder")).toBeUndefined();
+    expect(document.querySelector(".mobile-ticket-bar")).toBeNull();
   });
 
   it("names the table in the heading of a table order opened from the table plan", async () => {
