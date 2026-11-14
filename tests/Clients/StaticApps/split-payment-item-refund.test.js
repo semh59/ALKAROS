@@ -15,9 +15,9 @@ const PAYMENT_ID = "33333333-3333-3333-3333-333333333333";
 const TEA = "aaaaaaaa-0000-0000-0000-000000000001";
 const TOAST = "aaaaaaaa-0000-0000-0000-000000000002";
 
-const summary = (status = "Approved") => ({
+const summary = (status = "Approved", method) => ({
   billId: BILL_ID, payableAmount: 200, allocatedTotal: 200, remainingAmount: 0,
-  allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 200, paymentStatus: status }],
+  allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 200, method, paymentStatus: status }],
   unsettledPayment: null,
 });
 const line = (id, name, quantity, refundedQuantity = 0) => ({
@@ -34,14 +34,14 @@ const row = (extra = {}) => ({
 });
 
 async function open({
-  status = "Approved", items = [line(TEA, "Çay", 3, 1), line(TOAST, "Tost", 1)], receiptStatus = 200,
+  status = "Approved", method, items = [line(TEA, "Çay", 3, 1), line(TOAST, "Tost", 1)], receiptStatus = 200,
   requests = [], requestResult = row(), requestsStatus = 200,
 } = {}) {
   const base = `/api/v1/terminals/${TERMINAL_ID}/billing`;
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   const fetchMock = installFetchRouter([
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
-    { test: (url) => url.endsWith("/tenders/"), body: summary(status) },
+    { test: (url) => url.endsWith("/tenders/"), body: summary(status, method) },
     { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith(`${base}/refund-allowance`), body: { hasOpenSession: false, allowance: 0, used: 0, remaining: 0 } },
@@ -91,6 +91,14 @@ describe("split-payment.js item based refund", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
+  });
+
+  it.each([["Cash", "Nakit · "], ["Eft", "Havale / EFT · "], ["Card", "Kart · "], [undefined, "Ödeme · "]])("names the %s payment in the option the item refund is taken from", async (method, label) => {
+    await open({ method });
+    await vi.waitFor(() => expect(quantity(TEA)).not.toBeNull());
+
+    const option = document.querySelector(`[data-item-payment] option[value="${PAYMENT_ID}"]`);
+    expect(option.textContent.startsWith(label)).toBe(true);
   });
 
   it("says which choice is still missing for the item refund, one at a time, until the button turns on", async () => {

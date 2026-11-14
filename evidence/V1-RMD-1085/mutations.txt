@@ -1,0 +1,5 @@
+M1-option-label-generic exit 1 restored cmp ok
+M2-transfer-says-dekont exit 1 restored cmp ok
+M3-mixed-says-dekont exit 1 restored cmp ok
+M4-card-proof-dropped exit 1 restored cmp ok
+M5-method-name-fallback-removed exit 1 restored cmp ok

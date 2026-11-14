@@ -81,17 +81,17 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
   });
 
-  it("names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed", async () => {
+  it("names the refund slip for a card refund and the transfer sending for a bank transfer once the bill is closed", async () => {
     await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Eft" }], "Paid");
-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor.");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, havale gönderimi bekleniyor.");
 
     document.body.innerHTML = "";
     await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş veya iade dekontu girişi bekleniyor.");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi veya havale gönderimi bekleniyor.");
 
     document.body.innerHTML = "";
     await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
   });
 
   it("does not add the waiting-request remark when no request is waiting for the manager", async () => {
@@ -103,13 +103,13 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
   it("says one waiting request remains when several requests wait beside an approved transfer refund", async () => {
     await openPaid([pending, { ...pending, requestId: "r3" }, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
 
-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
   });
 
-  it("appends the waiting-request remark after the mixed slip or transfer receipt sentence", async () => {
+  it("appends the waiting-request remark after the mixed slip or transfer sending sentence", async () => {
     await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Card" }, { ...pending, requestId: "r3", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
 
-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş veya iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi veya havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
   });
 
   it("keeps the slip sentence when the refund method is missing", async () => {

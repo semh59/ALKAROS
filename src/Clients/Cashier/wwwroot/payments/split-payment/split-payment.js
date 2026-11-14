@@ -1663,7 +1663,7 @@
     }).join('');
     var paymentOptions = '<option value="">Ödeme seçin</option>' + itemPayments().map(function (line) {
       return '<option value="' + escapeHtml(line.paymentId) + '"' + (state.itemPayment === line.paymentId ? ' selected' : '') + '>' +
-        'Ödeme · ' + escapeHtml(formatMoney(line.amount)) + '</option>';
+        escapeHtml(METHOD_NAMES[line.method] || 'Ödeme') + ' · ' + escapeHtml(formatMoney(line.amount)) + '</option>';
     }).join('');
     var stockOptions =
       '<option value="">Seçin</option>' +
@@ -2505,8 +2505,8 @@
     if (awaitingSlip) {
       var awaiting = refunds.filter(function (row) { return row.status === 'AwaitingManualRefund'; });
       var transfers = awaiting.filter(function (row) { return row.method === 'Eft'; }).length;
-      var proof = transfers === 0 ? 'fiş' : transfers === awaiting.length ? 'iade dekontu' : 'fiş veya iade dekontu';
-      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' girişi bekleniyor.' + (awaitingDecision ? ' Ayrıca yönetici kararı bekleyen iade isteği var.' : '') };
+      var proof = transfers === 0 ? 'fiş girişi' : transfers === awaiting.length ? 'havale gönderimi' : 'fiş girişi veya havale gönderimi';
+      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' bekleniyor.' + (awaitingDecision ? ' Ayrıca yönetici kararı bekleyen iade isteği var.' : '') };
     }
     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
   }

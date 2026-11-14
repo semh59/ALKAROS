@@ -1,0 +1,115 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index ebc6eaeaf..5ab760695 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -1663,7 +1663,7 @@
+     }).join('');
+     var paymentOptions = '<option value="">Ödeme seçin</option>' + itemPayments().map(function (line) {
+       return '<option value="' + escapeHtml(line.paymentId) + '"' + (state.itemPayment === line.paymentId ? ' selected' : '') + '>' +
+-        'Ödeme · ' + escapeHtml(formatMoney(line.amount)) + '</option>';
++        escapeHtml(METHOD_NAMES[line.method] || 'Ödeme') + ' · ' + escapeHtml(formatMoney(line.amount)) + '</option>';
+     }).join('');
+     var stockOptions =
+       '<option value="">Seçin</option>' +
+@@ -2505,8 +2505,8 @@
+     if (awaitingSlip) {
+       var awaiting = refunds.filter(function (row) { return row.status === 'AwaitingManualRefund'; });
+       var transfers = awaiting.filter(function (row) { return row.method === 'Eft'; }).length;
+-      var proof = transfers === 0 ? 'fiş' : transfers === awaiting.length ? 'iade dekontu' : 'fiş veya iade dekontu';
+-      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' girişi bekleniyor.' + (awaitingDecision ? ' Ayrıca yönetici kararı bekleyen iade isteği var.' : '') };
++      var proof = transfers === 0 ? 'fiş girişi' : transfers === awaiting.length ? 'havale gönderimi' : 'fiş girişi veya havale gönderimi';
++      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' bekleniyor.' + (awaitingDecision ? ' Ayrıca yönetici kararı bekleyen iade isteği var.' : '') };
+     }
+     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
+   }
+diff --git a/tests/Clients/StaticApps/split-payment-item-refund.test.js b/tests/Clients/StaticApps/split-payment-item-refund.test.js
+index 90eba6bc2..9a073dc1e 100644
+--- a/tests/Clients/StaticApps/split-payment-item-refund.test.js
++++ b/tests/Clients/StaticApps/split-payment-item-refund.test.js
+@@ -15,9 +15,9 @@ const PAYMENT_ID = "33333333-3333-3333-3333-333333333333";
+ const TEA = "aaaaaaaa-0000-0000-0000-000000000001";
+ const TOAST = "aaaaaaaa-0000-0000-0000-000000000002";
+ 
+-const summary = (status = "Approved") => ({
++const summary = (status = "Approved", method) => ({
+   billId: BILL_ID, payableAmount: 200, allocatedTotal: 200, remainingAmount: 0,
+-  allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 200, paymentStatus: status }],
++  allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 200, method, paymentStatus: status }],
+   unsettledPayment: null,
+ });
+ const line = (id, name, quantity, refundedQuantity = 0) => ({
+@@ -34,14 +34,14 @@ const row = (extra = {}) => ({
+ });
+ 
+ async function open({
+-  status = "Approved", items = [line(TEA, "Çay", 3, 1), line(TOAST, "Tost", 1)], receiptStatus = 200,
++  status = "Approved", method, items = [line(TEA, "Çay", 3, 1), line(TOAST, "Tost", 1)], receiptStatus = 200,
+   requests = [], requestResult = row(), requestsStatus = 200,
+ } = {}) {
+   const base = `/api/v1/terminals/${TERMINAL_ID}/billing`;
+   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+   const fetchMock = installFetchRouter([
+     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+-    { test: (url) => url.endsWith("/tenders/"), body: summary(status) },
++    { test: (url) => url.endsWith("/tenders/"), body: summary(status, method) },
+     { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
+     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+     { test: (url) => url.endsWith(`${base}/refund-allowance`), body: { hasOpenSession: false, allowance: 0, used: 0, remaining: 0 } },
+@@ -93,6 +93,14 @@ describe("split-payment.js item based refund", () => {
+     document.body.innerHTML = "";
+   });
+ 
++  it.each([["Cash", "Nakit · "], ["Eft", "Havale / EFT · "], ["Card", "Kart · "], [undefined, "Ödeme · "]])("names the %s payment in the option the item refund is taken from", async (method, label) => {
++    await open({ method });
++    await vi.waitFor(() => expect(quantity(TEA)).not.toBeNull());
++
++    const option = document.querySelector(`[data-item-payment] option[value="${PAYMENT_ID}"]`);
++    expect(option.textContent.startsWith(label)).toBe(true);
++  });
++
+   it("says which choice is still missing for the item refund, one at a time, until the button turns on", async () => {
+     await open();
+     await vi.waitFor(() => expect(quantity(TEA)).not.toBeNull());
+diff --git a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+index 4bb984cb1..30d8ba152 100644
+--- a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
++++ b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+@@ -81,17 +81,17 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
+     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+   });
+ 
+-  it("names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed", async () => {
++  it("names the refund slip for a card refund and the transfer sending for a bank transfer once the bill is closed", async () => {
+     await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor.");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, havale gönderimi bekleniyor.");
+ 
+     document.body.innerHTML = "";
+     await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş veya iade dekontu girişi bekleniyor.");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi veya havale gönderimi bekleniyor.");
+ 
+     document.body.innerHTML = "";
+     await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+   });
+ 
+   it("does not add the waiting-request remark when no request is waiting for the manager", async () => {
+@@ -103,13 +103,13 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
+   it("says one waiting request remains when several requests wait beside an approved transfer refund", async () => {
+     await openPaid([pending, { ...pending, requestId: "r3" }, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+ 
+-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+   });
+ 
+-  it("appends the waiting-request remark after the mixed slip or transfer receipt sentence", async () => {
++  it("appends the waiting-request remark after the mixed slip or transfer sending sentence", async () => {
+     await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Card" }, { ...pending, requestId: "r3", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+ 
+-    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş veya iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi veya havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var.");
+   });
+ 
+   it("keeps the slip sentence when the refund method is missing", async () => {

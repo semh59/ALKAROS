@@ -1,0 +1,116 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-item-refund.test.js > split-payment.js item based refund > names the Cash payment in the option the item refund is taken from
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118146-0.32669304399962096:263:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118146-0.32669304399962096:459:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118146-0.32669304399962096:572:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-item-refund.test.js > split-payment.js item based refund > names the Eft payment in the option the item refund is taken from
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118438-0.9338651392183454:263:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118438-0.9338651392183454:459:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118438-0.9338651392183454:572:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-item-refund.test.js > split-payment.js item based refund > names the Card payment in the option the item refund is taken from
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118604-0.020192789455513394:263:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118604-0.020192789455513394:459:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794686118604-0.020192789455513394:572:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-open-refund-closed.test.js (17 tests | 3 failed) 2598ms
+     × names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed 149ms
+     × says one waiting request remains when several requests wait beside an approved transfer refund 124ms
+     × appends the waiting-request remark after the mixed slip or transfer receipt sentence 146ms
+ ❯ split-payment-item-refund.test.js (14 tests | 3 failed) 3484ms
+     × names the Cash payment in the option the item refund is taken from 306ms
+     × names the Eft payment in the option the item refund is taken from 169ms
+     × names the Card payment in the option the item refund is taken from 127ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-item-refund.test.js > split-payment.js item based refund > names the Cash payment in the option the item refund is taken from
+ FAIL  split-payment-item-refund.test.js > split-payment.js item based refund > names the Eft payment in the option the item refund is taken from
+ FAIL  split-payment-item-refund.test.js > split-payment.js item based refund > names the Card payment in the option the item refund is taken from
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-item-refund.test.js:101:50
+     99|
+    100|     const option = document.querySelector(`[data-item-payment] option[…
+    101|     expect(option.textContent.startsWith(label)).toBe(true);
+       |                                                  ^
+    102|   });
+    103|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed
+AssertionError: expected 'İade onaylandı, iade dekontu girişi b…' to be 'İade onaylandı, havale gönderimi bekl…' // Object.is equality
+
+Expected: "İade onaylandı, havale gönderimi bekleniyor."
+Received: "İade onaylandı, iade dekontu girişi bekleniyor."
+
+ ❯ split-payment-open-refund-closed.test.js:86:64
+     84|   it("names the refund slip for a card refund and the transfer receipt…
+     85|     await openPaid([{ ...pending, status: "AwaitingManualRefund", meth…
+     86|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+     87|
+     88|     document.body.innerHTML = "";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > says one waiting request remains when several requests wait beside an approved transfer refund
+AssertionError: expected 'İade onaylandı, iade dekontu girişi b…' to be 'İade onaylandı, havale gönderimi bekl…' // Object.is equality
+
+Expected: "İade onaylandı, havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+Received: "İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+
+ ❯ split-payment-open-refund-closed.test.js:106:64
+    104|     await openPaid([pending, { ...pending, requestId: "r3" }, { ...pen…
+    105|
+    106|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+    107|   });
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > appends the waiting-request remark after the mixed slip or transfer receipt sentence
+AssertionError: expected 'İade onaylandı, fiş veya iade dekontu…' to be 'İade onaylandı, fiş girişi veya haval…' // Object.is equality
+
+Expected: "İade onaylandı, fiş girişi veya havale gönderimi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+Received: "İade onaylandı, fiş veya iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+
+ ❯ split-payment-open-refund-closed.test.js:112:64
+    110|     await openPaid([pending, { ...pending, requestId: "r2", status: "A…
+    111|
+    112|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+    113|   });
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 25 passed (31)
+   Start at  22:55:16
+   Duration  4.98s (transform 2.47s, setup 54ms, import 136ms, tests 6.08s, environment 2.22s)
+

@@ -1,7 +1,7 @@
 # V1-RMD-1085 - İade ekranı yöntemi ve gerçek kanıt adımını söyler
 
 - Task ID: V1-RMD-1085
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
