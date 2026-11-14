@@ -1,0 +1,17 @@
+M1 closed never:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 2 failed | 4 passed (6) (restored, cmp ok)
+M2 closed always:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 2 failed | 4 passed (6) (restored, cmp ok)
+M3 text ignores closed:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 5 passed (6) (restored, cmp ok)
+M4 wording:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 5 passed (6) (restored, cmp ok)
+M5 no override:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 5 passed (6) (restored, cmp ok)
+M6 override always: Tests 6 passed (6) (restored, cmp ok)
+M7 status not read:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 2 failed | 4 passed (6) (restored, cmp ok)
+M8 manual hidden when closed:⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 5 passed (6) (restored, cmp ok)
+M6 override always (re-run after assertion added):⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 5 passed (6) (restored, cmp ok)

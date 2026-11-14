@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-open-refund-closed.test.js (5 tests | 1 failed) 709ms
+     × tells a refund request opened after the bill closed is only waiting for the manager, not keeping the bill open 133ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > tells a refund request opened after the bill closed is only waiting for the manager, not keeping the bill open
+AssertionError: expected 'Tahsilat Tamam, Hesap Açık' to be 'Hesap Ödendi' // Object.is equality
+
+Expected: "Hesap Ödendi"
+Received: "Tahsilat Tamam, Hesap Açık"
+
+ ❯ split-payment-open-refund-closed.test.js:66:61
+     64|     await openPaid([pending], "Paid");
+     65|
+     66|     expect(document.querySelector(".sp-title").textContent).toBe("Hesa…
+       |                                                             ^
+     67|     expect(document.querySelector(".sp-icon-circle").classList.contain…
+     68|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  15:05:10
+   Duration  2.19s (transform 323ms, setup 27ms, import 48ms, tests 709ms, environment 1.13s)
+
+exit=1

@@ -18,7 +18,7 @@ const pending = {
   requestedBy: "u1", requestedAt: "2026-10-13T10:00:00Z", decidedBy: null, decidedAt: null, slipNumber: null, billCancelled: false, mayDecide: false,
 };
 
-async function openPaid(requests) {
+async function openPaid(requests, billStatus) {
   window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
   installFetchRouter([
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
@@ -27,9 +27,11 @@ async function openPaid(requests) {
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: requests },
     { test: (url) => url.endsWith("/show-on-display"), body: {} },
+    { test: (url) => url.endsWith("/receipt"), body: { status: billStatus, tableNumber: "5", items: [] } },
   ]);
   await loadApp(htmlPath, scriptPath);
   await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+  if (billStatus) await vi.waitFor(() => expect(document.querySelector(".sp-back").getAttribute("href")).toBe("/tables"));
 }
 
 afterEach(() => { document.body.innerHTML = ""; });
@@ -56,5 +58,27 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
 
     expect(document.querySelector(".sp-title").textContent).toBe("Hesap Ödendi");
     expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(true);
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("Bu hesabın tamamı tahsil edildi.");
+  });
+
+  it("tells a refund request opened after the bill closed is only waiting for the manager, not keeping the bill open", async () => {
+    await openPaid([pending], "Paid");
+
+    expect(document.querySelector(".sp-title").textContent).toBe("Hesap Ödendi");
+    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(true);
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği gönderildi, yönetici kararı bekleniyor.");
+  });
+
+  it("still shows the approved refund's next step when the closed bill also has a request waiting", async () => {
+    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Card" }], "Paid");
+
+    expect(document.querySelector(".sp-subtitle").textContent).toContain("“İadeyi tamamla”");
+  });
+
+  it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the bill-stays-open sentence while the receipt says %s", async (status) => {
+    await openPaid([pending], status);
+
+    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.");
   });
 });

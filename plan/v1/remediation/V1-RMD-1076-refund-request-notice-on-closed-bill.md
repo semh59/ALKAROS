@@ -1,7 +1,7 @@
 # V1-RMD-1076 - Kapanmış hesapta açılan iade isteği "hesap kapanmaz" demez
 
 - Task ID: V1-RMD-1076
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

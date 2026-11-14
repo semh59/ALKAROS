@@ -120,6 +120,7 @@
     billItems: [],
     billTable: null,
     billRead: false,
+    billStatus: null,
     itemQty: {},
     itemPayment: '',
     itemStock: '',
@@ -1466,11 +1467,13 @@
       state.billTable = result.ok && result.body && result.body.tableNumber ? result.body.tableNumber : null;
       document.querySelector('.sp-back').setAttribute('href', state.billTable ? '/tables' : '/');
       state.billRead = !!result.ok;
+      state.billStatus = result.ok && result.body ? result.body.status : null;
       render();
     }).catch(function () {
       state.billItems = [];
       state.billTable = null;
       state.billRead = false;
+      state.billStatus = null;
     });
   }
 
@@ -2479,10 +2482,12 @@
   function closedHeading() {
     var refunds = state.refundRequests || [];
     var awaitingDecision = refunds.some(function (row) { return row.status === 'Requested'; });
-    if (awaitingDecision || refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; }))
+    // A request opened after the bill closed cannot hold it open.
+    var billClosed = state.billStatus === 'Paid';
+    if ((awaitingDecision && !billClosed) || refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; }))
       return {
         title: 'Tahsilat Tamam, Hesap Açık',
-        text: awaitingDecision
+        text: awaitingDecision && !billClosed
           ? 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.'
           : 'İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.',
         waiting: true,
@@ -2491,9 +2496,12 @@
     var deductions = state.adjustmentItems.filter(function (item) { return item.isDeduction; });
     var comps = deductions.filter(function (item) { return !!COMP_REASON_LABELS[item.reason]; }).length;
     var kind = deductions.length === 0 ? null : (comps === deductions.length ? CLOSED_BY.comp : (comps === 0 ? CLOSED_BY.discount : CLOSED_BY.both));
+    var heading;
     if (collected)
-      return { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
-    return kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
+      heading = { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
+    else
+      heading = kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
+    return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
   }
 
   // A print that was cancelled or whose answer got lost still used up the original; a manager gives it back with a reason.

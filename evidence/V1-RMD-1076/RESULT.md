@@ -1,0 +1,4 @@
+# V1-RMD-1076 RESULT
+split-payment.js: fis okumasindaki status (state.billStatus) Paid ise onay bekleyen iade isteginde "Hesap Odendi" basligi altinda "Iade istegi gonderildi, yonetici karari bekleniyor." yazar; status Paid degilse veya okunamadiysa onceki "karar verilene kadar hesap kapanmaz" cumlesi aynen kalir. Onaylanmis (AwaitingManualRefund) yol degismedi; kapanmis hesapta o cumle icin V1-RMD-1077 planli.
+Test: split-payment-open-refund-closed.test.js (7 test; red.log yeni kapali-hesap testi kirmizi; green-static.log 51 dosya/tum suite exit 0); mutations.txt 8 mutant, hepsi killed (M6 ek assert ile).
+Olculmedi: gercek tarayici/Docker; fis ile iade listesi paralel yuklendiginden kapali hesapta bir an eski cumle gorunebilir ve fis okumasi hata verirse eski cumle kalir (qa-frontend notu).
