@@ -1,0 +1,165 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-cashier-rules.test.js (6 tests | 6 failed) 303ms
+     × opens with one heading, Tahsilat, and no label stacked above it 286ms
+     × draws the table name as a quiet context line, not as a second heading 7ms
+     × keeps the remaining amount neutral, and green only once nothing is left 2ms
+     × draws the paid amount as large as the bill total, and the remaining amount larger than both 2ms
+     × paints the primary button in the accent with ink text, as the rules table says 2ms
+     × sets no text below 14px outside the receipt print sheet 3ms
+stderr | split-payment-quick-cash.test.js > split-payment.js quick cash buttons > offers six banknote buttons and an exact-amount button as real labelled buttons
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794613886627-0.673111654367394:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794613886627-0.673111654367394:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794613886627-0.673111654367394:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-quick-cash.test.js (10 tests | 1 failed) 1820ms
+     × offers six banknote buttons and an exact-amount button as real labelled buttons 308ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > opens with one heading, Tahsilat, and no label stacked above it
+AssertionError: expected <span class="sp-eyebrow"></span> to be null
+
+- Expected:
+null
+
++ Received:
+<span
+  class="sp-eyebrow"
+>
+  Hesap Ödeme
+</span>
+
+ ❯ split-payment-cashier-rules.test.js:48:51
+     46|     expect(document.querySelectorAll("h1").length).toBe(1);
+     47|     expect(document.querySelector("h1").textContent).toBe("Tahsilat");
+     48|     expect(document.querySelector(".sp-eyebrow")).toBeNull();
+       |                                                   ^
+     49|     expect(document.body.textContent).not.toContain("Hesap Ödeme");
+     50|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the table name as a quiet context line, not as a second heading
+AssertionError: expected 'var(--color-ink)' to be 'var(--color-text-muted)' // Object.is equality
+
+Expected: "var(--color-text-muted)"
+Received: "var(--color-ink)"
+
+ ❯ split-payment-cashier-rules.test.js:54:44
+     52|   it("draws the table name as a quiet context line, not as a second he…
+     53|     expect(Number.parseInt(declared(".sp-place", "font-size"), 10)).to…
+     54|     expect(declared(".sp-place", "color")).toBe("var(--color-text-mute…
+       |                                            ^
+     55|   });
+     56|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > keeps the remaining amount neutral, and green only once nothing is left
+AssertionError: expected 'var(--color-danger)' to be 'var(--color-ink)' // Object.is equality
+
+Expected: "var(--color-ink)"
+Received: "var(--color-danger)"
+
+ ❯ split-payment-cashier-rules.test.js:58:70
+     56|
+     57|   it("keeps the remaining amount neutral, and green only once nothing …
+     58|     expect(declared(".sp-summary-row.is-remaining .value", "color")).t…
+       |                                                                      ^
+     59|     expect(declared(".sp-summary-row.is-remaining.is-zero .value", "co…
+     60|     expect(css).not.toMatch(/\.is-remaining[^{]*\{[^}]*--color-danger/…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the paid amount as large as the bill total, and the remaining amount larger than both
+AssertionError: expected '\n.sp-summary-row.is-total .value { f…' to be '' // Object.is equality
+
+- Expected
++ Received
+
++
++ .sp-summary-row.is-total .value { font-size: 20px; 
+
+ ❯ split-payment-cashier-rules.test.js:64:53
+     62|
+     63|   it("draws the paid amount as large as the bill total, and the remain…
+     64|     expect(rule(".sp-summary-row.is-total .value")).toBe("");
+       |                                                     ^
+     65|     expect(declared(".sp-summary-row .value", "font-size")).toBe("20px…
+     66|     expect(Number.parseInt(declared(".sp-summary-row.is-remaining .val…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > paints the primary button in the accent with ink text, as the rules table says
+AssertionError: expected 'var(--color-ink)' to be 'var(--color-accent)' // Object.is equality
+
+Expected: "var(--color-accent)"
+Received: "var(--color-ink)"
+
+ ❯ split-payment-cashier-rules.test.js:71:55
+     69|   it("paints the primary button in the accent with ink text, as the ru…
+     70|     expect(ruleDoc("Birincil")).toContain("`--ds-color-accent`");
+     71|     expect(declared(".sp-btn-primary", "background")).toBe("var(--colo…
+       |                                                       ^
+     72|     expect(declared(".sp-btn-primary", "color")).toBe("var(--color-ink…
+     73|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > sets no text below 14px outside the receipt print sheet
+AssertionError: expected [ 12, 13, 13, 13, 13, 12, 13, 13 ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   12,
++   13,
++   13,
++   13,
++   13,
++   12,
++   13,
++   13,
++ ]
+
+ ❯ split-payment-cashier-rules.test.js:79:47
+     77|     const sizes = [...screen.matchAll(/font-size:\s*([\d.]+)(px|rem)/g…
+     78|     expect(sizes.length).toBeGreaterThan(20);
+     79|     expect(sizes.filter((size) => size < 14)).toEqual([]);
+       |                                               ^
+     80|   });
+     81| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  split-payment-quick-cash.test.js > split-payment.js quick cash buttons > offers six banknote buttons and an exact-amount button as real labelled buttons
+AssertionError: expected '200 ₺' to be '₺200,00' // Object.is equality
+
+Expected: "₺200,00"
+Received: "200 ₺"
+
+ ❯ split-payment-quick-cash.test.js:56:38
+     54|     expect(buttons.map((b) => b.dataset.quickCash)).toEqual(["5", "10"…
+     55|     expect(buttons.every((b) => b.tagName === "BUTTON" && b.type === "…
+     56|     expect(quick("200").textContent).toBe("₺200,00");
+       |                                      ^
+     57|     expect(document.querySelector(".sp-quick-cash").getAttribute("aria…
+     58|     expect(quick("exact").textContent).toBe("Tam tutar");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  7 failed | 27 passed (34)
+   Start at  02:51:25
+   Duration  3.81s (transform 1.96s, setup 52ms, import 153ms, tests 4.41s, environment 3.48s)
+
+exit=1

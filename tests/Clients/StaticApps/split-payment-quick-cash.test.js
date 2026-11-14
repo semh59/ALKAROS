@@ -53,7 +53,7 @@ describe("split-payment.js quick cash buttons", () => {
     const buttons = [...document.querySelectorAll("[data-quick-cash]")];
     expect(buttons.map((b) => b.dataset.quickCash)).toEqual(["5", "10", "20", "50", "100", "200", "exact"]);
     expect(buttons.every((b) => b.tagName === "BUTTON" && b.type === "button" && b.classList.contains("sp-btn"))).toBe(true);
-    expect(quick("200").textContent).toBe("200 ₺");
+    expect(quick("200").textContent).toBe("₺200,00");
     expect(document.querySelector(".sp-quick-cash").getAttribute("aria-label")).toBe("Hızlı nakit tutarı");
     expect(quick("exact").textContent).toBe("Tam tutar");
   });

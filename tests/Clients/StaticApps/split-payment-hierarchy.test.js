@@ -35,7 +35,7 @@ async function open(summary = unpaid) {
 }
 
 const declaredFontSize = (selector) => {
-  const rule = css.split("}").find((block) => block.split("{")[0].trim() === selector);
+  const rule = css.split("}").find((block) => block.split("{")[0].split(",").map((name) => name.trim()).includes(selector));
   return Number(/font-size:\s*(\d+)px/.exec(rule ?? "")?.[1] ?? 0);
 };
 

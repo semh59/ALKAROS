@@ -1,0 +1,14 @@
+killed M1 label stacked above the title again
+killed M2 remaining amount red again
+killed M3 paid amount drawn by its own smaller rule
+killed M4 paid row class dropped
+killed M5 primary button navy again
+killed M6 primary button white text
+killed M7 field label 13px
+killed M8 quick cash in the old money format
+killed M9 table name as large as the title
+killed M10 table name in ink
+killed M11 settled balance not green
+killed M12 login screen label back
+killed M13 small explanation 13px
+killed M14 one banknote button in the old format

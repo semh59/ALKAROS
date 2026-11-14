@@ -1151,7 +1151,7 @@
   function renderLogin() {
     app.innerHTML =
       '<div class="sp-card">' +
-      '<div><span class="sp-eyebrow">ALKAROS</span>' +
+      '<div>' +
       '<h1 class="sp-title">Kasa Girişi</h1>' +
       '<p class="sp-subtitle">Oturumunuz sona erdi. Devam etmek için tekrar giriş yapın.</p></div>' +
       errorAlert() +
@@ -2011,7 +2011,7 @@
   function renderQuickCash() {
     return '<div class="sp-quick-cash" role="group" aria-label="Hızlı nakit tutarı">' +
       QUICK_CASH_NOTES.map(function (note) {
-        return '<button class="sp-btn sp-btn-secondary" type="button" data-quick-cash="' + note + '">' + note + ' ₺</button>';
+        return '<button class="sp-btn sp-btn-secondary" type="button" data-quick-cash="' + note + '">' + formatMoney(note) + '</button>';
       }).join('') +
       '<button class="sp-btn sp-btn-secondary" type="button" data-quick-cash="exact">Tam tutar</button></div>';
   }
@@ -2246,7 +2246,7 @@
     var remaining = remainingAmount();
     app.innerHTML =
       '<div class="sp-card">' +
-      '<div><span class="sp-eyebrow">Hesap Ödeme</span>' +
+      '<div>' +
       '<h1 class="sp-title">Tahsilat</h1>' + renderBillContext() + '</div>' +
       errorAlert() +
       (state.locked
@@ -2261,7 +2261,7 @@
       renderStaleNotice() +
       renderChangeDue() +
       '<div class="sp-summary-row is-total"><span>Hesap toplamı</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
-      '<div class="sp-summary-row"><span>Ödenen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
+      '<div class="sp-summary-row is-paid"><span>Ödenen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
       '<div class="sp-summary-row is-remaining' + (remaining <= 0.004 ? ' is-zero' : '') + '">' +
       '<span>Kalan</span><span class="value">' + formatMoney(remaining) + '</span></div>' +
       '<div class="sp-divider"></div>' +
