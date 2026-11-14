@@ -1,0 +1,3 @@
+M1-owner-check-removed exit 1 restored cmp ok
+M2-manager-exemption exit 1 restored cmp ok
+Not: M1 satir 282 kosulu "if (false)" (2 test dustu: tek kasiyer + yonetici), M2 kosula "&& !await MayActForOwnerAsync(...)" eklendi (yonetici testi dustu, 1 basarisiz); ikisi de gercek test basarisizligi, derleme hatasi degil.

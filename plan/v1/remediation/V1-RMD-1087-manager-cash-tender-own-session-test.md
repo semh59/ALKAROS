@@ -1,7 +1,7 @@
 # V1-RMD-1087 - Yönetici de nakdi yalnız kendi açık kasa oturumuna alır (sunucu testi)
 
 - Task ID: V1-RMD-1087
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
