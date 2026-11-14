@@ -1,0 +1,12 @@
+killed M1 bottom bar drawn without an order
+killed M2 panel send button opens a toast again
+killed M4 quick sale hint dropped from the band
+killed M5 new sale hint also on a table order band
+killed M6 bar total label changed
+killed M7 band wording changed
+killed M3 bar send button opens a toast again
+killed M8 band announced to nobody
+killed M9 bar silent after sending
+killed M10 send button kept on a sent order in the bar
+killed M11 failed send swallowed without an error toast
+killed M12 stale revision sent

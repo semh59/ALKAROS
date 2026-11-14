@@ -830,22 +830,21 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         </div>
       )}
 
-      <div className="mobile-ticket-bar" aria-label="Sipariş özeti">
-        <div>
-          <span>{activeOrder ? "Toplam" : "Aktif sipariş yok"}</span>
-          <strong>{activeOrder ? formatMoney(activeOrder.total) : "Yeni satış"}</strong>
+      {activeOrder && (
+        <div className="mobile-ticket-bar" aria-label="Sipariş özeti">
+          <div>
+            <span>{activeOrder.editable ? "Toplam" : "Gönderildi · Toplam"}</span>
+            <strong>{formatMoney(activeOrder.total)}</strong>
+          </div>
+          {activeOrder.editable && (
+            <button data-telemetry-id="b.routes.cashier.10"
+              className="primary"
+              disabled={busy || activeOrder.lines.length === 0}
+              onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
+            >Gönder</button>
+          )}
         </div>
-        {activeOrder?.editable && (
-          <button data-telemetry-id="b.routes.cashier.10"
-            className="primary"
-            disabled={busy || activeOrder.lines.length === 0}
-            onClick={() => execute(
-              () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
-              activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
-            )}
-          >Gönder</button>
-        )}
-      </div>
+      )}
 
       <div className="pos-workspace">
         {/* V1-RMD-364 (module-by-module UI audit): the same tab-pattern gap
@@ -1006,15 +1005,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                 <button data-telemetry-id="b.routes.cashier.19"
                   className="primary submit-order"
                   disabled={busy || activeOrder.lines.length === 0}
-                  onClick={() => execute(
-                    () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
-                    activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
-                  )}
+                  onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
                 >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
               ) : (
-                <div className="submitted-state">
+                <div className="submitted-state" role="status">
                   <span>✓</span>
-                  <div><strong>Sipariş gönderildi</strong></div>
+                  <div><strong>Sipariş gönderildi</strong>{!activeOrder.tableNumber && <span>Yeni satış açabilirsiniz.</span>}</div>
                 </div>
               )}
               {!activeOrder.editable && (capabilities.includes("bills.split") ? (

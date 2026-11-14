@@ -1,0 +1,215 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.single-notice.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.single-notice.test.tsx
+new file mode 100644
+index 000000000..227b1cdf2
+--- /dev/null
++++ b/src/Clients/PosTerminal/src/routes/Cashier.single-notice.test.tsx
+@@ -0,0 +1,149 @@
++// @vitest-environment jsdom
++
++import { act, createElement } from "react";
++import { createRoot, type Root } from "react-dom/client";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { markTableCart } from "../tableCart";
++
++(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++
++const jsonResponse = (body: unknown, status = 200) =>
++  new Response(JSON.stringify(body), { status, headers: { "content-type": "application/json" } });
++
++vi.mock("@microsoft/signalr", () => ({
++  LogLevel: { Warning: 2 },
++  HubConnectionBuilder: class {
++    withUrl() { return this; }
++    withAutomaticReconnect() { return this; }
++    configureLogging() { return this; }
++    build() {
++      return {
++        on: () => undefined,
++        onreconnecting: () => undefined,
++        onreconnected: () => undefined,
++        onclose: () => undefined,
++        start: vi.fn(async () => undefined),
++        stop: vi.fn(async () => undefined),
++      };
++    }
++  },
++}));
++
++let root: Root | null = null;
++
++afterEach(() => {
++  if (root) {
++    act(() => root!.unmount());
++    root = null;
++  }
++  document.body.innerHTML = "";
++  sessionStorage.clear();
++  vi.unstubAllGlobals();
++  vi.resetModules();
++});
++
++const line = { itemId: "l1", name: "Çay", quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0, unsent: true };
++const order = (extra: Record<string, unknown>) => ({
++  orderId: "order-1", orderNumber: "1", revision: 2, editable: true, lines: [line], subtotal: 20, discountTotal: 0, taxTotal: 2, total: 20, ...extra,
++});
++
++async function render(active: unknown, afterSubmit: unknown = active, submitStatus = 200) {
++  let submitted = false;
++  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
++    const path = String(input);
++    if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
++    if (path.endsWith("/catalog")) return jsonResponse([]);
++    if (path.endsWith("/orders/active")) return jsonResponse(submitted ? afterSubmit : active);
++    if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
++    if (path.endsWith("/orders/order-1/submit") && init?.method === "POST") {
++      if (submitStatus !== 200) return jsonResponse({ code: "SERVER" }, submitStatus);
++      submitted = true;
++      return jsonResponse({ rowVersion: 3 });
++    }
++    return jsonResponse({});
++  });
++  vi.stubGlobal("fetch", fetchMock);
++  const { Cashier } = await import("./Cashier");
++  const { RouterProvider } = await import("../router");
++  document.body.innerHTML = '<div id="root"></div>';
++  root = createRoot(document.getElementById("root")!);
++  await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
++  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++  return fetchMock;
++}
++
++const sendToKitchen = () => act(async () => {
++  document.querySelector<HTMLButtonElement>(".submit-order")!.click();
++  await new Promise((resolve) => setTimeout(resolve, 0));
++});
++
++describe("Cashier tells each event once", () => {
++  it("draws no bottom bar, and no second 'no active order' line, while there is no order", async () => {
++    await render(null);
++
++    expect(document.querySelector(".mobile-ticket-bar")).toBeNull();
++    expect(document.body.textContent).not.toContain("Aktif sipariş yok");
++    expect(document.querySelectorAll(".ticket-heading h2")).toHaveLength(1);
++  });
++
++  it("draws the bottom bar with the total once an order is open", async () => {
++    await render(order({}));
++
++    expect(document.querySelector(".mobile-ticket-bar")?.textContent).toContain("Toplam");
++    expect(document.querySelector(".mobile-ticket-bar")?.textContent).toContain("₺20,00");
++  });
++
++  it("announces a sent table order only with the standing band, not also with a toast", async () => {
++    markTableCart("order-1");
++    await render(order({ tableNumber: "M-03" }), order({ tableNumber: "M-03", editable: false }));
++
++    await sendToKitchen();
++
++    expect(document.querySelector(".submitted-state")?.textContent).toContain("Sipariş gönderildi");
++    expect(document.querySelector(".submitted-state")?.getAttribute("role")).toBe("status");
++    expect(document.querySelector(".toast-message")).toBeNull();
++    expect(document.body.textContent).not.toContain("Sipariş mutfağa gönderildi");
++  });
++
++  it("carries the hint to open a new sale on the band of a sent quick sale, with no toast", async () => {
++    const fetchMock = await render(order({}), order({ editable: false }));
++
++    await sendToKitchen();
++
++    const post = fetchMock.mock.calls.find(([url, init]) => String(url).endsWith("/orders/order-1/submit") && init?.method === "POST")!;
++    expect(JSON.parse(String(post[1]!.body)).expectedRevision).toBe(2);
++
++    expect(document.querySelector(".submitted-state")?.textContent).toContain("Yeni satış açabilirsiniz.");
++    expect(document.querySelector(".toast-message")).toBeNull();
++  });
++
++  it("opens no toast either when the order is sent from the bottom bar", async () => {
++    await render(order({}), order({ editable: false }));
++
++    await act(async () => {
++      document.querySelector<HTMLButtonElement>(".mobile-ticket-bar button")!.click();
++      await new Promise((resolve) => setTimeout(resolve, 0));
++    });
++
++    expect(document.querySelector(".submitted-state")).not.toBeNull();
++    expect(document.querySelector(".toast-message")).toBeNull();
++    expect(document.querySelector(".mobile-ticket-bar span")?.textContent).toBe("Gönderildi · Toplam");
++    expect(document.querySelector(".mobile-ticket-bar button")).toBeNull();
++  });
++
++  it("still opens an error toast, and no sent band, when sending fails", async () => {
++    await render(order({}), order({}), 500);
++
++    await sendToKitchen();
++
++    expect(document.querySelector(".toast-message.error")).not.toBeNull();
++    expect(document.querySelector(".submitted-state")).toBeNull();
++  });
++
++  it("keeps the band of a sent table order free of the new-sale hint", async () => {
++    markTableCart("order-1");
++    await render(order({ tableNumber: "M-03", editable: false }));
++
++    expect(document.querySelector(".submitted-state")?.textContent).toBe("✓Sipariş gönderildi");
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index f090dbe22..e371a895d 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -830,22 +830,21 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+         </div>
+       )}
+ 
+-      <div className="mobile-ticket-bar" aria-label="Sipariş özeti">
+-        <div>
+-          <span>{activeOrder ? "Toplam" : "Aktif sipariş yok"}</span>
+-          <strong>{activeOrder ? formatMoney(activeOrder.total) : "Yeni satış"}</strong>
++      {activeOrder && (
++        <div className="mobile-ticket-bar" aria-label="Sipariş özeti">
++          <div>
++            <span>{activeOrder.editable ? "Toplam" : "Gönderildi · Toplam"}</span>
++            <strong>{formatMoney(activeOrder.total)}</strong>
++          </div>
++          {activeOrder.editable && (
++            <button data-telemetry-id="b.routes.cashier.10"
++              className="primary"
++              disabled={busy || activeOrder.lines.length === 0}
++              onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
++            >Gönder</button>
++          )}
+         </div>
+-        {activeOrder?.editable && (
+-          <button data-telemetry-id="b.routes.cashier.10"
+-            className="primary"
+-            disabled={busy || activeOrder.lines.length === 0}
+-            onClick={() => execute(
+-              () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
+-              activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
+-            )}
+-          >Gönder</button>
+-        )}
+-      </div>
++      )}
+ 
+       <div className="pos-workspace">
+         {/* V1-RMD-364 (module-by-module UI audit): the same tab-pattern gap
+@@ -1006,15 +1005,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+                 <button data-telemetry-id="b.routes.cashier.19"
+                   className="primary submit-order"
+                   disabled={busy || activeOrder.lines.length === 0}
+-                  onClick={() => execute(
+-                    () => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision),
+-                    activeOrder.tableNumber ? "Sipariş mutfağa gönderildi." : "Sipariş gönderildi. Yeni satış açabilirsiniz.",
+-                  )}
++                  onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
+                 >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
+               ) : (
+-                <div className="submitted-state">
++                <div className="submitted-state" role="status">
+                   <span>✓</span>
+-                  <div><strong>Sipariş gönderildi</strong></div>
++                  <div><strong>Sipariş gönderildi</strong>{!activeOrder.tableNumber && <span>Yeni satış açabilirsiniz.</span>}</div>
+                 </div>
+               )}
+               {!activeOrder.editable && (capabilities.includes("bills.split") ? (

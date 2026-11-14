@@ -1,7 +1,7 @@
 # V1-RMD-1060 - Satış ekranında aynı olay tek yerde bildirilir ve boş durumda "aktif sipariş yok" iki kez yazılmaz
 
 - Task ID: V1-RMD-1060
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

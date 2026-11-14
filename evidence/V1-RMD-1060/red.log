@@ -1,0 +1,98 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.single-notice.test.tsx (5 tests | 3 failed) 3935ms
+     × draws no bottom bar, and no second 'no active order' line, while there is no order 3516ms
+     × announces a sent table order only with the standing band, not also with a toast 107ms
+     × carries the hint to open a new sale on the band of a sent quick sale, with no toast 122ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.single-notice.test.tsx > Cashier tells each event once > draws no bottom bar, and no second 'no active order' line, while there is no order
+AssertionError: expected <div …(2)><div>…(2)</div></div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  aria-label="Sipariş özeti"
+  class="mobile-ticket-bar"
+>
+  <div>
+    <span>
+      Aktif sipariş yok
+    </span>
+    <strong>
+      Yeni satış
+    </strong>
+  </div>
+</div>
+
+ ❯ src/routes/Cashier.single-notice.test.tsx:78:58
+     76|     await render(null);
+     77|
+     78|     expect(document.querySelector(".mobile-ticket-bar")).toBeNull();
+       |                                                          ^
+     79|     expect(document.body.textContent).not.toContain("Aktif sipariş yok…
+     80|     expect(document.querySelectorAll(".ticket-heading h2")).toHaveLeng…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/Cashier.single-notice.test.tsx > Cashier tells each event once > announces a sent table order only with the standing band, not also with a toast
+AssertionError: expected <div …(3)><span></span>
+…(1)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  aria-live="polite"
+  class="toast-message success"
+  role="status"
+>
+  <span>
+    Sipariş mutfağa gönderildi.
+  </span>
+  <button
+    aria-label="Mesajı kapat"
+    data-telemetry-id="b.routes.cashier.8"
+  >
+    ×
+  </button>
+</div>
+
+ ❯ src/routes/Cashier.single-notice.test.tsx:97:54
+     95|
+     96|     expect(document.querySelector(".submitted-state")?.textContent).to…
+     97|     expect(document.querySelector(".toast-message")).toBeNull();
+       |                                                      ^
+     98|     expect(document.body.textContent).not.toContain("Sipariş mutfağa g…
+     99|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/routes/Cashier.single-notice.test.tsx > Cashier tells each event once > carries the hint to open a new sale on the band of a sent quick sale, with no toast
+AssertionError: expected '✓Sipariş gönderildi' to contain 'Yeni satış açabilirsiniz.'
+
+Expected: "Yeni satış açabilirsiniz."
+Received: "✓Sipariş gönderildi"
+
+ ❯ src/routes/Cashier.single-notice.test.tsx:106:69
+    104|     await sendToKitchen();
+    105|
+    106|     expect(document.querySelector(".submitted-state")?.textContent).to…
+       |                                                                     ^
+    107|     expect(document.querySelector(".toast-message")).toBeNull();
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  03:24:20
+   Duration  6.31s (transform 2.80s, setup 0ms, import 260ms, tests 3.94s, environment 1.72s)
+
+exit=1
