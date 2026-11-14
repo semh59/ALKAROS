@@ -1,7 +1,7 @@
 # V1-RMD-1069 - Masa panelindeki durum rozeti kartla aynı yazı rengini alır
 
 - Task ID: V1-RMD-1069
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
