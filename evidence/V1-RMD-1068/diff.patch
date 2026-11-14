@@ -1,0 +1,131 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+index 11f82e9fb..073811be9 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+@@ -127,7 +127,8 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
+ .sp-btn:disabled { cursor: not-allowed; }
+ .sp-btn-primary { background: var(--color-accent); color: var(--color-ink); }
+ .sp-btn-secondary { background: var(--color-surface); color: var(--color-ink); border: 1.5px solid var(--color-border); }
+-.sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-danger:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
++.sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-destructive:disabled, .sp-btn-danger:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
++.sp-btn-destructive { background: var(--color-surface); color: var(--color-danger); border: 1.5px solid var(--color-danger); }
+ .sp-btn-danger { background: var(--color-danger); color: #FFFFFF; }
+ 
+ .sp-row { display: flex; gap: 16px; }
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 4ef5ed211..207b2fc3b 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -1589,7 +1589,7 @@
+       '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
+       '<span><strong>Siparişi de iptal et</strong><small>İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.</small></span></label>' +
+       '<p class="sp-hint" id="cancel-hint" role="status"' + (state.cancelReason.trim() ? ' hidden' : '') + '>Hesabı iptal etmek için bir gerekçe seçin ya da yazın.</p>' +
+-      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary', state.summary.payableAmount) +
++      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-destructive', state.summary.payableAmount) +
+       '</div>'
+     );
+   }
+@@ -1673,7 +1673,7 @@
+       '<label class="sp-field"><span class="sp-field-label">Stoğa geri dönüş</span>' +
+       '<select class="sp-input" data-item-stock="1" aria-label="Stoğa geri dönüş"' + disabled + '>' + stockOptions + '</select></label>' +
+       renderReasonField('items', 'İade gerekçesi') +
+-      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request-items" data-disabled-reason=""' +
++      '<button class="sp-btn sp-btn-destructive" type="button" data-refund-action="request-items" data-disabled-reason=""' +
+       (state.refundBusy || !itemsReady() ? ' disabled' : '') + '>Seçilen ürünleri iade et</button></div>'
+     );
+   }
+@@ -1694,7 +1694,7 @@
+         return (
+           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(line.amount) + '</span>' +
+           renderReasonField('refund:' + line.paymentId, 'İade gerekçesi (' + formatMoney(line.amount) + ')') +
+-          '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
++          '<button class="sp-btn sp-btn-destructive" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
+           ' data-disabled-reason="İade istemek için bir gerekçe seçin ya da yazın."' +
+           (disabled || (String(state.refundReasons[line.paymentId] || '').trim() ? '' : ' disabled')) + '>İade iste</button></div>'
+         );
+@@ -1713,7 +1713,7 @@
+       confirmButtons(
+         'cancel-approved', id, 'Onaylı iadeyi iptal et', 'Evet, onaylı iadeyi iptal et',
+         ' data-disabled-reason="İptal etmek için gerekçeyi seçin ya da yazın."' +
+-        (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')), 'sp-btn-secondary', row.amount)
++        (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')), 'sp-btn-destructive', row.amount)
+     );
+   }
+ 
+diff --git a/tests/Clients/StaticApps/split-payment-cashier-rules.test.js b/tests/Clients/StaticApps/split-payment-cashier-rules.test.js
+index 48416a207..5862929a6 100644
+--- a/tests/Clients/StaticApps/split-payment-cashier-rules.test.js
++++ b/tests/Clients/StaticApps/split-payment-cashier-rules.test.js
+@@ -29,6 +29,32 @@ async function open() {
+   await vi.waitFor(() => expect(document.querySelector(".sp-summary-row")).not.toBeNull());
+ }
+ 
++const PAYMENT_ID = "33333333-3333-3333-3333-333333333333";
++const TEA = "aaaaaaaa-0000-0000-0000-000000000001";
++
++/** A paid bill with one refundable line: the screen then offers İade iste and Ürün bazlı iade. */
++async function openPaid({ requests = [], capabilities = [] } = {}) {
++  const base = `/api/v1/terminals/${TERMINAL_ID}/billing`;
++  const paid = { billId: BILL_ID, payableAmount: 150, allocatedTotal: 150, remainingAmount: 0, unsettledPayment: null, allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 150, paymentStatus: "Approved" }] };
++  const receipt = {
++    billId: BILL_ID, billNumber: "B-1", status: "Open", currencyCode: "TRY", openedAt: "2026-10-14T10:00:00Z", closedAt: null,
++    items: [{ billItemId: TEA, name: "Çay", quantity: 3, unitPrice: 50, amount: 150, refundedQuantity: 0 }], adjustments: [], subtotal: 150, payableAmount: 150, taxTotal: 0, payments: [],
++  };
++  window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
++  installFetchRouter([
++    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1", capabilities } },
++    { test: (url) => url.endsWith("/tenders/"), body: paid },
++    { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
++    { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
++    { test: (url) => url.endsWith(`${base}/refund-allowance`), body: { hasOpenSession: false, allowance: 0, used: 0, remaining: 0 } },
++    { test: (url) => url.endsWith(`/bills/${BILL_ID}/receipt`), body: receipt },
++    { test: (url) => url.endsWith(`${base}/refund-requests`), body: requests },
++    { test: (url) => url.endsWith("/show-on-display"), status: 204 },
++  ]);
++  await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
++  await vi.waitFor(() => expect(document.querySelector("h1")).not.toBeNull());
++}
++
+ const rule = (selector) => css.split("}").find((block) => block.split("{")[0].split(",").some((name) => name.trim() === selector)) ?? "";
+ const declared = (selector, property) => new RegExp(String.raw`(?:^|[;{\s])${property}:\s*([^;]+)`).exec(rule(selector))?.[1].trim();
+ const ruleDoc = (name) => new RegExp(String.raw`\| ${name} \|[^\n]*`).exec(rules)?.[0] ?? "";
+@@ -40,6 +66,39 @@ describe("Hesap Ödeme page follows docs/CASHIER_UI_RULES.md", () => {
+     document.body.innerHTML = "";
+   });
+ 
++  it("draws the destructive actions with the danger tokens on the surface, never filled and never like a neutral button", () => {
++    expect(declared(".sp-btn-destructive", "background")).toBe("var(--color-surface)");
++    expect(declared(".sp-btn-destructive", "color")).toBe("var(--color-danger)");
++    expect(declared(".sp-btn-destructive", "border")).toContain("var(--color-danger)");
++    expect(declared(".sp-btn-destructive:disabled", "background")).toBe("var(--color-disabled)");
++    expect(declared(".sp-btn-destructive:disabled", "color")).toBe("var(--color-text-muted)");
++  });
++
++  it("draws Hesabı iptal et as a destructive button", async () => {
++    await open();
++
++    const button = document.querySelector('[data-refund-action="cancel"]');
++    expect(button.classList.contains("sp-btn-destructive")).toBe(true);
++    expect(button.classList.contains("sp-btn-secondary")).toBe(false);
++  });
++
++  it("draws Onaylı iadeyi iptal et as a destructive button", async () => {
++    const waiting = { requestId: "44444444-4444-4444-4444-444444444444", billId: BILL_ID, paymentId: PAYMENT_ID, amount: 150, method: "Cash", reason: "İkram", status: "AwaitingManualRefund", requestedBy: "u2", requestedAt: "2026-10-14T10:00:00Z", decidedBy: "u3", decidedAt: null, slipNumber: null, billCancelled: false, approvedFromAllowance: false };
++    await openPaid({ requests: [waiting], capabilities: ["payments.refund.approve"] });
++    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="cancel-approved"]')).not.toBeNull());
++
++    expect(document.querySelector('[data-refund-action="cancel-approved"]').classList.contains("sp-btn-destructive")).toBe(true);
++  });
++
++  it.each(["request", "request-items"])("draws the refund button %s as a destructive button", async (action) => {
++    await openPaid();
++    await vi.waitFor(() => expect(document.querySelector(`[data-refund-action="${action}"]`)).not.toBeNull());
++
++    const button = document.querySelector(`[data-refund-action="${action}"]`);
++    expect(button.classList.contains("sp-btn-destructive")).toBe(true);
++    expect(button.classList.contains("sp-btn-secondary")).toBe(false);
++  });
++
+   it("opens with one heading, Tahsilat, and no label stacked above it", async () => {
+     await open();
+ 

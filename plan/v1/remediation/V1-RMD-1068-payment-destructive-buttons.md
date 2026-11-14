@@ -1,7 +1,7 @@
 # V1-RMD-1068 - Tahsilat sayfasında Hesabı iptal et ve İade iste düğmeleri yıkıcı stilde çizilir
 
 - Task ID: V1-RMD-1068
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,2 @@
+- qa-frontend: KABUL (iki gozlem RESULT.md notunda).
+- qa-test-kalitesi: disabled testi zayifti (yalniz secici): deger assertion ve D9 mutanti eklendi.

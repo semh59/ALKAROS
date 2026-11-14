@@ -1,0 +1,94 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the refund button request as a destructive button
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794647981596-0.5633854257547122:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794647981596-0.5633854257547122:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794647981596-0.5633854257547122:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the refund button request-items as a destructive button
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794647981737-0.3047758348875498:262:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794647981737-0.3047758348875498:458:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794647981737-0.3047758348875498:571:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-cashier-rules.test.js (19 tests | 4 failed) 918ms
+     × draws the destructive actions with the danger tokens on the surface, never filled and never like a neutral button 12ms
+     × draws Hesabı iptal et as a destructive button 176ms
+     × draws the refund button request as a destructive button 142ms
+     × draws the refund button request-items as a destructive button 152ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the destructive actions with the danger tokens on the surface, never filled and never like a neutral button
+AssertionError: expected undefined to be 'var(--color-surface)' // Object.is equality
+
+- Expected:
+"var(--color-surface)"
+
++ Received:
+undefined
+
+ ❯ split-payment-cashier-rules.test.js:69:59
+     67|
+     68|   it("draws the destructive actions with the danger tokens on the surf…
+     69|     expect(declared(".sp-btn-destructive", "background")).toBe("var(--…
+       |                                                           ^
+     70|     expect(declared(".sp-btn-destructive", "color")).toBe("var(--color…
+     71|     expect(declared(".sp-btn-destructive", "border")).toContain("var(-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws Hesabı iptal et as a destructive button
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-cashier-rules.test.js:79:61
+     77|
+     78|     const button = document.querySelector('[data-refund-action="cancel…
+     79|     expect(button.classList.contains("sp-btn-destructive")).toBe(true);
+       |                                                             ^
+     80|     expect(button.classList.contains("sp-btn-secondary")).toBe(false);
+     81|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the refund button request as a destructive button
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > draws the refund button request-items as a destructive button
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-cashier-rules.test.js:87:61
+     85|
+     86|     const button = document.querySelector(`[data-refund-action="${acti…
+     87|     expect(button.classList.contains("sp-btn-destructive")).toBe(true);
+       |                                                             ^
+     88|     expect(button.classList.contains("sp-btn-secondary")).toBe(false);
+     89|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 15 passed (19)
+   Start at  12:19:40
+   Duration  2.29s (transform 426ms, setup 24ms, import 57ms, tests 918ms, environment 1.01s)
+
+exit=1

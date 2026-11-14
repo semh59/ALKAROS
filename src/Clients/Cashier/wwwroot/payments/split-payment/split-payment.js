@@ -1589,7 +1589,7 @@
       '<label class="sp-check"><input type="checkbox" id="cancel-order" data-cancel-order' + (state.cancelOrder ? ' checked' : '') + (state.refundBusy ? ' disabled' : '') + '>' +
       '<span><strong>Siparişi de iptal et</strong><small>İşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.</small></span></label>' +
       '<p class="sp-hint" id="cancel-hint" role="status"' + (state.cancelReason.trim() ? ' hidden' : '') + '>Hesabı iptal etmek için bir gerekçe seçin ya da yazın.</p>' +
-      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-secondary', state.summary.payableAmount) +
+      confirmButtons('cancel', '', 'Hesabı iptal et', (state.cancelOrder ? 'Evet, hesabı ve siparişi iptal et' : 'Evet, hesabı iptal et'), (state.cancelReason.trim() ? '' : ' aria-describedby="cancel-hint" disabled') + (disabled ? ' disabled' : ''), 'sp-btn-destructive', state.summary.payableAmount) +
       '</div>'
     );
   }
@@ -1673,7 +1673,7 @@
       '<label class="sp-field"><span class="sp-field-label">Stoğa geri dönüş</span>' +
       '<select class="sp-input" data-item-stock="1" aria-label="Stoğa geri dönüş"' + disabled + '>' + stockOptions + '</select></label>' +
       renderReasonField('items', 'İade gerekçesi') +
-      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request-items" data-disabled-reason=""' +
+      '<button class="sp-btn sp-btn-destructive" type="button" data-refund-action="request-items" data-disabled-reason=""' +
       (state.refundBusy || !itemsReady() ? ' disabled' : '') + '>Seçilen ürünleri iade et</button></div>'
     );
   }
@@ -1694,7 +1694,7 @@
         return (
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(line.amount) + '</span>' +
           renderReasonField('refund:' + line.paymentId, 'İade gerekçesi (' + formatMoney(line.amount) + ')') +
-          '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
+          '<button class="sp-btn sp-btn-destructive" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
           ' data-disabled-reason="İade istemek için bir gerekçe seçin ya da yazın."' +
           (disabled || (String(state.refundReasons[line.paymentId] || '').trim() ? '' : ' disabled')) + '>İade iste</button></div>'
         );
@@ -1713,7 +1713,7 @@
       confirmButtons(
         'cancel-approved', id, 'Onaylı iadeyi iptal et', 'Evet, onaylı iadeyi iptal et',
         ' data-disabled-reason="İptal etmek için gerekçeyi seçin ya da yazın."' +
-        (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')), 'sp-btn-secondary', row.amount)
+        (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')), 'sp-btn-destructive', row.amount)
     );
   }
 

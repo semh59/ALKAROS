@@ -29,6 +29,32 @@ async function open() {
   await vi.waitFor(() => expect(document.querySelector(".sp-summary-row")).not.toBeNull());
 }
 
+const PAYMENT_ID = "33333333-3333-3333-3333-333333333333";
+const TEA = "aaaaaaaa-0000-0000-0000-000000000001";
+
+/** A paid bill with one refundable line: the screen then offers İade iste and Ürün bazlı iade. */
+async function openPaid({ requests = [], capabilities = [] } = {}) {
+  const base = `/api/v1/terminals/${TERMINAL_ID}/billing`;
+  const paid = { billId: BILL_ID, payableAmount: 150, allocatedTotal: 150, remainingAmount: 0, unsettledPayment: null, allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 150, paymentStatus: "Approved" }] };
+  const receipt = {
+    billId: BILL_ID, billNumber: "B-1", status: "Open", currencyCode: "TRY", openedAt: "2026-10-14T10:00:00Z", closedAt: null,
+    items: [{ billItemId: TEA, name: "Çay", quantity: 3, unitPrice: 50, amount: 150, refundedQuantity: 0 }], adjustments: [], subtotal: 150, payableAmount: 150, taxTotal: 0, payments: [],
+  };
+  window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
+  installFetchRouter([
+    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1", capabilities } },
+    { test: (url) => url.endsWith("/tenders/"), body: paid },
+    { test: (url) => url.includes("/cash-sessions/active"), status: 404 },
+    { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+    { test: (url) => url.endsWith(`${base}/refund-allowance`), body: { hasOpenSession: false, allowance: 0, used: 0, remaining: 0 } },
+    { test: (url) => url.endsWith(`/bills/${BILL_ID}/receipt`), body: receipt },
+    { test: (url) => url.endsWith(`${base}/refund-requests`), body: requests },
+    { test: (url) => url.endsWith("/show-on-display"), status: 204 },
+  ]);
+  await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
+  await vi.waitFor(() => expect(document.querySelector("h1")).not.toBeNull());
+}
+
 const rule = (selector) => css.split("}").find((block) => block.split("{")[0].split(",").some((name) => name.trim() === selector)) ?? "";
 const declared = (selector, property) => new RegExp(String.raw`(?:^|[;{\s])${property}:\s*([^;]+)`).exec(rule(selector))?.[1].trim();
 const ruleDoc = (name) => new RegExp(String.raw`\| ${name} \|[^\n]*`).exec(rules)?.[0] ?? "";
@@ -38,6 +64,39 @@ describe("Hesap Ödeme page follows docs/CASHIER_UI_RULES.md", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
+  });
+
+  it("draws the destructive actions with the danger tokens on the surface, never filled and never like a neutral button", () => {
+    expect(declared(".sp-btn-destructive", "background")).toBe("var(--color-surface)");
+    expect(declared(".sp-btn-destructive", "color")).toBe("var(--color-danger)");
+    expect(declared(".sp-btn-destructive", "border")).toContain("var(--color-danger)");
+    expect(declared(".sp-btn-destructive:disabled", "background")).toBe("var(--color-disabled)");
+    expect(declared(".sp-btn-destructive:disabled", "color")).toBe("var(--color-text-muted)");
+  });
+
+  it("draws Hesabı iptal et as a destructive button", async () => {
+    await open();
+
+    const button = document.querySelector('[data-refund-action="cancel"]');
+    expect(button.classList.contains("sp-btn-destructive")).toBe(true);
+    expect(button.classList.contains("sp-btn-secondary")).toBe(false);
+  });
+
+  it("draws Onaylı iadeyi iptal et as a destructive button", async () => {
+    const waiting = { requestId: "44444444-4444-4444-4444-444444444444", billId: BILL_ID, paymentId: PAYMENT_ID, amount: 150, method: "Cash", reason: "İkram", status: "AwaitingManualRefund", requestedBy: "u2", requestedAt: "2026-10-14T10:00:00Z", decidedBy: "u3", decidedAt: null, slipNumber: null, billCancelled: false, approvedFromAllowance: false };
+    await openPaid({ requests: [waiting], capabilities: ["payments.refund.approve"] });
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="cancel-approved"]')).not.toBeNull());
+
+    expect(document.querySelector('[data-refund-action="cancel-approved"]').classList.contains("sp-btn-destructive")).toBe(true);
+  });
+
+  it.each(["request", "request-items"])("draws the refund button %s as a destructive button", async (action) => {
+    await openPaid();
+    await vi.waitFor(() => expect(document.querySelector(`[data-refund-action="${action}"]`)).not.toBeNull());
+
+    const button = document.querySelector(`[data-refund-action="${action}"]`);
+    expect(button.classList.contains("sp-btn-destructive")).toBe(true);
+    expect(button.classList.contains("sp-btn-secondary")).toBe(false);
   });
 
   it("opens with one heading, Tahsilat, and no label stacked above it", async () => {

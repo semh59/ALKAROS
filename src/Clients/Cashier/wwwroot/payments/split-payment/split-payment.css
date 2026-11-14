@@ -127,7 +127,8 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 .sp-btn:disabled { cursor: not-allowed; }
 .sp-btn-primary { background: var(--color-accent); color: var(--color-ink); }
 .sp-btn-secondary { background: var(--color-surface); color: var(--color-ink); border: 1.5px solid var(--color-border); }
-.sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-danger:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
+.sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-destructive:disabled, .sp-btn-danger:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
+.sp-btn-destructive { background: var(--color-surface); color: var(--color-danger); border: 1.5px solid var(--color-danger); }
 .sp-btn-danger { background: var(--color-danger); color: #FFFFFF; }
 
 .sp-row { display: flex; gap: 16px; }

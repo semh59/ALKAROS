@@ -1,0 +1,14 @@
+killed D1 cancel back to neutral
+survived D2 cancel-approved back to neutral (ilk kosuda test yoktu; test eklendi, asagidaki kosuda killed)
+killed D3 item refund back to neutral
+killed D4 refund request back to neutral
+restore cmp identical
+killed D5 destructive filled red like the confirm
+killed D6 destructive text neutral
+killed D7 destructive border neutral
+killed D8 disabled look dropped
+restore cmp identical
+killed D2 cancel-approved back to neutral
+restore cmp identical
+killed D9 disabled destructive keeps danger red
+restore cmp identical
