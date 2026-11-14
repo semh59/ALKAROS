@@ -1,7 +1,7 @@
 # V1-RMD-1063 - Kasa oturumu sayfası oturum sahibini adıyla söyler ve başkasının oturumunda kimin kapatacağını yazar
 
 - Task ID: V1-RMD-1063
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
