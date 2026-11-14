@@ -1,0 +1,2 @@
+- qa-ux-tasarim: ilk tur 2 bulgu (koltuk istisnasi gereksiz, numara tasma riski): koltuk 14px, ic bosluk azaldi; ikinci tur KABUL (dugum ici istisna urun karari olarak raporlandi).
+- qa-test-kalitesi: ilk tur (birim, istisna tavani, font kisaltmasi): giderildi; son tur kisaltma boslugu da kapatildi (F8 killed).

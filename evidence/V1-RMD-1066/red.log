@@ -1,0 +1,49 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/tables/tablesStyle.test.ts (6 tests | 1 failed) 21ms
+     × has no floor plan text smaller than 14px outside the table nodes on the canvas, and none smaller than 11px inside them 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/tables/tablesStyle.test.ts > table screens style rules > has no floor plan text smaller than 14px outside the table nodes on the canvas, and none smaller than 11px inside them
+AssertionError: expected [ …(14) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".floor-plan-shell__toolbar small = 11.52px",
++   ".floor-plan-shell__eyebrow = 12px",
++   ".floor-plan-canvas__north = 12px",
++   ".floor-plan-table__number = 12px",
++   ".floor-plan-inspector__title span = 12px",
++   ".floor-plan-inspector__signals dt = 11.2px",
++   ".floor-plan-inspector__signals dd = 12.48px",
++   ".floor-plan-inspector__commands > span = 11.2px",
++   ".floor-plan-inspector__commands p, .floor-plan-inspector__hint = 12px",
++   ".floor-plan-seat-editor__row button = 11.52px",
++   ".floor-plan-review > div span = 11.52px",
++   ".floor-plan-review ul = 11.52px",
++   ".floor-plan-review p = 12px",
++   ".floor-plan-dense-list button small, .floor-plan-dense-list button > span:last-child = 11.52px",
++ ]
+
+ ❯ src/features/tables/tablesStyle.test.ts:24:84
+     22|     expect(exempt).toHaveLength(insideTableNode.size);
+     23|     const below = (list: typeof all, limit: number) => list.flatMap((b…
+     24|     expect(below(all.filter((block) => !insideTableNode.has(block.sele…
+       |                                                                                    ^
+     25|     expect(below(exempt, 11)).toEqual([]);
+     26|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  11:58:18
+   Duration  352ms (transform 35ms, setup 0ms, import 56ms, tests 21ms, environment 0ms)
+
+exit=1

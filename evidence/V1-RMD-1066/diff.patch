@@ -1,0 +1,154 @@
+diff --git a/src/Clients/PosTerminal/src/features/tables/floorPlan.css b/src/Clients/PosTerminal/src/features/tables/floorPlan.css
+index 5e507b0c7..aab7a9d54 100644
+--- a/src/Clients/PosTerminal/src/features/tables/floorPlan.css
++++ b/src/Clients/PosTerminal/src/features/tables/floorPlan.css
+@@ -20,8 +20,8 @@
+ 
+ .floor-plan-shell__toolbar > div:first-child { min-width: 0; display: grid; gap: .14rem; }
+ .floor-plan-shell__toolbar strong { overflow: hidden; font-size: 1.05rem; text-overflow: ellipsis; white-space: nowrap; }
+-.floor-plan-shell__toolbar small { color: #b8c7ce; font-size: .72rem; }
+-.floor-plan-shell__eyebrow { color: #ffb38f; font-size: .75rem; font-weight: 900; letter-spacing: .16em; }
++.floor-plan-shell__toolbar small { color: #b8c7ce; font-size: .875rem; }
++.floor-plan-shell__eyebrow { color: #ffb38f; font-size: .875rem; font-weight: 900; letter-spacing: .16em; }
+ .floor-plan-shell__mode-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--ds-space-2); }
+ .floor-plan-shell__mode-actions .ds-button { min-height: var(--ds-target-min); }
+ .floor-plan-shell__notice { margin: var(--ds-space-3); border: 1px solid #6a7b83; border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: #29424e; background: #f7fafb; font-weight: 700; }
+@@ -45,7 +45,7 @@
+   background-size: 10% 10%, 10% 10%, 2% 2%, 2% 2%;
+   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 85%);
+ }
+-.floor-plan-canvas__north { position: absolute; z-index: 1; top: .65rem; left: .8rem; color: #4d5d64; font-size: .75rem; font-weight: 900; letter-spacing: .14em; }
++.floor-plan-canvas__north { position: absolute; z-index: 1; top: .65rem; left: .8rem; color: #4d5d64; font-size: .875rem; font-weight: 900; letter-spacing: .14em; }
+ .floor-plan-table-wrap { position: absolute; min-width: 2.75rem; min-height: 2.75rem; }
+ .floor-plan-table {
+   width: 100%;
+@@ -57,7 +57,7 @@
+   gap: .08rem;
+   border: 2px solid #2f7a5a;
+   border-radius: .55rem;
+-  padding: .3rem;
++  padding: .2rem;
+   color: #183529;
+   background: #dff1e8;
+   box-shadow: 0 5px 12px rgb(25 47 57 / 16%);
+@@ -76,7 +76,7 @@
+ .floor-plan-table--outofservice { border-color: #8d3b45; color: #61262d; background: #f8dde0; }
+ .floor-plan-table--round { border-radius: 50%; }
+ .floor-plan-table--square { border-radius: .3rem; }
+-.floor-plan-table__number { font-size: clamp(.75rem, 1.15vw, 1rem); font-weight: 950; letter-spacing: -.03em; }
++.floor-plan-table__number { font-size: clamp(.875rem, 1.15vw, 1rem); font-weight: 950; letter-spacing: -.03em; }
+ .floor-plan-table__state, .floor-plan-table__context, .floor-plan-table__elapsed { overflow: hidden; font-size: clamp(.7rem, .85vw, .8rem); text-overflow: ellipsis; white-space: nowrap; }
+ .floor-plan-table__badge { width: fit-content; justify-self: center; border-radius: 999px; padding: .08rem .32rem; color: #fff; background: #253d48; font-size: .7rem; font-weight: 900; }
+ /* V1-TBL-009: the passive "just vacated" hint — informational, not the
+@@ -85,8 +85,8 @@
+ .floor-plan-seat {
+   position: absolute;
+   z-index: 2;
+-  width: 1.35rem;
+-  height: 1.35rem;
++  width: 1.5rem;
++  height: 1.5rem;
+   display: grid;
+   place-items: center;
+   transform: translate(-50%, -50%);
+@@ -95,7 +95,7 @@
+   color: #fff;
+   background: #334d59;
+   box-shadow: 0 2px 5px rgb(12 29 36 / 25%);
+-  font-size: .7rem;
++  font-size: .875rem;
+   font-weight: 900;
+   pointer-events: none;
+ }
+@@ -104,31 +104,31 @@
+ 
+ .floor-plan-inspector { min-width: 0; display: grid; align-content: start; gap: var(--ds-space-4); border-left: 1px solid #bac5ca; padding: var(--ds-space-4); background: #fff; }
+ .floor-plan-inspector__title { display: grid; gap: .18rem; padding-bottom: var(--ds-space-3); border-bottom: 1px solid var(--table-line); }
+-.floor-plan-inspector__title span { color: var(--table-accent-text, #00627a); font-size: .75rem; font-weight: 900; letter-spacing: .14em; }
++.floor-plan-inspector__title span { color: var(--table-accent-text, #00627a); font-size: .875rem; font-weight: 900; letter-spacing: .14em; }
+ .floor-plan-inspector__title strong { font-size: 1.75rem; letter-spacing: -.045em; }
+ .floor-plan-inspector__title small { color: var(--table-muted); }
+ .floor-plan-inspector__signals { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-space-2); margin: 0; }
+ .floor-plan-inspector__signals div { min-width: 0; display: grid; gap: .15rem; border-radius: var(--ds-radius-sm); padding: var(--ds-space-2); background: var(--ds-color-surface-subtle); }
+-.floor-plan-inspector__signals dt { color: var(--table-muted); font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+-.floor-plan-inspector__signals dd { min-width: 0; margin: 0; overflow: hidden; font-size: .78rem; font-weight: 800; text-overflow: ellipsis; }
+-.floor-plan-inspector__commands > span { color: var(--table-muted); font-size: .7rem; font-weight: 900; text-transform: uppercase; }
++.floor-plan-inspector__signals dt { color: var(--table-muted); font-size: .875rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
++.floor-plan-inspector__signals dd { min-width: 0; margin: 0; overflow: hidden; font-size: .875rem; font-weight: 800; text-overflow: ellipsis; }
++.floor-plan-inspector__commands > span { color: var(--table-muted); font-size: .875rem; font-weight: 900; text-transform: uppercase; }
+ .floor-plan-inspector__command-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin-top: .5rem; }
+ .floor-plan-inspector__command-buttons button { min-width: 0; min-height: var(--ds-target-min); padding-inline: .65rem; }
+-.floor-plan-inspector__commands p, .floor-plan-inspector__hint { margin: .5rem 0 0; color: var(--table-muted); font-size: .75rem; line-height: 1.5; }
++.floor-plan-inspector__commands p, .floor-plan-inspector__hint { margin: .5rem 0 0; color: var(--table-muted); font-size: .875rem; line-height: 1.5; }
+ .floor-plan-setup-fields { display: grid; gap: var(--ds-space-4); }
+ .floor-plan-setup-fields__grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-space-2); }
+ .floor-plan-seat-editor { display: grid; gap: var(--ds-space-2); }
+ .floor-plan-seat-editor > div:first-child { display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-2); }
+ .floor-plan-seat-editor__row { display: grid; grid-template-columns: 4rem minmax(0, 1fr) auto; gap: .35rem; }
+ .floor-plan-seat-editor__row input, .floor-plan-seat-editor__row button { min-width: 0; min-height: var(--ds-target-min); border: 1px solid #798991; border-radius: var(--ds-radius-sm); padding: .45rem; font: inherit; }
+-.floor-plan-seat-editor__row button { color: var(--ds-color-danger); background: #fff; font-size: .72rem; font-weight: 800; }
++.floor-plan-seat-editor__row button { color: var(--ds-color-danger); background: #fff; font-size: .875rem; font-weight: 800; }
+ .floor-plan-review { display: grid; gap: var(--ds-space-2); border-top: 1px solid var(--table-line); padding-top: var(--ds-space-3); }
+ .floor-plan-review > div { display: flex; justify-content: space-between; gap: var(--ds-space-2); }
+-.floor-plan-review > div span { color: var(--table-muted); font-size: .72rem; font-weight: 800; }
+-.floor-plan-review ul { margin: 0; padding-left: 1.15rem; font-size: .72rem; line-height: 1.5; }
++.floor-plan-review > div span { color: var(--table-muted); font-size: .875rem; font-weight: 800; }
++.floor-plan-review ul { margin: 0; padding-left: 1.15rem; font-size: .875rem; line-height: 1.5; }
+ .floor-plan-review__errors { color: var(--ds-color-danger); }
+ .floor-plan-review__warnings { color: #765300; }
+-.floor-plan-review p { margin: 0; color: var(--table-muted); font-size: .75rem; line-height: 1.5; }
++.floor-plan-review p { margin: 0; color: var(--table-muted); font-size: .875rem; line-height: 1.5; }
+ .floor-plan-dense-list { display: none; }
+ 
+ @media (max-width: 1023px) {
+@@ -146,7 +146,7 @@
+   .floor-plan-dense-list button { min-height: 4.25rem; display: flex; align-items: center; justify-content: space-between; gap: var(--ds-space-3); border: 1px solid var(--table-line); border-left: 4px solid var(--ds-color-success); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: var(--table-ink); background: #fff; font: inherit; text-align: left; }
+   .floor-plan-dense-list button[aria-pressed="true"] { border-color: var(--ds-color-focus); box-shadow: 0 0 0 3px rgb(0 108 189 / 16%); }
+   .floor-plan-dense-list button span:first-child { min-width: 0; display: grid; gap: .2rem; }
+-  .floor-plan-dense-list button small, .floor-plan-dense-list button > span:last-child { color: var(--table-muted); font-size: .72rem; }
++  .floor-plan-dense-list button small, .floor-plan-dense-list button > span:last-child { color: var(--table-muted); font-size: .875rem; }
+   .floor-plan-inspector__signals { grid-template-columns: 1fr 1fr; }
+ }
+ 
+diff --git a/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts b/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
+index 2b5a921ef..31da211bd 100644
+--- a/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
++++ b/src/Clients/PosTerminal/src/features/tables/tablesStyle.test.ts
+@@ -4,12 +4,34 @@ import { describe, expect, it } from "vitest";
+ const css = (name: string) => readFileSync(new URL(`./${name}`, import.meta.url), "utf8");
+ const rulesDoc = readFileSync(new URL("../../../../../../docs/CASHIER_UI_RULES.md", import.meta.url), "utf8");
+ const remPx = (value: string, unit: string) => Number(value) * (unit === "rem" ? 16 : 1);
+-const sizesIn = (source: string) => [...source.matchAll(/font(?:-size)?:\s*(?:[\d.]+\s+)?(?:clamp\()?(\.?\d+(?:\.\d+)?)(rem|px)/g)].map((match) => remPx(match[1], match[2]));
++const sizesIn = (source: string) => [...source.matchAll(/font(?:-size)?:\s*(?:[\w.-]+\s+)*?(?:clamp\()?(\.?\d+(?:\.\d+)?)(rem|px)/g)].map((match) => remPx(match[1], match[2]));
+ const blocks = (source: string) => [...source.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((match) => ({ selector: match[1].replace(/\s+/g, " ").trim(), body: match[2] }));
+ 
+ describe("table screens style rules", () => {
+-  it("has no live floor plan text smaller than 11px", () => {
+-    expect(sizesIn(css("floorPlan.css")).filter((size) => size < 11)).toEqual([]);
++  // Text lines inside a table node on the canvas: the room is the node's own size on the drawn plan (about 58px high by default,
++  // for a number, a state line and a badge), so 14px lines would overflow it. The seat number sits in a fixed rem circle and has room. Everything around the canvas has room and follows the 14px minimum of docs/CASHIER_UI_RULES.md 2.
++  const insideTableNode = new Set([
++    ".floor-plan-table__state, .floor-plan-table__context, .floor-plan-table__elapsed",
++    ".floor-plan-table__badge",
++  ]);
++
++  it("has no floor plan text smaller than 14px outside the table nodes on the canvas, and none smaller than 11px inside them", () => {
++    const all = blocks(css("floorPlan.css"));
++    const exempt = all.filter((block) => insideTableNode.has(block.selector));
++    expect(exempt).toHaveLength(insideTableNode.size);
++    const below = (list: typeof all, limit: number) => list.flatMap((block) => sizesIn(block.body).filter((size) => size < limit).map((size) => `${block.selector} = ${size}px`));
++    expect(below(all.filter((block) => !insideTableNode.has(block.selector)), 14)).toEqual([]);
++    expect(below(exempt, 11)).toEqual([]);
++    // An exception that grows to 14px is no exception: it must leave the list instead.
++    expect(exempt.flatMap((block) => sizesIn(block.body)).filter((size) => size >= 14)).toEqual([]);
++  });
++
++  it("writes every floor plan font size in rem or px, the units this file's checks can read", () => {
++    const source = css("floorPlan.css").replace(/\/\*[\s\S]*?\*\//g, "");
++    const declared = [...source.matchAll(/font-size:\s*([^;}]+)/g)].map((match) => match[1].trim());
++    expect(declared.filter((value) => !/^(clamp\()?\.?\d+(\.\d+)?(rem|px)(,|$)/.test(value))).toEqual([]);
++    const shorthand = [...source.matchAll(/(?<![-\w])font:\s*([^;}]+)/g)].map((match) => match[1].trim()).filter((value) => value !== "inherit");
++    expect(shorthand.filter((value) => !/^(?:[\w.-]+\s+)*(clamp\()?\.?\d+(\.\d+)?(rem|px)(,|\/|\s|$)/.test(value))).toEqual([]);
+   });
+ 
+   it("has no table plan text smaller than 14px, the smallest size docs/CASHIER_UI_RULES.md allows", () => {

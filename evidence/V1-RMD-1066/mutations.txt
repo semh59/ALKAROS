@@ -1,0 +1,12 @@
+killed F1 inspector title caption back to 12px
+killed F2 toolbar caption back to 11.5px
+killed F3 table number back below 14px
+restore cmp identical
+killed F4 node badge below the 11px floor
+restore cmp identical
+killed F5 seat number back to 11px
+killed F6 node state line grown to 14px but left as an exception
+killed F7 inspector hint in em
+restore cmp identical
+killed F8 italic shorthand at 12px
+restore cmp identical
