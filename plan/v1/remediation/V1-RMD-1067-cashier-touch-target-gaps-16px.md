@@ -1,7 +1,7 @@
 # V1-RMD-1067 - Masa paneli ve Tahsilat sayfasında dokunma hedefleri arası boşluk en az 16 piksel olur
 
 - Task ID: V1-RMD-1067
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
