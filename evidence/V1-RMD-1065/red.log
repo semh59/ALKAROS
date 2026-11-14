@@ -1,0 +1,167 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/shell/shellStyle.test.ts (2 tests | 1 failed) 12ms
+     × stacks the icon over the label and keeps labels at least 14px 5ms
+ ❯ src/cashierTextSize.test.ts (5 tests | 5 failed) 28ms
+     × ./styles.css sets no text below 14px outside the customer display 18ms
+     × ./shell/shell.css sets no text below 14px outside the customer display 2ms
+     × ./design-system/primitives.css sets no text below 14px outside the customer display 1ms
+     × ./features/billing/billing.css sets no text below 14px outside the customer display 1ms
+     × gives <small> an explicit size, so the browser default (a fraction of its parent) cannot take a note below 14px 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./styles.css sets no text below 14px outside the customer display
+AssertionError: expected [ 'label = 13.44px', …(23) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "label = 13.44px",
++   ".system-state = 13.12px",
++   ".login-card-heading > span = 12.16px",
++   ".pos-brand span = 12px",
++   ".header-action__badge = 12.8px",
++   ".experience-header-link, .experience-header-button = 12.8px",
++   ".submitted-state__hint = 13.44px",
++   ".operator-card span = 13.44px",
++   ".operator-card small = 13.6px",
++   ".category-rail button = 12.16px",
++   ".category-rail small = 12px",
++   ".product-category = 12px",
++   ".product-card-footer small = 12px",
++   ".product-price small = 12px",
++   ".ticket-meta span = 12px",
++   ".ticket-line-main small = 12px",
++   ".quantity-controls .remove = 12.8px",
++   ".ticket-totals = 13.76px",
++   ".pairing-card summary span = 13.12px",
++   ".pairing-card summary small = 12px",
++   ".danger-text = 12.8px",
++   ".dialog-danger-zone span = 13.12px",
++   ".system-state.compact = 12px",
++   ".mobile-ticket-bar span = 12px",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:23:19
+     21|       .filter((block) => !customerDisplay.test(block.selector))
+     22|       .flatMap((block) => sizesOf(block.body).filter((size) => size < …
+     23|     expect(small).toEqual([]);
+       |                   ^
+     24|   });
+     25|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./shell/shell.css sets no text below 14px outside the customer display
+AssertionError: expected [ …(10) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".production-shell__identity-item span = 10.88px",
++   ".production-shell__identity-item strong = 13.12px",
++   ".production-shell__sync = 13.6px",
++   ".production-shell__nav-badge = 12.8px",
++   ".production-shell__status = 13.12px",
++   ".production-shell__nav-label = 12px",
++   ".production-shell__brand = 13.12px",
++   ".production-shell__nav-link = 10.88px",
++   ".production-shell__nav-badge = 10.88px",
++   ".production-shell__status-item = 11.52px",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:23:19
+     21|       .filter((block) => !customerDisplay.test(block.selector))
+     22|       .flatMap((block) => sizesOf(block.body).filter((size) => size < …
+     23|     expect(small).toEqual([]);
+       |                   ^
+     24|   });
+     25|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./design-system/primitives.css sets no text below 14px outside the customer display
+AssertionError: expected [ '.ds-field__hint = 12.8px', …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".ds-field__hint = 12.8px",
++   ".ds-field__error = 12.8px",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:23:19
+     21|       .filter((block) => !customerDisplay.test(block.selector))
+     22|       .flatMap((block) => sizesOf(block.body).filter((size) => size < …
+     23|     expect(small).toEqual([]);
+       |                   ^
+     24|   });
+     25|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./features/billing/billing.css sets no text below 14px outside the customer display
+AssertionError: expected [ …(6) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".bill-split__header span, .bill-split__review > span = 10.4px",
++   ".bill-split__header p = 12.16px",
++   ".bill-split__editor section > div:first-child > span = 12px",
++   ".bill-split__items article header > span = 11.2px",
++   ".bill-split__items label, .bill-split__amounts label = 11.52px",
++   ".bill-split__review p = 12.16px",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:23:19
+     21|       .filter((block) => !customerDisplay.test(block.selector))
+     22|       .flatMap((block) => sizesOf(block.body).filter((size) => size < …
+     23|     expect(small).toEqual([]);
+       |                   ^
+     24|   });
+     25|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > gives <small> an explicit size, so the browser default (a fraction of its parent) cannot take a note below 14px
+AssertionError: a plain small rule: expected undefined to be defined
+ ❯ src/cashierTextSize.test.ts:28:40
+     26|   it("gives <small> an explicit size, so the browser default (a fracti…
+     27|     const rule = blocks(read("./styles.css")).find((block) => block.se…
+     28|     expect(rule, "a plain small rule").toBeDefined();
+       |                                        ^
+     29|     expect(Math.min(...sizesOf(rule!.body))).toBeGreaterThanOrEqual(MI…
+     30|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/shell/shellStyle.test.ts > the compact side rail (768 to 1279 px) > stacks the icon over the label and keeps labels at least 14px
+AssertionError: expected 12 to be greater than or equal to 14
+ ❯ src/shell/shellStyle.test.ts:20:23
+     18|     expect(rule(".production-shell__nav-link")).toMatch(/flex-directio…
+     19|     const size = Number(rule(".production-shell__nav-label").match(/fo…
+     20|     expect(size * 16).toBeGreaterThanOrEqual(14);
+       |                       ^
+     21|   });
+     22| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 1 passed (7)
+   Start at  11:46:51
+   Duration  402ms (transform 58ms, setup 0ms, import 99ms, tests 39ms, environment 0ms)
+
+exit=1

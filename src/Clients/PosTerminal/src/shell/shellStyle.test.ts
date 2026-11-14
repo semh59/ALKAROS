@@ -14,9 +14,19 @@ describe("the compact side rail (768 to 1279 px)", () => {
     expect(label).toMatch(/font-size:\s*\.?\d+(\.\d+)?rem/);
   });
 
-  it("stacks the icon over the label and keeps labels at least 11px", () => {
+  it("gives the rail room for 14px labels such as Bekleyen", () => {
+    expect(Number(compact.match(/--ds-shell-compact-rail-width:\s*(\d+)px/)?.[1])).toBeGreaterThanOrEqual(96);
+  });
+
+  it("lets the phone bottom bar labels wrap instead of cutting them", () => {
+    const label = css.slice(css.indexOf("@media (max-width: 767px)")).match(/\.production-shell__nav-label\s*\{([^}]*)\}/)?.[1] ?? "";
+    expect(label).not.toMatch(/nowrap|ellipsis/);
+    expect(label).toMatch(/overflow-wrap:\s*anywhere/);
+  });
+
+  it("stacks the icon over the label and keeps labels at least 14px", () => {
     expect(rule(".production-shell__nav-link")).toMatch(/flex-direction:\s*column/);
     const size = Number(rule(".production-shell__nav-label").match(/font-size:\s*(\.?\d+(?:\.\d+)?)rem/)?.[1]);
-    expect(size * 16).toBeGreaterThanOrEqual(11);
+    expect(size * 16).toBeGreaterThanOrEqual(14);
   });
 });

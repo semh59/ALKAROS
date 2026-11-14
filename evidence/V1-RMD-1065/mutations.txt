@@ -1,0 +1,19 @@
+killed S1 rail menu label back to 12px
+killed S2 identity caption back to 10.9px
+restore cmp identical
+killed T1 ticket line note back to 12px
+survived T2 bare small rule dropped (test did not require a size; fixed, re-run below killed)
+restore cmp identical
+killed P1 field error back to 12.8px
+restore cmp identical
+killed B1 split label back to 11.5px
+restore cmp identical
+killed T2 bare small rule dropped
+restore cmp identical
+killed S3 rail back to 76px
+killed S4 phone bar label cut again
+restore cmp identical
+killed B2 split label in em, below 14px
+restore cmp identical
+killed P2 font shorthand in em
+restore cmp identical

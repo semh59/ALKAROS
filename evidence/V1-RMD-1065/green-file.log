@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/cashierTextSize.test.ts (10 tests | 1 failed) 31ms
+     × ./styles.css writes every font size in rem or px, the units this test can read 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./styles.css writes every font size in rem or px, the units this test can read
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "950 clamp(3.2rem, 8vw, 7.2rem)/1 ui-monospace, SFMono-Regular, Consolas, monospace",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:30:105
+     28|     expect(declared.filter((value) => !/^(clamp\()?\.?\d+(\.\d+)?(rem|…
+     29|     const shorthand = [...read(file).matchAll(/(?<![-\w])font:\s*([^;}…
+     30|     expect(shorthand.filter((value) => !/^(?:[\w.-]+\s+)*\.?\d+(\.\d+)…
+       |                                                                                                         ^
+     31|   });
+     32|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  11:56:02
+   Duration  363ms (transform 31ms, setup 0ms, import 51ms, tests 31ms, environment 0ms)
+
+exit=1
