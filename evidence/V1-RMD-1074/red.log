@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (24 tests | 1 failed) 3432ms
+     × names the owner of another user's session in the header, read from the owner endpoint 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > names the owner of another user's session in the header, read from the owner endpoint
+AssertionError: expected [ Array(1) ] to include '/api/v1/terminals/t-1/cash-sessions/a…'
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:92:57
+     90|     await show();
+     91|
+     92|     expect(fetchMock.mock.calls.map((call) => call[0])).toContain("/ap…
+       |                                                         ^
+     93|     expect(document.querySelector("a.cash-session-link")!.textContent)…
+     94|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 23 passed (24)
+   Start at  14:03:11
+   Duration  6.90s (transform 2.24s, setup 0ms, import 477ms, tests 3.43s, environment 2.42s)
+

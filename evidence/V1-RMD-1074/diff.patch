@@ -1,0 +1,160 @@
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+index 7f9e8ef83..1fa66b19f 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+@@ -83,6 +83,66 @@ describe("cash session status", () => {
+     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+   });
+ 
++  it("names the owner of another user's session in the header, read from the owner endpoint", async () => {
++    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner")
++      ? answer(200, { displayName: "Deneme Kasiyer 6" })
++      : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
++    await show();
++
++    expect(fetchMock.mock.calls.map((call) => call[0])).toContain("/api/v1/terminals/t-1/cash-sessions/active/owner");
++    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda (Deneme Kasiyer 6)");
++  });
++
++  it("keeps the plain header text when the owner's name cannot be read, and never asks for it on the own session", async () => {
++    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? answer(404) : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
++    await show();
++    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda");
++
++    act(() => root?.unmount());
++    fetchMock.mockReset();
++    fetchMock.mockResolvedValue(answer(200, mine));
++    root = createRoot(document.getElementById("root")!);
++    await act(async () => { root!.render(<Probe enabled />); });
++    expect(fetchMock).toHaveBeenCalledTimes(1);
++  });
++
++  it.each([
++    ["a failed request", () => { throw new TypeError("Failed to fetch"); }],
++    ["a body that is not JSON", async () => ({ ok: true, status: 200, json: async () => { throw new SyntaxError("bad json"); } })],
++    ["an empty name", async () => answer(200, { displayName: "" })],
++    ["a name that is not text", async () => answer(200, { displayName: 7 })],
++  ])("keeps the plain header text for %s from the owner endpoint", async (_, ownerAnswer) => {
++    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? ownerAnswer() : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
++    await show();
++
++    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda");
++  });
++
++  it("shows the name of the newest read when an older read's owner answer arrives last", async () => {
++    let releaseOlder!: (value: unknown) => void;
++    const names = [new Promise((resolve) => { releaseOlder = resolve; }), Promise.resolve(answer(200, { displayName: "Yeni" }))];
++    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? names.shift() : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
++    await show();
++    await act(async () => { root!.render(<Probe enabled userId="u-3" />); });
++    expect(text()).toContain("(Yeni)");
++
++    await act(async () => { releaseOlder(answer(200, { displayName: "Eski" })); });
++
++    expect(text()).toContain("(Yeni)");
++    expect(text()).not.toContain("Eski");
++  });
++
++  it("drops a name read earlier when the next read cannot name the owner", async () => {
++    const owner = vi.fn().mockResolvedValueOnce(answer(200, { displayName: "Deneme Kasiyer 6" })).mockResolvedValue(answer(404));
++    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? owner() : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
++    await show();
++    expect(text()).toContain("(Deneme Kasiyer 6)");
++
++    await act(async () => { window.dispatchEvent(new Event("focus")); });
++
++    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda");
++  });
++
+   it("an answer whose body cannot be read is a failed read, not an open drawer", async () => {
+     fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => { throw new SyntaxError("bad json"); } });
+     await show();
+@@ -98,7 +158,7 @@ describe("cash session status", () => {
+ 
+     await act(async () => { root!.render(<Probe enabled userId="u-2" />); });
+ 
+-    expect(fetchMock).toHaveBeenCalledTimes(2);
++    expect(fetchMock).toHaveBeenCalledTimes(3);
+     expect(text()).toContain("Kasa: Başka kullanıcıda");
+   });
+ 
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+index ddef7d50d..8798cb674 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+@@ -1,28 +1,34 @@
+ import { useCallback, useEffect, useRef, useState } from "react";
+ import { cashSessionText } from "../../strings";
+-import { cashSessionPageHref, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
++import { cashSessionPageHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
+ import "./cash-session-status.css";
+ 
+ export interface CashSessionStatus {
+   /** Null until the first answer. */
+   state: CashSessionState | null;
++  /** Who holds the open session when it is another user's; null when unknown. */
++  ownerName?: string | null;
+   reload: () => void;
+ }
+ 
+ /** Reads the drawer state now, and again whenever the cashier returns to this tab (the drawer is opened on another page). */
+ export function useCashSessionState(terminalId: string, userId: string, enabled: boolean): CashSessionStatus | null {
+   const [state, setState] = useState<CashSessionState | null>(null);
++  const [ownerName, setOwnerName] = useState<string | null>(null);
+   const latest = useRef(0);
+   const reading = useRef(false);
+   // The newest read wins, so a manual retry is never swallowed by an older one still in flight.
+   const reload = useCallback(() => {
+     const mine = ++latest.current;
+     reading.current = true;
+-    void readCashSessionState(terminalId, userId).then((next) => {
++    void (async () => {
++      const next = await readCashSessionState(terminalId, userId);
++      const owner = next === "notOwned" ? await readCashSessionOwnerName(terminalId) : null;
+       if (mine !== latest.current) return;
+       reading.current = false;
++      setOwnerName(owner);
+       setState(next);
+-    });
++    })();
+   }, [terminalId, userId]);
+ 
+   useEffect(() => {
+@@ -39,13 +45,13 @@ export function useCashSessionState(terminalId: string, userId: string, enabled:
+     };
+   }, [enabled, reload]);
+ 
+-  return enabled ? { state, reload } : null;
++  return enabled ? { state, ownerName, reload } : null;
+ }
+ 
+ export function CashSessionLink({ status, className = "header-action" }: { status: CashSessionStatus; className?: string }) {
+   const key = status.state ?? "checking";
+   if (key === "forbidden") return <span className={`${className} cash-session-link cash-session-link--forbidden`} role="status">{cashSessionText.forbidden}</span>;
+-  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref}>{cashSessionText[key]}</a>;
++  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref}>{key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key]}</a>;
+ }
+ 
+ /** Shown above the work area while nothing says the user's own drawer is open. */
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts b/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
+index 82416e352..7a4fb0b4f 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
+@@ -33,3 +33,17 @@ export async function readCashSessionState(terminalId: string, userId: string, f
+   if (response.status === 401) notifySessionExpired();
+   return "unknown";
+ }
++
++/** The name of the user whose drawer session is open, for the header; null when it cannot be read (the header then names no one). */
++export async function readCashSessionOwnerName(terminalId: string, fetcher: typeof fetch = fetch): Promise<string | null> {
++  try {
++    const response = await fetcher(`/api/v1/terminals/${encodeURIComponent(terminalId)}/cash-sessions/active/owner`, {
++      credentials: "same-origin",
++      signal: AbortSignal.timeout(8_000),
++    });
++    const name = response.ok ? (await response.json()).displayName : null;
++    return typeof name === "string" && name ? name : null;
++  } catch {
++    return null;
++  }
++}

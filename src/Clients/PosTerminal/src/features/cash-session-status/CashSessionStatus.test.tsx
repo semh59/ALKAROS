@@ -83,6 +83,66 @@ describe("cash session status", () => {
     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
   });
 
+  it("names the owner of another user's session in the header, read from the owner endpoint", async () => {
+    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner")
+      ? answer(200, { displayName: "Deneme Kasiyer 6" })
+      : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
+    await show();
+
+    expect(fetchMock.mock.calls.map((call) => call[0])).toContain("/api/v1/terminals/t-1/cash-sessions/active/owner");
+    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda (Deneme Kasiyer 6)");
+  });
+
+  it("keeps the plain header text when the owner's name cannot be read, and never asks for it on the own session", async () => {
+    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? answer(404) : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
+    await show();
+    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda");
+
+    act(() => root?.unmount());
+    fetchMock.mockReset();
+    fetchMock.mockResolvedValue(answer(200, mine));
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => { root!.render(<Probe enabled />); });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ["a failed request", () => { throw new TypeError("Failed to fetch"); }],
+    ["a body that is not JSON", async () => ({ ok: true, status: 200, json: async () => { throw new SyntaxError("bad json"); } })],
+    ["an empty name", async () => answer(200, { displayName: "" })],
+    ["a name that is not text", async () => answer(200, { displayName: 7 })],
+  ])("keeps the plain header text for %s from the owner endpoint", async (_, ownerAnswer) => {
+    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? ownerAnswer() : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
+    await show();
+
+    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda");
+  });
+
+  it("shows the name of the newest read when an older read's owner answer arrives last", async () => {
+    let releaseOlder!: (value: unknown) => void;
+    const names = [new Promise((resolve) => { releaseOlder = resolve; }), Promise.resolve(answer(200, { displayName: "Yeni" }))];
+    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? names.shift() : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
+    await show();
+    await act(async () => { root!.render(<Probe enabled userId="u-3" />); });
+    expect(text()).toContain("(Yeni)");
+
+    await act(async () => { releaseOlder(answer(200, { displayName: "Eski" })); });
+
+    expect(text()).toContain("(Yeni)");
+    expect(text()).not.toContain("Eski");
+  });
+
+  it("drops a name read earlier when the next read cannot name the owner", async () => {
+    const owner = vi.fn().mockResolvedValueOnce(answer(200, { displayName: "Deneme Kasiyer 6" })).mockResolvedValue(answer(404));
+    fetchMock.mockImplementation(async (url: string) => url.endsWith("/active/owner") ? owner() : answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
+    await show();
+    expect(text()).toContain("(Deneme Kasiyer 6)");
+
+    await act(async () => { window.dispatchEvent(new Event("focus")); });
+
+    expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda");
+  });
+
   it("an answer whose body cannot be read is a failed read, not an open drawer", async () => {
     fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => { throw new SyntaxError("bad json"); } });
     await show();
@@ -98,7 +158,7 @@ describe("cash session status", () => {
 
     await act(async () => { root!.render(<Probe enabled userId="u-2" />); });
 
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(text()).toContain("Kasa: Başka kullanıcıda");
   });
 

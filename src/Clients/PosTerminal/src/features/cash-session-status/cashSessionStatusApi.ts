@@ -33,3 +33,17 @@ export async function readCashSessionState(terminalId: string, userId: string, f
   if (response.status === 401) notifySessionExpired();
   return "unknown";
 }
+
+/** The name of the user whose drawer session is open, for the header; null when it cannot be read (the header then names no one). */
+export async function readCashSessionOwnerName(terminalId: string, fetcher: typeof fetch = fetch): Promise<string | null> {
+  try {
+    const response = await fetcher(`/api/v1/terminals/${encodeURIComponent(terminalId)}/cash-sessions/active/owner`, {
+      credentials: "same-origin",
+      signal: AbortSignal.timeout(8_000),
+    });
+    const name = response.ok ? (await response.json()).displayName : null;
+    return typeof name === "string" && name ? name : null;
+  } catch {
+    return null;
+  }
+}

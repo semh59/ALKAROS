@@ -1,0 +1,10 @@
+M1 owner always read:       Tests  5 failed | 19 passed (24) (restored, cmp ok)
+M2 label ignores owner name:       Tests  1 failed | 23 passed (24) (restored, cmp ok)
+M3 owner name never returned:       Tests  1 failed | 23 passed (24) (restored, cmp ok)
+M4 wrong owner path:       Tests  1 failed | 23 passed (24) (restored, cmp ok)
+M5 owner ?? ownerName: esdeger mutant (reload kapanisi ilk render ownerName=null degerini yakalar, bayat ad gozlenemez); yerine M5b yazildi
+M5 stale name kept when next read has none: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 24 passed (25) (restored, cmp ok)
+M6 owner read failure not caught:       Tests  2 failed | 28 passed (30) (restored, cmp ok)
+M7 name type/empty guard removed:       Tests  1 failed | 29 passed (30) (restored, cmp ok)
+M8 stale-read guard removed:       Tests  1 failed | 29 passed (30) (restored, cmp ok)

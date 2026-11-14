@@ -1,0 +1,9 @@
+{
+  "task_id": "V1-RMD-1074",
+  "valid": false,
+  "metadata_errors": [
+    "Task status is 'Done', expected 'Planned' or 'InProgress'"
+  ],
+  "findings": []
+}
+exit=1

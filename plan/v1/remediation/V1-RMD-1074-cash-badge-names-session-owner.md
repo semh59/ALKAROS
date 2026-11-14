@@ -1,7 +1,7 @@
 # V1-RMD-1074 - Başlıktaki Kasa rozeti oturum başkasındaysa sahibinin adını da yazar
 
 - Task ID: V1-RMD-1074
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
