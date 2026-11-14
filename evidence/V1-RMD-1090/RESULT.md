@@ -1,0 +1,6 @@
+# V1-RMD-1090 sonuc
+Olcum (gercek ekran, split-payment-equal-split-taps.test.js): 2 kisiye esit bolme, biri nakit biri havale: Esit bolustur bolumu (1), Hesapla (2), Odemeyi Ekle nakit (3), Havale/EFT secimi (4), banka hareketi onay kutusu (5), Odemeyi Ekle (6) = ekranin kendi payi 6 dokunus. Nakit varsayilan yontem (dokunus yok), tutar Hesapla ile 50,00 dolu. Hesaba ulasmak (Bekleyen hesaplar, hesap karti) 2 dokunus ekler: toplam 8, sinir 8. Kasiyer denemesinin 9-10 sayisi ek gezinme adimlarini da iceriyordu.
+Kirmizi test yok: sinir zaten saglaniyor, uretim kodu degismedi; test sinira baglar (regresyonda kirilir). Kirmizi yerine mutasyonla kanit: M1-M4 olduruldu (Hesapla payi doldurmaz, kalan kisi sayaci azalmaz, nakit varsayilan degil, onay kutusu kalkarsa), cmp ok.
+Kanit: green-file.log 1/1, green-all.log StaticApps tamami.
+Acik risk: 8 dokunus hesaba ulasma adimlarini PosTerminal'de varsayim olarak sayar (testte sabit); masa planindan gelen yol (masa sec, Ode) da 2 dokunus.
+Not (qa): giris 2 dokunusu kodla dogrulandi (Cashier.tsx:774, PendingChecksWorkspace.tsx:234, TableOrderBridge.tsx:129) ama testle korunmaz; test yalniz ekran payini (6) korur. Sinir tam 8, bosluk yok. Kasa oturumu kapaliysa nakit hic alinamaz.

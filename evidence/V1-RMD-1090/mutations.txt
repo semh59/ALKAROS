@@ -1,0 +1,4 @@
+M1-hesapla-does-not-fill-share exit 1 restored cmp ok
+M2-split-left-never-decremented exit 1 restored cmp ok
+M3-cash-not-default (both default sources removed) exit 1 restored cmp ok
+M4-eft-confirm-field-removed exit 1 restored cmp ok
