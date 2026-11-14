@@ -1,7 +1,7 @@
 # V1-RMD-1082 - Masa yönetimi süresi dolmuş oturum testinin yanlış-geçme denetimi
 
 - Task ID: V1-RMD-1082
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

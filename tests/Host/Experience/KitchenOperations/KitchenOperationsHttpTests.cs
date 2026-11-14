@@ -1107,10 +1107,7 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
     public async Task FailedPrintJobsRefuseExpiredOtherTerminalAndDisplaySessions()
     {
         var terminalId = Guid.NewGuid();
-        var expiredCookie = await _database.SeedSessionAsync(terminalId, []);
-        await using (var expire = _database.DataSource.CreateCommand(
-            $"UPDATE identity.device_sessions SET created_at = now() - interval '2 hours', expires_at = now() - interval '1 hour' WHERE device_id = 'cashier:{terminalId:D}';"))
-            await expire.ExecuteNonQueryAsync();
+        var expiredCookie = await _database.SeedSessionAsync(terminalId, [], expired: true);
         var otherTerminalCookie = await _database.SeedSessionAsync(Guid.NewGuid(), []);
         var (displayToken, displayHash) = ALKAROS.Host.DualScreen.DualScreenToken.Create("kitchen-test-");
         await using (var command = _database.DataSource.CreateCommand(

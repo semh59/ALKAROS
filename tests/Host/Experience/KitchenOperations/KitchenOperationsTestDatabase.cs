@@ -44,7 +44,8 @@ public sealed class KitchenOperationsTestDatabase : PgTestDatabase
             INSERT INTO identity.device_sessions
                 (session_id, user_id, device_id, token_hash, created_at, expires_at)
             VALUES
-                ('{{Guid.NewGuid():D}}', '{{userId:D}}', 'cashier:{{terminalId:D}}', '{{tokenHash}}', now(),
+                ('{{Guid.NewGuid():D}}', '{{userId:D}}', 'cashier:{{terminalId:D}}', '{{tokenHash}}',
+                 CASE WHEN {{expired.ToString().ToLowerInvariant()}} THEN now() - interval '2 hours' ELSE now() END,
                  CASE WHEN {{expired.ToString().ToLowerInvariant()}} THEN now() - interval '1 minute'
                       ELSE now() + interval '1 hour' END);
             """);

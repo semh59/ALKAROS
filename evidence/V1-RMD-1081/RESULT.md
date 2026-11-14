@@ -1,0 +1,4 @@
+# V1-RMD-1081 sonuc
+Kok neden: KitchenOperationsTestDatabase.SeedSessionAsync(expired: true) created_at = now() ile expires_at = now() - 1 dk yaziyordu; chk_device_sessions_lifetime (expires_at > created_at) 23514 ile reddediyordu (red.log). Duzeltme: expired iken created_at = now() - 2 saat; expired=false yolu ayni.
+Test: 1080 testi UPDATE yerine expired: true kullaniyor, yeni 3/3 (green-new.log), KitchenOperations TAM kosu 78/78, 4 dk 59 sn (green-full.log). Mutant: yardimci suresi dolmusu gecerli yaziyor -> test kirilir (mutations.txt, killed, cmp ok).
+expired: true cagiran tum testler: yalniz 1080 testi (UPDATE ile dolanilmisti, yardimci hic kosmamisti) ve TableManagementHttpTests:34 (Table yardimcisi ayri sinif, acik zaman damgalari, kirik degil; mutasyonla yanlis-gecme yok, bkz. V1-RMD-1082). Kirik yardimciyla gecip hicbir sey denemeyen test yok. Diger test yardimcilarinda expired parametresi yok.
