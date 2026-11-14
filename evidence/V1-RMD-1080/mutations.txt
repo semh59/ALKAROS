@@ -1,0 +1,8 @@
+M1-no-limit: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 9 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok
+M2-ascending-order: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 9 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok
+M3-no-auth: Başarısız! - Başarısız:     2, Başarılı:     1, Atlanan:     0, Toplam:     3, Süre: 9 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok
+M4-display-401-not-403: Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 9 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok

@@ -1100,6 +1100,78 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
     }
 
     /// <summary>
+    /// V1-RMD-1080: the station-wide failed-job read refuses an expired cashier session, a session bound to
+    /// another terminal (401) and a customer-display session (403).
+    /// </summary>
+    [Fact]
+    public async Task FailedPrintJobsRefuseExpiredOtherTerminalAndDisplaySessions()
+    {
+        var terminalId = Guid.NewGuid();
+        var expiredCookie = await _database.SeedSessionAsync(terminalId, []);
+        await using (var expire = _database.DataSource.CreateCommand(
+            $"UPDATE identity.device_sessions SET created_at = now() - interval '2 hours', expires_at = now() - interval '1 hour' WHERE device_id = 'cashier:{terminalId:D}';"))
+            await expire.ExecuteNonQueryAsync();
+        var otherTerminalCookie = await _database.SeedSessionAsync(Guid.NewGuid(), []);
+        var (displayToken, displayHash) = ALKAROS.Host.DualScreen.DualScreenToken.Create("kitchen-test-");
+        await using (var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO customer_display.terminals (terminal_id, active_order_id, row_version, created_at, updated_at)
+            VALUES (@terminal_id, NULL, 1, now(), now());
+            INSERT INTO customer_display.display_sessions (session_id, display_id, terminal_id, token_hash, created_at, expires_at)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @terminal_id, @token_hash, now(), now() + interval '1 hour');
+            """))
+        {
+            command.Parameters.AddWithValue("terminal_id", terminalId);
+            command.Parameters.AddWithValue("token_hash", displayHash);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line";
+
+        foreach (var cookie in new[] { expiredCookie, otherTerminalCookie })
+        {
+            using var refused = await client.SendAsync(Request(HttpMethod.Get, path, cookie));
+            Assert.Equal(HttpStatusCode.Unauthorized, refused.StatusCode);
+        }
+
+        using var display = await client.SendAsync(
+            Request(HttpMethod.Get, path, $"{ALKAROS.Host.DualScreen.DualScreenApplication.DisplayCookieName}={displayToken}"));
+        Assert.Equal(HttpStatusCode.Forbidden, display.StatusCode);
+    }
+
+    /// <summary>
+    /// V1-RMD-1080: the failed-job read caps at the 500 newest jobs; the oldest one beyond the cap is left out.
+    /// </summary>
+    [Fact]
+    public async Task FailedPrintJobsReadReturnsTheNewestFiveHundredAndDropsTheOldest()
+    {
+        var terminalId = Guid.NewGuid();
+        var seed = await _database.SeedKitchenGraphAsync();
+        var oldestId = Guid.NewGuid();
+        await using (var command = _database.DataSource.CreateCommand(
+            $"""
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
+            SELECT gen_random_uuid(), '{seed.TicketId:D}', '{seed.PrinterId:D}', 'cap-' || n, 'x', 'Failed', 1, 5, now() + interval '1 day', 1,
+                   now() - n * interval '1 second'
+            FROM generate_series(1, 500) AS n;
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
+            VALUES ('{oldestId:D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'cap-oldest', 'x', 'Failed', 1, 5, now() + interval '1 day', 1,
+                    now() - interval '1 hour');
+            """))
+            await command.ExecuteNonQueryAsync();
+        var cookie = await _database.SeedSessionAsync(terminalId, []);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var jobs = await GetAsync<PrintJobV1[]>(client, Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line", cookie);
+
+        Assert.Equal(500, jobs!.Length);
+        Assert.DoesNotContain(jobs, job => job.Id == oldestId);
+    }
+
+    /// <summary>
     /// V1-KIT-012: a table-less order (takeaway/bar tab — SeedKitchenGraphAsync
     /// never sets orders.orders.table_id) must not fabricate a table label.
     /// </summary>
