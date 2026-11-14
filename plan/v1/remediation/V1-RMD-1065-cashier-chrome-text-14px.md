@@ -1,7 +1,7 @@
 # V1-RMD-1065 - Kasiyer ekranlarında üst başlık, menü, satış ve form yazıları 14 piksele çıkarılır
 
 - Task ID: V1-RMD-1065
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
