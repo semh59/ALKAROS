@@ -102,4 +102,13 @@ describe("Hesap Ödeme page follows docs/CASHIER_UI_RULES.md", () => {
     expect(sizes.length).toBeGreaterThan(20);
     expect(sizes.filter((size) => size < 14)).toEqual([]);
   });
+
+  it("styles no sp- class that neither this page nor the customer accounts page that shares the sheet ever uses", () => {
+    const sharing = resolve(pageDir, "..", "customer-accounts", "customer-accounts.js");
+    const used = [resolve(pageDir, "split-payment.js"), resolve(pageDir, "index.html"), sharing].map((file) => readFileSync(file, "utf8")).join(" ");
+    const screen = css.replace(/@media print \{[\s\S]*?\n\}\n/, "");
+    const classes = [...new Set([...screen.matchAll(/\.(sp-[a-z0-9-]+)/g)].map((match) => match[1]))];
+    expect(classes.length).toBeGreaterThan(30);
+    expect(classes.filter((name) => !new RegExp(`${name}(?![\\w-])`).test(used))).toEqual([]);
+  });
 });

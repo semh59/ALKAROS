@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-cashier-rules.test.js (11 tests | 1 failed) 1300ms
+     × styles no sp- class that neither the page script nor its markup ever uses 33ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > styles no sp- class that neither the page script nor its markup ever uses
+AssertionError: expected [ 'sp-eyebrow', 'sp-btn-ghost', …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "sp-eyebrow",
++   "sp-btn-ghost",
++   "sp-line-amount",
++   "sp-alert-success",
++ ]
+
+ ❯ split-payment-cashier-rules.test.js:111:60
+    109|     const classes = [...new Set([...screen.matchAll(/\.(sp-[a-z0-9-]+)…
+    110|     expect(classes.length).toBeGreaterThan(30);
+    111|     expect(classes.filter((name) => !used.includes(name))).toEqual([]);
+       |                                                            ^
+    112|   });
+    113| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  04:03:41
+   Duration  5.74s (transform 676ms, setup 58ms, import 267ms, tests 1.30s, environment 3.30s)
+
+exit=1
