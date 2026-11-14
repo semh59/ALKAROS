@@ -1,0 +1,72 @@
+diff --git a/plan/v1/remediation/V1-RMD-1077-approved-refund-notice-on-closed-bill.md b/plan/v1/remediation/V1-RMD-1077-approved-refund-notice-on-closed-bill.md
+index e2811b114..24ca09b4e 100644
+--- a/plan/v1/remediation/V1-RMD-1077-approved-refund-notice-on-closed-bill.md
++++ b/plan/v1/remediation/V1-RMD-1077-approved-refund-notice-on-closed-bill.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1077 - Kapanmış hesapta onaylanmış iade "hesap kapanmaz" demez
+ 
+ - Task ID: V1-RMD-1077
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index d976524ed..e16149633 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2482,12 +2482,13 @@
+   function closedHeading() {
+     var refunds = state.refundRequests || [];
+     var awaitingDecision = refunds.some(function (row) { return row.status === 'Requested'; });
+-    // A request opened after the bill closed cannot hold it open.
++    var awaitingSlip = refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; });
++    // A refund opened or approved after the bill closed cannot hold it open.
+     var billClosed = state.billStatus === 'Paid';
+-    if ((awaitingDecision && !billClosed) || refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; }))
++    if (!billClosed && (awaitingDecision || awaitingSlip))
+       return {
+         title: 'Tahsilat Tamam, Hesap Açık',
+-        text: awaitingDecision && !billClosed
++        text: awaitingDecision
+           ? 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.'
+           : 'İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.',
+         waiting: true,
+@@ -2501,6 +2502,7 @@
+       heading = { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
+     else
+       heading = kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
++    if (awaitingSlip) return { title: heading.title, text: 'İade onaylandı, fiş girişi bekleniyor.' };
+     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
+   }
+ 
+diff --git a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+index e7e468cc1..5cc134f12 100644
+--- a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
++++ b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+@@ -69,10 +69,23 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
+     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği gönderildi, yönetici kararı bekleniyor.");
+   });
+ 
+-  it("still shows the approved refund's next step when the closed bill also has a request waiting", async () => {
++  it("says the approved refund only waits for its slip entry once the bill is closed, even beside a request waiting", async () => {
++    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }], "Paid");
++
++    expect(document.querySelector(".sp-title").textContent).toBe("Hesap Ödendi");
++    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(true);
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
++
++    document.body.innerHTML = "";
+     await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Card" }], "Paid");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
++  });
++
++  it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the approved-refund sentence while the receipt says %s", async (status) => {
++    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }], status);
+ 
+-    expect(document.querySelector(".sp-subtitle").textContent).toContain("“İadeyi tamamla”");
++    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
++    expect(document.querySelector(".sp-subtitle").textContent).toContain("Bu yapılana kadar hesap kapanmaz.");
+   });
+ 
+   it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the bill-stays-open sentence while the receipt says %s", async (status) => {

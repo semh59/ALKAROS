@@ -1,0 +1,8 @@
+M1 slip branch removed:       Tests  1 failed | 10 passed (11) (restored, cmp ok)
+M2 closed never:       Tests  2 failed | 9 passed (11) (restored, cmp ok)
+M3 closed ignored for slip (open sentence):       Tests  1 failed | 10 passed (11) (restored, cmp ok)
+M4 wording:       Tests  1 failed | 10 passed (11) (restored, cmp ok)
+M5 slip loses to decision:       Tests  1 failed | 10 passed (11) (restored, cmp ok)
+M6 slip text always when open:       Tests  4 failed | 7 passed (11) (restored, cmp ok)
+M7 title hard-coded open:       Tests  1 failed | 10 passed (11) (restored, cmp ok)
+M8 status not read:       Tests  2 failed | 9 passed (11) (restored, cmp ok)

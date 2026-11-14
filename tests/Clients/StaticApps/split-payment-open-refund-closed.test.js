@@ -69,10 +69,23 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği gönderildi, yönetici kararı bekleniyor.");
   });
 
-  it("still shows the approved refund's next step when the closed bill also has a request waiting", async () => {
-    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Card" }], "Paid");
+  it("says the approved refund only waits for its slip entry once the bill is closed, even beside a request waiting", async () => {
+    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }], "Paid");
 
-    expect(document.querySelector(".sp-subtitle").textContent).toContain("“İadeyi tamamla”");
+    expect(document.querySelector(".sp-title").textContent).toBe("Hesap Ödendi");
+    expect(document.querySelector(".sp-icon-circle").classList.contains("success")).toBe(true);
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
+
+    document.body.innerHTML = "";
+    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Card" }], "Paid");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
+  });
+
+  it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the approved-refund sentence while the receipt says %s", async (status) => {
+    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }], status);
+
+    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
+    expect(document.querySelector(".sp-subtitle").textContent).toContain("Bu yapılana kadar hesap kapanmaz.");
   });
 
   it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the bill-stays-open sentence while the receipt says %s", async (status) => {

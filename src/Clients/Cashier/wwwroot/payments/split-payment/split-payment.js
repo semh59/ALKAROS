@@ -2482,12 +2482,13 @@
   function closedHeading() {
     var refunds = state.refundRequests || [];
     var awaitingDecision = refunds.some(function (row) { return row.status === 'Requested'; });
-    // A request opened after the bill closed cannot hold it open.
+    var awaitingSlip = refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; });
+    // A refund opened or approved after the bill closed cannot hold it open.
     var billClosed = state.billStatus === 'Paid';
-    if ((awaitingDecision && !billClosed) || refunds.some(function (row) { return row.status === 'AwaitingManualRefund'; }))
+    if (!billClosed && (awaitingDecision || awaitingSlip))
       return {
         title: 'Tahsilat Tamam, Hesap Açık',
-        text: awaitingDecision && !billClosed
+        text: awaitingDecision
           ? 'İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.'
           : 'İade onaylandı; aşağıdaki İade bölümünden kart için fiş numarasını yazıp “İadeyi tamamla”ya, havale için “Havale gönderildi”ye basın. Bu yapılana kadar hesap kapanmaz.',
         waiting: true,
@@ -2501,6 +2502,7 @@
       heading = { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
     else
       heading = kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
+    if (awaitingSlip) return { title: heading.title, text: 'İade onaylandı, fiş girişi bekleniyor.' };
     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
   }
 
