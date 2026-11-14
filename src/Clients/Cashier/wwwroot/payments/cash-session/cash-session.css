@@ -71,7 +71,7 @@ body {
 }
 
 .cs-eyebrow {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -94,8 +94,8 @@ body {
 }
 
 .cs-field { display: flex; flex-direction: column; gap: 8px; }
-.cs-field-label { font-size: 13px; font-weight: 600; color: var(--color-ink); }
-.cs-field-hint { font-size: 12px; color: var(--color-text-dim); }
+.cs-field-label { font-size: 14px; font-weight: 600; color: var(--color-ink); }
+.cs-field-hint { font-size: 14px; color: var(--color-text-dim); }
 
 .cs-input,
 .cs-textarea {
@@ -160,7 +160,7 @@ body {
   background: transparent;
   color: var(--color-brand);
   padding: 8px;
-  font-size: 13px;
+  font-size: 14px;
   min-height: var(--touch-target);
 }
 .cs-btn:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
@@ -175,7 +175,7 @@ body {
   border-radius: var(--radius-md);
   padding: 14px 16px;
 }
-.cs-stat-label { font-size: 12px; color: var(--color-text-dim); font-weight: 600; }
+.cs-stat-label { font-size: 14px; color: var(--color-text-dim); font-weight: 600; }
 .cs-stat-value { font-size: 20px; font-weight: 800; color: var(--color-ink); margin-top: 4px; }
 
 .cs-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
@@ -186,7 +186,7 @@ body {
   gap: 6px;
   border-radius: 999px;
   padding: 6px 12px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -201,13 +201,13 @@ body {
   gap: 10px;
   border-radius: var(--radius-md);
   padding: 14px 16px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.5;
 }
 .cs-alert-icon {
   width: 22px; height: 22px; border-radius: 999px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 800; color: #FFFFFF; flex: 0 0 auto;
+  font-size: 14px; font-weight: 800; color: #FFFFFF; flex: 0 0 auto;
 }
 .cs-alert-success { background: rgba(23, 101, 72, 0.10); }
 .cs-alert-success .cs-alert-icon { background: var(--color-success); }
@@ -236,7 +236,7 @@ body {
 .cs-request, .cs-movement { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; border-bottom: 1px solid var(--color-border, #E5E7EB); }
 .cs-request .cs-row { flex-wrap: wrap; }
 .cs-note { font-size: 14px; color: var(--color-ink); overflow-wrap: anywhere; }
-.cs-movement .cs-field-hint, .cs-request .cs-field-hint { color: var(--color-text-muted); font-size: 13px; }
+.cs-movement .cs-field-hint, .cs-request .cs-field-hint { color: var(--color-text-muted); font-size: 14px; }
 .cs-movement.is-in .value { color: var(--color-success); }
 .cs-movement.is-out .value { color: var(--color-danger); }
 .cs-summary-row .value { overflow-wrap: anywhere; text-align: right; min-width: 0; }
@@ -250,11 +250,11 @@ body {
 
 .cs-summary-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 4px 2px; font-size: 13px;
+  padding: 4px 2px; font-size: 14px;
 }
 .cs-summary-row .value { font-weight: 700; color: var(--color-ink); }
 
-.cs-error-text { color: var(--color-danger); font-size: 13px; }
+.cs-error-text { color: var(--color-danger); font-size: 14px; }
 
 /* V1-RMD-377 (module-by-module UI audit round 2, P1 - rakip karşılaştırması): kupür bazlı sayım. */
 .cs-denom-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }

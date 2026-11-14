@@ -1,7 +1,7 @@
 # V1-RMD-1075 - Kasa oturumu sayfasında 14 pikselden küçük yazı kalmaz
 
 - Task ID: V1-RMD-1075
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

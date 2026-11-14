@@ -1,0 +1,45 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-text-size.test.js (2 tests | 1 failed) 14ms
+     × declares no font size under 14px 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-text-size.test.js > cash session page text size > declares no font size under 14px
+AssertionError: expected [ Array(11) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "12px",
++   "13px",
++   "12px",
++   "13px",
++   "12px",
++   "13px",
++   "13px",
++   "13px",
++   "13px",
++   "13px",
++   "13px",
++ ]
+
+ ❯ cash-session-text-size.test.js:19:79
+     17|
+     18|     expect(sizes.length).toBeGreaterThan(10);
+     19|     expect(sizes.filter((size) => size.px < 14).map((size) => size.dec…
+       |                                                                               ^
+     20|   });
+     21| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  14:16:30
+   Duration  1.33s (transform 28ms, setup 24ms, import 25ms, tests 14ms, environment 997ms)
+
