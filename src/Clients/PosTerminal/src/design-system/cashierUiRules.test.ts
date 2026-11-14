@@ -23,6 +23,10 @@ const statusRows = () => section("4. Durum tablosu").split("\n").filter((line) =
 const backticked = (pattern: RegExp) => [...new Set([...doc.matchAll(/`(--[\w-]+)`/g)].map((match) => match[1]).filter((name) => pattern.test(name)))];
 
 describe("docs/CASHIER_UI_RULES.md", () => {
+  it("binds the kitchen board to the 14px minimum of the type size rules", () => {
+    expect(section("2. Punto")).toContain("Mutfak panosu (`kitchen-operations.css`) aynı 14px alt sınırına bağlıdır");
+  });
+
   it("lists every table-plan status once, with the label and icon the table plan draws", () => {
     const rows = statusRows();
     expect(rows.map(([key]) => key.replaceAll("`", ""))).toEqual(planLegend.map((entry) => entry.key));

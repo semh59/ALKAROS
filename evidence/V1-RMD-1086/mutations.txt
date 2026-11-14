@@ -1,0 +1,8 @@
+M1-timer-small-back-to-9.9px exit 1 restored cmp ok
+M2-station-label-11.5px exit 1 restored cmp ok
+M3-step-12.5px exit 1 restored cmp ok
+M4-step-text-may-wrap exit 1 restored cmp ok
+M5-stepper-no-wrap exit 1 restored cmp ok
+M6-step-touch-target-lost exit 1 restored cmp ok
+M7-doc-drops-kitchen-scope exit 1 restored cmp ok
+M8-em-unit-sneaks-in exit 1 restored cmp ok

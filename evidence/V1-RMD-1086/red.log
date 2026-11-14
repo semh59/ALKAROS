@@ -1,0 +1,133 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenTextSize.test.ts (3 tests | 3 failed) 19ms
+     × sets no text below 14px 14ms
+     × writes every font size in rem or px, the units this test can read 2ms
+     × lets the four step buttons share a row by content width without wrapping their text 1ms
+ ❯ src/design-system/cashierUiRules.test.ts (12 tests | 1 failed) 25ms
+     × binds the kitchen board to the 14px minimum of the type size rules 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/design-system/cashierUiRules.test.ts > docs/CASHIER_UI_RULES.md > binds the kitchen board to the 14px minimum of the type size rules
+AssertionError: expected '## 2. Punto\n\n- En küçük yazı 14px (…' to contain 'Mutfak panosu (`kitchen-operations.cs…'
+
+- Expected
++ Received
+
+- Mutfak panosu (`kitchen-operations.css`) aynı 14px alt sınırına bağlıdır
++ ## 2. Punto
++
++ - En küçük yazı 14px (`0.875rem`): rozet, alt not, kart altı, etiket, uyarı. 14px'ten küçük yazı yoktur.
++ - Gövde ve düğme yazısı 16px, tutar ve ana değer 20px ve üstü, ekran başlığı 22px ve üstü.
++ - Rozet ve etiketler kalın (700) yazılır; renk tek başına anlam taşımaz.
++
+
+ ❯ src/design-system/cashierUiRules.test.ts:27:33
+     25| describe("docs/CASHIER_UI_RULES.md", () => {
+     26|   it("binds the kitchen board to the 14px minimum of the type size rul…
+     27|     expect(section("2. Punto")).toContain("Mutfak panosu (`kitchen-ope…
+       |                                 ^
+     28|   });
+     29|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/kitchen-operations/kitchenTextSize.test.ts > kitchen board text size (docs/CASHIER_UI_RULES.md 2) > sets no text below 14px
+AssertionError: expected [ …(31) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".kitchen-workspace__kicker, .kitchen-panel__eyebrow = 10.88px",
++   ".kitchen-workspace__source = 11.84px",
++   ".kitchen-role-badge = 11.52px",
++   ".kitchen-live-sync-badge = 11.52px",
++   ".kitchen-stat span = 11.2px",
++   ".kitchen-density button, .kitchen-view-mode button = 11.84px",
++   ".kitchen-report__table th = 10.88px",
++   ".kitchen-report__bar-label = 12.8px",
++   ".kitchen-order__label = 10.88px",
++   ".kitchen-order__timer small = 9.92px",
++   ".kitchen-order__done = 11.84px",
++   ".kitchen-station__label = 11.52px",
++   ".kitchen-undo-btn = 11.52px",
++   ".kitchen-held-badge = 11.2px",
++   ".kitchen-item-row__detail = 12.48px",
++   ".kitchen-step = 10.88px",
++   ".kitchen-panel > header > strong, .kitchen-panel > header > span = 12.16px",
++   ".kitchen-panel__muted = 12.8px",
++   ".kitchen-unknown strong = 12.16px",
++   ".kitchen-unknown span = 11.84px",
++   ".kitchen-unknown__actions .ds-button = 11.52px",
++   ".kitchen-health dt = 12.48px",
++   ".kitchen-backup span = 11.52px",
++   ".kitchen-backup strong = 13.12px",
++   ".kitchen-backup p = 11.84px",
++   ".kitchen-printer-list strong = 12.8px",
++   ".kitchen-printer-list span:last-child = 11.52px",
++   ".kitchen-decision-form__context = 12.48px",
++   ".kitchen-route-form label = 12.48px",
++   ".kitchen-route-form__feedback = 12.48px",
++   ".kitchen-workspace__source = 11.2px",
++ ]
+
+ ❯ src/features/kitchen-operations/kitchenTextSize.test.ts:15:19
+     13|     expect(blocks.length).toBeGreaterThan(40);
+     14|     const small = blocks.flatMap((block) => sizesOf(block.body).filter…
+     15|     expect(small).toEqual([]);
+       |                   ^
+     16|   });
+     17|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/kitchen-operations/kitchenTextSize.test.ts > kitchen board text size (docs/CASHIER_UI_RULES.md 2) > writes every font size in rem or px, the units this test can read
+AssertionError: expected [ '.95em' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".95em",
++ ]
+
+ ❯ src/features/kitchen-operations/kitchenTextSize.test.ts:20:95
+     18|   it("writes every font size in rem or px, the units this test can rea…
+     19|     const declared = [...css.matchAll(/font-size:\s*([^;}]+)/g)].map((…
+     20|     expect(declared.filter((value) => !/^(clamp\()?\.?\d+(\.\d+)?(rem|…
+       |                                                                                               ^
+     21|     expect([...css.matchAll(/(?<![-\w])font:\s*([^;}]+)/g)].map((match…
+     22|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/kitchen-operations/kitchenTextSize.test.ts > kitchen board text size (docs/CASHIER_UI_RULES.md 2) > lets the four step buttons share a row by content width without wrapping their text
+AssertionError: expected ' flex: 1; min-height: 48px; border: 1…' to match /flex:\s*1 1 auto/
+
+- Expected:
+/flex:\s*1 1 auto/
+
++ Received:
+" flex: 1; min-height: 48px; border: 1.5px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); color: var(--ds-color-muted); font: inherit; font-size: clamp(.68rem, .3vw + .6rem, .78rem); font-weight: 800; cursor: default; padding: .2rem; "
+
+ ❯ src/features/kitchen-operations/kitchenTextSize.test.ts:26:18
+     24|   it("lets the four step buttons share a row by content width without …
+     25|     const step = blocks.find((block) => block.selector === ".kitchen-s…
+     26|     expect(step).toMatch(/flex:\s*1 1 auto/);
+       |                  ^
+     27|     expect(step).toMatch(/white-space:\s*nowrap/);
+     28|     expect(step).toMatch(/min-height:\s*48px/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 11 passed (15)
+   Start at  23:17:28
+   Duration  466ms (transform 131ms, setup 0ms, import 205ms, tests 45ms, environment 0ms)
+

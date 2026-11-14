@@ -1,0 +1,79 @@
+[36mvite v8.2.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 264 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                0.55 kB │ gzip:  0.33 kB
+dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+dist/assets/Cashier-C2XeD3Fd.css                               0.24 kB │ gzip:  0.18 kB
+dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+dist/assets/management-security-system-Cqi3Xt8E.css            2.44 kB │ gzip:  0.72 kB
+dist/assets/NfcOrder-KNdAOhPu.css                              4.71 kB │ gzip:  1.35 kB
+dist/assets/design-system-409abIFq.css                         6.34 kB │ gzip:  1.87 kB
+dist/assets/index-DNaE5KaM.css                                31.66 kB │ gzip:  7.58 kB
+dist/assets/workspace-B1xlgz6k.css                            97.46 kB │ gzip: 14.64 kB
+dist/assets/focusOnMount-tG3qApzB.js                           0.03 kB │ gzip:  0.05 kB
+dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+dist/assets/rolldown-runtime-EyZ2wyi3.js                       0.61 kB │ gzip:  0.39 kB
+dist/assets/format-Bh78ZGbj.js                                 1.50 kB │ gzip:  0.53 kB
+dist/assets/SecurityAdministration-DRGYVECB.js                 2.47 kB │ gzip:  1.05 kB
+dist/assets/ReservationStation-Cv6ZA23l.js                     3.97 kB │ gzip:  1.41 kB
+dist/assets/TokenTerminalSettings-CjDDZSQa.js                  5.60 kB │ gzip:  1.97 kB
+dist/assets/RelaySettings-WcIGgN5W.js                          6.17 kB │ gzip:  1.93 kB
+dist/assets/CustomerDisplayScreensaverSettings-BzEAReQK.js     6.21 kB │ gzip:  2.13 kB
+dist/assets/design-system-Cy-5cQHI.js                          7.39 kB │ gzip:  2.73 kB
+dist/assets/api-8eAW1BRo.js                                    7.45 kB │ gzip:  2.38 kB
+dist/assets/QnbCredentialSettings-jNGK8mdZ.js                  8.70 kB │ gzip:  2.84 kB
+dist/assets/BusinessIdentitySettings-D7tnwgp0.js               9.38 kB │ gzip:  2.84 kB
+dist/assets/NfcOrder-BA0F3IWB.js                               9.62 kB │ gzip:  3.16 kB
+dist/assets/CustomerDisplay-xC9zBxOZ.js                       14.00 kB │ gzip:  4.60 kB
+dist/assets/management-security-system-DLLAc1th.js            21.91 kB │ gzip:  6.16 kB
+dist/assets/Cashier-CeKzo5gV.js                               30.13 kB │ gzip:  8.97 kB
+dist/assets/HubConnectionBuilder-BSoreM0u.js                  54.78 kB │ gzip: 14.03 kB
+dist/assets/index-o3vuOmlU.js                                245.21 kB │ gzip: 79.17 kB
+dist/assets/workspace-DgveFfFe.js                            403.15 kB │ gzip: 97.49 kB
+
+[32m✓ built in 414ms[39m
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:731:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\nodes\HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\living\generated\HTMLCanvasElement.js:131:58)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13406:49
+    at Object.get (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:7722:23)
+    at _isIconLigature (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:13405:41)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27328:54
+    at Array.some (<anonymous>)
+    at hasRealTextChildren (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27327:35)
+    at Rule.colorContrastMatches [as matches] (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\axe-core@4.10.3\node_modules\axe-core\axe.js:27292:12) undefined
+
+ Test Files  120 passed (120)
+      Tests  1419 passed (1419)
+   Start at  23:18:36
+   Duration  51.20s (transform 24.43s, setup 0ms, import 52.22s, tests 164.77s, environment 259.25s)
+
