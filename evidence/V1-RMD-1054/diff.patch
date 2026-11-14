@@ -1,0 +1,206 @@
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.test.ts b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.test.ts
+index 74fe3b419..de6011ebd 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.test.ts
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.test.ts
+@@ -119,38 +119,25 @@ describe("kitchen operations API client", () => {
+     const network = createKitchenOperationsClient("terminal-1", "hot-line", vi.fn(async () => { throw new Error("offline"); }));
+     await expect(network.load()).rejects.toBeInstanceOf(KitchenOperationsApiError);
+   });
+-  // V1-RMD-293: there is no server-side "every failed print job across a station" endpoint - load() fans out
+-  // one GET per currently loaded ticket instead. Two tickets prove it does not just read the first one.
+-  it("fetches print jobs per loaded ticket and surfaces only Failed/DeadLetter ones", async () => {
+-    const twoTickets = [
+-      { ...payloads.tickets[0], id: "ticket-1" },
+-      { ...payloads.tickets[0], id: "ticket-2", ticketNumber: "KT-002" },
++  // V1-RMD-1054: one station-wide read replaces the per-ticket fan-out, however many tickets are open.
++  it("reads the station's failed print jobs with one request, not one per open ticket", async () => {
++    const manyTickets = Array.from({ length: 30 }, (_, index) => ({ ...payloads.tickets[0], id: `ticket-${index}` }));
++    const failures = [
++      { id: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Failed", attemptCount: 2, maxAttempts: 5, failedAt: "2026-09-26T00:01:00Z", createdAt: "2026-09-26T00:00:00Z" },
++      { id: "job-3", ticketId: "ticket-2", printerId: "printer-2", status: "DeadLetter", attemptCount: 5, maxAttempts: 5, failedAt: "2026-09-26T00:05:00Z", createdAt: "2026-09-26T00:00:00Z" },
+     ];
+-    const printJobsByTicket: Record<string, unknown[]> = {
+-      "ticket-1": [
+-        { id: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Failed", attemptCount: 2, maxAttempts: 5, failedAt: "2026-09-26T00:00:00Z", createdAt: "2026-09-26T00:00:00Z" },
+-        { id: "job-2", ticketId: "ticket-1", printerId: "printer-1", status: "Printed", attemptCount: 1, maxAttempts: 5, failedAt: null, createdAt: "2026-09-26T00:00:00Z" },
+-      ],
+-      "ticket-2": [
+-        { id: "job-3", ticketId: "ticket-2", printerId: "printer-2", status: "DeadLetter", attemptCount: 5, maxAttempts: 5, failedAt: "2026-09-26T00:05:00Z", createdAt: "2026-09-26T00:00:00Z" },
+-      ],
+-    };
+     const fetcher = vi.fn(async (url: RequestInfo | URL) => {
+       const path = String(url);
+-      if (path.includes("/print-jobs?ticketId=")) {
+-        const ticketId = new URL(path, "http://localhost").searchParams.get("ticketId")!;
+-        return new Response(JSON.stringify(printJobsByTicket[ticketId] ?? []), { status: 200, headers: { "Content-Type": "application/json" } });
+-      }
+-      return new Response(JSON.stringify(path.includes("health") ? payloads.health : path.includes("tickets") ? twoTickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : path.includes("live-sync") ? payloads.liveSync : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
++      return new Response(JSON.stringify(path.includes("/print-jobs/failed") ? failures : path.includes("health") ? payloads.health : path.includes("tickets") ? manyTickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : path.includes("live-sync") ? payloads.liveSync : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
+     });
+     const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
+ 
+     const result = await client.load();
+ 
+-    expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("/print-jobs?ticketId=ticket-1"), expect.anything());
+-    expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("/print-jobs?ticketId=ticket-2"), expect.anything());
+-    expect(result.printJobFailures).toHaveLength(2);
+-    expect(result.printJobFailures!.map((job) => job.id).sort()).toEqual(["job-1", "job-3"]);
+-    expect(result.printJobFailures!.some((job) => job.id === "job-2")).toBe(false);
++    const printJobCalls = fetcher.mock.calls.map(([url]) => String(url)).filter((url) => url.includes("/print-jobs"));
++    expect(printJobCalls).toHaveLength(1);
++    expect(printJobCalls[0]).toContain("/print-jobs/failed?stationId=hot-line");
++    expect(fetcher).toHaveBeenCalledTimes(9);
++    expect(result.printJobFailures!.map((job) => job.id)).toEqual(["job-1", "job-3"]);
+   });
+ });
+diff --git a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts
+index 7e99aa8ac..d15043bc4 100644
+--- a/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts
++++ b/src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts
+@@ -125,14 +125,7 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
+         get<KitchenBackup[]>("/operations/backups/recent?limit=20"),
+         get<{ enabled: boolean; denseModeThreshold: number }>("/operations/live-sync"),
+       ]);
+-      // V1-RMD-293: there is no server-side "every failed print job across a station" endpoint - only
+-      // per-ticket (GET /print-jobs?ticketId=). Fanning out over the tickets already loaded above is the
+-      // only way this screen can see a stuck print without a new server endpoint (outside this task's
+-      // Owned surface). Bounded by how many tickets are ever open on one board at once.
+-      const printJobsByTicket = await Promise.all(
+-        tickets.map((ticket) => get<KitchenPrintJob[]>(`/print-jobs?ticketId=${encodeURIComponent(ticket.id)}`)),
+-      );
+-      const printJobFailures = printJobsByTicket.flat().filter((job) => job.status === "Failed" || job.status === "DeadLetter");
++      const printJobFailures = await get<KitchenPrintJob[]>(`/print-jobs/failed?stationId=${encodeURIComponent(stationId)}`);
+       return {
+         tickets, printers, routes, categories, unknownDeliveries, printJobFailures, health, backups,
+         liveSyncEnabled: liveSync.enabled,
+diff --git a/src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs b/src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs
+index ba081327b..7595260a1 100644
+--- a/src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs
++++ b/src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs
+@@ -343,6 +343,18 @@ public static class KitchenOperationsEndpoints
+             return Results.Ok(await store.GetPrintJobsAsync(ticketId.Value, cancellationToken));
+         });
+ 
++        group.MapGet("/print-jobs/failed", async (
++            Guid terminalId,
++            string? stationId,
++            IKitchenOperationsSessionAuthorizer authorizer,
++            KitchenOperationsStore store,
++            HttpContext context,
++            CancellationToken cancellationToken) =>
++        {
++            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
++            return Results.Ok(await store.GetFailedPrintJobsAsync(stationId ?? string.Empty, cancellationToken));
++        });
++
+         group.MapGet("/print-jobs/{jobId:guid}", async (
+             Guid terminalId,
+             Guid jobId,
+diff --git a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+index ec131a30d..0cd5e4ed5 100644
+--- a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
++++ b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+@@ -497,6 +497,42 @@ public sealed class KitchenOperationsStore
+         return (await _printJobs.GetByTicketIdAsync(ticketId, cancellationToken)).Select(ToDto).ToArray();
+     }
+ 
++    /// <summary>
++    /// V1-RMD-1054: Failed/DeadLetter jobs of the station's open tickets in one query, so the board
++    /// polls once per station instead of once per ticket.
++    /// </summary>
++    public async Task<IReadOnlyList<PrintJobV1>> GetFailedPrintJobsAsync(
++        string stationId,
++        CancellationToken cancellationToken)
++    {
++        var normalizedStation = RequireText(stationId, 100, nameof(stationId));
++        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
++        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
++        if (tickets.Count == 0) return [];
++        await using var command = _dataSource.CreateCommand(
++            """
++            SELECT id, ticket_id, printer_id, status, attempt_count, max_attempts, next_attempt_at,
++                   lease_expires_at, printed_at, failed_at, created_at, updated_at
++            FROM kitchen.print_jobs
++            WHERE ticket_id = ANY(@ticket_ids) AND status IN ('Failed', 'DeadLetter')
++            ORDER BY created_at DESC
++            LIMIT 500;
++            """);
++        command.Parameters.AddWithValue("ticket_ids", tickets.Select(ticket => ticket.Id).ToArray());
++        var jobs = new List<PrintJobV1>();
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        while (await reader.ReadAsync(cancellationToken))
++            jobs.Add(new PrintJobV1(
++                reader.GetGuid(0), reader.GetGuid(1), reader.GetGuid(2), reader.GetString(3), reader.GetInt32(4),
++                reader.GetInt32(5), reader.IsDBNull(6) ? null : reader.GetFieldValue<DateTimeOffset>(6),
++                reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7),
++                reader.IsDBNull(8) ? null : reader.GetFieldValue<DateTimeOffset>(8),
++                reader.IsDBNull(9) ? null : reader.GetFieldValue<DateTimeOffset>(9),
++                reader.GetFieldValue<DateTimeOffset>(10),
++                reader.IsDBNull(11) ? null : reader.GetFieldValue<DateTimeOffset>(11)));
++        return jobs;
++    }
++
+     public async Task<PrintJobV1> GetPrintJobAsync(Guid jobId, CancellationToken cancellationToken)
+     {
+         EnsureId(jobId, nameof(jobId));
+diff --git a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+index 9f855260b..1ec3ebc70 100644
+--- a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
++++ b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+@@ -1049,6 +1049,56 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
+         Assert.Equal("Masa 7", ticket.TableNumber);
+     }
+ 
++    /// <summary>
++    /// V1-RMD-1054: one station-wide read returns only Failed/DeadLetter jobs of the station's open tickets;
++    /// pending jobs and another station's failures stay out, and a session is still required.
++    /// </summary>
++    [Fact]
++    public async Task FailedPrintJobsOfAStationComeFromOneReadAndStayInsideThatStation()
++    {
++        var terminalId = Guid.NewGuid();
++        var seed = await _database.SeedKitchenGraphAsync();
++        var (otherTicketId, otherPrinterId, otherStationId) = await _database.SeedTicketAwaitingPrintJobAsync();
++        var deadJobId = Guid.NewGuid();
++        var otherFailedId = Guid.NewGuid();
++        var cancelledTicketId = Guid.NewGuid();
++        await using (var command = _database.DataSource.CreateCommand(
++            $"""
++            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, row_version, created_at)
++            VALUES ('{deadJobId:D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'dead-{deadJobId:N}', 'x', 'DeadLetter', 5, 5, 1, now()),
++                   ('{otherFailedId:D}', '{otherTicketId:D}', '{otherPrinterId:D}', 'other-{otherFailedId:N}', 'x', 'Failed', 1, 5, 1, now());
++            UPDATE kitchen.print_jobs SET next_attempt_at = now() + interval '1 day' WHERE id = '{otherFailedId:D}';
++            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status, row_version, created_at)
++            VALUES ('{cancelledTicketId:D}', '{seed.OrderId:D}', 'KT-{cancelledTicketId:N}', 'hot-line', 'Cancelled', 1, now());
++            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
++            VALUES ('{Guid.NewGuid():D}', '{cancelledTicketId:D}', '{seed.PrinterId:D}', 'cancelled-{Guid.NewGuid():N}', 'x', 'Failed', 1, 5, now() + interval '1 day', 1, now());
++            UPDATE kitchen.print_jobs SET status = 'Failed', attempt_count = 1, next_attempt_at = now() + interval '1 day' WHERE id = '{seed.PrintJobId:D}';
++            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
++            VALUES ('{Guid.NewGuid():D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'pending-{Guid.NewGuid():N}', 'x', 'Pending', 0, 5, now() + interval '1 day', 1, now()),
++                   ('{Guid.NewGuid():D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'printed-{Guid.NewGuid():N}', 'x', 'Printed', 1, 5, NULL, 1, now());
++            """))
++            await command.ExecuteNonQueryAsync();
++        var cookie = await _database.SeedSessionAsync(terminalId, []);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        using var anonymous = await client.GetAsync(Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line");
++        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
++
++        var jobs = await GetAsync<PrintJobV1[]>(client, Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line", cookie);
++        Assert.Equal(
++            new[] { seed.PrintJobId, deadJobId }.OrderBy(id => id),
++            jobs!.Select(job => job.Id).OrderBy(id => id));
++        Assert.All(jobs, job => Assert.Equal(seed.TicketId, job.TicketId));
++
++        var other = await GetAsync<PrintJobV1[]>(
++            client, Prefix(terminalId) + $"/print-jobs/failed?stationId={Uri.EscapeDataString(otherStationId)}", cookie);
++        Assert.Equal(otherFailedId, Assert.Single(other!).Id);
++
++        using var missingStation = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/print-jobs/failed", cookie));
++        Assert.Equal(HttpStatusCode.BadRequest, missingStation.StatusCode);
++    }
++
+     /// <summary>
+     /// V1-KIT-012: a table-less order (takeaway/bar tab — SeedKitchenGraphAsync
+     /// never sets orders.orders.table_id) must not fabricate a table label.

@@ -343,6 +343,18 @@ public static class KitchenOperationsEndpoints
             return Results.Ok(await store.GetPrintJobsAsync(ticketId.Value, cancellationToken));
         });
 
+        group.MapGet("/print-jobs/failed", async (
+            Guid terminalId,
+            string? stationId,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            return Results.Ok(await store.GetFailedPrintJobsAsync(stationId ?? string.Empty, cancellationToken));
+        });
+
         group.MapGet("/print-jobs/{jobId:guid}", async (
             Guid terminalId,
             Guid jobId,

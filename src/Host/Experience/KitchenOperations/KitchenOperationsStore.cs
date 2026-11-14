@@ -497,6 +497,42 @@ public sealed class KitchenOperationsStore
         return (await _printJobs.GetByTicketIdAsync(ticketId, cancellationToken)).Select(ToDto).ToArray();
     }
 
+    /// <summary>
+    /// V1-RMD-1054: Failed/DeadLetter jobs of the station's open tickets in one query, so the board
+    /// polls once per station instead of once per ticket.
+    /// </summary>
+    public async Task<IReadOnlyList<PrintJobV1>> GetFailedPrintJobsAsync(
+        string stationId,
+        CancellationToken cancellationToken)
+    {
+        var normalizedStation = RequireText(stationId, 100, nameof(stationId));
+        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
+        if (tickets.Count == 0) return [];
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT id, ticket_id, printer_id, status, attempt_count, max_attempts, next_attempt_at,
+                   lease_expires_at, printed_at, failed_at, created_at, updated_at
+            FROM kitchen.print_jobs
+            WHERE ticket_id = ANY(@ticket_ids) AND status IN ('Failed', 'DeadLetter')
+            ORDER BY created_at DESC
+            LIMIT 500;
+            """);
+        command.Parameters.AddWithValue("ticket_ids", tickets.Select(ticket => ticket.Id).ToArray());
+        var jobs = new List<PrintJobV1>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            jobs.Add(new PrintJobV1(
+                reader.GetGuid(0), reader.GetGuid(1), reader.GetGuid(2), reader.GetString(3), reader.GetInt32(4),
+                reader.GetInt32(5), reader.IsDBNull(6) ? null : reader.GetFieldValue<DateTimeOffset>(6),
+                reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7),
+                reader.IsDBNull(8) ? null : reader.GetFieldValue<DateTimeOffset>(8),
+                reader.IsDBNull(9) ? null : reader.GetFieldValue<DateTimeOffset>(9),
+                reader.GetFieldValue<DateTimeOffset>(10),
+                reader.IsDBNull(11) ? null : reader.GetFieldValue<DateTimeOffset>(11)));
+        return jobs;
+    }
+
     public async Task<PrintJobV1> GetPrintJobAsync(Guid jobId, CancellationToken cancellationToken)
     {
         EnsureId(jobId, nameof(jobId));

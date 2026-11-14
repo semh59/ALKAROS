@@ -1,0 +1,18 @@
+Mutant tanimlari: TS-M1 bilet basina istek; TS-M2 stationId yok; TS-M3 sonuc yok sayilir; CS-M1 SQL'e Pending+Printed eklendi; CS-M2 ticket filtresi kaldirildi; CS-M3 DeadLetter cikarildi; CS-M4 RequireReadAsync kaldirildi. Hepsi assert ile oldu (CS-M1 ilk denemede yasadi, test guclendirilip tekrar olduruldu).
+TS-M1-per-ticket-fanout: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+TS-M1-per-ticket-fanout:       Tests  1 failed | 8 passed (9)
+  restored cmp ok
+TS-M2-no-station: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+TS-M2-no-station:       Tests  1 failed | 8 passed (9)
+  restored cmp ok
+TS-M3-ignores-result: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+TS-M3-ignores-result:       Tests  1 failed | 8 passed (9)
+  restored cmp ok
+CS-M2-all-stations: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 853 ms - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok
+CS-M3-no-deadletter: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 988 ms - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok
+CS-M4-no-auth: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 834 ms - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok
+CS-M1-pending-printed-included: Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 952 ms - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+  restored cmp ok

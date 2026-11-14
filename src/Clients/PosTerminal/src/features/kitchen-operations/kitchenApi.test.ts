@@ -119,38 +119,25 @@ describe("kitchen operations API client", () => {
     const network = createKitchenOperationsClient("terminal-1", "hot-line", vi.fn(async () => { throw new Error("offline"); }));
     await expect(network.load()).rejects.toBeInstanceOf(KitchenOperationsApiError);
   });
-  // V1-RMD-293: there is no server-side "every failed print job across a station" endpoint - load() fans out
-  // one GET per currently loaded ticket instead. Two tickets prove it does not just read the first one.
-  it("fetches print jobs per loaded ticket and surfaces only Failed/DeadLetter ones", async () => {
-    const twoTickets = [
-      { ...payloads.tickets[0], id: "ticket-1" },
-      { ...payloads.tickets[0], id: "ticket-2", ticketNumber: "KT-002" },
+  // V1-RMD-1054: one station-wide read replaces the per-ticket fan-out, however many tickets are open.
+  it("reads the station's failed print jobs with one request, not one per open ticket", async () => {
+    const manyTickets = Array.from({ length: 30 }, (_, index) => ({ ...payloads.tickets[0], id: `ticket-${index}` }));
+    const failures = [
+      { id: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Failed", attemptCount: 2, maxAttempts: 5, failedAt: "2026-09-26T00:01:00Z", createdAt: "2026-09-26T00:00:00Z" },
+      { id: "job-3", ticketId: "ticket-2", printerId: "printer-2", status: "DeadLetter", attemptCount: 5, maxAttempts: 5, failedAt: "2026-09-26T00:05:00Z", createdAt: "2026-09-26T00:00:00Z" },
     ];
-    const printJobsByTicket: Record<string, unknown[]> = {
-      "ticket-1": [
-        { id: "job-1", ticketId: "ticket-1", printerId: "printer-1", status: "Failed", attemptCount: 2, maxAttempts: 5, failedAt: "2026-09-26T00:00:00Z", createdAt: "2026-09-26T00:00:00Z" },
-        { id: "job-2", ticketId: "ticket-1", printerId: "printer-1", status: "Printed", attemptCount: 1, maxAttempts: 5, failedAt: null, createdAt: "2026-09-26T00:00:00Z" },
-      ],
-      "ticket-2": [
-        { id: "job-3", ticketId: "ticket-2", printerId: "printer-2", status: "DeadLetter", attemptCount: 5, maxAttempts: 5, failedAt: "2026-09-26T00:05:00Z", createdAt: "2026-09-26T00:00:00Z" },
-      ],
-    };
     const fetcher = vi.fn(async (url: RequestInfo | URL) => {
       const path = String(url);
-      if (path.includes("/print-jobs?ticketId=")) {
-        const ticketId = new URL(path, "http://localhost").searchParams.get("ticketId")!;
-        return new Response(JSON.stringify(printJobsByTicket[ticketId] ?? []), { status: 200, headers: { "Content-Type": "application/json" } });
-      }
-      return new Response(JSON.stringify(path.includes("health") ? payloads.health : path.includes("tickets") ? twoTickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : path.includes("live-sync") ? payloads.liveSync : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify(path.includes("/print-jobs/failed") ? failures : path.includes("health") ? payloads.health : path.includes("tickets") ? manyTickets : path.includes("backups") ? payloads.backups : path.includes("printers") ? payloads.printers : path.includes("routes") ? payloads.routes : path.includes("live-sync") ? payloads.liveSync : payloads.unknownDeliveries), { status: 200, headers: { "Content-Type": "application/json" } });
     });
     const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
 
     const result = await client.load();
 
-    expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("/print-jobs?ticketId=ticket-1"), expect.anything());
-    expect(fetcher).toHaveBeenCalledWith(expect.stringContaining("/print-jobs?ticketId=ticket-2"), expect.anything());
-    expect(result.printJobFailures).toHaveLength(2);
-    expect(result.printJobFailures!.map((job) => job.id).sort()).toEqual(["job-1", "job-3"]);
-    expect(result.printJobFailures!.some((job) => job.id === "job-2")).toBe(false);
+    const printJobCalls = fetcher.mock.calls.map(([url]) => String(url)).filter((url) => url.includes("/print-jobs"));
+    expect(printJobCalls).toHaveLength(1);
+    expect(printJobCalls[0]).toContain("/print-jobs/failed?stationId=hot-line");
+    expect(fetcher).toHaveBeenCalledTimes(9);
+    expect(result.printJobFailures!.map((job) => job.id)).toEqual(["job-1", "job-3"]);
   });
 });

@@ -125,14 +125,7 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
         get<KitchenBackup[]>("/operations/backups/recent?limit=20"),
         get<{ enabled: boolean; denseModeThreshold: number }>("/operations/live-sync"),
       ]);
-      // V1-RMD-293: there is no server-side "every failed print job across a station" endpoint - only
-      // per-ticket (GET /print-jobs?ticketId=). Fanning out over the tickets already loaded above is the
-      // only way this screen can see a stuck print without a new server endpoint (outside this task's
-      // Owned surface). Bounded by how many tickets are ever open on one board at once.
-      const printJobsByTicket = await Promise.all(
-        tickets.map((ticket) => get<KitchenPrintJob[]>(`/print-jobs?ticketId=${encodeURIComponent(ticket.id)}`)),
-      );
-      const printJobFailures = printJobsByTicket.flat().filter((job) => job.status === "Failed" || job.status === "DeadLetter");
+      const printJobFailures = await get<KitchenPrintJob[]>(`/print-jobs/failed?stationId=${encodeURIComponent(stationId)}`);
       return {
         tickets, printers, routes, categories, unknownDeliveries, printJobFailures, health, backups,
         liveSyncEnabled: liveSync.enabled,

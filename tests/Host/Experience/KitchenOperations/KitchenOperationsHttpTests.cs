@@ -1050,6 +1050,56 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
     }
 
     /// <summary>
+    /// V1-RMD-1054: one station-wide read returns only Failed/DeadLetter jobs of the station's open tickets;
+    /// pending jobs and another station's failures stay out, and a session is still required.
+    /// </summary>
+    [Fact]
+    public async Task FailedPrintJobsOfAStationComeFromOneReadAndStayInsideThatStation()
+    {
+        var terminalId = Guid.NewGuid();
+        var seed = await _database.SeedKitchenGraphAsync();
+        var (otherTicketId, otherPrinterId, otherStationId) = await _database.SeedTicketAwaitingPrintJobAsync();
+        var deadJobId = Guid.NewGuid();
+        var otherFailedId = Guid.NewGuid();
+        var cancelledTicketId = Guid.NewGuid();
+        await using (var command = _database.DataSource.CreateCommand(
+            $"""
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, row_version, created_at)
+            VALUES ('{deadJobId:D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'dead-{deadJobId:N}', 'x', 'DeadLetter', 5, 5, 1, now()),
+                   ('{otherFailedId:D}', '{otherTicketId:D}', '{otherPrinterId:D}', 'other-{otherFailedId:N}', 'x', 'Failed', 1, 5, 1, now());
+            UPDATE kitchen.print_jobs SET next_attempt_at = now() + interval '1 day' WHERE id = '{otherFailedId:D}';
+            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status, row_version, created_at)
+            VALUES ('{cancelledTicketId:D}', '{seed.OrderId:D}', 'KT-{cancelledTicketId:N}', 'hot-line', 'Cancelled', 1, now());
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
+            VALUES ('{Guid.NewGuid():D}', '{cancelledTicketId:D}', '{seed.PrinterId:D}', 'cancelled-{Guid.NewGuid():N}', 'x', 'Failed', 1, 5, now() + interval '1 day', 1, now());
+            UPDATE kitchen.print_jobs SET status = 'Failed', attempt_count = 1, next_attempt_at = now() + interval '1 day' WHERE id = '{seed.PrintJobId:D}';
+            INSERT INTO kitchen.print_jobs (id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
+            VALUES ('{Guid.NewGuid():D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'pending-{Guid.NewGuid():N}', 'x', 'Pending', 0, 5, now() + interval '1 day', 1, now()),
+                   ('{Guid.NewGuid():D}', '{seed.TicketId:D}', '{seed.PrinterId:D}', 'printed-{Guid.NewGuid():N}', 'x', 'Printed', 1, 5, NULL, 1, now());
+            """))
+            await command.ExecuteNonQueryAsync();
+        var cookie = await _database.SeedSessionAsync(terminalId, []);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var anonymous = await client.GetAsync(Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line");
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+
+        var jobs = await GetAsync<PrintJobV1[]>(client, Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line", cookie);
+        Assert.Equal(
+            new[] { seed.PrintJobId, deadJobId }.OrderBy(id => id),
+            jobs!.Select(job => job.Id).OrderBy(id => id));
+        Assert.All(jobs, job => Assert.Equal(seed.TicketId, job.TicketId));
+
+        var other = await GetAsync<PrintJobV1[]>(
+            client, Prefix(terminalId) + $"/print-jobs/failed?stationId={Uri.EscapeDataString(otherStationId)}", cookie);
+        Assert.Equal(otherFailedId, Assert.Single(other!).Id);
+
+        using var missingStation = await client.SendAsync(Request(HttpMethod.Get, Prefix(terminalId) + "/print-jobs/failed", cookie));
+        Assert.Equal(HttpStatusCode.BadRequest, missingStation.StatusCode);
+    }
+
+    /// <summary>
     /// V1-KIT-012: a table-less order (takeaway/bar tab — SeedKitchenGraphAsync
     /// never sets orders.orders.table_id) must not fabricate a table label.
     /// </summary>
