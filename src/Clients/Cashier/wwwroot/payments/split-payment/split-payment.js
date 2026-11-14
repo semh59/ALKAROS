@@ -2502,7 +2502,12 @@
       heading = { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
     else
       heading = kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
-    if (awaitingSlip) return { title: heading.title, text: 'İade onaylandı, fiş girişi bekleniyor.' };
+    if (awaitingSlip) {
+      var awaiting = refunds.filter(function (row) { return row.status === 'AwaitingManualRefund'; });
+      var transfers = awaiting.filter(function (row) { return row.method === 'Eft'; }).length;
+      var proof = transfers === 0 ? 'fiş' : transfers === awaiting.length ? 'iade dekontu' : 'fiş veya iade dekontu';
+      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' girişi bekleniyor.' };
+    }
     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
   }
 

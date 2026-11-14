@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-open-refund-closed.test.js (14 tests | 1 failed) 1959ms
+     × names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed 119ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed
+AssertionError: expected 'İade onaylandı, fiş girişi bekleniyor.' to be 'İade onaylandı, iade dekontu girişi b…' // Object.is equality
+
+Expected: "İade onaylandı, iade dekontu girişi bekleniyor."
+Received: "İade onaylandı, fiş girişi bekleniyor."
+
+ ❯ split-payment-open-refund-closed.test.js:86:64
+     84|   it("names the refund slip for a card refund and the transfer receipt…
+     85|     await openPaid([{ ...pending, status: "AwaitingManualRefund", meth…
+     86|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+     87|
+     88|     document.body.innerHTML = "";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 passed (14)
+   Start at  16:54:24
+   Duration  3.46s (transform 831ms, setup 29ms, import 62ms, tests 1.96s, environment 1.14s)
+
+exit=1

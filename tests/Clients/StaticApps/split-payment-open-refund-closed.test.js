@@ -81,6 +81,32 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
   });
 
+  it("names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed", async () => {
+    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor.");
+
+    document.body.innerHTML = "";
+    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş veya iade dekontu girişi bekleniyor.");
+
+    document.body.innerHTML = "";
+    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor.");
+  });
+
+  it("keeps the slip sentence when the refund method is missing", async () => {
+    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: null }], "Paid");
+
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
+  });
+
+  it("puts the manager decision first while the bill is still open and both refunds are waiting", async () => {
+    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Open");
+
+    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
+    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.");
+  });
+
   it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the approved-refund sentence while the receipt says %s", async (status) => {
     await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }], status);
 

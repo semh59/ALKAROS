@@ -1,7 +1,7 @@
 # V1-RMD-1078 - Kapanmış hesapta onaylanmış iade metni iade yöntemine göre
 
 - Task ID: V1-RMD-1078
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

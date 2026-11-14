@@ -1,0 +1,14 @@
+M1-transfer-always-slip:      Tests  1 failed | 13 passed (14)
+  restored cmp ok
+M2-all-transfers-mixed:      Tests  1 failed | 13 passed (14)
+  restored cmp ok
+M3-mixed-slip:      Tests  1 failed | 13 passed (14)
+  restored cmp ok
+M4-wrong-method:      Tests  2 failed | 12 passed (14)
+  restored cmp ok
+M5-wording:      Tests  1 failed | 13 passed (14)
+  restored cmp ok
+M6-all-awaiting-only-first:      Tests  1 failed | 13 passed (14)
+  restored cmp ok
+M7-no-awaiting-filter:      Tests  1 failed | 13 passed (14) (after adding Requested+Eft closed case)
+  restored cmp ok

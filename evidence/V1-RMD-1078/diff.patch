@@ -1,0 +1,68 @@
+diff --git a/plan/v1/remediation/V1-RMD-1078-approved-refund-notice-by-method.md b/plan/v1/remediation/V1-RMD-1078-approved-refund-notice-by-method.md
+index b5395bfd9..85b38e572 100644
+--- a/plan/v1/remediation/V1-RMD-1078-approved-refund-notice-by-method.md
++++ b/plan/v1/remediation/V1-RMD-1078-approved-refund-notice-by-method.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1078 - Kapanmış hesapta onaylanmış iade metni iade yöntemine göre
+ 
+ - Task ID: V1-RMD-1078
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index e16149633..757ce8694 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2502,7 +2502,12 @@
+       heading = { title: 'Hesap Ödendi', text: kind ? kind.paid : 'Bu hesabın tamamı tahsil edildi.' };
+     else
+       heading = kind || { title: 'Hesap Kapandı', text: 'Bu hesapta tahsil edilecek tutar kalmadı.' };
+-    if (awaitingSlip) return { title: heading.title, text: 'İade onaylandı, fiş girişi bekleniyor.' };
++    if (awaitingSlip) {
++      var awaiting = refunds.filter(function (row) { return row.status === 'AwaitingManualRefund'; });
++      var transfers = awaiting.filter(function (row) { return row.method === 'Eft'; }).length;
++      var proof = transfers === 0 ? 'fiş' : transfers === awaiting.length ? 'iade dekontu' : 'fiş veya iade dekontu';
++      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' girişi bekleniyor.' };
++    }
+     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
+   }
+ 
+diff --git a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+index 5cc134f12..15d93cb96 100644
+--- a/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
++++ b/tests/Clients/StaticApps/split-payment-open-refund-closed.test.js
+@@ -81,6 +81,32 @@ describe("a fully paid bill with a refund request waiting is not shown as paid",
+     expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
+   });
+ 
++  it("names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed", async () => {
++    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Eft" }], "Paid");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor.");
++
++    document.body.innerHTML = "";
++    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş veya iade dekontu girişi bekleniyor.");
++
++    document.body.innerHTML = "";
++    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Paid");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, iade dekontu girişi bekleniyor.");
++  });
++
++  it("keeps the slip sentence when the refund method is missing", async () => {
++    await openPaid([{ ...pending, status: "AwaitingManualRefund", method: null }], "Paid");
++
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade onaylandı, fiş girişi bekleniyor.");
++  });
++
++  it("puts the manager decision first while the bill is still open and both refunds are waiting", async () => {
++    await openPaid([pending, { ...pending, requestId: "r2", status: "AwaitingManualRefund", method: "Eft" }], "Open");
++
++    expect(document.querySelector(".sp-title").textContent).toBe("Tahsilat Tamam, Hesap Açık");
++    expect(document.querySelector(".sp-subtitle").textContent).toBe("İade isteği yönetici onayı bekliyor; karar verilene kadar hesap kapanmaz.");
++  });
++
+   it.each(["Open", "PartiallyPaid", "Reopened"])("keeps the approved-refund sentence while the receipt says %s", async (status) => {
+     await openPaid([{ ...pending, status: "AwaitingManualRefund", method: "Card" }], status);
+ 
