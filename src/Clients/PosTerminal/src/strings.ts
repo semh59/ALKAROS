@@ -1413,12 +1413,15 @@ export const refundMethodLabels: Record<string, string> = {
 export const cashSessionText = {
   checking: "Kasa: Kontrol…",
   open: "Kasa: Açık",
+  notOwned: "Kasa: Başka kullanıcıda",
   closed: "Kasa: Kapalı",
   unknown: "Kasa: Bilinmiyor",
   forbidden: "Kasa: İzin yok",
   closedBand: "Kasa oturumu kapalı. Nakit tahsilat için önce kasayı açın.",
   unknownBand: "Kasa durumu okunamadı. Nakit tahsilat yapmadan önce durumu yeniden okuyun.",
+  notOwnedBand: "Açık kasa oturumu başka bir kullanıcıya ait; nakit tahsilat yapılamaz. Oturumu açan kasiyer ya da bir yönetici kapatmalı, sonra kendi oturumunuzu açın.",
   openAction: "Kasayı aç",
+  viewAction: "Kasa oturumunu gör",
   retry: "Kasa durumunu yeniden oku",
 } as const;
 

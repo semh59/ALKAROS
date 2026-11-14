@@ -169,7 +169,7 @@
     BILL_HAS_SERVED_ITEMS: 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.',
     BILL_NOT_FOUND: 'Hesap bulunamadı.',
     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
-    CASH_SESSION_NOT_OWNED: 'Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın.',
+    CASH_SESSION_NOT_OWNED: 'Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil; oturumu açan kasiyer ya da bir yönetici kapatınca kendi oturumunuzu açın.',
     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
     CONCURRENT_MODIFICATION: 'Hesap bölme tasarımı başka bir işlem tarafından değiştirildi.',
     CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
@@ -502,7 +502,7 @@
     if (state.cashState === 'notOwned') {
       return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
         '<div class="sp-alert-title">Önce kasayı açın</div>' +
-        '<div class="sp-alert-body">Bir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil (açan kişi, ör. yönetici, önce kapatmalı); sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.</div>' +
+        '<div class="sp-alert-body">Bir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil: oturumu açan kasiyer ya da bir yönetici kapatmalı, sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.</div>' +
         '<div class="sp-notice-actions"><a class="sp-btn sp-btn-secondary" href="/cashier/payments/cash-session/index.html">Kasa oturumu</a></div></div></div>';
     }
     var closed = state.cashState === 'closed';

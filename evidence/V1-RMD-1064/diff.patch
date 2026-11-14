@@ -1,0 +1,322 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 6e4b1cec6..4ef5ed211 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -169,7 +169,7 @@
+     BILL_HAS_SERVED_ITEMS: 'Bu hesapta servis edilmiş ürün var; kasiyer iptal edemez. Bir yöneticiye başvurun. Ödeme alındıysa "İade iste" ile yönetici onaylı iade başlatabilirsiniz.',
+     BILL_NOT_FOUND: 'Hesap bulunamadı.',
+     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
+-    CASH_SESSION_NOT_OWNED: 'Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil, sahibi kapatınca kendi oturumunuzu açın.',
++    CASH_SESSION_NOT_OWNED: 'Önce kasayı açın: terminalde tek kasa oturumu olur ve nakit yalnız sahibine tahsil edilir; açık oturum size ait değil; oturumu açan kasiyer ya da bir yönetici kapatınca kendi oturumunuzu açın.',
+     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+     CONCURRENT_MODIFICATION: 'Hesap bölme tasarımı başka bir işlem tarafından değiştirildi.',
+     CONCURRENT_UPDATE: 'Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.',
+@@ -502,7 +502,7 @@
+     if (state.cashState === 'notOwned') {
+       return '<div class="sp-alert sp-alert-warning" id="cash-state-notice" role="status"><span class="sp-alert-icon">!</span><div>' +
+         '<div class="sp-alert-title">Önce kasayı açın</div>' +
+-        '<div class="sp-alert-body">Bir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil (açan kişi, ör. yönetici, önce kapatmalı); sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.</div>' +
++        '<div class="sp-alert-body">Bir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil: oturumu açan kasiyer ya da bir yönetici kapatmalı, sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.</div>' +
+         '<div class="sp-notice-actions"><a class="sp-btn sp-btn-secondary" href="/cashier/payments/cash-session/index.html">Kasa oturumu</a></div></div></div>';
+     }
+     var closed = state.cashState === 'closed';
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+index 6daad57d1..7f9e8ef83 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+@@ -8,10 +8,11 @@ import { CashSessionBand, CashSessionLink, useCashSessionState } from "./CashSes
+ 
+ (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+ 
++const mine = { cashSessionId: "s-1", cashierUserId: "u-1" };
+ const answer = (status: number, body: unknown = {}) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
+ 
+-function Probe({ enabled }: { enabled: boolean }) {
+-  const cashSession = useCashSessionState("t-1", enabled);
++function Probe({ enabled, userId = "u-1" }: { enabled: boolean; userId?: string }) {
++  const cashSession = useCashSessionState("t-1", userId, enabled);
+   return cashSession ? <><CashSessionLink status={cashSession} /><CashSessionBand status={cashSession} /></> : <p>kapalı özellik</p>;
+ }
+ 
+@@ -38,7 +39,7 @@ describe("cash session status", () => {
+   });
+ 
+   it("reads the active session of this terminal and shows Kasa: Açık without a band", async () => {
+-    fetchMock.mockResolvedValue(answer(200, { cashSessionId: "s-1" }));
++    fetchMock.mockResolvedValue(answer(200, mine));
+     await show();
+ 
+     expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/terminals/t-1/cash-sessions/active");
+@@ -69,6 +70,38 @@ describe("cash session status", () => {
+     expect(text()).toContain("Kasa durumu okunamadı");
+   });
+ 
++  it("an open session of another user says so in the header and in a band that names who may close it", async () => {
++    fetchMock.mockResolvedValue(answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
++    await show();
++
++    expect(text()).toContain("Kasa: Başka kullanıcıda");
++    expect(text()).not.toContain("Kasa: Açık");
++    const band = document.querySelector(".cash-session-band")!;
++    expect(band.textContent).toContain("Oturumu açan kasiyer ya da bir yönetici kapatmalı");
++    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
++    expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu gör");
++    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
++  });
++
++  it("an answer whose body cannot be read is a failed read, not an open drawer", async () => {
++    fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => { throw new SyntaxError("bad json"); } });
++    await show();
++
++    expect(text()).toContain("Kasa: Bilinmiyor");
++    expect(text()).not.toContain("Kasa: Açık");
++  });
++
++  it("reads again and judges ownership again when the signed-in user changes", async () => {
++    fetchMock.mockResolvedValue(answer(200, mine));
++    await show();
++    expect(text()).toContain("Kasa: Açık");
++
++    await act(async () => { root!.render(<Probe enabled userId="u-2" />); });
++
++    expect(fetchMock).toHaveBeenCalledTimes(2);
++    expect(text()).toContain("Kasa: Başka kullanıcıda");
++  });
++
+   it("a 403 is said plainly (no permission), with no band and no retry", async () => {
+     fetchMock.mockResolvedValue(answer(403));
+     await show();
+@@ -90,7 +123,7 @@ describe("cash session status", () => {
+     fetchMock.mockResolvedValue(answer(500));
+     await show();
+     fetchMock.mockClear();
+-    fetchMock.mockResolvedValue(answer(200, {}));
++    fetchMock.mockResolvedValue(answer(200, mine));
+ 
+     await act(async () => {
+       window.dispatchEvent(new Event("focus"));
+@@ -101,7 +134,7 @@ describe("cash session status", () => {
+   });
+ 
+   it("a network failure is a failed read too, and the retry button reads again", async () => {
+-    fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch")).mockResolvedValueOnce(answer(200, {}));
++    fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch")).mockResolvedValueOnce(answer(200, mine));
+     await show();
+     expect(text()).toContain("Kasa: Bilinmiyor");
+ 
+@@ -113,7 +146,7 @@ describe("cash session status", () => {
+   });
+ 
+   it("reads again when the cashier comes back to this tab after opening the drawer elsewhere", async () => {
+-    fetchMock.mockResolvedValueOnce(answer(404)).mockResolvedValueOnce(answer(200, {}));
++    fetchMock.mockResolvedValueOnce(answer(404)).mockResolvedValueOnce(answer(200, mine));
+     await show();
+     expect(text()).toContain("Kasa: Kapalı");
+ 
+@@ -139,8 +172,8 @@ describe("cash session status", () => {
+     expect(text()).toBe("kapalı özellik");
+   });
+ 
+-  it.each([404, 500])("has no axe violations in the %i state", async (status) => {
+-    fetchMock.mockResolvedValue(answer(status));
++  it.each([404, 500, 200])("has no axe violations in the %i state (200 is another user's session)", async (status) => {
++    fetchMock.mockResolvedValue(answer(status, status === 200 ? { cashSessionId: "s-1", cashierUserId: "u-2" } : {}));
+     await show();
+ 
+     const result = await axe.run(document.body, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+@@ -158,7 +191,7 @@ describe("the till sales header", () => {
+     vi.resetModules();
+   });
+ 
+-  async function renderTill(capabilities: string[], drawerAnswer: number) {
++  async function renderTill(capabilities: string[], drawerAnswer: number, drawerBody: unknown = {}) {
+     const requested: string[] = [];
+     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+       const path = String(input);
+@@ -167,7 +200,7 @@ describe("the till sales header", () => {
+       if (path.includes("/auth/session")) return json({ userId: "u", displayName: "Deniz Kaya", terminalId: "terminal", capabilities });
+       if (path.endsWith("/catalog")) return json([]);
+       if (path.endsWith("/orders/active")) return json(null);
+-      if (path.endsWith("/cash-sessions/active")) return json({}, drawerAnswer);
++      if (path.endsWith("/cash-sessions/active")) return json(drawerBody, drawerAnswer);
+       return json({ status: "ready" });
+     }));
+     const { RouterProvider } = await import("../../router");
+@@ -186,6 +219,16 @@ describe("the till sales header", () => {
+     expect(document.querySelector(".cash-session-band")?.textContent).toContain("Kasayı aç");
+   });
+ 
++  it.each([
++    ["u", "Kasa: Açık", false],
++    ["someone-else", "Kasa: Başka kullanıcıda", true],
++  ])("judges the drawer against the signed-in user: session of %s shows %s", async (owner, label, banded) => {
++    await renderTill(["orders.create", "cash.drawer"], 200, { cashSessionId: "s-1", cashierUserId: owner });
++
++    expect(document.querySelector("a.header-action.cash-session-link")?.textContent).toBe(label);
++    expect(document.querySelector(".cash-session-band") !== null).toBe(banded);
++  });
++
+   it("does not read or show the drawer for a session without cash.drawer", async () => {
+     const requested = await renderTill(["orders.create"], 404);
+ 
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+index f5e3a3b9e..ddef7d50d 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+@@ -10,7 +10,7 @@ export interface CashSessionStatus {
+ }
+ 
+ /** Reads the drawer state now, and again whenever the cashier returns to this tab (the drawer is opened on another page). */
+-export function useCashSessionState(terminalId: string, enabled: boolean): CashSessionStatus | null {
++export function useCashSessionState(terminalId: string, userId: string, enabled: boolean): CashSessionStatus | null {
+   const [state, setState] = useState<CashSessionState | null>(null);
+   const latest = useRef(0);
+   const reading = useRef(false);
+@@ -18,12 +18,12 @@ export function useCashSessionState(terminalId: string, enabled: boolean): CashS
+   const reload = useCallback(() => {
+     const mine = ++latest.current;
+     reading.current = true;
+-    void readCashSessionState(terminalId).then((next) => {
++    void readCashSessionState(terminalId, userId).then((next) => {
+       if (mine !== latest.current) return;
+       reading.current = false;
+       setState(next);
+     });
+-  }, [terminalId]);
++  }, [terminalId, userId]);
+ 
+   useEffect(() => {
+     if (!enabled) return;
+@@ -48,14 +48,14 @@ export function CashSessionLink({ status, className = "header-action" }: { statu
+   return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref}>{cashSessionText[key]}</a>;
+ }
+ 
+-/** Shown above the work area while nothing says the drawer is open. */
++/** Shown above the work area while nothing says the user's own drawer is open. */
+ export function CashSessionBand({ status }: { status: CashSessionStatus }) {
+-  if (status.state !== "closed" && status.state !== "unknown") return null;
+-  const closed = status.state === "closed";
++  const { state } = status;
++  if (state !== "closed" && state !== "notOwned" && state !== "unknown") return null;
+   return <div className="cash-session-band" role="status">
+-    <span>{closed ? cashSessionText.closedBand : cashSessionText.unknownBand}</span>
+-    {closed
+-      ? <a href={cashSessionPageHref}>{cashSessionText.openAction}</a>
++    <span>{cashSessionText[`${state}Band`]}</span>
++    {state !== "unknown"
++      ? <a href={cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
+       : <button data-telemetry-id="b.features.cash-session-status.1" type="button" onClick={status.reload}>{cashSessionText.retry}</button>}
+   </div>;
+ }
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts b/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
+index 84bb751fd..82416e352 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
+@@ -1,16 +1,17 @@
+ import { notifySessionExpired } from "../../api";
+ 
+-export type CashSessionState = "open" | "closed" | "forbidden" | "unknown";
++export type CashSessionState = "open" | "notOwned" | "closed" | "forbidden" | "unknown";
+ 
+ /** Where the cashier opens, counts and closes the drawer. */
+ export const cashSessionPageHref = "/cashier/payments/cash-session/index.html";
+ 
+ /**
+- * Whether this terminal has an open drawer. Only the server's 404 means "closed"; 403 means this user may not use
++ * Whether this terminal has an open drawer, and whether it is the signed-in user's: cash is taken only into the own session.
++ * Only the server's 404 means "closed"; 403 means this user may not use
+  * the drawer; every other failure (429, 5xx, no network) is "unknown", because calling it closed would tell a cashier with a working
+  * drawer to open another one.
+  */
+-export async function readCashSessionState(terminalId: string, fetcher: typeof fetch = fetch): Promise<CashSessionState> {
++export async function readCashSessionState(terminalId: string, userId: string, fetcher: typeof fetch = fetch): Promise<CashSessionState> {
+   let response: Response;
+   try {
+     response = await fetcher(`/api/v1/terminals/${encodeURIComponent(terminalId)}/cash-sessions/active`, {
+@@ -20,7 +21,13 @@ export async function readCashSessionState(terminalId: string, fetcher: typeof f
+   } catch {
+     return "unknown";
+   }
+-  if (response.ok) return "open";
++  if (response.ok) {
++    try {
++      return (await response.json()).cashierUserId === userId ? "open" : "notOwned";
++    } catch {
++      return "unknown";
++    }
++  }
+   if (response.status === 404) return "closed";
+   if (response.status === 403) return "forbidden";
+   if (response.status === 401) notifySessionExpired();
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index e371a895d..f3f0cce68 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -103,6 +103,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const [displayName, setDisplayName] = useState("");
+   const [terminalName, setTerminalName] = useState<string | null>(null);
+   const [capabilities, setCapabilities] = useState<string[]>([]);
++  const [userId, setUserId] = useState("");
+   // The queue screen chimes for itself; the sales screen and every other one still have to tell the till that an order landed.
+   useNewOrderChime(terminalId, capabilities.includes("orders.create") && onlineHubTabFor(currentPath) !== "orders");
+   // The pending-checks screen sounds and lists for itself; every other screen still has to tell the till that a check was sent over.
+@@ -119,7 +120,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const withoutKitchenIntent = useRef(false);
+   useEffect(() => { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }, []);
+   useEffect(() => { sessionRef.current = session; }, [session]);
+-  const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
++  const cashSession = useCashSessionState(terminalId, userId, session === "ready" && capabilities.includes("cash.drawer"));
+   const [busy, setBusy] = useState(false);
+   const [error, setError] = useState("");
+   // V1-RMD-388 (Tur 2, T7): only set by the session-expired handler below,
+@@ -197,6 +198,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     setDisplayName(session.displayName);
+     setTerminalName(session.terminalName ?? null);
+     setCapabilities(session.capabilities ?? []);
++    setUserId(session.userId);
+     setCatalog(products);
+     setOrder(openCheckOnly(active, tableCartRef.current));
+     setCustomerDisplayUrl(config?.customerDisplayUrl ?? "");
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 124534ae5..571a876b2 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1413,12 +1413,15 @@ export const refundMethodLabels: Record<string, string> = {
+ export const cashSessionText = {
+   checking: "Kasa: Kontrol…",
+   open: "Kasa: Açık",
++  notOwned: "Kasa: Başka kullanıcıda",
+   closed: "Kasa: Kapalı",
+   unknown: "Kasa: Bilinmiyor",
+   forbidden: "Kasa: İzin yok",
+   closedBand: "Kasa oturumu kapalı. Nakit tahsilat için önce kasayı açın.",
+   unknownBand: "Kasa durumu okunamadı. Nakit tahsilat yapmadan önce durumu yeniden okuyun.",
++  notOwnedBand: "Açık kasa oturumu başka bir kullanıcıya ait; nakit tahsilat yapılamaz. Oturumu açan kasiyer ya da bir yönetici kapatmalı, sonra kendi oturumunuzu açın.",
+   openAction: "Kasayı aç",
++  viewAction: "Kasa oturumunu gör",
+   retry: "Kasa durumunu yeniden oku",
+ } as const;
+ 
+diff --git a/tests/Clients/StaticApps/split-payment-cash-state.test.js b/tests/Clients/StaticApps/split-payment-cash-state.test.js
+index 7f455392b..2e529ad5c 100644
+--- a/tests/Clients/StaticApps/split-payment-cash-state.test.js
++++ b/tests/Clients/StaticApps/split-payment-cash-state.test.js
+@@ -67,7 +67,9 @@ describe("split-payment.js cash session state", () => {
+     const notice = document.getElementById("cash-state-notice");
+     expect(notice.textContent).toContain("Önce kasayı açın");
+     expect(notice.textContent).toContain("size ait değil");
+-    expect(notice.textContent).toContain("önce kapatmalı");
++    expect(notice.textContent).toContain("oturumu açan kasiyer ya da bir yönetici kapatmalı");
++    expect(notice.textContent).not.toContain("ör. yönetici");
++    expect(notice.textContent).toContain("bir yönetici kapatmalı");
+     expect(chip("Cash").textContent).toContain("kasa size ait değil");
+   });
+ 
+@@ -80,6 +82,7 @@ describe("split-payment.js cash session state", () => {
+     document.getElementById("submit-tender").click();
+ 
+     await vi.waitFor(() => expect(text()).toContain("Önce kasayı açın: terminalde tek kasa oturumu olur"));
++    expect(text()).toContain("oturumu açan kasiyer ya da bir yönetici kapatınca");
+   });
+ 
+   it("the cashier's own open session keeps cash selectable", async () => {

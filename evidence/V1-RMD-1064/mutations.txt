@@ -1,0 +1,20 @@
+killed MA1 another user's session counted as open
+killed MA2 comparison inverted
+killed MA3 unreadable body counted as open
+restore cmp identical
+killed MB1 band hidden for another user's session
+killed MB2 band action text wrong
+killed MB3 retry button for the not-owned band
+restore cmp identical
+killed MC1 header label
+killed MC2 band sentence names nobody
+restore cmp identical
+killed MD1 old wording back
+restore cmp identical
+killed ME1 hook given an empty user id
+killed ME2 user id never stored
+restore cmp identical
+killed MF1 user id dropped from the read dependencies
+restore cmp identical
+killed MG1 old error sentence back
+restore cmp identical

@@ -67,7 +67,9 @@ describe("split-payment.js cash session state", () => {
     const notice = document.getElementById("cash-state-notice");
     expect(notice.textContent).toContain("Önce kasayı açın");
     expect(notice.textContent).toContain("size ait değil");
-    expect(notice.textContent).toContain("önce kapatmalı");
+    expect(notice.textContent).toContain("oturumu açan kasiyer ya da bir yönetici kapatmalı");
+    expect(notice.textContent).not.toContain("ör. yönetici");
+    expect(notice.textContent).toContain("bir yönetici kapatmalı");
     expect(chip("Cash").textContent).toContain("kasa size ait değil");
   });
 
@@ -80,6 +82,7 @@ describe("split-payment.js cash session state", () => {
     document.getElementById("submit-tender").click();
 
     await vi.waitFor(() => expect(text()).toContain("Önce kasayı açın: terminalde tek kasa oturumu olur"));
+    expect(text()).toContain("oturumu açan kasiyer ya da bir yönetici kapatınca");
   });
 
   it("the cashier's own open session keeps cash selectable", async () => {

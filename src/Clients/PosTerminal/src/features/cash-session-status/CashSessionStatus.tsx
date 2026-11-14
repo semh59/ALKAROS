@@ -10,7 +10,7 @@ export interface CashSessionStatus {
 }
 
 /** Reads the drawer state now, and again whenever the cashier returns to this tab (the drawer is opened on another page). */
-export function useCashSessionState(terminalId: string, enabled: boolean): CashSessionStatus | null {
+export function useCashSessionState(terminalId: string, userId: string, enabled: boolean): CashSessionStatus | null {
   const [state, setState] = useState<CashSessionState | null>(null);
   const latest = useRef(0);
   const reading = useRef(false);
@@ -18,12 +18,12 @@ export function useCashSessionState(terminalId: string, enabled: boolean): CashS
   const reload = useCallback(() => {
     const mine = ++latest.current;
     reading.current = true;
-    void readCashSessionState(terminalId).then((next) => {
+    void readCashSessionState(terminalId, userId).then((next) => {
       if (mine !== latest.current) return;
       reading.current = false;
       setState(next);
     });
-  }, [terminalId]);
+  }, [terminalId, userId]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -48,14 +48,14 @@ export function CashSessionLink({ status, className = "header-action" }: { statu
   return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref}>{cashSessionText[key]}</a>;
 }
 
-/** Shown above the work area while nothing says the drawer is open. */
+/** Shown above the work area while nothing says the user's own drawer is open. */
 export function CashSessionBand({ status }: { status: CashSessionStatus }) {
-  if (status.state !== "closed" && status.state !== "unknown") return null;
-  const closed = status.state === "closed";
+  const { state } = status;
+  if (state !== "closed" && state !== "notOwned" && state !== "unknown") return null;
   return <div className="cash-session-band" role="status">
-    <span>{closed ? cashSessionText.closedBand : cashSessionText.unknownBand}</span>
-    {closed
-      ? <a href={cashSessionPageHref}>{cashSessionText.openAction}</a>
+    <span>{cashSessionText[`${state}Band`]}</span>
+    {state !== "unknown"
+      ? <a href={cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
       : <button data-telemetry-id="b.features.cash-session-status.1" type="button" onClick={status.reload}>{cashSessionText.retry}</button>}
   </div>;
 }

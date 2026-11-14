@@ -8,10 +8,11 @@ import { CashSessionBand, CashSessionLink, useCashSessionState } from "./CashSes
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
+const mine = { cashSessionId: "s-1", cashierUserId: "u-1" };
 const answer = (status: number, body: unknown = {}) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
 
-function Probe({ enabled }: { enabled: boolean }) {
-  const cashSession = useCashSessionState("t-1", enabled);
+function Probe({ enabled, userId = "u-1" }: { enabled: boolean; userId?: string }) {
+  const cashSession = useCashSessionState("t-1", userId, enabled);
   return cashSession ? <><CashSessionLink status={cashSession} /><CashSessionBand status={cashSession} /></> : <p>kapalı özellik</p>;
 }
 
@@ -38,7 +39,7 @@ describe("cash session status", () => {
   });
 
   it("reads the active session of this terminal and shows Kasa: Açık without a band", async () => {
-    fetchMock.mockResolvedValue(answer(200, { cashSessionId: "s-1" }));
+    fetchMock.mockResolvedValue(answer(200, mine));
     await show();
 
     expect(fetchMock.mock.calls[0][0]).toBe("/api/v1/terminals/t-1/cash-sessions/active");
@@ -69,6 +70,38 @@ describe("cash session status", () => {
     expect(text()).toContain("Kasa durumu okunamadı");
   });
 
+  it("an open session of another user says so in the header and in a band that names who may close it", async () => {
+    fetchMock.mockResolvedValue(answer(200, { cashSessionId: "s-1", cashierUserId: "u-2" }));
+    await show();
+
+    expect(text()).toContain("Kasa: Başka kullanıcıda");
+    expect(text()).not.toContain("Kasa: Açık");
+    const band = document.querySelector(".cash-session-band")!;
+    expect(band.textContent).toContain("Oturumu açan kasiyer ya da bir yönetici kapatmalı");
+    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+    expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu gör");
+    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+  });
+
+  it("an answer whose body cannot be read is a failed read, not an open drawer", async () => {
+    fetchMock.mockResolvedValue({ ok: true, status: 200, json: async () => { throw new SyntaxError("bad json"); } });
+    await show();
+
+    expect(text()).toContain("Kasa: Bilinmiyor");
+    expect(text()).not.toContain("Kasa: Açık");
+  });
+
+  it("reads again and judges ownership again when the signed-in user changes", async () => {
+    fetchMock.mockResolvedValue(answer(200, mine));
+    await show();
+    expect(text()).toContain("Kasa: Açık");
+
+    await act(async () => { root!.render(<Probe enabled userId="u-2" />); });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(text()).toContain("Kasa: Başka kullanıcıda");
+  });
+
   it("a 403 is said plainly (no permission), with no band and no retry", async () => {
     fetchMock.mockResolvedValue(answer(403));
     await show();
@@ -90,7 +123,7 @@ describe("cash session status", () => {
     fetchMock.mockResolvedValue(answer(500));
     await show();
     fetchMock.mockClear();
-    fetchMock.mockResolvedValue(answer(200, {}));
+    fetchMock.mockResolvedValue(answer(200, mine));
 
     await act(async () => {
       window.dispatchEvent(new Event("focus"));
@@ -101,7 +134,7 @@ describe("cash session status", () => {
   });
 
   it("a network failure is a failed read too, and the retry button reads again", async () => {
-    fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch")).mockResolvedValueOnce(answer(200, {}));
+    fetchMock.mockRejectedValueOnce(new TypeError("Failed to fetch")).mockResolvedValueOnce(answer(200, mine));
     await show();
     expect(text()).toContain("Kasa: Bilinmiyor");
 
@@ -113,7 +146,7 @@ describe("cash session status", () => {
   });
 
   it("reads again when the cashier comes back to this tab after opening the drawer elsewhere", async () => {
-    fetchMock.mockResolvedValueOnce(answer(404)).mockResolvedValueOnce(answer(200, {}));
+    fetchMock.mockResolvedValueOnce(answer(404)).mockResolvedValueOnce(answer(200, mine));
     await show();
     expect(text()).toContain("Kasa: Kapalı");
 
@@ -139,8 +172,8 @@ describe("cash session status", () => {
     expect(text()).toBe("kapalı özellik");
   });
 
-  it.each([404, 500])("has no axe violations in the %i state", async (status) => {
-    fetchMock.mockResolvedValue(answer(status));
+  it.each([404, 500, 200])("has no axe violations in the %i state (200 is another user's session)", async (status) => {
+    fetchMock.mockResolvedValue(answer(status, status === 200 ? { cashSessionId: "s-1", cashierUserId: "u-2" } : {}));
     await show();
 
     const result = await axe.run(document.body, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
@@ -158,7 +191,7 @@ describe("the till sales header", () => {
     vi.resetModules();
   });
 
-  async function renderTill(capabilities: string[], drawerAnswer: number) {
+  async function renderTill(capabilities: string[], drawerAnswer: number, drawerBody: unknown = {}) {
     const requested: string[] = [];
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
@@ -167,7 +200,7 @@ describe("the till sales header", () => {
       if (path.includes("/auth/session")) return json({ userId: "u", displayName: "Deniz Kaya", terminalId: "terminal", capabilities });
       if (path.endsWith("/catalog")) return json([]);
       if (path.endsWith("/orders/active")) return json(null);
-      if (path.endsWith("/cash-sessions/active")) return json({}, drawerAnswer);
+      if (path.endsWith("/cash-sessions/active")) return json(drawerBody, drawerAnswer);
       return json({ status: "ready" });
     }));
     const { RouterProvider } = await import("../../router");
@@ -184,6 +217,16 @@ describe("the till sales header", () => {
 
     expect(document.querySelector("a.header-action.cash-session-link")?.textContent).toBe("Kasa: Kapalı");
     expect(document.querySelector(".cash-session-band")?.textContent).toContain("Kasayı aç");
+  });
+
+  it.each([
+    ["u", "Kasa: Açık", false],
+    ["someone-else", "Kasa: Başka kullanıcıda", true],
+  ])("judges the drawer against the signed-in user: session of %s shows %s", async (owner, label, banded) => {
+    await renderTill(["orders.create", "cash.drawer"], 200, { cashSessionId: "s-1", cashierUserId: owner });
+
+    expect(document.querySelector("a.header-action.cash-session-link")?.textContent).toBe(label);
+    expect(document.querySelector(".cash-session-band") !== null).toBe(banded);
   });
 
   it("does not read or show the drawer for a session without cash.drawer", async () => {

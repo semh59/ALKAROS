@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-cash-state.test.js (13 tests | 1 failed) 2397ms
+     × another cashier's open session: cash is off and the cashier is told to open their own drawer first 188ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cash-state.test.js > split-payment.js cash session state > another cashier's open session: cash is off and the cashier is told to open their own drawer first
+AssertionError: expected '!Önce kasayı açınBir terminalde tek k…' to contain 'oturumu açan kasiyer ya da bir yöneti…'
+
+Expected: "oturumu açan kasiyer ya da bir yönetici kapatmalı"
+Received: "!Önce kasayı açınBir terminalde tek kasa oturumu olur ve nakit yalnız oturumun sahibine tahsil edilir. Açık oturum size ait değil (açan kişi, ör. yönetici, önce kapatmalı); sonra kendi oturumunuzu açın. Kart, EFT veya cari hesapla devam edebilirsiniz.Kasa oturumu"
+
+ ❯ split-payment-cash-state.test.js:70:32
+     68|     expect(notice.textContent).toContain("Önce kasayı açın");
+     69|     expect(notice.textContent).toContain("size ait değil");
+     70|     expect(notice.textContent).toContain("oturumu açan kasiyer ya da b…
+       |                                ^
+     71|     expect(notice.textContent).not.toContain("ör. yönetici");
+     72|     expect(notice.textContent).toContain("bir yönetici kapatmalı");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  11:32:36
+   Duration  4.73s (transform 1.15s, setup 35ms, import 79ms, tests 2.40s, environment 1.75s)
+

@@ -103,6 +103,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [displayName, setDisplayName] = useState("");
   const [terminalName, setTerminalName] = useState<string | null>(null);
   const [capabilities, setCapabilities] = useState<string[]>([]);
+  const [userId, setUserId] = useState("");
   // The queue screen chimes for itself; the sales screen and every other one still have to tell the till that an order landed.
   useNewOrderChime(terminalId, capabilities.includes("orders.create") && onlineHubTabFor(currentPath) !== "orders");
   // The pending-checks screen sounds and lists for itself; every other screen still has to tell the till that a check was sent over.
@@ -119,7 +120,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const withoutKitchenIntent = useRef(false);
   useEffect(() => { tableCartRef.current = takeTableCart(); withoutKitchenIntent.current = takeWithoutKitchenIntent(); }, []);
   useEffect(() => { sessionRef.current = session; }, [session]);
-  const cashSession = useCashSessionState(terminalId, session === "ready" && capabilities.includes("cash.drawer"));
+  const cashSession = useCashSessionState(terminalId, userId, session === "ready" && capabilities.includes("cash.drawer"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   // V1-RMD-388 (Tur 2, T7): only set by the session-expired handler below,
@@ -197,6 +198,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     setDisplayName(session.displayName);
     setTerminalName(session.terminalName ?? null);
     setCapabilities(session.capabilities ?? []);
+    setUserId(session.userId);
     setCatalog(products);
     setOrder(openCheckOnly(active, tableCartRef.current));
     setCustomerDisplayUrl(config?.customerDisplayUrl ?? "");
