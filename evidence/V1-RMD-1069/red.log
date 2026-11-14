@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/tables/tablesStyle.test.ts (8 tests | 1 failed) 22ms
+     × lets no side panel header rule recolour the status badge: only the first column (the context line) may set a text colour 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/tables/tablesStyle.test.ts > table screens style rules > lets no side panel header rule recolour the status badge: only the first column (the context line) may set a text colour
+AssertionError: .table-details__header > div > span:last-child: expected '.table-details__header > div > span:l…' to contain '> div:first-child >'
+
+Expected: "> div:first-child >"
+Received: ".table-details__header > div > span:last-child"
+
+ ❯ src/features/tables/tablesStyle.test.ts:58:72
+     56|     const header = blocks(css("tables.css")).filter((block) => block.s…
+     57|     expect(header.length).toBeGreaterThan(0);
+     58|     for (const block of header) expect(block.selector, block.selector)…
+       |                                                                        ^
+     59|   });
+     60|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  12:28:38
+   Duration  350ms (transform 35ms, setup 0ms, import 54ms, tests 22ms, environment 0ms)
+
+exit=1

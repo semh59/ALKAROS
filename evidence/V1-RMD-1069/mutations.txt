@@ -1,0 +1,6 @@
+killed B1 old selector back (reaches the badge)
+killed B2 descendant selector reaches the badge
+restore cmp identical
+B3 (selector back to '> div > span:last-child', jsdom match test): killed
+B4 (.table-details .table-status color): killed
+B5 (.table-workspace__content .table-details span color): killed

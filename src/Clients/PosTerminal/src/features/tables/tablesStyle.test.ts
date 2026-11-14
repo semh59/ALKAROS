@@ -1,8 +1,12 @@
+// @vitest-environment jsdom
 import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const css = (name: string) => readFileSync(new URL(`./${name}`, import.meta.url), "utf8");
-const rulesDoc = readFileSync(new URL("../../../../../../docs/CASHIER_UI_RULES.md", import.meta.url), "utf8");
+const here = dirname(fileURLToPath(import.meta.url));
+const css = (name: string) => readFileSync(resolve(here, name), "utf8");
+const rulesDoc = readFileSync(resolve(here, "../../../../../../docs/CASHIER_UI_RULES.md"), "utf8");
 const remPx = (value: string, unit: string) => Number(value) * (unit === "rem" ? 16 : 1);
 const sizesIn = (source: string) => [...source.matchAll(/font(?:-size)?:\s*(?:[\w.-]+\s+)*?(?:clamp\()?(\.?\d+(?:\.\d+)?)(rem|px)/g)].map((match) => remPx(match[1], match[2]));
 const blocks = (source: string) => [...source.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((match) => ({ selector: match[1].replace(/\s+/g, " ").trim(), body: match[2] }));
@@ -50,6 +54,18 @@ describe("table screens style rules", () => {
     const lines = [...css("tables.css").split("\n"), ...css("floorPlan.css").split("\n")]
       .filter((line) => /(^|[\s;{])color:\s*var\(--ds-color-accent(-hover)?\)/.test(line));
     expect(lines).toEqual([]);
+  });
+
+  it("lets no rule except the status rules set the text colour of the side panel status badge, with or without the just-vacated hint after it", () => {
+    const sheets = [...blocks(css("tables.css")), ...blocks(css("../../styles.css"))]
+      .filter((block) => /(?:^|[;\s])color:/.test(block.body) && !block.selector.startsWith("@") && !block.selector.includes(":root"));
+    expect(sheets.length).toBeGreaterThan(20);
+    for (const hint of ["", '<span class="table-card__recently-vacated">Az önce boşaldı</span>']) {
+      document.body.innerHTML = `<section class="table-workspace"><div class="table-workspace__content"><div class="table-details"><div class="table-details__header"><div><h2>M-01</h2><span>Masa bilgisi</span></div><div class="table-details__status-group"><span class="table-status table-status--pay">Ödeme bekliyor</span>${hint}</div></div></div></div></section>`;
+      const badge = document.querySelector(".table-status")!;
+      const offenders = sheets.filter((block) => block.selector.split(",").some((part) => part.trim() !== ".table-status" && badge.matches(part.trim())));
+      expect(offenders.map((block) => block.selector)).toEqual([]);
+    }
   });
 
   it("draws each status once, with the text and background tokens of its row in docs/CASHIER_UI_RULES.md", () => {
