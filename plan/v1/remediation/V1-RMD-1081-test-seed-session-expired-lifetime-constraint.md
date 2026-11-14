@@ -1,7 +1,7 @@
 # V1-RMD-1081 - Mutfak test yardımcısı SeedSessionAsync(expired: true) yaşam süresi kısıtına uyar
 
 - Task ID: V1-RMD-1081
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
