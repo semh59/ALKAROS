@@ -106,7 +106,7 @@ export function ProductionShell(props: ProductionShellProps) {
           <img className="production-shell__brand-mark" src={alkarosLogo} alt="ALKAROS" />
         </div>
         {identity && <div className="production-shell__identity" role="group" aria-label="Aktif çalışma bağlamı">
-          {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} />}
+          {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} kind="branch" />}
           {identity.terminalName && <IdentityItem label="Terminal" value={identity.terminalName} />}
           <IdentityItem label="Kullanıcı" value={identity.userName} />
           <IdentityItem label="Rol" value={identity.roleLabel} />
@@ -161,8 +161,8 @@ function SyncIndicator({ connectivity, freshness }: { connectivity: Connectivity
   return <span className={`production-shell__sync production-shell__sync--${tone}`} role="status">{text}</span>;
 }
 
-function IdentityItem({ label, value }: { label: string; value: string }) {
-  return <div className="production-shell__identity-item"><span>{label}</span><strong title={value}>{value}</strong></div>;
+function IdentityItem({ label, value, kind }: { label: string; value: string; kind?: "branch" }) {
+  return <div className="production-shell__identity-item" data-identity={kind}><span>{label}</span><strong title={value}>{value}</strong></div>;
 }
 
 function AccessContent({ session, authorization, children }: { session: ShellSession; authorization: RouteAuthorization; children: ReactNode }) {

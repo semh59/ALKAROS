@@ -43,9 +43,9 @@
 /* V1-RMD-256: mirrors WaiterPwa/Cashier's own .brand-mark rule for the
    same "on-dark" logo asset. */
 .production-shell__brand-mark { height: 24px; width: auto; display: block; }
-.production-shell__identity { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ds-space-2) var(--ds-space-4); }
+.production-shell__identity { min-width: 0; display: flex; align-items: center; flex-wrap: nowrap; gap: var(--ds-space-2) var(--ds-space-4); }
 .production-shell__identity-item { min-width: 0; display: grid; gap: 0.1rem; }
-.production-shell__identity-item span { color: #b9c7d1; font-size: .875rem; text-transform: uppercase; letter-spacing: 0.07em; }
+.production-shell__identity-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #b9c7d1; font-size: .875rem; text-transform: uppercase; letter-spacing: 0.07em; }
 .production-shell__identity-item strong { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; }
 .production-shell__sync { margin-left: auto; min-height: var(--ds-target-min); display: inline-flex; align-items: center; gap: var(--ds-space-2); color: #c1ccd5; font-size: .875rem; font-weight: 800; }
 .production-shell__sync::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: #8b97a2; }
@@ -60,7 +60,7 @@
 .production-shell__visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .production-shell__more-toggle[aria-current] { color: #fff; border-color: #f4a48f; }
 .production-shell__more button { min-height: var(--ds-target-min); border: 1px solid #4d5e6c; border-radius: var(--ds-radius-sm); color: #e8eef2; background: transparent; font-weight: 700; cursor: pointer; }
-.production-shell__header-actions { margin-left: var(--ds-space-3); display: flex; align-items: center; gap: var(--ds-space-2); }
+.production-shell__header-actions { min-width: 0; margin-left: var(--ds-space-3); display: flex; align-items: center; gap: var(--ds-space-2); }
 .production-shell__header .ds-button--secondary { color: #fff; border-color: #72808b; background: #263846; }
 
 .production-shell__nav {
@@ -149,7 +149,7 @@
   .production-shell__nav-link { flex-direction: column; justify-content: center; gap: 2px; padding-inline: var(--ds-space-1); text-align: center; }
   .production-shell__nav-label { font-size: .875rem; line-height: 1.15; overflow-wrap: break-word; }
   .production-shell__nav-badge { position: absolute; top: 2px; right: 2px; margin-left: 0; }
-  .production-shell__identity-item:first-child { display: none; }
+  .production-shell__identity-item[data-identity="branch"] { display: none; }
 }
 
 @media (max-width: 767px) {

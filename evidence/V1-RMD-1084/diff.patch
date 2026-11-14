@@ -1,0 +1,161 @@
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+index 1fa66b19f..4345b2938 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+@@ -1,6 +1,8 @@
+ // @vitest-environment jsdom
+ import { act } from "react";
+ import { createRoot, type Root } from "react-dom/client";
++import { readFileSync } from "node:fs";
++import { join } from "node:path";
+ import axe from "axe-core";
+ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+ import { registerSessionExpiredHandler } from "../../api";
+@@ -91,6 +93,21 @@ describe("cash session status", () => {
+ 
+     expect(fetchMock.mock.calls.map((call) => call[0])).toContain("/api/v1/terminals/t-1/cash-sessions/active/owner");
+     expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda (Deneme Kasiyer 6)");
++    expect(document.querySelector("a.cash-session-link")!.getAttribute("title")).toBe("Kasa: Başka kullanıcıda (Deneme Kasiyer 6)");
++  });
++
++  it("shortens a long owner name on one line so the header keeps its height", () => {
++    const css = readFileSync(join(import.meta.dirname, "cash-session-status.css"), "utf8");
++    const rule = css.match(/a\.cash-session-link, span\.cash-session-link \{([^}]*)\}/)?.[1] ?? "";
++
++    expect(rule).toContain("text-overflow: ellipsis");
++    expect(rule).toContain("white-space: nowrap");
++    expect(rule).toContain("overflow: hidden");
++    expect(rule).toContain("min-width: var(--ds-target-min)");
++    expect(rule).toMatch(/max-width: \d+rem/);
++    expect(Number(css.match(/@media \(max-width: 1279px\) \{ a\.cash-session-link, span\.cash-session-link \{ max-width: (\d+)rem;/)?.[1])).toBeLessThanOrEqual(14);
++    expect(Number(css.match(/@media \(max-width: 767px\) \{ a\.cash-session-link, span\.cash-session-link \{ max-width: (\d+)rem;/)?.[1])).toBeLessThanOrEqual(10);
++    expect(rule).toContain("line-height: var(--ds-target-min)");
+   });
+ 
+   it("keeps the plain header text when the owner's name cannot be read, and never asks for it on the own session", async () => {
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+index 8798cb674..e2ccc5caa 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+@@ -51,7 +51,8 @@ export function useCashSessionState(terminalId: string, userId: string, enabled:
+ export function CashSessionLink({ status, className = "header-action" }: { status: CashSessionStatus; className?: string }) {
+   const key = status.state ?? "checking";
+   if (key === "forbidden") return <span className={`${className} cash-session-link cash-session-link--forbidden`} role="status">{cashSessionText.forbidden}</span>;
+-  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref}>{key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key]}</a>;
++  const text = key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key];
++  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref} title={text}>{text}</a>;
+ }
+ 
+ /** Shown above the work area while nothing says the user's own drawer is open. */
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/cash-session-status.css b/src/Clients/PosTerminal/src/features/cash-session-status/cash-session-status.css
+index d20ae47c2..efdc44a69 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/cash-session-status.css
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/cash-session-status.css
+@@ -1,3 +1,6 @@
++a.cash-session-link, span.cash-session-link { display: block; max-width: 20rem; min-width: var(--ds-target-min); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: var(--ds-target-min); padding-block: 0; }
++@media (max-width: 1279px) { a.cash-session-link, span.cash-session-link { max-width: 12rem; } }
++@media (max-width: 767px) { a.cash-session-link, span.cash-session-link { max-width: 9rem; } }
+ .cash-session-link--open { border-color: #4cc38a; }
+ .cash-session-link--closed, .cash-session-link--unknown, .cash-session-link--forbidden { border-color: #f0b429; }
+ .cash-session-band {
+diff --git a/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx b/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
+index 9d1ef51ac..99c0c3c78 100644
+--- a/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
++++ b/src/Clients/PosTerminal/src/shell/ProductionShell.test.tsx
+@@ -61,6 +61,17 @@ describe("production shell", () => {
+     expect(labels).toEqual(["Şube", "Kullanıcı", "Rol"]);
+   });
+ 
++  it("marks the branch item by name so the compact header can drop it without hiding the user", async () => {
++    await render(<ProductionShell {...baseProps} session={{ status: "authenticated", identity: { ...identity, branchName: undefined, terminalName: null } }} />);
++
++    expect(document.querySelectorAll('.production-shell__identity-item[data-identity="branch"]')).toHaveLength(0);
++    expect(document.querySelector(".production-shell__identity-item strong")?.textContent).toBe("Deniz Kaya");
++
++    await act(async () => root!.unmount());
++    await render(<ProductionShell {...baseProps} />);
++    expect(document.querySelector('.production-shell__identity-item[data-identity="branch"] strong')?.textContent).toBe("Merkez");
++  });
++
+   it("filters navigation by capability and preserves the active route contract", async () => {
+     await render(<ProductionShell {...baseProps} />);
+ 
+diff --git a/src/Clients/PosTerminal/src/shell/ProductionShell.tsx b/src/Clients/PosTerminal/src/shell/ProductionShell.tsx
+index 4820c3f8f..f2b8be514 100644
+--- a/src/Clients/PosTerminal/src/shell/ProductionShell.tsx
++++ b/src/Clients/PosTerminal/src/shell/ProductionShell.tsx
+@@ -106,7 +106,7 @@ export function ProductionShell(props: ProductionShellProps) {
+           <img className="production-shell__brand-mark" src={alkarosLogo} alt="ALKAROS" />
+         </div>
+         {identity && <div className="production-shell__identity" role="group" aria-label="Aktif çalışma bağlamı">
+-          {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} />}
++          {identity.branchName && <IdentityItem label="Şube" value={identity.branchName} kind="branch" />}
+           {identity.terminalName && <IdentityItem label="Terminal" value={identity.terminalName} />}
+           <IdentityItem label="Kullanıcı" value={identity.userName} />
+           <IdentityItem label="Rol" value={identity.roleLabel} />
+@@ -161,8 +161,8 @@ function SyncIndicator({ connectivity, freshness }: { connectivity: Connectivity
+   return <span className={`production-shell__sync production-shell__sync--${tone}`} role="status">{text}</span>;
+ }
+ 
+-function IdentityItem({ label, value }: { label: string; value: string }) {
+-  return <div className="production-shell__identity-item"><span>{label}</span><strong title={value}>{value}</strong></div>;
++function IdentityItem({ label, value, kind }: { label: string; value: string; kind?: "branch" }) {
++  return <div className="production-shell__identity-item" data-identity={kind}><span>{label}</span><strong title={value}>{value}</strong></div>;
+ }
+ 
+ function AccessContent({ session, authorization, children }: { session: ShellSession; authorization: RouteAuthorization; children: ReactNode }) {
+diff --git a/src/Clients/PosTerminal/src/shell/layout-contract.test.ts b/src/Clients/PosTerminal/src/shell/layout-contract.test.ts
+index d237ecda2..b96cd6bae 100644
+--- a/src/Clients/PosTerminal/src/shell/layout-contract.test.ts
++++ b/src/Clients/PosTerminal/src/shell/layout-contract.test.ts
+@@ -50,6 +50,16 @@ describe("responsive and interaction style contract", () => {
+     expect(rule(".pos-workspace")).not.toContain("100vh - 72px");
+   });
+ 
++  it("keeps the identity block on one line and drops the branch by name, never by position, in the compact header", () => {
++    const start = shellCss.indexOf("\n.production-shell__identity {");
++    const identityRule = shellCss.slice(start, shellCss.indexOf("}", start));
++    expect(identityRule).toContain("flex-wrap: nowrap");
++    expect(shellCss).toMatch(/\n\.production-shell__header-actions \{ min-width: 0;/);
++    expect(shellCss).toMatch(/\.production-shell__identity-item span \{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap;/);
++    expect(shellCss).not.toContain(".production-shell__identity-item:first-child");
++    expect(shellCss).toContain('.production-shell__identity-item[data-identity="branch"] { display: none; }');
++  });
++
+   it("returns fixed shell regions to document flow in shallow zoom viewports", () => {
+     expect(shellCss).toContain("@media (max-width: 767px) and (max-height: 360px)");
+     expect(shellCss).toContain(".production-shell__header,\n  .production-shell__nav,\n  .production-shell__status { position: static; }");
+diff --git a/src/Clients/PosTerminal/src/shell/shell.css b/src/Clients/PosTerminal/src/shell/shell.css
+index d3bd1d251..4cbfc998e 100644
+--- a/src/Clients/PosTerminal/src/shell/shell.css
++++ b/src/Clients/PosTerminal/src/shell/shell.css
+@@ -43,9 +43,9 @@
+ /* V1-RMD-256: mirrors WaiterPwa/Cashier's own .brand-mark rule for the
+    same "on-dark" logo asset. */
+ .production-shell__brand-mark { height: 24px; width: auto; display: block; }
+-.production-shell__identity { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ds-space-2) var(--ds-space-4); }
++.production-shell__identity { min-width: 0; display: flex; align-items: center; flex-wrap: nowrap; gap: var(--ds-space-2) var(--ds-space-4); }
+ .production-shell__identity-item { min-width: 0; display: grid; gap: 0.1rem; }
+-.production-shell__identity-item span { color: #b9c7d1; font-size: .875rem; text-transform: uppercase; letter-spacing: 0.07em; }
++.production-shell__identity-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #b9c7d1; font-size: .875rem; text-transform: uppercase; letter-spacing: 0.07em; }
+ .production-shell__identity-item strong { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; }
+ .production-shell__sync { margin-left: auto; min-height: var(--ds-target-min); display: inline-flex; align-items: center; gap: var(--ds-space-2); color: #c1ccd5; font-size: .875rem; font-weight: 800; }
+ .production-shell__sync::before { content: ""; width: .6rem; height: .6rem; border-radius: 50%; background: #8b97a2; }
+@@ -60,7 +60,7 @@
+ .production-shell__visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+ .production-shell__more-toggle[aria-current] { color: #fff; border-color: #f4a48f; }
+ .production-shell__more button { min-height: var(--ds-target-min); border: 1px solid #4d5e6c; border-radius: var(--ds-radius-sm); color: #e8eef2; background: transparent; font-weight: 700; cursor: pointer; }
+-.production-shell__header-actions { margin-left: var(--ds-space-3); display: flex; align-items: center; gap: var(--ds-space-2); }
++.production-shell__header-actions { min-width: 0; margin-left: var(--ds-space-3); display: flex; align-items: center; gap: var(--ds-space-2); }
+ .production-shell__header .ds-button--secondary { color: #fff; border-color: #72808b; background: #263846; }
+ 
+ .production-shell__nav {
+@@ -149,7 +149,7 @@
+   .production-shell__nav-link { flex-direction: column; justify-content: center; gap: 2px; padding-inline: var(--ds-space-1); text-align: center; }
+   .production-shell__nav-label { font-size: .875rem; line-height: 1.15; overflow-wrap: break-word; }
+   .production-shell__nav-badge { position: absolute; top: 2px; right: 2px; margin-left: 0; }
+-  .production-shell__identity-item:first-child { display: none; }
++  .production-shell__identity-item[data-identity="branch"] { display: none; }
+ }
+ 
+ @media (max-width: 767px) {

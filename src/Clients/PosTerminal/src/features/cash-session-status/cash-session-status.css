@@ -1,3 +1,6 @@
+a.cash-session-link, span.cash-session-link { display: block; max-width: 20rem; min-width: var(--ds-target-min); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: var(--ds-target-min); padding-block: 0; }
+@media (max-width: 1279px) { a.cash-session-link, span.cash-session-link { max-width: 12rem; } }
+@media (max-width: 767px) { a.cash-session-link, span.cash-session-link { max-width: 9rem; } }
 .cash-session-link--open { border-color: #4cc38a; }
 .cash-session-link--closed, .cash-session-link--unknown, .cash-session-link--forbidden { border-color: #f0b429; }
 .cash-session-band {

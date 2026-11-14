@@ -1,7 +1,7 @@
 # V1-RMD-1084 - Uzun kullanıcı adında üst başlık düzeni bozulmaz
 
 - Task ID: V1-RMD-1084
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

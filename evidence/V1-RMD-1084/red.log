@@ -1,0 +1,89 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/shell/layout-contract.test.ts (7 tests | 1 failed) 24ms
+     × keeps the identity block on one line and drops the branch by name, never by position, in the compact header 12ms
+ ❯ src/shell/ProductionShell.test.tsx (20 tests | 1 failed) 463ms
+     × marks the branch item by name so the compact header can drop it without hiding the user 38ms
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (31 tests | 2 failed) 3213ms
+     × names the owner of another user's session in the header, read from the owner endpoint 12ms
+     × shortens a long owner name on one line so the header keeps its height 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/shell/layout-contract.test.ts > responsive and interaction style contract > keeps the identity block on one line and drops the branch by name, never by position, in the compact header
+AssertionError: expected '\n.production-shell__identity { min-w…' to contain 'flex-wrap: nowrap'
+
+- Expected
++ Received
+
+- flex-wrap: nowrap
++
++ .production-shell__identity { min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--ds-space-2) var(--ds-space-4); 
+
+ ❯ src/shell/layout-contract.test.ts:56:26
+     54|     const start = shellCss.indexOf("\n.production-shell__identity {");
+     55|     const identityRule = shellCss.slice(start, shellCss.indexOf("}", s…
+     56|     expect(identityRule).toContain("flex-wrap: nowrap");
+       |                          ^
+     57|     expect(shellCss).not.toContain(".production-shell__identity-item:f…
+     58|     expect(shellCss).toContain('.production-shell__identity-item[data-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/shell/ProductionShell.test.tsx > production shell > marks the branch item by name so the compact header can drop it without hiding the user
+AssertionError: expected undefined to be 'Merkez' // Object.is equality
+
+- Expected:
+"Merkez"
+
++ Received:
+undefined
+
+ ❯ src/shell/ProductionShell.test.tsx:72:116
+     70|     await act(async () => root!.unmount());
+     71|     await render(<ProductionShell {...baseProps} />);
+     72|     expect(document.querySelector('.production-shell__identity-item[da…
+       |                                                                                                                    ^
+     73|   });
+     74|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > names the owner of another user's session in the header, read from the owner endpoint
+AssertionError: expected null to be 'Kasa: Başka kullanıcıda (Deneme Kasiy…' // Object.is equality
+
+- Expected:
+"Kasa: Başka kullanıcıda (Deneme Kasiyer 6)"
+
++ Received:
+null
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:95:82
+     93|     expect(fetchMock.mock.calls.map((call) => call[0])).toContain("/ap…
+     94|     expect(document.querySelector("a.cash-session-link")!.textContent)…
+     95|     expect(document.querySelector("a.cash-session-link")!.getAttribute…
+       |                                                                                  ^
+     96|   });
+     97|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > shortens a long owner name on one line so the header keeps its height
+TypeError: The URL must be of scheme file
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:99:17
+     97|
+     98|   it("shortens a long owner name on one line so the header keeps its h…
+     99|     const css = readFileSync(new URL("./cash-session-status.css", impo…
+       |                 ^
+    100|     const rule = css.match(/a\.cash-session-link, span\.cash-session-l…
+    101|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  4 failed | 58 passed (62)
+   Start at  22:34:35
+   Duration  5.24s (transform 2.38s, setup 0ms, import 960ms, tests 3.71s, environment 2.53s)
+

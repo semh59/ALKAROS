@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerSessionExpiredHandler } from "../../api";
@@ -91,6 +93,21 @@ describe("cash session status", () => {
 
     expect(fetchMock.mock.calls.map((call) => call[0])).toContain("/api/v1/terminals/t-1/cash-sessions/active/owner");
     expect(document.querySelector("a.cash-session-link")!.textContent).toBe("Kasa: Başka kullanıcıda (Deneme Kasiyer 6)");
+    expect(document.querySelector("a.cash-session-link")!.getAttribute("title")).toBe("Kasa: Başka kullanıcıda (Deneme Kasiyer 6)");
+  });
+
+  it("shortens a long owner name on one line so the header keeps its height", () => {
+    const css = readFileSync(join(import.meta.dirname, "cash-session-status.css"), "utf8");
+    const rule = css.match(/a\.cash-session-link, span\.cash-session-link \{([^}]*)\}/)?.[1] ?? "";
+
+    expect(rule).toContain("text-overflow: ellipsis");
+    expect(rule).toContain("white-space: nowrap");
+    expect(rule).toContain("overflow: hidden");
+    expect(rule).toContain("min-width: var(--ds-target-min)");
+    expect(rule).toMatch(/max-width: \d+rem/);
+    expect(Number(css.match(/@media \(max-width: 1279px\) \{ a\.cash-session-link, span\.cash-session-link \{ max-width: (\d+)rem;/)?.[1])).toBeLessThanOrEqual(14);
+    expect(Number(css.match(/@media \(max-width: 767px\) \{ a\.cash-session-link, span\.cash-session-link \{ max-width: (\d+)rem;/)?.[1])).toBeLessThanOrEqual(10);
+    expect(rule).toContain("line-height: var(--ds-target-min)");
   });
 
   it("keeps the plain header text when the owner's name cannot be read, and never asks for it on the own session", async () => {

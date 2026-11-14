@@ -61,6 +61,17 @@ describe("production shell", () => {
     expect(labels).toEqual(["Şube", "Kullanıcı", "Rol"]);
   });
 
+  it("marks the branch item by name so the compact header can drop it without hiding the user", async () => {
+    await render(<ProductionShell {...baseProps} session={{ status: "authenticated", identity: { ...identity, branchName: undefined, terminalName: null } }} />);
+
+    expect(document.querySelectorAll('.production-shell__identity-item[data-identity="branch"]')).toHaveLength(0);
+    expect(document.querySelector(".production-shell__identity-item strong")?.textContent).toBe("Deniz Kaya");
+
+    await act(async () => root!.unmount());
+    await render(<ProductionShell {...baseProps} />);
+    expect(document.querySelector('.production-shell__identity-item[data-identity="branch"] strong')?.textContent).toBe("Merkez");
+  });
+
   it("filters navigation by capability and preserves the active route contract", async () => {
     await render(<ProductionShell {...baseProps} />);
 

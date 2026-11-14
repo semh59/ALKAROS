@@ -1,0 +1,11 @@
+M1-identity-wraps exit 1 restored cmp ok
+M2-branch-by-position exit 1 restored cmp ok
+M3-branch-not-marked exit 1 restored cmp ok
+M4-no-title exit 1 restored cmp ok
+M5-no-ellipsis exit 1 restored cmp ok
+M6-chip-wraps exit 1 restored cmp ok
+M7-no-height-keep exit 1 restored cmp ok
+M8-actions-no-shrink exit 1 restored cmp ok
+M9-label-overlaps exit 1 restored cmp ok
+M10-compact-chip-wide exit 1 restored cmp ok
+M11-chip-shrinks-below-target exit 1 restored cmp ok

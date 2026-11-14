@@ -51,7 +51,8 @@ export function useCashSessionState(terminalId: string, userId: string, enabled:
 export function CashSessionLink({ status, className = "header-action" }: { status: CashSessionStatus; className?: string }) {
   const key = status.state ?? "checking";
   if (key === "forbidden") return <span className={`${className} cash-session-link cash-session-link--forbidden`} role="status">{cashSessionText.forbidden}</span>;
-  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref}>{key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key]}</a>;
+  const text = key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key];
+  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref} title={text}>{text}</a>;
 }
 
 /** Shown above the work area while nothing says the user's own drawer is open. */

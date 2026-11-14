@@ -1,0 +1,5 @@
+# V1-RMD-1084 sonuc
+Bulgu dogrulandi (kod): kasa baglantisi (header-action/experience-header-link) satir sarmasi ve sinirsiz genislikle uzuyor; kimlik blogu flex-wrap:wrap oldugu icin 68 px bara sigmiyordu; sikisik gorunumde (768-1279) shell.css `:first-child` ile ilk kimlik ogesini gizliyordu: sube yoksa bu kullanici adiydi.
+Duzeltme: a.cash-session-link tek satir, ellipsis, tavan 20rem (1279 px alti 12rem, 767 alti 9rem), alt sinir 48 px, 48 px satir yuksekligi, title tam metin; kimlik blogu nowrap, etiketler ellipsis, header-actions min-width:0; sube ogesi data-identity="branch" ile gizlenir (konumla degil). 14 px ve 48 px kurallari korunur; cashierTextSize ve shell testleri yesil.
+Kanit: red.log (4 kirmizi), green-file.log, green-all.log PosTerminal 1415/1415, tsc 0, client-build-gate.log exit 0, mutations.txt (11 mutant killed, cmp ok).
+Olculemedi: gercek tarayici yok; testler CSS metnini sinar, piksel sigmasi dogrulanmadi. Acik risk (qa): 390 px telefonda ad ve kasa baglantisi birkac harfe inebilir (title dokunmatikte acilmaz); 389 px ve alti kural (kullanici gizlenir) eski davranis, kapsam disi.

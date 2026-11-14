@@ -50,6 +50,16 @@ describe("responsive and interaction style contract", () => {
     expect(rule(".pos-workspace")).not.toContain("100vh - 72px");
   });
 
+  it("keeps the identity block on one line and drops the branch by name, never by position, in the compact header", () => {
+    const start = shellCss.indexOf("\n.production-shell__identity {");
+    const identityRule = shellCss.slice(start, shellCss.indexOf("}", start));
+    expect(identityRule).toContain("flex-wrap: nowrap");
+    expect(shellCss).toMatch(/\n\.production-shell__header-actions \{ min-width: 0;/);
+    expect(shellCss).toMatch(/\.production-shell__identity-item span \{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap;/);
+    expect(shellCss).not.toContain(".production-shell__identity-item:first-child");
+    expect(shellCss).toContain('.production-shell__identity-item[data-identity="branch"] { display: none; }');
+  });
+
   it("returns fixed shell regions to document flow in shallow zoom viewports", () => {
     expect(shellCss).toContain("@media (max-width: 767px) and (max-height: 360px)");
     expect(shellCss).toContain(".production-shell__header,\n  .production-shell__nav,\n  .production-shell__status { position: static; }");
