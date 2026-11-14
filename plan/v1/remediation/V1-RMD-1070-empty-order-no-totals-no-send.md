@@ -1,7 +1,7 @@
 # V1-RMD-1070 - Boş siparişte sağ panelde toplam bölümü ve pasif Mutfağa gönder düğmesi çizilmez
 
 - Task ID: V1-RMD-1070
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
