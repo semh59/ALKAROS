@@ -13,9 +13,9 @@ Semih kararı: mutfak panosundaki 14px altı yazılar 14px'e çıkar. Ölçülen
 ## Owned surface
 
 - `evidence/V1-RMD-1086/**`
-- `src/Clients/PosTerminal/src/features/kitchen-operations/kitchenTextSize.test.ts`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css
+  - src/Clients/PosTerminal/src/features/kitchen-operations/kitchenTextSize.test.ts
   - docs/CASHIER_UI_RULES.md
   - src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
