@@ -1,0 +1,49 @@
+[src/Clients/PosTerminal] npm run lint
+
+> @alkaros/pos-terminal@1.0.0 lint
+> oxlint -c .oxlintrc.json --max-warnings=0 src
+
+[src/Clients/PosTerminal] npm run typecheck
+
+> @alkaros/pos-terminal@1.0.0 typecheck
+> tsc --noEmit
+
+[src/Clients/PosTerminal] npx vite build
+[36mvite v8.2.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 264 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                0.55 kB │ gzip:  0.33 kB
+dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+dist/assets/Cashier-C2XeD3Fd.css                               0.24 kB │ gzip:  0.18 kB
+dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+dist/assets/management-security-system-Cqi3Xt8E.css            2.44 kB │ gzip:  0.72 kB
+dist/assets/NfcOrder-KNdAOhPu.css                              4.71 kB │ gzip:  1.35 kB
+dist/assets/design-system-wZl1GyXA.css                         6.33 kB │ gzip:  1.87 kB
+dist/assets/index-CPNxH8J0.css                                31.77 kB │ gzip:  7.60 kB
+dist/assets/workspace-BLlkz37k.css                            96.97 kB │ gzip: 14.62 kB
+dist/assets/focusOnMount-tG3qApzB.js                           0.03 kB │ gzip:  0.05 kB
+dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+dist/assets/rolldown-runtime-EyZ2wyi3.js                       0.61 kB │ gzip:  0.39 kB
+dist/assets/format-Bh78ZGbj.js                                 1.50 kB │ gzip:  0.53 kB
+dist/assets/SecurityAdministration-DHR_mh-p.js                 2.47 kB │ gzip:  1.04 kB
+dist/assets/ReservationStation-CvY6XS6c.js                     3.97 kB │ gzip:  1.42 kB
+dist/assets/TokenTerminalSettings-CeOLepo5.js                  5.60 kB │ gzip:  1.97 kB
+dist/assets/RelaySettings-J5KxoNbu.js                          6.17 kB │ gzip:  1.93 kB
+dist/assets/CustomerDisplayScreensaverSettings-Bh-MT7uc.js     6.21 kB │ gzip:  2.13 kB
+dist/assets/design-system-DaWld7Xd.js                          7.39 kB │ gzip:  2.73 kB
+dist/assets/api-8eAW1BRo.js                                    7.45 kB │ gzip:  2.38 kB
+dist/assets/QnbCredentialSettings-Cpntmm9r.js                  8.70 kB │ gzip:  2.84 kB
+dist/assets/BusinessIdentitySettings-D5e3383N.js               9.38 kB │ gzip:  2.84 kB
+dist/assets/NfcOrder-CtKhrshP.js                               9.62 kB │ gzip:  3.16 kB
+dist/assets/CustomerDisplay-DeMx9YYJ.js                       14.00 kB │ gzip:  4.60 kB
+dist/assets/management-security-system-BvnvABHm.js            21.91 kB │ gzip:  6.16 kB
+dist/assets/Cashier-DvQUQs6D.js                               30.22 kB │ gzip:  9.00 kB
+dist/assets/HubConnectionBuilder-BSoreM0u.js                  54.78 kB │ gzip: 14.03 kB
+dist/assets/index-DtA1Weqi.js                                245.21 kB │ gzip: 79.17 kB
+dist/assets/workspace-X0PwQQwt.js                            402.30 kB │ gzip: 97.21 kB
+
+[32m✓ built in 403ms[39m
+exit=0

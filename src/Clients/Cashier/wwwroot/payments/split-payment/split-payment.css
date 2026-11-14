@@ -130,7 +130,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 .sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-danger:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
 .sp-btn-danger { background: var(--color-danger); color: #FFFFFF; }
 
-.sp-row { display: flex; gap: 10px; }
+.sp-row { display: flex; gap: 16px; }
 .sp-row > * { flex: 1; }
 
 
@@ -143,7 +143,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 
 .sp-divider { height: 1px; background: var(--color-border); }
 
-.sp-method-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.sp-method-chips { display: flex; gap: 16px; flex-wrap: wrap; }
 .sp-method-chip {
   border: 1.5px solid var(--color-border); border-radius: 999px;
   padding: 10px 16px; font-size: 14px; font-weight: 700; min-height: var(--touch-target);
@@ -203,7 +203,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 }
 
 /* V1-RMD-443: "Hesaba yaz" customer picker. */
-.sp-customer-list { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
+.sp-customer-list { display: flex; flex-direction: column; gap: 16px; max-height: 260px; overflow-y: auto; }
 .sp-customer {
   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 48px; padding: 8px 12px;
   border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-surface); color: var(--color-text);
@@ -216,7 +216,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
 
 .sp-change-due { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 16px; border-radius: 10px; background: var(--color-success-soft, #def4ea); color: var(--color-success, #1f6b52); font-size: 1.1rem; }
 .sp-change-due strong { font-size: 1.9rem; font-variant-numeric: tabular-nums; }
-.sp-quick-cash { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; margin-top: 8px; }
+.sp-quick-cash { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 16px; margin-top: 8px; }
 .sp-change-preview { min-height: 1.4em; margin-top: 6px; font-weight: 700; }
 .sp-change-preview.is-short { color: var(--color-danger, #b3261e); }
 
@@ -255,6 +255,6 @@ html { scroll-padding-bottom: 80px; }
 .sp-check span { align-self: center; display: flex; flex-direction: column; gap: 4px; }
 .sp-check small { color: var(--color-muted, #4d5c68); font-size: 14px; }
 @media (max-height: 860px) and (min-width: 640px) {
-  .sp-quick-cash { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
+  .sp-quick-cash { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 16px; margin-top: 4px; }
   .sp-quick-cash .sp-btn { padding: 6px 2px; font-size: 16px; }
 }

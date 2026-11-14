@@ -1,0 +1,14 @@
+killed G1 panel rows back to 12.8px
+restore cmp identical
+killed G2 method chips back to 8px
+killed G3 button row back to 10px
+killed G4 quick cash grid back to 8px
+killed G5 compact quick cash back to 8px
+restore cmp identical
+killed G6 customer list back to 6px
+killed G7 compact quick cash gap in rem below 16px
+killed G8 method chips row-gap override
+restore cmp identical
+killed G9 panel gap in px below 16
+killed G10 panel row-gap override
+restore cmp identical

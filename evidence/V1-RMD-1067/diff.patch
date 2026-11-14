@@ -1,0 +1,100 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+index 03aedd633..11f82e9fb 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+@@ -130,7 +130,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
+ .sp-btn-primary:disabled, .sp-btn-secondary:disabled, .sp-btn-danger:disabled { background: var(--color-disabled); color: var(--color-text-muted); border-color: var(--color-border); }
+ .sp-btn-danger { background: var(--color-danger); color: #FFFFFF; }
+ 
+-.sp-row { display: flex; gap: 10px; }
++.sp-row { display: flex; gap: 16px; }
+ .sp-row > * { flex: 1; }
+ 
+ 
+@@ -143,7 +143,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
+ 
+ .sp-divider { height: 1px; background: var(--color-border); }
+ 
+-.sp-method-chips { display: flex; gap: 8px; flex-wrap: wrap; }
++.sp-method-chips { display: flex; gap: 16px; flex-wrap: wrap; }
+ .sp-method-chip {
+   border: 1.5px solid var(--color-border); border-radius: 999px;
+   padding: 10px 16px; font-size: 14px; font-weight: 700; min-height: var(--touch-target);
+@@ -203,7 +203,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
+ }
+ 
+ /* V1-RMD-443: "Hesaba yaz" customer picker. */
+-.sp-customer-list { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
++.sp-customer-list { display: flex; flex-direction: column; gap: 16px; max-height: 260px; overflow-y: auto; }
+ .sp-customer {
+   display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 48px; padding: 8px 12px;
+   border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-surface); color: var(--color-text);
+@@ -216,7 +216,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
+ 
+ .sp-change-due { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 16px; border-radius: 10px; background: var(--color-success-soft, #def4ea); color: var(--color-success, #1f6b52); font-size: 1.1rem; }
+ .sp-change-due strong { font-size: 1.9rem; font-variant-numeric: tabular-nums; }
+-.sp-quick-cash { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; margin-top: 8px; }
++.sp-quick-cash { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 16px; margin-top: 8px; }
+ .sp-change-preview { min-height: 1.4em; margin-top: 6px; font-weight: 700; }
+ .sp-change-preview.is-short { color: var(--color-danger, #b3261e); }
+ 
+@@ -255,6 +255,6 @@ html { scroll-padding-bottom: 80px; }
+ .sp-check span { align-self: center; display: flex; flex-direction: column; gap: 4px; }
+ .sp-check small { color: var(--color-muted, #4d5c68); font-size: 14px; }
+ @media (max-height: 860px) and (min-width: 640px) {
+-  .sp-quick-cash { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; margin-top: 4px; }
++  .sp-quick-cash { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 16px; margin-top: 4px; }
+   .sp-quick-cash .sp-btn { padding: 6px 2px; font-size: 16px; }
+ }
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index cf7905f09..6893cc829 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -518,10 +518,11 @@ describe("TableOrderBridge", () => {
+       .filter((rule) => rule.selector.includes("table-order-bridge"));
+     const body = (selector: string) => bridgeRules.filter((rule) => rule.selector === selector).map((rule) => rule.body).join(";");
+ 
+-    it.each([".table-order-bridge__actions", ".table-order-bridge__mini"])("keeps at least 16px between the buttons of %s", (selector) => {
+-      const declared = /(?:^|[;\s])gap:\s*([^;]+)/.exec(body(selector))?.[1].trim().split(/\s+/) ?? [];
++    it.each([".table-order-bridge", ".table-order-bridge__actions", ".table-order-bridge__mini"])("keeps at least 16px between the buttons of %s", (selector) => {
++      const declared = [...body(selector).matchAll(/(?:^|[;\s])(?:row-|column-)?gap:\s*([^;]+)/g)].flatMap((match) => match[1].trim().split(/\s+/));
+       expect(declared.length).toBeGreaterThan(0);
+-      for (const value of declared) expect(Number.parseFloat(value) * 16).toBeGreaterThanOrEqual(16);
++      // Only rem and px are read; any other unit fails here instead of passing as a number.
++      for (const value of declared) expect(/^[\d.]+rem$/.test(value) ? Number.parseFloat(value) * 16 : /^[\d.]+px$/.test(value) ? Number.parseFloat(value) : Number.NaN, value).toBeGreaterThanOrEqual(16);
+     });
+ 
+     it("sets every panel text at 14px or larger", () => {
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index a511f3bdf..70a93ad40 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -188,7 +188,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .experience-header-link:focus-visible, .experience-header-button:focus-visible { outline: 3px solid #71c6ff; outline-offset: 2px; }
+ .experience-not-found { border: 1px solid var(--line); border-radius: 12px; padding: 2rem; background: var(--surface); color: var(--muted); }
+ .table-route { display: grid; gap: 1rem; }
+-.table-order-bridge { display: grid; gap: .8rem; }
++.table-order-bridge { display: grid; gap: 1rem; }
+ .table-workspace__side--map > .table-order-bridge { border: 1px solid var(--ds-color-line); border-radius: 16px; padding: 1rem 1.2rem; background: var(--ds-color-surface); }
+ .table-order-bridge__lines { display: grid; gap: .3rem; max-height: 14rem; margin: 0; padding: 0; overflow-y: auto; list-style: none; }
+ .table-order-bridge__lines li, .table-order-bridge__total { display: flex; justify-content: space-between; gap: .6rem; font-size: .875rem; }
+diff --git a/tests/Clients/StaticApps/split-payment-cashier-rules.test.js b/tests/Clients/StaticApps/split-payment-cashier-rules.test.js
+index 74f2b4f1e..48416a207 100644
+--- a/tests/Clients/StaticApps/split-payment-cashier-rules.test.js
++++ b/tests/Clients/StaticApps/split-payment-cashier-rules.test.js
+@@ -96,6 +96,15 @@ describe("Hesap Ödeme page follows docs/CASHIER_UI_RULES.md", () => {
+     expect(declared(".sp-btn-primary", "color")).toBe("var(--color-ink)");
+   });
+ 
++  it.each([".sp-method-chips", ".sp-row", ".sp-quick-cash", ".sp-customer-list"])("keeps at least 16px between the touch targets laid out by %s", (selector) => {
++    const gaps = [...css.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^{}]*)\}/g)]
++      .filter(([, names]) => names.split(",").some((name) => name.trim() === selector))
++      .flatMap(([, , body]) => [...body.matchAll(/(?:^|[;\s])(?:row-|column-)?gap:\s*([^;]+)/g)].flatMap((match) => match[1].trim().split(/\s+/)));
++    expect(gaps.length).toBeGreaterThan(0);
++    // Only px is read; any other unit fails here instead of passing as a number.
++    expect(gaps.filter((gap) => !/^\d+px$/.test(gap) || Number.parseInt(gap, 10) < 16)).toEqual([]);
++  });
++
+   it("sets no text below 14px outside the receipt print sheet", () => {
+     const screen = css.replace(/@media print \{[\s\S]*?\n\}\n/, "");
+     const sizes = [...screen.matchAll(/font-size:\s*([\d.]+)(px|rem)/g)].map((match) => Number(match[1]) * (match[2] === "rem" ? 16 : 1));

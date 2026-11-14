@@ -1,0 +1,2 @@
+- qa-ux-tasarim: ilk tur: musteri listesi 6px (giderildi), 7 sutunlu hizli nakit 640-768px olculemedi (RESULT.md).
+- qa-test-kalitesi: ilk tur 3 bulgu (birim, row/column-gap, @media varyanti): test birimi okur, row-gap/column-gap yakalar, G6-G10 killed.

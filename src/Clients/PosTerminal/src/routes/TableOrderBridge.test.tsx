@@ -518,10 +518,11 @@ describe("TableOrderBridge", () => {
       .filter((rule) => rule.selector.includes("table-order-bridge"));
     const body = (selector: string) => bridgeRules.filter((rule) => rule.selector === selector).map((rule) => rule.body).join(";");
 
-    it.each([".table-order-bridge__actions", ".table-order-bridge__mini"])("keeps at least 16px between the buttons of %s", (selector) => {
-      const declared = /(?:^|[;\s])gap:\s*([^;]+)/.exec(body(selector))?.[1].trim().split(/\s+/) ?? [];
+    it.each([".table-order-bridge", ".table-order-bridge__actions", ".table-order-bridge__mini"])("keeps at least 16px between the buttons of %s", (selector) => {
+      const declared = [...body(selector).matchAll(/(?:^|[;\s])(?:row-|column-)?gap:\s*([^;]+)/g)].flatMap((match) => match[1].trim().split(/\s+/));
       expect(declared.length).toBeGreaterThan(0);
-      for (const value of declared) expect(Number.parseFloat(value) * 16).toBeGreaterThanOrEqual(16);
+      // Only rem and px are read; any other unit fails here instead of passing as a number.
+      for (const value of declared) expect(/^[\d.]+rem$/.test(value) ? Number.parseFloat(value) * 16 : /^[\d.]+px$/.test(value) ? Number.parseFloat(value) : Number.NaN, value).toBeGreaterThanOrEqual(16);
     });
 
     it("sets every panel text at 14px or larger", () => {

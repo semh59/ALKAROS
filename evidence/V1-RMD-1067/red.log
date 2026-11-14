@@ -1,0 +1,106 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (47 tests | 1 failed) 377ms
+       × keeps at least 16px between the buttons of .table-order-bridge 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > panel style rules from docs/CASHIER_UI_RULES.md > keeps at least 16px between the buttons of .table-order-bridge
+AssertionError: expected 12.8 to be greater than or equal to 16
+ ❯ src/routes/TableOrderBridge.test.tsx:524:75
+    522|       const declared = /(?:^|[;\s])gap:\s*([^;]+)/.exec(body(selector)…
+    523|       expect(declared.length).toBeGreaterThan(0);
+    524|       for (const value of declared) expect(Number.parseFloat(value) * …
+       |                                                                           ^
+    525|     });
+    526|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 46 passed (47)
+   Start at  12:08:24
+   Duration  2.27s (transform 301ms, setup 0ms, import 444ms, tests 377ms, environment 1.17s)
+
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-cashier-rules.test.js (14 tests | 3 failed) 491ms
+     × keeps at least 16px between the touch targets laid out by .sp-method-chips 14ms
+     × keeps at least 16px between the touch targets laid out by .sp-row 3ms
+     × keeps at least 16px between the touch targets laid out by .sp-quick-cash 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > keeps at least 16px between the touch targets laid out by .sp-method-chips
+AssertionError: expected [ 8 ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   8,
++ ]
+
+ ❯ split-payment-cashier-rules.test.js:104:44
+    102|       .flatMap(([, , body]) => [...body.matchAll(/(?:^|[;\s])gap:\s*(\…
+    103|     expect(gaps.length).toBeGreaterThan(0);
+    104|     expect(gaps.filter((gap) => gap < 16)).toEqual([]);
+       |                                            ^
+    105|   });
+    106|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > keeps at least 16px between the touch targets laid out by .sp-row
+AssertionError: expected [ 10 ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   10,
++ ]
+
+ ❯ split-payment-cashier-rules.test.js:104:44
+    102|       .flatMap(([, , body]) => [...body.matchAll(/(?:^|[;\s])gap:\s*(\…
+    103|     expect(gaps.length).toBeGreaterThan(0);
+    104|     expect(gaps.filter((gap) => gap < 16)).toEqual([]);
+       |                                            ^
+    105|   });
+    106|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  split-payment-cashier-rules.test.js > Hesap Ödeme page follows docs/CASHIER_UI_RULES.md > keeps at least 16px between the touch targets laid out by .sp-quick-cash
+AssertionError: expected [ 8, 8 ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   8,
++   8,
++ ]
+
+ ❯ split-payment-cashier-rules.test.js:104:44
+    102|       .flatMap(([, , body]) => [...body.matchAll(/(?:^|[;\s])gap:\s*(\…
+    103|     expect(gaps.length).toBeGreaterThan(0);
+    104|     expect(gaps.filter((gap) => gap < 16)).toEqual([]);
+       |                                            ^
+    105|   });
+    106|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 11 passed (14)
+   Start at  12:08:29
+   Duration  2.08s (transform 235ms, setup 28ms, import 61ms, tests 491ms, environment 1.16s)
+

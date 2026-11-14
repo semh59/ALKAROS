@@ -96,6 +96,15 @@ describe("Hesap Ödeme page follows docs/CASHIER_UI_RULES.md", () => {
     expect(declared(".sp-btn-primary", "color")).toBe("var(--color-ink)");
   });
 
+  it.each([".sp-method-chips", ".sp-row", ".sp-quick-cash", ".sp-customer-list"])("keeps at least 16px between the touch targets laid out by %s", (selector) => {
+    const gaps = [...css.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+      .filter(([, names]) => names.split(",").some((name) => name.trim() === selector))
+      .flatMap(([, , body]) => [...body.matchAll(/(?:^|[;\s])(?:row-|column-)?gap:\s*([^;]+)/g)].flatMap((match) => match[1].trim().split(/\s+/)));
+    expect(gaps.length).toBeGreaterThan(0);
+    // Only px is read; any other unit fails here instead of passing as a number.
+    expect(gaps.filter((gap) => !/^\d+px$/.test(gap) || Number.parseInt(gap, 10) < 16)).toEqual([]);
+  });
+
   it("sets no text below 14px outside the receipt print sheet", () => {
     const screen = css.replace(/@media print \{[\s\S]*?\n\}\n/, "");
     const sizes = [...screen.matchAll(/font-size:\s*([\d.]+)(px|rem)/g)].map((match) => Number(match[1]) * (match[2] === "rem" ? 16 : 1));
