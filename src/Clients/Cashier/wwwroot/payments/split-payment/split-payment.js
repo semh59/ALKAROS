@@ -2506,7 +2506,7 @@
       var awaiting = refunds.filter(function (row) { return row.status === 'AwaitingManualRefund'; });
       var transfers = awaiting.filter(function (row) { return row.method === 'Eft'; }).length;
       var proof = transfers === 0 ? 'fiş' : transfers === awaiting.length ? 'iade dekontu' : 'fiş veya iade dekontu';
-      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' girişi bekleniyor.' };
+      return { title: heading.title, text: 'İade onaylandı, ' + proof + ' girişi bekleniyor.' + (awaitingDecision ? ' Ayrıca yönetici kararı bekleyen iade isteği var.' : '') };
     }
     return awaitingDecision ? { title: heading.title, text: 'İade isteği gönderildi, yönetici kararı bekleniyor.' } : heading;
   }

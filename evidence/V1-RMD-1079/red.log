@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-open-refund-closed.test.js (16 tests | 3 failed) 2422ms
+     × says the approved refund only waits for its slip entry once the bill is closed, even beside a request waiting 245ms
+     × names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed 357ms
+     × says one waiting request remains when several requests wait beside an approved transfer refund 144ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > says the approved refund only waits for its slip entry once the bill is closed, even beside a request waiting
+AssertionError: expected 'İade onaylandı, fiş girişi bekleniyor.' to be 'İade onaylandı, fiş girişi bekleniyor…' // Object.is equality
+
+Expected: "İade onaylandı, fiş girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+Received: "İade onaylandı, fiş girişi bekleniyor."
+
+ ❯ split-payment-open-refund-closed.test.js:81:64
+     79|     document.body.innerHTML = "";
+     80|     await openPaid([pending, { ...pending, requestId: "r2", status: "A…
+     81|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+     82|   });
+     83|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > names the refund slip for a card refund and the transfer receipt for a bank transfer once the bill is closed
+AssertionError: expected 'İade onaylandı, iade dekontu girişi b…' to be 'İade onaylandı, iade dekontu girişi b…' // Object.is equality
+
+Expected: "İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+Received: "İade onaylandı, iade dekontu girişi bekleniyor."
+
+ ❯ split-payment-open-refund-closed.test.js:94:64
+     92|     document.body.innerHTML = "";
+     93|     await openPaid([pending, { ...pending, requestId: "r2", status: "A…
+     94|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+     95|   });
+     96|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  split-payment-open-refund-closed.test.js > a fully paid bill with a refund request waiting is not shown as paid > says one waiting request remains when several requests wait beside an approved transfer refund
+AssertionError: expected 'İade onaylandı, iade dekontu girişi b…' to be 'İade onaylandı, iade dekontu girişi b…' // Object.is equality
+
+Expected: "İade onaylandı, iade dekontu girişi bekleniyor. Ayrıca yönetici kararı bekleyen iade isteği var."
+Received: "İade onaylandı, iade dekontu girişi bekleniyor."
+
+ ❯ split-payment-open-refund-closed.test.js:106:64
+    104|     await openPaid([pending, { ...pending, requestId: "r3" }, { ...pen…
+    105|
+    106|     expect(document.querySelector(".sp-subtitle").textContent).toBe("İ…
+       |                                                                ^
+    107|   });
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 13 passed (16)
+   Start at  17:09:31
+   Duration  3.86s (transform 1.03s, setup 25ms, import 54ms, tests 2.42s, environment 1.10s)
+
+exit=1

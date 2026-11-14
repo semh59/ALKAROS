@@ -1,0 +1,18 @@
+M1-never-append: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+M1-never-append:       Tests  3 failed | 13 passed (16)
+  restored cmp ok
+M2-always-append: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+M2-always-append:       Tests  4 failed | 12 passed (16)
+  restored cmp ok
+M3-wording: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+M3-wording:       Tests  3 failed | 13 passed (16)
+  restored cmp ok
+M4-append-on-awaitingSlip-only-wrong: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M4-append-on-awaitingSlip-only-wrong:       Tests  2 failed | 14 passed (16)
+  restored cmp ok
+M5-dropped-approved-part: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M5-dropped-approved-part:       Tests  2 failed | 14 passed (16)
+  restored cmp ok
+M6-rejected-counts-as-waiting: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M6-rejected-counts-as-waiting:       Tests  2 failed | 15 passed (17)
+  restored cmp ok

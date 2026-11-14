@@ -1,7 +1,7 @@
 # V1-RMD-1079 - Kapanmış hesapta birden çok bekleyen iade metinde görünür
 
 - Task ID: V1-RMD-1079
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
