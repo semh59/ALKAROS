@@ -40,6 +40,13 @@ describe("docs/CASHIER_UI_RULES.md", () => {
     }
   });
 
+  it("writes the primary button's text in ink on the accent fill, as the button table of the rules says", () => {
+    expect(section("5. Düğme hiyerarşisi")).toContain("`--ds-color-accent` dolgu, `--ds-color-ink` yazı");
+    const rule = read("src/Clients/PosTerminal/src/design-system/primitives.css").match(/\.ds-button--primary \{([^}]*)\}/)![1];
+    expect(rule).toMatch(/(?:^|[;\s])color:\s*var\(--ds-color-ink\)/);
+    expect(rule).toMatch(/background:\s*var\(--ds-color-accent\)/);
+  });
+
   it("pairs each status text token with its own soft tint, or with the neutral surface", () => {
     for (const [key, , , text, background] of statusRows()) {
       expect(background, key).toBeOneOf([`${text.slice(0, -1)}-soft\``, "`--ds-color-surface-subtle`"]);

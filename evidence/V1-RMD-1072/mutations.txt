@@ -1,0 +1,8 @@
+s-color-surface); background: var(--ds-color-accent)/ => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+r(--ds-color-accent)/ => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+s-color-ink); background: var(--ds-color-brand)/ => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+
+M1 yazi surface, M2 yazi kuralsiz, M3 zemin brand: hepsi oldu.

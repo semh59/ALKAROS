@@ -1,7 +1,7 @@
 # V1-RMD-1072 - Genel birincil düğme camgöbeği zeminde ink yazı kullanır
 
 - Task ID: V1-RMD-1072
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

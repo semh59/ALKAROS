@@ -1,0 +1,31 @@
+diff --git a/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts b/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts
+index b48db39c9..f006bc356 100644
+--- a/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts
++++ b/src/Clients/PosTerminal/src/design-system/cashierUiRules.test.ts
+@@ -40,6 +40,13 @@ describe("docs/CASHIER_UI_RULES.md", () => {
+     }
+   });
+ 
++  it("writes the primary button's text in ink on the accent fill, as the button table of the rules says", () => {
++    expect(section("5. Düğme hiyerarşisi")).toContain("`--ds-color-accent` dolgu, `--ds-color-ink` yazı");
++    const rule = read("src/Clients/PosTerminal/src/design-system/primitives.css").match(/\.ds-button--primary \{([^}]*)\}/)![1];
++    expect(rule).toMatch(/(?:^|[;\s])color:\s*var\(--ds-color-ink\)/);
++    expect(rule).toMatch(/background:\s*var\(--ds-color-accent\)/);
++  });
++
+   it("pairs each status text token with its own soft tint, or with the neutral surface", () => {
+     for (const [key, , , text, background] of statusRows()) {
+       expect(background, key).toBeOneOf([`${text.slice(0, -1)}-soft\``, "`--ds-color-surface-subtle`"]);
+diff --git a/src/Clients/PosTerminal/src/design-system/primitives.css b/src/Clients/PosTerminal/src/design-system/primitives.css
+index 0c5b4fd1a..729d49206 100644
+--- a/src/Clients/PosTerminal/src/design-system/primitives.css
++++ b/src/Clients/PosTerminal/src/design-system/primitives.css
+@@ -24,7 +24,7 @@
+   outline-offset: 2px;
+ }
+ 
+-.ds-button--primary { color: #fff; background: var(--ds-color-accent); }
++.ds-button--primary { color: var(--ds-color-ink); background: var(--ds-color-accent); }
+ .ds-button--primary:hover:not(:disabled) { background: var(--ds-color-accent-hover); }
+ .ds-button--secondary { color: var(--ds-color-ink); border-color: var(--ds-color-line); background: var(--ds-color-surface); }
+ .ds-button--quiet { color: var(--ds-color-ink); background: transparent; }

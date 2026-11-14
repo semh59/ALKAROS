@@ -24,7 +24,7 @@
   outline-offset: 2px;
 }
 
-.ds-button--primary { color: #fff; background: var(--ds-color-accent); }
+.ds-button--primary { color: var(--ds-color-ink); background: var(--ds-color-accent); }
 .ds-button--primary:hover:not(:disabled) { background: var(--ds-color-accent-hover); }
 .ds-button--secondary { color: var(--ds-color-ink); border-color: var(--ds-color-line); background: var(--ds-color-surface); }
 .ds-button--quiet { color: var(--ds-color-ink); background: transparent; }

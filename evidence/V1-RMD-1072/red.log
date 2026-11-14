@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/design-system/cashierUiRules.test.ts (11 tests | 1 failed) 22ms
+     × writes the primary button's text in ink on the accent fill, as the button table of the rules says 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/design-system/cashierUiRules.test.ts > docs/CASHIER_UI_RULES.md > writes the primary button's text in ink on the accent fill, as the button table of the rules says
+AssertionError: expected ' color: #fff; background: var(--ds-co…' to match /(?:^|[;\s])color:\s*var\(--ds-color-i…/
+
+- Expected:
+/(?:^|[;\s])color:\s*var\(--ds-color-ink\)/
+
++ Received:
+" color: #fff; background: var(--ds-color-accent); "
+
+ ❯ src/design-system/cashierUiRules.test.ts:46:18
+     44|     expect(section("5. Düğme hiyerarşisi")).toContain("`--ds-color-acc…
+     45|     const rule = read("src/Clients/PosTerminal/src/design-system/primi…
+     46|     expect(rule).toMatch(/(?:^|[;\s])color:\s*var\(--ds-color-ink\)/);
+       |                  ^
+     47|     expect(rule).toMatch(/background:\s*var\(--ds-color-accent\)/);
+     48|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  12:57:39
+   Duration  425ms (transform 90ms, setup 0ms, import 119ms, tests 22ms, environment 0ms)
+

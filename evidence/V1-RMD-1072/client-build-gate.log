@@ -1,0 +1,37 @@
+[36mvite v8.2.2 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 264 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                0.55 kB │ gzip:  0.33 kB
+dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+dist/assets/Cashier-C2XeD3Fd.css                               0.24 kB │ gzip:  0.18 kB
+dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+dist/assets/management-security-system-Cqi3Xt8E.css            2.44 kB │ gzip:  0.72 kB
+dist/assets/NfcOrder-KNdAOhPu.css                              4.71 kB │ gzip:  1.35 kB
+dist/assets/design-system-409abIFq.css                         6.34 kB │ gzip:  1.87 kB
+dist/assets/index-DNaE5KaM.css                                31.66 kB │ gzip:  7.58 kB
+dist/assets/workspace-5on22mtN.css                            96.98 kB │ gzip: 14.62 kB
+dist/assets/focusOnMount-tG3qApzB.js                           0.03 kB │ gzip:  0.05 kB
+dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+dist/assets/rolldown-runtime-EyZ2wyi3.js                       0.61 kB │ gzip:  0.39 kB
+dist/assets/format-Bh78ZGbj.js                                 1.50 kB │ gzip:  0.53 kB
+dist/assets/SecurityAdministration-BN3BGfKq.js                 2.47 kB │ gzip:  1.05 kB
+dist/assets/ReservationStation-DzMAdx8Z.js                     3.97 kB │ gzip:  1.41 kB
+dist/assets/TokenTerminalSettings-CtVkOT85.js                  5.60 kB │ gzip:  1.97 kB
+dist/assets/RelaySettings-BVVB16Sj.js                          6.17 kB │ gzip:  1.93 kB
+dist/assets/CustomerDisplayScreensaverSettings-B0aVj-O1.js     6.21 kB │ gzip:  2.13 kB
+dist/assets/design-system-BDY_Ydd1.js                          7.39 kB │ gzip:  2.73 kB
+dist/assets/api-8eAW1BRo.js                                    7.45 kB │ gzip:  2.38 kB
+dist/assets/QnbCredentialSettings-COZcqVu4.js                  8.70 kB │ gzip:  2.84 kB
+dist/assets/BusinessIdentitySettings-D9o7R_s8.js               9.38 kB │ gzip:  2.84 kB
+dist/assets/NfcOrder-CHC0CGau.js                               9.62 kB │ gzip:  3.16 kB
+dist/assets/CustomerDisplay-CHYZjXkC.js                       14.00 kB │ gzip:  4.60 kB
+dist/assets/management-security-system-BAX9By9s.js            21.91 kB │ gzip:  6.16 kB
+dist/assets/Cashier-Dqjnukxv.js                               30.13 kB │ gzip:  8.97 kB
+dist/assets/HubConnectionBuilder-BSoreM0u.js                  54.78 kB │ gzip: 14.03 kB
+dist/assets/index-DSc3urv3.js                                245.21 kB │ gzip: 79.18 kB
+dist/assets/workspace-Ba7ycQLB.js                            402.30 kB │ gzip: 97.21 kB
+
+[32m✓ built in 405ms[39m
