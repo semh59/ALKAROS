@@ -290,6 +290,46 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CashTenderByAManagerIntoAnotherUsersOpenSessionIsRefusedLikeACashier()
+    {
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, "mgr-own-owner");
+        var managerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "mgr-own-manager", ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashSessionOverride);
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", managerCookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "mgr-own-refused" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        Assert.Equal("CASH_SESSION_NOT_OWNED", (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        await using var payments = _database.DataSource.CreateCommand("SELECT count(*) FROM payments.payments;");
+        Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
+    }
+
+    [Fact]
+    public async Task CashTenderByAManagerIntoTheirOwnOpenSessionSucceeds()
+    {
+        var terminalId = Guid.NewGuid();
+        var managerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "mgr-own-session", ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashSessionOverride);
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", managerCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", managerCookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 80m, IdempotencyKey = "mgr-own-accepted" });
+
+        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
+    }
+
+    [Fact]
     public async Task CashTenderBelowTheAmountDueIsRejected()
     {
         var terminalId = Guid.NewGuid();
