@@ -2,6 +2,8 @@
 
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { registerSessionExpiredHandler } from "../api";
 import { TableOrderBridge } from "./TableOrderBridge";
@@ -383,10 +385,10 @@ describe("TableOrderBridge", () => {
     expect(button("Mutfağa göndermeden hesaba ekle")).toBeUndefined();
   });
 
-  it("puts Böl, Masa taşı and İptal / iade in one mini row under the main buttons, and Sipariş al is the only filled button of an empty table", async () => {
+  it("puts Böl and Masa taşı in one mini row under the main buttons, and Sipariş al is the only filled button of an empty table", async () => {
     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
     await flush();
-    expect([...document.querySelectorAll(".table-order-bridge__mini button")].map((b) => b.textContent)).toEqual(["Böl", "Masa taşı", "İptal / iade"]);
+    expect([...document.querySelectorAll(".table-order-bridge__mini button")].map((b) => b.textContent)).toEqual(["Böl", "Masa taşı"]);
 
     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 1 } });
     await flush();
@@ -401,6 +403,28 @@ describe("TableOrderBridge", () => {
 
     render({ onTransfer: undefined });
     expect(button("Masa taşı")?.disabled).toBe(true);
+  });
+
+  it("says why Masa taşı is closed when the table cannot be moved, and not when it can or another till holds the bill", () => {
+    render({ onTransfer: undefined });
+    expect(document.querySelector(".table-order-bridge__reason")?.textContent).toBe("Bu masa şu anda taşınamaz.");
+
+    render();
+    expect(document.querySelector(".table-order-bridge__reason")).toBeNull();
+
+    render({ onTransfer: undefined, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1, billOnOtherTerminal: true } });
+    expect(document.querySelector(".table-order-bridge__reason")).toBeNull();
+  });
+
+  it("draws İptal / iade alone in its own destructive row, apart from Böl and Masa taşı", async () => {
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+
+    const cancel = button("İptal / iade")!;
+    expect(cancel.closest(".table-order-bridge__mini")).toBeNull();
+    expect(cancel.parentElement?.className).toBe("table-order-bridge__danger");
+    expect(cancel.className).toBe("table-order-bridge__cancel");
+    expect(cancel.parentElement?.children).toHaveLength(1);
   });
 
   it("closes Öde, Böl, Masa taşı and İptal / iade and says why when another till holds the bill", () => {
@@ -485,5 +509,38 @@ describe("TableOrderBridge", () => {
     await flush();
 
     expect(document.body.textContent).not.toContain("Hesap kalemleri alınamadı");
+  });
+
+  describe("panel style rules from docs/CASHIER_UI_RULES.md", () => {
+    const stylesheet = readFileSync(join(import.meta.dirname, "../styles.css"), "utf8");
+    const bridgeRules = [...stylesheet.replace(/\/\*[\s\S]*?\*\//g, "").matchAll(/^([^@{}\n][^{}]*)\{([^{}]*)\}/gm)]
+      .map((match) => ({ selector: match[1].replace(/\s+/g, " ").trim(), body: match[2] }))
+      .filter((rule) => rule.selector.includes("table-order-bridge"));
+    const body = (selector: string) => bridgeRules.filter((rule) => rule.selector === selector).map((rule) => rule.body).join(";");
+
+    it.each([".table-order-bridge__actions", ".table-order-bridge__mini"])("keeps at least 16px between the buttons of %s", (selector) => {
+      const declared = /(?:^|[;\s])gap:\s*([^;]+)/.exec(body(selector))?.[1].trim().split(/\s+/) ?? [];
+      expect(declared.length).toBeGreaterThan(0);
+      for (const value of declared) expect(Number.parseFloat(value) * 16).toBeGreaterThanOrEqual(16);
+    });
+
+    it("sets every panel text at 14px or larger", () => {
+      const sizes = bridgeRules.flatMap((rule) => [...rule.body.matchAll(/font-size:\s*([\d.]+)(rem|px)/g)].map((match) => Number(match[1]) * (match[2] === "rem" ? 16 : 1)));
+      expect(sizes.length).toBeGreaterThan(5);
+      for (const selector of [".table-order-bridge p", ".table-order-bridge__reason", ".table-order-bridge__mini button", ".table-order-bridge__lines li, .table-order-bridge__total"]) expect(body(selector), selector).toMatch(/font-size:/);
+      expect(sizes.filter((size) => size < 14)).toEqual([]);
+    });
+
+    it("answers a touch on İptal / iade and keeps it readable while closed", () => {
+      expect(body(".table-order-bridge__cancel:hover:not(:disabled)")).toContain("background: var(--ds-color-danger-soft)");
+      expect(body(".table-order-bridge__cancel:disabled")).toMatch(/opacity:\s*1;/);
+      expect(body(".table-order-bridge__cancel:disabled")).toContain("color: var(--ds-color-muted)");
+    });
+
+    it("draws İptal / iade with the danger tokens and the panel with design tokens only", () => {
+      expect(body(".table-order-bridge__cancel")).toMatch(/color:\s*var\(--ds-color-danger\)/);
+      expect(body(".table-order-bridge__cancel")).toMatch(/border:\s*1px solid var\(--ds-color-danger\)/);
+      expect(bridgeRules.map((rule) => rule.body).join(";")).not.toMatch(/#e2cfc8|#fffaf7|#795b18|#922c36|#fff0f1/);
+    });
   });
 });

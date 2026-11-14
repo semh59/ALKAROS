@@ -1,0 +1,182 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+stderr | src/routes/TableOrderBridge.test.tsx > TableOrderBridge > says why Masa taşı is closed when the table cannot be moved, and not when it can or another till holds the bill
+An update to TableOrderBridge inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/routes/TableOrderBridge.test.tsx (45 tests | 7 failed) 335ms
+     × puts Böl and Masa taşı in one mini row under the main buttons, and Sipariş al is the only filled button of an empty table 13ms
+     × says why Masa taşı is closed when the table cannot be moved, and not when it can or another till holds the bill 4ms
+     × draws İptal / iade alone in its own destructive row, apart from Böl and Masa taşı 8ms
+       × keeps at least 16px between the buttons of .table-order-bridge__actions 1ms
+       × keeps at least 16px between the buttons of .table-order-bridge__mini 1ms
+       × sets every panel text at 14px or larger 2ms
+       × draws İptal / iade with the danger tokens and the panel with design tokens only 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > puts Böl and Masa taşı in one mini row under the main buttons, and Sipariş al is the only filled button of an empty table
+AssertionError: expected [ 'Böl', 'Masa taşı', 'İptal / iade' ] to deeply equal [ 'Böl', 'Masa taşı' ]
+
+- Expected
++ Received
+
+  [
+    "Böl",
+    "Masa taşı",
++   "İptal / iade",
+  ]
+
+ ❯ src/routes/TableOrderBridge.test.tsx:391:106
+    389|     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrde…
+    390|     await flush();
+    391|     expect([...document.querySelectorAll(".table-order-bridge__mini bu…
+       |                                                                                                          ^
+    392|
+    393|     render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrde…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > says why Masa taşı is closed when the table cannot be moved, and not when it can or another till holds the bill
+AssertionError: expected undefined to be 'Bu masa şu anda taşınamaz.' // Object.is equality
+
+- Expected:
+"Bu masa şu anda taşınamaz."
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:410:80
+    408|   it("says why Masa taşı is closed when the table cannot be moved, and…
+    409|     render({ onTransfer: undefined });
+    410|     expect(document.querySelector(".table-order-bridge__reason")?.text…
+       |                                                                                ^
+    411|
+    412|     render();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > draws İptal / iade alone in its own destructive row, apart from Böl and Masa taşı
+AssertionError: expected <div …(1)>…(3)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="table-order-bridge__mini"
+>
+  <button
+    class="secondary"
+    data-telemetry-id="b.routes.tableorderbridge.split"
+    type="button"
+  >
+    Böl
+  </button>
+  <button
+    class="secondary"
+    data-telemetry-id="b.routes.tableorderbridge.transfer"
+    type="button"
+  >
+    Masa taşı
+  </button>
+  <button
+    class="secondary"
+    data-telemetry-id="b.routes.tableorderbridge.cancel"
+    type="button"
+  >
+    İptal / iade
+  </button>
+</div>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:424:57
+    422|
+    423|     const cancel = button("İptal / iade")!;
+    424|     expect(cancel.closest(".table-order-bridge__mini")).toBeNull();
+       |                                                         ^
+    425|     expect(cancel.parentElement?.className).toBe("table-order-bridge__…
+    426|     expect(cancel.className).toBe("table-order-bridge__cancel");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > panel style rules from docs/CASHIER_UI_RULES.md > keeps at least 16px between the buttons of .table-order-bridge__actions
+AssertionError: expected 9.6 to be greater than or equal to 16
+ ❯ src/routes/TableOrderBridge.test.tsx:523:37
+    521|     it.each([".table-order-bridge__actions", ".table-order-bridge__min…
+    522|       const gap = /(?:^|[;\s])gap:\s*([\d.]+)rem/.exec(body(selector));
+    523|       expect(Number(gap?.[1]) * 16).toBeGreaterThanOrEqual(16);
+       |                                     ^
+    524|     });
+    525|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > panel style rules from docs/CASHIER_UI_RULES.md > keeps at least 16px between the buttons of .table-order-bridge__mini
+AssertionError: expected 8 to be greater than or equal to 16
+ ❯ src/routes/TableOrderBridge.test.tsx:523:37
+    521|     it.each([".table-order-bridge__actions", ".table-order-bridge__min…
+    522|       const gap = /(?:^|[;\s])gap:\s*([\d.]+)rem/.exec(body(selector));
+    523|       expect(Number(gap?.[1]) * 16).toBeGreaterThanOrEqual(16);
+       |                                     ^
+    524|     });
+    525|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > panel style rules from docs/CASHIER_UI_RULES.md > sets every panel text at 14px or larger
+AssertionError: expected [ 13.44, 13.6 ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   13.44,
++   13.6,
++ ]
+
+ ❯ src/routes/TableOrderBridge.test.tsx:529:49
+    527|       const sizes = bridgeRules.flatMap((rule) => [...rule.body.matchA…
+    528|       expect(sizes.length).toBeGreaterThan(5);
+    529|       expect(sizes.filter((size) => size < 14)).toEqual([]);
+       |                                                 ^
+    530|     });
+    531|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > panel style rules from docs/CASHIER_UI_RULES.md > draws İptal / iade with the danger tokens and the panel with design tokens only
+AssertionError: expected '' to match /color:\s*var\(--ds-color-danger\)/
+
+- Expected:
+/color:\s*var\(--ds-color-danger\)/
+
++ Received:
+""
+
+ ❯ src/routes/TableOrderBridge.test.tsx:533:51
+    531|
+    532|     it("draws İptal / iade with the danger tokens and the panel with d…
+    533|       expect(body(".table-order-bridge__cancel")).toMatch(/color:\s*va…
+       |                                                   ^
+    534|       expect(body(".table-order-bridge__cancel")).toMatch(/border:\s*1…
+    535|       expect(bridgeRules.map((rule) => rule.body).join(";")).not.toMat…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 38 passed (45)
+   Start at  03:03:07
+   Duration  2.14s (transform 256ms, setup 0ms, import 371ms, tests 335ms, environment 1.15s)
+
+exit=1

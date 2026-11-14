@@ -1,7 +1,7 @@
 # V1-RMD-1058 - Masa panelinde İptal / iade ayrı satırda yıkıcı stille durur, düğmeler arası boşluk 16 pikseldir ve pasif düğmenin nedeni yazılır
 
 - Task ID: V1-RMD-1058
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

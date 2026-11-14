@@ -1,0 +1,15 @@
+killed M1 cancel drawn as a plain secondary button
+killed M2 actions gap back to 9.6px
+killed M3 mini row gap back to 8px
+killed M4 note text 13.4px again
+killed M5 cancel text not danger
+killed M6 no reason for a table that cannot move
+killed M7 reason also under another till bill
+killed M8 peach panel background back
+killed M9 cancel border not danger
+killed M10 danger row wrapper renamed
+killed M11 reason font 13px again
+killed M12 no hover answer on the cancel button
+killed M13 closed cancel button faded again
+killed M14 reason font size declaration deleted
+killed M15 vertical gap of the actions grid 3px
