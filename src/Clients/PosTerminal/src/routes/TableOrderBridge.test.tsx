@@ -153,6 +153,43 @@ describe("TableOrderBridge", () => {
     expect(button("Sipariş al")).toBeDefined();
   });
 
+  it("gives a table that asked for its check a Öde button for the sent check and no wrong promise", async () => {
+    const fetchMock = stubFetch(() => reply(200, { billId: "b-ask" }));
+    const { navigateTo } = render({
+      orderAllowed: false,
+      table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 1 },
+      awaitingCheck: { orderId: "o-sent", itemCount: 3, total: 150 },
+    });
+    const text = document.querySelector(".table-order-bridge")!.textContent;
+
+    expect(text).toContain("Garson hesabı kasaya gönderdi");
+    expect(text).not.toContain("Sipariş al deyince");
+    expect(text).not.toContain("uygun değil");
+    expect(text).not.toContain("Bu masada açık hesap yok");
+    await click("Öde");
+
+    expect(String(otherCalls(fetchMock)[0][0])).toContain("/from-order/o-sent");
+    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-ask");
+  });
+
+  it("makes Öde the only filled button on a table with a sent check, and says nothing about it without the bill permission", () => {
+    const empty = { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: null, rowVersion: 1 };
+    render({ table: empty, awaitingCheck: { orderId: "o-sent", itemCount: 3, total: 150 } });
+    expect([...document.querySelectorAll(".table-order-bridge button.primary")].map((b) => b.textContent)).toEqual(["Öde"]);
+
+    act(() => root!.unmount());
+    render({ table: empty, canCollect: false, awaitingCheck: { orderId: "o-sent", itemCount: 3, total: 150 } });
+    expect(button("Öde")).toBeUndefined();
+    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("Garson hesabı kasaya gönderdi");
+    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("3 kalem");
+  });
+
+  it("keeps the order's own check over the sent check when the table still holds an order", () => {
+    render({ awaitingCheck: { orderId: "o-sent", itemCount: 3, total: 150 } });
+
+    expect(document.querySelector(".table-order-bridge")?.textContent).not.toContain("Garson hesabı kasaya gönderdi");
+  });
+
   it("offers no collection without the permission to open a bill", () => {
     render({ canCollect: false });
 

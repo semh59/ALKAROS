@@ -17,6 +17,13 @@ interface BridgeTable {
   billOnOtherTerminal?: boolean;
 }
 
+/** A check the waiter sent to the till: it has left the table row but is waiting in the till's own list. */
+export interface AwaitingCheck {
+  orderId: string;
+  itemCount: number;
+  total: number;
+}
+
 interface TableOrderBridgeProps {
   terminalId: string;
   table: BridgeTable;
@@ -24,6 +31,8 @@ interface TableOrderBridgeProps {
   orderAllowed: boolean;
   canManage: boolean;
   canCollect: boolean;
+  /** The check this table sent to the till and nobody opened yet; absent when there is none. */
+  awaitingCheck?: AwaitingCheck;
   /** Reading the bill lines needs the order permission, which the bill permission does not imply. */
   canReadLines: boolean;
   /** Adding a line at the till without a kitchen ticket. */
@@ -48,7 +57,7 @@ function lineNote(line: TableOrder["items"][number]) {
 
 /** What the cashier can do with the selected table: take or continue its order, and collect its check. */
 export function TableOrderBridge({
-  terminalId, table, orderAllowed, canManage, canCollect, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
+  terminalId, table, orderAllowed, canManage, canCollect, awaitingCheck, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
   navigateTo = (href: string) => window.location.assign(href),
 }: TableOrderBridgeProps) {
   const [collecting, setCollecting] = useState(false);
@@ -59,6 +68,7 @@ export function TableOrderBridge({
   const [sentCount, setSentCount] = useState(0);
   const [bill, setBill] = useState<TableOrder | "failed" | null>(null);
   const hasCheck = table.currentOrderId !== null || table.currentBillId !== null;
+  const sentCheck = hasCheck || !canCollect ? undefined : awaitingCheck;
   const billed = table.currentBillId !== null;
   const otherTill = table.billOnOtherTerminal === true;
   const { tableId, currentOrderId } = table;
@@ -95,11 +105,12 @@ export function TableOrderBridge({
     }
   };
   const collect = async () => {
-    if (!table.currentOrderId && !table.currentBillId) return;
+    const orderId = table.currentOrderId ?? sentCheck?.orderId;
+    if (!orderId && !table.currentBillId) return;
     setCollecting(true);
     setCollectError(undefined);
     try {
-      navigateTo(await collectionHrefForOrder(terminalId, table.currentOrderId ?? "", table.currentBillId));
+      navigateTo(await collectionHrefForOrder(terminalId, orderId ?? "", table.currentBillId));
     } catch (reason) {
       if (reason instanceof BillingSplitApiError && reason.status === 401) notifySessionExpired();
       setCollectError(reason instanceof BillingSplitApiError ? reason.message : "Hesap açılamadı. Tekrar deneyin.");
@@ -107,12 +118,12 @@ export function TableOrderBridge({
     }
   };
   return <section className="table-order-bridge" aria-label="Masa hesabı">
-    <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : !canManage
+    <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : sentCheck ? "Garson hesabı kasaya gönderdi; ödemeyi almak için Öde'ye basın." : !canManage
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
       : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
     <div className="table-order-bridge__actions">
-      {hasCheck && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
+      {(hasCheck || sentCheck) && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
         className="primary"
         type="button"
         disabled={busy || collecting || otherTill}
@@ -120,7 +131,7 @@ export function TableOrderBridge({
         onClick={() => void collect()}
       >{collecting ? "Hesap açılıyor…" : "Öde"}</button>}
       {canManage && <button data-telemetry-id="b.routes.tableorderbridge.1"
-        className={hasCheck ? "secondary" : "primary"}
+        className={hasCheck || sentCheck ? "secondary" : "primary"}
         type="button"
         disabled={!orderAllowed || busy || billed}
         aria-busy={busy}
@@ -136,7 +147,7 @@ export function TableOrderBridge({
     </div>}
     {hasCheck && canManage && !onTransfer && !otherTill && <small className="table-order-bridge__reason">Bu masa şu anda taşınamaz.</small>}
     {table.currentBillId && canCollect && <div className="table-order-bridge__danger"><button data-telemetry-id="b.routes.tableorderbridge.cancel" className="table-order-bridge__cancel" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button></div>}
-    {canManage && !orderAllowed && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
+    {canManage && !orderAllowed && !sentCheck && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
     {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
     {hasCheck ? !canReadLines ? null : read === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : read && <>
@@ -144,6 +155,7 @@ export function TableOrderBridge({
           {lines.map((line) => <li key={line.itemId}><span>{line.quantity} × {line.productName}{lineNote(line) && <small className="table-order-bridge__unsent"> · {lineNote(line)}</small>}</span><span>{formatMoney(line.totalPrice)}</span></li>)}
         </ul>
         <p className="table-order-bridge__total"><span>Toplam</span><strong>{formatMoney(read.totalAmount)}</strong></p>
-      </> : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
+      </> : sentCheck ? <p className="table-order-bridge__total"><span>{sentCheck.itemCount} kalem</span><strong>{formatMoney(sentCheck.total)}</strong></p>
+      : <p className="table-order-bridge__lines-note">Bu masada açık hesap yok.</p>}
   </section>;
 }

@@ -3,7 +3,7 @@ import { ApiError, api } from "../api";
 import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
 import { canStartTableOrder } from "./tableOrderAvailability";
-import { TableOrderBridge } from "./TableOrderBridge";
+import { TableOrderBridge, type AwaitingCheck } from "./TableOrderBridge";
 import { managementText, navLabels, roleLabels } from "../strings";
 import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
@@ -222,7 +222,8 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
   const [refreshError, setRefreshError] = useState<string>();
   const [selectedTableId, setSelectedTableId] = useState<string | null>(() => tryGetItem(selectedTableKey));
   // Absent when the till list could not be read: a table is then never shown as asking for the bill.
-  const [awaitingCheckTableIds, setAwaitingCheckTableIds] = useState<ReadonlySet<string> | undefined>();
+  const [awaitingChecks, setAwaitingChecks] = useState<ReadonlyMap<string, AwaitingCheck> | undefined>();
+  const awaitingCheckTableIds = useMemo(() => awaitingChecks && new Set(awaitingChecks.keys()), [awaitingChecks]);
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
@@ -255,9 +256,9 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
       const [nextZones, nextTables, awaiting] = await Promise.all([
         client.listZones(),
         client.listTables(),
-        !canSeeChecks ? Promise.resolve(undefined) : loadPendingChecks(terminalId).then((checks) => new Set(checks.flatMap((check) => check.tableId && !check.billId ? [check.tableId] : [])), () => undefined),
+        !canSeeChecks ? Promise.resolve(undefined) : loadPendingChecks(terminalId).then((checks) => new Map(checks.flatMap((check) => check.tableId && !check.billId ? [[check.tableId, { orderId: check.orderId, itemCount: check.itemCount, total: check.total }] as const] : [])), () => undefined),
       ]);
-      setAwaitingCheckTableIds(awaiting);
+      setAwaitingChecks(awaiting);
       setZones(nextZones);
       setTables(nextTables);
       setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
@@ -382,6 +383,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
         orderAllowed={canStartTableOrder(table)}
         canManage={canManage}
         canCollect={canCollect}
+        awaitingCheck={awaitingChecks?.get(table.tableId)}
         canReadLines={canSeeChecks}
         canAddWithoutKitchen={canAddWithoutKitchen}
         busy={orderBusy}

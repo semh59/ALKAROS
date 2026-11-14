@@ -1,0 +1,7 @@
+M1-sentcheck-ignored exit 1 restored cmp ok
+M2-wrong-reason-shown exit 1 restored cmp ok
+M3-order-id-dropped exit 1 restored cmp ok
+M4-sentcheck-over-own exit 1 restored cmp ok
+M5-note-not-changed exit 1 restored cmp ok
+M6-no-collect-permission-ignored exit 1 restored cmp ok
+M7-two-primary-buttons exit 1 restored cmp ok

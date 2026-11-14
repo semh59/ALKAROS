@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (49 tests | 1 failed) 586ms
+     × gives a table that asked for its check a Öde button for the sent check and no wrong promise 20ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > gives a table that asked for its check a Öde button for the sent check and no wrong promise
+AssertionError: expected 'Sipariş al deyince sipariş ve mutfak …' to contain 'Garson hesabı kasaya gönderdi'
+
+Expected: "Garson hesabı kasaya gönderdi"
+Received: "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır.Sipariş alMasa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.Bu masada açık hesap yok."
+
+ ❯ src/routes/TableOrderBridge.test.tsx:165:18
+    163|     const text = document.querySelector(".table-order-bridge")!.textCo…
+    164|
+    165|     expect(text).toContain("Garson hesabı kasaya gönderdi");
+       |                  ^
+    166|     expect(text).not.toContain("Sipariş al deyince");
+    167|     expect(text).not.toContain("uygun değil");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 48 passed (49)
+   Start at  22:24:03
+   Duration  4.01s (transform 419ms, setup 0ms, import 628ms, tests 586ms, environment 2.16s)
+
