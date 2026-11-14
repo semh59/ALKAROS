@@ -66,6 +66,11 @@ describe("Cashier tells the operator why they landed back on the login form", ()
 
     expect(document.querySelector("input[autocomplete='username']")).not.toBeNull();
     expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
+    const terminalId = localStorage.getItem("alkaros.terminal-id")!;
+    expect(terminalId).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(document.body.textContent!.toLowerCase()).not.toContain(terminalId.slice(0, 8).toLowerCase());
+    expect(document.body.textContent).not.toContain("Terminal ·");
+    expect(document.querySelector(".terminal-reference")).toBeNull();
     expect(localStorage.getItem("alkaros.selected-table")).toBe("table-kept");
     localStorage.removeItem("alkaros.selected-table");
   });

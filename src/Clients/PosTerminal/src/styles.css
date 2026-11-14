@@ -139,7 +139,6 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .login-card h2 { margin: 0; font-size: 2.2rem; letter-spacing: -.035em; }
 .login-card p { margin: 0; color: var(--muted); }
 .login-submit { margin-top: .25rem; min-height: 54px; }
-.terminal-reference { color: #9099a2; text-align: center; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
 .alert { border-radius: 11px; padding: .8rem 1rem; font-weight: 750; }
 .alert.error { color: #8d2731; border: 1px solid #efc2c6; background: #fff0f1; }
 .alert.unauthorized { color: #7d251f; border: 1px solid #edb8ae; background: #fff1ed; }

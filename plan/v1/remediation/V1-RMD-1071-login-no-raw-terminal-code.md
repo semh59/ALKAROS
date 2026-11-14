@@ -1,7 +1,7 @@
 # V1-RMD-1071 - Giriş ekranında ham terminal kodu gösterilmez
 
 - Task ID: V1-RMD-1071
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

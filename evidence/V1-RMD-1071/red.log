@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.session-ended-message.test.tsx (4 tests | 1 failed) 2843ms
+     × shows no ended-session message when the first session probe of a fresh page comes back 401 2446ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.session-ended-message.test.tsx > Cashier tells the operator why they landed back on the login form > shows no ended-session message when the first session probe of a fresh page comes back 401
+AssertionError: expected 'AALKAROS RESTAURANT OSServis hızınıka…' not to match /Terminal ·|[0-9A-F]{8}/
+
+- Expected:
+/Terminal ·|[0-9A-F]{8}/
+
++ Received:
+"AALKAROS RESTAURANT OSServis hızınıkasada koruyun.Sipariş, müşteri ekranı ve mutfak akışı aynı gerçek veriyi takip eder.Kasa sunucusu hazırPersonel girişiGiriş yapYetkili kullanıcı hesabınızla devam edin.Kasa sunucusu çevrimiçiKullanıcı adıParolaGiriş yapTerminal · 57AA0807"
+
+ ❯ src/routes/Cashier.session-ended-message.test.tsx:69:43
+     67|     expect(document.querySelector("input[autocomplete='username']")).n…
+     68|     expect(document.body.textContent).not.toContain("Oturumunuz sonlan…
+     69|     expect(document.body.textContent).not.toMatch(/Terminal ·|[0-9A-F]…
+       |                                           ^
+     70|     expect(document.querySelector(".terminal-reference")).toBeNull();
+     71|     expect(localStorage.getItem("alkaros.selected-table")).toBe("table…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  12:50:39
+   Duration  4.45s (transform 1.87s, setup 0ms, import 125ms, tests 2.84s, environment 1.11s)
+

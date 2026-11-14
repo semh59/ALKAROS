@@ -623,7 +623,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           <button data-telemetry-id="b.routes.cashier.1" className="primary login-submit" disabled={busy || session === "checking" || backendStatus === "offline"}>
             {session === "checking" ? "Oturum kontrol ediliyor…" : busy ? "Giriş yapılıyor…" : "Giriş yap"}
           </button>
-          <small className="terminal-reference">Terminal · {terminalId.slice(0, 8).toUpperCase()}</small>
         </form>
       </main>
     );

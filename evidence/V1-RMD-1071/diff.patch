@@ -1,0 +1,40 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.session-ended-message.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.session-ended-message.test.tsx
+index 6a8e36481..7c950ebe4 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.session-ended-message.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.session-ended-message.test.tsx
+@@ -66,6 +66,11 @@ describe("Cashier tells the operator why they landed back on the login form", ()
+ 
+     expect(document.querySelector("input[autocomplete='username']")).not.toBeNull();
+     expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
++    const terminalId = localStorage.getItem("alkaros.terminal-id")!;
++    expect(terminalId).toMatch(/^[0-9a-f-]{36}$/i);
++    expect(document.body.textContent!.toLowerCase()).not.toContain(terminalId.slice(0, 8).toLowerCase());
++    expect(document.body.textContent).not.toContain("Terminal ·");
++    expect(document.querySelector(".terminal-reference")).toBeNull();
+     expect(localStorage.getItem("alkaros.selected-table")).toBe("table-kept");
+     localStorage.removeItem("alkaros.selected-table");
+   });
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 5fb41e511..11fec2e1c 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -623,7 +623,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+           <button data-telemetry-id="b.routes.cashier.1" className="primary login-submit" disabled={busy || session === "checking" || backendStatus === "offline"}>
+             {session === "checking" ? "Oturum kontrol ediliyor…" : busy ? "Giriş yapılıyor…" : "Giriş yap"}
+           </button>
+-          <small className="terminal-reference">Terminal · {terminalId.slice(0, 8).toUpperCase()}</small>
+         </form>
+       </main>
+     );
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index 70a93ad40..090d106c8 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -139,7 +139,6 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
+ .login-card h2 { margin: 0; font-size: 2.2rem; letter-spacing: -.035em; }
+ .login-card p { margin: 0; color: var(--muted); }
+ .login-submit { margin-top: .25rem; min-height: 54px; }
+-.terminal-reference { color: #9099a2; text-align: center; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+ .alert { border-radius: 11px; padding: .8rem 1rem; font-weight: 750; }
+ .alert.error { color: #8d2731; border: 1px solid #efc2c6; background: #fff0f1; }
+ .alert.unauthorized { color: #7d251f; border: 1px solid #edb8ae; background: #fff1ed; }
