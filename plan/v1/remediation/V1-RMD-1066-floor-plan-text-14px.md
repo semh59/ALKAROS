@@ -1,7 +1,7 @@
 # V1-RMD-1066 - Salon planı arayüzünde masa düğümü dışındaki yazılar 14 piksele çıkarılır, düğüm içi satırların gerekçesi yazılır
 
 - Task ID: V1-RMD-1066
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
