@@ -1,0 +1,3 @@
+# Reviews
+- qa-frontend: KABUL. Yetki adi sunucu kuraliyla ayni; ReservationStation etkilenmez (varsayilan false); okuma basarisizsa eski not (guvenli yon); Geri al iddiasi dogru. Not: strings.ts yorum yeri (duzeltildi); workspace baglanti testi eksik (RESULT'ta acik risk).
+- qa-bulgu-dogrulayici: KABUL. Geri al ve baska iptal yollari dogrulandi. Yeni bulgu (Orta, kapsam disi): "Masaya geri gonder" (CashierHandoffStore) servis kontrolu yapmadan hesabi iptal eder; orders.create yeter. Dusuk: birlestirilmis hesapta baska siparisteki servis edilmis kalem panelde gorunmeyebilir (sunucu 409 yonlendirir).

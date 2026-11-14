@@ -1,0 +1,5 @@
+M1-ignores-cancel-permission exit 1 restored cmp ok
+M2-served-never-detected exit 1 restored cmp ok
+M3 equivalent: Active status check removed from code (lines already excludes Cancelled and Waste), no mutant
+M4-note-without-referral exit 1 restored cmp ok
+M5-always-referral exit 1 restored cmp ok

@@ -184,7 +184,7 @@ export function ExperiencePage({
     </>}
   >
     {cashSession && <CashSessionBand status={cashSession} />}
-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} />}
+    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
     {onlineTab !== null && (
@@ -207,7 +207,7 @@ export function ExperiencePage({
 // Exported for the standalone Reservation Station screen (V1-CUI-006),
 // which reuses this exact table-fetching + floor-plan wiring rather than
 // duplicating it.
-export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, canAddWithoutKitchen = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; canAddWithoutKitchen?: boolean; reservationOnly?: boolean }) {
+export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, canAddWithoutKitchen = false, canCancelServed = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; canAddWithoutKitchen?: boolean; canCancelServed?: boolean; reservationOnly?: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
@@ -385,6 +385,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
         canCollect={canCollect}
         awaitingCheck={awaitingChecks?.get(table.tableId)}
         canReadLines={canSeeChecks}
+        canCancelServed={canCancelServed}
         canAddWithoutKitchen={canAddWithoutKitchen}
         busy={orderBusy}
         error={orderError}

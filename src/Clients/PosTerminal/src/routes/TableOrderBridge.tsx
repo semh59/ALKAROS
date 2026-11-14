@@ -5,7 +5,7 @@ import { formatMoney } from "../format";
 import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
 import { collectionHref } from "../features/pending-checks/pendingChecksApi";
-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText } from "../strings";
+import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, servedBillNote } from "../strings";
 
 interface BridgeTable {
   tableId: string;
@@ -35,6 +35,8 @@ interface TableOrderBridgeProps {
   awaitingCheck?: AwaitingCheck;
   /** Reading the bill lines needs the order permission, which the bill permission does not imply. */
   canReadLines: boolean;
+  /** Whether this user may cancel a bill that holds a served line (the refund approver). */
+  canCancelServed?: boolean;
   /** Adding a line at the till without a kitchen ticket. */
   canAddWithoutKitchen: boolean;
   busy: boolean;
@@ -57,7 +59,7 @@ function lineNote(line: TableOrder["items"][number]) {
 
 /** What the cashier can do with the selected table: take or continue its order, and collect its check. */
 export function TableOrderBridge({
-  terminalId, table, orderAllowed, canManage, canCollect, awaitingCheck, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
+  terminalId, table, orderAllowed, canManage, canCollect, awaitingCheck, canReadLines, canCancelServed = false, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
   navigateTo = (href: string) => window.location.assign(href),
 }: TableOrderBridgeProps) {
   const [collecting, setCollecting] = useState(false);
@@ -89,6 +91,7 @@ export function TableOrderBridge({
   const read = !canReadLines || (bill !== "failed" && bill?.orderId !== currentOrderId) ? null : bill;
   const lines = read && read !== "failed" ? read.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
   const unsent = read && read !== "failed" ? read.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
+  const servedLine = lines.some((line) => line.kitchenState === "Served");
   const sentOrder = read !== null && read !== "failed" && read.status !== "Draft";
   const send = async () => {
     setSending(true);
@@ -120,7 +123,7 @@ export function TableOrderBridge({
   return <section className="table-order-bridge" aria-label="Masa hesabı">
     <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : sentCheck ? "Garson hesabı kasaya gönderdi; ödemeyi almak için Öde'ye basın." : !canManage
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
-      : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
+      : billed ? canCollect ? servedLine && !canCancelServed ? `Hesap açıldığı için ürün eklenemez. ${servedBillNote}` : "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
     <div className="table-order-bridge__actions">
       {(hasCheck || sentCheck) && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"

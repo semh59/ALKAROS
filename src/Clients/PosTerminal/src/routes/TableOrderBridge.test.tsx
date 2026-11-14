@@ -133,6 +133,33 @@ describe("TableOrderBridge", () => {
     expect(onStartOrder).not.toHaveBeenCalled();
   });
 
+  it("tells a cashier to contact an authorised manager when a billed table has a served line, instead of pointing at a cancel that would be refused", async () => {
+    stubFetch(undefined, { ...tableOrder, items: [{ itemId: "k2", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" }] });
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+
+    const note = document.querySelector("#table-order-bridge-note")?.textContent;
+    expect(note).toContain("servis edilmiş ürün var");
+    expect(note).toContain("Yetkili yöneticiye başvurun");
+    expect(note).not.toContain("hesabı iptal edin");
+  });
+
+  it("keeps the cancel hint for a manager who may cancel a bill with served lines", async () => {
+    stubFetch(undefined, { ...tableOrder, items: [{ itemId: "k2", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" }] });
+    render({ canCancelServed: true, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+
+    expect(document.querySelector("#table-order-bridge-note")?.textContent).toContain("hesabı iptal edin");
+  });
+
+  it("keeps the cancel hint for a cashier when no line of the billed table is served", async () => {
+    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+    await flush();
+
+    expect(document.querySelector("#table-order-bridge-note")?.textContent).toContain("hesabı iptal edin");
+    expect(document.querySelector("#table-order-bridge-note")?.textContent).not.toContain("Yetkili yöneticiye");
+  });
+
   it("does not point to a button the cashier does not have", () => {
     render({ canCollect: false, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
 

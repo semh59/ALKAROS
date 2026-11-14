@@ -1,0 +1,130 @@
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+index 0db66acff..c16428f7f 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.test.tsx
+@@ -133,6 +133,33 @@ describe("TableOrderBridge", () => {
+     expect(onStartOrder).not.toHaveBeenCalled();
+   });
+ 
++  it("tells a cashier to contact an authorised manager when a billed table has a served line, instead of pointing at a cancel that would be refused", async () => {
++    stubFetch(undefined, { ...tableOrder, items: [{ itemId: "k2", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" }] });
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++
++    const note = document.querySelector("#table-order-bridge-note")?.textContent;
++    expect(note).toContain("servis edilmiş ürün var");
++    expect(note).toContain("Yetkili yöneticiye başvurun");
++    expect(note).not.toContain("hesabı iptal edin");
++  });
++
++  it("keeps the cancel hint for a manager who may cancel a bill with served lines", async () => {
++    stubFetch(undefined, { ...tableOrder, items: [{ itemId: "k2", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" }] });
++    render({ canCancelServed: true, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++
++    expect(document.querySelector("#table-order-bridge-note")?.textContent).toContain("hesabı iptal edin");
++  });
++
++  it("keeps the cancel hint for a cashier when no line of the billed table is served", async () => {
++    render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
++    await flush();
++
++    expect(document.querySelector("#table-order-bridge-note")?.textContent).toContain("hesabı iptal edin");
++    expect(document.querySelector("#table-order-bridge-note")?.textContent).not.toContain("Yetkili yöneticiye");
++  });
++
+   it("does not point to a button the cashier does not have", () => {
+     render({ canCollect: false, table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: "o-1", currentBillId: "b-1", rowVersion: 1 } });
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+index ef1582314..527a4bf1e 100644
+--- a/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
++++ b/src/Clients/PosTerminal/src/routes/TableOrderBridge.tsx
+@@ -5,7 +5,7 @@ import { formatMoney } from "../format";
+ import { BillingSplitApiError } from "../features/billing";
+ import { collectionHrefForOrder } from "../collectOrder";
+ import { collectionHref } from "../features/pending-checks/pendingChecksApi";
+-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText } from "../strings";
++import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, servedBillNote } from "../strings";
+ 
+ interface BridgeTable {
+   tableId: string;
+@@ -35,6 +35,8 @@ interface TableOrderBridgeProps {
+   awaitingCheck?: AwaitingCheck;
+   /** Reading the bill lines needs the order permission, which the bill permission does not imply. */
+   canReadLines: boolean;
++  /** Whether this user may cancel a bill that holds a served line (the refund approver). */
++  canCancelServed?: boolean;
+   /** Adding a line at the till without a kitchen ticket. */
+   canAddWithoutKitchen: boolean;
+   busy: boolean;
+@@ -57,7 +59,7 @@ function lineNote(line: TableOrder["items"][number]) {
+ 
+ /** What the cashier can do with the selected table: take or continue its order, and collect its check. */
+ export function TableOrderBridge({
+-  terminalId, table, orderAllowed, canManage, canCollect, awaitingCheck, canReadLines, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
++  terminalId, table, orderAllowed, canManage, canCollect, awaitingCheck, canReadLines, canCancelServed = false, canAddWithoutKitchen, busy, error, onStartOrder, onAddWithoutKitchen, onSent, onTransfer,
+   navigateTo = (href: string) => window.location.assign(href),
+ }: TableOrderBridgeProps) {
+   const [collecting, setCollecting] = useState(false);
+@@ -89,6 +91,7 @@ export function TableOrderBridge({
+   const read = !canReadLines || (bill !== "failed" && bill?.orderId !== currentOrderId) ? null : bill;
+   const lines = read && read !== "failed" ? read.items.filter((item) => item.status !== "Cancelled" && item.status !== "Waste") : [];
+   const unsent = read && read !== "failed" ? read.items.reduce((sum, item) => sum + (item.status === "Draft" ? item.quantity : 0), 0) : 0;
++  const servedLine = lines.some((line) => line.kitchenState === "Served");
+   const sentOrder = read !== null && read !== "failed" && read.status !== "Draft";
+   const send = async () => {
+     setSending(true);
+@@ -120,7 +123,7 @@ export function TableOrderBridge({
+   return <section className="table-order-bridge" aria-label="Masa hesabı">
+     <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : sentCheck ? "Garson hesabı kasaya gönderdi; ödemeyi almak için Öde'ye basın." : !canManage
+       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
+-      : billed ? canCollect ? "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
++      : billed ? canCollect ? servedLine && !canCancelServed ? `Hesap açıldığı için ürün eklenemez. ${servedBillNote}` : "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir." : "Hesap açıldığı için ürün eklenemez."
+         : table.currentOrderId ? unsent > 0 ? kitchenlessText.sendFirst : "Siparişe ürün ekleyin ya da hesabı ödeyin." : "Sipariş al deyince sipariş ve mutfak kaydı birlikte açılır."}</p>
+     <div className="table-order-bridge__actions">
+       {(hasCheck || sentCheck) && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.2"
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index 9d89760b7..85473cae9 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -184,7 +184,7 @@ export function ExperiencePage({
+     </>}
+   >
+     {cashSession && <CashSessionBand status={cashSession} />}
+-    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} />}
++    {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} />}
+     {onlineTab !== null && (
+@@ -207,7 +207,7 @@ export function ExperiencePage({
+ // Exported for the standalone Reservation Station screen (V1-CUI-006),
+ // which reuses this exact table-fetching + floor-plan wiring rather than
+ // duplicating it.
+-export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, canAddWithoutKitchen = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; canAddWithoutKitchen?: boolean; reservationOnly?: boolean }) {
++export function TableRoute({ terminalId, canManage, canConfigure = false, canCollect = false, canSeeChecks = false, canAddWithoutKitchen = false, canCancelServed = false, reservationOnly = false }: { terminalId: string; canManage: boolean; canConfigure?: boolean; canCollect?: boolean; canSeeChecks?: boolean; canAddWithoutKitchen?: boolean; canCancelServed?: boolean; reservationOnly?: boolean }) {
+   const { navigate } = useRouter();
+   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
+   const [state, setState] = useState<TableWorkspaceState>("loading");
+@@ -385,6 +385,7 @@ export function TableRoute({ terminalId, canManage, canConfigure = false, canCol
+         canCollect={canCollect}
+         awaitingCheck={awaitingChecks?.get(table.tableId)}
+         canReadLines={canSeeChecks}
++        canCancelServed={canCancelServed}
+         canAddWithoutKitchen={canAddWithoutKitchen}
+         busy={orderBusy}
+         error={orderError}
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 571a876b2..920e14bfe 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1433,6 +1433,9 @@ export const kitchenlessReasons = [
+ 
+ export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
+ 
++/** A billed table whose bill holds a served line: the server lets only a refund approver cancel it. */
++export const servedBillNote = "Hesapta servis edilmiş ürün var; hesabı yalnız yetkili yönetici iptal edebilir. Yetkili yöneticiye başvurun.";
++
+ /** What the kitchen has done with a sent line, shown only once it matters to the cashier (cancelling a served line is refused). */
+ export const kitchenStateNotes: Readonly<Record<string, string>> = { Ready: itemStatusLabels.Ready, Served: itemStatusLabels.Served };
+ 

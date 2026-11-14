@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (53 tests | 1 failed) 447ms
+     × tells a cashier to contact an authorised manager when a billed table has a served line, instead of pointing at a cancel that would be refused 33ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > tells a cashier to contact an authorised manager when a billed table has a served line, instead of pointing at a cancel that would be refused
+AssertionError: expected 'Hesap açıldığı için ürün eklenemez. E…' to contain 'servis edilmiş ürün var'
+
+Expected: "servis edilmiş ürün var"
+Received: "Hesap açıldığı için ürün eklenemez. Eklemek için aşağıdaki 'İptal / iade' düğmesiyle hesabı iptal edin; ödeme alındıysa önce iade gerekir."
+
+ ❯ src/routes/TableOrderBridge.test.tsx:142:18
+    140|
+    141|     const note = document.querySelector("#table-order-bridge-note")?.t…
+    142|     expect(note).toContain("servis edilmiş ürün var");
+       |                  ^
+    143|     expect(note).toContain("Yetkili yöneticiye başvurun");
+    144|     expect(note).not.toContain("hesabı iptal edin");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 52 passed (53)
+   Start at  00:16:32
+   Duration  2.39s (transform 314ms, setup 0ms, import 558ms, tests 447ms, environment 1.07s)
+
+exit 1
