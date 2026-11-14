@@ -1,0 +1,132 @@
+diff --git a/tests/Clients/StaticApps/split-payment-discount-pending.test.js b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+index ce05d6790..654e92dcc 100644
+--- a/tests/Clients/StaticApps/split-payment-discount-pending.test.js
++++ b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+@@ -17,7 +17,7 @@ const applied = { status: "Applied", billId: BILL_ID, adjustmentId: "a1", summar
+ const pending = { status: "Pending", billId: BILL_ID, adjustmentId: null, summary: null, grantId: "g1" };
+ 
+ // Each element answers one POST .../discount in order.
+-async function open(discountAnswers, delayMs = 0) {
++async function open(discountAnswers) {
+   const answers = [...discountAnswers];
+   const routeSet = [
+     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+@@ -27,7 +27,6 @@ async function open(discountAnswers, delayMs = 0) {
+     { test: (url) => url.endsWith("/refund-requests"), body: [] },
+     {
+       test: (url, init) => url.endsWith("/discount") && init?.method === "POST",
+-      delayMs,
+       get status() { return answers[0].status; },
+       get body() { return answers.shift().body; },
+     },
+@@ -49,7 +48,21 @@ const type = (id, value) => {
+ };
+ const submit = () => document.getElementById("submit-discount");
+ const text = () => document.getElementById("app").textContent;
+-const settle = () => new Promise((done) => setTimeout(done, 20));
++// The submit button is disabled from the click until the answer is handled, so this waits for the answer without a sleep.
++const answered = () => vi.waitFor(() => expect(submit().disabled).toBe(false));
++// Lets the first `free` discount requests through at once and holds the rest until the returned release() is called,
++// so a test decides when the server answers instead of racing a timer.
++function holdDiscountAnswers(fetchMock, free) {
++  const inner = fetchMock.getMockImplementation();
++  let release;
++  const gate = new Promise((resolve) => { release = resolve; });
++  let seen = 0;
++  fetchMock.mockImplementation(async (url, init) => {
++    if (String(url).endsWith("/discount") && init?.method === "POST" && ++seen > free) await gate;
++    return inner(url, init);
++  });
++  return release;
++}
+ 
+ describe("split-payment.js discount waiting for a manager", () => {
+   beforeEach(() => vi.resetModules());
+@@ -69,7 +82,7 @@ describe("split-payment.js discount waiting for a manager", () => {
+ 
+     submit().click();
+     await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLength(2));
+-    await settle();
++    await answered();
+     submit().click();
+     await vi.waitFor(() => expect(text()).toContain("İndirim uygulandı ve kaydedildi."));
+ 
+@@ -105,16 +118,18 @@ describe("split-payment.js discount waiting for a manager", () => {
+   it("sends no second check while the previous one is still unanswered", async () => {
+     vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+     try {
+-      const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }, { status: 202, body: pending }], 100);
++      const fetchMock = await open([{ status: 202, body: pending }, { status: 202, body: pending }]);
++      const release = holdDiscountAnswers(fetchMock, 1);
+       type("discount-value", "20");
+       submit().click();
+       await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+ 
+       await vi.advanceTimersByTimeAsync(5000);
+-      await vi.advanceTimersByTimeAsync(5000);
+-      await vi.advanceTimersByTimeAsync(5000);
++      await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLength(2));
++      await vi.advanceTimersByTimeAsync(10000);
+ 
+-      expect(discountCalls(fetchMock).length).toBeLessThanOrEqual(2);
++      expect(discountCalls(fetchMock)).toHaveLength(2);
++      release();
+     } finally {
+       vi.useRealTimers();
+     }
+@@ -226,12 +241,14 @@ describe("split-payment.js discount waiting for a manager", () => {
+   });
+ 
+   it("ignores a waiting answer for a form that was edited while the request was in flight", async () => {
+-    const fetchMock = await open([{ status: 202, body: pending }], 80);
++    const fetchMock = await open([{ status: 202, body: pending }]);
++    const release = holdDiscountAnswers(fetchMock, 0);
+ 
+     type("discount-value", "20");
+     submit().click();
+     type("discount-value", "100");
+-    await new Promise((done) => setTimeout(done, 150));
++    release();
++    await answered();
+ 
+     expect(text()).not.toContain("yönetici onayına gönderildi");
+     expect(text()).not.toContain("İndirim uygulandı");
+@@ -242,11 +259,12 @@ describe("split-payment.js discount waiting for a manager", () => {
+   });
+ 
+   it("keeps what was typed while the request was in flight when the discount is applied", async () => {
+-    await open([{ status: 200, body: applied }], 80);
++    const release = holdDiscountAnswers(await open([{ status: 200, body: applied }]), 0);
+ 
+     type("discount-value", "20");
+     submit().click();
+     type("discount-value", "7");
++    release();
+     await vi.waitFor(() => expect(text()).toContain("İndirim uygulandı ve kaydedildi."));
+ 
+     expect(document.getElementById("discount-value").value).toBe("7");
+@@ -281,7 +299,7 @@ describe("split-payment.js discount waiting for a manager", () => {
+     await vi.waitFor(() => expect(text()).toContain("yönetici onayına gönderildi"));
+     submit().click();
+     await vi.waitFor(() => expect(discountCalls(fetchMock)).toHaveLength(2));
+-    await settle();
++    await answered();
+ 
+     expect(submit().textContent).toBe("Onay durumunu kontrol et");
+     const [first, second] = discountCalls(fetchMock);
+@@ -289,12 +307,13 @@ describe("split-payment.js discount waiting for a manager", () => {
+   });
+ 
+   it("shows no error for a refusal that belongs to a form edited in the meantime", async () => {
+-    await open([{ status: 403, body: { error: { code: "GRANT_DENIED", message: "x" } } }], 80);
++    const release = holdDiscountAnswers(await open([{ status: 403, body: { error: { code: "GRANT_DENIED", message: "x" } } }]), 0);
+ 
+     type("discount-value", "20");
+     submit().click();
+     type("discount-value", "7");
+-    await new Promise((done) => setTimeout(done, 150));
++    release();
++    await answered();
+ 
+     expect(text()).not.toContain("reddedildi");
+   });

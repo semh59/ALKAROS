@@ -1,0 +1,3 @@
+# V1-RMD-1073 sonuc
+Zamanlamaya bagli uc yer belirleyici yapildi: sabit 20 ms ve 150 ms beklemeler, yanit tamamlaninca devreye giren dugme durumuna (answered) baglandi; 80/100 ms gecikmeli yanitlar elle acilan bir kapiyla (holdDiscountAnswers) degistirildi. "Yanitsizken ikinci kontrol gonderilmez" testi artik tam 2 istek bekler (eskiden <=2). Test silinmedi, gevsetilmedi; uretim kodu degismedi.
+Kanit: bu bir kirilganlik duzeltmesi oldugundan taban kodda belirleyici kirmizi uretilemez; bunun yerine mutations.txt (uretim koduna uc mutant, hepsi oldu), tam StaticApps koşusu iki kez 595/595 (green-all-1/2.log) ve split-payment-discount-pending 3 ardisik koşu 19/19.
