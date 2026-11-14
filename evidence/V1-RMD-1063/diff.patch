@@ -1,0 +1,368 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 1929ee871..8bc4a7c2b 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -14,6 +14,8 @@
+     terminalId: null,
+     displayName: null,
+     session: null,
++    // The name of the cashier who opened a session that is not the signed-in user's; null until read.
++    ownerName: null,
+     suggestedOpeningBalance: null,
+     lastCountedAmount: null,
+     expectedCash: null,
+@@ -119,6 +121,7 @@
+     CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED: 'İşletmede ödenmemiş hesap veya sonucu belirsiz ödeme var; bunları bilerek kapatmak için onay kutusunu işaretleyin.',
+     CASH_RECONCILE_SELF_NOT_ALLOWED: 'Oturumu açan veya kapatan kişi kendi oturumunu mutabık edemez; başka bir yönetici onaylamalı.',
+     INVALID_CREDENTIALS: 'Kullanıcı adı veya şifre hatalı.',
++    TERMINAL_KEY_MISMATCH: 'Bu terminal başka bir tarayıcıya bağlı. Kasa terminalinin kendi tarayıcısından giriş yapın ya da bir yönetici Güvenlik ekranından terminali sıfırlasın.',
+     FORBIDDEN: 'Bu işlem için yetkiniz yok.',
+     VALIDATION_FAILED: 'Girilen bilgiler geçersiz. Alanları kontrol edin.',
+   };
+@@ -253,8 +256,10 @@
+       }
+       state.session = result.body;
+       state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
+-      if (state.phase === 'open') return loadMovements();
+-      render();
++      return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
++        if (state.phase === 'open') return loadMovements();
++        render();
++      });
+     }).catch(function () {
+       failActiveSessionRead('Kasa durumu okunamadı. Sunucuya ulaşılamadı; bağlantınızı kontrol edip yeniden deneyin.');
+     });
+@@ -306,6 +311,42 @@
+     return state.capabilities.indexOf('cash.session.override') >= 0;
+   }
+ 
++  function ownsSession() {
++    var s = state.session;
++    return !(s && s.cashierUserId && s.cashierUserId !== state.userId);
++  }
++
++  // The owner or a manager counts and closes the drawer; anyone else is told whose it is and who may.
++  function mayActForOwner() {
++    return ownsSession() || canApprove();
++  }
++
++  function sessionOwnerName() {
++    return ownsSession() ? state.displayName : (state.ownerName || 'Başka bir kullanıcı');
++  }
++
++  function loadOwnerName() {
++    return api(cashSessionsBase() + '/active/owner').then(function (result) {
++      state.ownerName = result.ok ? result.body.displayName : null;
++    }).catch(function () {
++      state.ownerName = null;
++    });
++  }
++
++  function ownerNotice() {
++    if (ownsSession()) return '';
++    var rule = canApprove()
++      ? 'Yönetici olarak sizin de sayıp kapatma yetkiniz var.'
++      : 'Sayma ve kapatma için oturumu açan kasiyer ya da bir yönetici gerekir; kendi oturumunuzu o kapanınca açabilirsiniz.';
++    return '<div class="cs-alert cs-alert-warning" id="owner-notice"><span class="cs-alert-icon">!</span>' +
++      '<div class="cs-alert-body">Bu kasa oturumu ' + escapeHtml(sessionOwnerName()) + ' adına açık. ' + rule + '</div></div>';
++  }
++
++  // The reason sits next to the button it switches off (docs/CASHIER_UI_RULES.md 3).
++  function blockedCountHint() {
++    return '<p class="cs-field-hint" id="owner-hint">Bu düğme sizde pasif: sayımı ' + escapeHtml(sessionOwnerName()) + ' ya da bir yönetici yapabilir.</p>';
++  }
++
+   // ---- actions ---------------------------------------------------------
+ 
+   function submitLogin(username, password) {
+@@ -695,11 +736,12 @@
+       '<div class="cs-card">' +
+       '<div class="cs-header">' +
+       '<div><span class="cs-eyebrow">Kasa Oturumu</span>' +
+-      '<h1 class="cs-title">' + escapeHtml(state.displayName || '') + '</h1></div>' +
++      '<h1 class="cs-title">' + escapeHtml(sessionOwnerName() || '') + '</h1></div>' +
+       '<span class="cs-status-pill is-open"><span class="cs-status-dot"></span>Açık</span>' +
+       '</div>' +
+       errorAlert() +
+       noticeAlert() +
++      ownerNotice() +
+       '<div class="cs-grid-2">' +
+       '<div class="cs-stat"><div class="cs-stat-label">Açılış Tutarı</div>' +
+       '<div class="cs-stat-value">' + formatMoney(s.openingBalance) + '</div></div>' +
+@@ -714,10 +756,12 @@
+       '</div>' +
+       renderMovementList() +
+       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
+-      (hasPending
++      (!mayActForOwner()
++        ? blockedCountHint()
++        : hasPending
+         ? '<p class="cs-field-hint" id="pending-hint">Onay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.</p>'
+         : '<p class="cs-field-hint" id="count-hint">Sayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.</p>') +
+-      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending ? 'disabled' : '') + '>' +
++      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending || !mayActForOwner() ? 'disabled' : '') + '>' +
+       (state.busy ? 'Bekleyin…' : 'Kasayı Kapat: Sayıma Başla') + '</button>' +
+       '</div>';
+     ['in', 'out'].forEach(function (direction) {
+@@ -996,6 +1040,7 @@
+       '</p></div>' +
+       errorAlert() +
+       noticeAlert() +
++      ownerNotice() +
+       (isDenom
+         ? renderDenominationRows()
+         : ('<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
+@@ -1014,7 +1059,8 @@
+           '<button class="cs-btn cs-btn-secondary" id="zero-cancel" type="button">Hayır, düzelt</button>' +
+           '<button class="cs-btn cs-btn-primary" id="zero-confirm" type="button" ' + (state.busy ? 'disabled' : '') + '>Evet, çekmece boş</button>' +
+           '</div>'
+-        : '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy ? 'disabled' : '') + '>' +
++        : (mayActForOwner() ? '' : blockedCountHint()) +
++          '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy || !mayActForOwner() ? 'disabled' : '') + '>' +
+           (state.busy ? 'Kaydediliyor…' : 'Sayımı Kaydet') + '</button>') +
+       '</div>';
+ 
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index 2ff0b1bc2..f12c7c08e 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -62,6 +62,22 @@ public static partial class DualScreenApplication
+             return active is null ? Results.NotFound() : Results.Ok(active);
+         });
+ 
++        // Any cashier on the terminal may learn whose drawer session is open: a cash tender into it is refused for them,
++        // and the screen has to say who must close it.
++        group.MapGet("/active/owner", async (
++            Guid terminalId,
++            ICashSessionRepository sessionRepository,
++            DualScreenStore store,
++            IAuthorizationService authorization,
++            HttpContext context,
++            CancellationToken cancellationToken) =>
++        {
++            await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
++            var active = await sessionRepository.GetActiveByTerminalIdAsync(terminalId, cancellationToken) is [var only] ? only : null;
++            var displayName = active is null ? null : await store.GetUserDisplayNameAsync(active.CashierUserId, cancellationToken);
++            return displayName is null ? Results.NotFound() : Results.Ok(new CashSessionOwnerResponseV1(displayName));
++        });
++
+         group.MapPost("/", async (
+             Guid terminalId,
+             OpenCashSessionRequestV1 request,
+@@ -350,6 +366,8 @@ public sealed class CashTenderSessionNotOwnedException()
+ /// <summary>V13-CSH-004: request/response DTOs for the CashSession/cash-tender HTTP surface.</summary>
+ public sealed record SuggestedOpeningBalanceResponseV1(decimal? SuggestedOpeningBalance);
+ 
++public sealed record CashSessionOwnerResponseV1(string DisplayName);
++
+ public sealed record OpenCashSessionRequestV1(decimal OpeningBalance);
+ 
+ public sealed record RecordCashCountRequestV1(decimal CountedAmount, string? Notes);
+diff --git a/src/Host/DualScreen/DualScreenStore.cs b/src/Host/DualScreen/DualScreenStore.cs
+index 2a466176a..b2ff002e2 100644
+--- a/src/Host/DualScreen/DualScreenStore.cs
++++ b/src/Host/DualScreen/DualScreenStore.cs
+@@ -71,6 +71,13 @@ public sealed partial class DualScreenStore
+         return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
+     }
+ 
++    public async Task<string?> GetUserDisplayNameAsync(Guid userId, CancellationToken cancellationToken)
++    {
++        await using var command = _dataSource.CreateCommand("SELECT display_name FROM identity.users WHERE user_id = @user_id;");
++        command.Parameters.AddWithValue("user_id", userId);
++        return (string?)await command.ExecuteScalarAsync(cancellationToken);
++    }
++
+     public async Task<CashierPrincipal?> AuthenticateCashierAsync(
+         string? rawToken,
+         Guid terminalId,
+diff --git a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+index 261867367..1df8a8dac 100644
+--- a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+@@ -272,6 +272,27 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+         Assert.Equal(0, await _database.DenialCountAsync(await drawer.OwnerIdAsync()));
+     }
+ 
++    [Fact]
++    public async Task AnotherCashierOnTheTerminalLearnsWhoseDrawerSessionIsOpenButAWaiterDoesNot()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        var stranger = await drawer.CookieAsync("stranger", ApplicationPermissions.CashDrawer);
++        var waiter = await drawer.CookieAsync("waiter", ApplicationPermissions.OrdersCreate);
++        await RenameUserAsync(await drawer.OwnerIdAsync(), "Drawer Owner");
++        await RenameUserAsync(await _database.UserIdForCookieAsync(stranger), "Someone Else");
++
++        var named = await drawer.ActiveOwnerAsync(stranger);
++        Assert.Equal(HttpStatusCode.OK, named.StatusCode);
++        Assert.Equal("Drawer Owner", (await named.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("displayName").GetString());
++        Assert.Equal(HttpStatusCode.Forbidden, (await drawer.ActiveOwnerAsync(waiter)).StatusCode);
++        Assert.Equal(HttpStatusCode.Unauthorized, (await drawer.ActiveOwnerAsync("")).StatusCode);
++
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(100m);
++        Assert.Equal(HttpStatusCode.OK, (await drawer.CloseAsync(100m)).StatusCode);
++        Assert.Equal(HttpStatusCode.NotFound, (await drawer.ActiveOwnerAsync(stranger)).StatusCode);
++    }
++
+     [Fact]
+     public async Task AManagerMayStartCountAndCloseAnotherCashiersSession()
+     {
+@@ -480,6 +501,14 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+         Assert.Contains(messagePart, error.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
+     }
+ 
++    private async Task RenameUserAsync(Guid userId, string displayName)
++    {
++        await using var command = _database.DataSource.CreateCommand("UPDATE identity.users SET display_name = @name WHERE user_id = @id;");
++        command.Parameters.AddWithValue("name", displayName);
++        command.Parameters.AddWithValue("id", userId);
++        await command.ExecuteNonQueryAsync();
++    }
++
+     private async Task<Drawer> DrawerAsync(decimal opening, string[]? ownerPermissions = null)
+     {
+         var terminalId = Guid.NewGuid();
+@@ -541,6 +570,9 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+         public Task<HttpResponseMessage> CloseAsync(decimal actual, string? explanation = null, bool acknowledge = false, string? cookie = null)
+             => PostAsync("/close", new { ActualCash = actual, DifferenceExplanation = explanation, AcknowledgeUnsettled = acknowledge }, cookie);
+ 
++        public Task<HttpResponseMessage> ActiveOwnerAsync(string cookie)
++            => Send(new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/cash-sessions/active/owner"), cookie);
++
+         public string PathOf(Guid sessionId) => $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}";
+ 
+         public Task<string> StatusAsync() => database.SessionStatusAsync(SessionId);
+diff --git a/tests/Clients/StaticApps/cash-session-owner.test.js b/tests/Clients/StaticApps/cash-session-owner.test.js
+new file mode 100644
+index 000000000..fc397021b
+--- /dev/null
++++ b/tests/Clients/StaticApps/cash-session-owner.test.js
+@@ -0,0 +1,127 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { fileURLToPath } from "node:url";
++import { dirname, resolve } from "node:path";
++import { loadApp } from "./support/loadApp.js";
++
++const here = dirname(fileURLToPath(import.meta.url));
++const pageDir = resolve(here, "..", "..", "..", "src/Clients/Cashier/wwwroot/payments/cash-session");
++const htmlPath = resolve(pageDir, "index.html");
++const scriptPath = resolve(pageDir, "cash-session.js");
++
++const TERMINAL = "11111111-1111-1111-1111-111111111111";
++const SESSION = "22222222-2222-2222-2222-222222222222";
++const emptyList = { movements: [], movementsTruncated: false, requests: [], approvalThreshold: 500, selfApprovalEnabled: false };
++const reply = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body, headers: { get: () => null } });
++const text = () => document.body.textContent;
++const title = () => document.querySelector(".cs-title").textContent;
++
++/** A scripted terminal: `me` is signed in, the open drawer belongs to `owner`. */
++function install({ ownerId = "u2", capabilities = [], status = "Open", ownerLookup = reply(200, { displayName: "Mehmet Usta" }), login = null }) {
++  vi.stubGlobal("fetch", vi.fn(async (url, init) => {
++    const method = init?.method ?? "GET";
++    if (url.endsWith("/auth/session/current")) {
++      return login ? reply(401, {}) : reply(200, { userId: "u1", displayName: "Ayşe", terminalId: TERMINAL, capabilities });
++    }
++    if (url.endsWith("/auth/login")) return login;
++    if (url.endsWith("/cash-sessions/active/owner")) return ownerLookup;
++    if (url.endsWith("/cash-sessions/active")) {
++      return reply(200, { cashSessionId: SESSION, cashierUserId: ownerId, status, openingBalance: 1000, openedAt: "2026-11-03T08:00:00Z" });
++    }
++    if (url.endsWith("/cash-movements") && method === "GET") return reply(200, emptyList);
++    if (url.endsWith("/expected-cash")) return reply(200, { expectedCash: 1000, varianceTolerance: 50, openBillCount: 0, unsettledPaymentCount: 0 });
++    throw new Error(`unrouted ${method} ${url}`);
++  }));
++}
++
++async function open(world) {
++  install(world);
++  await loadApp(htmlPath, scriptPath);
++  await vi.waitFor(() => expect(document.querySelector(".cs-title")).not.toBeNull());
++}
++
++describe("cash-session.js names whose drawer session it is", () => {
++  beforeEach(() => vi.resetModules());
++  afterEach(() => {
++    vi.unstubAllGlobals();
++    document.body.innerHTML = "";
++  });
++
++  it("titles the page with the cashier's own name, adds no notice and never asks who the owner is on their own session", async () => {
++    await open({ ownerId: "u1" });
++
++    expect(title()).toBe("Ayşe");
++    expect(document.getElementById("owner-notice")).toBeNull();
++    expect(document.getElementById("owner-hint")).toBeNull();
++    expect(document.getElementById("start-count").disabled).toBe(false);
++    expect(globalThis.fetch.mock.calls.some(([url]) => String(url).endsWith("/active/owner"))).toBe(false);
++  });
++
++  it("titles the page with the session owner's name, not the signed-in user's, and says who may close it", async () => {
++    await open({});
++    await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
++
++    const notice = document.getElementById("owner-notice").textContent;
++    expect(notice).toContain("Mehmet Usta adına açık");
++    expect(notice).toContain("oturumu açan kasiyer ya da bir yönetici");
++    expect(text()).not.toContain("Ayşe");
++  });
++
++  it("keeps the count button off with the reason in the line right above it, for a cashier who is not the owner", async () => {
++    await open({});
++    await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
++
++    const button = document.getElementById("start-count");
++    expect(button.disabled).toBe(true);
++    expect(button.previousElementSibling.id).toBe("owner-hint");
++    expect(button.previousElementSibling.textContent).toContain("Mehmet Usta ya da bir yönetici");
++  });
++
++  it("tells a manager they may close it for the owner and leaves the button on", async () => {
++    await open({ capabilities: ["cash.session.override"] });
++    await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
++
++    expect(document.getElementById("owner-notice").textContent).toContain("Yönetici olarak sizin de sayıp kapatma yetkiniz var");
++    expect(document.getElementById("start-count").disabled).toBe(false);
++    expect(document.getElementById("owner-hint")).toBeNull();
++  });
++
++  it.each([500, 404])("falls back to a plain phrase when the owner's name cannot be read (%i), and still explains", async (status) => {
++    await open({ ownerLookup: reply(status, {}) });
++    await vi.waitFor(() => expect(document.getElementById("owner-notice")).not.toBeNull());
++
++    expect(title()).toBe("Başka bir kullanıcı");
++    expect(document.getElementById("owner-notice").textContent).toContain("Başka bir kullanıcı adına açık");
++  });
++
++  it("holds the count save on the counting screen for a cashier who is not the owner, with the reason above it", async () => {
++    await open({ status: "Counting" });
++    await vi.waitFor(() => expect(document.getElementById("owner-notice")).not.toBeNull());
++
++    const button = document.getElementById("submit-count");
++    expect(button.disabled).toBe(true);
++    expect(button.previousElementSibling.id).toBe("owner-hint");
++  });
++
++  it("lets a manager save the count of another cashier's drawer", async () => {
++    await open({ status: "Counting", capabilities: ["cash.session.override"] });
++    await vi.waitFor(() => expect(document.getElementById("owner-notice")).not.toBeNull());
++
++    expect(document.getElementById("submit-count").disabled).toBe(false);
++    expect(document.getElementById("owner-hint")).toBeNull();
++  });
++
++  it("answers a terminal bound to another browser with its own sentence, never with 'no permission'", async () => {
++    install({ login: reply(403, { error: { code: "TERMINAL_KEY_MISMATCH", message: "raw server text" } }) });
++    await loadApp(htmlPath, scriptPath);
++    await vi.waitFor(() => expect(document.getElementById("login-form")).not.toBeNull());
++    document.getElementById("username").value = "admin";
++    document.getElementById("password").value = "x";
++    document.getElementById("login-form").dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
++
++    await vi.waitFor(() => expect(document.querySelector(".cs-alert-body")).not.toBeNull());
++    const message = document.querySelector(".cs-alert-body").textContent;
++    expect(message).toContain("başka bir tarayıcıya bağlı");
++    expect(message).not.toContain("yetkiniz yok");
++    expect(message).not.toContain("raw server text");
++  });
++});

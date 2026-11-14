@@ -1,0 +1,104 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-owner.test.js (7 tests | 6 failed) 5833ms
+     × titles the page with the session owner's name, not the signed-in user's, and says who may close it 1110ms
+     × keeps the count button off next to the sentence that says why, for a cashier who is not the owner 1112ms
+     × tells a manager they may close it for the owner and leaves the button on 1123ms
+     × falls back to a plain phrase when the owner's name cannot be read, and still explains 1108ms
+     × holds the count save on the counting screen for a cashier who is not the owner 1118ms
+     × answers a terminal bound to another browser with its own sentence, never with 'no permission' 112ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > titles the page with the session owner's name, not the signed-in user's, and says who may close it
+AssertionError: expected 'Ayşe' to be 'Mehmet Usta' // Object.is equality
+
+Expected: "Mehmet Usta"
+Received: "Ayşe"
+
+ ❯ cash-session-owner.test.js:59:44
+     57|   it("titles the page with the session owner's name, not the signed-in…
+     58|     await open({});
+     59|     await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
+       |                                            ^
+     60|
+     61|     const notice = document.getElementById("owner-notice").textContent;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > keeps the count button off next to the sentence that says why, for a cashier who is not the owner
+AssertionError: expected null not to be null
+ ❯ cash-session-owner.test.js:69:80
+     67|   it("keeps the count button off next to the sentence that says why, f…
+     68|     await open({});
+     69|     await vi.waitFor(() => expect(document.getElementById("owner-notic…
+       |                                                                                ^
+     70|
+     71|     expect(document.getElementById("start-count").disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > tells a manager they may close it for the owner and leaves the button on
+AssertionError: expected 'Ayşe' to be 'Mehmet Usta' // Object.is equality
+
+Expected: "Mehmet Usta"
+Received: "Ayşe"
+
+ ❯ cash-session-owner.test.js:76:44
+     74|   it("tells a manager they may close it for the owner and leaves the b…
+     75|     await open({ capabilities: ["cash.session.override"] });
+     76|     await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
+       |                                            ^
+     77|
+     78|     expect(document.getElementById("owner-notice").textContent).toCont…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > falls back to a plain phrase when the owner's name cannot be read, and still explains
+AssertionError: expected null not to be null
+ ❯ cash-session-owner.test.js:84:80
+     82|   it("falls back to a plain phrase when the owner's name cannot be rea…
+     83|     await open({ ownerLookup: reply(500, {}) });
+     84|     await vi.waitFor(() => expect(document.getElementById("owner-notic…
+       |                                                                                ^
+     85|
+     86|     expect(title()).toBe("Başka bir kullanıcı");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > holds the count save on the counting screen for a cashier who is not the owner
+AssertionError: expected null not to be null
+ ❯ cash-session-owner.test.js:92:80
+     90|   it("holds the count save on the counting screen for a cashier who is…
+     91|     await open({ status: "Counting" });
+     92|     await vi.waitFor(() => expect(document.getElementById("owner-notic…
+       |                                                                                ^
+     93|
+     94|     expect(document.getElementById("submit-count").disabled).toBe(true…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > answers a terminal bound to another browser with its own sentence, never with 'no permission'
+AssertionError: expected 'Bu işlem için yetkiniz yok.' to contain 'başka bir tarayıcıya bağlı'
+
+Expected: "başka bir tarayıcıya bağlı"
+Received: "Bu işlem için yetkiniz yok."
+
+ ❯ cash-session-owner.test.js:107:21
+    105|     await vi.waitFor(() => expect(document.querySelector(".cs-alert-bo…
+    106|     const message = document.querySelector(".cs-alert-body").textConte…
+    107|     expect(message).toContain("başka bir tarayıcıya bağlı");
+       |                     ^
+    108|     expect(message).not.toContain("yetkiniz yok");
+    109|     expect(message).not.toContain("raw server text");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 1 passed (7)
+   Start at  11:04:38
+   Duration  7.29s (transform 256ms, setup 26ms, import 44ms, tests 5.83s, environment 1.10s)
+
+exit=1

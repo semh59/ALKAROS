@@ -14,6 +14,8 @@
     terminalId: null,
     displayName: null,
     session: null,
+    // The name of the cashier who opened a session that is not the signed-in user's; null until read.
+    ownerName: null,
     suggestedOpeningBalance: null,
     lastCountedAmount: null,
     expectedCash: null,
@@ -119,6 +121,7 @@
     CASH_CLOSE_UNSETTLED_NOT_ACKNOWLEDGED: 'İşletmede ödenmemiş hesap veya sonucu belirsiz ödeme var; bunları bilerek kapatmak için onay kutusunu işaretleyin.',
     CASH_RECONCILE_SELF_NOT_ALLOWED: 'Oturumu açan veya kapatan kişi kendi oturumunu mutabık edemez; başka bir yönetici onaylamalı.',
     INVALID_CREDENTIALS: 'Kullanıcı adı veya şifre hatalı.',
+    TERMINAL_KEY_MISMATCH: 'Bu terminal başka bir tarayıcıya bağlı. Kasa terminalinin kendi tarayıcısından giriş yapın ya da bir yönetici Güvenlik ekranından terminali sıfırlasın.',
     FORBIDDEN: 'Bu işlem için yetkiniz yok.',
     VALIDATION_FAILED: 'Girilen bilgiler geçersiz. Alanları kontrol edin.',
   };
@@ -253,8 +256,10 @@
       }
       state.session = result.body;
       state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
-      if (state.phase === 'open') return loadMovements();
-      render();
+      return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
+        if (state.phase === 'open') return loadMovements();
+        render();
+      });
     }).catch(function () {
       failActiveSessionRead('Kasa durumu okunamadı. Sunucuya ulaşılamadı; bağlantınızı kontrol edip yeniden deneyin.');
     });
@@ -304,6 +309,42 @@
 
   function canApprove() {
     return state.capabilities.indexOf('cash.session.override') >= 0;
+  }
+
+  function ownsSession() {
+    var s = state.session;
+    return !(s && s.cashierUserId && s.cashierUserId !== state.userId);
+  }
+
+  // The owner or a manager counts and closes the drawer; anyone else is told whose it is and who may.
+  function mayActForOwner() {
+    return ownsSession() || canApprove();
+  }
+
+  function sessionOwnerName() {
+    return ownsSession() ? state.displayName : (state.ownerName || 'Başka bir kullanıcı');
+  }
+
+  function loadOwnerName() {
+    return api(cashSessionsBase() + '/active/owner').then(function (result) {
+      state.ownerName = result.ok ? result.body.displayName : null;
+    }).catch(function () {
+      state.ownerName = null;
+    });
+  }
+
+  function ownerNotice() {
+    if (ownsSession()) return '';
+    var rule = canApprove()
+      ? 'Yönetici olarak sizin de sayıp kapatma yetkiniz var.'
+      : 'Sayma ve kapatma için oturumu açan kasiyer ya da bir yönetici gerekir; kendi oturumunuzu o kapanınca açabilirsiniz.';
+    return '<div class="cs-alert cs-alert-warning" id="owner-notice"><span class="cs-alert-icon">!</span>' +
+      '<div class="cs-alert-body">Bu kasa oturumu ' + escapeHtml(sessionOwnerName()) + ' adına açık. ' + rule + '</div></div>';
+  }
+
+  // The reason sits next to the button it switches off (docs/CASHIER_UI_RULES.md 3).
+  function blockedCountHint() {
+    return '<p class="cs-field-hint" id="owner-hint">Bu düğme sizde pasif: sayımı ' + escapeHtml(sessionOwnerName()) + ' ya da bir yönetici yapabilir.</p>';
   }
 
   // ---- actions ---------------------------------------------------------
@@ -695,11 +736,12 @@
       '<div class="cs-card">' +
       '<div class="cs-header">' +
       '<div><span class="cs-eyebrow">Kasa Oturumu</span>' +
-      '<h1 class="cs-title">' + escapeHtml(state.displayName || '') + '</h1></div>' +
+      '<h1 class="cs-title">' + escapeHtml(sessionOwnerName() || '') + '</h1></div>' +
       '<span class="cs-status-pill is-open"><span class="cs-status-dot"></span>Açık</span>' +
       '</div>' +
       errorAlert() +
       noticeAlert() +
+      ownerNotice() +
       '<div class="cs-grid-2">' +
       '<div class="cs-stat"><div class="cs-stat-label">Açılış Tutarı</div>' +
       '<div class="cs-stat-value">' + formatMoney(s.openingBalance) + '</div></div>' +
@@ -714,10 +756,12 @@
       '</div>' +
       renderMovementList() +
       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
-      (hasPending
+      (!mayActForOwner()
+        ? blockedCountHint()
+        : hasPending
         ? '<p class="cs-field-hint" id="pending-hint">Onay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.</p>'
         : '<p class="cs-field-hint" id="count-hint">Sayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.</p>') +
-      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending ? 'disabled' : '') + '>' +
+      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending || !mayActForOwner() ? 'disabled' : '') + '>' +
       (state.busy ? 'Bekleyin…' : 'Kasayı Kapat: Sayıma Başla') + '</button>' +
       '</div>';
     ['in', 'out'].forEach(function (direction) {
@@ -996,6 +1040,7 @@
       '</p></div>' +
       errorAlert() +
       noticeAlert() +
+      ownerNotice() +
       (isDenom
         ? renderDenominationRows()
         : ('<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
@@ -1014,7 +1059,8 @@
           '<button class="cs-btn cs-btn-secondary" id="zero-cancel" type="button">Hayır, düzelt</button>' +
           '<button class="cs-btn cs-btn-primary" id="zero-confirm" type="button" ' + (state.busy ? 'disabled' : '') + '>Evet, çekmece boş</button>' +
           '</div>'
-        : '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy ? 'disabled' : '') + '>' +
+        : (mayActForOwner() ? '' : blockedCountHint()) +
+          '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy || !mayActForOwner() ? 'disabled' : '') + '>' +
           (state.busy ? 'Kaydediliyor…' : 'Sayımı Kaydet') + '</button>') +
       '</div>';
 

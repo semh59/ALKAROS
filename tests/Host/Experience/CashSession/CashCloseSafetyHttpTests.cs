@@ -273,6 +273,27 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnotherCashierOnTheTerminalLearnsWhoseDrawerSessionIsOpenButAWaiterDoesNot()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        var stranger = await drawer.CookieAsync("stranger", ApplicationPermissions.CashDrawer);
+        var waiter = await drawer.CookieAsync("waiter", ApplicationPermissions.OrdersCreate);
+        await RenameUserAsync(await drawer.OwnerIdAsync(), "Drawer Owner");
+        await RenameUserAsync(await _database.UserIdForCookieAsync(stranger), "Someone Else");
+
+        var named = await drawer.ActiveOwnerAsync(stranger);
+        Assert.Equal(HttpStatusCode.OK, named.StatusCode);
+        Assert.Equal("Drawer Owner", (await named.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("displayName").GetString());
+        Assert.Equal(HttpStatusCode.Forbidden, (await drawer.ActiveOwnerAsync(waiter)).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await drawer.ActiveOwnerAsync("")).StatusCode);
+
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(100m);
+        Assert.Equal(HttpStatusCode.OK, (await drawer.CloseAsync(100m)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await drawer.ActiveOwnerAsync(stranger)).StatusCode);
+    }
+
+    [Fact]
     public async Task AManagerMayStartCountAndCloseAnotherCashiersSession()
     {
         await using var drawer = await DrawerAsync(opening: 100m);
@@ -480,6 +501,14 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
         Assert.Contains(messagePart, error.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
     }
 
+    private async Task RenameUserAsync(Guid userId, string displayName)
+    {
+        await using var command = _database.DataSource.CreateCommand("UPDATE identity.users SET display_name = @name WHERE user_id = @id;");
+        command.Parameters.AddWithValue("name", displayName);
+        command.Parameters.AddWithValue("id", userId);
+        await command.ExecuteNonQueryAsync();
+    }
+
     private async Task<Drawer> DrawerAsync(decimal opening, string[]? ownerPermissions = null)
     {
         var terminalId = Guid.NewGuid();
@@ -540,6 +569,9 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
 
         public Task<HttpResponseMessage> CloseAsync(decimal actual, string? explanation = null, bool acknowledge = false, string? cookie = null)
             => PostAsync("/close", new { ActualCash = actual, DifferenceExplanation = explanation, AcknowledgeUnsettled = acknowledge }, cookie);
+
+        public Task<HttpResponseMessage> ActiveOwnerAsync(string cookie)
+            => Send(new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/cash-sessions/active/owner"), cookie);
 
         public string PathOf(Guid sessionId) => $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}";
 

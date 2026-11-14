@@ -71,6 +71,13 @@ public sealed partial class DualScreenStore
         return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
+    public async Task<string?> GetUserDisplayNameAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand("SELECT display_name FROM identity.users WHERE user_id = @user_id;");
+        command.Parameters.AddWithValue("user_id", userId);
+        return (string?)await command.ExecuteScalarAsync(cancellationToken);
+    }
+
     public async Task<CashierPrincipal?> AuthenticateCashierAsync(
         string? rawToken,
         Guid terminalId,

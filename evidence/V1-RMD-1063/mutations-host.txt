@@ -1,0 +1,4 @@
+killed MH1 constant owner name [test failed]
+killed MH2 no drawer permission check [test failed]
+killed MH3 name of the caller instead of the owner [test failed]
+restore cmp identical

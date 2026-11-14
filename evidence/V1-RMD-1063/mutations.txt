@@ -1,0 +1,15 @@
+killed M1 owner notice never drawn
+killed M2 start-count stays on for a non-owner
+killed M3 title is the signed-in user's name
+killed M4 a manager is held back like a cashier
+killed M5 terminal key sentence dropped
+killed M6 count save stays on for a non-owner
+killed M7 owner name never looked up
+killed M8 manager gets the cashier sentence
+killed M9 no fallback phrase
+killed M10 someone else's session treated as own
+killed M11 manager held back on the counting screen
+killed M12 no reason next to the count button
+killed M13 no reason on the counting screen
+killed M14 reason names no owner
+restore cmp identical

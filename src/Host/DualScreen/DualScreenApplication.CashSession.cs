@@ -62,6 +62,22 @@ public static partial class DualScreenApplication
             return active is null ? Results.NotFound() : Results.Ok(active);
         });
 
+        // Any cashier on the terminal may learn whose drawer session is open: a cash tender into it is refused for them,
+        // and the screen has to say who must close it.
+        group.MapGet("/active/owner", async (
+            Guid terminalId,
+            ICashSessionRepository sessionRepository,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+            var active = await sessionRepository.GetActiveByTerminalIdAsync(terminalId, cancellationToken) is [var only] ? only : null;
+            var displayName = active is null ? null : await store.GetUserDisplayNameAsync(active.CashierUserId, cancellationToken);
+            return displayName is null ? Results.NotFound() : Results.Ok(new CashSessionOwnerResponseV1(displayName));
+        });
+
         group.MapPost("/", async (
             Guid terminalId,
             OpenCashSessionRequestV1 request,
@@ -349,6 +365,8 @@ public sealed class CashTenderSessionNotOwnedException()
 
 /// <summary>V13-CSH-004: request/response DTOs for the CashSession/cash-tender HTTP surface.</summary>
 public sealed record SuggestedOpeningBalanceResponseV1(decimal? SuggestedOpeningBalance);
+
+public sealed record CashSessionOwnerResponseV1(string DisplayName);
 
 public sealed record OpenCashSessionRequestV1(decimal OpeningBalance);
 
