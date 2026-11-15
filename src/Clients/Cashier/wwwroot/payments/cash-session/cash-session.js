@@ -1138,6 +1138,8 @@
     });
   }
 
+  var DIFFERENCE_REASONS = ['Para üstü yanlış verildi', 'Sayım hatası', 'Kasadan çıkış kaydedilmedi', 'Bahşiş ayrıldı'];
+
   function renderClosing() {
     var expected = state.expectedCash;
     var counted = state.lastCountedAmount;
@@ -1183,13 +1185,35 @@
           ? '<label class="cs-field-label" for="difference-explanation">Fark Açıklaması (zorunlu)</label>' +
             '<textarea class="cs-textarea" id="difference-explanation" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>'
           : '') +
+      (hasDifference && !exceeded
+        ? '<div class="cs-row" role="group" aria-label="Hazır gerekçeler">' + DIFFERENCE_REASONS.map(function (reason) {
+            return '<button class="cs-btn cs-btn-secondary" type="button" data-reason-preset>' + reason + '</button>';
+          }).join('') + '</div>'
+        : '') +
       (hasExpected
         ? ''
         : '<p class="cs-field-hint" id="expected-missing">Beklenen tutar okunamadı; kasayı kapatmak için yeniden okuyun.</p>' +
           '<button class="cs-btn cs-btn-secondary" id="reread-expected" type="button" ' + (state.busy ? 'disabled' : '') + '>Beklenen tutarı yeniden oku</button>') +
       '<button class="cs-btn cs-btn-primary" id="submit-close" ' + (closeDisabled ? 'disabled' : '') + '>' +
       (state.busy ? 'Kapatılıyor…' : 'Kasayı Kapat') + '</button>' +
+      '<button class="cs-btn cs-btn-secondary" id="recount" type="button" ' + (state.busy ? 'disabled' : '') + '>Sayımı düzelt</button>' +
       '</div>';
+    document.getElementById('recount').addEventListener('click', function () {
+      state.phase = 'counting';
+      state.countMode = 'manual';
+      state.drafts.acknowledged = false;
+      state.drafts.counted = counted.toFixed(2);
+      state.varianceExceeded = false;
+      state.error = null;
+      render();
+    });
+    document.querySelectorAll('[data-reason-preset]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var field = document.getElementById('difference-explanation');
+        field.value = button.textContent;
+        field.focus();
+      });
+    });
     var reread = document.getElementById('reread-expected');
     if (reread) reread.addEventListener('click', rereadExpectedCash);
     var ack = document.getElementById('ack-unsettled');

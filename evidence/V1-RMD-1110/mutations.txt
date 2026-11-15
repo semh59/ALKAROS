@@ -1,0 +1,7 @@
+R1-recount-without-amount exit 1 restored cmp ok
+R2-recount-keeps-denominations exit 1 restored cmp ok
+R3-preset-not-written exit 1 restored cmp ok
+R5-recount-sends-close exit 1 restored cmp ok
+R4-presets-over-the-limit exit 1 restored cmp ok
+R6-presets-without-difference exit 1 restored cmp ok
+R7-acknowledgement-kept exit 1 restored cmp ok

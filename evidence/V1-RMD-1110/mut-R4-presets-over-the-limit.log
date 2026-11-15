@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-recount.test.js (5 tests | 1 failed) 1414ms
+     × keeps the ready reasons away from the manager's approval note when the difference is over the limit 300ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > keeps the ready reasons away from the manager's approval note when the difference is over the limit
+AssertionError: expected <button …(3)></button>
+…(3) to have a length of +0 but got 4
+
+- Expected
++ Received
+
+- 0
++ 4
+
+ ❯ cash-session-close-recount.test.js:94:63
+     92|     await vi.waitFor(() => expect($("#override-reason")).not.toBeNull(…
+     93|
+     94|     expect(document.querySelectorAll("[data-reason-preset]")).toHaveLe…
+       |                                                               ^
+     95|     expect(sent(calls, "/close")).toHaveLength(1);
+     96|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  16:04:24
+   Duration  2.83s (transform 225ms, setup 30ms, import 55ms, tests 1.41s, environment 1.05s)
+

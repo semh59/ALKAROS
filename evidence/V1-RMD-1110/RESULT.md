@@ -1,0 +1,5 @@
+# V1-RMD-1110 sonuc
+Dogrulama (sunucu, kodla): CashSessionPolicy.ValidateCanRecordCount yalniz Counting durumu ister ve sayim oturum durumunu degistirmez; her sayim yeni satir eklenir (denetim izi kalir), kapanis en son sayimi (ORDER BY counted_at DESC LIMIT 1) kullanir ve ActualCash'in ona esit olmasini sart kosar. Yani ikinci sayim kabul edilir; yapildi.
+Duzeltme: cash-session.js fark teyidi ekranina "Sayimi duzelt" (sayim ekranina doner, onceki tutar tek tutar modunda yazili, "bilerek kapatiyorum" onayi sifirlanir, yeni sayim ayni /counts yoluyla gider) ve fark aciklamasi altinda hazir gerekce dugmeleri (4 metin; dokunus kutuya yazar, duzenlenebilir). Hazir gerekceler tolerans asimindaki yonetici onay notunda gosterilmez.
+Kanit: red.log 2 kirmizi; green.log cash-session + cashier-ui 8 dosya 138/138; mutations.txt R1-R7 killed; client-build-gate: yalniz vanilla Cashier.
+Acik risk: .cs-row sarmaz, 4 gerekce dar ekranda cok satirli olabilir (cash-session.css bu gorevin yuzeyi degil, olculmedi); "Sayimi duzelt" sirasinda yazilmis fark aciklamasi taslagi tasinmaz (fark degisecegi icin kabul).

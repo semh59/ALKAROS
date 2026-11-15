@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-recount.test.js (3 tests | 1 failed) 1797ms
+     × takes the cashier back to the count with the typed amount and closes with the corrected count 1327ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > takes the cashier back to the count with the typed amount and closes with the corrected count
+AssertionError: expected null not to be null
+ ❯ cash-session-close-recount.test.js:61:61
+     59|
+     60|     $("#recount").click();
+     61|     await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull()…
+       |                                                             ^
+     62|     expect($("#counted-amount").value).toBe("1000.00");
+     63|     type("#counted-amount", "900");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  16:01:21
+   Duration  3.40s (transform 156ms, setup 25ms, import 43ms, tests 1.80s, environment 1.20s)
+

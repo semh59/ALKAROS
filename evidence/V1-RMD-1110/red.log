@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-recount.test.js (3 tests | 2 failed) 735ms
+     × takes the cashier back to the count with the typed amount and closes with the corrected count 283ms
+     × offers ready reasons for a difference and a tap writes the text into the explanation 230ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > takes the cashier back to the count with the typed amount and closes with the corrected count
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-close-recount.test.js:58:25
+     56|   it("takes the cashier back to the count with the typed amount and cl…
+     57|     const calls = await toClosing(10);
+     58|     expect($("#recount").textContent).toBe("Sayımı düzelt");
+       |                         ^
+     59|
+     60|     $("#recount").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > offers ready reasons for a difference and a tap writes the text into the explanation
+AssertionError: expected 0 to be greater than or equal to 3
+ ❯ cash-session-close-recount.test.js:79:28
+     77|     const presets = [...document.querySelectorAll("[data-reason-preset…
+     78|
+     79|     expect(presets.length).toBeGreaterThanOrEqual(3);
+       |                            ^
+     80|     presets[1].click();
+     81|     expect($("#difference-explanation").value).toBe(presets[1].textCon…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  16:00:34
+   Duration  2.29s (transform 130ms, setup 26ms, import 44ms, tests 735ms, environment 1.16s)
+

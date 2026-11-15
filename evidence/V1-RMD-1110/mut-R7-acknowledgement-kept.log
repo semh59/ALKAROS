@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-recount.test.js (5 tests | 1 failed) 1525ms
+     × asks for the acknowledgement of open business again after a recount 297ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > asks for the acknowledgement of open business again after a recount
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ cash-session-close-recount.test.js:108:41
+    106|     await vi.waitFor(() => expect($("#ack-unsettled")).not.toBeNull());
+    107|
+    108|     expect($("#ack-unsettled").checked).toBe(false);
+       |                                         ^
+    109|     expect($("#submit-close").disabled).toBe(true);
+    110|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  16:04:36
+   Duration  3.13s (transform 265ms, setup 32ms, import 63ms, tests 1.52s, environment 1.23s)
+
