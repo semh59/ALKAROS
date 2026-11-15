@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx (11 tests | 2 failed) 3974ms
+     × ignores "0" 136ms
+     × ignores "" 125ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "0"
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores ""
+AssertionError: expected [ { quantity: +0, …(1) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "expectedRevision": 3,
++     "quantity": 0,
++   },
++ ]
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:143:21
+    141|     await press("Enter");
+    142|
+    143|     expect(patches).toEqual([]);
+       |                     ^
+    144|     expect(quantityInput()).toBeNull();
+    145|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  15:43:06
+   Duration  5.80s (transform 1.95s, setup 0ms, import 130ms, tests 3.97s, environment 1.35s)
+

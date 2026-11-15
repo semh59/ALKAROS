@@ -375,7 +375,8 @@ button.operator-card { min-height: 48px; border: 1px solid #4d5e6c; border-radiu
 .line-total { font-size: .9rem; white-space: nowrap; }
 .quantity-controls { grid-column: 1 / -1; display: flex; align-items: center; gap: .4rem; }
 .quantity-controls button { min-width: 48px; height: 48px; color: #26313b; border: 1px solid #ccd3d9; border-radius: 10px; background: #f6f7f8; font-size: 1.1rem; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; }
-.quantity-controls span { min-width: 36px; text-align: center; font-weight: 850; }
+.quantity-controls .quantity-value { min-width: 56px; background: #fff; }
+.quantity-controls .quantity-input { width: 72px; height: 48px; padding: 0 .5rem; border: 2px solid var(--navy); border-radius: 10px; text-align: center; font: inherit; font-weight: 850; }
 .quantity-controls .remove { min-width: 48px; min-height: 48px; margin-left: auto; padding: 0 .9rem; color: var(--red); border-color: #efd0d3; background: #fff5f6; font-size: .875rem; display: inline-flex; align-items: center; justify-content: center; }
 .ticket-totals { display: grid; gap: .5rem; padding: 1rem 1.25rem .8rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .875rem; }
 .ticket-totals > div { display: flex; justify-content: space-between; }

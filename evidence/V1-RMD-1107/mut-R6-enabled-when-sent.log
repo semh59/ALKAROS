@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx (11 tests | 1 failed) 3795ms
+     × cannot be opened on an order that was already sent 101ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > cannot be opened on an order that was already sent
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:159:48
+    157|     await openCashier(false);
+    158|
+    159|     expect(quantityButton()?.disabled ?? true).toBe(true);
+       |                                                ^
+    160|   });
+    161| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  15:43:23
+   Duration  5.45s (transform 1.94s, setup 0ms, import 146ms, tests 3.80s, environment 1.21s)
+

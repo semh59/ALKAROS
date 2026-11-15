@@ -1,0 +1,272 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.quantity-entry.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.quantity-entry.test.tsx
+new file mode 100644
+index 000000000..4da2bc9e9
+--- /dev/null
++++ b/src/Clients/PosTerminal/src/routes/Cashier.quantity-entry.test.tsx
+@@ -0,0 +1,161 @@
++// @vitest-environment jsdom
++
++import { act, createElement } from "react";
++import { createRoot, type Root } from "react-dom/client";
++import { afterEach, describe, expect, it, vi } from "vitest";
++
++(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
++
++const jsonResponse = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
++
++vi.mock("@microsoft/signalr", () => ({
++  LogLevel: { Warning: 2 },
++  HubConnectionBuilder: class {
++    withUrl() { return this; }
++    withAutomaticReconnect() { return this; }
++    configureLogging() { return this; }
++    build() {
++      return {
++        on: () => undefined, onreconnecting: () => undefined, onreconnected: () => undefined, onclose: () => undefined,
++        start: vi.fn(async () => undefined), stop: vi.fn(async () => undefined),
++      };
++    }
++  },
++}));
++
++const line = { lineId: "l", itemId: "i1", productId: "p-ayran", name: "Ayran", quantity: 1, unitPrice: 20, lineTotal: 20, discountAmount: 0 };
++const order = (editable = true) => ({
++  displayId: "d", terminalId: "terminal", orderId: "order-1", revision: 3, state: "Active", editable, orderNumber: "1",
++  lines: [line], subtotal: 20, discountTotal: 0, taxTotal: 0, total: 20, currency: "TRY", serverTimestamp: "", message: "",
++});
++
++let root: Root | null = null;
++afterEach(() => {
++  if (root) act(() => root!.unmount());
++  root = null;
++  document.body.innerHTML = "";
++  vi.unstubAllGlobals();
++  vi.resetModules();
++});
++
++async function openCashier(editable = true) {
++  const patches: Array<{ quantity: number; expectedRevision: number }> = [];
++  vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
++    const path = String(input);
++    if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
++    if (path.endsWith("/catalog")) return jsonResponse([{ productId: "p-ayran", sku: "AYR-01", name: "Ayran", categoryCode: "ICE", categoryName: "İçecek", unitPrice: 20, taxRate: 10 }]);
++    if (path.endsWith("/orders/active")) return jsonResponse(order(editable));
++    if (path.endsWith("/orders/order-1/items/i1") && init?.method === "PATCH") {
++      patches.push(JSON.parse(String(init.body)));
++      return jsonResponse({ orderId: "order-1", revision: 4 });
++    }
++    if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
++    return jsonResponse({});
++  }));
++  const { Cashier } = await import("./Cashier");
++  const { RouterProvider } = await import("../router");
++  document.body.innerHTML = '<div id="root"></div>';
++  root = createRoot(document.getElementById("root")!);
++  await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
++  for (let i = 0; i < 3; i++) await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++  return patches;
++}
++
++const quantityButton = () => document.querySelector<HTMLButtonElement>('button[aria-label="Ayran adedini değiştir"]');
++const quantityInput = () => document.querySelector<HTMLInputElement>('input[aria-label="Ayran adedi"]');
++const settle = () => act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
++const openEntry = async () => {
++  await act(async () => { quantityButton()!.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
++};
++const typeQuantity = async (text: string) => {
++  await act(async () => {
++    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(quantityInput(), text);
++    quantityInput()!.dispatchEvent(new Event("input", { bubbles: true }));
++  });
++};
++const press = async (key: string) => {
++  await act(async () => { quantityInput()!.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true })); });
++  await settle();
++};
++const leave = async () => {
++  await act(async () => { quantityInput()?.dispatchEvent(new FocusEvent("focusout", { bubbles: true })); });
++  await settle();
++};
++
++describe("Cashier line quantity can be typed", () => {
++  it("opens a number box with the current quantity and sets the typed quantity on Enter", async () => {
++    const patches = await openCashier();
++    await openEntry();
++
++    expect(quantityInput()!.value).toBe("1");
++    expect(document.activeElement).toBe(quantityInput());
++    await typeQuantity("10");
++    await press("Enter");
++
++    expect(patches).toEqual([{ quantity: 10, expectedRevision: 3 }]);
++    expect(quantityInput()).toBeNull();
++  });
++
++  it("sets the typed quantity when the box is left", async () => {
++    const patches = await openCashier();
++    await openEntry();
++    await typeQuantity("4");
++    await leave();
++
++    expect(patches).toEqual([{ quantity: 4, expectedRevision: 3 }]);
++  });
++
++  it("sends once when Enter is followed by leaving the box", async () => {
++    const patches = await openCashier();
++    await openEntry();
++    await typeQuantity("6");
++    const box = quantityInput()!;
++    await act(async () => {
++      box.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
++      box.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
++    });
++    await settle();
++
++    expect(patches).toHaveLength(1);
++  });
++
++  it("Escape cancels and a later blur does not send", async () => {
++    const patches = await openCashier();
++    await openEntry();
++    await typeQuantity("9");
++    const box = quantityInput()!;
++    await act(async () => {
++      box.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true, cancelable: true }));
++      box.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
++    });
++    await settle();
++
++    expect(patches).toEqual([]);
++    expect(quantityInput()).toBeNull();
++  });
++
++  it.each(["0", "-2", "abc", "", "1"])("ignores %j", async (text) => {
++    const patches = await openCashier();
++    await openEntry();
++    await typeQuantity(text);
++    await press("Enter");
++
++    expect(patches).toEqual([]);
++    expect(quantityInput()).toBeNull();
++  });
++
++  it("accepts a comma as the decimal mark", async () => {
++    const patches = await openCashier();
++    await openEntry();
++    await typeQuantity("2,5");
++    await press("Enter");
++
++    expect(patches).toEqual([{ quantity: 2.5, expectedRevision: 3 }]);
++  });
++
++  it("cannot be opened on an order that was already sent", async () => {
++    await openCashier(false);
++
++    expect(quantityButton()?.disabled ?? true).toBe(true);
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 0e0b4fa81..cf71cd6da 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
+ import { isPlainClick, useRouter } from "../router";
+ import { focusOnMount } from "../focusOnMount";
+ import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
+-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
++import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+ import { formatDateTime, formatMoney, formatQuantity } from "../format";
+ import { savedId } from "../storage";
+ import { playNewItemChime } from "../audioAlerts";
+@@ -147,6 +147,13 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
+   const headerMenu = useRef<HTMLElement>(null);
+   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
++  const [quantityEntry, setQuantityEntry] = useState<{ itemId: string; draft: string } | null>(null);
++  // The latest entry for the handlers: Enter and the blur that follows it must send once.
++  const quantityEntryRef = useRef<{ itemId: string; draft: string } | null>(null);
++  const changeQuantityEntry = (next: { itemId: string; draft: string } | null) => {
++    quantityEntryRef.current = next;
++    setQuantityEntry(next);
++  };
+   const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
+   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
+   const kitchenlessOrderId = order?.orderId;
+@@ -685,6 +692,17 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     else void addProduct(product);
+   };
+ 
++  // A typed quantity replaces the tapped one; a missing, zero, negative or unchanged number leaves the line as it is (removing is its own button).
++  const commitQuantity = async (line: DisplayLine) => {
++    const entry = quantityEntryRef.current;
++    changeQuantityEntry(null);
++    const target = activeOrder;
++    if (!entry || entry.itemId !== line.itemId || !target?.orderId) return;
++    const quantity = Number(entry.draft.trim().replace(",", "."));
++    if (!(quantity > 0) || quantity === line.quantity) return;
++    await execute(() => api.changeQuantity(terminalId, target.orderId!, line.itemId, quantity, target.revision));
++  };
++
+   // A scanner types the SKU and presses Enter: an exact SKU (any category) or a search narrowed to one product is sold.
+   const addSearchedProduct = () => {
+     if (busy || !normalizedSearch) return;
+@@ -1001,7 +1019,28 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+                           terminalId, activeOrder.orderId!, line.itemId, line.quantity - 1, activeOrder.revision,
+                         ))}
+                       >−</button>
+-                      <span>{formatQuantity(line.quantity)}</span>
++                      {quantityEntry !== null && quantityEntry.itemId === line.itemId ? (
++                        <input
++                          className="quantity-input"
++                          ref={focusOnMount}
++                          inputMode="decimal"
++                          aria-label={quantityEntryText.input(line.name)}
++                          value={quantityEntry.draft}
++                          onChange={(event) => changeQuantityEntry({ itemId: line.itemId, draft: event.target.value })}
++                          onKeyDown={(event) => {
++                            if (event.key === "Enter") { event.preventDefault(); void commitQuantity(line); }
++                            else if (event.key === "Escape") { event.preventDefault(); changeQuantityEntry(null); }
++                          }}
++                          onBlur={() => void commitQuantity(line)}
++                        />
++                      ) : (
++                        <button data-telemetry-id="b.routes.cashier.quantity"
++                          className="quantity-value"
++                          aria-label={quantityEntryText.change(line.name)}
++                          disabled={busy || !activeOrder.editable}
++                          onClick={() => changeQuantityEntry({ itemId: line.itemId, draft: String(line.quantity) })}
++                        >{formatQuantity(line.quantity)}</button>
++                      )}
+                       <button data-telemetry-id="b.routes.cashier.17"
+                         aria-label={`${line.name} artır`}
+                         disabled={busy || !activeOrder.editable}
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index ad50ba839..c3d41c4c2 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1448,6 +1448,11 @@ export const servedRecallNote = "Hesapta servis edilmiş ürün var; masaya yaln
+ /** What the kitchen has done with a sent line, shown only once it matters to the cashier (cancelling a served line is refused). */
+ export const kitchenStateNotes: Readonly<Record<string, string>> = { Ready: itemStatusLabels.Ready, Served: itemStatusLabels.Served };
+ 
++export const quantityEntryText = {
++  change: (name: string) => `${name} adedini değiştir`,
++  input: (name: string) => `${name} adedi`,
++};
++
+ export const sendAndCollectLabel = "Gönder ve tahsil et";
+ 
+ export const kitchenlessText = {
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index 090d106c8..0f5deb5e5 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -375,7 +375,8 @@ button.operator-card { min-height: 48px; border: 1px solid #4d5e6c; border-radiu
+ .line-total { font-size: .9rem; white-space: nowrap; }
+ .quantity-controls { grid-column: 1 / -1; display: flex; align-items: center; gap: .4rem; }
+ .quantity-controls button { min-width: 48px; height: 48px; color: #26313b; border: 1px solid #ccd3d9; border-radius: 10px; background: #f6f7f8; font-size: 1.1rem; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; }
+-.quantity-controls span { min-width: 36px; text-align: center; font-weight: 850; }
++.quantity-controls .quantity-value { min-width: 56px; background: #fff; }
++.quantity-controls .quantity-input { width: 72px; height: 48px; padding: 0 .5rem; border: 2px solid var(--navy); border-radius: 10px; text-align: center; font: inherit; font-weight: 850; }
+ .quantity-controls .remove { min-width: 48px; min-height: 48px; margin-left: auto; padding: 0 .9rem; color: var(--red); border-color: #efd0d3; background: #fff5f6; font-size: .875rem; display: inline-flex; align-items: center; justify-content: center; }
+ .ticket-totals { display: grid; gap: .5rem; padding: 1rem 1.25rem .8rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .875rem; }
+ .ticket-totals > div { display: flex; justify-content: space-between; }

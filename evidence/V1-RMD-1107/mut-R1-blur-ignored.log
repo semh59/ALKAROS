@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx (11 tests | 1 failed) 3663ms
+     × sets the typed quantity when the box is left 161ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > sets the typed quantity when the box is left
+AssertionError: expected [] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+- [
+-   {
+-     "expectedRevision": 3,
+-     "quantity": 4,
+-   },
+- ]
++ []
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:105:21
+    103|     await leave();
+    104|
+    105|     expect(patches).toEqual([{ quantity: 4, expectedRevision: 3 }]);
+       |                     ^
+    106|   });
+    107|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  15:42:41
+   Duration  5.22s (transform 1.82s, setup 0ms, import 128ms, tests 3.66s, environment 1.12s)
+

@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx (11 tests | 1 failed) 3857ms
+     × accepts a comma as the decimal mark 132ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > accepts a comma as the decimal mark
+AssertionError: expected [] to deeply equal [ { quantity: 2.5, …(1) } ]
+
+- Expected
++ Received
+
+- [
+-   {
+-     "expectedRevision": 3,
+-     "quantity": 2.5,
+-   },
+- ]
++ []
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:153:21
+    151|     await press("Enter");
+    152|
+    153|     expect(patches).toEqual([{ quantity: 2.5, expectedRevision: 3 }]);
+       |                     ^
+    154|   });
+    155|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  15:43:14
+   Duration  5.29s (transform 1.98s, setup 0ms, import 129ms, tests 3.86s, environment 1.00s)
+

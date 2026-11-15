@@ -1,0 +1,183 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx (11 tests | 7 failed) 4139ms
+     × opens a number box with the current quantity and sets the typed quantity on Enter 2925ms
+     × sends once when Enter is followed by leaving the box 164ms
+     × ignores "0" 117ms
+     × ignores "-2" 139ms
+     × ignores "abc" 105ms
+     × ignores "" 96ms
+     × ignores "1" 109ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > opens a number box with the current quantity and sets the typed quantity on Enter
+AssertionError: expected <input …(4)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Ayran adedi"
+  class="quantity-input"
+  inputmode="decimal"
+  value="10"
+/>
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:96:29
+     94|
+     95|     expect(patches).toEqual([{ quantity: 10, expectedRevision: 3 }]);
+     96|     expect(quantityInput()).toBeNull();
+       |                             ^
+     97|   });
+     98|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > sends once when Enter is followed by leaving the box
+AssertionError: expected [ { quantity: 6, …(1) }, …(1) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:119:21
+    117|     await settle();
+    118|
+    119|     expect(patches).toHaveLength(1);
+       |                     ^
+    120|   });
+    121|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "0"
+AssertionError: expected <input …(4)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Ayran adedi"
+  class="quantity-input"
+  inputmode="decimal"
+  value="0"
+/>
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:144:29
+    142|
+    143|     expect(patches).toEqual([]);
+    144|     expect(quantityInput()).toBeNull();
+       |                             ^
+    145|   });
+    146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "-2"
+AssertionError: expected <input …(4)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Ayran adedi"
+  class="quantity-input"
+  inputmode="decimal"
+  value="-2"
+/>
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:144:29
+    142|
+    143|     expect(patches).toEqual([]);
+    144|     expect(quantityInput()).toBeNull();
+       |                             ^
+    145|   });
+    146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "abc"
+AssertionError: expected <input …(4)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Ayran adedi"
+  class="quantity-input"
+  inputmode="decimal"
+  value="abc"
+/>
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:144:29
+    142|
+    143|     expect(patches).toEqual([]);
+    144|     expect(quantityInput()).toBeNull();
+       |                             ^
+    145|   });
+    146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores ""
+AssertionError: expected <input …(4)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Ayran adedi"
+  class="quantity-input"
+  inputmode="decimal"
+  value=""
+/>
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:144:29
+    142|
+    143|     expect(patches).toEqual([]);
+    144|     expect(quantityInput()).toBeNull();
+       |                             ^
+    145|   });
+    146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "1"
+AssertionError: expected <input …(4)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Ayran adedi"
+  class="quantity-input"
+  inputmode="decimal"
+  value="1"
+/>
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:144:29
+    142|
+    143|     expect(patches).toEqual([]);
+    144|     expect(quantityInput()).toBeNull();
+       |                             ^
+    145|   });
+    146|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 4 passed (11)
+   Start at  15:42:57
+   Duration  5.74s (transform 2.15s, setup 0ms, import 136ms, tests 4.14s, environment 1.16s)
+

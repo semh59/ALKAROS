@@ -1,0 +1,117 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.quantity-entry.test.tsx (11 tests | 10 failed) 3387ms
+     × opens a number box with the current quantity and sets the typed quantity on Enter 2469ms
+     × sets the typed quantity when the box is left 101ms
+     × sends once when Enter is followed by leaving the box 99ms
+     × Escape cancels and a later blur does not send 116ms
+     × ignores "0" 96ms
+     × ignores "-2" 71ms
+     × ignores "abc" 84ms
+     × ignores "" 97ms
+     × ignores "1" 81ms
+     × accepts a comma as the decimal mark 95ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > opens a number box with the current quantity and sets the typed quantity on Enter
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:68:43
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const openEntry = async () => {
+     68|   await act(async () => { quantityButton()!.dispatchEvent(new MouseEve…
+       |                                           ^
+     69| };
+     70| const typeQuantity = async (text: string) => {
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openEntry src/routes/Cashier.quantity-entry.test.tsx:68:9
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:88:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > sets the typed quantity when the box is left
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:68:43
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const openEntry = async () => {
+     68|   await act(async () => { quantityButton()!.dispatchEvent(new MouseEve…
+       |                                           ^
+     69| };
+     70| const typeQuantity = async (text: string) => {
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openEntry src/routes/Cashier.quantity-entry.test.tsx:68:9
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:101:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > sends once when Enter is followed by leaving the box
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:68:43
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const openEntry = async () => {
+     68|   await act(async () => { quantityButton()!.dispatchEvent(new MouseEve…
+       |                                           ^
+     69| };
+     70| const typeQuantity = async (text: string) => {
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openEntry src/routes/Cashier.quantity-entry.test.tsx:68:9
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:110:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > Escape cancels and a later blur does not send
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:68:43
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const openEntry = async () => {
+     68|   await act(async () => { quantityButton()!.dispatchEvent(new MouseEve…
+       |                                           ^
+     69| };
+     70| const typeQuantity = async (text: string) => {
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openEntry src/routes/Cashier.quantity-entry.test.tsx:68:9
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:124:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "0"
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "-2"
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "abc"
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores ""
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > ignores "1"
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:68:43
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const openEntry = async () => {
+     68|   await act(async () => { quantityButton()!.dispatchEvent(new MouseEve…
+       |                                           ^
+     69| };
+     70| const typeQuantity = async (text: string) => {
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openEntry src/routes/Cashier.quantity-entry.test.tsx:68:9
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:139:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/routes/Cashier.quantity-entry.test.tsx > Cashier line quantity can be typed > accepts a comma as the decimal mark
+TypeError: Cannot read properties of null (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:68:43
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const openEntry = async () => {
+     68|   await act(async () => { quantityButton()!.dispatchEvent(new MouseEve…
+       |                                           ^
+     69| };
+     70| const typeQuantity = async (text: string) => {
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ openEntry src/routes/Cashier.quantity-entry.test.tsx:68:9
+ ❯ src/routes/Cashier.quantity-entry.test.tsx:149:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 1 passed (11)
+   Start at  15:39:53
+   Duration  4.90s (transform 1.87s, setup 0ms, import 134ms, tests 3.39s, environment 1.11s)
+

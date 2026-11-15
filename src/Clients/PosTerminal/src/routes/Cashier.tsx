@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
 import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
@@ -147,6 +147,13 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
   const headerMenu = useRef<HTMLElement>(null);
   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
+  const [quantityEntry, setQuantityEntry] = useState<{ itemId: string; draft: string } | null>(null);
+  // The latest entry for the handlers: Enter and the blur that follows it must send once.
+  const quantityEntryRef = useRef<{ itemId: string; draft: string } | null>(null);
+  const changeQuantityEntry = (next: { itemId: string; draft: string } | null) => {
+    quantityEntryRef.current = next;
+    setQuantityEntry(next);
+  };
   const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
   const kitchenlessOrderId = order?.orderId;
@@ -685,6 +692,17 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     else void addProduct(product);
   };
 
+  // A typed quantity replaces the tapped one; a missing, zero, negative or unchanged number leaves the line as it is (removing is its own button).
+  const commitQuantity = async (line: DisplayLine) => {
+    const entry = quantityEntryRef.current;
+    changeQuantityEntry(null);
+    const target = activeOrder;
+    if (!entry || entry.itemId !== line.itemId || !target?.orderId) return;
+    const quantity = Number(entry.draft.trim().replace(",", "."));
+    if (!(quantity > 0) || quantity === line.quantity) return;
+    await execute(() => api.changeQuantity(terminalId, target.orderId!, line.itemId, quantity, target.revision));
+  };
+
   // A scanner types the SKU and presses Enter: an exact SKU (any category) or a search narrowed to one product is sold.
   const addSearchedProduct = () => {
     if (busy || !normalizedSearch) return;
@@ -1001,7 +1019,28 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                           terminalId, activeOrder.orderId!, line.itemId, line.quantity - 1, activeOrder.revision,
                         ))}
                       >−</button>
-                      <span>{formatQuantity(line.quantity)}</span>
+                      {quantityEntry !== null && quantityEntry.itemId === line.itemId ? (
+                        <input
+                          className="quantity-input"
+                          ref={focusOnMount}
+                          inputMode="decimal"
+                          aria-label={quantityEntryText.input(line.name)}
+                          value={quantityEntry.draft}
+                          onChange={(event) => changeQuantityEntry({ itemId: line.itemId, draft: event.target.value })}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") { event.preventDefault(); void commitQuantity(line); }
+                            else if (event.key === "Escape") { event.preventDefault(); changeQuantityEntry(null); }
+                          }}
+                          onBlur={() => void commitQuantity(line)}
+                        />
+                      ) : (
+                        <button data-telemetry-id="b.routes.cashier.quantity"
+                          className="quantity-value"
+                          aria-label={quantityEntryText.change(line.name)}
+                          disabled={busy || !activeOrder.editable}
+                          onClick={() => changeQuantityEntry({ itemId: line.itemId, draft: String(line.quantity) })}
+                        >{formatQuantity(line.quantity)}</button>
+                      )}
                       <button data-telemetry-id="b.routes.cashier.17"
                         aria-label={`${line.name} artır`}
                         disabled={busy || !activeOrder.editable}
