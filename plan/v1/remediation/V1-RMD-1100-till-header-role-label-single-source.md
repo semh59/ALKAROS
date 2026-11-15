@@ -1,7 +1,7 @@
 # V1-RMD-1100 - Kasa satış üst çubuğundaki rol etiketi diğer ekranlarla aynı kaynaktan gelir
 
 - Task ID: V1-RMD-1100
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
