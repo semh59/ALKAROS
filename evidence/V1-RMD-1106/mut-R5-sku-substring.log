@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.search-add.test.tsx (8 tests | 1 failed) 3687ms
+     × matches the SKU exactly even when it is also part of other products' text 125ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > matches the SKU exactly even when it is also part of other products' text
+AssertionError: expected [ 'p-borek' ] to deeply equal [ 'p-simit' ]
+
+- Expected
++ Received
+
+  [
+-   "p-simit",
++   "p-borek",
+  ]
+
+ ❯ src/routes/Cashier.search-add.test.tsx:126:49
+    124|     await typeAndEnter("sim-01");
+    125|
+    126|     expect(added.map((item) => item.productId)).toEqual(["p-simit"]);
+       |                                                 ^
+    127|   });
+    128|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:35:18
+   Duration  5.31s (transform 2.18s, setup 0ms, import 132ms, tests 3.69s, environment 1.20s)
+

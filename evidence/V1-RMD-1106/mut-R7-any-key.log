@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.search-add.test.tsx (8 tests | 1 failed) 3642ms
+     × adds nothing for an empty box or another key 125ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > adds nothing for an empty box or another key
+AssertionError: expected [ { productId: 'p-ayran', …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "expectedRevision": 3,
++     "productId": "p-ayran",
++     "quantity": 1,
++   },
++ ]
+
+ ❯ src/routes/Cashier.search-add.test.tsx:143:19
+    141|     await typeAndEnter("ayr-01", "a");
+    142|
+    143|     expect(added).toEqual([]);
+       |                   ^
+    144|   });
+    145|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:34:47
+   Duration  5.27s (transform 2.10s, setup 0ms, import 138ms, tests 3.64s, environment 1.19s)
+

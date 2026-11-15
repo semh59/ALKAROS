@@ -95,6 +95,11 @@ const forgetShiftState = () => {
   } catch { /* storage unavailable: nothing was remembered */ }
 };
 
+// A touch terminal would pop its on-screen keyboard over the product grid at every sale screen visit; a scanner or keyboard terminal starts in the search box.
+const focusSearchOnMount = (element: HTMLElement | null) => {
+  if (!window.matchMedia?.("(pointer: coarse)").matches) focusOnMount(element);
+};
+
 export function Cashier({ navigateToPage = (href: string) => window.location.assign(href) }: { navigateToPage?: (href: string) => void }) {
   const { path: currentPath, navigate } = useRouter();
   const [terminalId] = useState(() => savedId("alkaros.terminal-id"));
@@ -675,6 +680,21 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     }
   };
 
+  const chooseProduct = (product: CatalogProduct) => {
+    if (product.modifierGroups?.length && !kitchenlessReason) setPickingProduct(product);
+    else void addProduct(product);
+  };
+
+  // A scanner types the SKU and presses Enter: an exact SKU (any category) or a search narrowed to one product is sold.
+  const addSearchedProduct = () => {
+    if (busy || !normalizedSearch) return;
+    const match = catalog.find((product) => foldSearch(product.sku) === normalizedSearch)
+      ?? (visibleProducts.length === 1 ? visibleProducts[0] : undefined);
+    if (!match) return;
+    setSearch("");
+    chooseProduct(match);
+  };
+
   const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
     if (addingProduct.current) return;
     if (kitchenlessReason) {
@@ -898,7 +918,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               <span>⌕</span>
               <input
                 value={search}
+                ref={focusSearchOnMount}
                 onChange={(event) => setSearch(event.target.value)}
+                onKeyDown={(event) => { if (event.key === "Enter") addSearchedProduct(); }}
                 placeholder="Ürün veya SKU ara"
                 aria-label="Ürün ara"
               />
@@ -911,10 +933,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                 className="product-card"
                 key={product.productId}
                 disabled={busy}
-                onClick={() => {
-                  if (product.modifierGroups?.length && !kitchenlessReason) setPickingProduct(product);
-                  else void addProduct(product);
-                }}
+                onClick={() => chooseProduct(product)}
               >
                 <span className="product-category">{product.categoryName}</span>
                 <strong>{product.name}</strong>

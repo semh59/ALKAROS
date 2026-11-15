@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.search-add.test.tsx (8 tests | 1 failed) 3579ms
+     × adds the only match of the search 112ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > adds the only match of the search
+AssertionError: expected [] to deeply equal [ 'p-simit2' ]
+
+- Expected
++ Received
+
+- [
+-   "p-simit2",
+- ]
++ []
+
+ ❯ src/routes/Cashier.search-add.test.tsx:117:49
+    115|     await typeAndEnter("peynir");
+    116|
+    117|     expect(added.map((item) => item.productId)).toEqual(["p-simit2"]);
+       |                                                 ^
+    118|   });
+    119|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:34:14
+   Duration  5.15s (transform 2.12s, setup 0ms, import 129ms, tests 3.58s, environment 1.12s)
+

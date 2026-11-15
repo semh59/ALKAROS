@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.search-add.test.tsx (8 tests | 1 failed) 3503ms
+     × adds the product whose SKU matches exactly, from any category, and clears the box 135ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > adds the product whose SKU matches exactly, from any category, and clears the box
+AssertionError: expected 'ayr-01' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ ayr-01
+
+ ❯ src/routes/Cashier.search-add.test.tsx:99:31
+     97|
+     98|     expect(added.map((item) => item.productId)).toEqual(["p-ayran"]);
+     99|     expect(searchBox().value).toBe("");
+       |                               ^
+    100|   });
+    101|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:34:22
+   Duration  5.14s (transform 2.05s, setup 0ms, import 173ms, tests 3.50s, environment 1.17s)
+

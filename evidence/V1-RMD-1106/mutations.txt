@@ -1,0 +1,8 @@
+R2-exact-sku-only-in-open-category exit 1 restored cmp ok
+R3-single-match-dropped exit 1 restored cmp ok
+R4-box-not-cleared exit 1 restored cmp ok
+R6-options-bypassed exit 1 restored cmp ok
+R7-any-key exit 1 restored cmp ok
+R5-sku-substring exit 1 restored cmp ok
+R1-no-focus exit 1 restored cmp ok
+R8-touch-check-dropped exit 1 restored cmp ok

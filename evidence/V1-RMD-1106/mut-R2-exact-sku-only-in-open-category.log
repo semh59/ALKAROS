@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.search-add.test.tsx (8 tests | 1 failed) 3784ms
+     × finds an exact SKU of another category while a category tab is open 158ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > finds an exact SKU of another category while a category tab is open
+AssertionError: expected [] to deeply equal [ 'p-ayran' ]
+
+- Expected
++ Received
+
+- [
+-   "p-ayran",
+- ]
++ []
+
+ ❯ src/routes/Cashier.search-add.test.tsx:109:49
+    107|     await typeAndEnter("ayr-01");
+    108|
+    109|     expect(added.map((item) => item.productId)).toEqual(["p-ayran"]);
+       |                                                 ^
+    110|   });
+    111|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:34:05
+   Duration  5.47s (transform 2.11s, setup 0ms, import 129ms, tests 3.78s, environment 1.26s)
+

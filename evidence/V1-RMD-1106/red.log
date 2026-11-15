@@ -1,0 +1,442 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.search-add.test.tsx (7 tests | 5 failed) 3267ms
+     × has the focus in the search box when the sales screen opens 2679ms
+     × adds the product whose SKU matches exactly, from any category, and clears the box 120ms
+     × adds the only match of the search 97ms
+     × matches the SKU exactly even when it is also part of other products' text 98ms
+     × opens the options dialog for a product that has options instead of adding it 86ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > has the focus in the search box when the sales screen opens
+AssertionError: expected <body><div id="root">…(1)</div></body> to be <input …(3)></input> // Object.is equality
+
+- Expected
++ Received
+
++ <body>
++   <div
++     id="root"
++   >
++     <main
++       class="cashier-shell"
++     >
++       <header
++         class="pos-header"
++       >
++         <div
++           class="pos-brand"
++         >
++           <div
++             class="brand-mark compact"
++           >
++             A
++           </div>
++           <div>
++             <strong>
++               ALKAROS
++             </strong>
++             <span>
++               Kasa satış
++             </span>
++           </div>
++         </div>
++         <div
++           class="system-state connection-state online"
++           role="status"
++         >
++           <span
++             aria-hidden="true"
++           />
++           Bağlantı var
++         </div>
++         <div
++           class="pos-header-actions"
++         >
++           <nav
++             aria-label="Çalışma alanı"
++             class="view-switch"
++           >
++             <a
++               href="/tables"
++             >
++               Masalar
++             </a>
++             <a
++               aria-current="page"
++               href="/"
++             >
++               Hızlı satış
++             </a>
++           </nav>
++           <button
++             aria-controls="header-menu"
++             aria-expanded="false"
++             class="operator-card"
++             data-telemetry-id="b.routes.cashier.42"
++           >
++             <span>
++               Deniz Kaya
++             </span>
++             <small>
++               Sınırlı erişim
++                · Diğer ▾
++             </small>
++           </button>
++         </div>
++       </header>
++       <div
++         class="pos-workspace"
++       >
++         <div
++           aria-label="Ürün kategorileri"
++           class="category-rail"
++           role="tablist"
++           tabindex="-1"
++         >
++           <button
++             aria-selected="true"
++             class="active"
++             data-telemetry-id="b.routes.cashier.12"
++             role="tab"
++             tabindex="0"
++           >
++             <span
++               class="category-glyph"
++             >
++               ⌂
++             </span>
++             Tümü
++             <small>
++               4
++             </small>
++           </button>
++           <button
++             aria-selected="false"
++             class=""
++             data-telemetry-id="b.routes.cashier.13"
++             role="tab"
++             tabindex="-1"
++           >
++             <span
++               class="category-glyph"
++             >
++               01
++             </span>
++             Ana Yemek
++             <small>
++               3
++             </small>
++           </button>
++           <button
++             aria-selected="false"
++             class=""
++             data-telemetry-id="b.routes.cashier.13"
++             role="tab"
++             tabindex="-1"
++           >
++             <span
++               class="category-glyph"
++             >
++               02
++             </span>
++             İçecek
++             <small>
++               1
++             </small>
++           </button>
++         </div>
++         <section
++           class="catalog-workspace"
++         >
++           <div
++             class="catalog-toolbar"
++           >
++             <div>
++               <span
++                 class="eyebrow dark"
++               >
++                 HIZLI SİPARİŞ
++               </span>
++               <h1>
++                 Tüm ürünler
++               </h1>
++             </div>
++             <label
++               class="search-field"
++             >
++               <span>
++                 ⌕
++               </span>
+                <input
+                  aria-label="Ürün ara"
+                  placeholder="Ürün veya SKU ara"
+                  value=""
+                />
++             </label>
++           </div>
++           <div
++             class="product-grid"
++           >
++             <button
++               class="product-card"
++               data-telemetry-id="b.routes.cashier.14"
++             >
++               <span
++                 class="product-category"
++               >
++                 Ana Yemek
++               </span>
++               <strong>
++                 Pide
++               </strong>
++               <span
++                 class="product-card-footer"
++               >
++                 <small>
++                   PİDE-1
++                 </small>
++                 <span
++                   class="product-price"
++                 >
++                   <b>
++                     ₺100,00
++                   </b>
++                   <small>
++                     KDV dahil
++                   </small>
++                 </span>
++               </span>
++             </button>
++             <button
++               class="product-card"
++               data-telemetry-id="b.routes.cashier.14"
++             >
++               <span
++                 class="product-category"
++               >
++                 İçecek
++               </span>
++               <strong>
++                 Ayran
++               </strong>
++               <span
++                 class="product-card-footer"
++               >
++                 <small>
++                   AYR-01
++                 </small>
++                 <span
++                   class="product-price"
++                 >
++                   <b>
++                     ₺20,00
++                   </b>
++                   <small>
++                     KDV dahil
++                   </small>
++                 </span>
++               </span>
++             </button>
++             <button
++               class="product-card"
++               data-telemetry-id="b.routes.cashier.14"
++             >
++               <span
++                 class="product-category"
++               >
++                 Ana Yemek
++               </span>
++               <strong>
++                 Simit
++               </strong>
++               <span
++                 class="product-card-footer"
++               >
++                 <small>
++                   SIM-01
++                 </small>
++                 <span
++                   class="product-price"
++                 >
++                   <b>
++                     ₺10,00
++                   </b>
++                   <small>
++                     KDV dahil
++                   </small>
++                 </span>
++               </span>
++             </button>
++             <button
++               class="product-card"
++               data-telemetry-id="b.routes.cashier.14"
++             >
++               <span
++                 class="product-category"
++               >
++                 Ana Yemek
++               </span>
++               <strong>
++                 Simit Peynirli
++               </strong>
++               <span
++                 class="product-card-footer"
++               >
++                 <small>
++                   SIM-02
++                 </small>
++                 <span
++                   class="product-price"
++                 >
++                   <b>
++                     ₺15,00
++                   </b>
++                   <small>
++                     KDV dahil
++                   </small>
++                 </span>
++               </span>
++             </button>
++           </div>
++         </section>
++         <aside
++           class="ticket-panel"
++         >
++           <div
++             class="ticket-heading"
++           >
++             <div>
++               <span
++                 class="eyebrow dark"
++               >
++                 AKTİF SİPARİŞ
++               </span>
++               <h2>
++                 Sipariş 1
++               </h2>
++             </div>
++             <div
++               class="ticket-meta"
++             >
++               <strong>
++                 0
++               </strong>
++               <span>
++                 ürün
++               </span>
++             </div>
++           </div>
++           <div
++             aria-atomic="false"
++             aria-live="polite"
++             class="ticket-lines"
++           >
++             <div
++               class="ticket-empty"
++             >
++               Soldaki katalogdan ürün seçin.
++             </div>
++           </div>
++           <div
++             class="ticket-footer"
++           />
++         </aside>
++       </div>
++     </main>
++   </div>
++ </body>
+
+ ❯ src/routes/Cashier.search-add.test.tsx:90:36
+     88|     await openCashier();
+     89|
+     90|     expect(document.activeElement).toBe(searchBox());
+       |                                    ^
+     91|   });
+     92|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > adds the product whose SKU matches exactly, from any category, and clears the box
+AssertionError: expected [] to deeply equal [ 'p-ayran' ]
+
+- Expected
++ Received
+
+- [
+-   "p-ayran",
+- ]
++ []
+
+ ❯ src/routes/Cashier.search-add.test.tsx:98:49
+     96|     await typeAndEnter("ayr-01");
+     97|
+     98|     expect(added.map((item) => item.productId)).toEqual(["p-ayran"]);
+       |                                                 ^
+     99|     expect(searchBox().value).toBe("");
+    100|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > adds the only match of the search
+AssertionError: expected [] to deeply equal [ 'p-simit2' ]
+
+- Expected
++ Received
+
+- [
+-   "p-simit2",
+- ]
++ []
+
+ ❯ src/routes/Cashier.search-add.test.tsx:107:49
+    105|     await typeAndEnter("peynir");
+    106|
+    107|     expect(added.map((item) => item.productId)).toEqual(["p-simit2"]);
+       |                                                 ^
+    108|   });
+    109|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > matches the SKU exactly even when it is also part of other products' text
+AssertionError: expected [] to deeply equal [ 'p-simit' ]
+
+- Expected
++ Received
+
+- [
+-   "p-simit",
+- ]
++ []
+
+ ❯ src/routes/Cashier.search-add.test.tsx:115:49
+    113|     await typeAndEnter("sim-01");
+    114|
+    115|     expect(added.map((item) => item.productId)).toEqual(["p-simit"]);
+       |                                                 ^
+    116|   });
+    117|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/routes/Cashier.search-add.test.tsx > Cashier search is ready for a scanner or the keyboard > opens the options dialog for a product that has options instead of adding it
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ src/routes/Cashier.search-add.test.tsx:142:68
+    140|
+    141|     expect(added).toEqual([]);
+    142|     expect(document.querySelector('[role="dialog"]')?.textContent).toC…
+       |                                                                    ^
+    143|   });
+    144| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 2 passed (7)
+   Start at  15:32:21
+   Duration  4.87s (transform 2.03s, setup 0ms, import 150ms, tests 3.27s, environment 1.16s)
+

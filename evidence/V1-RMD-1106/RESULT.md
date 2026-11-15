@@ -1,0 +1,5 @@
+# V1-RMD-1106 sonuc
+Dogrulama (kod): React satis ekraninda arama kutusunda odak ve Enter yoktu; SKU okutulunca kasiyer karta dokunuyordu (vanilla cashier-app.js'te vardi). Alarm gercekti. Bekletme ve kalem notu: React api.addItem govdesi yalniz productId, quantity, modifierIds tasir; bekletme ucu yok. Atlandi, gerekce bu.
+Duzeltme: Cashier.tsx chooseProduct (kart ve Enter ortak) + addSearchedProduct: Enter'da tam SKU (tum kategoriler, Turkce i katlamali) ya da aramanin tek urune inmesi; secenekli urun secenek penceresini acar; kutu temizlenir. Acilista odak, dokunmatik (pointer: coarse) terminalde ekran klavyesi acilmasin diye atlanir.
+Kanit: red.log 5 kirmizi; green.log routes+features+shell 106 dosya 1291/1291; tsc 0; mutations.txt R1-R8 killed; client-build-gate.log exit 0.
+Acik risk: kutu ekleme denenmeden temizlenir (mutfaksiz gerekce aktifken secenekli urun okutulursa SKU silinir, hata kalir); busy ve bos arama korumasi tek basina test edilmedi; IME birlestirme kontrolu yok; gercek tablette odak olculmedi.
