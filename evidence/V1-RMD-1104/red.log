@@ -1,0 +1,114 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > offers 2, 3 and 4 person buttons outside the closed fold
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486289-0.7001766133890693:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486289-0.7001766133890693:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486289-0.7001766133890693:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > 2 people put one share into the amount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486505-0.2872820779978412:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486505-0.2872820779978412:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486505-0.2872820779978412:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > 3 people put one share into the amount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486634-0.032103101716500326:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486634-0.032103101716500326:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486634-0.032103101716500326:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > 4 people put one share into the amount
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486763-0.4607809517393968:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486763-0.4607809517393968:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486763-0.4607809517393968:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > agrees with the manual Hesapla button
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486880-0.4585939172618546:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486880-0.4585939172618546:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745486880-0.4585939172618546:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-equal-split-shortcuts.test.js (5 tests | 5 failed) 760ms
+     × offers 2, 3 and 4 person buttons outside the closed fold 231ms
+     × 2 people put one share into the amount 131ms
+     × 3 people put one share into the amount 129ms
+     × 4 people put one share into the amount 117ms
+     × agrees with the manual Hesapla button 151ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > offers 2, 3 and 4 person buttons outside the closed fold
+AssertionError: expected [ undefined, undefined, undefined ] to deeply equal [ '2 kişi', '3 kişi', '4 kişi' ]
+
+- Expected
++ Received
+
+  [
+-   "2 kişi",
+-   "3 kişi",
+-   "4 kişi",
++   undefined,
++   undefined,
++   undefined,
+  ]
+
+ ❯ split-payment-equal-split-shortcuts.test.js:35:58
+     33|     await open();
+     34|     expect(document.getElementById("fold-split").open).toBe(false);
+     35|     expect([2, 3, 4].map((n) => people(n)?.textContent)).toEqual(["2 k…
+       |                                                          ^
+     36|     expect(people(2).closest("details")).toBeNull();
+     37|     expect(people(2).parentElement.getAttribute("aria-label")).toBe("E…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > 2 people put one share into the amount
+ FAIL  split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > 3 people put one share into the amount
+ FAIL  split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > 4 people put one share into the amount
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-equal-split-shortcuts.test.js:42:18
+     40|   it.each([[2, "50.00"], [3, "33.33"], [4, "25.00"]])("%i people put o…
+     41|     await open();
+     42|     people(count).click();
+       |                  ^
+     43|     expect(document.getElementById("amount-draft").value).toBe(share);
+     44|     expect(document.getElementById("payer-hint").textContent).toBe(`Öd…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  split-payment-equal-split-shortcuts.test.js > equal split shortcuts beside the amount field > agrees with the manual Hesapla button
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-equal-split-shortcuts.test.js:55:14
+     53|     document.getElementById("apply-split").click();
+     54|     const manual = document.getElementById("amount-draft").value;
+     55|     people(3).click();
+       |              ^
+     56|     expect(document.getElementById("amount-draft").value).toBe(manual);
+     57|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  15:24:44
+   Duration  2.37s (transform 351ms, setup 37ms, import 56ms, tests 760ms, environment 1.20s)
+

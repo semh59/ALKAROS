@@ -2315,7 +2315,11 @@
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
-        '<span class="sp-amount-suffix">₺</span></div></div>' +
+        '<span class="sp-amount-suffix">₺</span></div>' +
+        '<div class="sp-row" role="group" aria-label="Eşit bölme">' +
+        [2, 3, 4].map(function (people) {
+          return '<button class="sp-btn sp-btn-secondary" type="button" data-split-people="' + people + '">' + people + ' kişi</button>';
+        }).join('') + '</div></div>' +
         (state.selectedMethod === 'Cash'
           ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-muted)">(isteğe bağlı)</span></span>' +
             '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
@@ -2390,6 +2394,12 @@
         state.amountDraft = Math.min(share.amount, remainingAmount()).toFixed(2);
         state.tenderIdempotencyKey = null;
         render();
+      });
+    });
+    document.querySelectorAll('[data-split-people]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        state.splitCount = Number(button.getAttribute('data-split-people'));
+        submitEqualSplit();
       });
     });
     var applySplit = document.getElementById('apply-split');

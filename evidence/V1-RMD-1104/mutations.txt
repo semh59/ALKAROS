@@ -1,0 +1,4 @@
+R1-four-dropped exit 1 restored cmp ok
+R2-count-ignored exit 1 restored cmp ok
+R3-share-not-applied exit 1 restored cmp ok
+R4-people-label exit 1 restored cmp ok
