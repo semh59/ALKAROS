@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenCardHeight.test.ts (2 tests | 1 failed) 11ms
+     × keeps the card header (table, timer, warning button) outside the scrolling area 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/kitchenCardHeight.test.ts > kitchen table card height > keeps the card header (table, timer, warning button) outside the scrolling area
+AssertionError: expected ' min-width: 0; max-height: 36rem; ove…' not to match /max-height/
+
+- Expected:
+/max-height/
+
++ Received:
+" min-width: 0; max-height: 36rem; overflow: hidden; border: 1px solid var(--ds-color-line); border-left: 6px solid var(--ds-color-muted); border-radius: var(--ds-radius-sm); background: var(--ds-color-surface); box-shadow: 0 5px 16px rgb(18 32 43 / 5%); "
+
+ ❯ src/features/kitchen-operations/kitchenCardHeight.test.ts:16:42
+     14|
+     15|   it("keeps the card header (table, timer, warning button) outside the…
+     16|     expect(bodyOf(".kitchen-order")).not.toMatch(/max-height/);
+       |                                          ^
+     17|     expect(bodyOf(".kitchen-order__head")).not.toMatch(/overflow/);
+     18|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  18:26:01
+   Duration  345ms (transform 27ms, setup 0ms, import 47ms, tests 11ms, environment 0ms)
+

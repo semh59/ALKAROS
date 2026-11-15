@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/kitchen-operations/kitchenCardHeight.test.ts (2 tests | 1 failed) 10ms
+     × caps the station area so a table with many tickets scrolls inside its card 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/kitchen-operations/kitchenCardHeight.test.ts > kitchen table card height > caps the station area so a table with many tickets scrolls inside its card
+AssertionError: expected ' display: grid; grid-template-columns…' to match /max-height:\s*[^;]*(rem|vh)/
+
+- Expected:
+/max-height:\s*[^;]*(rem|vh)/
+
++ Received:
+" display: grid; grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); "
+
+ ❯ src/features/kitchen-operations/kitchenCardHeight.test.ts:11:22
+      9|   it("caps the station area so a table with many tickets scrolls insid…
+     10|     const stations = bodyOf(".kitchen-order__stations");
+     11|     expect(stations).toMatch(/max-height:\s*[^;]*(rem|vh)/);
+       |                      ^
+     12|     expect(stations).toMatch(/overflow-y:\s*auto/);
+     13|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  18:25:32
+   Duration  638ms (transform 25ms, setup 0ms, import 55ms, tests 10ms, environment 0ms)
+
