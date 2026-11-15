@@ -1,7 +1,7 @@
 # V1-RMD-1104 - Eşit bölmede 2, 3, 4 kişi hızlı tuşları
 
 - Task ID: V1-RMD-1104
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
