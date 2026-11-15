@@ -1,0 +1,86 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+index b862bb8a1..60a483cb8 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+@@ -54,6 +54,16 @@ describe("the till header", () => {
+     expect([...document.querySelectorAll(".pos-header-actions > nav a")].map((link) => link.textContent)).toEqual(["Masalar", "Hızlı satış"]);
+   });
+ 
++  it.each([
++    [["orders.create", "catalog.manage"], "Yönetici"],
++    [["orders.create", "bills.split"], "Kasiyer / Operasyon"],
++    [["orders.create"], "Sınırlı erişim"],
++  ])("labels the operator with the same role the other screens derive from the session (%j)", async (capabilities, role) => {
++    await renderHome({ capabilities });
++
++    expect(userButton().querySelector("small")?.textContent).toBe(`${role} · Diğer ▾`);
++  });
++
+   it("keeps the rarely used actions in a menu that is closed until the user opens it", async () => {
+     await renderHome();
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 11fec2e1c..b6609ebf4 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
+ import { isPlainClick, useRouter } from "../router";
+ import { focusOnMount } from "../focusOnMount";
+ import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
+-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
++import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, roleLabelFor, stateText, type KitchenlessReasonCode } from "../strings";
+ import { formatDateTime, formatMoney, formatQuantity } from "../format";
+ import { savedId } from "../storage";
+ import { playNewItemChime } from "../audioAlerts";
+@@ -774,7 +774,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
+           {cashSession && <CashSessionLink status={cashSession} />}
+           <button data-telemetry-id="b.routes.cashier.42" className="operator-card" ref={userMenuButton} aria-expanded={menuOpen} aria-controls="header-menu" onClick={() => setMenuOpen((open) => !open)}>
+-            <span>{displayName || username}</span><small>Kasiyer · Diğer ▾</small>
++            <span>{displayName || username}</span><small>{roleLabelFor(capabilities)} · Diğer ▾</small>
+           </button>
+         </div>
+       </header>
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index d0c50cfc9..ead07ed76 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -4,7 +4,7 @@ import { tryGetItem, trySetItem } from "../storage";
+ import { useRouter } from "../router";
+ import { canStartTableOrder } from "./tableOrderAvailability";
+ import { TableOrderBridge, type AwaitingCheck } from "./TableOrderBridge";
+-import { managementText, navLabels, roleLabels } from "../strings";
++import { managementText, navLabels, roleLabelFor } from "../strings";
+ import { formatClockTime } from "../format";
+ import { ProductionShell } from "../shell";
+ import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
+@@ -101,11 +101,7 @@ export function ExperiencePage({
+           : capabilitySet.has("orders.create") || capabilitySet.has("tables.status");
+   // Role label is derived from the session's capabilities, not from the current
+   // route. (deep-analysis finding F-4)
+-  const roleLabel = capabilitySet.has("catalog.manage")
+-    ? roleLabels.manager
+-    : capabilitySet.has("bills.split")
+-      ? roleLabels.cashierOps
+-      : roleLabels.limited;
++  const roleLabel = roleLabelFor(capabilitySet);
+   const session: ShellSession = {
+     status: "authenticated",
+     identity: {
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 80e369d92..b7f637128 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -28,6 +28,12 @@ export const roleLabels = {
+   limited: "Sınırlı erişim",
+ } as const;
+ 
++/** The one place a session's role label is derived (shell identity and till header), from capabilities only. */
++export const roleLabelFor = (capabilities: Iterable<string>) => {
++  const granted = new Set(capabilities);
++  return granted.has("catalog.manage") ? roleLabels.manager : granted.has("bills.split") ? roleLabels.cashierOps : roleLabels.limited;
++};
++
+ /** Connectivity status labels for the shell status bar. */
+ export const connectivityLabels = {
+   online: "Çevrimiçi",

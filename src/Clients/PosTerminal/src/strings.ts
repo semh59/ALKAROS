@@ -28,6 +28,12 @@ export const roleLabels = {
   limited: "Sınırlı erişim",
 } as const;
 
+/** The one place a session's role label is derived (shell identity and till header), from capabilities only. */
+export const roleLabelFor = (capabilities: Iterable<string>) => {
+  const granted = new Set(capabilities);
+  return granted.has("catalog.manage") ? roleLabels.manager : granted.has("bills.split") ? roleLabels.cashierOps : roleLabels.limited;
+};
+
 /** Connectivity status labels for the shell status bar. */
 export const connectivityLabels = {
   online: "Çevrimiçi",

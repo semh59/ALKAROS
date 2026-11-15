@@ -54,6 +54,16 @@ describe("the till header", () => {
     expect([...document.querySelectorAll(".pos-header-actions > nav a")].map((link) => link.textContent)).toEqual(["Masalar", "Hızlı satış"]);
   });
 
+  it.each([
+    [["orders.create", "catalog.manage"], "Yönetici"],
+    [["orders.create", "bills.split"], "Kasiyer / Operasyon"],
+    [["orders.create"], "Sınırlı erişim"],
+  ])("labels the operator with the same role the other screens derive from the session (%j)", async (capabilities, role) => {
+    await renderHome({ capabilities });
+
+    expect(userButton().querySelector("small")?.textContent).toBe(`${role} · Diğer ▾`);
+  });
+
   it("keeps the rarely used actions in a menu that is closed until the user opens it", async () => {
     await renderHome();
 

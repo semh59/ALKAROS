@@ -1,0 +1,5 @@
+R1-header-hardcoded exit 1 restored cmp ok
+R2-manager-check-dropped exit 1 restored cmp ok
+R3-cashier-check-dropped exit 1 restored cmp ok
+R4-header-limited-always exit 1 restored cmp ok
+done

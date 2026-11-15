@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
 import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, stateText, type KitchenlessReasonCode } from "../strings";
+import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, roleLabelFor, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
@@ -774,7 +774,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
           {cashSession && <CashSessionLink status={cashSession} />}
           <button data-telemetry-id="b.routes.cashier.42" className="operator-card" ref={userMenuButton} aria-expanded={menuOpen} aria-controls="header-menu" onClick={() => setMenuOpen((open) => !open)}>
-            <span>{displayName || username}</span><small>Kasiyer · Diğer ▾</small>
+            <span>{displayName || username}</span><small>{roleLabelFor(capabilities)} · Diğer ▾</small>
           </button>
         </div>
       </header>

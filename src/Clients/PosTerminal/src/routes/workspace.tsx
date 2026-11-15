@@ -4,7 +4,7 @@ import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
 import { canStartTableOrder } from "./tableOrderAvailability";
 import { TableOrderBridge, type AwaitingCheck } from "./TableOrderBridge";
-import { managementText, navLabels, roleLabels } from "../strings";
+import { managementText, navLabels, roleLabelFor } from "../strings";
 import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
@@ -101,11 +101,7 @@ export function ExperiencePage({
           : capabilitySet.has("orders.create") || capabilitySet.has("tables.status");
   // Role label is derived from the session's capabilities, not from the current
   // route. (deep-analysis finding F-4)
-  const roleLabel = capabilitySet.has("catalog.manage")
-    ? roleLabels.manager
-    : capabilitySet.has("bills.split")
-      ? roleLabels.cashierOps
-      : roleLabels.limited;
+  const roleLabel = roleLabelFor(capabilitySet);
   const session: ShellSession = {
     status: "authenticated",
     identity: {
