@@ -1,0 +1,72 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/touchTargets.test.ts (22 tests | 4 failed) 23ms
+     × has its own rule after the shared meta colour so it wins 4ms
+     × is at least 14 px 2ms
+     × keeps 16 px (--ds-space-4) off the card edges and the button 1ms
+     × uses the muted colour token, not a hard-coded colour 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > has its own rule after the shared meta colour so it wins
+AssertionError: .pending-checks__served-note { not found: expected -1 to be greater than 953
+ ❯ src/touchTargets.test.ts:80:43
+     78|
+     79|   it("has its own rule after the shared meta colour so it wins", () =>…
+     80|     expect(start, `${opening} not found`).toBeGreaterThan(css.indexOf(…
+       |                                           ^
+     81|   });
+     82|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > is at least 14 px
+AssertionError: expected null not to be null
+ ❯ src/touchTargets.test.ts:85:22
+     83|   it("is at least 14 px", () => {
+     84|     const size = body.match(/(?<![-\w])font-size:\s*([\d.]+(?:px|rem))…
+     85|     expect(size).not.toBeNull();
+       |                      ^
+     86|     expect(pixels(size![1])).toBeGreaterThanOrEqual(14);
+     87|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > keeps 16 px (--ds-space-4) off the card edges and the button
+AssertionError: expected null not to be null
+ ❯ src/touchTargets.test.ts:91:24
+     89|   it("keeps 16 px (--ds-space-4) off the card edges and the button", (…
+     90|     const margin = body.match(/(?<![-\w])margin:\s*([^;]+);/);
+     91|     expect(margin).not.toBeNull();
+       |                        ^
+     92|     const [, side, bottom] = margin![1].trim().split(/\s+/);
+     93|     expect(side).toBe("var(--ds-space-4)");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > uses the muted colour token, not a hard-coded colour
+AssertionError: expected '' to match /(?<![-\w])color:\s*var\(--ds-color-mu…/
+
+- Expected:
+/(?<![-\w])color:\s*var\(--ds-color-muted\)/
+
++ Received:
+""
+
+ ❯ src/touchTargets.test.ts:98:18
+     96|
+     97|   it("uses the muted colour token, not a hard-coded colour", () => {
+     98|     expect(body).toMatch(/(?<![-\w])color:\s*var\(--ds-color-muted\)/);
+       |                  ^
+     99|   });
+    100| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 18 passed (22)
+   Start at  12:44:34
+   Duration  423ms (transform 36ms, setup 0ms, import 61ms, tests 23ms, environment 0ms)
+

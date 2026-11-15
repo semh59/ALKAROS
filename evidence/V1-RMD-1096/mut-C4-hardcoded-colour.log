@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/touchTargets.test.ts (22 tests | 1 failed) 23ms
+     × uses the muted colour token, not a hard-coded colour 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > uses the muted colour token, not a hard-coded colour
+AssertionError: expected ' margin: 0 var(--ds-space-4) var(--ds…' to match /(?<![-\w])color:\s*var\(--ds-color-mu…/
+
+- Expected:
+/(?<![-\w])color:\s*var\(--ds-color-muted\)/
+
++ Received:
+" margin: 0 var(--ds-space-4) var(--ds-space-4); font-size: .875rem; line-height: 1.4; color: #61727a; "
+
+ ❯ src/touchTargets.test.ts:98:18
+     96|
+     97|   it("uses the muted colour token, not a hard-coded colour", () => {
+     98|     expect(body).toMatch(/(?<![-\w])color:\s*var\(--ds-color-muted\)/);
+       |                  ^
+     99|   });
+    100| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 21 passed (22)
+   Start at  12:44:51
+   Duration  381ms (transform 32ms, setup 0ms, import 57ms, tests 23ms, environment 0ms)
+

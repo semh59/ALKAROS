@@ -1,0 +1,5 @@
+# V1-RMD-1096 sonuc
+Dogrulama (kod): pending-checks__served-note icin pending-checks.css'te kural yoktu (grep); not kartin sol kenarina yapisik ve genel meta renginde (#61727a) cikiyordu. Alarm gercekti.
+Duzeltme: pending-checks.css'e kural eklendi: font-size .875rem (14 px), margin 0 var(--ds-space-4) var(--ds-space-4) (yanlardan ve alttan 16 px), color var(--ds-color-muted) (#4d5c68, kasa renk tablosu). Kural meta kuralindan sonra durur, esit ozgullukte kazanir. docs/CASHIER_UI_RULES.md (2, 3, renk tablosu) ile uyumlu. Not metni ve gosterim kosulu degismedi.
+Kanit: red.log (4 kirmizi), green.log touchTargets 22/22, green-all.log (pending-checks + workspace + touchTargets) 140/140, client-build-gate.log exit 0 (lint, typecheck, vite build), mutations.txt C1-C4 killed.
+Acik risk: test kural bloguna bicim eslesmesiyle bakar (dort degerli margin yazimi veya ikinci ezici kural yakalanmaz); notun ust boslugu 0 ve butonla arasinda kartin 4 px grid bosluğu var (not dokunma hedefi degil, kural ihlali sayilmaz). Kontrast elle hesaplandi (~6,5:1), aracla olculmedi.

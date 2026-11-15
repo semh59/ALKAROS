@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/touchTargets.test.ts (22 tests | 1 failed) 38ms
+     × keeps 16 px (--ds-space-4) off the card edges and the button 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > keeps 16 px (--ds-space-4) off the card edges and the button
+AssertionError: expected 'var(--ds-space-3)' to be 'var(--ds-space-4)' // Object.is equality
+
+Expected: "var(--ds-space-4)"
+Received: "var(--ds-space-3)"
+
+ ❯ src/touchTargets.test.ts:93:18
+     91|     expect(margin).not.toBeNull();
+     92|     const [, side, bottom] = margin![1].trim().split(/\s+/);
+     93|     expect(side).toBe("var(--ds-space-4)");
+       |                  ^
+     94|     expect(bottom).toBe("var(--ds-space-4)");
+     95|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 21 passed (22)
+   Start at  12:44:39
+   Duration  440ms (transform 49ms, setup 0ms, import 85ms, tests 38ms, environment 0ms)
+

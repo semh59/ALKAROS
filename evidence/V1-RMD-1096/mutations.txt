@@ -1,0 +1,4 @@
+C1-rule-missing exit 1 restored cmp ok
+C2-font-12px exit 1 restored cmp ok
+C3-margin-12px exit 1 restored cmp ok
+C4-hardcoded-colour exit 1 restored cmp ok

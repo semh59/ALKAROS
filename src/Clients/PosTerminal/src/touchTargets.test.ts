@@ -68,3 +68,33 @@ describe("the notice box stays off the header", () => {
     expect(Number(bottom![1]) * (bottom![2] === "rem" ? 16 : 1)).toBeGreaterThanOrEqual(80);
   });
 });
+
+describe("the served-recall note follows the cashier UI rules", () => {
+  const css = read("./features/pending-checks/pending-checks.css");
+  const opening = ".pending-checks__served-note {";
+  const start = css.indexOf(opening);
+  const body = start < 0 ? "" : css.slice(start + opening.length, css.indexOf("}", start));
+  const pixels = (value: string) => Number.parseFloat(value) * (value.endsWith("rem") ? 16 : 1);
+
+  it("has its own rule after the shared meta colour so it wins", () => {
+    expect(start, `${opening} not found`).toBeGreaterThan(css.indexOf(".pending-checks__meta, .pending-checks__preview {"));
+  });
+
+  it("is at least 14 px", () => {
+    const size = body.match(/(?<![-\w])font-size:\s*([\d.]+(?:px|rem))/);
+    expect(size).not.toBeNull();
+    expect(pixels(size![1])).toBeGreaterThanOrEqual(14);
+  });
+
+  it("keeps 16 px (--ds-space-4) from the card sides and bottom", () => {
+    const margin = body.match(/(?<![-\w])margin:\s*([^;]+);/);
+    expect(margin).not.toBeNull();
+    const [, side, bottom] = margin![1].trim().split(/\s+/);
+    expect(side).toBe("var(--ds-space-4)");
+    expect(bottom).toBe("var(--ds-space-4)");
+  });
+
+  it("uses the muted colour token, not a hard-coded colour", () => {
+    expect(body).toMatch(/(?<![-\w])color:\s*var\(--ds-color-muted\)/);
+  });
+});

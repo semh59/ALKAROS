@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/touchTargets.test.ts (22 tests | 1 failed) 18ms
+     × is at least 14 px 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/touchTargets.test.ts > the served-recall note follows the cashier UI rules > is at least 14 px
+AssertionError: expected 12 to be greater than or equal to 14
+ ❯ src/touchTargets.test.ts:86:30
+     84|     const size = body.match(/(?<![-\w])font-size:\s*([\d.]+(?:px|rem))…
+     85|     expect(size).not.toBeNull();
+     86|     expect(pixels(size![1])).toBeGreaterThanOrEqual(14);
+       |                              ^
+     87|   });
+     88|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 21 passed (22)
+   Start at  12:44:36
+   Duration  355ms (transform 33ms, setup 0ms, import 55ms, tests 18ms, environment 0ms)
+

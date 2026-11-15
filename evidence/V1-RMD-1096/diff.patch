@@ -1,0 +1,50 @@
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css b/src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
+index 129e716eb..e6525966e 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
++++ b/src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
+@@ -15,6 +15,7 @@
+ .pending-checks__error { border: 1px solid var(--ds-color-danger); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+ .pending-checks__card { display: grid; gap: .25rem; border: 1px solid #bdc8cd; border-radius: var(--ds-radius-sm); background: #f7fbfd; }
+ .pending-checks__recall { justify-self: start; min-height: 48px; margin: 0 var(--ds-space-3) var(--ds-space-3); border: 1px solid #4b5e68; border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-3); color: #3a4c55; background: #fff; font: inherit; cursor: pointer; }
++.pending-checks__served-note { margin: 0 var(--ds-space-4) var(--ds-space-4); font-size: .875rem; line-height: 1.4; color: var(--ds-color-muted); }
+ .pending-checks__recall:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }
+ .pending-checks__merge-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ds-space-3); }
+ .pending-checks__merge { min-height: 48px; border: 1px solid #142b35; border-radius: var(--ds-radius-sm); padding: 0 var(--ds-space-3); color: #fff; background: #142b35; font: inherit; font-weight: 700; cursor: pointer; }
+diff --git a/src/Clients/PosTerminal/src/touchTargets.test.ts b/src/Clients/PosTerminal/src/touchTargets.test.ts
+index 4d76bdfbd..b048d6bd7 100644
+--- a/src/Clients/PosTerminal/src/touchTargets.test.ts
++++ b/src/Clients/PosTerminal/src/touchTargets.test.ts
+@@ -68,3 +68,33 @@ describe("the notice box stays off the header", () => {
+     expect(Number(bottom![1]) * (bottom![2] === "rem" ? 16 : 1)).toBeGreaterThanOrEqual(80);
+   });
+ });
++
++describe("the served-recall note follows the cashier UI rules", () => {
++  const css = read("./features/pending-checks/pending-checks.css");
++  const opening = ".pending-checks__served-note {";
++  const start = css.indexOf(opening);
++  const body = start < 0 ? "" : css.slice(start + opening.length, css.indexOf("}", start));
++  const pixels = (value: string) => Number.parseFloat(value) * (value.endsWith("rem") ? 16 : 1);
++
++  it("has its own rule after the shared meta colour so it wins", () => {
++    expect(start, `${opening} not found`).toBeGreaterThan(css.indexOf(".pending-checks__meta, .pending-checks__preview {"));
++  });
++
++  it("is at least 14 px", () => {
++    const size = body.match(/(?<![-\w])font-size:\s*([\d.]+(?:px|rem))/);
++    expect(size).not.toBeNull();
++    expect(pixels(size![1])).toBeGreaterThanOrEqual(14);
++  });
++
++  it("keeps 16 px (--ds-space-4) from the card sides and bottom", () => {
++    const margin = body.match(/(?<![-\w])margin:\s*([^;]+);/);
++    expect(margin).not.toBeNull();
++    const [, side, bottom] = margin![1].trim().split(/\s+/);
++    expect(side).toBe("var(--ds-space-4)");
++    expect(bottom).toBe("var(--ds-space-4)");
++  });
++
++  it("uses the muted colour token, not a hard-coded colour", () => {
++    expect(body).toMatch(/(?<![-\w])color:\s*var\(--ds-color-muted\)/);
++  });
++});
