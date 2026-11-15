@@ -926,31 +926,36 @@ public sealed class KitchenOperationsStore
         return result;
     }
 
-    // Waiters rarely mark items served, so a Ready ticket of an order that payment or cancellation already
-    // closed would stay on the board (and keep its failed print jobs in the error strip) forever; tickets
-    // still being made always stay.
+    // A bill is often paid before the kitchen is done (a counter sale is paid at once), so a Completed order keeps
+    // the tickets still being made for one shift; Ready and stale tickets of it, and every ticket of a Cancelled or
+    // Rejected order, would otherwise sit on the board (and in the error strip) forever because waiters rarely mark
+    // items served.
+    private static readonly TimeSpan PaidFirstWindow = TimeSpan.FromHours(12);
+
     private async Task<IReadOnlyList<KitchenTicket>> GetBoardTicketsAsync(string stationId, CancellationToken cancellationToken)
     {
         var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
         var tickets = await _tickets.GetActiveByStationAsync(stationId, liveSync, cancellationToken);
-        var closedOrders = await ClosedOrderIdsAsync(
-            tickets.Where(ticket => ticket.Status == KitchenTicketState.Ready).Select(ticket => ticket.OrderId).ToArray(),
-            cancellationToken);
-        return tickets.Where(ticket => ticket.Status != KitchenTicketState.Ready || !closedOrders.Contains(ticket.OrderId)).ToArray();
+        var closed = await ClosedOrderStatusesAsync(tickets.Select(ticket => ticket.OrderId).Distinct().ToArray(), cancellationToken);
+        var staleBefore = DateTimeOffset.UtcNow - PaidFirstWindow;
+        return tickets.Where(ticket => !closed.TryGetValue(ticket.OrderId, out var orderStatus)
+            || (orderStatus == "Completed"
+                && ticket.Status is KitchenTicketState.Queued or KitchenTicketState.Accepted or KitchenTicketState.Preparing
+                && ticket.CreatedAt >= staleBefore)).ToArray();
     }
 
-    private async Task<HashSet<Guid>> ClosedOrderIdsAsync(Guid[] orderIds, CancellationToken cancellationToken)
+    private async Task<Dictionary<Guid, string>> ClosedOrderStatusesAsync(Guid[] orderIds, CancellationToken cancellationToken)
     {
-        var closed = new HashSet<Guid>();
+        var closed = new Dictionary<Guid, string>();
         if (orderIds.Length == 0)
             return closed;
 
         await using var command = _dataSource.CreateCommand(
-            "SELECT order_id FROM orders.orders WHERE order_id = ANY(@order_ids) AND status IN ('Completed', 'Cancelled', 'Rejected');");
+            "SELECT order_id, status FROM orders.orders WHERE order_id = ANY(@order_ids) AND status IN ('Completed', 'Cancelled', 'Rejected');");
         command.Parameters.Add("order_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderIds;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
-            closed.Add(reader.GetGuid(0));
+            closed[reader.GetGuid(0)] = reader.GetString(1);
         return closed;
     }
 

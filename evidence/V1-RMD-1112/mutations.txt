@@ -1,0 +1,9 @@
+M1-no-filter exit 1 restored cmp ok
+M2-ready-only-filter exit 1 restored cmp ok
+M3-completed-all-hidden exit 1 restored cmp ok
+M4-cancelled-kept exit 1 restored cmp ok
+M5-rejected-kept exit 1 restored cmp ok
+M6-open-hidden exit 1 restored cmp ok
+M7-no-stale-window exit 1 restored cmp ok
+M8-ready-kept-when-completed exit 1 restored cmp ok
+done

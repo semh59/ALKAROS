@@ -221,15 +221,25 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Empty((await GetAsync<KitchenTicketV1[]>(client, board, cookie))!);
     }
 
-    // Waiters rarely press "served", so a Ready ticket of an order that payment or cancellation already closed
-    // must leave the live-sync board; a ticket still being prepared stays whatever the order status.
+    // Waiters rarely press "served", so a Ready ticket of a closed order must leave the live-sync board. A bill is
+    // often paid before the kitchen is done (counter sales are paid at once), so a Completed order keeps the tickets
+    // still being made for one shift; a Cancelled or Rejected order keeps nothing.
     [Theory]
-    [InlineData("Completed", true, false)]
-    [InlineData("Cancelled", true, false)]
-    [InlineData("Rejected", true, false)]
-    [InlineData("Submitted", true, true)]
-    [InlineData("Completed", false, true)]
-    public async Task AReadyTicketOfAClosedOrderLeavesTheLiveSyncBoard(string orderStatus, bool ready, bool onBoard)
+    [InlineData("Completed", "Ready", 0, false)]
+    [InlineData("Cancelled", "Ready", 0, false)]
+    [InlineData("Rejected", "Ready", 0, false)]
+    [InlineData("Submitted", "Ready", 0, true)]
+    [InlineData("Completed", "Preparing", 0, true)]
+    [InlineData("Completed", "Queued", 0, true)]
+    [InlineData("Completed", "Queued", 13, false)]
+    [InlineData("Completed", "Preparing", 13, false)]
+    [InlineData("Completed", "Preparing", 11, true)]
+    [InlineData("Cancelled", "Preparing", 0, false)]
+    [InlineData("Rejected", "Preparing", 0, false)]
+    [InlineData("Cancelled", "Queued", 0, false)]
+    [InlineData("Rejected", "Queued", 0, false)]
+    [InlineData("Submitted", "Queued", 13, true)]
+    public async Task ATicketOfAClosedOrderLeavesTheLiveSyncBoardUnlessItIsStillBeingMade(string orderStatus, string stage, int ageHours, bool onBoard)
     {
         var terminalId = Guid.NewGuid();
         var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
@@ -241,10 +251,15 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
         await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
         var item = Prefix(terminalId) + $"/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition";
-        var preparing = await PostAsync<KitchenTicketV1>(client, item, cookie, new TransitionKitchenItemV1("Preparing", 1, 1));
-        if (ready)
-            await PostAsync<KitchenTicketV1>(client, item, cookie,
-                new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
+        if (stage != "Queued")
+        {
+            var preparing = await PostAsync<KitchenTicketV1>(client, item, cookie, new TransitionKitchenItemV1("Preparing", 1, 1));
+            if (stage == "Ready")
+                await PostAsync<KitchenTicketV1>(client, item, cookie,
+                    new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
+        }
+        await _database.ScalarAsync<string>(
+            $"UPDATE kitchen.kitchen_tickets SET created_at = now() - interval '{ageHours} hours' WHERE id = '{seed.TicketId:D}' RETURNING status;");
         await _database.ScalarAsync<string>(
             $"UPDATE orders.orders SET status = '{orderStatus}' WHERE order_id = '{seed.OrderId:D}' RETURNING status;");
 

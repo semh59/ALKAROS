@@ -1,7 +1,7 @@
 # V1-RMD-1112 - Mutfak panosu kapanmış siparişin eski ve hazır biletlerini göstermez
 
 - Task ID: V1-RMD-1112
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
