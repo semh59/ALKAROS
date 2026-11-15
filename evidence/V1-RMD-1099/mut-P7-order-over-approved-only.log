@@ -1,0 +1,823 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-refunds.test.js (31 tests | 30 failed) 1025ms
+     × says why the request button is off and drops the sentence when the missing text is typed 44ms
+     × says why the reject button is off and drops the sentence when the missing text is typed 15ms
+     × says why the complete button is off and drops the sentence when the missing text is typed 14ms
+     × keeps one sentence per row under the right button, brings it back when the text is cleared and shows none while a request is being sent 12ms
+     × offers approve and reject only on the requests the server says the caller may decide 12ms
+     × shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide false) 103ms
+     × shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true) 47ms
+     × asks for a refund of an approved payment with the typed reason 13ms
+     × retries a refund request that hit a server fault under the same idempotency key 14ms
+     × cancels an unpaid bill with the reason and shows it as cancelled 12ms
+     × offers no cancel for a bill that already has money on it 11ms
+     × shows the Turkish server message when the cancel is refused, never a raw status 117ms
+     × lets an approver reject a waiting request with a note 27ms
+     × lets an approver approve a waiting request 11ms
+     × shows the cancelled screen when the approval closed the bill 11ms
+     × offers a refund only for approved payments that have no open request 11ms
+     × lists only the refund requests of this bill 11ms
+     × completes a card refund with the slip number 11ms
+     × lets an approver cancel an approved Card refund with a reason and a second tap 10ms
+     × lets an approver cancel an approved Eft refund with a reason and a second tap 12ms
+     × sends a reason typed under Diğer and enables the cancel only while it is filled 190ms
+     × drops the second-tap question when a typed reason changes 12ms
+     × does not carry the reason chosen for a rejection over to the cancel of the same request once it was approved 12ms
+     × drops the second-tap question when the reason changes 63ms
+     × offers no cancel of an approved refund without the approve permission, to someone who must not decide it, or once it is completed 12ms
+     × completes a transfer refund without a slip field and sends no slip number 12ms
+     × names the method and, for repeated methods, the payment order on every refund request card 11ms
+     × keeps the payment order stable when an earlier payment of the same method was already refunded 134ms
+     × names every method the server can send and marks a self-approved request 40ms
+     × explains a refused self decision with a fixed sentence, never the server text 15ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 30 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says why the request button is off and drops the sentence when the missing text is typed
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257203-0.07365751359390138:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257203-0.07365751359390138:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says why the reject button is off and drops the sentence when the missing text is typed
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257232-0.6219233344332442:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257232-0.6219233344332442:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > says why the complete button is off and drops the sentence when the missing text is typed
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257246-0.830573853021148:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257246-0.830573853021148:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > keeps one sentence per row under the right button, brings it back when the text is cleared and shows none while a request is being sent
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257259-0.004213094280068441:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257259-0.004213094280068441:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > offers approve and reject only on the requests the server says the caller may decide
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257274-0.692256411575415:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257274-0.692256411575415:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide false)
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257286-0.48174809038803246:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257286-0.48174809038803246:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > shows the card-charged approval of the caller's own claim only when the server says it may decide (mayDecide true)
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257390-0.2948789044622737:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257390-0.2948789044622737:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > asks for a refund of an approved payment with the typed reason
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257436-0.42601624836601903:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257436-0.42601624836601903:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > retries a refund request that hit a server fault under the same idempotency key
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257449-0.573793092770646:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257449-0.573793092770646:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > cancels an unpaid bill with the reason and shows it as cancelled
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257463-0.46654156408933267:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257463-0.46654156408933267:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > offers no cancel for a bill that already has money on it
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257474-0.5590204724716248:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257474-0.5590204724716248:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > shows the Turkish server message when the cancel is refused, never a raw status
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257485-0.4700554330890194:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257485-0.4700554330890194:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > lets an approver reject a waiting request with a note
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257603-0.3730254305049111:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257603-0.3730254305049111:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > lets an approver approve a waiting request
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257629-0.3661365397366104:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257629-0.3661365397366104:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > shows the cancelled screen when the approval closed the bill
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257640-0.4664904131678187:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257640-0.4664904131678187:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > offers a refund only for approved payments that have no open request
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257651-0.09084892781077203:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257651-0.09084892781077203:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > lists only the refund requests of this bill
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257662-0.11981748254430757:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257662-0.11981748254430757:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > completes a card refund with the slip number
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257673-0.937829512568204:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257673-0.937829512568204:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > lets an approver cancel an approved Card refund with a reason and a second tap
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257684-0.3175172597661132:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257684-0.3175172597661132:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > lets an approver cancel an approved Eft refund with a reason and a second tap
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257694-0.6019225074826238:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257694-0.6019225074826238:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > sends a reason typed under Diğer and enables the cancel only while it is filled
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257706-0.07606185058927306:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257706-0.07606185058927306:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > drops the second-tap question when a typed reason changes
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257896-0.9520274133971969:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257896-0.9520274133971969:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > does not carry the reason chosen for a rejection over to the cancel of the same request once it was approved
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257908-0.9676961621725712:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257908-0.9676961621725712:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > drops the second-tap question when the reason changes
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257920-0.8834073533883449:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257920-0.8834073533883449:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > offers no cancel of an approved refund without the approve permission, to someone who must not decide it, or once it is completed
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257983-0.8080112011885385:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257983-0.8080112011885385:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > completes a transfer refund without a slip field and sends no slip number
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257995-0.7787898401500687:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743257995-0.7787898401500687:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > names the method and, for repeated methods, the payment order on every refund request card
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258007-0.8007617142491266:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258007-0.8007617142491266:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[27/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > keeps the payment order stable when an earlier payment of the same method was already refunded
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258018-0.3655799078453439:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258018-0.3655799078453439:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[28/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > names every method the server can send and marks a self-approved request
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258154-0.9190830468335084:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258154-0.9190830468335084:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[29/30]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > explains a refused self decision with a fixed sentence, never the server text
+RolldownError: Parse failure: Parse failed with 1 error:
+Expected a semicolon or an implicit semicolon after a statement, but found none
+1637:   // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+1638:   function paymentLabel(line, fallbackName) {
+1639:     var same = state.summary.allocations.filter(function (other) { return other.method === line.method var same = sta...
+                                                                                                            ^
+1640:     var name = METHOD_NAMES[line.method] || fallbackName;
+1641:     return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+At file: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258192-0.40182283863766577:1639:102
+  File: /@fs/D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743258192-0.40182283863766577:1639:102
+  1637 |    // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  1638 |    function paymentLabel(line, fallbackName) {
+  1639 |  ...ilter(function (other) { return other.method === line.method var same = state.summary.allocations.filter(function ...
+       |                                                                 ^
+  1640 |      var name = METHOD_NAMES[line.method] || fallbackName;
+  1641 |      return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1...
+ ❯ error node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/shared/logs-DmYCAKcW.mjs:159:24
+ ❯ normalizeParseError node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:25:9
+ ❯ wrap node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:5:39
+ ❯ parseAstAsync node_modules/.pnpm/rolldown@1.2.9/node_modules/rolldown/dist/parse-ast-index.mjs:54:9
+ ❯ ssrTransformScript node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:16049:9
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.3.0/node_modules/vite/dist/node/chunks/node.js:19668:64
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[30/30]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  30 failed | 1 passed (31)
+   Start at  14:47:35
+   Duration  2.60s (transform 74ms, setup 27ms, import 83ms, tests 1.03s, environment 1.10s)
+

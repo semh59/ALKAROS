@@ -1633,6 +1633,14 @@
     return item.quantity - (item.refundedQuantity || 0);
   }
 
+  // Names a payment for the refund screen: method and amount, plus its order among the same method's payments
+  // (the server lists them by payment time) so two equal cash payments stay distinguishable.
+  function paymentLabel(line, fallbackName) {
+    var same = state.summary.allocations.filter(function (other) { return other.method === line.method; });
+    var name = METHOD_NAMES[line.method] || fallbackName;
+    return (name ? name + ' · ' : '') + formatMoney(line.amount) + (same.length > 1 ? ' · ' + (same.indexOf(line) + 1) + '. ödeme' : '');
+  }
+
   function itemPayments() {
     return state.summary.allocations.filter(function (line) {
       return (line.paymentStatus === 'Approved' || line.paymentStatus === 'PartiallyRefunded') && !openRefundFor(line.paymentId);
@@ -1688,7 +1696,7 @@
     }).join('');
     var paymentOptions = '<option value="">Ödeme seçin</option>' + itemPayments().map(function (line) {
       return '<option value="' + escapeHtml(line.paymentId) + '"' + (state.itemPayment === line.paymentId ? ' selected' : '') + '>' +
-        escapeHtml(METHOD_NAMES[line.method] || 'Ödeme') + ' · ' + escapeHtml(formatMoney(line.amount)) + '</option>';
+        escapeHtml(paymentLabel(line, 'Ödeme')) + '</option>';
     }).join('');
     var stockOptions =
       '<option value="">Seçin</option>' +
@@ -1720,8 +1728,8 @@
       lines.map(function (line) {
         var id = escapeHtml(line.paymentId);
         return (
-          '<div class="sp-line"><span class="sp-line-method">' + formatMoney(line.amount) + '</span>' +
-          renderReasonField('refund:' + line.paymentId, 'İade gerekçesi (' + formatMoney(line.amount) + ')') +
+          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(paymentLabel(line, '')) + '</span>' +
+          renderReasonField('refund:' + line.paymentId, 'İade gerekçesi (' + paymentLabel(line, '') + ')') +
           '<button class="sp-btn sp-btn-destructive" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
           ' data-disabled-reason="İade istemek için bir gerekçe seçin ya da yazın."' +
           (disabled || (String(state.refundReasons[line.paymentId] || '').trim() ? '' : ' disabled')) + '>İade iste</button></div>'

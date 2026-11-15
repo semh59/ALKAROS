@@ -431,6 +431,32 @@ describe("split-payment.js cancel and refund", () => {
     expect(posted(fetchMock, "/complete").body).toEqual({ slipNumber: null, note: null });
   });
 
+  it("names the method and, for repeated methods, the payment order on every refund request card", async () => {
+    const pay = (id, amount, method) => ({ allocationId: "a" + id, paymentId: "p" + id, amount, paymentStatus: "Approved", method });
+    await open(routes({
+      summary: { ...paidSummary, allocations: [pay(1, 85, "Cash"), pay(2, 85, "Cash"), pay(3, 50, "Eft")] },
+    }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="request"]')).not.toBeNull());
+
+    const field = [...document.querySelectorAll(".sp-field")].find((node) => node.querySelector(".sp-field-label")?.textContent === "İade iste");
+    expect([...field.querySelectorAll(".sp-line-method")].map((node) => node.textContent)).toEqual([
+      "Nakit · ₺85,00 · 1. ödeme", "Nakit · ₺85,00 · 2. ödeme", "Havale / EFT · ₺50,00",
+    ]);
+    expect([...field.querySelectorAll("[data-reason-select]")].map((node) => node.getAttribute("aria-label"))).toEqual([
+      "İade gerekçesi (Nakit · ₺85,00 · 1. ödeme)", "İade gerekçesi (Nakit · ₺85,00 · 2. ödeme)", "İade gerekçesi (Havale / EFT · ₺50,00)",
+    ]);
+  });
+
+  it("keeps the payment order stable when an earlier payment of the same method was already refunded", async () => {
+    const pay = (id, status) => ({ allocationId: "a" + id, paymentId: "p" + id, amount: 85, paymentStatus: status, method: "Cash" });
+    await open(routes({ summary: { ...paidSummary, allocations: [pay(1, "Refunded"), pay(2, "Approved"), pay(3, "Approved")] } }));
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="request"]')).not.toBeNull());
+
+    expect([...document.querySelectorAll(".sp-line-method")].map((node) => node.textContent).filter((text) => text.includes("ödeme"))).toEqual([
+      "Nakit · ₺85,00 · 2. ödeme", "Nakit · ₺85,00 · 3. ödeme",
+    ]);
+  });
+
   it("names every method the server can send and marks a self-approved request", async () => {
     await open(routes({
       summary: paidSummary,

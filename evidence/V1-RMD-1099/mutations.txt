@@ -1,0 +1,8 @@
+P1-no-ordinal exit 1 restored cmp ok
+P2-ordinal-always exit 1 restored cmp ok
+P3-ordinal-zero-based exit 1 restored cmp ok
+P4-no-method-name exit 1 restored cmp ok
+P5-label-amount-only exit 1 restored cmp ok
+P6-ordinal-over-all exit 1 restored cmp ok
+P7-order-over-approved-only exit 1 restored cmp ok
+done

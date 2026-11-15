@@ -1,0 +1,79 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > names the method and, for repeated methods, the payment order on every refund request card
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743200534-0.5729775428298632:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743200534-0.5729775428298632:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743200534-0.5729775428298632:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-refunds.test.js > split-payment.js cancel and refund > keeps the payment order stable when an earlier payment of the same method was already refunded
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743200688-0.5875281666960325:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743200688-0.5875281666960325:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794743200688-0.5875281666960325:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-refunds.test.js (31 tests | 2 failed) 5654ms
+     × names the method and, for repeated methods, the payment order on every refund request card 154ms
+     × keeps the payment order stable when an earlier payment of the same method was already refunded 141ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > names the method and, for repeated methods, the payment order on every refund request card
+AssertionError: expected [ 'Nakit · ₺85,00', …(2) ] to deeply equal [ 'Nakit · ₺85,00 · 1. ödeme', …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "Nakit · ₺85,00 · 1. ödeme",
+-   "Nakit · ₺85,00 · 2. ödeme",
++   "Nakit · ₺85,00",
++   "Nakit · ₺85,00",
+    "Havale / EFT · ₺50,00",
+  ]
+
+ ❯ split-payment-refunds.test.js:442:92
+    440|
+    441|     const field = [...document.querySelectorAll(".sp-field")].find((no…
+    442|     expect([...field.querySelectorAll(".sp-line-method")].map((node) =…
+       |                                                                                            ^
+    443|       "Nakit · ₺85,00 · 1. ödeme", "Nakit · ₺85,00 · 2. ödeme", "Haval…
+    444|     ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-refunds.test.js > split-payment.js cancel and refund > keeps the payment order stable when an earlier payment of the same method was already refunded
+AssertionError: expected [] to deeply equal [ 'Nakit · ₺85,00 · 2. ödeme', …(1) ]
+
+- Expected
++ Received
+
+- [
+-   "Nakit · ₺85,00 · 2. ödeme",
+-   "Nakit · ₺85,00 · 3. ödeme",
+- ]
++ []
+
+ ❯ split-payment-refunds.test.js:455:136
+    453|     await vi.waitFor(() => expect(document.querySelector('[data-refund…
+    454|
+    455|     expect([...document.querySelectorAll(".sp-line-method")].map((node…
+       |                                                                                                                                        ^
+    456|       "Nakit · ₺85,00 · 2. ödeme", "Nakit · ₺85,00 · 3. ödeme",
+    457|     ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 29 passed (31)
+   Start at  14:46:33
+   Duration  7.48s (transform 2.19s, setup 36ms, import 95ms, tests 5.65s, environment 1.40s)
+
