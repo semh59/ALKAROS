@@ -1,7 +1,7 @@
 # V1-RMD-1103 - Tezgâh satışında tek düğmeyle gönder ve tahsil et
 
 - Task ID: V1-RMD-1103
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
