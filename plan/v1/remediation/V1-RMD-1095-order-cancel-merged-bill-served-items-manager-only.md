@@ -1,7 +1,7 @@
 # V1-RMD-1095 - Kasa kuyruğundaki sipariş iptali birleştirilmiş hesapta servis edilmiş kalemi yalnız yetkili yöneticiye bırakır
 
 - Task ID: V1-RMD-1095
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

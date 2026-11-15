@@ -75,7 +75,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
     {
         var merged = await SeedMergedAsync(attachToTable: true);
 
-        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, "corr-merged-1", CancellationToken.None);
+        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-1", CancellationToken.None);
 
         Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
         Assert.Equal(0L, await Count("SELECT count(*) FROM billing.bill_items WHERE bill_id = @id AND superseded_at IS NULL;", merged.BillId));
@@ -168,8 +168,63 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
         await Exec("UPDATE billing.bills SET status = 'Paid' WHERE bill_id = @id;", ("id", merged.BillId));
 
         await Assert.ThrowsAsync<OrderCancelHasPaymentException>(() =>
-            CancellationStore().CancelAsync(merged.SecondOrderId, "Müşteri vazgeçti", null, _actor, "corr-merged-4", CancellationToken.None));
+            CancellationStore().CancelAsync(merged.SecondOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-4", CancellationToken.None));
         Assert.Equal("Paid", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+    }
+
+    [Fact]
+    public async Task CancellingOneOrderNeverCancelsAMergedBillHoldingAnotherOrdersServedItemUnlessTheActorMayApproveRefunds()
+    {
+        var merged = await SeedMergedAsync(attachToTable: true);
+        await Exec("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", merged.SecondOrderId));
+
+        await Assert.ThrowsAsync<OrderCancelHasServedItemsException>(() =>
+            CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-7", CancellationToken.None));
+
+        Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+        Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
+
+        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, true, "corr-merged-8", CancellationToken.None);
+
+        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+        Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.SecondOrderId));
+    }
+
+    [Fact]
+    public async Task AnotherOrdersCancelledServedLineDoesNotStopACashierFromCancellingAnOrderOfAMergedBill()
+    {
+        var merged = await SeedMergedAsync(attachToTable: true);
+        await Exec(
+            "UPDATE orders.order_items SET kitchen_state = 'Served', status = 'Cancelled' WHERE order_id = @id;", ("id", merged.SecondOrderId));
+
+        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-9", CancellationToken.None);
+
+        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+    }
+
+    [Fact]
+    public async Task AServedLineOnAnAlreadyCancelledMergedBillDoesNotStopACashierFromCancellingAnOrder()
+    {
+        var merged = await SeedMergedAsync();
+        await Exec("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", merged.SecondOrderId));
+        await Exec("UPDATE billing.bills SET status = 'Cancelled' WHERE bill_id = @id;", ("id", merged.BillId));
+
+        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-10", CancellationToken.None);
+
+        Assert.Equal("Cancelled", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
+    }
+
+    [Fact]
+    public async Task AServedLineOnAnUnrelatedBillDoesNotStopACashierFromCancellingAnOrder()
+    {
+        var merged = await SeedMergedAsync();
+        var unrelated = await SeedMergedAsync();
+        await Exec("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", unrelated.SecondOrderId));
+
+        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-11", CancellationToken.None);
+
+        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+        Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", unrelated.BillId));
     }
 
     [Fact]

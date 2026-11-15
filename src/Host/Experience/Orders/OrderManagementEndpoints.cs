@@ -919,6 +919,7 @@ public static class OrderManagementEndpoints
             CancelOrderRequestV1 request,
             OrderCancellationStore store,
             OrderCommandReplayStore replays,
+            IRoleRepository roles,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             ICashierQueueAnnouncer queueAnnouncer,
@@ -929,12 +930,15 @@ public static class OrderManagementEndpoints
         {
             var userId = await RequireCashierPermissionAsync(
                 context, terminalId, dualStore, authorization, ApplicationPermissions.BillsCancel, cancellationToken);
+            // The same approver a bill cancellation asks for when a bill this cancels holds another order's served item.
+            var mayCancelServed = (await roles.GetPermissionCodesForUserAsync(userId, cancellationToken))
+                .Contains(ApplicationPermissions.PaymentsRefundApprove, StringComparer.Ordinal);
             var result = await replays.ExecuteAsync(
                 $"orders:{terminalId:N}:{userId:N}:cancel",
                 request.IdempotencyKey,
                 request,
                 () => store.CancelAsync(
-                    orderId, request.Reason, request.ExpectedRowVersion, userId, context.TraceIdentifier, cancellationToken),
+                    orderId, request.Reason, request.ExpectedRowVersion, userId, mayCancelServed, context.TraceIdentifier, cancellationToken),
                 cancellationToken);
             await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", orderId, null, cancellationToken);
             await DualScreenApplication.NotifyCustomerDisplayAsync(

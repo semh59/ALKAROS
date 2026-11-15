@@ -1,0 +1,3 @@
+# Reviews
+- qa-backend: KABUL. Sorgu, kilit sirasi, yetki baglantisi dogru; varsayilan true ile hesap iptali ve temizlik degismez. Dusuk: kilit yalniz hesaplari tutar (yaris, 1097); superseded_at filtresi yok (hesap iptaliyle ayni); iki test boslugu (istege bagli).
+- qa-bulgu-dogrulayici: KABUL. Tekrar oynatma ile kacis yok (anahtar kullaniciya bagli, hata kaydedilmez); imza degisikligi eski testleri bozmaz; superseded_at bulgusu etkisiz (yalniz iptal edilen hesapta dolar). Orta (kapsam disi, dogrulanamadi): hesap iptali + siparis iptali yolunda ayni siparisin ikinci acik hesabi baska siparisin servis edilmis kalemini tasiyorsa kontrol atlanabilir (varsayilan true). Dusuk: sipariş iptali yarisi 1097'ye eklenmeli; bolunmus iki acik hesap testi yok.

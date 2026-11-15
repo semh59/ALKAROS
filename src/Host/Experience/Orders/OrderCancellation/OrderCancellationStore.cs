@@ -26,13 +26,15 @@ public sealed class OrderCancellationStore(
     public const int MaxReasonLength = 500;
 
     public async Task<CancelOrderResultV1> CancelAsync(
-        Guid orderId, string? reason, long? expectedRowVersion, Guid actorId, string correlationId, CancellationToken cancellationToken)
+        Guid orderId, string? reason, long? expectedRowVersion, Guid actorId, bool actorMayCancelServed, string correlationId,
+        CancellationToken cancellationToken)
     {
         var trimmed = NormalizeReason(reason);
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var result = await CancelInTransactionAsync(
-            orderId, trimmed, expectedRowVersion, actorId, correlationId, connection, transaction, cancellationToken);
+            orderId, trimmed, expectedRowVersion, actorId, correlationId, connection, transaction, cancellationToken,
+            actorMayCancelServed: actorMayCancelServed);
         await transaction.CommitAsync(cancellationToken);
         return result;
     }
@@ -56,7 +58,8 @@ public sealed class OrderCancellationStore(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken,
-        string actorType = "User")
+        string actorType = "User",
+        bool actorMayCancelServed = true)
     {
         var lockedBills = new HashSet<Guid>();
         await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBills, cancellationToken);
@@ -70,6 +73,8 @@ public sealed class OrderCancellationStore(
         await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBills, cancellationToken);
         if (await BillMoneyGuard.OrderHasMoneyAsync(connection, transaction, orderId, cancellationToken))
             throw new OrderCancelHasPaymentException(orderId);
+        if (!actorMayCancelServed && await BillsHoldServedItemAsync(connection, transaction, orderId, cancellationToken))
+            throw new OrderCancelHasServedItemsException(orderId);
 
         var now = DateTimeOffset.UtcNow;
         await orders.SaveAsync(
@@ -121,5 +126,22 @@ public sealed class OrderCancellationStore(
             connection, transaction, cancellationToken);
 
         return new CancelOrderResultV1(orderId, "Cancelled", reason, now, itemsCancelled, stockRestored, waste, billsCancelled);
+    }
+
+    /// <summary>The bills this cancels may carry other orders' lines (a merged bill); a served one there needs a refund approver, as a bill cancellation does.</summary>
+    private static async Task<bool> BillsHoldServedItemAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            $"""
+            SELECT EXISTS (
+                SELECT 1 FROM billing.bill_items bli
+                JOIN billing.bills b ON b.bill_id = bli.bill_id
+                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
+                WHERE b.status NOT IN ('Paid', 'Cancelled') AND oli.status = 'Active' AND oli.kitchen_state = 'Served'
+                  AND {BillOrderLink.Matches("b", "@order_id")});
+            """, connection, transaction);
+        command.Parameters.AddWithValue("order_id", orderId);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 }

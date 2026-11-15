@@ -215,6 +215,31 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACashierCannotCancelAnOrderWhoseBillHoldsAnotherOrdersServedItemButARefundApproverCan()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.cancel");
+        var (_, managerCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "manager", "bills.cancel", "payments.refund.approve");
+        var seeded = await SeedAsync(KitchenState.Sent);
+        var other = await SeedAsync(KitchenState.Served);
+        // The other order's line sits on this order's bill, as it does once the two checks are merged.
+        await Exec("UPDATE billing.bill_items SET bill_id = @bill WHERE bill_id = @other;", ("bill", seeded.BillId), ("other", other.BillId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = await client.SendAsync(CancelOrder(terminalId, seeded.OrderId, cashierCookie, "Deneme", seeded.RowVersion));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal("ORDER_HAS_SERVED_ITEMS", await ErrorCode(refused));
+        await AssertUntouchedAsync(seeded);
+
+        using var allowed = await client.SendAsync(CancelOrder(terminalId, seeded.OrderId, managerCookie, "Deneme", seeded.RowVersion));
+
+        Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
+        Assert.Equal("Cancelled", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", seeded.OrderId));
+    }
+
+    [Fact]
     public async Task ACancelledOrderCannotBeCancelledAgainAndAReplayWithTheSameKeyAnswersTheSame()
     {
         var terminalId = Guid.NewGuid();
@@ -294,7 +319,7 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
         var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "cashier", "bills.cancel");
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => store.CancelAsync(
-            seeded.OrderId, "Deneme", seeded.RowVersion, userId, "test", CancellationToken.None));
+            seeded.OrderId, "Deneme", seeded.RowVersion, userId, false, "test", CancellationToken.None));
 
         await AssertUntouchedAsync(seeded);
         Assert.Equal(0m, await OnHandAsync(seeded.Lines[0].StockItemId));
@@ -419,7 +444,7 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
         await using var firstConnection = await _source.OpenConnectionAsync();
         await using var firstTransaction = await firstConnection.BeginTransactionAsync();
         await TakeBillLockAsync(firstConnection, firstTransaction, seeded.BillId);
-        var cancelling = store.CancelAsync(seeded.OrderId, "Deneme", seeded.RowVersion, userId, "test", CancellationToken.None);
+        var cancelling = store.CancelAsync(seeded.OrderId, "Deneme", seeded.RowVersion, userId, false, "test", CancellationToken.None);
         await WaitForBlockedLockAsync();
 
         // The till opens a second bill and starts a payment on it before the cancellation looks again.

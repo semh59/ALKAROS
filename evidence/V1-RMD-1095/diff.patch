@@ -1,0 +1,226 @@
+diff --git a/src/Host/Experience/Orders/OrderCancellation/OrderCancellationStore.cs b/src/Host/Experience/Orders/OrderCancellation/OrderCancellationStore.cs
+index 394a08534..8031ba582 100644
+--- a/src/Host/Experience/Orders/OrderCancellation/OrderCancellationStore.cs
++++ b/src/Host/Experience/Orders/OrderCancellation/OrderCancellationStore.cs
+@@ -26,13 +26,15 @@ public sealed class OrderCancellationStore(
+     public const int MaxReasonLength = 500;
+ 
+     public async Task<CancelOrderResultV1> CancelAsync(
+-        Guid orderId, string? reason, long? expectedRowVersion, Guid actorId, string correlationId, CancellationToken cancellationToken)
++        Guid orderId, string? reason, long? expectedRowVersion, Guid actorId, bool actorMayCancelServed, string correlationId,
++        CancellationToken cancellationToken)
+     {
+         var trimmed = NormalizeReason(reason);
+         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+         var result = await CancelInTransactionAsync(
+-            orderId, trimmed, expectedRowVersion, actorId, correlationId, connection, transaction, cancellationToken);
++            orderId, trimmed, expectedRowVersion, actorId, correlationId, connection, transaction, cancellationToken,
++            actorMayCancelServed: actorMayCancelServed);
+         await transaction.CommitAsync(cancellationToken);
+         return result;
+     }
+@@ -56,7 +58,8 @@ public sealed class OrderCancellationStore(
+         NpgsqlConnection connection,
+         NpgsqlTransaction transaction,
+         CancellationToken cancellationToken,
+-        string actorType = "User")
++        string actorType = "User",
++        bool actorMayCancelServed = true)
+     {
+         var lockedBills = new HashSet<Guid>();
+         await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBills, cancellationToken);
+@@ -70,6 +73,8 @@ public sealed class OrderCancellationStore(
+         await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBills, cancellationToken);
+         if (await BillMoneyGuard.OrderHasMoneyAsync(connection, transaction, orderId, cancellationToken))
+             throw new OrderCancelHasPaymentException(orderId);
++        if (!actorMayCancelServed && await BillsHoldServedItemAsync(connection, transaction, orderId, cancellationToken))
++            throw new OrderCancelHasServedItemsException(orderId);
+ 
+         var now = DateTimeOffset.UtcNow;
+         await orders.SaveAsync(
+@@ -122,4 +127,21 @@ public sealed class OrderCancellationStore(
+ 
+         return new CancelOrderResultV1(orderId, "Cancelled", reason, now, itemsCancelled, stockRestored, waste, billsCancelled);
+     }
++
++    /// <summary>The bills this cancels may carry other orders' lines (a merged bill); a served one there needs a refund approver, as a bill cancellation does.</summary>
++    private static async Task<bool> BillsHoldServedItemAsync(
++        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
++    {
++        await using var command = new NpgsqlCommand(
++            $"""
++            SELECT EXISTS (
++                SELECT 1 FROM billing.bill_items bli
++                JOIN billing.bills b ON b.bill_id = bli.bill_id
++                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
++                WHERE b.status NOT IN ('Paid', 'Cancelled') AND oli.status = 'Active' AND oli.kitchen_state = 'Served'
++                  AND {BillOrderLink.Matches("b", "@order_id")});
++            """, connection, transaction);
++        command.Parameters.AddWithValue("order_id", orderId);
++        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
++    }
+ }
+diff --git a/src/Host/Experience/Orders/OrderManagementEndpoints.cs b/src/Host/Experience/Orders/OrderManagementEndpoints.cs
+index 3e0cd4a7b..ce60df102 100644
+--- a/src/Host/Experience/Orders/OrderManagementEndpoints.cs
++++ b/src/Host/Experience/Orders/OrderManagementEndpoints.cs
+@@ -919,6 +919,7 @@ public static class OrderManagementEndpoints
+             CancelOrderRequestV1 request,
+             OrderCancellationStore store,
+             OrderCommandReplayStore replays,
++            IRoleRepository roles,
+             DualScreenStore dualStore,
+             IAuthorizationService authorization,
+             ICashierQueueAnnouncer queueAnnouncer,
+@@ -929,12 +930,15 @@ public static class OrderManagementEndpoints
+         {
+             var userId = await RequireCashierPermissionAsync(
+                 context, terminalId, dualStore, authorization, ApplicationPermissions.BillsCancel, cancellationToken);
++            // The same approver a bill cancellation asks for when a bill this cancels holds another order's served item.
++            var mayCancelServed = (await roles.GetPermissionCodesForUserAsync(userId, cancellationToken))
++                .Contains(ApplicationPermissions.PaymentsRefundApprove, StringComparer.Ordinal);
+             var result = await replays.ExecuteAsync(
+                 $"orders:{terminalId:N}:{userId:N}:cancel",
+                 request.IdempotencyKey,
+                 request,
+                 () => store.CancelAsync(
+-                    orderId, request.Reason, request.ExpectedRowVersion, userId, context.TraceIdentifier, cancellationToken),
++                    orderId, request.Reason, request.ExpectedRowVersion, userId, mayCancelServed, context.TraceIdentifier, cancellationToken),
+                 cancellationToken);
+             await queueAnnouncer.AnnouncePendingChecksChangedAsync("Cancelled", orderId, null, cancellationToken);
+             await DualScreenApplication.NotifyCustomerDisplayAsync(
+diff --git a/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs b/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
+index 276d3d746..7ddc12e6c 100644
+--- a/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
++++ b/tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
+@@ -75,7 +75,7 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
+     {
+         var merged = await SeedMergedAsync(attachToTable: true);
+ 
+-        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, "corr-merged-1", CancellationToken.None);
++        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-1", CancellationToken.None);
+ 
+         Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+         Assert.Equal(0L, await Count("SELECT count(*) FROM billing.bill_items WHERE bill_id = @id AND superseded_at IS NULL;", merged.BillId));
+@@ -168,10 +168,65 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
+         await Exec("UPDATE billing.bills SET status = 'Paid' WHERE bill_id = @id;", ("id", merged.BillId));
+ 
+         await Assert.ThrowsAsync<OrderCancelHasPaymentException>(() =>
+-            CancellationStore().CancelAsync(merged.SecondOrderId, "Müşteri vazgeçti", null, _actor, "corr-merged-4", CancellationToken.None));
++            CancellationStore().CancelAsync(merged.SecondOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-4", CancellationToken.None));
+         Assert.Equal("Paid", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+     }
+ 
++    [Fact]
++    public async Task CancellingOneOrderNeverCancelsAMergedBillHoldingAnotherOrdersServedItemUnlessTheActorMayApproveRefunds()
++    {
++        var merged = await SeedMergedAsync(attachToTable: true);
++        await Exec("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", merged.SecondOrderId));
++
++        await Assert.ThrowsAsync<OrderCancelHasServedItemsException>(() =>
++            CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-7", CancellationToken.None));
++
++        Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
++        Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
++
++        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, true, "corr-merged-8", CancellationToken.None);
++
++        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
++        Assert.Equal("Submitted", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.SecondOrderId));
++    }
++
++    [Fact]
++    public async Task AnotherOrdersCancelledServedLineDoesNotStopACashierFromCancellingAnOrderOfAMergedBill()
++    {
++        var merged = await SeedMergedAsync(attachToTable: true);
++        await Exec(
++            "UPDATE orders.order_items SET kitchen_state = 'Served', status = 'Cancelled' WHERE order_id = @id;", ("id", merged.SecondOrderId));
++
++        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-9", CancellationToken.None);
++
++        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
++    }
++
++    [Fact]
++    public async Task AServedLineOnAnAlreadyCancelledMergedBillDoesNotStopACashierFromCancellingAnOrder()
++    {
++        var merged = await SeedMergedAsync();
++        await Exec("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", merged.SecondOrderId));
++        await Exec("UPDATE billing.bills SET status = 'Cancelled' WHERE bill_id = @id;", ("id", merged.BillId));
++
++        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-10", CancellationToken.None);
++
++        Assert.Equal("Cancelled", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", merged.FirstOrderId));
++    }
++
++    [Fact]
++    public async Task AServedLineOnAnUnrelatedBillDoesNotStopACashierFromCancellingAnOrder()
++    {
++        var merged = await SeedMergedAsync();
++        var unrelated = await SeedMergedAsync();
++        await Exec("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", unrelated.SecondOrderId));
++
++        await CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-11", CancellationToken.None);
++
++        Assert.Equal("Cancelled", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
++        Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", unrelated.BillId));
++    }
++
+     [Fact]
+     public async Task FromOrderOnAnOrderOfAMergedBillReturnsTheMergedBillAndOpensNoSecondOne()
+     {
+diff --git a/tests/Host/Experience/Billing/OrderCancellationHttpTests.cs b/tests/Host/Experience/Billing/OrderCancellationHttpTests.cs
+index 8e4e86d57..36c837408 100644
+--- a/tests/Host/Experience/Billing/OrderCancellationHttpTests.cs
++++ b/tests/Host/Experience/Billing/OrderCancellationHttpTests.cs
+@@ -214,6 +214,31 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
+         await AssertUntouchedAsync(seeded);
+     }
+ 
++    [Fact]
++    public async Task ACashierCannotCancelAnOrderWhoseBillHoldsAnotherOrdersServedItemButARefundApproverCan()
++    {
++        var terminalId = Guid.NewGuid();
++        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.cancel");
++        var (_, managerCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "manager", "bills.cancel", "payments.refund.approve");
++        var seeded = await SeedAsync(KitchenState.Sent);
++        var other = await SeedAsync(KitchenState.Served);
++        // The other order's line sits on this order's bill, as it does once the two checks are merged.
++        await Exec("UPDATE billing.bill_items SET bill_id = @bill WHERE bill_id = @other;", ("bill", seeded.BillId), ("other", other.BillId));
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++
++        using var refused = await client.SendAsync(CancelOrder(terminalId, seeded.OrderId, cashierCookie, "Deneme", seeded.RowVersion));
++
++        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
++        Assert.Equal("ORDER_HAS_SERVED_ITEMS", await ErrorCode(refused));
++        await AssertUntouchedAsync(seeded);
++
++        using var allowed = await client.SendAsync(CancelOrder(terminalId, seeded.OrderId, managerCookie, "Deneme", seeded.RowVersion));
++
++        Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
++        Assert.Equal("Cancelled", await Text("SELECT status FROM orders.orders WHERE order_id = @id;", seeded.OrderId));
++    }
++
+     [Fact]
+     public async Task ACancelledOrderCannotBeCancelledAgainAndAReplayWithTheSameKeyAnswersTheSame()
+     {
+@@ -294,7 +319,7 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
+         var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "cashier", "bills.cancel");
+ 
+         await Assert.ThrowsAsync<InvalidOperationException>(() => store.CancelAsync(
+-            seeded.OrderId, "Deneme", seeded.RowVersion, userId, "test", CancellationToken.None));
++            seeded.OrderId, "Deneme", seeded.RowVersion, userId, false, "test", CancellationToken.None));
+ 
+         await AssertUntouchedAsync(seeded);
+         Assert.Equal(0m, await OnHandAsync(seeded.Lines[0].StockItemId));
+@@ -419,7 +444,7 @@ public sealed class OrderCancellationHttpTests : IAsyncLifetime
+         await using var firstConnection = await _source.OpenConnectionAsync();
+         await using var firstTransaction = await firstConnection.BeginTransactionAsync();
+         await TakeBillLockAsync(firstConnection, firstTransaction, seeded.BillId);
+-        var cancelling = store.CancelAsync(seeded.OrderId, "Deneme", seeded.RowVersion, userId, "test", CancellationToken.None);
++        var cancelling = store.CancelAsync(seeded.OrderId, "Deneme", seeded.RowVersion, userId, false, "test", CancellationToken.None);
+         await WaitForBlockedLockAsync();
+ 
+         // The till opens a second bill and starts a payment on it before the cancellation looks again.

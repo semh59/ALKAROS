@@ -1,0 +1,6 @@
+S1-check-removed exit 1 restored cmp ok
+S2-flag-inverted exit 1 restored cmp ok
+S3-endpoint-always-allows exit 1 restored cmp ok
+S4-inactive-lines-count exit 1 restored cmp ok
+S5-closed-bills-count exit 1 restored cmp ok
+S6-unrelated-bills-count exit 1 restored cmp ok
