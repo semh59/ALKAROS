@@ -1,7 +1,7 @@
 # V1-RMD-1093 - Servis edilmiş ürünlü hesabı masaya geri göndermeyi yalnız yetkili yönetici yapar
 
 - Task ID: V1-RMD-1093
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
