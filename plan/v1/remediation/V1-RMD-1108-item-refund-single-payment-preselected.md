@@ -1,7 +1,7 @@
 # V1-RMD-1108 - Tek ödemeli hesapta ürün iadesi ödemeyi kendisi seçer
 
 - Task ID: V1-RMD-1108
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
