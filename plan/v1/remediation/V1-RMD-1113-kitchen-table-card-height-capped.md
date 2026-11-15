@@ -1,7 +1,7 @@
 # V1-RMD-1113 - Mutfak masa kartı yüksekliği sınırlıdır
 
 - Task ID: V1-RMD-1113
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
