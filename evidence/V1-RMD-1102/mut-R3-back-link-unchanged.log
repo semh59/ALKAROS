@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (8 tests | 1 failed) 1368ms
+     × turns the back link into the bill and goes there once the drawer is open 175ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > turns the back link into the bill and goes there once the drawer is open
+AssertionError: expected '← Kasaya dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Kasaya dön"
+
+ ❯ cash-session-return-to.test.js:45:39
+     43|   it("turns the back link into the bill and goes there once the drawer…
+     44|     const assign = await openPageWith(BILL);
+     45|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     46|     expect($(".cs-back").getAttribute("href")).toBe(BILL);
+     47|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 8 passed (9)
+   Start at  15:14:51
+   Duration  3.22s (transform 464ms, setup 54ms, import 114ms, tests 1.61s, environment 2.81s)
+

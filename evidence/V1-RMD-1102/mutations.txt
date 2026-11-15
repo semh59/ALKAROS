@@ -1,0 +1,5 @@
+R1-returnTo-unvalidated exit 1 restored cmp ok
+R2-no-navigation-after-open exit 1 restored cmp ok
+R3-back-link-unchanged exit 1 restored cmp ok
+R5-back-href-unchanged exit 1 restored cmp ok
+R4-link-without-returnTo exit 1 restored cmp ok

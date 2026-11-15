@@ -2443,6 +2443,12 @@
     if (resolveButton) resolveButton.addEventListener('click', resolveNotCharged);
     var submitButton = document.getElementById('submit-tender');
     if (submitButton) submitButton.addEventListener('click', submitTender);
+    // The cash session page brings the cashier back here once the drawer is open: the address is added as the link is used.
+    document.querySelectorAll('#cash-state-notice a').forEach(function (link) {
+      link.addEventListener('click', function () {
+        link.setAttribute('href', link.getAttribute('href').split('?')[0] + '?returnTo=' + encodeURIComponent(window.location.pathname + window.location.search));
+      });
+    });
     var retryCashButton = document.getElementById('retry-cash-state');
     if (retryCashButton) retryCashButton.addEventListener('click', retryCashState);
     var retrySummaryButton = document.getElementById('retry-summary');

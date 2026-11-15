@@ -7,6 +7,17 @@
 
   var TERMINAL_ID_KEY = 'alkaros.terminal-id';
   var app = document.getElementById('app');
+  // The payment page sends the cashier here with the page to come back to; only a same-origin relative path is followed
+  // (one leading slash, no "//", backslash, space or control character), anything else would be an open redirect.
+  var returnTo = (function () {
+    var value = new URLSearchParams(window.location.search).get('returnTo');
+    return value && /^\/(?![\/\\])[^\\\s\x00-\x1f]*$/.test(value) ? value : null;
+  })();
+  if (returnTo) {
+    var backLink = document.querySelector('.cs-back');
+    backLink.setAttribute('href', returnTo);
+    backLink.textContent = '← Hesaba dön';
+  }
   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
 
   var state = {
@@ -392,6 +403,10 @@
         if (!result.ok) {
           state.error = describeHttpFailure(result.status, result.body);
           render();
+          return;
+        }
+        if (returnTo) {
+          window.location.assign(returnTo);
           return;
         }
         state.session = result.body;

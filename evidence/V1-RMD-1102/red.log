@@ -1,0 +1,60 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-cash-return-link.test.js > the closed-drawer notice brings the cashier back to this bill > links to the cash session page with this page as returnTo
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744786618-0.35632357192248854:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744786618-0.35632357192248854:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744786618-0.35632357192248854:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-cash-return-link.test.js (1 test | 1 failed) 302ms
+     × links to the cash session page with this page as returnTo 300ms
+ ❯ cash-session-return-to.test.js (8 tests | 1 failed) 1365ms
+     × turns the back link into the bill and goes there once the drawer is open 201ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > turns the back link into the bill and goes there once the drawer is open
+AssertionError: expected '← Kasaya dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Kasaya dön"
+
+ ❯ cash-session-return-to.test.js:45:39
+     43|   it("turns the back link into the bill and goes there once the drawer…
+     44|     const assign = await openPageWith(BILL);
+     45|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     46|     expect($(".cs-back").getAttribute("href")).toBe(BILL);
+     47|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-cash-return-link.test.js > the closed-drawer notice brings the cashier back to this bill > links to the cash session page with this page as returnTo
+AssertionError: expected null to be '/cashier/payments/split-payment/index…' // Object.is equality
+
+- Expected:
+"/cashier/payments/split-payment/index.html?billId=22222222-2222-2222-2222-222222222222"
+
++ Received:
+null
+
+ ❯ split-payment-cash-return-link.test.js:32:46
+     30|     const url = new URL(link.getAttribute("href"), "http://localhost");
+     31|     expect(url.pathname).toBe("/cashier/payments/cash-session/index.ht…
+     32|     expect(url.searchParams.get("returnTo")).toBe(`/cashier/payments/s…
+       |                                              ^
+     33|   });
+     34| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 7 passed (9)
+   Start at  15:13:04
+   Duration  3.54s (transform 467ms, setup 42ms, import 133ms, tests 1.67s, environment 3.47s)
+

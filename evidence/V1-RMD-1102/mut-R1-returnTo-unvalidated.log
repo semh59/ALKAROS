@@ -1,0 +1,55 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (8 tests | 6 failed) 1140ms
+     × ignores the unsafe returnTo //evil.example/x: no navigation and the plain back link 132ms
+     × ignores the unsafe returnTo https://evil.example/x: no navigation and the plain back link 128ms
+     × ignores the unsafe returnTo /\evil.example: no navigation and the plain back link 109ms
+     × ignores the unsafe returnTo javascript:alert(1): no navigation and the plain back link 122ms
+     × ignores the unsafe returnTo bill: no navigation and the plain back link 110ms
+     × ignores the unsafe returnTo /a b: no navigation and the plain back link 96ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > ignores the unsafe returnTo //evil.example/x: no navigation and the plain back link
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > ignores the unsafe returnTo https://evil.example/x: no navigation and the plain back link
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > ignores the unsafe returnTo /\evil.example: no navigation and the plain back link
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > ignores the unsafe returnTo javascript:alert(1): no navigation and the plain back link
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > ignores the unsafe returnTo /a b: no navigation and the plain back link
+AssertionError: expected '← Hesaba dön' to be '← Kasaya dön' // Object.is equality
+
+Expected: "← Kasaya dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:55:41
+     53|     async (unsafe) => {
+     54|       const assign = await openPageWith(unsafe);
+     55|       expect($(".cs-back").textContent).toBe("← Kasaya dön");
+       |                                         ^
+     56|       expect($(".cs-back").getAttribute("href")).toBe("/");
+     57|       await openTheDrawer();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > ignores the unsafe returnTo bill: no navigation and the plain back link
+AssertionError: expected '← Hesaba dön' to be '← Kasaya dön' // Object.is equality
+
+Expected: "← Kasaya dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:55:41
+     53|     async (unsafe) => {
+     54|       const assign = await openPageWith(unsafe);
+     55|       expect($(".cs-back").textContent).toBe("← Kasaya dön");
+       |                                         ^
+     56|       expect($(".cs-back").getAttribute("href")).toBe("/");
+     57|       await openTheDrawer();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  6 failed | 3 passed (9)
+   Start at  15:14:37
+   Duration  2.65s (transform 506ms, setup 38ms, import 135ms, tests 1.47s, environment 2.31s)
+

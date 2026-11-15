@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (8 tests | 1 failed) 1388ms
+     × turns the back link into the bill and goes there once the drawer is open 217ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > turns the back link into the bill and goes there once the drawer is open
+AssertionError: expected '/' to be '/cashier/payments/split-payment/index…' // Object.is equality
+
+Expected: "/cashier/payments/split-payment/index.html?billId=abc"
+Received: "/"
+
+ ❯ cash-session-return-to.test.js:46:48
+     44|     const assign = await openPageWith(BILL);
+     45|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+     46|     expect($(".cs-back").getAttribute("href")).toBe(BILL);
+       |                                                ^
+     47|     $("#open-btn").click();
+     48|     await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(BILL));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 8 passed (9)
+   Start at  15:15:04
+   Duration  3.36s (transform 554ms, setup 60ms, import 143ms, tests 1.71s, environment 3.00s)
+

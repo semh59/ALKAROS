@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-cash-return-link.test.js > the closed-drawer notice brings the cashier back to this bill > takes the cash session page link to this page as returnTo when it is used
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745092085-0.24886195543516987:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745092085-0.24886195543516987:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794745092085-0.24886195543516987:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-cash-return-link.test.js (1 test | 1 failed) 243ms
+     × takes the cash session page link to this page as returnTo when it is used 241ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cash-return-link.test.js > the closed-drawer notice brings the cashier back to this bill > takes the cash session page link to this page as returnTo when it is used
+AssertionError: expected null to be '/cashier/payments/split-payment/index…' // Object.is equality
+
+- Expected:
+"/cashier/payments/split-payment/index.html?billId=22222222-2222-2222-2222-222222222222"
+
++ Received:
+null
+
+ ❯ split-payment-cash-return-link.test.js:34:46
+     32|     const url = new URL(link.getAttribute("href"), "http://localhost");
+     33|     expect(url.pathname).toBe("/cashier/payments/cash-session/index.ht…
+     34|     expect(url.searchParams.get("returnTo")).toBe(`/cashier/payments/s…
+       |                                              ^
+     35|   });
+     36| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 8 passed (9)
+   Start at  15:18:10
+   Duration  3.21s (transform 500ms, setup 53ms, import 100ms, tests 1.67s, environment 2.69s)
+
