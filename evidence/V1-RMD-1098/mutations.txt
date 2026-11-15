@@ -1,0 +1,8 @@
+M1-no-filter exit 1 restored cmp ok
+M2-cancelled-kept exit 1 restored cmp ok
+M3-rejected-kept exit 1 restored cmp ok
+M4-preparing-hidden exit 1 restored cmp ok
+M5-completed-kept exit 1 restored cmp ok
+M6-failed-jobs-unfiltered exit 1 restored cmp ok
+M7-all-ready-hidden exit 1 restored cmp ok
+done

@@ -1,0 +1,211 @@
+diff --git a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+index 0cd5e4ed5..de44ba007 100644
+--- a/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
++++ b/src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs
+@@ -106,8 +106,7 @@ public sealed class KitchenOperationsStore
+         CancellationToken cancellationToken)
+     {
+         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
+-        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+-        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
++        var tickets = await GetBoardTicketsAsync(normalizedStation, cancellationToken);
+         // V1-KIT-012: one batched query for every distinct order on this
+         // station's board, not one query per ticket — several tickets
+         // (different stations) can share the same orderId.
+@@ -506,8 +505,7 @@ public sealed class KitchenOperationsStore
+         CancellationToken cancellationToken)
+     {
+         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
+-        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+-        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
++        var tickets = await GetBoardTicketsAsync(normalizedStation, cancellationToken);
+         if (tickets.Count == 0) return [];
+         await using var command = _dataSource.CreateCommand(
+             """
+@@ -928,6 +926,34 @@ public sealed class KitchenOperationsStore
+         return result;
+     }
+ 
++    // Waiters rarely mark items served, so a Ready ticket of an order that payment or cancellation already
++    // closed would stay on the board (and keep its failed print jobs in the error strip) forever; tickets
++    // still being made always stay.
++    private async Task<IReadOnlyList<KitchenTicket>> GetBoardTicketsAsync(string stationId, CancellationToken cancellationToken)
++    {
++        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
++        var tickets = await _tickets.GetActiveByStationAsync(stationId, liveSync, cancellationToken);
++        var closedOrders = await ClosedOrderIdsAsync(
++            tickets.Where(ticket => ticket.Status == KitchenTicketState.Ready).Select(ticket => ticket.OrderId).ToArray(),
++            cancellationToken);
++        return tickets.Where(ticket => ticket.Status != KitchenTicketState.Ready || !closedOrders.Contains(ticket.OrderId)).ToArray();
++    }
++
++    private async Task<HashSet<Guid>> ClosedOrderIdsAsync(Guid[] orderIds, CancellationToken cancellationToken)
++    {
++        var closed = new HashSet<Guid>();
++        if (orderIds.Length == 0)
++            return closed;
++
++        await using var command = _dataSource.CreateCommand(
++            "SELECT order_id FROM orders.orders WHERE order_id = ANY(@order_ids) AND status IN ('Completed', 'Cancelled', 'Rejected');");
++        command.Parameters.Add("order_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderIds;
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        while (await reader.ReadAsync(cancellationToken))
++            closed.Add(reader.GetGuid(0));
++        return closed;
++    }
++
+     private async Task<(Guid? TableId, string? TableNumber)> ResolveTableLabelAsync(
+         Guid orderId, CancellationToken cancellationToken)
+     {
+diff --git a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+index deccd46d6..0fe6b3a69 100644
+--- a/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
++++ b/tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs
+@@ -221,6 +221,147 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
+         Assert.Empty((await GetAsync<KitchenTicketV1[]>(client, board, cookie))!);
+     }
+ 
++    // Waiters rarely press "served", so a Ready ticket of an order that payment or cancellation already closed
++    // must leave the live-sync board; a ticket still being prepared stays whatever the order status.
++    [Theory]
++    [InlineData("Completed", true, false)]
++    [InlineData("Cancelled", true, false)]
++    [InlineData("Rejected", true, false)]
++    [InlineData("Submitted", true, true)]
++    [InlineData("Completed", false, true)]
++    public async Task AReadyTicketOfAClosedOrderLeavesTheLiveSyncBoard(string orderStatus, bool ready, bool onBoard)
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
++        var seed = await _database.SeedKitchenGraphAsync();
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
++        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
++        var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
++        await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
++        var item = Prefix(terminalId) + $"/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition";
++        var preparing = await PostAsync<KitchenTicketV1>(client, item, cookie, new TransitionKitchenItemV1("Preparing", 1, 1));
++        if (ready)
++            await PostAsync<KitchenTicketV1>(client, item, cookie,
++                new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
++        await _database.ScalarAsync<string>(
++            $"UPDATE orders.orders SET status = '{orderStatus}' WHERE order_id = '{seed.OrderId:D}' RETURNING status;");
++
++        var board = await GetAsync<KitchenTicketV1[]>(client, Prefix(terminalId) + "/tickets?stationId=hot-line", cookie);
++
++        Assert.Equal(onBoard ? new[] { seed.TicketId } : Array.Empty<Guid>(), board!.Select(ticket => ticket.Id));
++    }
++
++    [Fact]
++    public async Task ClosingOneOrderRemovesOnlyItsReadyTicketAndItsFailedPrintJobFromTheBoardAndErrorStrip()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
++        var closed = await _database.SeedKitchenGraphAsync();
++        var openOrder = Guid.NewGuid();
++        var openTicket = Guid.NewGuid();
++        var openItem = Guid.NewGuid();
++        var openJob = Guid.NewGuid();
++        var orderItem = Guid.NewGuid();
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO orders.orders (order_id, source, status, confirmation_status, order_number, created_at, updated_at)
++            VALUES ('{openOrder:D}', 'Cashier', 'Submitted', 'NotRequired', 'ORD-{openOrder:N}', now(), now()) RETURNING status;
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO orders.order_items (
++                order_item_id, order_id, product_id, product_name_snapshot, quantity, unit_price,
++                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, created_at, updated_at)
++            SELECT '{orderItem:D}', '{openOrder:D}', product_id, product_name_snapshot, quantity, unit_price,
++                tax_rate, net_amount, gross_amount, status, kitchen_state, portion_reservation_status, now(), now()
++            FROM orders.order_items WHERE order_id = '{closed.OrderId:D}' RETURNING status;
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status, row_version, created_at)
++            VALUES ('{openTicket:D}', '{openOrder:D}', 'KT-{openTicket:N}', 'hot-line', 'Queued', 1, now()) RETURNING status;
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO kitchen.kitchen_ticket_items (
++                id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity,
++                modifiers_summary, notes, status, row_version, created_at)
++            SELECT '{openItem:D}', '{openTicket:D}', '{orderItem:D}', product_id, product_name_snapshot, quantity,
++                modifiers_summary, notes, 'Queued', 1, now()
++            FROM kitchen.kitchen_ticket_items WHERE id = '{closed.ItemId:D}' RETURNING status;
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO kitchen.print_jobs (
++                id, ticket_id, printer_id, idempotency_key, payload, status, attempt_count, max_attempts, next_attempt_at, row_version, created_at)
++            VALUES ('{openJob:D}', '{openTicket:D}', '{closed.PrinterId:D}', 'open-{openJob:N}', 'x', 'Failed', 1, 5, now() + interval '1 day', 1, now()) RETURNING status;
++            """);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
++        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
++        var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
++        await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
++        foreach (var (ticket, itemId) in new[] { (closed.TicketId, closed.ItemId), (openTicket, openItem) })
++        {
++            var item = Prefix(terminalId) + $"/tickets/{ticket:D}/items/{itemId:D}/transition";
++            var preparing = await PostAsync<KitchenTicketV1>(client, item, cookie, new TransitionKitchenItemV1("Preparing", 1, 1));
++            await PostAsync<KitchenTicketV1>(client, item, cookie,
++                new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
++        }
++        await _database.ScalarAsync<string>(
++            $"UPDATE kitchen.print_jobs SET status = 'Failed', attempt_count = 1, next_attempt_at = now() + interval '1 day' WHERE id = '{closed.PrintJobId:D}' RETURNING status;");
++        await _database.ScalarAsync<string>(
++            $"UPDATE orders.orders SET status = 'Completed' WHERE order_id = '{closed.OrderId:D}' RETURNING status;");
++
++        var board = await GetAsync<KitchenTicketV1[]>(client, Prefix(terminalId) + "/tickets?stationId=hot-line", cookie);
++        var failed = await GetAsync<PrintJobV1[]>(client, Prefix(terminalId) + "/print-jobs/failed?stationId=hot-line", cookie);
++
++        Assert.Equal(new[] { openTicket }, board!.Select(ticket => ticket.Id));
++        Assert.Equal(new[] { openJob }, failed!.Select(job => job.Id));
++    }
++
++    [Fact]
++    public async Task OnlyTheReadyTicketOfAClosedOrderLeavesTheBoardNotItsTicketStillBeingMade()
++    {
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
++        var seed = await _database.SeedKitchenGraphAsync();
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
++        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
++        var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
++        await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
++        var item = Prefix(terminalId) + $"/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition";
++        var preparing = await PostAsync<KitchenTicketV1>(client, item, cookie, new TransitionKitchenItemV1("Preparing", 1, 1));
++        await PostAsync<KitchenTicketV1>(client, item, cookie,
++            new TransitionKitchenItemV1("Ready", preparing.RowVersion, Assert.Single(preparing.Items).RowVersion));
++        var secondTicket = Guid.NewGuid();
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status, row_version, created_at)
++            VALUES ('{secondTicket:D}', '{seed.OrderId:D}', 'KT-{secondTicket:N}', 'hot-line', 'Queued', 1, now()) RETURNING status;
++            """);
++        await _database.ScalarAsync<string>(
++            $"""
++            INSERT INTO kitchen.kitchen_ticket_items (
++                id, ticket_id, order_item_id, product_id, product_name_snapshot, quantity,
++                modifiers_summary, notes, status, row_version, created_at)
++            SELECT gen_random_uuid(), '{secondTicket:D}', order_item_id, product_id, product_name_snapshot, quantity,
++                modifiers_summary, notes, 'Queued', 1, now()
++            FROM kitchen.kitchen_ticket_items WHERE id = '{seed.ItemId:D}' RETURNING status;
++            """);
++        await _database.ScalarAsync<string>(
++            $"UPDATE orders.orders SET status = 'Completed' WHERE order_id = '{seed.OrderId:D}' RETURNING status;");
++
++        var board = await GetAsync<KitchenTicketV1[]>(client, Prefix(terminalId) + "/tickets?stationId=hot-line", cookie);
++
++        Assert.Equal(new[] { secondTicket }, board!.Select(ticket => ticket.Id));
++    }
++
+     // V1-KIT-009: undo is a forward-step correction, not a cancel — a
+     // kitchen-staff-only (kitchen.advance) session must be able to fix its
+     // own misclick without needing orders.send.

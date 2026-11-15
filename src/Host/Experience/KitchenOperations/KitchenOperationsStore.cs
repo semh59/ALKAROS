@@ -106,8 +106,7 @@ public sealed class KitchenOperationsStore
         CancellationToken cancellationToken)
     {
         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
-        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
-        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
+        var tickets = await GetBoardTicketsAsync(normalizedStation, cancellationToken);
         // V1-KIT-012: one batched query for every distinct order on this
         // station's board, not one query per ticket — several tickets
         // (different stations) can share the same orderId.
@@ -506,8 +505,7 @@ public sealed class KitchenOperationsStore
         CancellationToken cancellationToken)
     {
         var normalizedStation = RequireText(stationId, 100, nameof(stationId));
-        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
-        var tickets = await _tickets.GetActiveByStationAsync(normalizedStation, liveSync, cancellationToken);
+        var tickets = await GetBoardTicketsAsync(normalizedStation, cancellationToken);
         if (tickets.Count == 0) return [];
         await using var command = _dataSource.CreateCommand(
             """
@@ -926,6 +924,34 @@ public sealed class KitchenOperationsStore
                 reader.IsDBNull(2) ? null : reader.GetString(2));
         }
         return result;
+    }
+
+    // Waiters rarely mark items served, so a Ready ticket of an order that payment or cancellation already
+    // closed would stay on the board (and keep its failed print jobs in the error strip) forever; tickets
+    // still being made always stay.
+    private async Task<IReadOnlyList<KitchenTicket>> GetBoardTicketsAsync(string stationId, CancellationToken cancellationToken)
+    {
+        var liveSync = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+        var tickets = await _tickets.GetActiveByStationAsync(stationId, liveSync, cancellationToken);
+        var closedOrders = await ClosedOrderIdsAsync(
+            tickets.Where(ticket => ticket.Status == KitchenTicketState.Ready).Select(ticket => ticket.OrderId).ToArray(),
+            cancellationToken);
+        return tickets.Where(ticket => ticket.Status != KitchenTicketState.Ready || !closedOrders.Contains(ticket.OrderId)).ToArray();
+    }
+
+    private async Task<HashSet<Guid>> ClosedOrderIdsAsync(Guid[] orderIds, CancellationToken cancellationToken)
+    {
+        var closed = new HashSet<Guid>();
+        if (orderIds.Length == 0)
+            return closed;
+
+        await using var command = _dataSource.CreateCommand(
+            "SELECT order_id FROM orders.orders WHERE order_id = ANY(@order_ids) AND status IN ('Completed', 'Cancelled', 'Rejected');");
+        command.Parameters.Add("order_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = orderIds;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            closed.Add(reader.GetGuid(0));
+        return closed;
     }
 
     private async Task<(Guid? TableId, string? TableNumber)> ResolveTableLabelAsync(
