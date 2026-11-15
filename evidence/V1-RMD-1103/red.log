@@ -1,0 +1,45 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.send-and-collect.test.tsx (6 tests | 2 failed) 3440ms
+     × sends the order, then opens its bill and goes to the payment page 2934ms
+     × does not open the payment page when sending fails 95ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.send-and-collect.test.tsx > Cashier counter sale: send and collect in one tap > sends the order, then opens its bill and goes to the payment page
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:67:61
+     65|
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const tap = (element: Element) => act(async () => { element.dispatchEv…
+       |                                                             ^
+     68| const button = (label: string) => [...document.querySelectorAll<HTMLBu…
+     69| const SEND_AND_COLLECT = "Gönder ve tahsil et";
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ tap src/routes/Cashier.send-and-collect.test.tsx:67:35
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:75:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.send-and-collect.test.tsx > Cashier counter sale: send and collect in one tap > does not open the payment page when sending fails
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:67:61
+     65|
+     66| const settle = () => act(async () => { await new Promise((resolve) => …
+     67| const tap = (element: Element) => act(async () => { element.dispatchEv…
+       |                                                             ^
+     68| const button = (label: string) => [...document.querySelectorAll<HTMLBu…
+     69| const SEND_AND_COLLECT = "Gönder ve tahsil et";
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ tap src/routes/Cashier.send-and-collect.test.tsx:67:35
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:88:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  15:20:11
+   Duration  5.15s (transform 2.21s, setup 0ms, import 233ms, tests 3.44s, environment 1.17s)
+

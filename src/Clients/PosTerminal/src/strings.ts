@@ -1448,6 +1448,8 @@ export const servedRecallNote = "Hesapta servis edilmiş ürün var; masaya yaln
 /** What the kitchen has done with a sent line, shown only once it matters to the cashier (cancelling a served line is refused). */
 export const kitchenStateNotes: Readonly<Record<string, string>> = { Ready: itemStatusLabels.Ready, Served: itemStatusLabels.Served };
 
+export const sendAndCollectLabel = "Gönder ve tahsil et";
+
 export const kitchenlessText = {
   open: "Mutfağa göndermeden hesaba ekle",
   pickReason: "Mutfağa neden gönderilmiyor?",

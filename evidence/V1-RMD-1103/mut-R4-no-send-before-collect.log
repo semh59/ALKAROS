@@ -1,0 +1,46 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.send-and-collect.test.tsx (6 tests | 2 failed) 3537ms
+     × sends the order, then opens its bill and goes to the payment page 3017ms
+     × does not open the payment page when sending fails 132ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.send-and-collect.test.tsx > Cashier counter sale: send and collect in one tap > sends the order, then opens its bill and goes to the payment page
+AssertionError: expected -1 to be greater than or equal to 0
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:80:20
+     78|     const submit = till.calls.findIndex((call) => call.startsWith("POS…
+     79|     const bill = till.calls.indexOf("POST /billing/bills/from-order/or…
+     80|     expect(submit).toBeGreaterThanOrEqual(0);
+       |                    ^
+     81|     expect(bill).toBeGreaterThan(submit);
+     82|     expect(till.assign).toHaveBeenCalledWith("/cashier/payments/split-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.send-and-collect.test.tsx > Cashier counter sale: send and collect in one tap > does not open the payment page when sending fails
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:91:84
+     89|     await settle();
+     90|
+     91|     expect(till.calls.some((call) => call.includes("/billing/bills/fro…
+       |                                                                                    ^
+     92|     expect(till.assign).not.toHaveBeenCalled();
+     93|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  15:21:54
+   Duration  5.95s (transform 2.20s, setup 0ms, import 142ms, tests 3.54s, environment 1.87s)
+

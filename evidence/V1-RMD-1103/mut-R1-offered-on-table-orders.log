@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.send-and-collect.test.tsx (6 tests | 1 failed) 3903ms
+     × offers no combined button on a table order opened as the cart 95ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.send-and-collect.test.tsx > Cashier counter sale: send and collect in one tap > offers no combined button on a table order opened as the cart
+AssertionError: expected <button …(2)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  class="primary submit-order"
+  data-telemetry-id="b.routes.cashier.sendcollect"
+>
+  Gönder ve tahsil et
+</button>
+
+ ❯ src/routes/Cashier.send-and-collect.test.tsx:106:38
+    104|
+    105|     expect(button("Mutfağa gönder (1)")).toBeDefined();
+    106|     expect(button(SEND_AND_COLLECT)).toBeUndefined();
+       |                                      ^
+    107|   });
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  15:22:32
+   Duration  5.80s (transform 2.50s, setup 0ms, import 131ms, tests 3.90s, environment 1.40s)
+

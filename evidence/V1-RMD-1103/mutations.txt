@@ -1,0 +1,4 @@
+R2-permission-dropped exit 1 restored cmp ok
+R3-collect-despite-send-failure exit 1 restored cmp ok
+R4-no-send-before-collect exit 1 restored cmp ok
+R1-offered-on-table-orders exit 1 restored cmp ok

@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
 import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, roleLabelFor, stateText, type KitchenlessReasonCode } from "../strings";
+import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
@@ -480,6 +480,11 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     }
   };
 
+  // A counter sale (no table) is usually paid at once: one tap sends the order and opens the payment page.
+  const sendAndCollect = async (order: NonNullable<typeof activeOrder>) => {
+    if (await execute(() => api.submitOrder(terminalId, order.orderId!, order.revision))) await collectOrder(order.orderId!);
+  };
+
   const execute = async (action: () => Promise<unknown>, success?: string) => {
     setBusy(true);
     setConfirmRemoveId(null);
@@ -709,6 +714,8 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       addingProduct.current = false;
     }
   };
+
+  const sendAndCollectOffered = !activeOrder?.tableNumber && capabilities.includes("bills.split");
 
   if (currentPath !== "/") {
     return <ExperiencePage
@@ -1005,11 +1012,20 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
               </div>
               )}
               {activeOrder.editable ? (activeOrder.lines.length > 0 && (
-                <button data-telemetry-id="b.routes.cashier.19"
-                  className="primary submit-order"
-                  disabled={busy}
-                  onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
-                >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
+                <>
+                  {sendAndCollectOffered && (
+                    <button data-telemetry-id="b.routes.cashier.sendcollect"
+                      className="primary submit-order"
+                      disabled={busy}
+                      onClick={() => void sendAndCollect(activeOrder)}
+                    >{sendAndCollectLabel}</button>
+                  )}
+                  <button data-telemetry-id="b.routes.cashier.19"
+                    className={sendAndCollectOffered ? "secondary submit-order" : "primary submit-order"}
+                    disabled={busy}
+                    onClick={() => execute(() => api.submitOrder(terminalId, activeOrder.orderId!, activeOrder.revision))}
+                  >{`Mutfağa gönder (${formatQuantity(unsentCount || itemCount)})`}</button>
+                </>
               )) : (
                 <div className="submitted-state" role="status">
                   <span>✓</span>
