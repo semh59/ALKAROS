@@ -241,7 +241,10 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            // Same rule as a cash tender: cash moves in or out of the drawer of the user who does it, managers included.
+            if (session.Snapshot.CashierUserId != principal.UserId)
+                throw new CashTenderSessionNotOwnedException();
             ArgumentException.ThrowIfNullOrWhiteSpace(request.IdempotencyKey);
             var direction = request.Direction == CashMovementDirectionV1.In ? CashTransactionDirection.In : CashTransactionDirection.Out;
 

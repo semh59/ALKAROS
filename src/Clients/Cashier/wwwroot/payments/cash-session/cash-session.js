@@ -101,12 +101,14 @@
   }
 
   // The server's own message is never shown: every code the drawer screen can meet has its Turkish text here.
+  var NOT_OWNED_MOVEMENT_TEXT = 'Nakit giriş ve çıkış yalnız kendi kasa oturumunuza yazılır; sahibi kapatınca kendi kasa oturumunuzu açın.';
   var ERROR_TEXT = {
     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
     CASH_MOVEMENT_REASON_INVALID: 'Açıklama zorunludur ve en çok 500 karakter olabilir.',
     CASH_MOVEMENT_REQUESTS_PENDING: 'Onay bekleyen nakit çıkış talebi var; önce karara bağlayın veya geri çekin.',
     CASH_MOVEMENT_SELF_APPROVAL: 'Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.',
     CASH_MOVEMENT_REQUEST_STATE: 'Bu çıkış talebi artık beklemiyor; liste yenilendi.',
+    CASH_SESSION_NOT_OWNED: NOT_OWNED_MOVEMENT_TEXT,
     CASH_MOVEMENT_REQUEST_NOT_FOUND: 'Çıkış talebi bulunamadı.',
     IDEMPOTENCY_KEY_REUSED: 'Bu işlem farklı bir nakit hareketi için zaten kaydedilmiş. Sayfayı yenileyip tekrar deneyin.',
     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
@@ -192,7 +194,7 @@
   // than doing nothing.
   function focusPrimaryField() {
     var target = app.querySelector('input:not(:disabled), textarea:not(:disabled)');
-    if (!target) target = document.getElementById('cash-in');
+    if (!target) target = app.querySelector('#cash-in:not(:disabled)');
     if (!target) target = app.querySelector('button:not(:disabled)');
     if (target) target.focus({ preventScroll: true });
   }
@@ -751,9 +753,10 @@
       '<div class="cs-divider"></div>' +
       renderPendingRequests() +
       '<div class="cs-row">' +
-      '<button class="cs-btn cs-btn-secondary" id="cash-in">Nakit Giriş</button>' +
-      '<button class="cs-btn cs-btn-secondary" id="cash-out">Nakit Çıkış</button>' +
+      '<button class="cs-btn cs-btn-secondary" id="cash-in"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Giriş</button>' +
+      '<button class="cs-btn cs-btn-secondary" id="cash-out"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Çıkış</button>' +
       '</div>' +
+      (ownsSession() ? '' : '<p class="cs-field-hint" id="movement-owner-hint">' + NOT_OWNED_MOVEMENT_TEXT + '</p>') +
       renderMovementList() +
       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
       (!mayActForOwner()

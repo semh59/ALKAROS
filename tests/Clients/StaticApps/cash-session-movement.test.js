@@ -232,6 +232,18 @@ describe("cash-session.js cash movements", () => {
     expect($("#movement-notes").value).toBe("market");
   });
 
+  it("tells the cashier to open their own drawer session when the server says the session is not theirs", async () => {
+    const refusal = reply(409, { error: { code: "CASH_SESSION_NOT_OWNED", message: "RAW ENGLISH MESSAGE" } });
+    await open({ expected: 5000, movementReply: refusal });
+    await toSummary("in", "40", "bozuk para");
+
+    $("#movement-confirm").click();
+    await vi.waitFor(() => expect($("#movement-amount")).not.toBeNull());
+
+    expect(text()).toContain("kendi kasa oturumunuzu açın");
+    expect(text()).not.toContain("RAW ENGLISH MESSAGE");
+  });
+
   it("keeps what was typed through a validation re-render", async () => {
     await open();
     await startMovement("in", "25", "");

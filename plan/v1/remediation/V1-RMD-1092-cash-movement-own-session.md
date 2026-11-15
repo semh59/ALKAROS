@@ -1,7 +1,7 @@
 # V1-RMD-1092 - Nakit giriş ve çıkış yalnız kasiyerin kendi açık kasa oturumuna yazılır
 
 - Task ID: V1-RMD-1092
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

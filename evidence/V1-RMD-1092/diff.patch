@@ -1,0 +1,214 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 8bc4a7c2b..8e696d84a 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -101,12 +101,14 @@
+   }
+ 
+   // The server's own message is never shown: every code the drawer screen can meet has its Turkish text here.
++  var NOT_OWNED_MOVEMENT_TEXT = 'Nakit giriş ve çıkış yalnız kendi kasa oturumunuza yazılır; sahibi kapatınca kendi kasa oturumunuzu açın.';
+   var ERROR_TEXT = {
+     CASH_OUT_EXCEEDS_DRAWER: 'Çıkış tutarı kasadaki nakdi aşıyor.',
+     CASH_MOVEMENT_REASON_INVALID: 'Açıklama zorunludur ve en çok 500 karakter olabilir.',
+     CASH_MOVEMENT_REQUESTS_PENDING: 'Onay bekleyen nakit çıkış talebi var; önce karara bağlayın veya geri çekin.',
+     CASH_MOVEMENT_SELF_APPROVAL: 'Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.',
+     CASH_MOVEMENT_REQUEST_STATE: 'Bu çıkış talebi artık beklemiyor; liste yenilendi.',
++    CASH_SESSION_NOT_OWNED: NOT_OWNED_MOVEMENT_TEXT,
+     CASH_MOVEMENT_REQUEST_NOT_FOUND: 'Çıkış talebi bulunamadı.',
+     IDEMPOTENCY_KEY_REUSED: 'Bu işlem farklı bir nakit hareketi için zaten kaydedilmiş. Sayfayı yenileyip tekrar deneyin.',
+     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+@@ -192,7 +194,7 @@
+   // than doing nothing.
+   function focusPrimaryField() {
+     var target = app.querySelector('input:not(:disabled), textarea:not(:disabled)');
+-    if (!target) target = document.getElementById('cash-in');
++    if (!target) target = app.querySelector('#cash-in:not(:disabled)');
+     if (!target) target = app.querySelector('button:not(:disabled)');
+     if (target) target.focus({ preventScroll: true });
+   }
+@@ -751,9 +753,10 @@
+       '<div class="cs-divider"></div>' +
+       renderPendingRequests() +
+       '<div class="cs-row">' +
+-      '<button class="cs-btn cs-btn-secondary" id="cash-in">Nakit Giriş</button>' +
+-      '<button class="cs-btn cs-btn-secondary" id="cash-out">Nakit Çıkış</button>' +
++      '<button class="cs-btn cs-btn-secondary" id="cash-in"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Giriş</button>' +
++      '<button class="cs-btn cs-btn-secondary" id="cash-out"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Çıkış</button>' +
+       '</div>' +
++      (ownsSession() ? '' : '<p class="cs-field-hint" id="movement-owner-hint">' + NOT_OWNED_MOVEMENT_TEXT + '</p>') +
+       renderMovementList() +
+       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
+       (!mayActForOwner()
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index f12c7c08e..22e04f626 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -241,7 +241,10 @@ public static partial class DualScreenApplication
+             CancellationToken cancellationToken) =>
+         {
+             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            // Same rule as a cash tender: cash moves in or out of the drawer of the user who does it, managers included.
++            if (session.Snapshot.CashierUserId != principal.UserId)
++                throw new CashTenderSessionNotOwnedException();
+             ArgumentException.ThrowIfNullOrWhiteSpace(request.IdempotencyKey);
+             var direction = request.Direction == CashMovementDirectionV1.In ? CashTransactionDirection.In : CashTransactionDirection.Out;
+ 
+diff --git a/tests/Clients/StaticApps/cash-session-movement.test.js b/tests/Clients/StaticApps/cash-session-movement.test.js
+index 392e98e84..1891cabe0 100644
+--- a/tests/Clients/StaticApps/cash-session-movement.test.js
++++ b/tests/Clients/StaticApps/cash-session-movement.test.js
+@@ -232,6 +232,18 @@ describe("cash-session.js cash movements", () => {
+     expect($("#movement-notes").value).toBe("market");
+   });
+ 
++  it("tells the cashier to open their own drawer session when the server says the session is not theirs", async () => {
++    const refusal = reply(409, { error: { code: "CASH_SESSION_NOT_OWNED", message: "RAW ENGLISH MESSAGE" } });
++    await open({ expected: 5000, movementReply: refusal });
++    await toSummary("in", "40", "bozuk para");
++
++    $("#movement-confirm").click();
++    await vi.waitFor(() => expect($("#movement-amount")).not.toBeNull());
++
++    expect(text()).toContain("kendi kasa oturumunuzu açın");
++    expect(text()).not.toContain("RAW ENGLISH MESSAGE");
++  });
++
+   it("keeps what was typed through a validation re-render", async () => {
+     await open();
+     await startMovement("in", "25", "");
+diff --git a/tests/Clients/StaticApps/cash-session-owner.test.js b/tests/Clients/StaticApps/cash-session-owner.test.js
+index fc397021b..8d77e49b0 100644
+--- a/tests/Clients/StaticApps/cash-session-owner.test.js
++++ b/tests/Clients/StaticApps/cash-session-owner.test.js
+@@ -76,6 +76,27 @@ describe("cash-session.js names whose drawer session it is", () => {
+     expect(button.previousElementSibling.textContent).toContain("Mehmet Usta ya da bir yönetici");
+   });
+ 
++  it.each([[[]], [["cash.session.override"]]])("switches Nakit Giriş and Nakit Çıkış off with the reason right below them on another user's session (%j)", async (capabilities) => {
++    await open({ capabilities });
++    await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
++
++    expect(document.getElementById("cash-in").disabled).toBe(true);
++    expect(document.getElementById("cash-out").disabled).toBe(true);
++    const hint = document.getElementById("movement-owner-hint");
++    expect(hint.previousElementSibling.querySelector("#cash-out")).not.toBeNull();
++    expect(hint.textContent).toContain("kendi kasa oturumunuzu açın");
++    expect(document.getElementById("cash-in").getAttribute("aria-describedby")).toBe("movement-owner-hint");
++    expect(document.getElementById("cash-out").getAttribute("aria-describedby")).toBe("movement-owner-hint");
++  });
++
++  it("keeps Nakit Giriş and Nakit Çıkış on, without a hint, on the cashier's own session", async () => {
++    await open({ ownerId: "u1" });
++
++    expect(document.getElementById("cash-in").disabled).toBe(false);
++    expect(document.getElementById("cash-out").disabled).toBe(false);
++    expect(document.getElementById("movement-owner-hint")).toBeNull();
++  });
++
+   it("tells a manager they may close it for the owner and leaves the button on", async () => {
+     await open({ capabilities: ["cash.session.override"] });
+     await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
+diff --git a/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs b/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs
+index f5e9a5edd..c0017d5bd 100644
+--- a/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs
+@@ -160,8 +160,9 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
+     [Fact]
+     public async Task AManagerCannotApproveTheirOwnRequestUnlessTheSettingIsOn()
+     {
+-        await using var till = await TillAsync(opening: 2000m);
+-        var manager = await till.ManagerAsync("own-request");
++        // The manager asks from their own drawer session: cash moves only in the caller's own session (V1-RMD-1092).
++        await using var till = await TillAsync(opening: 2000m, openedByManager: true);
++        var manager = new Manager(till.Cashier, await _database.UserIdForCookieAsync(till.Cashier));
+         var requestId = await till.RequestAsync(800m, "avans", manager.Cookie);
+ 
+         var refused = await till.DecideAsync(requestId, "approve", manager.Cookie);
+@@ -724,8 +725,8 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
+     [Fact]
+     public async Task ADeactivatedSelfApprovalSettingCountsAsOff()
+     {
+-        await using var till = await TillAsync(opening: 2000m);
+-        var manager = await till.ManagerAsync("inactive-switch");
++        await using var till = await TillAsync(opening: 2000m, openedByManager: true);
++        var manager = new Manager(till.Cashier, await _database.UserIdForCookieAsync(till.Cashier));
+         var requestId = await till.RequestAsync(800m, "avans", manager.Cookie);
+         await _database.SetSettingAsync(SelfApprovalKey, "Boolean", "true");
+         await _database.DeactivateSettingAsync(SelfApprovalKey);
+@@ -764,10 +765,13 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
+         Assert.Contains(messagePart, error.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
+     }
+ 
+-    private async Task<Till> TillAsync(decimal opening)
++    private async Task<Till> TillAsync(decimal opening, bool openedByManager = false)
+     {
+         var terminalId = Guid.NewGuid();
+-        var cashier = await _database.SeedCashierSessionAsync(terminalId, "till-" + Guid.NewGuid().ToString("N")[..8]);
++        var token = "till-" + Guid.NewGuid().ToString("N")[..8];
++        var cashier = openedByManager
++            ? await _database.SeedCashierSessionWithPermissionsAsync(terminalId, token, ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride)
++            : await _database.SeedCashierSessionAsync(terminalId, token);
+         var app = DualScreenApplication.Build(new DualScreenOptions(
+             _database.ConnectionString, _webRoot, "http://127.0.0.1:0", TrustedProxies: [System.Net.IPAddress.Loopback]));
+         await app.StartAsync();
+diff --git a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+index b12870654..13752837e 100644
+--- a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+@@ -311,6 +311,54 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
+         Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
+     }
+ 
++    [Theory]
++    [InlineData("In", false, 900)]
++    [InlineData("Out", false, 900)]
++    [InlineData("Out", false, 50)]
++    [InlineData("In", true, 900)]
++    [InlineData("Out", true, 900)]
++    [InlineData("Out", true, 50)]
++    public async Task CashMovementIntoAnotherUsersOpenSessionIsRefusedAndWritesNothing(string direction, bool asManager, int amount)
++    {
++        var terminalId = Guid.NewGuid();
++        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, "mv-own-owner");
++        var otherCookie = asManager
++            ? await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "mv-own-other", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride)
++            : await _database.SeedCashierSessionAsync(terminalId, "mv-own-other");
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 1000m });
++        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
++        var path = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}";
++
++        // 900 is above the approval threshold (a wrongly accepted cash-out would leave a pending request), 50 is below it (a ledger row).
++        var movement = await PostAsync(client, $"{path}/cash-movements", otherCookie,
++            new { Direction = direction, Amount = (decimal)amount, Notes = "not my drawer", IdempotencyKey = Guid.NewGuid().ToString() });
++
++        Assert.Equal(HttpStatusCode.Conflict, movement.StatusCode);
++        Assert.Equal("CASH_SESSION_NOT_OWNED", (await movement.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
++        var list = await (await GetAsync(client, $"{path}/cash-movements", ownerCookie)).Content.ReadFromJsonAsync<JsonElement>();
++        Assert.Equal(0, list.GetProperty("movements").GetArrayLength());
++        Assert.Equal(0, list.GetProperty("requests").GetArrayLength());
++    }
++
++    [Fact]
++    public async Task CashMovementIntoTheCallersOwnOpenSessionStillSucceedsForAManager()
++    {
++        var terminalId = Guid.NewGuid();
++        var managerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
++            terminalId, "mv-own-manager", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", managerCookie, new { OpeningBalance = 1000m });
++        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
++
++        var movement = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", managerCookie,
++            new { Direction = "In", Amount = 50m, Notes = "float", IdempotencyKey = Guid.NewGuid().ToString() });
++
++        Assert.Equal(HttpStatusCode.Created, movement.StatusCode);
++    }
++
+     [Fact]
+     public async Task CashTenderByAManagerIntoTheirOwnOpenSessionSucceeds()
+     {

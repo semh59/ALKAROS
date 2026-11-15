@@ -311,6 +311,54 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(0L, (long)(await payments.ExecuteScalarAsync())!);
     }
 
+    [Theory]
+    [InlineData("In", false, 900)]
+    [InlineData("Out", false, 900)]
+    [InlineData("Out", false, 50)]
+    [InlineData("In", true, 900)]
+    [InlineData("Out", true, 900)]
+    [InlineData("Out", true, 50)]
+    public async Task CashMovementIntoAnotherUsersOpenSessionIsRefusedAndWritesNothing(string direction, bool asManager, int amount)
+    {
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionAsync(terminalId, "mv-own-owner");
+        var otherCookie = asManager
+            ? await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "mv-own-other", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride)
+            : await _database.SeedCashierSessionAsync(terminalId, "mv-own-other");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 1000m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var path = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}";
+
+        // 900 is above the approval threshold (a wrongly accepted cash-out would leave a pending request), 50 is below it (a ledger row).
+        var movement = await PostAsync(client, $"{path}/cash-movements", otherCookie,
+            new { Direction = direction, Amount = (decimal)amount, Notes = "not my drawer", IdempotencyKey = Guid.NewGuid().ToString() });
+
+        Assert.Equal(HttpStatusCode.Conflict, movement.StatusCode);
+        Assert.Equal("CASH_SESSION_NOT_OWNED", (await movement.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        var list = await (await GetAsync(client, $"{path}/cash-movements", ownerCookie)).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(0, list.GetProperty("movements").GetArrayLength());
+        Assert.Equal(0, list.GetProperty("requests").GetArrayLength());
+    }
+
+    [Fact]
+    public async Task CashMovementIntoTheCallersOwnOpenSessionStillSucceedsForAManager()
+    {
+        var terminalId = Guid.NewGuid();
+        var managerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "mv-own-manager", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", managerCookie, new { OpeningBalance = 1000m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var movement = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", managerCookie,
+            new { Direction = "In", Amount = 50m, Notes = "float", IdempotencyKey = Guid.NewGuid().ToString() });
+
+        Assert.Equal(HttpStatusCode.Created, movement.StatusCode);
+    }
+
     [Fact]
     public async Task CashTenderByAManagerIntoTheirOwnOpenSessionSucceeds()
     {

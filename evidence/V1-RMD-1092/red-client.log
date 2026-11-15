@@ -1,0 +1,79 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-owner.test.js (12 tests | 2 failed) 1332ms
+     × switches Nakit Giriş and Nakit Çıkış off with the reason right below them on another user's session ([]) 102ms
+     × switches Nakit Giriş and Nakit Çıkış off with the reason right below them on another user's session (["cash.session.override"]) 113ms
+ ❯ cash-session-movement.test.js (66 tests | 1 failed) 12288ms
+     × tells the cashier to open their own drawer session when the server says the session is not theirs 252ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > tells the cashier to open their own drawer session when the server says the session is not theirs
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'kendi kasa oturumunuzu açın'
+
+- Expected
++ Received
+
+- kendi kasa oturumunuzu açın
++
++   ← Kasaya dön
++   Kasa HareketiNakit Giriş!Hataİşlem, kasanın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Tutar₺AçıklamaBozuk paraBankaTakviyebozuk paraVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:243:20
+    241|     await vi.waitFor(() => expect($("#movement-amount")).not.toBeNull(…
+    242|
+    243|     expect(text()).toContain("kendi kasa oturumunuzu açın");
+       |                    ^
+    244|     expect(text()).not.toContain("RAW ENGLISH MESSAGE");
+    245|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > switches Nakit Giriş and Nakit Çıkış off with the reason right below them on another user's session ([])
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-owner.test.js:83:57
+     81|     await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
+     82|
+     83|     expect(document.getElementById("cash-in").disabled).toBe(true);
+       |                                                         ^
+     84|     expect(document.getElementById("cash-out").disabled).toBe(true);
+     85|     const hint = document.getElementById("movement-owner-hint");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  cash-session-owner.test.js > cash-session.js names whose drawer session it is > switches Nakit Giriş and Nakit Çıkış off with the reason right below them on another user's session (["cash.session.override"])
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-owner.test.js:83:57
+     81|     await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
+     82|
+     83|     expect(document.getElementById("cash-in").disabled).toBe(true);
+       |                                                         ^
+     84|     expect(document.getElementById("cash-out").disabled).toBe(true);
+     85|     const hint = document.getElementById("movement-owner-hint");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 75 passed (78)
+   Start at  10:12:20
+   Duration  15.25s (transform 2.54s, setup 98ms, import 226ms, tests 13.62s, environment 4.41s)
+

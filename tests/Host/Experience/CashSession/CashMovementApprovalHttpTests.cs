@@ -160,8 +160,9 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
     [Fact]
     public async Task AManagerCannotApproveTheirOwnRequestUnlessTheSettingIsOn()
     {
-        await using var till = await TillAsync(opening: 2000m);
-        var manager = await till.ManagerAsync("own-request");
+        // The manager asks from their own drawer session: cash moves only in the caller's own session (V1-RMD-1092).
+        await using var till = await TillAsync(opening: 2000m, openedByManager: true);
+        var manager = new Manager(till.Cashier, await _database.UserIdForCookieAsync(till.Cashier));
         var requestId = await till.RequestAsync(800m, "avans", manager.Cookie);
 
         var refused = await till.DecideAsync(requestId, "approve", manager.Cookie);
@@ -724,8 +725,8 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
     [Fact]
     public async Task ADeactivatedSelfApprovalSettingCountsAsOff()
     {
-        await using var till = await TillAsync(opening: 2000m);
-        var manager = await till.ManagerAsync("inactive-switch");
+        await using var till = await TillAsync(opening: 2000m, openedByManager: true);
+        var manager = new Manager(till.Cashier, await _database.UserIdForCookieAsync(till.Cashier));
         var requestId = await till.RequestAsync(800m, "avans", manager.Cookie);
         await _database.SetSettingAsync(SelfApprovalKey, "Boolean", "true");
         await _database.DeactivateSettingAsync(SelfApprovalKey);
@@ -764,10 +765,13 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
         Assert.Contains(messagePart, error.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
     }
 
-    private async Task<Till> TillAsync(decimal opening)
+    private async Task<Till> TillAsync(decimal opening, bool openedByManager = false)
     {
         var terminalId = Guid.NewGuid();
-        var cashier = await _database.SeedCashierSessionAsync(terminalId, "till-" + Guid.NewGuid().ToString("N")[..8]);
+        var token = "till-" + Guid.NewGuid().ToString("N")[..8];
+        var cashier = openedByManager
+            ? await _database.SeedCashierSessionWithPermissionsAsync(terminalId, token, ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride)
+            : await _database.SeedCashierSessionAsync(terminalId, token);
         var app = DualScreenApplication.Build(new DualScreenOptions(
             _database.ConnectionString, _webRoot, "http://127.0.0.1:0", TrustedProxies: [System.Net.IPAddress.Loopback]));
         await app.StartAsync();

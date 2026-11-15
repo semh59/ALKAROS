@@ -1,0 +1,6 @@
+C1-buttons-always-enabled exit 1 restored cmp ok
+C2-no-hint exit 1 restored cmp ok
+C3-no-error-text exit 1 restored cmp ok
+C4-no-aria-link exit 1 restored cmp ok
+S1-no-owner-check exit 1 restored cmp ok
+S2-inverted-owner-check exit 1 restored cmp ok

@@ -76,6 +76,27 @@ describe("cash-session.js names whose drawer session it is", () => {
     expect(button.previousElementSibling.textContent).toContain("Mehmet Usta ya da bir yönetici");
   });
 
+  it.each([[[]], [["cash.session.override"]]])("switches Nakit Giriş and Nakit Çıkış off with the reason right below them on another user's session (%j)", async (capabilities) => {
+    await open({ capabilities });
+    await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
+
+    expect(document.getElementById("cash-in").disabled).toBe(true);
+    expect(document.getElementById("cash-out").disabled).toBe(true);
+    const hint = document.getElementById("movement-owner-hint");
+    expect(hint.previousElementSibling.querySelector("#cash-out")).not.toBeNull();
+    expect(hint.textContent).toContain("kendi kasa oturumunuzu açın");
+    expect(document.getElementById("cash-in").getAttribute("aria-describedby")).toBe("movement-owner-hint");
+    expect(document.getElementById("cash-out").getAttribute("aria-describedby")).toBe("movement-owner-hint");
+  });
+
+  it("keeps Nakit Giriş and Nakit Çıkış on, without a hint, on the cashier's own session", async () => {
+    await open({ ownerId: "u1" });
+
+    expect(document.getElementById("cash-in").disabled).toBe(false);
+    expect(document.getElementById("cash-out").disabled).toBe(false);
+    expect(document.getElementById("movement-owner-hint")).toBeNull();
+  });
+
   it("tells a manager they may close it for the owner and leaves the button on", async () => {
     await open({ capabilities: ["cash.session.override"] });
     await vi.waitFor(() => expect(title()).toBe("Mehmet Usta"));
