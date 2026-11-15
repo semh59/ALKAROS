@@ -1,0 +1,145 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 10% 20.00 fills the tip amount and sends nothing
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326385-0.48360619855914777:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326385-0.48360619855914777:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326385-0.48360619855914777:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 15% 30.00 fills the tip amount and sends nothing
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326585-0.8150958373299111:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326585-0.8150958373299111:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326585-0.8150958373299111:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 20% 40.00 fills the tip amount and sends nothing
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326715-0.12318227682874572:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326715-0.12318227682874572:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326715-0.12318227682874572:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > computes the tip from the bill total without the tips already added
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326840-0.557114790426818:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326840-0.557114790426818:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326840-0.557114790426818:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 5% undefined selects percentage, fills the value and sends nothing
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326962-0.500509143984207:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326962-0.500509143984207:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747326962-0.500509143984207:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 10% undefined selects percentage, fills the value and sends nothing
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327088-0.21659606682201005:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327088-0.21659606682201005:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327088-0.21659606682201005:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 20% undefined selects percentage, fills the value and sends nothing
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327227-0.39565865361501773:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327227-0.39565865361501773:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327227-0.39565865361501773:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-adjustment-presets.test.js > tip and discount percentage buttons > keeps the discount reason the cashier chose
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327340-0.10963939255792832:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327340-0.10963939255792832:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747327340-0.10963939255792832:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-adjustment-presets.test.js (8 tests | 8 failed) 1144ms
+     × tip 10% 20.00 fills the tip amount and sends nothing 215ms
+     × tip 15% 30.00 fills the tip amount and sends nothing 130ms
+     × tip 20% 40.00 fills the tip amount and sends nothing 125ms
+     × computes the tip from the bill total without the tips already added 122ms
+     × discount 5% undefined selects percentage, fills the value and sends nothing 127ms
+     × discount 10% undefined selects percentage, fills the value and sends nothing 139ms
+     × discount 20% undefined selects percentage, fills the value and sends nothing 113ms
+     × keeps the discount reason the cashier chose 172ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 10% 20.00 fills the tip amount and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 15% 30.00 fills the tip amount and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 20% 40.00 fills the tip amount and sends nothing
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ split-payment-adjustment-presets.test.js:36:30
+     34|   it.each([[10, "20.00"], [15, "30.00"], [20, "40.00"]])("tip %i%% fil…
+     35|     const fetchMock = await open();
+     36|     expect(tipButton(percent).textContent).toBe(`%${percent}`);
+       |                              ^
+     37|     tipButton(percent).click();
+     38|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > computes the tip from the bill total without the tips already added
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-adjustment-presets.test.js:45:18
+     43|   it("computes the tip from the bill total without the tips already ad…
+     44|     await open({ payable: 220, adjustments: [{ adjustmentId: "t1", adj…
+     45|     tipButton(10).click();
+       |                  ^
+     46|
+     47|     expect(document.getElementById("tip-amount").value).toBe("20.00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 5% undefined selects percentage, fills the value and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 10% undefined selects percentage, fills the value and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 20% undefined selects percentage, fills the value and sends nothing
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ split-payment-adjustment-presets.test.js:54:35
+     52|     document.getElementById("discount-calc-type").value = "FixedAmount…
+     53|     document.getElementById("discount-calc-type").dispatchEvent(new Ev…
+     54|     expect(discountButton(percent).textContent).toBe(`%${percent}`);
+       |                                   ^
+     55|     discountButton(percent).click();
+     56|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > keeps the discount reason the cashier chose
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ split-payment-adjustment-presets.test.js:69:23
+     67|     reason.value = other;
+     68|     reason.dispatchEvent(new Event("change", { bubbles: true }));
+     69|     discountButton(10).click();
+       |                       ^
+     70|
+     71|     expect(document.getElementById("discount-reason").value).toBe(othe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  15:55:24
+   Duration  2.58s (transform 509ms, setup 25ms, import 50ms, tests 1.14s, environment 1.04s)
+

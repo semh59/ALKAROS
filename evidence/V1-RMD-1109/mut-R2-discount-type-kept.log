@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-adjustment-presets.test.js (8 tests | 3 failed) 1245ms
+     × discount 5 percent selects percentage, fills the value and sends nothing 153ms
+     × discount 10 percent selects percentage, fills the value and sends nothing 150ms
+     × discount 20 percent selects percentage, fills the value and sends nothing 138ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 5 percent selects percentage, fills the value and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 10 percent selects percentage, fills the value and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 20 percent selects percentage, fills the value and sends nothing
+AssertionError: expected 'FixedAmount' to be 'Percentage' // Object.is equality
+
+Expected: "Percentage"
+Received: "FixedAmount"
+
+ ❯ split-payment-adjustment-presets.test.js:58:65
+     56|     discountButton(percent).click();
+     57|
+     58|     expect(document.getElementById("discount-calc-type").value).toBe("…
+       |                                                                 ^
+     59|     expect(document.getElementById("discount-value").value).toBe(Strin…
+     60|     expect(document.getElementById("submit-discount").textContent).toB…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 5 passed (8)
+   Start at  15:57:24
+   Duration  2.62s (transform 515ms, setup 25ms, import 52ms, tests 1.24s, environment 1.04s)
+

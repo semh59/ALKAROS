@@ -1,7 +1,7 @@
 # V1-RMD-1109 - Bahşiş ve indirimde hazır yüzde düğmeleri
 
 - Task ID: V1-RMD-1109
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

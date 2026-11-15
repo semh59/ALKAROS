@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-adjustment-presets.test.js (8 tests | 3 failed) 1376ms
+     × tip 10 percent fills 20.00 and sends nothing 350ms
+     × tip 15 percent fills 30.00 and sends nothing 163ms
+     × tip 20 percent fills 40.00 and sends nothing 136ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 10 percent fills 20.00 and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 15 percent fills 30.00 and sends nothing
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 20 percent fills 40.00 and sends nothing
+AssertionError: expected [ [ …(2) ] ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ split-payment-adjustment-presets.test.js:41:30
+     39|
+     40|     expect(document.getElementById("tip-amount").value).toBe(amount);
+     41|     expect(posts(fetchMock)).toHaveLength(0);
+       |                              ^
+     42|   });
+     43|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 5 passed (8)
+   Start at  15:57:29
+   Duration  2.87s (transform 571ms, setup 45ms, import 83ms, tests 1.38s, environment 1.08s)
+

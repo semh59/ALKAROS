@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-adjustment-presets.test.js (8 tests | 1 failed) 1281ms
+     × discount 20 percent selects percentage, fills the value and sends nothing 156ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > discount 20 percent selects percentage, fills the value and sends nothing
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ split-payment-adjustment-presets.test.js:55:35
+     53|     document.getElementById("discount-calc-type").value = "FixedAmount…
+     54|     document.getElementById("discount-calc-type").dispatchEvent(new Ev…
+     55|     expect(discountButton(percent).textContent).toBe(`%${percent}`);
+       |                                   ^
+     56|     discountButton(percent).click();
+     57|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:57:46
+   Duration  2.75s (transform 561ms, setup 28ms, import 51ms, tests 1.28s, environment 1.12s)
+

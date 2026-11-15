@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-adjustment-presets.test.js (8 tests | 1 failed) 1193ms
+     × tip 20 percent fills 40.00 and sends nothing 147ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > tip 20 percent fills 40.00 and sends nothing
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ split-payment-adjustment-presets.test.js:37:30
+     35|   it.each([[10, "20.00"], [15, "30.00"], [20, "40.00"]])("tip %i perce…
+     36|     const fetchMock = await open();
+     37|     expect(tipButton(percent).textContent).toBe(`%${percent}`);
+       |                              ^
+     38|     tipButton(percent).click();
+     39|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:57:41
+   Duration  2.67s (transform 497ms, setup 26ms, import 52ms, tests 1.19s, environment 1.06s)
+

@@ -1369,6 +1369,21 @@
     );
   }
 
+  // Percentage shortcuts only fill the form; the cashier still presses the send button, so every approval rule stays in force.
+  function presetButtons(attribute, label, percents, disabled) {
+    return '<div class="sp-row" role="group" aria-label="' + label + '">' + percents.map(function (percent) {
+      return '<button class="sp-btn sp-btn-secondary" type="button" data-' + attribute + '="' + percent + '"' + disabled + '>%' + percent + '</button>';
+    }).join('') + '</div>';
+  }
+
+  // The tip is a share of the bill without the tips already added to it.
+  function tipBase() {
+    var tips = state.adjustmentItems.reduce(function (sum, item) {
+      return item.adjustmentType === 'Tip' && !item.isDeduction ? sum + Number(item.amount) : sum;
+    }, 0);
+    return Math.max(0, state.summary.payableAmount - tips);
+  }
+
   function renderDiscountForm() {
     var disabled = state.discountBusy ? ' disabled' : '';
     return (
@@ -1387,6 +1402,7 @@
           escapeHtml(DISCOUNT_REASON_LABELS[code]) + '</option>';
       }).join('') +
       '</select>' +
+      presetButtons('discount-percent', 'İndirim yüzdesi', [5, 10, 20], disabled) +
       '<div class="sp-row">' +
       '<select class="sp-input" id="discount-calc-type" aria-label="İndirim hesaplama türü">' +
       '<option value="Percentage"' + (state.discountCalcType === 'Percentage' ? ' selected' : '') + '>Yüzde (%)</option>' +
@@ -1437,6 +1453,7 @@
     return (
       '<div class="sp-field"><span class="sp-field-label">Gönüllü bahşiş ekle</span>' +
       (state.tipError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.tipError) + '</div>' : '') +
+      presetButtons('tip-percent', 'Bahşiş yüzdesi', [10, 15, 20], disabled) +
       '<div class="sp-row">' +
       '<input class="sp-input" type="number" step="0.01" min="0.01" id="tip-amount" placeholder="Tutar" aria-label="Bahşiş tutarı" value="' +
       escapeHtml(state.tipAmountDraft) + '">' +
@@ -2513,6 +2530,20 @@
     if (submitCompButton) submitCompButton.addEventListener('click', submitComp);
     var submitDiscountButton = document.getElementById('submit-discount');
     if (submitDiscountButton) submitDiscountButton.addEventListener('click', submitDiscount);
+    document.querySelectorAll('[data-tip-percent]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        state.tipAmountDraft = (Math.round(tipBase() * Number(button.getAttribute('data-tip-percent'))) / 100).toFixed(2);
+        render();
+      });
+    });
+    document.querySelectorAll('[data-discount-percent]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        state.discountCalcType = 'Percentage';
+        state.discountValueDraft = button.getAttribute('data-discount-percent');
+        editedDiscount();
+        render();
+      });
+    });
     var tipAmountInput = document.getElementById('tip-amount');
     if (tipAmountInput) tipAmountInput.addEventListener('input', function () { state.tipAmountDraft = this.value; });
     var tipNoteInput = document.getElementById('tip-note');

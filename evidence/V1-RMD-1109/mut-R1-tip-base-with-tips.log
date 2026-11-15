@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-adjustment-presets.test.js (8 tests | 1 failed) 1316ms
+     × computes the tip from the bill total without the tips already added 164ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-adjustment-presets.test.js > tip and discount percentage buttons > computes the tip from the bill total without the tips already added
+AssertionError: expected '22.00' to be '20.00' // Object.is equality
+
+Expected: "20.00"
+Received: "22.00"
+
+ ❯ split-payment-adjustment-presets.test.js:48:57
+     46|     tipButton(10).click();
+     47|
+     48|     expect(document.getElementById("tip-amount").value).toBe("20.00");
+       |                                                         ^
+     49|   });
+     50|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:57:18
+   Duration  2.75s (transform 552ms, setup 26ms, import 52ms, tests 1.32s, environment 1.07s)
+

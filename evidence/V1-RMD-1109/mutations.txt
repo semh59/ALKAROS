@@ -1,0 +1,6 @@
+R1-tip-base-with-tips exit 1 restored cmp ok
+R2-discount-type-kept exit 1 restored cmp ok
+R3-tip-sends-itself exit 1 restored cmp ok
+R4-discount-sends-itself exit 1 restored cmp ok
+R5-tip-percent-wrong exit 1 restored cmp ok
+R6-discount-percent-wrong exit 1 restored cmp ok
