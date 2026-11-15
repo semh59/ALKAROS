@@ -1,0 +1,126 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-item-refund-single-payment.test.js > item refund form with a single payment > selects the only payment and leaves the stock choice empty
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747078273-0.3871164562699494:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747078273-0.3871164562699494:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747078273-0.3871164562699494:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-item-refund-single-payment.test.js > item refund form with a single payment > can be submitted without touching the payment and sends that payment
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747078661-0.4148481119081553:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747078661-0.4148481119081553:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747078661-0.4148481119081553:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-item-refund-single-payment.test.js (4 tests | 2 failed) 730ms
+     × selects the only payment and leaves the stock choice empty 217ms
+     × can be submitted without touching the payment and sends that payment 176ms
+stderr | split-payment-item-refund.test.js > split-payment.js item based refund > says which choice is still missing for the item refund, one at a time, until the button turns on
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747079046-0.8492756490382012:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747079046-0.8492756490382012:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747079046-0.8492756490382012:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-item-refund.test.js > split-payment.js item based refund > keeps the button off until quantity, payment, stock choice and reason are all given
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747079410-0.7990764108164251:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747079410-0.7990764108164251:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747079410-0.7990764108164251:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-item-refund.test.js (14 tests | 2 failed) 3366ms
+     × says which choice is still missing for the item refund, one at a time, until the button turns on 158ms
+     × keeps the button off until quantity, payment, stock choice and reason are all given 157ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-item-refund-single-payment.test.js > item refund form with a single payment > selects the only payment and leaves the stock choice empty
+AssertionError: expected '' to be '33333333-3333-3333-3333-333333333331' // Object.is equality
+
+- Expected
++ Received
+
+- 33333333-3333-3333-3333-333333333331
+
+ ❯ split-payment-item-refund-single-payment.test.js:63:35
+     61|     await open([PAY_1]);
+     62|
+     63|     expect(paymentSelect().value).toBe(PAY_1);
+       |                                   ^
+     64|     expect(stockSelect().value).toBe("");
+     65|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-item-refund-single-payment.test.js > item refund form with a single payment > can be submitted without touching the payment and sends that payment
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ split-payment-item-refund-single-payment.test.js:81:31
+     79|     fillRest();
+     80|
+     81|     expect(submit().disabled).toBe(false);
+       |                               ^
+     82|     submit().click();
+     83|     submit().click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-item-refund.test.js > split-payment.js item based refund > says which choice is still missing for the item refund, one at a time, until the button turns on
+AssertionError: expected 'İadenin düşeceği ödemeyi seçin.' to be 'Ürünlerin stoğa dönüp dönmeyeceğini s…' // Object.is equality
+
+Expected: "Ürünlerin stoğa dönüp dönmeyeceğini seçin."
+Received: "İadenin düşeceği ödemeyi seçin."
+
+ ❯ split-payment-item-refund.test.js:113:20
+    111|     expect(hint()).toBe("Ürün adedini sayı olarak, kalan adedi aşmayac…
+    112|     typeQuantity(TEA, "2");
+    113|     expect(hint()).toBe("Ürünlerin stoğa dönüp dönmeyeceğini seçin.");
+       |                    ^
+    114|     choose("[data-item-stock]", "yes");
+    115|     expect(hint()).toBe("İade gerekçesini seçin ya da yazın.");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  split-payment-item-refund.test.js > split-payment.js item based refund > keeps the button off until quantity, payment, stock choice and reason are all given
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ split-payment-item-refund.test.js:156:31
+    154|     expect(submit().disabled).toBe(true);
+    155|     chooseReason("İkram");
+    156|     expect(submit().disabled).toBe(false);
+       |                               ^
+    157|   });
+    158|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 14 passed (18)
+   Start at  15:51:16
+   Duration  5.19s (transform 1.66s, setup 52ms, import 141ms, tests 4.10s, environment 2.90s)
+

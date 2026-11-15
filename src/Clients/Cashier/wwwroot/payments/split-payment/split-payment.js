@@ -1647,6 +1647,13 @@
     });
   }
 
+  // With a single payment to take the refund from there is nothing to choose: it is selected for the cashier.
+  function selectedItemPayment() {
+    var payments = itemPayments();
+    var picked = payments.filter(function (line) { return line.paymentId === state.itemPayment; })[0];
+    return picked ? picked.paymentId : (payments.length === 1 ? payments[0].paymentId : '');
+  }
+
   function refundableItems() {
     if (state.refundListFailed || itemPayments().length === 0) return [];
     return state.billItems.filter(function (item) { return itemLeft(item) > 0; });
@@ -1670,14 +1677,14 @@
 
   function itemsReady() {
     var chosen = chosenItems();
-    return !!chosen && chosen.length > 0 && !!state.itemPayment && !!state.itemStock && !!state.itemReason.trim();
+    return !!chosen && chosen.length > 0 && !!selectedItemPayment() && !!state.itemStock && !!state.itemReason.trim();
   }
 
   function itemsMissingText() {
     var chosen = chosenItems();
     if (!chosen) return 'Ürün adedini sayı olarak, kalan adedi aşmayacak şekilde yazın.';
     if (chosen.length === 0) return 'İade edilecek ürünün adedini yazın.';
-    if (!state.itemPayment) return 'İadenin düşeceği ödemeyi seçin.';
+    if (!selectedItemPayment()) return 'İadenin düşeceği ödemeyi seçin.';
     if (!state.itemStock) return 'Ürünlerin stoğa dönüp dönmeyeceğini seçin.';
     return 'İade gerekçesini seçin ya da yazın.';
   }
@@ -1695,7 +1702,7 @@
       );
     }).join('');
     var paymentOptions = '<option value="">Ödeme seçin</option>' + itemPayments().map(function (line) {
-      return '<option value="' + escapeHtml(line.paymentId) + '"' + (state.itemPayment === line.paymentId ? ' selected' : '') + '>' +
+      return '<option value="' + escapeHtml(line.paymentId) + '"' + (selectedItemPayment() === line.paymentId ? ' selected' : '') + '>' +
         escapeHtml(paymentLabel(line, 'Ödeme')) + '</option>';
     }).join('');
     var stockOptions =
@@ -1849,7 +1856,7 @@
       var paymentId = element.getAttribute('data-payment-id');
       call = requestRefundCall({ paymentId: paymentId, reason: state.refundReasons[paymentId] || '' });
     } else if (action === 'request-items') {
-      call = requestRefundCall({ paymentId: state.itemPayment, reason: state.itemReason, items: chosenItems() || [] });
+      call = requestRefundCall({ paymentId: selectedItemPayment(), reason: state.itemReason, items: chosenItems() || [] });
     } else if (action === 'approve') {
       call = api(refundsBase() + '/' + requestId + '/approve', { method: 'POST' });
     } else if (action === 'reject' || action === 'cancel-approved') {

@@ -1,0 +1,5 @@
+R1-no-preselect exit 1 restored cmp ok
+R2-first-of-many exit 1 restored cmp ok
+R3-request-uses-raw-state exit 1 restored cmp ok
+R4-ready-uses-raw-state exit 1 restored cmp ok
+R5-stock-defaulted exit 1 restored cmp ok

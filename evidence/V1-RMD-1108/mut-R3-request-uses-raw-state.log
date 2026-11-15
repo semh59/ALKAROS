@@ -1,0 +1,58 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-item-refund-single-payment.test.js > item refund form with a single payment > can be submitted without touching the payment and sends that payment
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747094488-0.5913077860875045:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747094488-0.5913077860875045:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747094488-0.5913077860875045:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-item-refund-single-payment.test.js > item refund form with a single payment > can be submitted without touching the payment and sends that payment
+Müşteri ekranına bağlanamadı: [TypeError: Failed to parse URL from /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display] {
+  [cause]: TypeError: Invalid URL
+      at new URL (node:internal/url:840:25)
+      at new URL (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/vitest@4.1.11_jsdom@26.1.0_vite@8.3.0/node_modules/vitest/dist/chunks/index.DC7d2Pf8.js:557:2)
+      at new Request (node:internal/deps/undici/undici:12072:25)
+      at fetch (node:internal/deps/undici/undici:12997:25)
+      at fetch (node:internal/deps/undici/undici:17708:10)
+      at fetch (node:internal/bootstrap/web/exposed-window-or-worker:83:12)
+      at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747094488-0.5913077860875045:268:12)
+      at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747094488-0.5913077860875045:464:5)
+      at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747094488-0.5913077860875045:577:7 {
+    code: 'ERR_INVALID_URL',
+    input: '/api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display'
+  }
+}
+
+ ❯ split-payment-item-refund-single-payment.test.js (4 tests | 1 failed) 747ms
+     × can be submitted without touching the payment and sends that payment 186ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-item-refund-single-payment.test.js > item refund form with a single payment > can be submitted without touching the payment and sends that payment
+AssertionError: expected '' to be '33333333-3333-3333-3333-333333333331' // Object.is equality
+
+- Expected
++ Received
+
+- 33333333-3333-3333-3333-333333333331
+
+ ❯ split-payment-item-refund-single-payment.test.js:86:48
+     84|     await vi.waitFor(() => expect(fetchMock.mock.calls.some(([url, ini…
+     85|     const call = fetchMock.mock.calls.find(([url, init]) => url.endsWi…
+     86|     expect(JSON.parse(call[1].body).paymentId).toBe(PAY_1);
+       |                                                ^
+     87|   });
+     88|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 17 passed (18)
+   Start at  15:51:32
+   Duration  4.82s (transform 1.55s, setup 35ms, import 131ms, tests 4.07s, environment 2.26s)
+

@@ -110,8 +110,6 @@ describe("split-payment.js item based refund", () => {
     typeQuantity(TEA, "5");
     expect(hint()).toBe("Ürün adedini sayı olarak, kalan adedi aşmayacak şekilde yazın.");
     typeQuantity(TEA, "2");
-    expect(hint()).toBe("İadenin düşeceği ödemeyi seçin.");
-    choose("[data-item-payment]", PAYMENT_ID);
     expect(hint()).toBe("Ürünlerin stoğa dönüp dönmeyeceğini seçin.");
     choose("[data-item-stock]", "yes");
     expect(hint()).toBe("İade gerekçesini seçin ya da yazın.");
@@ -152,8 +150,6 @@ describe("split-payment.js item based refund", () => {
 
     typeQuantity(TEA, "1");
     expect(submit().disabled).toBe(true);
-    choose("[data-item-payment]", PAYMENT_ID);
-    expect(submit().disabled).toBe(true);
     choose("[data-item-stock]", "no");
     expect(submit().disabled).toBe(true);
     chooseReason("İkram");
@@ -180,7 +176,6 @@ describe("split-payment.js item based refund", () => {
     await vi.waitFor(() => expect(quantity(TEA)).not.toBeNull());
     const steps = {
       quantity: () => typeQuantity(TEA, "1"),
-      payment: () => choose("[data-item-payment]", PAYMENT_ID),
       stock: () => choose("[data-item-stock]", "no"),
       reason: () => chooseReason("İkram"),
     };

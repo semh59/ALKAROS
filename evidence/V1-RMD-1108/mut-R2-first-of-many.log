@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-item-refund-single-payment.test.js > item refund form with a single payment > asks for the payment when there are two
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747086422-0.9208034881622466:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747086422-0.9208034881622466:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794747086422-0.9208034881622466:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-item-refund-single-payment.test.js (4 tests | 1 failed) 666ms
+     × asks for the payment when there are two 142ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-item-refund-single-payment.test.js > item refund form with a single payment > asks for the payment when there are two
+AssertionError: expected '33333333-3333-3333-3333-333333333331' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ 33333333-3333-3333-3333-333333333331
+
+ ❯ split-payment-item-refund-single-payment.test.js:70:35
+     68|     await open([PAY_1, PAY_2]);
+     69|
+     70|     expect(paymentSelect().value).toBe("");
+       |                                   ^
+     71|     fillRest();
+     72|     expect(submit().disabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 17 passed (18)
+   Start at  15:51:24
+   Duration  4.98s (transform 1.56s, setup 35ms, import 119ms, tests 4.00s, environment 2.50s)
+
