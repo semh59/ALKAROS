@@ -1,7 +1,7 @@
 # V1-RMD-1096 - Kasa kuyruğundaki "Yetkili yöneticiye başvurun" notu kasa arayüz kurallarına göre biçimlenir
 
 - Task ID: V1-RMD-1096
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
