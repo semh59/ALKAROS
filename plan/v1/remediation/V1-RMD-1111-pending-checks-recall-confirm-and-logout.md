@@ -1,7 +1,7 @@
 # V1-RMD-1111 - Masaya geri gönderme tek adım onaylı, Çıkış kullanıcı kartı menüsünde belirgin
 
 - Task ID: V1-RMD-1111
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
