@@ -1,4 +1,4 @@
-# V1-RMD-1112 - Mutfak panosu kapanmış siparişin hiçbir biletini göstermez
+# V1-RMD-1112 - Mutfak panosu kapanmış siparişin eski ve hazır biletlerini göstermez
 
 - Task ID: V1-RMD-1112
 - Status: Planned
@@ -7,8 +7,7 @@
 - Surface state: Existing
 
 ## Goal
-
-Kasa kullanıcı denemesi 12: V1-RMD-1098 yalnız Hazır biletleri gizledi; hesabı ödenip kapanmış siparişlerin Bekliyor ve Hazırlanıyor biletleri panoda duruyor ve masa kartı 2000 pikseli aşıyor. Pano sorgusu ve yazdırma hatası şeridi, siparişi Completed, Cancelled veya Rejected olan biletleri durumu ne olursa olsun (Queued, Preparing, Ready, Served) panodan çıkarır. Açık siparişin biletleri, Hazır bölümü ve canlı eşitleme ayarı aynen sürer. Bilet verisi silinmez, yalnız pano süzgeci değişir.
+Kasa kullanıcı denemesi 12: V1-RMD-1098 yalnız Hazır biletleri gizledi; hesabı ödenip kapanmış siparişlerin Bekliyor ve Hazırlanıyor biletleri panoda duruyor ve masa kartı 2000 pikseli aşıyor. Pano sorgusu ve yazdırma hatası şeridi şunu uygular: siparişi Cancelled veya Rejected olan hiçbir bilet görünmez; siparişi Completed olan Hazır biletler görünmez; siparişi Completed olan Bekliyor, Kabul edildi veya Hazırlanıyor biletler yalnız son 12 saat içinde açıldıysa görünür (tezgâh satışı hemen ödenir, mutfak işi sürer; eski terk edilmiş biletler düşer). Açık siparişin biletleri, Hazır bölümü ve canlı eşitleme ayarı aynen sürer. Bilet verisi silinmez, yalnız pano süzgeci değişir. (Görev talimatı "durum ne olursa olsun gizle" idi; bağımsız qa, tezgâh satışında ödenmiş yemeğin mutfaktan kaybolacağını gösterdiği için Completed için 12 saatlik pencere seçildi.)
 
 ## Owned surface
 
