@@ -1,0 +1,4 @@
+S1-owner-check-removed exit 1 restored cmp ok
+S2-endpoint-passes-decider exit 1 restored cmp ok
+S3-error-code-unmapped exit 1 restored cmp ok
+C1-client-text-missing exit 1 restored cmp ok

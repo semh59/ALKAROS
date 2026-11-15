@@ -66,7 +66,7 @@ public sealed class CashMovementStore(
     }
 
     public async Task<CashMovementRequest> ApproveAsync(
-        Guid cashSessionId, Guid requestId, Guid deciderId, CancellationToken cancellationToken)
+        Guid cashSessionId, Guid requestId, Guid deciderId, Guid sessionOwnerId, CancellationToken cancellationToken)
     {
         var selfApprovalEnabled = await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken);
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
@@ -74,6 +74,9 @@ public sealed class CashMovementStore(
         // Same lock order as RecordAsync (session row, then request row) so the two never wait on each other.
         var expectedCash = await ledger.LockOpenSessionAndReadExpectedCashAsync(cashSessionId, connection, transaction, cancellationToken);
         var request = await LoadOpenRequestAsync(cashSessionId, requestId, connection, transaction, cancellationToken);
+        // Cash moves only in the requester's own session; a request written under the older rule stays open but is never paid out.
+        if (request.RequestedBy != sessionOwnerId)
+            throw new CashMovementRequestNotOwnSessionException();
         var selfApproved = request.RequestedBy == deciderId;
         if (selfApproved && !selfApprovalEnabled)
             throw new CashMovementSelfApprovalException();
@@ -201,6 +204,10 @@ public sealed class CashMovementStore(
                 })),
             connection, transaction, cancellationToken);
 }
+
+/// <summary>The request was opened by someone other than the owner of the session it points at, so it cannot be paid out of that drawer.</summary>
+public sealed class CashMovementRequestNotOwnSessionException()
+    : Exception("A cash-out request is approved only in the session of the person who asked for it.");
 
 /// <summary>The drawer screen's view of one session's manual movements.</summary>
 public sealed record DrawerMovementsV1(

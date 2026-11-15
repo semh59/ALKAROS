@@ -734,6 +734,7 @@ public static class ApiErrorCatalog
             CashOutExceedsDrawerException => (409, "CASH_OUT_EXCEEDS_DRAWER", "Çıkış tutarı kasadaki nakdi aşıyor."),
             CashMovementRequestNotFoundException => (404, "CASH_MOVEMENT_REQUEST_NOT_FOUND", "Çıkış talebi bulunamadı."),
             CashMovementRequestStateException => (409, "CASH_MOVEMENT_REQUEST_STATE", "Bu çıkış talebi artık beklemiyor."),
+            CashMovementRequestNotOwnSessionException => (409, "CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "Bu çıkış talebi, talep sahibinin kendi kasa oturumunda açılmamış; onaylanamaz. Reddedin; talep sahibi kendi oturumundan yeniden istesin."),
             CashMovementSelfApprovalException => (403, "CASH_MOVEMENT_SELF_APPROVAL", "Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı."),
             PendingCashMovementRequestsException => (409, "CASH_MOVEMENT_REQUESTS_PENDING", "Onay bekleyen nakit çıkış talebi var; kasayı kapatmadan önce karara bağlayın."),
             CashMovementKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir nakit hareketi için zaten kullanılmış."),

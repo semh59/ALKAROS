@@ -625,6 +625,7 @@ describe("cash-session.js movement flow details", () => {
     ["CASH_MOVEMENT_REASON_INVALID", "Açıklama zorunludur ve en çok 500"],
     ["CASH_MOVEMENT_REQUESTS_PENDING", "Onay bekleyen nakit çıkış talebi var"],
     ["CASH_MOVEMENT_SELF_APPROVAL", "Kendi çıkış talebinizi onaylayamazsınız"],
+    ["CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "talep sahibinin kendi kasa oturumunda"],
     ["IDEMPOTENCY_KEY_REUSED", "zaten kaydedilmiş"],
     ["CLOSED_CASH_SESSION", "Kasa oturumu açık değil"],
   ])("shows the Turkish text of %s and never the raw server message", async (code, expected) => {

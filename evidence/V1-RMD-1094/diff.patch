@@ -1,0 +1,114 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 8e696d84a..8adaee057 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -107,6 +107,7 @@
+     CASH_MOVEMENT_REASON_INVALID: 'Açıklama zorunludur ve en çok 500 karakter olabilir.',
+     CASH_MOVEMENT_REQUESTS_PENDING: 'Onay bekleyen nakit çıkış talebi var; önce karara bağlayın veya geri çekin.',
+     CASH_MOVEMENT_SELF_APPROVAL: 'Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı.',
++    CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION: 'Bu çıkış talebi, talep sahibinin kendi kasa oturumunda açılmamış; onaylanamaz. Reddedin; talep sahibi kendi oturumundan yeniden istesin.',
+     CASH_MOVEMENT_REQUEST_STATE: 'Bu çıkış talebi artık beklemiyor; liste yenilendi.',
+     CASH_SESSION_NOT_OWNED: NOT_OWNED_MOVEMENT_TEXT,
+     CASH_MOVEMENT_REQUEST_NOT_FOUND: 'Çıkış talebi bulunamadı.',
+diff --git a/src/Host/Composition/Errors/ApiErrorCatalog.cs b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+index d5aec0c0b..81920a5bd 100644
+--- a/src/Host/Composition/Errors/ApiErrorCatalog.cs
++++ b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+@@ -734,6 +734,7 @@ public static class ApiErrorCatalog
+             CashOutExceedsDrawerException => (409, "CASH_OUT_EXCEEDS_DRAWER", "Çıkış tutarı kasadaki nakdi aşıyor."),
+             CashMovementRequestNotFoundException => (404, "CASH_MOVEMENT_REQUEST_NOT_FOUND", "Çıkış talebi bulunamadı."),
+             CashMovementRequestStateException => (409, "CASH_MOVEMENT_REQUEST_STATE", "Bu çıkış talebi artık beklemiyor."),
++            CashMovementRequestNotOwnSessionException => (409, "CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "Bu çıkış talebi, talep sahibinin kendi kasa oturumunda açılmamış; onaylanamaz. Reddedin; talep sahibi kendi oturumundan yeniden istesin."),
+             CashMovementSelfApprovalException => (403, "CASH_MOVEMENT_SELF_APPROVAL", "Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı."),
+             PendingCashMovementRequestsException => (409, "CASH_MOVEMENT_REQUESTS_PENDING", "Onay bekleyen nakit çıkış talebi var; kasayı kapatmadan önce karara bağlayın."),
+             CashMovementKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir nakit hareketi için zaten kullanılmış."),
+diff --git a/src/Host/DualScreen/CashMovementStore.cs b/src/Host/DualScreen/CashMovementStore.cs
+index 02805f1cb..208101fa3 100644
+--- a/src/Host/DualScreen/CashMovementStore.cs
++++ b/src/Host/DualScreen/CashMovementStore.cs
+@@ -66,7 +66,7 @@ public sealed class CashMovementStore(
+     }
+ 
+     public async Task<CashMovementRequest> ApproveAsync(
+-        Guid cashSessionId, Guid requestId, Guid deciderId, CancellationToken cancellationToken)
++        Guid cashSessionId, Guid requestId, Guid deciderId, Guid sessionOwnerId, CancellationToken cancellationToken)
+     {
+         var selfApprovalEnabled = await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken);
+         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+@@ -74,6 +74,9 @@ public sealed class CashMovementStore(
+         // Same lock order as RecordAsync (session row, then request row) so the two never wait on each other.
+         var expectedCash = await ledger.LockOpenSessionAndReadExpectedCashAsync(cashSessionId, connection, transaction, cancellationToken);
+         var request = await LoadOpenRequestAsync(cashSessionId, requestId, connection, transaction, cancellationToken);
++        // Cash moves only in the requester's own session; a request written under the older rule stays open but is never paid out.
++        if (request.RequestedBy != sessionOwnerId)
++            throw new CashMovementRequestNotOwnSessionException();
+         var selfApproved = request.RequestedBy == deciderId;
+         if (selfApproved && !selfApprovalEnabled)
+             throw new CashMovementSelfApprovalException();
+@@ -202,6 +205,10 @@ public sealed class CashMovementStore(
+             connection, transaction, cancellationToken);
+ }
+ 
++/// <summary>The request was opened by someone other than the owner of the session it points at, so it cannot be paid out of that drawer.</summary>
++public sealed class CashMovementRequestNotOwnSessionException()
++    : Exception("A cash-out request is approved only in the session of the person who asked for it.");
++
+ /// <summary>The drawer screen's view of one session's manual movements.</summary>
+ public sealed record DrawerMovementsV1(
+     IReadOnlyList<CashMovementEntry> Movements,
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashMovements.cs b/src/Host/DualScreen/DualScreenApplication.CashMovements.cs
+index 9f6f734b6..ed0eff480 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashMovements.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashMovements.cs
+@@ -44,8 +44,8 @@ public static partial class DualScreenApplication
+         {
+             var principal = await RequireCashierPermissionAsync(
+                 context, terminalId, store, authorization, ApplicationPermissions.CashSessionOverride, cancellationToken);
+-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+-            return Results.Ok(await movements.ApproveAsync(cashSessionId, requestId, principal.UserId, cancellationToken));
++            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            return Results.Ok(await movements.ApproveAsync(cashSessionId, requestId, principal.UserId, session.Snapshot.CashierUserId, cancellationToken));
+         });
+ 
+         group.MapPost("/{cashSessionId:guid}/cash-movement-requests/{requestId:guid}/reject", async (
+diff --git a/tests/Clients/StaticApps/cash-session-movement.test.js b/tests/Clients/StaticApps/cash-session-movement.test.js
+index 1891cabe0..6c46c412a 100644
+--- a/tests/Clients/StaticApps/cash-session-movement.test.js
++++ b/tests/Clients/StaticApps/cash-session-movement.test.js
+@@ -625,6 +625,7 @@ describe("cash-session.js movement flow details", () => {
+     ["CASH_MOVEMENT_REASON_INVALID", "Açıklama zorunludur ve en çok 500"],
+     ["CASH_MOVEMENT_REQUESTS_PENDING", "Onay bekleyen nakit çıkış talebi var"],
+     ["CASH_MOVEMENT_SELF_APPROVAL", "Kendi çıkış talebinizi onaylayamazsınız"],
++    ["CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "talep sahibinin kendi kasa oturumunda"],
+     ["IDEMPOTENCY_KEY_REUSED", "zaten kaydedilmiş"],
+     ["CLOSED_CASH_SESSION", "Kasa oturumu açık değil"],
+   ])("shows the Turkish text of %s and never the raw server message", async (code, expected) => {
+diff --git a/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs b/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs
+index c0017d5bd..141f33224 100644
+--- a/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashMovementApprovalHttpTests.cs
+@@ -180,6 +180,24 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
+         Assert.Equal(1200m, await till.ExpectedCashAsync());
+     }
+ 
++    [Fact]
++    public async Task ARequestOpenedInAnotherUsersSessionCannotBeApprovedButCanStillBeRejected()
++    {
++        // A request written before cash was bound to the caller's own session: the requester is not the session owner.
++        await using var till = await TillAsync(opening: 2000m);
++        var requester = await till.ManagerAsync("stale-requester");
++        var approver = await till.ManagerAsync("stale-approver");
++        await _database.InsertRequestAsync(till.SessionId, requester.UserId);
++        var requestId = Assert.Single((await till.ListAsync()).GetProperty("requests").EnumerateArray()).GetProperty("id").GetGuid();
++
++        var approved = await till.DecideAsync(requestId, "approve", approver.Cookie);
++
++        await AssertErrorAsync(approved, HttpStatusCode.Conflict, "CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "kendi kasa oturumunda");
++        Assert.Equal(2000m, await till.ExpectedCashAsync());
++        var rejected = await till.DecideAsync(requestId, "reject", approver.Cookie, new { Note = "başka oturum" });
++        Assert.Equal("Rejected", (await rejected.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
++    }
++
+     [Fact]
+     public async Task OnlyAUserWithTheOverridePermissionCanDecide()
+     {

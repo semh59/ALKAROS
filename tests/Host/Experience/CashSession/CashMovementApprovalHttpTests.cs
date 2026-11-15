@@ -181,6 +181,24 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARequestOpenedInAnotherUsersSessionCannotBeApprovedButCanStillBeRejected()
+    {
+        // A request written before cash was bound to the caller's own session: the requester is not the session owner.
+        await using var till = await TillAsync(opening: 2000m);
+        var requester = await till.ManagerAsync("stale-requester");
+        var approver = await till.ManagerAsync("stale-approver");
+        await _database.InsertRequestAsync(till.SessionId, requester.UserId);
+        var requestId = Assert.Single((await till.ListAsync()).GetProperty("requests").EnumerateArray()).GetProperty("id").GetGuid();
+
+        var approved = await till.DecideAsync(requestId, "approve", approver.Cookie);
+
+        await AssertErrorAsync(approved, HttpStatusCode.Conflict, "CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "kendi kasa oturumunda");
+        Assert.Equal(2000m, await till.ExpectedCashAsync());
+        var rejected = await till.DecideAsync(requestId, "reject", approver.Cookie, new { Note = "başka oturum" });
+        Assert.Equal("Rejected", (await rejected.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
+    }
+
+    [Fact]
     public async Task OnlyAUserWithTheOverridePermissionCanDecide()
     {
         await using var till = await TillAsync(opening: 2000m);

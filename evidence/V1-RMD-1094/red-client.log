@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (67 tests | 1 failed) 12391ms
+     × shows the Turkish text of CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION and never the raw server message 231ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js movement flow details > shows the Turkish text of CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION and never the raw server message
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'talep sahibinin kendi kasa oturumunda'
+
+- Expected
++ Received
+
+- talep sahibinin kendi kasa oturumunda
++
++   ← Kasaya dön
++   Kasa HareketiNakit Çıkış!Hataİşlem, kasanın güncel durumuyla çakışıyor. Sayfayı yenileyip tekrar deneyin.Tutar₺AçıklamaBankaGiderTedarikçiBozuk paramarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-movement.test.js:638:20
+    636|     await vi.waitFor(() => expect($("#movement-submit")).not.toBeNull(…
+    637|
+    638|     expect(text()).toContain(expected);
+       |                    ^
+    639|     expect(text()).not.toContain("RAW ENGLISH");
+    640|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 66 passed (67)
+   Start at  11:46:42
+   Duration  13.98s (transform 2.09s, setup 30ms, import 84ms, tests 12.39s, environment 1.15s)
+

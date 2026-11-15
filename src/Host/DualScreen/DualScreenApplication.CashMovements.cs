@@ -44,8 +44,8 @@ public static partial class DualScreenApplication
         {
             var principal = await RequireCashierPermissionAsync(
                 context, terminalId, store, authorization, ApplicationPermissions.CashSessionOverride, cancellationToken);
-            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
-            return Results.Ok(await movements.ApproveAsync(cashSessionId, requestId, principal.UserId, cancellationToken));
+            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            return Results.Ok(await movements.ApproveAsync(cashSessionId, requestId, principal.UserId, session.Snapshot.CashierUserId, cancellationToken));
         });
 
         group.MapPost("/{cashSessionId:guid}/cash-movement-requests/{requestId:guid}/reject", async (

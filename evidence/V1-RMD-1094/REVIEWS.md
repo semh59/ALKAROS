@@ -1,0 +1,3 @@
+# Reviews
+- qa-api-uclar: KABUL. Dusuk: ApiErrorCatalogTests tablosunda satir yok (yuzey disi, risk); istisna CashTransactionException yerine Exception'dan turer (Host'taki CashTenderSessionNotOwnedException ile ayni, davranis etkisi yok); yeni test cancel yolunu ayrica sinamaz (kod degismedi).
+- qa-bulgu-dogrulayici: KABUL. Onayi atlatan baska uc yok (tek yazma noktasi CashMovementStore.ApproveAsync); oturum sahibi kayittan okunur, cashier_user_id sonradan degismez; 3 Kasim kararlari bozulmuyor. Dusuk: ayni uc bulgular dogrulandi; client-build-gate "istemci yok" dedi cunku Cashier wwwroot vanilla JS (package.json yok), degisiklik vitest ile sinandi.

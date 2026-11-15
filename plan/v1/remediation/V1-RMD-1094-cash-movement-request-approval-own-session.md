@@ -1,7 +1,7 @@
 # V1-RMD-1094 - Bekleyen nakit çıkış talebi yalnız talep sahibinin kendi kasa oturumunda onaylanır
 
 - Task ID: V1-RMD-1094
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
