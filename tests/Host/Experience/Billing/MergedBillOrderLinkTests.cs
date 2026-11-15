@@ -228,6 +228,41 @@ public sealed class MergedBillOrderLinkTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AKitchenServeInFlightOnAnotherOrderOfTheMergedBillIsWaitedForNotMissedByTheOrderCancellation()
+    {
+        var merged = await SeedMergedAsync(attachToTable: true);
+        await using var kitchen = await _source.OpenConnectionAsync();
+        await using var transaction = await kitchen.BeginTransactionAsync();
+        // What the kitchen event consumer does, left uncommitted: bump the order row first, then mark its lines served.
+        await using (var serve = new NpgsqlCommand(
+            """
+            UPDATE orders.orders SET row_version = row_version + 1 WHERE order_id = @id;
+            UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;
+            """, kitchen, transaction))
+        {
+            serve.Parameters.AddWithValue("id", merged.SecondOrderId);
+            await serve.ExecuteNonQueryAsync();
+        }
+
+        var cancelling = CancellationStore().CancelAsync(merged.FirstOrderId, "Müşteri vazgeçti", null, _actor, false, "corr-merged-12", CancellationToken.None);
+        var waited = false;
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (!waited && DateTime.UtcNow < deadline)
+        {
+            await using var probe = _source.CreateCommand("SELECT count(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND wait_event IN ('transactionid', 'tuple') AND datname = current_database();");
+            waited = (long)(await probe.ExecuteScalarAsync())! > 0;
+            if (!waited)
+                await Task.Delay(50);
+        }
+
+        await transaction.CommitAsync();
+
+        Assert.True(waited, "The order cancellation never waited for the kitchen update that was still in flight.");
+        await Assert.ThrowsAsync<OrderCancelHasServedItemsException>(() => cancelling);
+        Assert.Equal("Open", await Text("SELECT status FROM billing.bills WHERE bill_id = @id;", merged.BillId));
+    }
+
+    [Fact]
     public async Task FromOrderOnAnOrderOfAMergedBillReturnsTheMergedBillAndOpensNoSecondOne()
     {
         var merged = await SeedMergedAsync();

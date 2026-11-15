@@ -478,14 +478,11 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Equal("Open", await _database.BillStatusAsync(billId));
     }
 
-    [Fact]
-    public async Task ACheckMergedIntoABillWithAnotherChecksServedItemCannotBeRecalledByACashier()
+    /// <summary>Two checks on two tables billed together on the first check's bill; the second check's line is Served.</summary>
+    private async Task<(Guid FirstOrderId, Guid FirstTableId, Guid BillId, Guid SecondOrderId)> SeedMergedBillWithServedSecondCheckAsync(
+        HttpClient client, string cookie, Guid terminalId)
     {
-        var terminalId = Guid.NewGuid();
-        var cookie = await _database.SeedCashierSessionAsync(terminalId);
         var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
-        await using var app = await StartAsync();
-        using var client = CreateClient(app);
         var firstTable = await _database.SeedTableAsync();
         var first = await SendRoundAsync(client, cookie, terminalId, firstTable, new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
         await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, first.OrderId), cookie, new SendCheckToCashierRequestV1(firstTable)));
@@ -500,12 +497,107 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
             FROM orders.order_items WHERE order_id = @order;
             """,
             ("bill", billId), ("order", secondOrderId));
+        return (first.OrderId, firstTable, billId, secondOrderId);
+    }
 
-        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, first.OrderId), cookie, new RecallCheckRequestV1(firstTable)));
+    [Fact]
+    public async Task ACheckMergedIntoABillWithAnotherChecksServedItemCannotBeRecalledByACashier()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (firstOrderId, firstTable, billId, _) = await SeedMergedBillWithServedSecondCheckAsync(client, cookie, terminalId);
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, firstOrderId), cookie, new RecallCheckRequestV1(firstTable)));
 
         Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
         Assert.Contains("CHECK_HAS_SERVED_ITEMS", await refused.Content.ReadAsStringAsync());
         Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task AKitchenServeInFlightOnAnotherCheckOfTheMergedBillIsWaitedForNotMissedByTheRecall()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (firstOrderId, firstTable, billId, secondOrderId) = await SeedMergedBillWithServedSecondCheckAsync(client, cookie, terminalId);
+        await _database.ExecuteAsync("UPDATE orders.order_items SET kitchen_state = 'Sent' WHERE order_id = @id;", ("id", secondOrderId));
+
+        await using var kitchen = await StartKitchenServeAsync(secondOrderId);
+        var recalling = client.SendAsync(JsonRequest(RecallPath(terminalId, firstOrderId), cookie, new RecallCheckRequestV1(firstTable)));
+        var waited = await WaitUntilBlockedAsync();
+        await kitchen.Transaction.CommitAsync();
+        using var response = await recalling;
+
+        Assert.True(waited, "The recall never waited for the kitchen update that was still in flight.");
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("CHECK_HAS_SERVED_ITEMS", await response.Content.ReadAsStringAsync());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task AKitchenServeInFlightOnTheCheckOfARepeatedRecallIsWaitedForNotMissed()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (orderId, tableId, billId) = await SendServedCheckAsync(client, cookie, terminalId);
+        await _database.ExecuteAsync("UPDATE orders.order_items SET kitchen_state = 'Sent' WHERE order_id = @id;", ("id", orderId));
+        await _database.ExecuteAsync("UPDATE table_mgmt.tables SET current_order_id = @order WHERE table_id = @id;", ("order", orderId), ("id", tableId));
+
+        await using var kitchen = await StartKitchenServeAsync(orderId);
+        var recalling = client.SendAsync(JsonRequest(RecallPath(terminalId, orderId), cookie, new RecallCheckRequestV1(tableId)));
+        var waited = await WaitUntilBlockedAsync();
+        await kitchen.Transaction.CommitAsync();
+        using var response = await recalling;
+
+        Assert.True(waited, "The repeated recall never waited for the kitchen update that was still in flight.");
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("CHECK_HAS_SERVED_ITEMS", await response.Content.ReadAsStringAsync());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    private sealed class KitchenServe(NpgsqlConnection connection, NpgsqlTransaction transaction) : IAsyncDisposable
+    {
+        public NpgsqlTransaction Transaction { get; } = transaction;
+
+        public async ValueTask DisposeAsync()
+        {
+            await Transaction.DisposeAsync();
+            await connection.DisposeAsync();
+        }
+    }
+
+    /// <summary>What the kitchen event consumer does, left uncommitted: bump the order row first, then mark its lines served.</summary>
+    private async Task<KitchenServe> StartKitchenServeAsync(Guid orderId)
+    {
+        var connection = await _database.DataSource.OpenConnectionAsync();
+        var transaction = await connection.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand(
+            """
+            UPDATE orders.orders SET row_version = row_version + 1 WHERE order_id = @order;
+            UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @order;
+            """, connection, transaction);
+        command.Parameters.AddWithValue("order", orderId);
+        await command.ExecuteNonQueryAsync();
+        return new KitchenServe(connection, transaction);
+    }
+
+    private async Task<bool> WaitUntilBlockedAsync()
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (await _database.ScalarAsync<long>("SELECT count(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND wait_event IN ('transactionid', 'tuple') AND datname = current_database();") > 0)
+                return true;
+            await Task.Delay(50);
+        }
+
+        return false;
     }
 
     [Fact]

@@ -126,6 +126,20 @@ public sealed class BillCancellationStore(
     private static async Task<bool> HasServedItemAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
     {
+        // A kitchen update that serves a line writes its order row first; taking the rows here makes the check wait for one in flight.
+        await using (var rowLocks = new NpgsqlCommand(
+            """
+            SELECT 1 FROM orders.orders WHERE order_id IN (
+                SELECT oli.order_id FROM billing.bill_items bli
+                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
+                WHERE bli.bill_id = @bill_id)
+            ORDER BY order_id FOR NO KEY UPDATE;
+            """, connection, transaction))
+        {
+            rowLocks.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = billId;
+            await rowLocks.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         await using var command = new NpgsqlCommand(
             """
             SELECT EXISTS (

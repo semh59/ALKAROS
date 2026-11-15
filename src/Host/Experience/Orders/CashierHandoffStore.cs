@@ -218,6 +218,7 @@ public sealed class CashierHandoffStore
     {
         if (actorMayCancelServed)
             return;
+        await OrderCancellation.OrderCancellationStore.LockOrdersOfBillsLinkedToAsync(connection, transaction, orderId, cancellationToken);
         // The bills cancelled with the check may carry other orders' lines (a merged bill), so those count too.
         await using var served = new NpgsqlCommand(
             $"""

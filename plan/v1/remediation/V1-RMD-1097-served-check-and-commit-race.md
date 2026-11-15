@@ -1,7 +1,7 @@
 # V1-RMD-1097 - Servis edilmiş kalem kontrolü ile iptalin işlenmesi arasındaki yarış penceresi kapanır
 
 - Task ID: V1-RMD-1097
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

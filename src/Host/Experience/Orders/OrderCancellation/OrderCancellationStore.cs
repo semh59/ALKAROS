@@ -128,10 +128,32 @@ public sealed class OrderCancellationStore(
         return new CancelOrderResultV1(orderId, "Cancelled", reason, now, itemsCancelled, stockRestored, waste, billsCancelled);
     }
 
+    /// <summary>
+    /// Takes the row of the order and of every other order whose lines sit on its open bills, in id order. A kitchen update that serves a
+    /// line writes its order row first, so a served-line check made after this waits for an update in flight and then sees it.
+    /// </summary>
+    internal static async Task LockOrdersOfBillsLinkedToAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            $"""
+            SELECT 1 FROM orders.orders
+            WHERE order_id = @order_id OR order_id IN (
+                SELECT oli.order_id FROM billing.bill_items bli
+                JOIN billing.bills b ON b.bill_id = bli.bill_id
+                JOIN orders.order_items oli ON oli.order_item_id = bli.order_item_id
+                WHERE b.status <> 'Cancelled' AND {BillOrderLink.Matches("b", "@order_id")})
+            ORDER BY order_id FOR NO KEY UPDATE;
+            """, connection, transaction);
+        command.Parameters.AddWithValue("order_id", orderId);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     /// <summary>The bills this cancels may carry other orders' lines (a merged bill); a served one there needs a refund approver, as a bill cancellation does.</summary>
     private static async Task<bool> BillsHoldServedItemAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {
+        await LockOrdersOfBillsLinkedToAsync(connection, transaction, orderId, cancellationToken);
         await using var command = new NpgsqlCommand(
             $"""
             SELECT EXISTS (

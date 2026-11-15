@@ -1,0 +1,5 @@
+S1-bill-cancel-lock-removed exit 1 restored cmp ok
+S2-recall-lock-removed exit 1 restored cmp ok
+S3-order-cancel-lock-removed exit 1 restored cmp ok
+S4-helper-takes-no-row-lock exit 1 restored cmp ok
+S5-helper-skips-own-order exit 1 restored cmp ok

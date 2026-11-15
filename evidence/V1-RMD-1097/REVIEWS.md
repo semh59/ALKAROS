@@ -1,0 +1,3 @@
+# Reviews
+- qa-performans-dayaniklilik: KABUL. Odeme/iade/iptal/temizlik yollari hesap kilidi sonra siparis satiri sirasinda; mutfak hesap kilidi beklemez. Orta: tekrar dalinda masa-sonra-siparis kilit sirasi (risk), Reparent ORDER BY'siz; test sorgusu genis (daraltildi: wait_event IN transactionid, tuple). Dusuk: FOR NO KEY UPDATE yeterli (uygulandi).
+- qa-bulgu-dogrulayici: KABUL. Kilit mutfagi gercekten bekletir (SaveAsync once orders satiri); order_items'i kilitsiz yazan baska yol yok; mutfakla deadlock yok. Orta: testler SaveAsync siparisini sabitlemez (risk, kapsam disi). Dusuk: ana dalda kilit sirasi id sirasina uymaz (Reparent ile birlikte teorik).

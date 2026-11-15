@@ -322,6 +322,54 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AKitchenServeInFlightWhenTheCashierCancelsIsWaitedForNotMissedByTheServedRule()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cashierCookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split", "bills.cancel");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+
+        // What the kitchen event consumer does, left uncommitted: bump the order row first, then mark its lines served.
+        await using var kitchen = await source.OpenConnectionAsync();
+        await using var transaction = await kitchen.BeginTransactionAsync();
+        await using (var serve = new NpgsqlCommand(
+            """
+            UPDATE orders.orders SET row_version = row_version + 1 WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);
+            UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id);
+            """, kitchen, transaction))
+        {
+            serve.Parameters.AddWithValue("id", seeded.BillId);
+            await serve.ExecuteNonQueryAsync();
+        }
+
+        var cancelling = client.SendAsync(Cancel(terminalId, seeded.BillId, cashierCookie, "Müşteri vazgeçti"));
+        var waited = await WaitUntilBlockedAsync(source);
+        await transaction.CommitAsync();
+        using var response = await cancelling;
+
+        Assert.True(waited, "The cancellation never waited for the kitchen update that was still in flight.");
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("BILL_HAS_SERVED_ITEMS", await ErrorCode(response));
+        Assert.NotEqual("Cancelled", await StatusAsync(seeded.BillId));
+    }
+
+    private static async Task<bool> WaitUntilBlockedAsync(NpgsqlDataSource source)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (DateTime.UtcNow < deadline)
+        {
+            await using var command = source.CreateCommand("SELECT count(*) FROM pg_stat_activity WHERE wait_event_type = 'Lock' AND wait_event IN ('transactionid', 'tuple') AND datname = current_database();");
+            if ((long)(await command.ExecuteScalarAsync())! > 0)
+                return true;
+            await Task.Delay(50);
+        }
+
+        return false;
+    }
+
+    [Fact]
     public async Task APaidBillWithAServedItemStillSendsTheCashierToTheRefundFirst()
     {
         var terminalId = Guid.NewGuid();
