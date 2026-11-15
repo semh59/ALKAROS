@@ -8,7 +8,7 @@
 
 ## Goal
 
-Hesap iptali ve masaya geri gönderme, servis edilmiş kalem kontrolünü yaptıktan sonra işlemi işlerken mutfak kalemi servis edebilir; hesap iptali siparişin satırını kilitlemediği için kontrol eskimiş veriyle geçer ve yetkisiz kasiyerin iptali servis edilmiş kalemli hesabı iptal edilmiş bırakır (masaya geri gönderme aynı pencereyi birleştirilmiş hesabın diğer siparişleri ve tekrar dalında taşır). Mutfak olay işleyicisi önce sipariş satırını günceller; bu yüzden kontrolden önce ilgili siparişlerin satırı aynı işlemde FOR UPDATE ile kilitlenir (mevcut kilit sırası: hesap kilidi, sonra sipariş satırı). Bekleyen mutfak güncellemesi kilidi bekler, işlem bitince görülür; kontrol ya güncel veriyi görür ya da güncelleme işlemden sonra gelir. Eşzamanlılık testi bekleyen mutfak güncellemesini taklit eder. Kasiyerin görünen davranışı, hata kodları ve yetkili yönetici akışı değişmez.
+Hesap iptali ve masaya geri gönderme, servis edilmiş kalem kontrolünü yaptıktan sonra işlemi işlerken mutfak kalemi servis edebilir; hesap iptali siparişin satırını kilitlemediği için kontrol eskimiş veriyle geçer ve yetkisiz kasiyerin iptali servis edilmiş kalemli hesabı iptal edilmiş bırakır (masaya geri gönderme aynı pencereyi birleştirilmiş hesabın diğer siparişleri ve tekrar dalında, sipariş iptali ise birleştirilmiş hesabın diğer siparişlerinin kalemleri için taşır; iptal edilen siparişin kendi kalemleri sürüm denetimiyle zaten korunur). Mutfak olay işleyicisi önce sipariş satırını günceller; bu yüzden kontrolden önce ilgili siparişlerin satırı aynı işlemde FOR UPDATE ile kilitlenir (mevcut kilit sırası: hesap kilidi, sonra sipariş satırı). Bekleyen mutfak güncellemesi kilidi bekler, işlem bitince görülür; kontrol ya güncel veriyi görür ya da güncelleme işlemden sonra gelir. Eşzamanlılık testi bekleyen mutfak güncellemesini taklit eder. Kasiyerin görünen davranışı, hata kodları ve yetkili yönetici akışı değişmez.
 
 ## Owned surface
 
@@ -16,7 +16,9 @@ Hesap iptali ve masaya geri gönderme, servis edilmiş kalem kontrolünü yaptı
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/Experience/Billing/BillCancellation.cs
   - src/Host/Experience/Orders/CashierHandoffStore.cs
+  - src/Host/Experience/Orders/OrderCancellation/OrderCancellationStore.cs
   - tests/Host/Experience/Billing/BillCancellationHttpTests.cs
+  - tests/Host/Experience/Billing/MergedBillOrderLinkTests.cs
   - tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
@@ -27,7 +29,7 @@ Hesap iptali ve masaya geri gönderme, servis edilmiş kalem kontrolünü yaptı
 
 ## Out of scope
 
-- Sipariş iptali (OrderCancellationStore, sürüm denetimiyle zaten korunur); mutfak olay işleyicisi; kilit sırasının genel yeniden tasarımı
+- Mutfak olay işleyicisi; kilit sırasının genel yeniden tasarımı
 
 ## Dependencies
 
