@@ -1,0 +1,4 @@
+# Reviews
+- qa-api-uclar: RED, sonra duzeltildi. Yuksek: birlestirilmis hesapta baska siparisin servis edilmis kalemi kontrolden kaciyordu (BillOrderLink ile bill_items'a bakildi, test eklendi). Orta: yaris penceresi (BillCancellation ile ayni, risk). Orta (kapsam disi): OrderCancellationStore birlestirilmis hesap boslugu. Dusuk: test eksikleri (iptal edilmis kalem, birlestirilmis hesap) eklendi.
+- qa-frontend: KABUL. Dusuk: served-note CSS yok (risk), servedItemCount undefined savunmasi (servedRecallBlocked ile kapandi), kismi odenmis/tableId null testi (eklendi).
+- qa-bulgu-dogrulayici (son hal): KABUL. Duzeltme dogru. Dusuk: liste sayaci sunucu kontrolunden dar (birlestirilmis hesabin baska siparisi kuyrukta degilse dugme gorunur, basinca 409 ve Turkce not); eski ekrandan tekrar geri gonderme "AlreadyAttached" yerine 409 alabilir; yoneticinin geri almasi audit kaydi yazmaz (hesap iptali de yazmaz).

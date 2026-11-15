@@ -227,6 +227,18 @@ describe("workspace route gating uses granular permission codes, not the removed
     expect(document.querySelector('input[type="checkbox"]') !== null).toBe(mergeOffered);
   });
 
+  it.each([
+    [["orders.create"], true],
+    [["orders.create", "payments.refund.approve"], false],
+  ])("the till queue gives a check with a served item the referral note unless payments.refund.approve is held (%j)", async (capabilities, referral) => {
+    const check = { orderId: "o-1", orderNumber: "S-o-1", tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, addedWithoutKitchenCount: 0, servedItemCount: 1, tableId: "tb-5" };
+    await renderRoute("/pending-checks", capabilities, (url) => (url.includes("awaiting-payment") ? [check] : []));
+    await act(async () => Promise.resolve());
+
+    expect(document.querySelector(".pending-checks__served-note") !== null).toBe(referral);
+    expect(document.querySelector('button[aria-label^="Yanlışlıkla gönderildi"]') !== null).toBe(!referral);
+  });
+
   it("shows the number of listed checks on the menu badge while the till queue is open", async () => {
     const check = (orderId: string) => ({ orderId, orderNumber: `S-${orderId}`, tableNumber: "5", itemCount: 1, total: 100, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tb-5" });
     await renderRoute("/pending-checks", ["orders.create"], (url) => (url.includes("awaiting-payment") ? [check("o-1"), check("o-2"), check("o-3")] : []));
@@ -483,6 +495,19 @@ describe("workspace /tables route marks tables whose check waits at the till", (
   it("shows Hesap istedi for a sent check without a bill", async () => {
     await open(() => json([{ orderId: "o1", orderNumber: "1", tableNumber: "M-3", itemCount: 1, total: 10, createdAt: "2026-11-12T09:00:00Z", billId: null, paidAmount: 0, itemPreview: null, tableId: "tbl-ask" }]));
     expect(document.querySelector(".table-card--plan-ask")?.textContent).toContain("Hesap istedi");
+  });
+
+  it.each([
+    [["tables.status", "orders.create", "bills.split"], true],
+    [["tables.status", "orders.create", "bills.split", "payments.refund.approve"], false],
+  ])("the table panel of a billed table with a served line refers a cashier to a manager unless payments.refund.approve is held (%j)", async (capabilities, referral) => {
+    const billed = { ...table, status: "Occupied", currentOrderId: "o1", currentBillId: "b1" };
+    const order = { orderId: "o1", tableId: "tbl-ask", tableNumber: "M-3", status: "Submitted", rowVersion: 1, totalAmount: 20, createdAt: "2026-11-12T09:00:00Z",
+      items: [{ itemId: "i1", productName: "Pilav", quantity: 1, unitPrice: 20, totalPrice: 20, status: "Active", kitchenState: "Served" }] };
+    await open(() => json([]), capabilities, false, (path: string) => path.includes("/orders/table/") ? json(order) : undefined, billed);
+    for (let i = 0; i < 4; i++) await act(async () => Promise.resolve());
+
+    expect(document.querySelector("#table-order-bridge-note")?.textContent?.includes("Yetkili yöneticiye başvurun")).toBe(referral);
   });
 
   it("keeps the table the cashier chose selected when the tables screen opens again, and falls back to the first when it is gone", async () => {

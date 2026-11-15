@@ -36,8 +36,8 @@ const hubUrls: string[] = [];
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const sample = [
-  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran", addedWithoutKitchenCount: 0, tableId: "tb-5" },
-  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay", addedWithoutKitchenCount: 0, tableId: "tb-5" },
+  { orderId: "o-1", orderNumber: "S-001", tableNumber: "5", itemCount: 3, total: 540, createdAt: "2026-09-24T11:32:00Z", billId: null, paidAmount: 0, itemPreview: "Köfte, Ayran", addedWithoutKitchenCount: 0, servedItemCount: 0, tableId: "tb-5" },
+  { orderId: "o-2", orderNumber: "S-002", tableNumber: "5", itemCount: 1, total: 90, createdAt: "2026-09-24T12:10:00Z", billId: "b-2", paidAmount: 40, itemPreview: "Çay", addedWithoutKitchenCount: 0, servedItemCount: 0, tableId: "tb-5" },
 ];
 
 describe("PendingChecksWorkspace", () => {
@@ -60,7 +60,7 @@ describe("PendingChecksWorkspace", () => {
     vi.unstubAllGlobals();
   });
 
-  async function render(navigateTo = vi.fn(), permissions = { canCancel: true, canMerge: true }) {
+  async function render(navigateTo = vi.fn(), permissions: { canCancel: boolean; canMerge: boolean; canCancelServed?: boolean } = { canCancel: true, canMerge: true }) {
     root = createRoot(document.getElementById("root")!);
     await act(async () => {
       root!.render(<PendingChecksWorkspace terminalId="t-1" navigateTo={navigateTo} {...permissions} />);
@@ -200,6 +200,7 @@ describe("PendingChecksWorkspace", () => {
     ["TABLE_HAS_OPEN_CHECK", "Bu masada yeni bir hesap açık; önce onu kasaya gönderin."],
     ["CHECK_HAS_PAYMENT", "Bu hesapta tahsilat başlamış; masaya geri alınamaz."],
     ["CHECK_NOT_RECALLABLE", "Bu hesap artık kasa kuyruğunda değil; liste yenilendi."],
+    ["CHECK_HAS_SERVED_ITEMS", "Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun."],
     ["SOMETHING_NEW", "Hesap masaya geri gönderilemedi."],
   ])("shows a fixed Turkish sentence for %s when the check cannot go back, never the server's text", async (code, sentence) => {
     fetchMock.mockImplementation(async (url: string) =>
@@ -224,6 +225,38 @@ describe("PendingChecksWorkspace", () => {
     expect(rows[0].querySelector(".pending-checks__number")?.textContent).toBe("Masa 5 · 14:32");
     expect(rows[0].querySelector(".pending-checks__meta")?.textContent).toBe("3 kalem · S-001");
     expect(rows[1].querySelector(".pending-checks__number")?.textContent).toBe("Hızlı satış · 15:30");
+  });
+
+  describe("a check with a served item", () => {
+    const served = [{ ...sample[0], servedItemCount: 2 }, { ...sample[1], orderId: "o-3", orderNumber: "S-003", paidAmount: 0, billId: null, tableId: "tb-6", tableNumber: "6" }];
+    const recallButtons = () => document.querySelectorAll('button[aria-label^="Yanlışlıkla gönderildi"]');
+
+    it("gives a cashier the referral note instead of the send-back button, and keeps the button on a check without served items", async () => {
+      fetchMock.mockResolvedValue(ok(served));
+      await render();
+
+      const cards = document.querySelectorAll("li.pending-checks__card");
+      expect(cards[0].querySelector('button[aria-label^="Yanlışlıkla gönderildi"]')).toBeNull();
+      expect(cards[0].querySelector(".pending-checks__served-note")?.textContent).toBe("Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun.");
+      expect(cards[1].querySelector('button[aria-label^="Yanlışlıkla gönderildi"]')).not.toBeNull();
+      expect(cards[1].querySelector(".pending-checks__served-note")).toBeNull();
+    });
+
+    it("offers neither the note nor the button on a served check that is part-paid or has no table", async () => {
+      fetchMock.mockResolvedValue(ok([{ ...served[0], paidAmount: 40, billId: "b-9" }, { ...served[0], orderId: "o-8", orderNumber: "S-008", tableId: null }]));
+      await render();
+
+      expect(document.querySelector(".pending-checks__served-note")).toBeNull();
+      expect(recallButtons()).toHaveLength(0);
+    });
+
+    it("keeps the send-back button, without a note, for someone who may cancel a served bill", async () => {
+      fetchMock.mockResolvedValue(ok(served));
+      await render(vi.fn(), { canCancel: true, canMerge: true, canCancelServed: true });
+
+      expect(recallButtons()).toHaveLength(2);
+      expect(document.querySelector(".pending-checks__served-note")).toBeNull();
+    });
   });
 
   it("puts the send-back action inside the check's own card", async () => {
@@ -317,7 +350,7 @@ describe("PendingChecksWorkspace", () => {
 
   describe("merging several checks of one table into one bill", () => {
     const row = (orderId: string, tableId: string, createdAt: string, extra: object = {}) =>
-      ({ orderId, orderNumber: `S-${orderId}`, tableNumber: tableId.slice(-1), itemCount: 1, total: 100, createdAt, billId: null, paidAmount: 0, itemPreview: null, addedWithoutKitchenCount: 0, tableId, ...extra });
+      ({ orderId, orderNumber: `S-${orderId}`, tableNumber: tableId.slice(-1), itemCount: 1, total: 100, createdAt, billId: null, paidAmount: 0, itemPreview: null, addedWithoutKitchenCount: 0, servedItemCount: 0, tableId, ...extra });
     const merge = [
       row("o-1", "tb-5", "2026-09-24T11:32:00Z"),
       row("o-3", "tb-5", "2026-09-24T11:40:00Z"),

@@ -119,7 +119,7 @@ public sealed class CashierHandoffStore
     /// </summary>
     public async Task<RecallCheckResultV1> RecallCheckAsync(
         Guid tableId, Guid orderId, IBillRepository bills, IAuditEventStore auditEvents, Guid actorId, string correlationId,
-        CancellationToken cancellationToken = default)
+        bool actorMayCancelServed = false, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(bills);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -144,6 +144,7 @@ public sealed class CashierHandoffStore
             // never cancels a bill that money has since moved on.
             if (!await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
             {
+                await RequireNoServedItemUnlessAllowedAsync(connection, transaction, orderId, actorMayCancelServed, cancellationToken);
                 await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
                 await using var clearPointer = new NpgsqlCommand(
                     """
@@ -177,6 +178,7 @@ public sealed class CashierHandoffStore
         await BillMoneyGuard.LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
         if (await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
             throw new CheckHasPaymentException(orderId);
+        await RequireNoServedItemUnlessAllowedAsync(connection, transaction, orderId, actorMayCancelServed, cancellationToken);
 
         await using (var attach = new NpgsqlCommand(
             """
@@ -208,6 +210,29 @@ public sealed class CashierHandoffStore
             connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new RecallCheckResultV1(orderId, tableId, "Recalled");
+    }
+
+    /// <summary>Taking a check back cancels its bill, so a served item needs the same approver the bill cancellation asks for.</summary>
+    private static async Task RequireNoServedItemUnlessAllowedAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, bool actorMayCancelServed, CancellationToken cancellationToken)
+    {
+        if (actorMayCancelServed)
+            return;
+        // The bills cancelled with the check may carry other orders' lines (a merged bill), so those count too.
+        await using var served = new NpgsqlCommand(
+            $"""
+            SELECT EXISTS (
+                SELECT 1 FROM orders.order_items oli
+                WHERE oli.status = 'Active' AND oli.kitchen_state = 'Served'
+                  AND (oli.order_id = @order_id OR EXISTS (
+                        SELECT 1 FROM billing.bill_items bli
+                        JOIN billing.bills b ON b.bill_id = bli.bill_id
+                        WHERE bli.order_item_id = oli.order_item_id AND b.status <> 'Cancelled'
+                          AND {BillOrderLink.Matches("b", "@order_id")})));
+            """, connection, transaction);
+        served.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+        if ((bool)(await served.ExecuteScalarAsync(cancellationToken))!)
+            throw new CheckHasServedItemsException(orderId);
     }
 
     /// <summary>Takes the <c>bill-settlement</c> lock of every bill of the order not locked yet, in bill-id order.</summary>
@@ -248,7 +273,8 @@ public sealed class CashierHandoffStore
                           WHERE pi.order_id = o.order_id AND pi.status = 'Active'
                           ORDER BY pi.created_at, pi.order_item_id
                           LIMIT 3) preview) AS item_preview,
-                   COUNT(i.order_item_id) FILTER (WHERE i.status = 'Active' AND i.without_kitchen_reason_code IS NOT NULL) AS without_kitchen_count
+                   COUNT(i.order_item_id) FILTER (WHERE i.status = 'Active' AND i.without_kitchen_reason_code IS NOT NULL) AS without_kitchen_count,
+                   COUNT(i.order_item_id) FILTER (WHERE i.status = 'Active' AND i.kitchen_state = 'Served') AS served_count
             FROM orders.orders o
             LEFT JOIN orders.order_items i ON i.order_id = o.order_id
             LEFT JOIN table_mgmt.tables t ON t.table_id = o.table_id
@@ -292,7 +318,8 @@ public sealed class CashierHandoffStore
                 reader.GetDecimal(8),
                 reader.IsDBNull(9) ? null : reader.GetString(9),
                 reader.IsDBNull(6) ? null : reader.GetGuid(6),
-                (int)reader.GetInt64(10)));
+                (int)reader.GetInt64(10),
+                (int)reader.GetInt64(11)));
         }
 
         // A bill merged from several orders is one check at the till: the oldest order stands for it (rows come oldest first).
@@ -304,6 +331,7 @@ public sealed class CashierHandoffStore
                 {
                     ItemCount = group.Sum(row => row.ItemCount),
                     AddedWithoutKitchenCount = group.Sum(row => row.AddedWithoutKitchenCount),
+                    ServedItemCount = group.Sum(row => row.ServedItemCount),
                     Total = group.Sum(row => row.Total),
                     ItemPreview = string.Join(", ", group.Select(row => row.ItemPreview).Where(preview => preview is not null)),
                 })
@@ -329,6 +357,10 @@ public sealed class CheckHasPaymentException : Exception
     public Guid OrderId { get; }
     public CheckHasPaymentException(Guid orderId) : base($"Check {orderId} already has a payment.") { OrderId = orderId; }
 }
+
+/// <summary>A served item is on the check; only an approver (payments.refund.approve) may take it back, as with a bill cancellation.</summary>
+public sealed class CheckHasServedItemsException(Guid orderId)
+    : Exception($"Check {orderId} has a served item.");
 
 /// <summary>V1-RMD-281: the table already carries a newer check; the caller must decide (send it first).</summary>
 public sealed class TableHasNewerCheckException : Exception

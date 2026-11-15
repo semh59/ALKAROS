@@ -1,5 +1,6 @@
 import { notifySessionExpired } from "../../api";
 import { RefundApiError, describeRefundFailure } from "../billing";
+import { servedRecallNote } from "../../strings";
 
 /** A check a waiter sent to the till (V1-ORD-006). It is tracked by its own number, never by the table. */
 export interface PendingCheck {
@@ -16,6 +17,8 @@ export interface PendingCheck {
   itemPreview: string | null;
   /** How many of the lines the cashier added without a kitchen ticket. */
   addedWithoutKitchenCount: number;
+  /** How many of the lines the kitchen has served; only an approver may send such a check back. */
+  servedItemCount: number;
   /** Where the check came from; lets the till send a mistakenly sent check back. */
   tableId: string | null;
 }
@@ -54,6 +57,7 @@ const recallFailureText: Record<string, string> = {
   TABLE_HAS_OPEN_CHECK: "Bu masada yeni bir hesap açık; önce onu kasaya gönderin.",
   CHECK_HAS_PAYMENT: "Bu hesapta tahsilat başlamış; masaya geri alınamaz.",
   CHECK_NOT_RECALLABLE: "Bu hesap artık kasa kuyruğunda değil; liste yenilendi.",
+  CHECK_HAS_SERVED_ITEMS: servedRecallNote,
   INVALID_TABLE: "Hesabın masası bulunamadı; geri gönderilemedi.",
 };
 

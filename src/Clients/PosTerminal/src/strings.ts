@@ -1436,6 +1436,9 @@ export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
 /** A billed table whose bill holds a served line: the server lets only a refund approver cancel it. */
 export const servedBillNote = "Hesapta servis edilmiş ürün var; hesabı yalnız yetkili yönetici iptal edebilir. Yetkili yöneticiye başvurun.";
 
+/** A till-queue check holding a served line: the server lets only a refund approver take it back to its table. */
+export const servedRecallNote = "Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun.";
+
 /** What the kitchen has done with a sent line, shown only once it matters to the cashier (cancelling a served line is refused). */
 export const kitchenStateNotes: Readonly<Record<string, string>> = { Ready: itemStatusLabels.Ready, Served: itemStatusLabels.Served };
 

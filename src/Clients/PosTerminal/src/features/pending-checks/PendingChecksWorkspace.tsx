@@ -4,7 +4,7 @@ import { notifySessionExpired } from "../../api";
 import { BillingSplitApiError, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
-import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText } from "../../strings";
+import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, servedRecallNote } from "../../strings";
 import { collectionHrefForOrder } from "../../collectOrder";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
@@ -33,10 +33,12 @@ function checkTitle(check: PendingCheck): string {
  * sit at the same table. Tapping a row opens (or creates) its bill and goes straight to collection.
  * Nothing here touches the table.
  */
-export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, onCount, navigateTo = (href: string) => window.location.assign(href) }: {
+export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMerge, canCancelServed = false, onCount, navigateTo = (href: string) => window.location.assign(href) }: {
   terminalId: string;
   canCancel: boolean;
   canMerge: boolean;
+  /** Holds payments.refund.approve: may take a check with a served item back to its table. */
+  canCancelServed?: boolean;
   /** Told the number of listed checks after every read, so the menu badge shows the same number. */
   onCount?: (count: number) => void;
   navigateTo?: (href: string) => void;
@@ -162,6 +164,8 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
     }
   };
 
+  const servedRecallBlocked = (check: PendingCheck) => check.servedItemCount > 0 && !canCancelServed;
+
   const recall = async (check: PendingCheck) => {
     if (!check.tableId) return;
     setOpeningOrderId(check.orderId);
@@ -251,7 +255,10 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
                 {openingOrderId === check.orderId && <span className="pending-checks__opening">Açılıyor…</span>}
                 {check.billId === null && !mayMerge && <span className="pending-checks__meta">{openBillDeniedText}</span>}
               </button>
-              {check.paidAmount === 0 && check.tableId && (
+              {check.paidAmount === 0 && check.tableId && servedRecallBlocked(check) && (
+                <p className="pending-checks__meta pending-checks__served-note">{servedRecallNote}</p>
+              )}
+              {check.paidAmount === 0 && check.tableId && !servedRecallBlocked(check) && (
                 <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
                   type="button"
                   className="pending-checks__recall"

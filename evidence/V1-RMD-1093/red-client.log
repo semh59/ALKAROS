@@ -1,0 +1,94 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (39 tests | 3 failed) 1252ms
+     × shows a fixed Turkish sentence for CHECK_HAS_SERVED_ITEMS when the check cannot go back, never the server's text 39ms
+       × gives a cashier the referral note instead of the send-back button, and keeps the button on a check without served items 21ms
+       × keeps the send-back button, without a note, for someone who may cancel a served bill 15ms
+ ❯ src/routes/workspace.test.tsx (64 tests | 1 failed) 2008ms
+     × the till queue gives a check with a served item the referral note unless payments.refund.approve is held (["orders.create"]) 35ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > the till queue gives a check with a served item the referral note unless payments.refund.approve is held (["orders.create"])
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/routes/workspace.test.tsx:238:77
+    236|     await act(async () => Promise.resolve());
+    237|
+    238|     expect(document.querySelector(".pending-checks__served-note") !== …
+       |                                                                             ^
+    239|     expect(document.querySelector("button.pending-checks__recall") !==…
+    240|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_HAS_SERVED_ITEMS when the check cannot go back, never the server's text
+AssertionError: expected 'Hesap masaya geri gönderilemedi.' to be 'Hesapta servis edilmiş ürün var; masa…' // Object.is equality
+
+Expected: "Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun."
+Received: "Hesap masaya geri gönderilemedi."
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:216:67
+    214|     });
+    215|
+    216|     expect(document.querySelector('[role="alert"]')?.textContent).toBe…
+       |                                                                   ^
+    217|     expect(document.body.textContent).not.toContain("raw server text");
+    218|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > a check with a served item > gives a cashier the referral note instead of the send-back button, and keeps the button on a check without served items
+AssertionError: expected <button …(4)></button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"
+  class="pending-checks__recall"
+  data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
+  type="button"
+>
+  Yanlışlıkla gönderildi: masaya geri gönder
+</button>
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:239:71
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > a check with a served item > keeps the send-back button, without a note, for someone who may cancel a served bill
+AssertionError: expected <button …(4)></button>
+…(3) to have a length of 2 but got 4
+
+- Expected
++ Received
+
+- 2
++ 4
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:249:31
+    247|       await render(vi.fn(), { canCancel: true, canMerge: true, canCanc…
+    248|
+    249|       expect(recallButtons()).toHaveLength(2);
+       |                               ^
+    250|       expect(document.querySelector(".pending-checks__served-note")).t…
+    251|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  4 failed | 113 passed (117)
+   Start at  11:03:27
+   Duration  6.34s (transform 2.90s, setup 0ms, import 4.52s, tests 3.92s, environment 4.88s)
+

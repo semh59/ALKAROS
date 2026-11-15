@@ -181,7 +181,9 @@ public sealed record PendingCheckSummaryV1(
     // V1-RMD-281: lets the till send a mistakenly sent check back to its table.
     Guid? TableId = null,
     // How many of the check lines the cashier added without a kitchen ticket.
-    int AddedWithoutKitchenCount = 0);
+    int AddedWithoutKitchenCount = 0,
+    // Lines the kitchen served; the till tells a cashier who may not take such a check back.
+    int ServedItemCount = 0);
 
 /// <summary>V1-ORD-005: request body for voiding a not-yet-sent item.</summary>
 public sealed record VoidOrderItemRequestV1(

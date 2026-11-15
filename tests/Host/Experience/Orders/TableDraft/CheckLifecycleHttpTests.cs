@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders;
@@ -428,6 +429,134 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Contains("CHECK_HAS_PAYMENT", await refused.Content.ReadAsStringAsync());
         Assert.False(await _database.TableHasOpenCheckAsync(tableId));
         Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    private async Task<(Guid OrderId, Guid TableId, Guid BillId)> SendServedCheckAsync(HttpClient client, string cookie, Guid terminalId)
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+        await _database.ExecuteAsync("UPDATE orders.order_items SET kitchen_state = 'Served' WHERE order_id = @id;", ("id", check.OrderId));
+        return (check.OrderId, tableId, billId);
+    }
+
+    [Fact]
+    public async Task ACheckWithAServedItemCannotBeRecalledByACashierAndNothingChanges()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (orderId, tableId, billId) = await SendServedCheckAsync(client, cookie, terminalId);
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, orderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("CHECK_HAS_SERVED_ITEMS", await refused.Content.ReadAsStringAsync());
+        Assert.False(await _database.TableHasOpenCheckAsync(tableId));
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ARepeatedRecallOfAHalfRecalledServedCheckStillKeepsItsBillForACashier()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (orderId, tableId, billId) = await SendServedCheckAsync(client, cookie, terminalId);
+        // A recall that failed half-way: the table points at the check again but its bill is still open.
+        await _database.ExecuteAsync("UPDATE table_mgmt.tables SET current_order_id = @order WHERE table_id = @id;", ("order", orderId), ("id", tableId));
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, orderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("CHECK_HAS_SERVED_ITEMS", await refused.Content.ReadAsStringAsync());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ACheckMergedIntoABillWithAnotherChecksServedItemCannotBeRecalledByACashier()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var firstTable = await _database.SeedTableAsync();
+        var first = await SendRoundAsync(client, cookie, terminalId, firstTable, new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, first.OrderId), cookie, new SendCheckToCashierRequestV1(firstTable)));
+        var (secondOrderId, _, _) = await SendServedCheckAsync(client, cookie, terminalId);
+        var billId = await _database.SeedBillForOrderAsync(first.OrderId, 560m, "Open");
+        // The merged bill carries the second check's served line although the recalled check itself has none.
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO billing.bill_items (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price,
+                                            tax_rate, net_amount, gross_amount, line_type, created_at, updated_at)
+            SELECT gen_random_uuid(), @bill, order_item_id, product_id, product_name_snapshot, quantity, unit_price, 0, unit_price, unit_price, 'Sale', now(), now()
+            FROM orders.order_items WHERE order_id = @order;
+            """,
+            ("bill", billId), ("order", secondOrderId));
+
+        using var refused = await client.SendAsync(JsonRequest(RecallPath(terminalId, first.OrderId), cookie, new RecallCheckRequestV1(firstTable)));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("CHECK_HAS_SERVED_ITEMS", await refused.Content.ReadAsStringAsync());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ACancelledServedItemDoesNotStopACashierRecallingTheCheck()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (orderId, tableId, billId) = await SendServedCheckAsync(client, cookie, terminalId);
+        await _database.ExecuteAsync("UPDATE orders.order_items SET status = 'Cancelled' WHERE order_id = @id;", ("id", orderId));
+
+        using var recalled = await client.SendAsync(JsonRequest(RecallPath(terminalId, orderId), cookie, new RecallCheckRequestV1(tableId)));
+
+        Assert.True(recalled.IsSuccessStatusCode, await recalled.Content.ReadAsStringAsync());
+        Assert.Equal("Cancelled", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ACheckWithAServedItemCanBeRecalledByAnApprover()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        // This project loads only the migrations it needs, and the refund permissions arrive with a later one.
+        await _database.ExecuteAsync(
+            "INSERT INTO identity.permissions (permission_id, code, name) VALUES (gen_random_uuid(), 'payments.refund.approve', 'Approve or reject a refund request') ON CONFLICT (code) DO NOTHING;");
+        var approver = (await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "recall-approver", "orders.create", "payments.refund.approve")).Cookie;
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (orderId, tableId, billId) = await SendServedCheckAsync(client, cookie, terminalId);
+
+        using var recalled = await client.SendAsync(JsonRequest(RecallPath(terminalId, orderId), approver, new RecallCheckRequestV1(tableId)));
+
+        Assert.True(recalled.IsSuccessStatusCode, await recalled.Content.ReadAsStringAsync());
+        Assert.Equal("Cancelled", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task TheTillQueueCountsTheServedItemsOfEachCheck()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var (orderId, _, _) = await SendServedCheckAsync(client, cookie, terminalId);
+
+        using var queue = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
+
+        var row = (await queue.Content.ReadFromJsonAsync<JsonElement>()).EnumerateArray().Single(c => c.GetProperty("orderId").GetGuid() == orderId);
+        Assert.Equal(1, row.GetProperty("servedItemCount").GetInt32());
     }
 
     [Fact]

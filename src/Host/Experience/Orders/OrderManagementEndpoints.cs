@@ -402,6 +402,7 @@ public static class OrderManagementEndpoints
             IAuthorizationService authorization,
             IAuditEventStore auditEvents,
             IBillRepository bills,
+            IRoleRepository roles,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -411,12 +412,15 @@ public static class OrderManagementEndpoints
             if (request is null || request.TableId == Guid.Empty)
                 return Results.BadRequest(new { error = new { code = "INVALID_TABLE", message = "Masa kimliği boş olamaz." } });
 
+            // The same approver a bill cancellation asks for when the bill holds a served item.
+            var mayCancelServed = (await roles.GetPermissionCodesForUserAsync(principal, cancellationToken))
+                .Contains(ApplicationPermissions.PaymentsRefundApprove, StringComparer.Ordinal);
             try
             {
                 // The till must not keep a ghost bill (a re-send would otherwise reuse it with stale items); the
                 // store cancels it in the same transaction as its money check (V1-RMD-414).
                 var result = await store.RecallCheckAsync(
-                    request.TableId, orderId, bills, auditEvents, principal, context.TraceIdentifier, cancellationToken);
+                    request.TableId, orderId, bills, auditEvents, principal, context.TraceIdentifier, mayCancelServed, cancellationToken);
 
                 // Also on a repeat: a retry may be completing a request that failed half-way.
                 await queueAnnouncer.AnnouncePendingChecksChangedAsync("Recalled", orderId, request.TableId, cancellationToken);
@@ -432,6 +436,12 @@ public static class OrderManagementEndpoints
             {
                 return Results.Json(
                     new { error = new { code = "CHECK_HAS_PAYMENT", message = "Bu hesapta tahsilat başlamış; masaya geri alınamaz." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+            catch (CheckHasServedItemsException)
+            {
+                return Results.Json(
+                    new { error = new { code = "CHECK_HAS_SERVED_ITEMS", message = "Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun." } },
                     statusCode: StatusCodes.Status409Conflict);
             }
             catch (CheckNotRecallableException exception)

@@ -1,0 +1,16 @@
+S1-helper-never-refuses exit 1 restored cmp ok
+S2-everyone-may-cancel-served exit 1 restored cmp ok
+S3-nobody-may-cancel-served exit 1 restored cmp ok
+S4-main-path-check-removed exit 1 restored cmp ok
+S5-repeat-branch-check-removed exit 1 restored cmp ok
+S6-served-count-wrong-state exit 1 restored cmp ok
+C1-queue-flag-never-set exit 1 restored cmp ok
+C2-queue-flag-always-set exit 1 restored cmp ok
+C3-table-panel-flag-never-set exit 1 restored cmp ok
+C4-table-panel-flag-always-set exit 1 restored cmp ok
+C7-no-error-mapping exit 1 restored cmp ok
+C5-note-never-shown exit 1 restored cmp ok
+C6-approver-loses-button exit 1 restored cmp ok
+C8-note-ignores-paid-and-table exit 1 restored cmp ok
+S7-merged-bill-lines-ignored exit 1 restored cmp ok
+S8-cancelled-lines-count exit 1 restored cmp ok
