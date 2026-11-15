@@ -13,9 +13,9 @@ Kasiyer deneyimi turu: React satış ekranında ürün aramasına açılışta o
 ## Owned surface
 
 - `evidence/V1-RMD-1106/**`
+- `src/Clients/PosTerminal/src/routes/Cashier.search-add.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
-  - src/Clients/PosTerminal/src/routes/Cashier.search-add.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

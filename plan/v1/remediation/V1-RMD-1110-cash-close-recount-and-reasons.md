@@ -16,6 +16,8 @@ Kasiyer deneyimi turu: kapanış fark teyidi ekranında yanlış yazılan sayım
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
   - tests/Clients/StaticApps/cash-session-close-recount.test.js
+  - tests/Clients/StaticApps/cash-session-close.test.js
+  - tests/Clients/StaticApps/cash-session-text-size.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

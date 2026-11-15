@@ -13,10 +13,10 @@ Kasiyer deneyimi turu: masasız (hızlı) satışta kasiyer önce "Mutfağa gön
 ## Owned surface
 
 - `evidence/V1-RMD-1103/**`
+- `src/Clients/PosTerminal/src/routes/Cashier.send-and-collect.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/strings.ts
-  - src/Clients/PosTerminal/src/routes/Cashier.send-and-collect.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

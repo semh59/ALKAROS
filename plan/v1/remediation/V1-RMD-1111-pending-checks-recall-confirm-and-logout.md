@@ -19,6 +19,9 @@ Kasiyer deneyimi turu: bekleyen hesaplarda "Yanlışlıkla gönderildi: masaya g
   - src/Clients/PosTerminal/src/strings.ts
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+  - src/Clients/PosTerminal/src/routes/workspace.test.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.cancel.test.tsx
+  - src/Clients/PosTerminal/src/features/pending-checks/pending-checks.css
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

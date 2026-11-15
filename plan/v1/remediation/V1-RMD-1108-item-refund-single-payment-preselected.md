@@ -1,7 +1,7 @@
 # V1-RMD-1108 - Tek ödemeli hesapta ürün iadesi ödemeyi kendisi seçer
 
 - Task ID: V1-RMD-1108
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
@@ -16,6 +16,7 @@ Kasiyer deneyimi turu: ürün bazlı iade formunda hesapta tek geçerli ödeme o
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/split-payment-item-refund-single-payment.test.js
+  - tests/Clients/StaticApps/split-payment-item-refund.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

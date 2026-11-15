@@ -16,6 +16,11 @@ Kasiyer deneyimi turu: bahşiş ve indirim için tutar elle hesaplanıp yazılı
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/split-payment-adjustment-presets.test.js
+  - tests/Clients/StaticApps/split-payment-discount-pending.test.js
+  - tests/Clients/StaticApps/split-payment-cashier-rules.test.js
+  - tests/Clients/StaticApps/split-payment-reasons.test.js
+  - tests/Clients/StaticApps/split-payment-undo-adjustment.test.js
+  - tests/Clients/StaticApps/split-payment-comp.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

@@ -13,11 +13,11 @@ Kasiyer deneyimi turu: 10 adet için artı düğmesine 9 kez basılıyor. Sipari
 ## Owned surface
 
 - `evidence/V1-RMD-1107/**`
+- `src/Clients/PosTerminal/src/routes/Cashier.quantity-entry.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/PosTerminal/src/routes/Cashier.tsx
   - src/Clients/PosTerminal/src/strings.ts
   - src/Clients/PosTerminal/src/styles.css
-  - src/Clients/PosTerminal/src/routes/Cashier.quantity-entry.test.tsx
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
