@@ -2595,8 +2595,15 @@
       '</div>';
   }
 
+  // The first button after a paid bill starts the next job; without a read receipt the place is unknown and printing stays primary.
+  function nextJobLink() {
+    if (state.billTable) return backLink('/tables', 'Masalara dön', true);
+    return state.billRead ? backLink('/', 'Yeni satış', true) : '';
+  }
+
   function renderPaid() {
     var heading = closedHeading();
+    var nextJob = state.receiptConfirm ? '' : nextJobLink();
     app.innerHTML =
       '<div class="sp-card sp-center-text">' +
       (heading.waiting ? '<span class="sp-icon-circle">…</span>' : '<span class="sp-icon-circle success">✓</span>') +
@@ -2610,7 +2617,8 @@
       (state.receiptConfirm
         ? '<div class="sp-alert-body" role="alert" id="receipt-confirm">İlk basım orijinaldir, sonrakiler KOPYA yazar.</div>'
         : '') +
-      '<button class="sp-btn sp-btn-primary" type="button" id="print-receipt" data-receipt-action="print"' +
+      nextJob +
+      '<button class="sp-btn ' + (nextJob ? 'sp-btn-secondary' : 'sp-btn-primary') + '" type="button" id="print-receipt" data-receipt-action="print"' +
       (state.receiptBusy ? ' disabled' : '') + '>' +
       (state.receiptBusy ? 'Fiş hazırlanıyor…' : (state.receiptConfirm ? 'Evet, yazdır' : 'Fişi yazdır')) + '</button>' +
       (state.receiptConfirm

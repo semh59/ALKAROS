@@ -1,0 +1,46 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-next-step.test.js > the paid-bill screen names the next job > offers a primary new sale after a counter sale and keeps the pending list secondary
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744526750-0.44565976559561793:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744526750-0.44565976559561793:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744526750-0.44565976559561793:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-next-step.test.js (3 tests | 1 failed) 528ms
+     × offers a primary new sale after a counter sale and keeps the pending list secondary 208ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-next-step.test.js > the paid-bill screen names the next job > offers a primary new sale after a counter sale and keeps the pending list secondary
+AssertionError: expected { text: 'Yeni satış', href: '/', …(1) } to match object { href: '/', primary: true }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "href": "/",
+-   "primary": true,
++   "primary": false,
+  }
+
+ ❯ split-payment-next-step.test.js:36:58
+     34|     await openPaid({ tableNumber: null });
+     35|     await vi.waitFor(() => expect(links().some((l) => l.text === "Yeni…
+     36|     expect(links().find((l) => l.text === "Yeni satış")).toMatchObject…
+       |                                                          ^
+     37|     expect(links().find((l) => l.text === "Bekleyen hesaplara dön")).t…
+     38|     expect(links().some((l) => l.text === "Masalara dön")).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  15:08:44
+   Duration  2.41s (transform 291ms, setup 38ms, import 57ms, tests 528ms, environment 1.32s)
+

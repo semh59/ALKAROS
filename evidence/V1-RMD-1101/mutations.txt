@@ -1,0 +1,5 @@
+R1-next-job-dropped exit 1 restored cmp ok
+R2-table-goes-home exit 1 restored cmp ok
+R3-new-sale-secondary exit 1 restored cmp ok
+R4-print-always-primary exit 1 restored cmp ok
+R5-confirm-keeps-next-job exit 1 restored cmp ok

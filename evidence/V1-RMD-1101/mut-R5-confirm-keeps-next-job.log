@@ -1,0 +1,42 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-next-step.test.js > the paid-bill screen names the next job > keeps the receipt confirmation primary while the original/KOPYA warning is open
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744689690-0.352701562842889:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744689690-0.352701562842889:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744689690-0.352701562842889:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-next-step.test.js (5 tests | 1 failed) 988ms
+     × keeps the receipt confirmation primary while the original/KOPYA warning is open 161ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-next-step.test.js > the paid-bill screen names the next job > keeps the receipt confirmation primary while the original/KOPYA warning is open
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-next-step.test.js:60:91
+     58|     document.getElementById("print-receipt").click();
+     59|     expect(document.getElementById("print-receipt").textContent).toBe(…
+     60|     expect(document.getElementById("print-receipt").classList.contains…
+       |                                                                                           ^
+     61|     expect(links().some((l) => l.text === "Masalara dön")).toBe(false);
+     62|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  15:11:27
+   Duration  2.75s (transform 491ms, setup 29ms, import 63ms, tests 988ms, environment 1.35s)
+

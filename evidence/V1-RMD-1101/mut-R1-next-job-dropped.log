@@ -1,0 +1,71 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-next-step.test.js > the paid-bill screen names the next job > offers a primary new sale after a counter sale and keeps the pending list secondary
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744512216-0.7391609785944492:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744512216-0.7391609785944492:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744512216-0.7391609785944492:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-next-step.test.js > the paid-bill screen names the next job > makes the receipt print secondary so the next-job button is the primary one
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744513652-0.1583304161393947:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744513652-0.1583304161393947:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794744513652-0.1583304161393947:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-next-step.test.js (3 tests | 2 failed) 2654ms
+     × offers a primary new sale after a counter sale and keeps the pending list secondary 1239ms
+     × makes the receipt print secondary so the next-job button is the primary one 1194ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-next-step.test.js > the paid-bill screen names the next job > offers a primary new sale after a counter sale and keeps the pending list secondary
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-next-step.test.js:35:81
+     33|   it("offers a primary new sale after a counter sale and keeps the pen…
+     34|     await openPaid({ tableNumber: null });
+     35|     await vi.waitFor(() => expect(links().some((l) => l.text === "Yeni…
+       |                                                                                 ^
+     36|     expect(links().find((l) => l.text === "Yeni satış")).toMatchObject…
+     37|     expect(links().find((l) => l.text === "Bekleyen hesaplara dön")).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-next-step.test.js > the paid-bill screen names the next job > makes the receipt print secondary so the next-job button is the primary one
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ split-payment-next-step.test.js:51:81
+     49|   it("makes the receipt print secondary so the next-job button is the …
+     50|     await openPaid({ tableNumber: null });
+     51|     await vi.waitFor(() => expect(links().some((l) => l.text === "Yeni…
+       |                                                                                 ^
+     52|     expect(document.getElementById("print-receipt").classList.contains…
+     53|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  15:08:30
+   Duration  4.65s (transform 320ms, setup 29ms, import 59ms, tests 2.65s, environment 1.55s)
+
