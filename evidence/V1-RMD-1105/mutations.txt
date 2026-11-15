@@ -1,0 +1,4 @@
+R1-guard-dropped exit 1 restored cmp ok
+R2-amount-field-only exit 1 restored cmp ok
+R3-received-field-only exit 1 restored cmp ok
+R4-any-key exit 1 restored cmp ok

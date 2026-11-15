@@ -1,7 +1,7 @@
 # V1-RMD-1105 - Tutar ve alınan para alanlarında Enter ödemeyi ekler
 
 - Task ID: V1-RMD-1105
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

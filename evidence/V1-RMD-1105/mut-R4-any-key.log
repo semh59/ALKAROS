@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-enter-key.test.js (5 tests | 1 failed) 870ms
+     × ignores other keys 146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-enter-key.test.js > Enter in the payment fields adds the payment > ignores other keys
+AssertionError: expected [ [ …(2) ] ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ split-payment-enter-key.test.js:63:32
+     61|     amount.dispatchEvent(new KeyboardEvent("keydown", { key: "a", bubb…
+     62|
+     63|     expect(tenders(fetchMock)).toHaveLength(0);
+       |                                ^
+     64|   });
+     65|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  15:29:45
+   Duration  2.45s (transform 344ms, setup 25ms, import 57ms, tests 870ms, environment 1.21s)
+

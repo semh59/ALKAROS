@@ -2425,6 +2425,14 @@
       updateChangePreview();
     }
     if (amountInput) amountInput.addEventListener('input', updateChangePreview);
+    // The same guard as the button: nothing is sent while it is off or a tender is already on its way.
+    [amountInput, tenderedInput].forEach(function (field) {
+      if (field) field.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' || submitTenderDisabled()) return;
+        event.preventDefault();
+        submitTender();
+      });
+    });
     document.querySelectorAll('[data-quick-cash]').forEach(function (button) {
       button.addEventListener('click', function () { applyQuickCash(button.getAttribute('data-quick-cash')); });
     });

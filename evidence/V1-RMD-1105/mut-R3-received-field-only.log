@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-enter-key.test.js (5 tests | 1 failed) 827ms
+     × sends one cash tender from amount-draft and ignores a second Enter while it is in flight 203ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-enter-key.test.js > Enter in the payment fields adds the payment > sends one cash tender from amount-draft and ignores a second Enter while it is in flight
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ split-payment-enter-key.test.js:52:32
+     50|     enter(target);
+     51|     enter(document.getElementById(field) ?? target);
+     52|     expect(tenders(fetchMock)).toHaveLength(1);
+       |                                ^
+     53|     release();
+     54|     await vi.waitFor(() => expect(document.body.textContent).toContain…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  15:29:39
+   Duration  2.66s (transform 378ms, setup 29ms, import 62ms, tests 827ms, environment 1.32s)
+
