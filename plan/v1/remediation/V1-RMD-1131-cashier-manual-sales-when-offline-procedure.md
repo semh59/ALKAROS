@@ -1,7 +1,7 @@
 # V1-RMD-1131 - Kasada internet kesilince elle satış prosedürü (go-live belgesi)
 
 - Task ID: V1-RMD-1131
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: documentation
 - Surface state: Existing

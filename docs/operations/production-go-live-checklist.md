@@ -197,6 +197,71 @@ end to end against the live schema — see `evidence/V1-RMD-095/`).
       out of V1 scope. For a single pilot restaurant the single-box headroom
       (~10x the RPO target) is sufficient; revisit before multi-store rollout.
 
+## 6. Kasada internet kesilince elle satış prosedürü — MANUAL (kasiyer eğitimi)
+
+Kasa ekranı çevrimdışı satış yapmaz (bilinçli karar): ödeme, stok ve kasa
+sayımı sunucuda tutulur. İnternet ya da sunucu bağlantısı kesilirse satış
+elle yürütülür; bu bölüm o geçici durum içindir.
+
+**Ne zaman kullanılır.** Kasa ekranı sunucuya ulaşamıyor ("bağlantı yok"
+uyarısı) ve yönetici kesintiyi kontrol edip (yönlendirici, sunucu, kablo) birkaç
+dakikada düzelmeyeceğine karar verdi. Kısa takılmalarda beklenir; defter
+açılmaz.
+
+**Defter formatı.** Kasada hazır tutulan numaralı, kalemle yazılan bir defter
+(ya da basılı tablo). Her satış bir satırdır:
+
+| Sıra no | Saat | Ürünler ve adetler | Tutar (₺) | Ödeme (yalnız Nakit) | Kasiyer | İşlendi (kutu + işleyenin adı) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 14:05 | 2 Çay, 1 Tost | 85,00 | Nakit | Deniz | ☐ |
+
+Defterin ilk satırına kesintinin başlangıç saati ve onaylayan yöneticinin adı,
+son satırına bitiş saati yazılır.
+
+Sıra numaraları atlanmaz; hatalı satır silinmez, üstü çizilip yenisi yazılır.
+Kesinti sırasında müşteriye sistem fişi verilemez. Defter vergi belgesi yerine
+geçmez: mali belge (yazarkasa/e-belge) yükümlülüğü için işletmenin mali
+müşavirinin görüşü önceden alınır; bu belgede doğrulanmış bir karar yoktur.
+
+**İnternet gelince nasıl işlenir.**
+
+1. Yönetici gözetiminde, kasiyer kendi kasa oturumunu açar (oturum açıksa
+   devam eder).
+2. Defter satırları sırayla tek tek ekrana girilir: ürünler eklenir, nakit
+   tahsil edilir; sistem kasaya parayı bu sırada yazar. Sistem kaydı
+   girişin saatini taşır; gerçek satış saati yalnız defterde kalır ve saatlik
+   raporlar bu yüzden kaymış görünebilir.
+3. İşlenen satırın "İşlendi" kutusu işaretlenir ve işleyenin adı yazılır; bir
+   satır iki kez işlenmez.
+4. Tüm satırlar işlenince defterin toplamı ile kasa ekranının nakit toplamı
+   karşılaştırılır; fark varsa nedeni, kasiyerin kendisi dışında ikinci bir kişi (yönetici ya da
+   başka yetkili) kontrol edip defterin altına yazar.
+5. Defter yönetici tarafından imzalanıp saklanır (muhasebe kanıtı).
+
+**Riskler.** (Bu prosedür yalnız kasa içindir; garson ve mutfak akışının kesintide
+nasıl yürüyeceği burada ele alınmaz.)
+
+- Stok: ürün stoğu satışlar işlenene kadar eski görünür; kesinti sırasında biten
+  ürün satılmış olabilir.
+- Kasa farkı: defterde yanlış ya da eksik satır, gün sonu kasa farkı olarak
+  görünür.
+- Çifte giriş: aynı satırın iki kez işlenmesi parayı kasaya iki kez yazar; bu
+  yüzden "İşlendi" kutusu zorunludur.
+- Fiş yok: kesinti sırasında sistem fişi çıkmaz; müşteri fiş isterse mali
+  müşavirin önceden verdiği karara uyulur; defter iç kayıttır.
+- Kart ödemesi kesintide alınamaz: kart ve diğer elektronik ödemeler yalnız
+  bağlantı varken alınır; kesintide yalnız nakit satılır.
+
+**Kasiyer için 6 adım.**
+
+1. Ekranda "bağlantı yok" görürsen yöneticiyi çağır; kendi başına defter açma.
+2. Yönetici onaylarsa elle satış defterini aç; yalnız nakit sat.
+3. Her satışı sıra numarasıyla yaz: saat, ürünler ve adetler, tutar, kasiyer.
+4. Parayı al ve defterdeki tutarla aynı olduğundan emin ol; kart alma.
+5. İnternet gelince yöneticiyi çağır; satırları sırayla ekrana gir ve işlenen
+   satırı işaretle.
+6. Toplamı kasa ekranıyla karşılaştır; fark varsa yöneticiye göster.
+
 ---
 
 ## Go / no-go summary
@@ -215,6 +280,7 @@ end to end against the live schema — see `evidence/V1-RMD-095/`).
 | Local/offline order RPO ≈ 0 (competitor parity) | shipped |
 | PITR / WAL archiving (5 min RPO for money/fiscal/audit) | shipped (`V1-RMD-095`); off-host copy + cron pending |
 | Off-host copy of base backups + WAL archive | **pending — ops wiring** |
+| Kasada internet kesilince elle satış prosedürü (§6) | **pending — kasiyer eğitimi ve defter basımı** |
 
 A LAN-only pilot at one location can go live once the "pending — site / ops
 wiring" rows are walked. The "pending — decision" row (public TLS) is only

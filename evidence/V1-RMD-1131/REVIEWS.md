@@ -1,0 +1,2 @@
+- qa-dokuman-bagimlilik: RED (6 bulgu) -> duzeltildi
+- qa-bulgu-dogrulayici: RED (fis karari, Nakit sutunu) -> duzeltildi, ikinci bakista KABUL
