@@ -1,7 +1,7 @@
 # V1-RMD-1152 - Satış ekranında "Satış yok" bağlantısı: kasa sayfasındaki gerekçe formuna götürür, geldiği yere döner
 
 - Task ID: V1-RMD-1152
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
