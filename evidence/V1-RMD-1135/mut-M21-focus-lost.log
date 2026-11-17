@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (18 tests | 1 failed) 4984ms
+     × starts on the reasons and keeps the focus on the reason just chosen 1163ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > starts on the reasons and keeps the focus on the reason just chosen
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to be 'Diğer' // Object.is equality
+
+- Expected
++ Received
+
+- Diğer
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yokPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeBozuk paraSayımDiğerSeçilen gerekçe: DiğerNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:225:72
+    223|
+    224|     chips[2].click();
+    225|     await vi.waitFor(() => expect(document.activeElement?.textContent)…
+       |                                                                        ^
+    226|     expect(document.activeElement.getAttribute("aria-pressed")).toBe("…
+    227|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 passed (18)
+   Start at  18:22:04
+   Duration  6.42s (transform 726ms, setup 24ms, import 52ms, tests 4.98s, environment 1.11s)
+

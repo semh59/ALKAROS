@@ -41,13 +41,18 @@
     summaryExpected: null,
     // Typed-but-unsent values live in state, not only in the DOM: every re-render (busy, error,
     // notice) rebuilds the screen, and the fields must come back exactly as the cashier left them.
-    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false },
+    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false, noSaleNote: '' },
     zeroCountPrompt: false,
     pendingDecision: null,
     userId: null,
     capabilities: [],
     movements: null,
     movementsError: false,
+    // The physical drawer: what the server says about it (null = no button), and the no-sale form in progress.
+    drawer: null,
+    noSaleReason: null,
+    noSaleKey: null,
+    noSaleSignature: null,
     notice: null,
     busy: false,
     error: null,
@@ -121,6 +126,9 @@
     CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION: 'Bu çıkış talebi, talep sahibinin kendi kasa oturumunda açılmamış; onaylanamaz. Reddedin; talep sahibi kendi oturumundan yeniden istesin.',
     CASH_MOVEMENT_REQUEST_STATE: 'Bu çıkış talebi artık beklemiyor; liste yenilendi.',
     CASH_SESSION_NOT_OWNED: NOT_OWNED_MOVEMENT_TEXT,
+    CASH_DRAWER_DISABLED: 'Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir.',
+    CASH_DRAWER_REASON_INVALID: 'Bir gerekçe seçin; “Diğer” için not yazın (en çok 200 karakter).',
+    CASH_DRAWER_SESSION_NOT_OPEN: 'Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır.',
     CASH_MOVEMENT_REQUEST_NOT_FOUND: 'Çıkış talebi bulunamadı.',
     IDEMPOTENCY_KEY_REUSED: 'Bu işlem farklı bir nakit hareketi için zaten kaydedilmiş. Sayfayı yenileyip tekrar deneyin.',
     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
@@ -205,7 +213,8 @@
   // typing into, just because the button they have not clicked yet got disabled, would be worse
   // than doing nothing.
   function focusPrimaryField() {
-    var target = app.querySelector('input:not(:disabled), textarea:not(:disabled)');
+    // The no-sale form starts on its reasons: a note field first would raise the on-screen keyboard over them.
+    var target = app.querySelector('[data-no-sale-reason]') || app.querySelector('input:not(:disabled), textarea:not(:disabled)');
     if (!target) target = app.querySelector('#cash-in:not(:disabled)');
     if (!target) target = app.querySelector('button:not(:disabled)');
     if (target) target.focus({ preventScroll: true });
@@ -271,7 +280,7 @@
       state.session = result.body;
       state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
       return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
-        if (state.phase === 'open') return loadMovements();
+        if (state.phase === 'open') return Promise.all([loadMovements(), loadDrawer()]);
         render();
       });
     }).catch(function () {
@@ -308,12 +317,79 @@
     });
   }
 
+  // The "no sale" button is optional: any failure to read the drawer status simply leaves it out.
+  function loadDrawer() {
+    return api(movementsBase() + '/cash-drawer').then(function (result) {
+      state.drawer = result.ok && result.body ? result.body : null;
+      render();
+    }).catch(function () {
+      state.drawer = null;
+    });
+  }
+
+  function canOpenDrawerWithoutSale() {
+    return !!(state.drawer && state.drawer.enabled && state.drawer.canKick && ownsSession());
+  }
+
+  function submitNoSale() {
+    captureDrafts();
+    // A line break typed into the note is a space: the server refuses control characters.
+    var note = (state.drafts.noSaleNote || '').replace(/\s+/g, ' ').trim();
+    if (!state.noSaleReason) return setError('Bir gerekçe seçin.');
+    if (state.noSaleReason === 'Other' && !note) return setError('“Diğer” için not yazın.');
+    if (note.length > 200) return setError('Not en çok 200 karakter olabilir.');
+    var body = { ReasonCode: state.noSaleReason, Note: note || null };
+    // A retry of the same request keeps its key (the server then answers with the opening it already made); an edited one gets a new key.
+    var signature = JSON.stringify(body);
+    if (!state.noSaleKey || state.noSaleSignature !== signature) {
+      state.noSaleKey = newUuid();
+      state.noSaleSignature = signature;
+    }
+    body.IdempotencyKey = state.noSaleKey;
+    state.error = null;
+    setBusy(true);
+    api(movementsBase() + '/cash-drawer/no-sale', { method: 'POST', body: body }).then(function (result) {
+      state.busy = false;
+      if (result.status < 500) state.noSaleKey = null;
+      if (!result.ok) {
+        var errorCode = result.body && result.body.error && result.body.error.code;
+        if (errorCode === 'CASH_DRAWER_DISABLED' || errorCode === 'CASH_DRAWER_SESSION_NOT_OPEN') {
+          state.drawer = null;
+          state.phase = 'open';
+        }
+        state.error = describeHttpFailure(result.status, result.body);
+        render();
+        return;
+      }
+      var answer = result.body || {};
+      if (state.drawer) state.drawer.noSaleCount = answer.noSaleCount;
+      var warning = answer.warning ? ' ' + answer.warning : '';
+      state.noSaleReason = null;
+      state.drafts.noSaleNote = '';
+      state.phase = 'open';
+      if (answer.delivered) {
+        state.error = null;
+        state.notice = 'Çekmece açıldı.' + warning;
+      } else {
+        state.notice = null;
+        state.error = 'Çekmece açılamadı; yazıcı bağlantısını kontrol edin.' + warning;
+      }
+      render();
+    }).catch(function () {
+      state.busy = false;
+      setError('Bağlantı kesildi. Çekmece açılmış olabilir; kontrol edin, açılmadıysa yeniden deneyin.');
+    });
+  }
+
   // A new shift must not inherit the previous one's list, requests, drafts or count.
   function resetForNewSession() {
     state.movements = null;
     state.movementsError = false;
     state.notice = null;
-    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false };
+    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false, noSaleNote: '' };
+    state.drawer = null;
+    state.noSaleReason = null;
+    state.noSaleKey = null;
     state.denominationCounts = {};
     state.zeroCountPrompt = false;
     state.pendingDecision = null;
@@ -770,6 +846,7 @@
       '<button class="cs-btn cs-btn-secondary" id="cash-in"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Giriş</button>' +
       '<button class="cs-btn cs-btn-secondary" id="cash-out"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Çıkış</button>' +
       '</div>' +
+      renderNoSaleButton() +
       (ownsSession() ? '' : '<p class="cs-field-hint" id="movement-owner-hint">' + NOT_OWNED_MOVEMENT_TEXT + '</p>') +
       renderMovementList() +
       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
@@ -795,12 +872,22 @@
         render();
       });
     });
+    var noSale = document.getElementById('no-sale');
+    if (noSale) {
+      noSale.addEventListener('click', function () {
+        state.error = null;
+        state.notice = null;
+        state.noSaleKey = null;
+        state.phase = 'nosale';
+        render();
+      });
+    }
     document.getElementById('start-count').addEventListener('click', startCounting);
     document.getElementById('refresh-movements').addEventListener('click', function () {
       state.error = null;
       state.pendingDecision = null;
       setBusy(true);
-      loadMovements().then(function () { setBusy(false); });
+      Promise.all([loadMovements(), loadDrawer()]).then(function () { setBusy(false); });
     });
     // Approving moves money and rejecting cannot be undone, so both ask once more; withdrawing one's own request does not.
     Array.prototype.forEach.call(app.querySelectorAll('[data-request-action]'), function (button) {
@@ -903,6 +990,57 @@
 
   var OUT_REASONS = ['Banka', 'Gider', 'Tedarikçi', 'Bozuk para'];
   var IN_REASONS = ['Bozuk para', 'Banka', 'Takviye'];
+
+  function renderNoSaleButton() {
+    if (!canOpenDrawerWithoutSale()) return '';
+    var count = state.drawer.noSaleCount;
+    return '<div class="cs-row"><button class="cs-btn cs-btn-secondary" id="no-sale" type="button">Satış yok</button></div>' +
+      (count > 0 ? '<p class="cs-field-hint" id="no-sale-count">Bu vardiyada satışsız açma: ' + count + '</p>' : '');
+  }
+
+  function renderNoSale() {
+    var reasons = (state.drawer && state.drawer.reasons) || [];
+    var chosen = reasons.filter(function (reason) { return reason.code === state.noSaleReason; })[0];
+    app.innerHTML =
+      '<div class="cs-card">' +
+      '<div><span class="cs-eyebrow">Para Çekmecesi</span><h1 class="cs-title">Satış yok</h1></div>' +
+      errorAlert() +
+      '<p class="cs-field-hint">Para işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.</p>' +
+      '<form id="no-sale-form" novalidate>' +
+      '<span class="cs-field-label" id="no-sale-reason-label">Gerekçe</span>' +
+      '<div class="cs-chips" role="group" aria-labelledby="no-sale-reason-label">' + reasons.map(function (reason) {
+        return '<button class="cs-chip" type="button" data-no-sale-reason="' + escapeHtml(reason.code) + '" aria-pressed="' +
+          (reason.code === state.noSaleReason) + '">' + escapeHtml(reason.name) + '</button>';
+      }).join('') + '</div>' +
+      (chosen ? '<p class="cs-field-hint" id="no-sale-chosen">Seçilen gerekçe: ' + escapeHtml(chosen.name) + '</p>' : '') +
+      '<label class="cs-field-label" for="no-sale-note">' + (state.noSaleReason === 'Other' ? 'Not (zorunlu)' : 'Not') + '</label>' +
+      '<textarea class="cs-textarea" id="no-sale-note" maxlength="200">' + escapeHtml(state.drafts.noSaleNote) + '</textarea>' +
+      '<div class="cs-row">' +
+      '<button class="cs-btn cs-btn-secondary" id="no-sale-cancel" type="button">Vazgeç</button>' +
+      '<button class="cs-btn cs-btn-primary" id="no-sale-submit" type="submit" ' + (state.busy ? 'disabled' : '') + '>' +
+      (state.busy ? 'Açılıyor…' : 'Çekmeceyi aç') + '</button>' +
+      '</div></form></div>';
+    Array.prototype.forEach.call(app.querySelectorAll('[data-no-sale-reason]'), function (chip) {
+      chip.addEventListener('click', function () {
+        state.noSaleReason = chip.dataset.noSaleReason;
+        render();
+        var pressed = app.querySelector('[data-no-sale-reason="' + state.noSaleReason + '"]');
+        if (pressed) pressed.focus({ preventScroll: true });
+      });
+    });
+    document.getElementById('no-sale-cancel').addEventListener('click', function () {
+      state.noSaleReason = null;
+      state.noSaleKey = null;
+      state.drafts.noSaleNote = '';
+      state.error = null;
+      state.phase = 'open';
+      render();
+    });
+    document.getElementById('no-sale-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      submitNoSale();
+    });
+  }
 
   function renderMovement() {
     var isIn = state.movementDirection === 'in';
@@ -1295,7 +1433,7 @@
     if (renderedKey !== screenKey()) return;
     [['movement-amount', 'amount'], ['movement-notes', 'notes'], ['counted-amount', 'counted'],
       ['count-notes', 'countNotes'], ['override-reason', 'explanation'],
-      ['difference-explanation', 'explanation']].forEach(function (pair) {
+      ['difference-explanation', 'explanation'], ['no-sale-note', 'noSaleNote']].forEach(function (pair) {
       var element = document.getElementById(pair[0]);
       if (element && app.contains(element)) state.drafts[pair[1]] = element.value;
     });
@@ -1316,6 +1454,7 @@
       case 'conflict': renderConflict(); break;
       case 'open': renderOpen(); break;
       case 'movement': renderMovement(); break;
+      case 'nosale': renderNoSale(); break;
       case 'counting': renderCounting(); break;
       case 'closing': renderClosing(); break;
       case 'closed': renderClosed(); break;

@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 3385ms
+     × hides the button once the server says the drawer is switched off 206ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > hides the button once the server says the drawer is switched off
+AssertionError: expected <button …(3)></button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  class="cs-btn cs-btn-secondary"
+  id="no-sale"
+  type="button"
+>
+  Satış yok
+</button>
+
+ ❯ cash-session-no-sale.test.js:189:27
+    187|     $("#no-sale-cancel").click();
+    188|     await vi.waitFor(() => expect($("#cash-in")).not.toBeNull());
+    189|     expect($("#no-sale")).toBeNull();
+       |                           ^
+    190|   });
+    191|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:16:16
+   Duration  4.67s (transform 614ms, setup 24ms, import 49ms, tests 3.38s, environment 927ms)
+

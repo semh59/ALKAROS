@@ -1,7 +1,7 @@
 # V1-RMD-1135 - Kasa ekranında "Satış yok" düğmesi: gerekçe listesi, uyarı ve sonuç bildirimi
 
 - Task ID: V1-RMD-1135
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

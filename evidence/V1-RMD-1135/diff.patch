@@ -1,0 +1,524 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 2e222d032..b6a9351f7 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -41,13 +41,18 @@
+     summaryExpected: null,
+     // Typed-but-unsent values live in state, not only in the DOM: every re-render (busy, error,
+     // notice) rebuilds the screen, and the fields must come back exactly as the cashier left them.
+-    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false },
++    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false, noSaleNote: '' },
+     zeroCountPrompt: false,
+     pendingDecision: null,
+     userId: null,
+     capabilities: [],
+     movements: null,
+     movementsError: false,
++    // The physical drawer: what the server says about it (null = no button), and the no-sale form in progress.
++    drawer: null,
++    noSaleReason: null,
++    noSaleKey: null,
++    noSaleSignature: null,
+     notice: null,
+     busy: false,
+     error: null,
+@@ -121,6 +126,9 @@
+     CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION: 'Bu çıkış talebi, talep sahibinin kendi kasa oturumunda açılmamış; onaylanamaz. Reddedin; talep sahibi kendi oturumundan yeniden istesin.',
+     CASH_MOVEMENT_REQUEST_STATE: 'Bu çıkış talebi artık beklemiyor; liste yenilendi.',
+     CASH_SESSION_NOT_OWNED: NOT_OWNED_MOVEMENT_TEXT,
++    CASH_DRAWER_DISABLED: 'Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir.',
++    CASH_DRAWER_REASON_INVALID: 'Bir gerekçe seçin; “Diğer” için not yazın (en çok 200 karakter).',
++    CASH_DRAWER_SESSION_NOT_OPEN: 'Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır.',
+     CASH_MOVEMENT_REQUEST_NOT_FOUND: 'Çıkış talebi bulunamadı.',
+     IDEMPOTENCY_KEY_REUSED: 'Bu işlem farklı bir nakit hareketi için zaten kaydedilmiş. Sayfayı yenileyip tekrar deneyin.',
+     CLOSED_CASH_SESSION: 'Kasa oturumu açık değil.',
+@@ -205,7 +213,8 @@
+   // typing into, just because the button they have not clicked yet got disabled, would be worse
+   // than doing nothing.
+   function focusPrimaryField() {
+-    var target = app.querySelector('input:not(:disabled), textarea:not(:disabled)');
++    // The no-sale form starts on its reasons: a note field first would raise the on-screen keyboard over them.
++    var target = app.querySelector('[data-no-sale-reason]') || app.querySelector('input:not(:disabled), textarea:not(:disabled)');
+     if (!target) target = app.querySelector('#cash-in:not(:disabled)');
+     if (!target) target = app.querySelector('button:not(:disabled)');
+     if (target) target.focus({ preventScroll: true });
+@@ -271,7 +280,7 @@
+       state.session = result.body;
+       state.phase = state.session.status === 'Counting' ? 'counting' : 'open';
+       return (ownsSession() ? Promise.resolve() : loadOwnerName()).then(function () {
+-        if (state.phase === 'open') return loadMovements();
++        if (state.phase === 'open') return Promise.all([loadMovements(), loadDrawer()]);
+         render();
+       });
+     }).catch(function () {
+@@ -308,12 +317,79 @@
+     });
+   }
+ 
++  // The "no sale" button is optional: any failure to read the drawer status simply leaves it out.
++  function loadDrawer() {
++    return api(movementsBase() + '/cash-drawer').then(function (result) {
++      state.drawer = result.ok && result.body ? result.body : null;
++      render();
++    }).catch(function () {
++      state.drawer = null;
++    });
++  }
++
++  function canOpenDrawerWithoutSale() {
++    return !!(state.drawer && state.drawer.enabled && state.drawer.canKick && ownsSession());
++  }
++
++  function submitNoSale() {
++    captureDrafts();
++    // A line break typed into the note is a space: the server refuses control characters.
++    var note = (state.drafts.noSaleNote || '').replace(/\s+/g, ' ').trim();
++    if (!state.noSaleReason) return setError('Bir gerekçe seçin.');
++    if (state.noSaleReason === 'Other' && !note) return setError('“Diğer” için not yazın.');
++    if (note.length > 200) return setError('Not en çok 200 karakter olabilir.');
++    var body = { ReasonCode: state.noSaleReason, Note: note || null };
++    // A retry of the same request keeps its key (the server then answers with the opening it already made); an edited one gets a new key.
++    var signature = JSON.stringify(body);
++    if (!state.noSaleKey || state.noSaleSignature !== signature) {
++      state.noSaleKey = newUuid();
++      state.noSaleSignature = signature;
++    }
++    body.IdempotencyKey = state.noSaleKey;
++    state.error = null;
++    setBusy(true);
++    api(movementsBase() + '/cash-drawer/no-sale', { method: 'POST', body: body }).then(function (result) {
++      state.busy = false;
++      if (result.status < 500) state.noSaleKey = null;
++      if (!result.ok) {
++        var errorCode = result.body && result.body.error && result.body.error.code;
++        if (errorCode === 'CASH_DRAWER_DISABLED' || errorCode === 'CASH_DRAWER_SESSION_NOT_OPEN') {
++          state.drawer = null;
++          state.phase = 'open';
++        }
++        state.error = describeHttpFailure(result.status, result.body);
++        render();
++        return;
++      }
++      var answer = result.body || {};
++      if (state.drawer) state.drawer.noSaleCount = answer.noSaleCount;
++      var warning = answer.warning ? ' ' + answer.warning : '';
++      state.noSaleReason = null;
++      state.drafts.noSaleNote = '';
++      state.phase = 'open';
++      if (answer.delivered) {
++        state.error = null;
++        state.notice = 'Çekmece açıldı.' + warning;
++      } else {
++        state.notice = null;
++        state.error = 'Çekmece açılamadı; yazıcı bağlantısını kontrol edin.' + warning;
++      }
++      render();
++    }).catch(function () {
++      state.busy = false;
++      setError('Bağlantı kesildi. Çekmece açılmış olabilir; kontrol edin, açılmadıysa yeniden deneyin.');
++    });
++  }
++
+   // A new shift must not inherit the previous one's list, requests, drafts or count.
+   function resetForNewSession() {
+     state.movements = null;
+     state.movementsError = false;
+     state.notice = null;
+-    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false };
++    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false, noSaleNote: '' };
++    state.drawer = null;
++    state.noSaleReason = null;
++    state.noSaleKey = null;
+     state.denominationCounts = {};
+     state.zeroCountPrompt = false;
+     state.pendingDecision = null;
+@@ -770,6 +846,7 @@
+       '<button class="cs-btn cs-btn-secondary" id="cash-in"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Giriş</button>' +
+       '<button class="cs-btn cs-btn-secondary" id="cash-out"' + (ownsSession() ? '' : ' disabled aria-describedby="movement-owner-hint"') + '>Nakit Çıkış</button>' +
+       '</div>' +
++      renderNoSaleButton() +
+       (ownsSession() ? '' : '<p class="cs-field-hint" id="movement-owner-hint">' + NOT_OWNED_MOVEMENT_TEXT + '</p>') +
+       renderMovementList() +
+       '<button class="cs-btn cs-btn-ghost" id="refresh-movements" type="button" ' + (state.busy ? 'disabled' : '') + '>Listeyi yenile</button>' +
+@@ -795,12 +872,22 @@
+         render();
+       });
+     });
++    var noSale = document.getElementById('no-sale');
++    if (noSale) {
++      noSale.addEventListener('click', function () {
++        state.error = null;
++        state.notice = null;
++        state.noSaleKey = null;
++        state.phase = 'nosale';
++        render();
++      });
++    }
+     document.getElementById('start-count').addEventListener('click', startCounting);
+     document.getElementById('refresh-movements').addEventListener('click', function () {
+       state.error = null;
+       state.pendingDecision = null;
+       setBusy(true);
+-      loadMovements().then(function () { setBusy(false); });
++      Promise.all([loadMovements(), loadDrawer()]).then(function () { setBusy(false); });
+     });
+     // Approving moves money and rejecting cannot be undone, so both ask once more; withdrawing one's own request does not.
+     Array.prototype.forEach.call(app.querySelectorAll('[data-request-action]'), function (button) {
+@@ -904,6 +991,57 @@
+   var OUT_REASONS = ['Banka', 'Gider', 'Tedarikçi', 'Bozuk para'];
+   var IN_REASONS = ['Bozuk para', 'Banka', 'Takviye'];
+ 
++  function renderNoSaleButton() {
++    if (!canOpenDrawerWithoutSale()) return '';
++    var count = state.drawer.noSaleCount;
++    return '<div class="cs-row"><button class="cs-btn cs-btn-secondary" id="no-sale" type="button">Satış yok</button></div>' +
++      (count > 0 ? '<p class="cs-field-hint" id="no-sale-count">Bu vardiyada satışsız açma: ' + count + '</p>' : '');
++  }
++
++  function renderNoSale() {
++    var reasons = (state.drawer && state.drawer.reasons) || [];
++    var chosen = reasons.filter(function (reason) { return reason.code === state.noSaleReason; })[0];
++    app.innerHTML =
++      '<div class="cs-card">' +
++      '<div><span class="cs-eyebrow">Para Çekmecesi</span><h1 class="cs-title">Satış yok</h1></div>' +
++      errorAlert() +
++      '<p class="cs-field-hint">Para işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.</p>' +
++      '<form id="no-sale-form" novalidate>' +
++      '<span class="cs-field-label" id="no-sale-reason-label">Gerekçe</span>' +
++      '<div class="cs-chips" role="group" aria-labelledby="no-sale-reason-label">' + reasons.map(function (reason) {
++        return '<button class="cs-chip" type="button" data-no-sale-reason="' + escapeHtml(reason.code) + '" aria-pressed="' +
++          (reason.code === state.noSaleReason) + '">' + escapeHtml(reason.name) + '</button>';
++      }).join('') + '</div>' +
++      (chosen ? '<p class="cs-field-hint" id="no-sale-chosen">Seçilen gerekçe: ' + escapeHtml(chosen.name) + '</p>' : '') +
++      '<label class="cs-field-label" for="no-sale-note">' + (state.noSaleReason === 'Other' ? 'Not (zorunlu)' : 'Not') + '</label>' +
++      '<textarea class="cs-textarea" id="no-sale-note" maxlength="200">' + escapeHtml(state.drafts.noSaleNote) + '</textarea>' +
++      '<div class="cs-row">' +
++      '<button class="cs-btn cs-btn-secondary" id="no-sale-cancel" type="button">Vazgeç</button>' +
++      '<button class="cs-btn cs-btn-primary" id="no-sale-submit" type="submit" ' + (state.busy ? 'disabled' : '') + '>' +
++      (state.busy ? 'Açılıyor…' : 'Çekmeceyi aç') + '</button>' +
++      '</div></form></div>';
++    Array.prototype.forEach.call(app.querySelectorAll('[data-no-sale-reason]'), function (chip) {
++      chip.addEventListener('click', function () {
++        state.noSaleReason = chip.dataset.noSaleReason;
++        render();
++        var pressed = app.querySelector('[data-no-sale-reason="' + state.noSaleReason + '"]');
++        if (pressed) pressed.focus({ preventScroll: true });
++      });
++    });
++    document.getElementById('no-sale-cancel').addEventListener('click', function () {
++      state.noSaleReason = null;
++      state.noSaleKey = null;
++      state.drafts.noSaleNote = '';
++      state.error = null;
++      state.phase = 'open';
++      render();
++    });
++    document.getElementById('no-sale-form').addEventListener('submit', function (event) {
++      event.preventDefault();
++      submitNoSale();
++    });
++  }
++
+   function renderMovement() {
+     var isIn = state.movementDirection === 'in';
+     if (state.movementStep === 'summary') {
+@@ -1295,7 +1433,7 @@
+     if (renderedKey !== screenKey()) return;
+     [['movement-amount', 'amount'], ['movement-notes', 'notes'], ['counted-amount', 'counted'],
+       ['count-notes', 'countNotes'], ['override-reason', 'explanation'],
+-      ['difference-explanation', 'explanation']].forEach(function (pair) {
++      ['difference-explanation', 'explanation'], ['no-sale-note', 'noSaleNote']].forEach(function (pair) {
+       var element = document.getElementById(pair[0]);
+       if (element && app.contains(element)) state.drafts[pair[1]] = element.value;
+     });
+@@ -1316,6 +1454,7 @@
+       case 'conflict': renderConflict(); break;
+       case 'open': renderOpen(); break;
+       case 'movement': renderMovement(); break;
++      case 'nosale': renderNoSale(); break;
+       case 'counting': renderCounting(); break;
+       case 'closing': renderClosing(); break;
+       case 'closed': renderClosed(); break;
+diff --git a/tests/Clients/StaticApps/cash-session-no-sale.test.js b/tests/Clients/StaticApps/cash-session-no-sale.test.js
+new file mode 100644
+index 000000000..e36996703
+--- /dev/null
++++ b/tests/Clients/StaticApps/cash-session-no-sale.test.js
+@@ -0,0 +1,277 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { fileURLToPath } from "node:url";
++import { dirname, resolve } from "node:path";
++import { loadApp } from "./support/loadApp.js";
++
++const here = dirname(fileURLToPath(import.meta.url));
++const pageDir = resolve(here, "..", "..", "..", "src/Clients/Cashier/wwwroot/payments/cash-session");
++const htmlPath = resolve(pageDir, "index.html");
++const scriptPath = resolve(pageDir, "cash-session.js");
++
++const TERMINAL = "11111111-1111-1111-1111-111111111111";
++const SESSION = "22222222-2222-2222-2222-222222222222";
++const ME = "33333333-3333-3333-3333-333333333333";
++const BASE = `/api/v1/terminals/${TERMINAL}/cash-sessions/${SESSION}`;
++
++const session = { cashSessionId: SESSION, status: "Open", openingBalance: 1000, openedAt: "2026-11-17T08:00:00Z" };
++const emptyList = { movements: [], movementsTruncated: false, requests: [], approvalThreshold: 500, selfApprovalEnabled: false };
++const reasons = [{ code: "ChangeCoins", name: "Bozuk para" }, { code: "Count", name: "Sayım" }, { code: "Other", name: "Diğer" }];
++const status = (over = {}) => ({ enabled: true, canKick: true, noSaleCount: 0, warningCount: 5, reasons, ...over });
++
++const reply = (code, body) => ({ ok: code >= 200 && code < 300, status: code, json: async () => body, headers: { get: () => null } });
++const $ = (selector) => document.querySelector(selector);
++const text = () => document.body.textContent;
++
++function install(world) {
++  const calls = [];
++  vi.stubGlobal("fetch", vi.fn(async (url, init) => {
++    const method = init?.method ?? "GET";
++    calls.push({ url, method, body: init?.body ? JSON.parse(init.body) : null });
++    if (url.endsWith("/auth/session/current")) return reply(200, { userId: ME, displayName: "Ayşe", terminalId: TERMINAL, capabilities: [] });
++    if (url.endsWith("/cash-sessions/active")) return reply(200, { ...session, cashierUserId: world.owner ?? ME });
++    if (url.endsWith("/cash-sessions/active/owner")) return reply(200, { displayName: "Başka Kasiyer" });
++    if (url.endsWith("/cash-movements")) return reply(200, emptyList);
++    if (url.endsWith("/cash-drawer") && method === "GET") {
++      if (world.statusDown) throw new TypeError("network");
++      return world.statusReply ?? reply(200, world.status ?? status());
++    }
++    if (url.endsWith("/cash-drawer/no-sale")) {
++      if (world.networkDown) throw new TypeError("network");
++      world.onPost?.();
++      return world.postReplies?.shift() ?? reply(200, { delivered: true, noSaleCount: 1, warning: null, replayed: false });
++    }
++    throw new Error(`unrouted ${method} ${url}`);
++  }));
++  return calls;
++}
++
++async function open(world = {}) {
++  const calls = install(world);
++  await loadApp(htmlPath, scriptPath);
++  await vi.waitFor(() => expect($("#cash-out")).not.toBeNull());
++  await vi.waitFor(() => expect(calls.some((c) => c.url.endsWith("/cash-drawer"))).toBe(true));
++  await new Promise((done) => setTimeout(done, 20));
++  return calls;
++}
++
++async function openForm(calls) {
++  await vi.waitFor(() => expect($("#no-sale")).not.toBeNull());
++  $("#no-sale").click();
++  await vi.waitFor(() => expect($("#no-sale-form")).not.toBeNull());
++  return calls;
++}
++
++const choose = (name) => [...document.querySelectorAll("[data-no-sale-reason]")].find((b) => b.textContent === name).click();
++const type = (selector, value) => {
++  const element = $(selector);
++  element.value = value;
++  element.dispatchEvent(new Event("input", { bubbles: true }));
++};
++const posts = (calls) => calls.filter((c) => c.method === "POST" && c.url.endsWith("/cash-drawer/no-sale"));
++
++describe("cash-session.js no sale", () => {
++  beforeEach(() => {
++    vi.resetModules();
++    window.history.replaceState({}, "", "/");
++  });
++  afterEach(() => {
++    vi.unstubAllGlobals();
++    document.body.innerHTML = "";
++  });
++
++  it("shows the button only when the drawer is on, the cashier may kick it and the session is their own", async () => {
++    await open();
++    expect($("#no-sale")?.textContent).toBe("Satış yok");
++    document.body.innerHTML = "";
++    vi.resetModules();
++
++    for (const world of [{ status: status({ enabled: false }) }, { status: status({ canKick: false }) }, { statusDown: true }, { statusReply: reply(500, {}) }, { owner: "99999999-9999-9999-9999-999999999999" }]) {
++      document.body.innerHTML = "";
++      vi.resetModules();
++      await open(world);
++      expect($("#no-sale"), JSON.stringify(Object.keys(world))).toBeNull();
++    }
++  });
++
++  it("reads the drawer status once from the session's own address", async () => {
++    const calls = await open();
++    expect(calls.filter((c) => c.url === `${BASE}/cash-drawer`)).toHaveLength(1);
++  });
++
++  it("offers the server's reasons and refuses to send without one", async () => {
++    const calls = await openForm(await open());
++
++    expect([...document.querySelectorAll("[data-no-sale-reason]")].map((b) => b.textContent)).toEqual(["Bozuk para", "Sayım", "Diğer"]);
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Bir gerekçe seçin."));
++    expect(posts(calls)).toHaveLength(0);
++  });
++
++  it("needs a note for Diğer and keeps it to 200 characters", async () => {
++    const calls = await openForm(await open());
++    choose("Diğer");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("“Diğer” için not yazın."));
++
++    expect($("#no-sale-note").getAttribute("maxlength")).toBe("200");
++    type("#no-sale-note", "x".repeat(201));
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Not en çok 200 karakter olabilir."));
++    expect(posts(calls)).toHaveLength(0);
++  });
++
++  it("opens the drawer with the chosen reason, then tells the cashier and counts the opening", async () => {
++    const calls = await openForm(await open());
++    choose("Bozuk para");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Çekmece açıldı."));
++
++    const [call] = posts(calls);
++    expect(call.url).toBe(`${BASE}/cash-drawer/no-sale`);
++    expect(call.body).toMatchObject({ ReasonCode: "ChangeCoins", Note: null });
++    expect(call.body.IdempotencyKey).toMatch(/^[0-9a-f-]{36}$/);
++    expect($("#no-sale-form")).toBeNull();
++    expect(text()).toContain("Bu vardiyada satışsız açma: 1");
++  });
++
++  it("sends the note and keeps one request in flight on a double tap", async () => {
++    let release;
++    const world = { postReplies: [new Promise((resolve) => { release = resolve; })] };
++    const calls = await openForm(await open(world));
++    choose("Diğer");
++    type("#no-sale-note", "  kasa tamiri ");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(posts(calls)).toHaveLength(1));
++    $("#no-sale-submit")?.click();
++
++    release(reply(200, { delivered: true, noSaleCount: 1, warning: null, replayed: false }));
++    await vi.waitFor(() => expect(text()).toContain("Çekmece açıldı."));
++    expect(posts(calls)).toHaveLength(1);
++    expect(posts(calls)[0].body).toMatchObject({ ReasonCode: "Other", Note: "kasa tamiri" });
++  });
++
++  it("says plainly when the drawer did not open, and shows the server's warning when there is one", async () => {
++    const world = { postReplies: [reply(200, { delivered: false, noSaleCount: 5, warning: "Bu vardiyada 5 kez satışsız çekmece açıldı.", replayed: false })] };
++    await openForm(await open(world));
++    choose("Sayım");
++    $("#no-sale-submit").click();
++
++    await vi.waitFor(() => expect(text()).toContain("Çekmece açılamadı; yazıcı bağlantısını kontrol edin."));
++    expect(text()).toContain("Bu vardiyada 5 kez satışsız çekmece açıldı.");
++    expect(text()).not.toContain("Çekmece açıldı.");
++  });
++
++  it.each([
++    [409, "CASH_DRAWER_DISABLED", "Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir."],
++    [400, "CASH_DRAWER_REASON_INVALID", "Bir gerekçe seçin; “Diğer” için not yazın (en çok 200 karakter)."],
++    [409, "CASH_DRAWER_SESSION_NOT_OPEN", "Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır."],
++    [403, "FORBIDDEN", "Bu işlem için yetkiniz yok."],
++    [500, "INTERNAL_ERROR", "Sunucu tarafında bir sorun oluştu. Lütfen tekrar deneyin."],
++  ])("answers %i %s with a fixed Turkish sentence, never the server's text", async (code, errorCode, sentence) => {
++    const world = { postReplies: [reply(code, { error: { code: errorCode, message: "RAW SERVER TEXT" } })] };
++    await openForm(await open(world));
++    choose("Sayım");
++    $("#no-sale-submit").click();
++
++    await vi.waitFor(() => expect(text()).toContain(sentence));
++    expect(text()).not.toContain("RAW SERVER TEXT");
++  });
++
++  it("hides the button once the server says the drawer is switched off", async () => {
++    const world = { postReplies: [reply(409, { error: { code: "CASH_DRAWER_DISABLED", message: "x" } })] };
++    await openForm(await open(world));
++    choose("Sayım");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Para çekmecesi bağlantısı kapalı"));
++
++    await vi.waitFor(() => expect($("#cash-in")).not.toBeNull());
++    expect($("#no-sale")).toBeNull();
++    expect($("#no-sale-form")).toBeNull();
++    expect(text()).toContain("Para çekmecesi bağlantısı kapalı");
++  });
++
++  it("says on the form that the note is required once Diğer is chosen", async () => {
++    await openForm(await open());
++    expect($("label[for=no-sale-note]").textContent).toBe("Not");
++
++    choose("Diğer");
++
++    expect($("label[for=no-sale-note]").textContent).toBe("Not (zorunlu)");
++  });
++
++  it("leaves the form when the session has closed, and the refresh button reads the drawer again", async () => {
++    const world = { postReplies: [reply(409, { error: { code: "CASH_DRAWER_SESSION_NOT_OPEN", message: "x" } })] };
++    const calls = await openForm(await open(world));
++    choose("Sayım");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect($("#no-sale-form")).toBeNull());
++    expect($("#no-sale")).toBeNull();
++
++    $("#refresh-movements").click();
++    await vi.waitFor(() => expect(calls.filter((c) => c.url === `${BASE}/cash-drawer`)).toHaveLength(2));
++    await vi.waitFor(() => expect($("#no-sale")).not.toBeNull());
++  });
++
++  it("gives every new opening of the form a new key, even after a lost connection", async () => {
++    const calls = await openForm(await open({ networkDown: true }));
++    choose("Sayım");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Bağlantı kesildi."));
++    $("#no-sale-cancel").click();
++    await vi.waitFor(() => expect($("#no-sale")).not.toBeNull());
++    $("#no-sale").click();
++    await vi.waitFor(() => expect($("#no-sale-form")).not.toBeNull());
++    choose("Sayım");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(posts(calls)).toHaveLength(2));
++
++    expect(posts(calls)[1].body.IdempotencyKey).not.toBe(posts(calls)[0].body.IdempotencyKey);
++  });
++
++  it("turns a line break in the note into a space, as the server refuses control characters", async () => {
++    const calls = await openForm(await open());
++    choose("Diğer");
++    type("#no-sale-note", "kasa\ntamiri\t yapildi ");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(posts(calls)).toHaveLength(1));
++
++    expect(posts(calls)[0].body.Note).toBe("kasa tamiri yapildi");
++  });
++
++  it("starts on the reasons and keeps the focus on the reason just chosen", async () => {
++    await openForm(await open());
++    const chips = [...document.querySelectorAll("[data-no-sale-reason]")];
++    expect(document.activeElement).toBe(chips[0]);
++
++    chips[2].click();
++    await vi.waitFor(() => expect(document.activeElement?.textContent).toBe("Diğer"));
++    expect(document.activeElement.getAttribute("aria-pressed")).toBe("true");
++  });
++
++  it("retries a lost connection with the same key and uses a new key for a changed request", async () => {
++    const world = { networkDown: true };
++    const calls = await openForm(await open(world));
++    choose("Sayım");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Bağlantı kesildi. Çekmece açılmış olabilir"));
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(posts(calls)).toHaveLength(2));
++    await vi.waitFor(() => expect($("#no-sale-submit").disabled).toBe(false));
++    choose("Bozuk para");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(posts(calls)).toHaveLength(3));
++
++    const keys = posts(calls).map((c) => c.body.IdempotencyKey);
++    expect(keys[1]).toBe(keys[0]);
++    expect(keys[2]).not.toBe(keys[0]);
++  });
++
++  it("changes no amount on the screen: the opening balance stays as it was", async () => {
++    await openForm(await open());
++    choose("Sayım");
++    $("#no-sale-submit").click();
++    await vi.waitFor(() => expect(text()).toContain("Çekmece açıldı."));
++
++    expect(text()).toContain("1.000,00");
++  });
++});

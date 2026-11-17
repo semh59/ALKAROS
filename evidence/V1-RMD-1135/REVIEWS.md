@@ -1,0 +1,2 @@
+- qa-frontend: KABUL (orta: vazgecince eski anahtar -> sifirlama + test + M17/M18; orta: textarea satir sonu -> bosluga cevrilir + test + M19; orta: odak -> ilk gerekce dugmesi ve secim sonrasi odak + test + M21/M22; dusuk: ayar kapali hatasinda ana ekrana donus + M20)
+- qa-ux-tasarim: KABUL (orta: Diger notu zorunlu etiketi + M23; dusuk: oturum kapali/yenile -> M24/M25; orta delivered=false yeniden doldurma ve bos gerekce listesi riske yazildi)

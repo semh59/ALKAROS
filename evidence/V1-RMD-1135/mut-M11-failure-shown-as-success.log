@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 4444ms
+     × says plainly when the drawer did not open, and shows the server's warning when there is one 1154ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > says plainly when the drawer did not open, and shows the server's warning when there is one
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Çekmece açılamadı; yazıcı bağlantısın…'
+
+- Expected
++ Received
+
+- Çekmece açılamadı; yazıcı bağlantısını kontrol edin.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık✓Çekmece açıldı. Bu vardiyada 5 kez satışsız çekmece açıldı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSatış yokBu vardiyada satışsız açma: 5Bu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:159:43
+    157|     $("#no-sale-submit").click();
+    158|
+    159|     await vi.waitFor(() => expect(text()).toContain("Çekmece açılamadı…
+       |                                           ^
+    160|     expect(text()).toContain("Bu vardiyada 5 kez satışsız çekmece açıl…
+    161|     expect(text()).not.toContain("Çekmece açıldı.");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:16:24
+   Duration  6.00s (transform 637ms, setup 31ms, import 50ms, tests 4.44s, environment 1.21s)
+

@@ -1,0 +1,61 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 15 failed) 16714ms
+     × shows the button only when the drawer is on, the cashier may kick it and the session is their own 1219ms
+     × reads the drawer status once from the session's own address 1098ms
+     × offers the server's reasons and refuses to send without one 1102ms
+     × needs a note for Diğer and keeps it to 200 characters 1103ms
+     × opens the drawer with the chosen reason, then tells the cashier and counts the opening 1108ms
+     × sends the note and keeps one request in flight on a double tap 1126ms
+     × says plainly when the drawer did not open, and shows the server's warning when there is one 1100ms
+     × answers 409 CASH_DRAWER_DISABLED with a fixed Turkish sentence, never the server's text 1117ms
+     × answers 400 CASH_DRAWER_REASON_INVALID with a fixed Turkish sentence, never the server's text 1102ms
+     × answers 409 CASH_DRAWER_SESSION_NOT_OPEN with a fixed Turkish sentence, never the server's text 1116ms
+     × answers 403 FORBIDDEN with a fixed Turkish sentence, never the server's text 1098ms
+     × answers 500 INTERNAL_ERROR with a fixed Turkish sentence, never the server's text 1098ms
+     × hides the button once the server says the drawer is switched off 1104ms
+     × retries a lost connection with the same key and uses a new key for a changed request 1110ms
+     × changes no amount on the screen: the opening balance stays as it was 1110ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 15 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > shows the button only when the drawer is on, the cashier may kick it and the session is their own
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > reads the drawer status once from the session's own address
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > offers the server's reasons and refuses to send without one
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > needs a note for Diğer and keeps it to 200 characters
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > opens the drawer with the chosen reason, then tells the cashier and counts the opening
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > sends the note and keeps one request in flight on a double tap
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > says plainly when the drawer did not open, and shows the server's warning when there is one
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 409 CASH_DRAWER_DISABLED with a fixed Turkish sentence, never the server's text
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 400 CASH_DRAWER_REASON_INVALID with a fixed Turkish sentence, never the server's text
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 409 CASH_DRAWER_SESSION_NOT_OPEN with a fixed Turkish sentence, never the server's text
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 403 FORBIDDEN with a fixed Turkish sentence, never the server's text
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 500 INTERNAL_ERROR with a fixed Turkish sentence, never the server's text
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > hides the button once the server says the drawer is switched off
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > retries a lost connection with the same key and uses a new key for a changed request
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > changes no amount on the screen: the opening balance stays as it was
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-no-sale.test.js:52:84
+     50|   await loadApp(htmlPath, scriptPath);
+     51|   await vi.waitFor(() => expect($("#cash-out")).not.toBeNull());
+     52|   await vi.waitFor(() => expect(calls.some((c) => c.url.endsWith("/cas…
+       |                                                                                    ^
+     53|   await new Promise((done) => setTimeout(done, 20));
+     54|   return calls;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/15]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  15 failed (15)
+   Start at  18:10:02
+   Duration  19.31s (transform 527ms, setup 45ms, import 90ms, tests 16.71s, environment 1.92s)
+

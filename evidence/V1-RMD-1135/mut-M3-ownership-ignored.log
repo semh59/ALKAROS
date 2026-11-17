@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 3448ms
+     × shows the button only when the drawer is on, the cashier may kick it and the session is their own 824ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > shows the button only when the drawer is on, the cashier may kick it and the session is their own
+AssertionError: ["owner"]: expected <button …(3)></button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  class="cs-btn cs-btn-secondary"
+  id="no-sale"
+  type="button"
+>
+  Satış yok
+</button>
+
+ ❯ cash-session-no-sale.test.js:92:65
+     90|       vi.resetModules();
+     91|       await open(world);
+     92|       expect($("#no-sale"), JSON.stringify(Object.keys(world))).toBeNu…
+       |                                                                 ^
+     93|     }
+     94|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:15:16
+   Duration  4.80s (transform 613ms, setup 24ms, import 53ms, tests 3.45s, environment 1.01s)
+

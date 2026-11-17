@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 3373ms
+     × sends the note and keeps one request in flight on a double tap 197ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > sends the note and keeps one request in flight on a double tap
+AssertionError: expected [ { …(3) }, { …(3) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ cash-session-no-sale.test.js:149:26
+    147|     release(reply(200, { delivered: true, noSaleCount: 1, warning: nul…
+    148|     await vi.waitFor(() => expect(text()).toContain("Çekmece açıldı.")…
+    149|     expect(posts(calls)).toHaveLength(1);
+       |                          ^
+    150|     expect(posts(calls)[0].body).toMatchObject({ ReasonCode: "Other", …
+    151|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:16:47
+   Duration  4.60s (transform 632ms, setup 22ms, import 52ms, tests 3.37s, environment 891ms)
+

@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 3432ms
+     × opens the drawer with the chosen reason, then tells the cashier and counts the opening 205ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > opens the drawer with the chosen reason, then tells the cashier and counts the opening
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Bu vardiyada satışsız açma: 1'
+
+- Expected
++ Received
+
+- Bu vardiyada satışsız açma: 1
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık✓Çekmece açıldı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSatış yokBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:134:20
+    132|     expect(call.body.IdempotencyKey).toMatch(/^[0-9a-f-]{36}$/);
+    133|     expect($("#no-sale-form")).toBeNull();
+    134|     expect(text()).toContain("Bu vardiyada satışsız açma: 1");
+       |                    ^
+    135|   });
+    136|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:16:39
+   Duration  4.79s (transform 644ms, setup 25ms, import 48ms, tests 3.43s, environment 1.01s)
+

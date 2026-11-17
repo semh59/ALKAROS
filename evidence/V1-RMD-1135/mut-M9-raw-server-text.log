@@ -1,0 +1,163 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 6 failed) 9203ms
+     × answers 409 CASH_DRAWER_DISABLED with a fixed Turkish sentence, never the server's text 1173ms
+     × answers 400 CASH_DRAWER_REASON_INVALID with a fixed Turkish sentence, never the server's text 1152ms
+     × answers 409 CASH_DRAWER_SESSION_NOT_OPEN with a fixed Turkish sentence, never the server's text 1139ms
+     × answers 403 FORBIDDEN with a fixed Turkish sentence, never the server's text 1161ms
+     × answers 500 INTERNAL_ERROR with a fixed Turkish sentence, never the server's text 1165ms
+     × hides the button once the server says the drawer is switched off 1142ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 409 CASH_DRAWER_DISABLED with a fixed Turkish sentence, never the server's text
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to contain 'Para çekmecesi bağlantısı kapalı; yön…'
+
+- Expected
++ Received
+
+- Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir.
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yok!HataRAW SERVER TEXTPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:176:43
+    174|     $("#no-sale-submit").click();
+    175|
+    176|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    177|     expect(text()).not.toContain("RAW SERVER TEXT");
+    178|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 400 CASH_DRAWER_REASON_INVALID with a fixed Turkish sentence, never the server's text
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to contain 'Bir gerekçe seçin; “Diğer” için not y…'
+
+- Expected
++ Received
+
+- Bir gerekçe seçin; “Diğer” için not yazın (en çok 200 karakter).
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yok!HataRAW SERVER TEXTPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeBozuk paraSayımDiğerSeçilen gerekçe: SayımNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:176:43
+    174|     $("#no-sale-submit").click();
+    175|
+    176|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    177|     expect(text()).not.toContain("RAW SERVER TEXT");
+    178|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 409 CASH_DRAWER_SESSION_NOT_OPEN with a fixed Turkish sentence, never the server's text
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to contain 'Kasa oturumu kapanmış; satışsız açma …'
+
+- Expected
++ Received
+
+- Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır.
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yok!HataRAW SERVER TEXTPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeBozuk paraSayımDiğerSeçilen gerekçe: SayımNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:176:43
+    174|     $("#no-sale-submit").click();
+    175|
+    176|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    177|     expect(text()).not.toContain("RAW SERVER TEXT");
+    178|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 403 FORBIDDEN with a fixed Turkish sentence, never the server's text
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to contain 'Bu işlem için yetkiniz yok.'
+
+- Expected
++ Received
+
+- Bu işlem için yetkiniz yok.
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yok!HataRAW SERVER TEXTPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeBozuk paraSayımDiğerSeçilen gerekçe: SayımNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:176:43
+    174|     $("#no-sale-submit").click();
+    175|
+    176|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    177|     expect(text()).not.toContain("RAW SERVER TEXT");
+    178|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > answers 500 INTERNAL_ERROR with a fixed Turkish sentence, never the server's text
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to contain 'Sunucu tarafında bir sorun oluştu. Lü…'
+
+- Expected
++ Received
+
+- Sunucu tarafında bir sorun oluştu. Lütfen tekrar deneyin.
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yok!HataRAW SERVER TEXTPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeBozuk paraSayımDiğerSeçilen gerekçe: SayımNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:176:43
+    174|     $("#no-sale-submit").click();
+    175|
+    176|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    177|     expect(text()).not.toContain("RAW SERVER TEXT");
+    178|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > hides the button once the server says the drawer is switched off
+AssertionError: expected '\n  ← Kasaya dön\n  Para ÇekmecesiSat…' to contain 'Para çekmecesi bağlantısı kapalı'
+
+- Expected
++ Received
+
+- Para çekmecesi bağlantısı kapalı
++
++   ← Kasaya dön
++   Para ÇekmecesiSatış yok!HataxPara işlemi olmadan çekmece açılır; gerekçe zorunludur ve kayda geçer.GerekçeNotVazgeçÇekmeceyi aç
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:185:43
+    183|     choose("Sayım");
+    184|     $("#no-sale-submit").click();
+    185|     await vi.waitFor(() => expect(text()).toContain("Para çekmecesi ba…
+       |                                           ^
+    186|
+    187|     $("#no-sale-cancel").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 9 passed (15)
+   Start at  18:16:03
+   Duration  10.67s (transform 654ms, setup 32ms, import 51ms, tests 9.20s, environment 1.12s)
+

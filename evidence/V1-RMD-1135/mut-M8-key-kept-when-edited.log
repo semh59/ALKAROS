@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 3445ms
+     × retries a lost connection with the same key and uses a new key for a changed request 277ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > retries a lost connection with the same key and uses a new key for a changed request
+AssertionError: expected 'f84f2913-edb7-489b-8f59-3929a3815205' not to be 'f84f2913-edb7-489b-8f59-3929a3815205' // Object.is equality
+ ❯ cash-session-no-sale.test.js:207:25
+    205|     const keys = posts(calls).map((c) => c.body.IdempotencyKey);
+    206|     expect(keys[1]).toBe(keys[0]);
+    207|     expect(keys[2]).not.toBe(keys[0]);
+       |                         ^
+    208|   });
+    209|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:15:56
+   Duration  4.76s (transform 613ms, setup 23ms, import 53ms, tests 3.45s, environment 978ms)
+

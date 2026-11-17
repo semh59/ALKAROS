@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (20 tests | 1 failed) 4336ms
+     × says on the form that the note is required once Diğer is chosen 138ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > says on the form that the note is required once Diğer is chosen
+AssertionError: expected 'Not' to be 'Not (zorunlu)' // Object.is equality
+
+Expected: "Not (zorunlu)"
+Received: "Not"
+
+ ❯ cash-session-no-sale.test.js:199:54
+    197|     choose("Diğer");
+    198|
+    199|     expect($("label[for=no-sale-note]").textContent).toBe("Not (zorunl…
+       |                                                      ^
+    200|   });
+    201|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 19 passed (20)
+   Start at  18:26:32
+   Duration  5.61s (transform 818ms, setup 24ms, import 50ms, tests 4.34s, environment 949ms)
+

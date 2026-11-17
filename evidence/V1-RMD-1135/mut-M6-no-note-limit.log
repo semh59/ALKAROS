@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 4519ms
+     × needs a note for Diğer and keeps it to 200 characters 1163ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > needs a note for Diğer and keeps it to 200 characters
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Not en çok 200 karakter olabilir.'
+
+- Expected
++ Received
+
+- Not en çok 200 karakter olabilir.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık✓Çekmece açıldı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSatış yokBu vardiyada satışsız açma: 1Bu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:119:43
+    117|     type("#no-sale-note", "x".repeat(201));
+    118|     $("#no-sale-submit").click();
+    119|     await vi.waitFor(() => expect(text()).toContain("Not en çok 200 ka…
+       |                                           ^
+    120|     expect(posts(calls)).toHaveLength(0);
+    121|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:15:40
+   Duration  5.96s (transform 652ms, setup 31ms, import 51ms, tests 4.52s, environment 1.10s)
+

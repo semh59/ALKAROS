@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (18 tests | 1 failed) 3873ms
+     × turns a line break in the note into a space, as the server refuses control characters 134ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > turns a line break in the note into a space, as the server refuses control characters
+AssertionError: expected 'kasa\ntamiri\t yapildi' to be 'kasa tamiri yapildi' // Object.is equality
+
+- Expected
++ Received
+
+- kasa tamiri yapildi
++ kasa
++ tamiri	 yapildi
+
+ ❯ cash-session-no-sale.test.js:216:39
+    214|     await vi.waitFor(() => expect(posts(calls)).toHaveLength(1));
+    215|
+    216|     expect(posts(calls)[0].body.Note).toBe("kasa tamiri yapildi");
+       |                                       ^
+    217|   });
+    218|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 passed (18)
+   Start at  18:21:48
+   Duration  5.12s (transform 705ms, setup 23ms, import 50ms, tests 3.87s, environment 918ms)
+

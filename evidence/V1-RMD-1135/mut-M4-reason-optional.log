@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 4509ms
+     × offers the server's reasons and refuses to send without one 1148ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > offers the server's reasons and refuses to send without one
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Bir gerekçe seçin.'
+
+- Expected
++ Received
+
+- Bir gerekçe seçin.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık✓Çekmece açıldı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSatış yokBu vardiyada satışsız açma: 1Bu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:106:43
+    104|     expect([...document.querySelectorAll("[data-no-sale-reason]")].map…
+    105|     $("#no-sale-submit").click();
+    106|     await vi.waitFor(() => expect(text()).toContain("Bir gerekçe seçin…
+       |                                           ^
+    107|     expect(posts(calls)).toHaveLength(0);
+    108|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:15:23
+   Duration  5.99s (transform 677ms, setup 28ms, import 50ms, tests 4.51s, environment 1.12s)
+

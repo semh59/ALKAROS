@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 3441ms
+     × sends the note and keeps one request in flight on a double tap 200ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > sends the note and keeps one request in flight on a double tap
+AssertionError: expected { ReasonCode: 'Other', …(2) } to match object { ReasonCode: 'Other', …(1) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "Note": "kasa tamiri",
++   "Note": "  kasa tamiri ",
+    "ReasonCode": "Other",
+  }
+
+ ❯ cash-session-no-sale.test.js:150:34
+    148|     await vi.waitFor(() => expect(text()).toContain("Çekmece açıldı.")…
+    149|     expect(posts(calls)).toHaveLength(1);
+    150|     expect(posts(calls)[0].body).toMatchObject({ ReasonCode: "Other", …
+       |                                  ^
+    151|   });
+    152|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:17:03
+   Duration  4.82s (transform 642ms, setup 25ms, import 47ms, tests 3.44s, environment 1.04s)
+

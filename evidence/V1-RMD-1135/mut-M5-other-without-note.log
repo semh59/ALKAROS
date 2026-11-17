@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-no-sale.test.js (15 tests | 1 failed) 4456ms
+     × needs a note for Diğer and keeps it to 200 characters 1160ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-no-sale.test.js > cash-session.js no sale > needs a note for Diğer and keeps it to 200 characters
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain '“Diğer” için not yazın.'
+
+- Expected
++ Received
+
+- “Diğer” için not yazın.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık✓Çekmece açıldı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışSatış yokBu vardiyada satışsız açma: 1Bu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-no-sale.test.js:114:43
+    112|     choose("Diğer");
+    113|     $("#no-sale-submit").click();
+    114|     await vi.waitFor(() => expect(text()).toContain("“Diğer” için not …
+       |                                           ^
+    115|
+    116|     expect($("#no-sale-note").getAttribute("maxlength")).toBe("200");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  18:15:32
+   Duration  5.79s (transform 646ms, setup 23ms, import 53ms, tests 4.46s, environment 994ms)
+
