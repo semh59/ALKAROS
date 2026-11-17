@@ -1,0 +1,2 @@
+- qa-frontend: BULGU orta (yeni tahsilatta eski bildirim kalmasi) -> duzeltildi + test; sonra KABUL (dusuk test bulgulari giderildi: metin/role dogrulamasi eklendi)
+- qa-ux-tasarim: KABUL (metin, yer); orta gorsel agirlik -> 16 px kalin ink; orta eski bildirim -> duzeltildi; "Odeme alindi" ekleme onerisi plan metni sabit oldugu icin uygulanmadi (odendi ekraninda onay zaten var)

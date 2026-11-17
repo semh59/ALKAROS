@@ -147,6 +147,7 @@
     reasonChoices: {},
     tenderedDraft: '',
     changeDue: null,
+    drawerNotice: false,
     receiptError: null,
     receiptBusy: false,
     receiptConfirm: false,
@@ -1159,6 +1160,7 @@
     state.error = null;
     lastShownError = null;
     state.changeDue = null;
+    state.drawerNotice = false;
     // V1-RMD-314: reuse the in-flight key across a retry of this exact attempt - see the field's own
     // doc comment. A brand-new key is minted only when none is pending.
     state.tenderIdempotencyKey = tenderKeyFor([
@@ -1183,7 +1185,10 @@
           if (!result.ok) return result;
           return {
             ok: true, status: result.status,
-            body: { outcome: 'Approved', approvedAmount: result.body.approvedAmount, changeAmount: result.body.changeAmount },
+            body: {
+              outcome: 'Approved', approvedAmount: result.body.approvedAmount, changeAmount: result.body.changeAmount,
+              drawerOpened: result.body.drawerOpened,
+            },
           };
         })
       : api(tendersBase(), {
@@ -1227,6 +1232,7 @@
       }
       state.lastResult = result.body;
       state.changeDue = hasTendered && result.body && Number(result.body.changeAmount) > 0 ? Number(result.body.changeAmount) : null;
+      state.drawerNotice = !!result.body && result.body.drawerOpened === false;
       state.tenderedDraft = '';
       state.noteDraft = '';
       state.eftConfirmed = false;
@@ -2182,6 +2188,11 @@
     );
   }
 
+  // Not an error: the money is taken and the bill is settled; only the drawer has to be opened by hand.
+  function renderDrawerNotice() {
+    return state.drawerNotice ? '<p class="sp-hint sp-drawer-notice" id="drawer-notice" role="status">Çekmece açılamadı, elle açın.</p>' : '';
+  }
+
   var QUICK_CASH_NOTES = [5, 10, 20, 50, 100, 200];
 
   function renderQuickCash() {
@@ -2443,6 +2454,7 @@
       renderCashStateNotice() +
       renderStaleNotice() +
       renderChangeDue() +
+      renderDrawerNotice() +
       '<div class="sp-summary-row is-total"><span>Hesap toplamı</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
       '<div class="sp-summary-row is-paid"><span>Ödenen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
       '<div class="sp-summary-row is-remaining' + (remaining <= 0.004 ? ' is-zero' : '') + '">' +
@@ -2794,6 +2806,7 @@
       '<p class="sp-subtitle">' + heading.text + '</p>' +
       renderBillContext() +
       renderChangeDue() +
+      renderDrawerNotice() +
       (state.receiptError
         ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'
         : '') +

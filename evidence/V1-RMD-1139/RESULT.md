@@ -1,0 +1,5 @@
+# V1-RMD-1139 sonuc
+Dogrulama: bulgu 2 gercekti (cekmece acilmazsa odeme ekraninda hicbir uyari yoktu).
+Duzeltme: split-payment.js - nakit tahsilat yanitinda drawerOpened === false ise "Cekmece acilamadi, elle acin." (sp-hint, role=status, hata kutusu degil) para ustu satirinin altinda; hem kismi odeme (hazir) hem Hesap Odendi ekraninda gorunur. true, null, alan yok: hicbir sey. Satir yalniz basarili tahsilatin sonucuyla belirlenir; kart/havale/cari yolu alani gecirmez.
+Kanit: red.log (2 kirmizi), green-new.log 5/5, green-focused.log 48/48; tum StaticApps takimi: 66 dosya/744 test, split-payment-discount-pending.test.js yalniz paralel kosuda zaman asimiyla dalgali (degisiklikten bagimsiz: degisiklik olmadan da kirildi; tek basina 31/31); mutations.txt M1-M9 killed (cp+cmp); client-build-gate: istemci (PosTerminal) degismedi.
+Inceleme sonrasi: yeni tahsilat baslarken eski bildirim silinir (basarisiz tahsilatta hata kutusunun yaninda eski cekmece satiri kalmasin, iki incelemeci de istedi); satir 16 px/kalin/ink (sp-drawer-notice) ile gozden kacmaz, hata kutusu degil. M9 ve 6. test eklendi; M1-M9 killed.

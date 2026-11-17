@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > says calmly that the drawer did not open, on the paid screen, without an error box
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938899352-0.1200020544964796:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938899352-0.1200020544964796:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938899352-0.1200020544964796:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-drawer-notice.test.js (6 tests | 1 failed) 1423ms
+     × says calmly that the drawer did not open, on the paid screen, without an error box 292ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > says calmly that the drawer did not open, on the paid screen, without an error box
+AssertionError: expected null not to be null
+ ❯ split-payment-drawer-notice.test.js:66:26
+     64|
+     65|     await vi.waitFor(() => expect(app().textContent).toContain("Hesap …
+     66|     expect(notice()).not.toBeNull();
+       |                          ^
+     67|     expect(notice().textContent).toBe(NOTICE);
+     68|     expect(notice().getAttribute("role")).toBe("status");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  21:08:17
+   Duration  2.85s (transform 417ms, setup 23ms, import 55ms, tests 1.42s, environment 1.08s)
+

@@ -1,0 +1,100 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > says calmly that the drawer did not open, on the paid screen, without an error box
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938922280-0.6871569806312003:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938922280-0.6871569806312003:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938922280-0.6871569806312003:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > keeps the notice after a part payment and drops it when the next payment opens the drawer
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938923150-0.7321495774437303:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938923150-0.7321495774437303:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938923150-0.7321495774437303:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > drops the old notice when the next payment fails, so it never sits beside an error box
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938923341-0.7607925120876297:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938923341-0.7607925120876297:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938923341-0.7607925120876297:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-drawer-notice.test.js (6 tests | 3 failed) 1289ms
+     × says calmly that the drawer did not open, on the paid screen, without an error box 305ms
+     × keeps the notice after a part payment and drops it when the next payment opens the drawer 191ms
+     × drops the old notice when the next payment fails, so it never sits beside an error box 211ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > says calmly that the drawer did not open, on the paid screen, without an error box
+AssertionError: expected 'alert' to be 'status' // Object.is equality
+
+Expected: "status"
+Received: "alert"
+
+ ❯ split-payment-drawer-notice.test.js:68:43
+     66|     expect(notice()).not.toBeNull();
+     67|     expect(notice().textContent).toBe(NOTICE);
+     68|     expect(notice().getAttribute("role")).toBe("status");
+       |                                           ^
+     69|     expect(app().querySelector('[role="alert"]')).toBeNull();
+     70|     expect(app().querySelector(".sp-alert-danger")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > keeps the notice after a part payment and drops it when the next payment opens the drawer
+AssertionError: expected 'alert' to be 'status' // Object.is equality
+
+Expected: "status"
+Received: "alert"
+
+ ❯ split-payment-drawer-notice.test.js:96:43
+     94|     await vi.waitFor(() => expect(notice()).not.toBeNull());
+     95|     expect(notice().textContent).toBe(NOTICE);
+     96|     expect(notice().getAttribute("role")).toBe("status");
+       |                                           ^
+     97|     expect(app().textContent).not.toContain("Hesap Ödendi");
+     98|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > drops the old notice when the next payment fails, so it never sits beside an error box
+AssertionError: expected <div …(3)></div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="sp-alert sp-alert-danger"
+  id="drawer-notice"
+  role="alert"
+>
+  Çekmece açılamadı, elle açın.
+</div>
+
+ ❯ split-payment-drawer-notice.test.js:117:22
+    115|
+    116|     await vi.waitFor(() => expect(app().querySelector('.sp-alert-dange…
+    117|     expect(notice()).toBeNull();
+       |                      ^
+    118|   });
+    119| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 3 passed (6)
+   Start at  21:08:40
+   Duration  2.61s (transform 390ms, setup 25ms, import 52ms, tests 1.29s, environment 973ms)
+

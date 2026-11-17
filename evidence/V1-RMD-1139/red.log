@@ -1,0 +1,57 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > says calmly that the drawer did not open, on the paid screen, without an error box
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938531401-0.798307322636477:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938531401-0.798307322636477:544:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938531401-0.798307322636477:657:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > keeps the notice after a part payment and drops it when the next payment opens the drawer
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938532302-0.09648484803524271:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938532302-0.09648484803524271:544:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794938532302-0.09648484803524271:657:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-drawer-notice.test.js (5 tests | 2 failed) 2059ms
+     × says calmly that the drawer did not open, on the paid screen, without an error box 337ms
+     × keeps the notice after a part payment and drops it when the next payment opens the drawer 1141ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > says calmly that the drawer did not open, on the paid screen, without an error box
+AssertionError: expected null not to be null
+ ❯ split-payment-drawer-notice.test.js:64:26
+     62|
+     63|     await vi.waitFor(() => expect(app().textContent).toContain("Hesap …
+     64|     expect(notice()).not.toBeNull();
+       |                          ^
+     65|     expect(notice().textContent).toBe(NOTICE);
+     66|     expect(notice().getAttribute("role")).toBe("status");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-drawer-notice.test.js > split-payment.js drawer-not-opened notice > keeps the notice after a part payment and drops it when the next payment opens the drawer
+AssertionError: expected null not to be null
+ ❯ split-payment-drawer-notice.test.js:92:49
+     90|
+     91|     await payCash(50);
+     92|     await vi.waitFor(() => expect(notice()).not.toBeNull());
+       |                                                 ^
+     93|     expect(app().textContent).not.toContain("Hesap Ödendi");
+     94|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  21:02:08
+   Duration  5.07s (transform 359ms, setup 47ms, import 66ms, tests 2.06s, environment 2.37s)
+

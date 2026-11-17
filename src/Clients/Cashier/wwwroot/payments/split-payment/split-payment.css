@@ -157,6 +157,7 @@ a.sp-btn { display: inline-flex; align-items: center; justify-content: center; t
   border-style: dashed; cursor: not-allowed;
 }
 .sp-hint { margin: 8px 0 0; font-size: 14px; color: var(--color-text-muted); }
+.sp-drawer-notice { font-size: 16px; font-weight: 600; color: var(--color-ink); }
 .sp-notice-actions { margin-top: 10px; }
 
 .sp-line {
