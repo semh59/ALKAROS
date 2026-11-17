@@ -1,7 +1,7 @@
 # V1-RMD-1119 - Hesap Ödeme sayfası Son satışlardan açılınca geri bağlantısı Son satışlara döner
 
 - Task ID: V1-RMD-1119
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
