@@ -1,0 +1,66 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comp.test.js > split-payment.js comp (ikram) > lets a manager approve a waiting comp at the till with the comp request's own key
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919647277-0.26169564687635083:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919647277-0.26169564687635083:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919647277-0.26169564687635083:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comp.test.js (12 tests | 1 failed) 3823ms
+     × lets a manager approve a waiting comp at the till with the comp request's own key 1223ms
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919649318-0.01576119528365838:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919649318-0.01576119528365838:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919649318-0.01576119528365838:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (28 tests | 1 failed) 7624ms
+     × sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere 1249ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comp.test.js > split-payment.js comp (ikram) > lets a manager approve a waiting comp at the till with the comp request's own key
+AssertionError: expected 'İkramİkramİkram uygulandı ve kaydedil…' to contain 'Mehmet Yılmaz onayıyla uygulandı.'
+
+Expected: "Mehmet Yılmaz onayıyla uygulandı."
+Received: "İkramİkramİkram uygulandı ve kaydedildi.Müşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram et"
+
+ ❯ split-payment-comp.test.js:253:43
+    251|     document.getElementById("comp-approve-here").click();
+    252|
+    253|     await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz ona…
+       |                                           ^
+    254|     const approval = fetchMock.mock.calls.filter(([url]) => url.endsWi…
+    255|     expect(approval.url).toContain("/approvals/g1/approve");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Mehmet Yılmaz onayıyla uygulandı.'
+
+Expected: "Mehmet Yılmaz onayıyla uygulandı."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim uygulandı ve kaydedildi.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)İndirim uygulaGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:418:43
+    416|     fillApprover("mudur1", "Mudur-Sifre-1");
+    417|     approveFields().button.click();
+    418|     await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz ona…
+       |                                           ^
+    419|
+    420|     const [approval] = approveCalls(fetchMock);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 42 passed (44)
+   Start at  15:47:23
+   Duration  9.16s (transform 2.76s, setup 61ms, import 231ms, tests 11.45s, environment 3.44s)
+

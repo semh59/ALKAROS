@@ -1,0 +1,395 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index f01b8d6eb..6f8782a3c 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -77,6 +77,18 @@
+     discountPending: false,
+     discountError: null,
+     discountNotice: null,
++    // A manager approving at the till: only the name lives in state; the password is read from its field, sent and
++    // dropped, never stored.
++    discountGrantId: null,
++    discountApproverName: '',
++    discountApproveBusy: false,
++    discountApproveError: null,
++    discountApprovedBy: null,
++    compGrantId: null,
++    compApproverName: '',
++    compApproveBusy: false,
++    compApproveError: null,
++    compApprovedBy: null,
+     tipAmountDraft: '',
+     tipNoteDraft: '',
+     tipBusy: false,
+@@ -169,6 +181,12 @@
+   // whose sentence carries the amounts or the credit reason of this very request (SERVER_TEXT_CODES).
+   var ERROR_TEXTS = {
+     ACCOUNT_REFUND_UNSUPPORTED: 'Müşteri hesabına yazılan ödeme buradan iade edilemez.',
++    ALREADY_RESOLVED: 'Bu talep zaten yanıtlanmış.',
++    APPROVER_LACKS_PERMISSION: 'Bu yönetici bu işlemi onaylama yetkisine sahip değil.',
++    MANAGER_CREDENTIAL_INVALID: 'Yönetici adı veya şifre hatalı.',
++    MANAGER_LOCKED: 'Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın.',
++    SELF_APPROVAL_NOT_ALLOWED: 'Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir.',
++    TOO_MANY_ATTEMPTS: 'Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın.',
+     ACTIVE_CASH_SESSION_EXISTS: 'Bu terminalde zaten açık bir kasa oturumu var.',
+     ALLOWANCE_BELOW_USED: 'İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.',
+     BILL_BUSY: 'Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin.',
+@@ -377,6 +395,67 @@
+       state[kind + 'Busy'] = false;
+     });
+   }
++  function renderApproveHere(kind) {
++    if (!state[kind + 'Pending'] || !state[kind + 'GrantId']) return '';
++    var busy = state[kind + 'ApproveBusy'];
++    var disabled = busy ? ' disabled' : '';
++    return (
++      '<div class="sp-field"><span class="sp-field-label">Yönetici burada onaylasın</span>' +
++      (state[kind + 'ApproveError'] ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state[kind + 'ApproveError']) + '</div>' : '') +
++      '<input class="sp-input" type="text" id="' + kind + '-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' +
++      disabled + ' value="' + escapeHtml(state[kind + 'ApproverName']) + '">' +
++      '<input class="sp-input" type="password" id="' + kind + '-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' + disabled + '>' +
++      '<button class="sp-btn sp-btn-secondary" id="' + kind + '-approve-here" type="button"' + disabled + '>' +
++      (busy ? 'Onaylanıyor…' : 'Yönetici onayı ver') + '</button>' +
++      '</div>'
++    );
++  }
++  function appliedNotice(kind, label) {
++    var by = state[kind + 'ApprovedBy'];
++    state[kind + 'ApprovedBy'] = null;
++    return by ? label + ', ' + by + ' onayıyla uygulandı.' : label + ' uygulandı ve kaydedildi.';
++  }
++  // The manager's server-side check decides everything; a decided answer re-sends the waiting request, which applies it.
++  function approveHere(kind) {
++    var nameInput = document.getElementById(kind + '-approver-name');
++    var secretInput = document.getElementById(kind + '-approver-secret');
++    var name = nameInput.value.trim();
++    var secret = secretInput.value;
++    state[kind + 'ApproverName'] = name;
++    if (!name || !secret) {
++      state[kind + 'ApproveError'] = 'Yönetici adı ve şifresini girin.';
++      render();
++      return;
++    }
++    state[kind + 'ApproveBusy'] = true;
++    state[kind + 'ApproveError'] = null;
++    render();
++    var key = kind === 'discount' ? state.discountIdempotencyKey : state.compIdempotencyKey;
++    api(billBase() + '/approvals/' + state[kind + 'GrantId'] + '/approve', {
++      method: 'POST',
++      body: { IdempotencyKey: key, Username: name, Password: secret },
++    }).then(function (result) {
++      state[kind + 'ApproveBusy'] = false;
++      var code = result.body && result.body.error && result.body.error.code;
++      // The form was edited while the answer was on its way: that request is gone, so the old one is not re-sent.
++      if (!state[kind + 'Pending']) {
++        render();
++        return;
++      }
++      if (result.ok || code === 'ALREADY_RESOLVED') {
++        state[kind + 'ApprovedBy'] = result.ok ? result.body.approverName : null;
++        render();
++        probeApproval(kind);
++        return;
++      }
++      state[kind + 'ApproveError'] = describeHttpFailure(result.status, result.body);
++      render();
++    }).catch(function () {
++      state[kind + 'ApproveBusy'] = false;
++      state[kind + 'ApproveError'] = 'Bağlantı kurulamadı. Tekrar deneyin.';
++      render();
++    });
++  }
+   function ensureApprovalPoll() {
+     var waiting = state.discountPending || state.compPending;
+     if (waiting && !approvalPollTimer) {
+@@ -812,6 +891,7 @@
+       return;
+     }
+     if (waiting) {
++      state.discountGrantId = result.body.grantId;
+       state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
+       render();
+       return;
+@@ -820,7 +900,7 @@
+       state.discountValueDraft = '';
+       state.discountNoteDraft = '';
+     }
+-    state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
++    state.discountNotice = appliedNotice('discount', 'İndirim');
+     // A discount lowers remainingAmount(): refresh the tender summary too and re-derive amountDraft from the new
+     // ceiling the same way loadEverything() does on initial load.
+     return refreshAdjustments().then(refreshSummary).then(function () {
+@@ -881,13 +961,14 @@
+       return;
+     }
+     if (waiting) {
++      state.compGrantId = result.body.grantId;
+       state.compNotice = 'İkram talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
+       render();
+       return;
+     }
+     state.compAmountDraft = '';
+     state.compNoteDraft = '';
+-    state.compNotice = 'İkram uygulandı ve kaydedildi.';
++    state.compNotice = appliedNotice('comp', 'İkram');
+     return refreshAdjustments().then(refreshSummary).then(function () {
+       state.amountDraft = remainingAmount().toFixed(2);
+       render();
+@@ -1442,6 +1523,7 @@
+       escapeHtml(state.discountNoteDraft) + '">' +
+       '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
+       (state.discountBusy ? 'Gönderiliyor…' : (state.discountPending ? 'Onay durumunu kontrol et' : (state.discountConfirm ? 'Evet, indirimi uygula' : 'İndirim uygula'))) + '</button>' +
++      renderApproveHere('discount') +
+       '</div>'
+     );
+   }
+@@ -1471,6 +1553,7 @@
+       escapeHtml(state.compNoteDraft) + '">' +
+       '<button class="sp-btn sp-btn-secondary" id="submit-comp" type="button"' + disabled + '>' +
+       (state.compBusy ? 'Gönderiliyor…' : (state.compPending ? 'Onay durumunu kontrol et' : (state.compConfirm ? 'Evet, ikram et' : 'İkram et'))) + '</button>' +
++      renderApproveHere('comp') +
+       '</div>'
+     );
+   }
+@@ -2558,6 +2641,14 @@
+     if (compAllButton) compAllButton.addEventListener('click', function () { state.compAmountDraft = remainingAmount().toFixed(2); editedComp(); render(); });
+     var submitCompButton = document.getElementById('submit-comp');
+     if (submitCompButton) submitCompButton.addEventListener('click', submitComp);
++    ['discount', 'comp'].forEach(function (kind) {
++      var approveButton = document.getElementById(kind + '-approve-here');
++      if (approveButton) approveButton.addEventListener('click', function () { approveHere(kind); });
++      var approverName = document.getElementById(kind + '-approver-name');
++      if (approverName) approverName.addEventListener('input', function () { state[kind + 'ApproverName'] = this.value; });
++      var approverSecret = document.getElementById(kind + '-approver-secret');
++      if (approverSecret) approverSecret.addEventListener('keydown', function (event) { if (event.key === 'Enter') approveHere(kind); });
++    });
+     var submitDiscountButton = document.getElementById('submit-discount');
+     if (submitDiscountButton) submitDiscountButton.addEventListener('click', submitDiscount);
+     document.querySelectorAll('[data-tip-percent]').forEach(function (button) {
+diff --git a/tests/Clients/StaticApps/split-payment-comp.test.js b/tests/Clients/StaticApps/split-payment-comp.test.js
+index d70323842..79bb04b03 100644
+--- a/tests/Clients/StaticApps/split-payment-comp.test.js
++++ b/tests/Clients/StaticApps/split-payment-comp.test.js
+@@ -17,14 +17,20 @@ const applied = { status: "Applied", billId: BILL_ID, adjustmentId: "a1", summar
+ const pending = { status: "Pending", billId: BILL_ID, adjustmentId: null, summary: null, grantId: "g1" };
+ 
+ // Each element answers one POST .../comp in order.
+-async function open(compAnswers) {
++async function open(compAnswers, approveAnswers = []) {
+   const answers = [...compAnswers];
++  const approvals = [...approveAnswers];
+   const routeSet = [
+     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
+     { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
+     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+     { test: (url) => url.endsWith("/refund-requests"), body: [] },
++    {
++      test: (url, init) => url.endsWith("/approve") && init?.method === "POST",
++      get status() { return approvals[0].status; },
++      get body() { return approvals.shift().body; },
++    },
+     {
+       test: (url, init) => url.endsWith("/comp") && init?.method === "POST",
+       get status() { return answers[0].status; },
+@@ -229,4 +235,24 @@ describe("split-payment.js comp (ikram)", () => {
+     submit().click();
+     await vi.waitFor(() => expect(compCalls(fetchMock)).toHaveLength(1));
+   });
++
++  it("lets a manager approve a waiting comp at the till with the comp request's own key", async () => {
++    const fetchMock = await open(
++      [{ status: 202, body: pending }, { status: 200, body: applied }],
++      [{ status: 200, body: { grantId: "g1", approverUserId: "m1", approverName: "Mehmet Yılmaz" } }]);
++    type("comp-amount", "30");
++    submit().click();
++    await vi.waitFor(() => expect(document.getElementById("comp-approve-here")).not.toBeNull());
++
++    const name = document.getElementById("comp-approver-name");
++    name.value = "mudur1";
++    name.dispatchEvent(new Event("input", { bubbles: true }));
++    document.getElementById("comp-approver-secret").value = "Mudur-Sifre-1";
++    document.getElementById("comp-approve-here").click();
++
++    await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz onayıyla uygulandı."));
++    const approval = fetchMock.mock.calls.filter(([url]) => url.endsWith("/approve")).map(([url, init]) => ({ url, ...JSON.parse(init.body) }))[0];
++    expect(approval.url).toContain("/approvals/g1/approve");
++    expect(approval.IdempotencyKey).toBe(compCalls(fetchMock)[0].IdempotencyKey);
++  });
+ });
+diff --git a/tests/Clients/StaticApps/split-payment-discount-pending.test.js b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+index 654e92dcc..9aa3f88fd 100644
+--- a/tests/Clients/StaticApps/split-payment-discount-pending.test.js
++++ b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+@@ -17,14 +17,22 @@ const applied = { status: "Applied", billId: BILL_ID, adjustmentId: "a1", summar
+ const pending = { status: "Pending", billId: BILL_ID, adjustmentId: null, summary: null, grantId: "g1" };
+ 
+ // Each element answers one POST .../discount in order.
+-async function open(discountAnswers) {
++let approveDelayMs = 0;
++async function open(discountAnswers, approveAnswers = []) {
+   const answers = [...discountAnswers];
++  const approvals = [...approveAnswers];
+   const routeSet = [
+     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
+     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
+     { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
+     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
+     { test: (url) => url.endsWith("/refund-requests"), body: [] },
++    {
++      test: (url, init) => url.endsWith("/approve") && init?.method === "POST",
++      delayMs: approveDelayMs,
++      get status() { return approvals[0].status; },
++      get body() { return approvals.shift().body; },
++    },
+     {
+       test: (url, init) => url.endsWith("/discount") && init?.method === "POST",
+       get status() { return answers[0].status; },
+@@ -358,3 +366,147 @@ describe("split-payment.js discount waiting for a manager", () => {
+     expect(text()).not.toContain("bölme tasarımı");
+   });
+ });
++
++const approvedByManager = { status: 200, body: { grantId: "g1", approverUserId: "m1", approverName: "Mehmet Yılmaz" } };
++const approveCalls = (fetchMock) => fetchMock.mock.calls
++  .filter(([url, init]) => url.endsWith("/approve") && init?.method === "POST")
++  .map(([url, init]) => ({ url, ...JSON.parse(init.body) }));
++const approveFields = () => ({
++  name: document.getElementById("discount-approver-name"),
++  secret: document.getElementById("discount-approver-secret"),
++  button: document.getElementById("discount-approve-here"),
++});
++const fillApprover = (name, secret) => {
++  const fields = approveFields();
++  fields.name.value = name;
++  fields.name.dispatchEvent(new Event("input", { bubbles: true }));
++  fields.secret.value = secret;
++};
++async function waitForManager(fetchMock) {
++  type("discount-value", "20");
++  submit().click();
++  await vi.waitFor(() => expect(approveFields().button).not.toBeNull());
++  return fetchMock;
++}
++
++describe("split-payment.js manager approving a waiting discount at the till", () => {
++  beforeEach(() => vi.resetModules());
++  afterEach(() => {
++    approveDelayMs = 0;
++    vi.unstubAllGlobals();
++    document.body.innerHTML = "";
++    window.sessionStorage.clear();
++    window.localStorage.clear();
++  });
++
++  it("shows no manager fields until a request is waiting, then password-typed fields", async () => {
++    await open([{ status: 202, body: pending }]);
++    expect(approveFields().button).toBeNull();
++
++    type("discount-value", "20");
++    submit().click();
++    await vi.waitFor(() => expect(approveFields().button).not.toBeNull());
++
++    expect(approveFields().secret.type).toBe("password");
++    expect(approveFields().secret.getAttribute("autocomplete")).toBe("off");
++    expect(approveFields().button.textContent).toBe("Yönetici onayı ver");
++  });
++
++  it("sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere", async () => {
++    const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }], [approvedByManager]);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "Mudur-Sifre-1");
++    approveFields().button.click();
++    await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz onayıyla uygulandı."));
++
++    const [approval] = approveCalls(fetchMock);
++    const discount = discountCalls(fetchMock);
++    expect(approval.url).toContain("/approvals/g1/approve");
++    expect(approval).toMatchObject({ Username: "mudur1", Password: "Mudur-Sifre-1", IdempotencyKey: discount[0].IdempotencyKey });
++    expect(discount.at(-1).IdempotencyKey).toBe(discount[0].IdempotencyKey);
++    const everywhere = JSON.stringify([window.location.href, { ...window.sessionStorage }, { ...window.localStorage }]);
++    expect(everywhere).not.toContain("Mudur-Sifre-1");
++    expect(document.body.innerHTML).not.toContain("Mudur-Sifre-1");
++  });
++
++  it.each([
++    ["MANAGER_CREDENTIAL_INVALID", 403, "Yönetici adı veya şifre hatalı."],
++    ["MANAGER_LOCKED", 403, "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."],
++    ["TOO_MANY_ATTEMPTS", 429, "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."],
++    ["SELF_APPROVAL_NOT_ALLOWED", 403, "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."],
++    ["APPROVER_LACKS_PERMISSION", 403, "Bu yönetici bu işlemi onaylama yetkisine sahip değil."],
++  ])("says %s in a fixed Turkish sentence, empties the password and keeps the request waiting", async (code, status, sentence) => {
++    const fetchMock = await open([{ status: 202, body: pending }], [{ status, body: { error: { code, message: "raw english" } } }]);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "yanlis-sifre");
++    approveFields().button.click();
++    await vi.waitFor(() => expect(text()).toContain(sentence));
++
++    expect(text()).not.toContain("raw english");
++    expect(approveFields().secret.value).toBe("");
++    expect(submit().textContent).toBe("Onay durumunu kontrol et");
++    expect(discountCalls(fetchMock)).toHaveLength(1);
++  });
++
++  it("asks for both fields and sends nothing when one is empty", async () => {
++    const fetchMock = await open([{ status: 202, body: pending }]);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "");
++    approveFields().button.click();
++
++    await vi.waitFor(() => expect(text()).toContain("Yönetici adı ve şifresini girin."));
++    expect(approveCalls(fetchMock)).toHaveLength(0);
++  });
++
++  it("checks the request again when the manager had already decided it elsewhere", async () => {
++    const fetchMock = await open(
++      [{ status: 202, body: pending }, { status: 200, body: applied }],
++      [{ status: 409, body: { error: { code: "ALREADY_RESOLVED", message: "x" } } }]);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "Mudur-Sifre-1");
++    approveFields().button.click();
++
++    await vi.waitFor(() => expect(text()).toContain("İndirim uygulandı ve kaydedildi."));
++    expect(discountCalls(fetchMock)).toHaveLength(2);
++  });
++
++  it("approves with Enter in the password field", async () => {
++    const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }], [approvedByManager]);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "Mudur-Sifre-1");
++    approveFields().secret.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
++
++    await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz onayıyla uygulandı."));
++  });
++
++  it("does not re-send the old request when the form was edited while the approval was on its way", async () => {
++    approveDelayMs = 150;
++    const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }], [approvedByManager]);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "Mudur-Sifre-1");
++    approveFields().button.click();
++    await vi.waitFor(() => expect(approveCalls(fetchMock)).toHaveLength(1));
++    type("discount-value", "50");
++    await new Promise((done) => setTimeout(done, 400));
++
++    expect(discountCalls(fetchMock)).toHaveLength(1);
++    expect(text()).not.toContain("onayıyla uygulandı");
++    expect(approveFields().button).toBeNull();
++  });
++
++  it("says the connection failed when the approval request cannot be sent", async () => {
++    const fetchMock = await open([{ status: 202, body: pending }], []);
++    await waitForManager(fetchMock);
++
++    fillApprover("mudur1", "Mudur-Sifre-1");
++    approveFields().button.click();
++
++    await vi.waitFor(() => expect(text()).toContain("Bağlantı kurulamadı. Tekrar deneyin."), { timeout: 4000 });
++  });
++});

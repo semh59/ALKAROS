@@ -1,0 +1,165 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says MANAGER_CREDENTIAL_INVALID in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919610425-0.9311004791079514:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919610425-0.9311004791079514:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919610425-0.9311004791079514:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says MANAGER_LOCKED in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919611637-0.05300144696050213:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919611637-0.05300144696050213:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919611637-0.05300144696050213:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says TOO_MANY_ATTEMPTS in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919612872-0.31163938291530136:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919612872-0.31163938291530136:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919612872-0.31163938291530136:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says SELF_APPROVAL_NOT_ALLOWED in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919614089-0.0679428773040569:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919614089-0.0679428773040569:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919614089-0.0679428773040569:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says APPROVER_LACKS_PERMISSION in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919615304-0.4808750365549713:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919615304-0.4808750365549713:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919615304-0.4808750365549713:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > checks the request again when the manager had already decided it elsewhere
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919616700-0.5252898806221112:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919616700-0.5252898806221112:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919616700-0.5252898806221112:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (28 tests | 6 failed) 12286ms
+     × says MANAGER_CREDENTIAL_INVALID in a fixed Turkish sentence, empties the password and keeps the request waiting 1213ms
+     × says MANAGER_LOCKED in a fixed Turkish sentence, empties the password and keeps the request waiting 1235ms
+     × says TOO_MANY_ATTEMPTS in a fixed Turkish sentence, empties the password and keeps the request waiting 1217ms
+     × says SELF_APPROVAL_NOT_ALLOWED in a fixed Turkish sentence, empties the password and keeps the request waiting 1216ms
+     × says APPROVER_LACKS_PERMISSION in a fixed Turkish sentence, empties the password and keeps the request waiting 1206ms
+     × checks the request again when the manager had already decided it elsewhere 1154ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says MANAGER_CREDENTIAL_INVALID in a fixed Turkish sentence, empties the password and keeps the request waiting
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Yönetici adı veya şifre hatalı.'
+
+Expected: "Yönetici adı veya şifre hatalı."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)Onay durumunu kontrol etYönetici burada onaylasınraw englishYönetici onayı verGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:442:43
+    440|     fillApprover("mudur1", "yanlis-sifre");
+    441|     approveFields().button.click();
+    442|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    443|
+    444|     expect(text()).not.toContain("raw english");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says MANAGER_LOCKED in a fixed Turkish sentence, empties the password and keeps the request waiting
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Bu yönetici hesabı geçici olarak kili…'
+
+Expected: "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)Onay durumunu kontrol etYönetici burada onaylasınraw englishYönetici onayı verGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:442:43
+    440|     fillApprover("mudur1", "yanlis-sifre");
+    441|     approveFields().button.click();
+    442|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    443|
+    444|     expect(text()).not.toContain("raw english");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says TOO_MANY_ATTEMPTS in a fixed Turkish sentence, empties the password and keeps the request waiting
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Çok fazla hatalı deneme. Biraz bekley…'
+
+Expected: "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)Onay durumunu kontrol etYönetici burada onaylasınraw englishYönetici onayı verGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:442:43
+    440|     fillApprover("mudur1", "yanlis-sifre");
+    441|     approveFields().button.click();
+    442|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    443|
+    444|     expect(text()).not.toContain("raw english");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says SELF_APPROVAL_NOT_ALLOWED in a fixed Turkish sentence, empties the password and keeps the request waiting
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Kendi talebinizi onaylayamazsınız; yö…'
+
+Expected: "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)Onay durumunu kontrol etYönetici burada onaylasınraw englishYönetici onayı verGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:442:43
+    440|     fillApprover("mudur1", "yanlis-sifre");
+    441|     approveFields().button.click();
+    442|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    443|
+    444|     expect(text()).not.toContain("raw english");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says APPROVER_LACKS_PERMISSION in a fixed Turkish sentence, empties the password and keeps the request waiting
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Bu yönetici bu işlemi onaylama yetkis…'
+
+Expected: "Bu yönetici bu işlemi onaylama yetkisine sahip değil."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)Onay durumunu kontrol etYönetici burada onaylasınraw englishYönetici onayı verGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:442:43
+    440|     fillApprover("mudur1", "yanlis-sifre");
+    441|     approveFields().button.click();
+    442|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    443|
+    444|     expect(text()).not.toContain("raw english");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > checks the request again when the manager had already decided it elsewhere
+AssertionError: expected null not to be null
+ ❯ split-payment-discount-pending.test.js:386:61
+    384|   type("discount-value", "20");
+    385|   submit().click();
+    386|   await vi.waitFor(() => expect(approveFields().button).not.toBeNull()…
+       |                                                             ^
+    387|   return fetchMock;
+    388| }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  6 failed | 38 passed (44)
+   Start at  15:46:44
+   Duration  13.85s (transform 2.52s, setup 46ms, import 223ms, tests 15.05s, environment 3.40s)
+

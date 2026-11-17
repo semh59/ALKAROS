@@ -17,14 +17,20 @@ const applied = { status: "Applied", billId: BILL_ID, adjustmentId: "a1", summar
 const pending = { status: "Pending", billId: BILL_ID, adjustmentId: null, summary: null, grantId: "g1" };
 
 // Each element answers one POST .../comp in order.
-async function open(compAnswers) {
+async function open(compAnswers, approveAnswers = []) {
   const answers = [...compAnswers];
+  const approvals = [...approveAnswers];
   const routeSet = [
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
     { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
+    {
+      test: (url, init) => url.endsWith("/approve") && init?.method === "POST",
+      get status() { return approvals[0].status; },
+      get body() { return approvals.shift().body; },
+    },
     {
       test: (url, init) => url.endsWith("/comp") && init?.method === "POST",
       get status() { return answers[0].status; },
@@ -228,5 +234,25 @@ describe("split-payment.js comp (ikram)", () => {
     expect(compCalls(fetchMock)).toHaveLength(0);
     submit().click();
     await vi.waitFor(() => expect(compCalls(fetchMock)).toHaveLength(1));
+  });
+
+  it("lets a manager approve a waiting comp at the till with the comp request's own key", async () => {
+    const fetchMock = await open(
+      [{ status: 202, body: pending }, { status: 200, body: applied }],
+      [{ status: 200, body: { grantId: "g1", approverUserId: "m1", approverName: "Mehmet Yılmaz" } }]);
+    type("comp-amount", "30");
+    submit().click();
+    await vi.waitFor(() => expect(document.getElementById("comp-approve-here")).not.toBeNull());
+
+    const name = document.getElementById("comp-approver-name");
+    name.value = "mudur1";
+    name.dispatchEvent(new Event("input", { bubbles: true }));
+    document.getElementById("comp-approver-secret").value = "Mudur-Sifre-1";
+    document.getElementById("comp-approve-here").click();
+
+    await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz onayıyla uygulandı."));
+    const approval = fetchMock.mock.calls.filter(([url]) => url.endsWith("/approve")).map(([url, init]) => ({ url, ...JSON.parse(init.body) }))[0];
+    expect(approval.url).toContain("/approvals/g1/approve");
+    expect(approval.IdempotencyKey).toBe(compCalls(fetchMock)[0].IdempotencyKey);
   });
 });

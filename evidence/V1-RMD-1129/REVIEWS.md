@@ -1,0 +1,2 @@
+- qa-frontend: KABUL (orta bulgu: duzenleme yarisi -> duzeltildi + test + M10; Enter, ag hatasi testi eklendi)
+- qa-guvenlik-yetki: KABUL (dusuk notlar riske yazildi)

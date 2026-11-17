@@ -77,6 +77,18 @@
     discountPending: false,
     discountError: null,
     discountNotice: null,
+    // A manager approving at the till: only the name lives in state; the password is read from its field, sent and
+    // dropped, never stored.
+    discountGrantId: null,
+    discountApproverName: '',
+    discountApproveBusy: false,
+    discountApproveError: null,
+    discountApprovedBy: null,
+    compGrantId: null,
+    compApproverName: '',
+    compApproveBusy: false,
+    compApproveError: null,
+    compApprovedBy: null,
     tipAmountDraft: '',
     tipNoteDraft: '',
     tipBusy: false,
@@ -169,6 +181,12 @@
   // whose sentence carries the amounts or the credit reason of this very request (SERVER_TEXT_CODES).
   var ERROR_TEXTS = {
     ACCOUNT_REFUND_UNSUPPORTED: 'Müşteri hesabına yazılan ödeme buradan iade edilemez.',
+    ALREADY_RESOLVED: 'Bu talep zaten yanıtlanmış.',
+    APPROVER_LACKS_PERMISSION: 'Bu yönetici bu işlemi onaylama yetkisine sahip değil.',
+    MANAGER_CREDENTIAL_INVALID: 'Yönetici adı veya şifre hatalı.',
+    MANAGER_LOCKED: 'Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın.',
+    SELF_APPROVAL_NOT_ALLOWED: 'Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir.',
+    TOO_MANY_ATTEMPTS: 'Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın.',
     ACTIVE_CASH_SESSION_EXISTS: 'Bu terminalde zaten açık bir kasa oturumu var.',
     ALLOWANCE_BELOW_USED: 'İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.',
     BILL_BUSY: 'Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin.',
@@ -375,6 +393,67 @@
       return isDiscount ? discountAnswered(result, signature) : compAnswered(result, signature);
     }).catch(function () {
       state[kind + 'Busy'] = false;
+    });
+  }
+  function renderApproveHere(kind) {
+    if (!state[kind + 'Pending'] || !state[kind + 'GrantId']) return '';
+    var busy = state[kind + 'ApproveBusy'];
+    var disabled = busy ? ' disabled' : '';
+    return (
+      '<div class="sp-field"><span class="sp-field-label">Yönetici burada onaylasın</span>' +
+      (state[kind + 'ApproveError'] ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state[kind + 'ApproveError']) + '</div>' : '') +
+      '<input class="sp-input" type="text" id="' + kind + '-approver-name" autocomplete="off" maxlength="64" placeholder="Yönetici kullanıcı adı" aria-label="Yönetici kullanıcı adı"' +
+      disabled + ' value="' + escapeHtml(state[kind + 'ApproverName']) + '">' +
+      '<input class="sp-input" type="password" id="' + kind + '-approver-secret" autocomplete="off" maxlength="256" placeholder="Yönetici şifresi" aria-label="Yönetici şifresi"' + disabled + '>' +
+      '<button class="sp-btn sp-btn-secondary" id="' + kind + '-approve-here" type="button"' + disabled + '>' +
+      (busy ? 'Onaylanıyor…' : 'Yönetici onayı ver') + '</button>' +
+      '</div>'
+    );
+  }
+  function appliedNotice(kind, label) {
+    var by = state[kind + 'ApprovedBy'];
+    state[kind + 'ApprovedBy'] = null;
+    return by ? label + ', ' + by + ' onayıyla uygulandı.' : label + ' uygulandı ve kaydedildi.';
+  }
+  // The manager's server-side check decides everything; a decided answer re-sends the waiting request, which applies it.
+  function approveHere(kind) {
+    var nameInput = document.getElementById(kind + '-approver-name');
+    var secretInput = document.getElementById(kind + '-approver-secret');
+    var name = nameInput.value.trim();
+    var secret = secretInput.value;
+    state[kind + 'ApproverName'] = name;
+    if (!name || !secret) {
+      state[kind + 'ApproveError'] = 'Yönetici adı ve şifresini girin.';
+      render();
+      return;
+    }
+    state[kind + 'ApproveBusy'] = true;
+    state[kind + 'ApproveError'] = null;
+    render();
+    var key = kind === 'discount' ? state.discountIdempotencyKey : state.compIdempotencyKey;
+    api(billBase() + '/approvals/' + state[kind + 'GrantId'] + '/approve', {
+      method: 'POST',
+      body: { IdempotencyKey: key, Username: name, Password: secret },
+    }).then(function (result) {
+      state[kind + 'ApproveBusy'] = false;
+      var code = result.body && result.body.error && result.body.error.code;
+      // The form was edited while the answer was on its way: that request is gone, so the old one is not re-sent.
+      if (!state[kind + 'Pending']) {
+        render();
+        return;
+      }
+      if (result.ok || code === 'ALREADY_RESOLVED') {
+        state[kind + 'ApprovedBy'] = result.ok ? result.body.approverName : null;
+        render();
+        probeApproval(kind);
+        return;
+      }
+      state[kind + 'ApproveError'] = describeHttpFailure(result.status, result.body);
+      render();
+    }).catch(function () {
+      state[kind + 'ApproveBusy'] = false;
+      state[kind + 'ApproveError'] = 'Bağlantı kurulamadı. Tekrar deneyin.';
+      render();
     });
   }
   function ensureApprovalPoll() {
@@ -812,6 +891,7 @@
       return;
     }
     if (waiting) {
+      state.discountGrantId = result.body.grantId;
       state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
       render();
       return;
@@ -820,7 +900,7 @@
       state.discountValueDraft = '';
       state.discountNoteDraft = '';
     }
-    state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
+    state.discountNotice = appliedNotice('discount', 'İndirim');
     // A discount lowers remainingAmount(): refresh the tender summary too and re-derive amountDraft from the new
     // ceiling the same way loadEverything() does on initial load.
     return refreshAdjustments().then(refreshSummary).then(function () {
@@ -881,13 +961,14 @@
       return;
     }
     if (waiting) {
+      state.compGrantId = result.body.grantId;
       state.compNotice = 'İkram talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
       render();
       return;
     }
     state.compAmountDraft = '';
     state.compNoteDraft = '';
-    state.compNotice = 'İkram uygulandı ve kaydedildi.';
+    state.compNotice = appliedNotice('comp', 'İkram');
     return refreshAdjustments().then(refreshSummary).then(function () {
       state.amountDraft = remainingAmount().toFixed(2);
       render();
@@ -1442,6 +1523,7 @@
       escapeHtml(state.discountNoteDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
       (state.discountBusy ? 'Gönderiliyor…' : (state.discountPending ? 'Onay durumunu kontrol et' : (state.discountConfirm ? 'Evet, indirimi uygula' : 'İndirim uygula'))) + '</button>' +
+      renderApproveHere('discount') +
       '</div>'
     );
   }
@@ -1471,6 +1553,7 @@
       escapeHtml(state.compNoteDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="submit-comp" type="button"' + disabled + '>' +
       (state.compBusy ? 'Gönderiliyor…' : (state.compPending ? 'Onay durumunu kontrol et' : (state.compConfirm ? 'Evet, ikram et' : 'İkram et'))) + '</button>' +
+      renderApproveHere('comp') +
       '</div>'
     );
   }
@@ -2558,6 +2641,14 @@
     if (compAllButton) compAllButton.addEventListener('click', function () { state.compAmountDraft = remainingAmount().toFixed(2); editedComp(); render(); });
     var submitCompButton = document.getElementById('submit-comp');
     if (submitCompButton) submitCompButton.addEventListener('click', submitComp);
+    ['discount', 'comp'].forEach(function (kind) {
+      var approveButton = document.getElementById(kind + '-approve-here');
+      if (approveButton) approveButton.addEventListener('click', function () { approveHere(kind); });
+      var approverName = document.getElementById(kind + '-approver-name');
+      if (approverName) approverName.addEventListener('input', function () { state[kind + 'ApproverName'] = this.value; });
+      var approverSecret = document.getElementById(kind + '-approver-secret');
+      if (approverSecret) approverSecret.addEventListener('keydown', function (event) { if (event.key === 'Enter') approveHere(kind); });
+    });
     var submitDiscountButton = document.getElementById('submit-discount');
     if (submitDiscountButton) submitDiscountButton.addEventListener('click', submitDiscount);
     document.querySelectorAll('[data-tip-percent]').forEach(function (button) {

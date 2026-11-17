@@ -17,14 +17,22 @@ const applied = { status: "Applied", billId: BILL_ID, adjustmentId: "a1", summar
 const pending = { status: "Pending", billId: BILL_ID, adjustmentId: null, summary: null, grantId: "g1" };
 
 // Each element answers one POST .../discount in order.
-async function open(discountAnswers) {
+let approveDelayMs = 0;
+async function open(discountAnswers, approveAnswers = []) {
   const answers = [...discountAnswers];
+  const approvals = [...approveAnswers];
   const routeSet = [
     { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
     { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: unpaid },
     { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "s1" } },
     { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
     { test: (url) => url.endsWith("/refund-requests"), body: [] },
+    {
+      test: (url, init) => url.endsWith("/approve") && init?.method === "POST",
+      delayMs: approveDelayMs,
+      get status() { return approvals[0].status; },
+      get body() { return approvals.shift().body; },
+    },
     {
       test: (url, init) => url.endsWith("/discount") && init?.method === "POST",
       get status() { return answers[0].status; },
@@ -356,5 +364,149 @@ describe("split-payment.js discount waiting for a manager", () => {
 
     await vi.waitFor(() => expect(text()).toContain("Bu hesap durumunda indirim uygulanamaz."));
     expect(text()).not.toContain("bölme tasarımı");
+  });
+});
+
+const approvedByManager = { status: 200, body: { grantId: "g1", approverUserId: "m1", approverName: "Mehmet Yılmaz" } };
+const approveCalls = (fetchMock) => fetchMock.mock.calls
+  .filter(([url, init]) => url.endsWith("/approve") && init?.method === "POST")
+  .map(([url, init]) => ({ url, ...JSON.parse(init.body) }));
+const approveFields = () => ({
+  name: document.getElementById("discount-approver-name"),
+  secret: document.getElementById("discount-approver-secret"),
+  button: document.getElementById("discount-approve-here"),
+});
+const fillApprover = (name, secret) => {
+  const fields = approveFields();
+  fields.name.value = name;
+  fields.name.dispatchEvent(new Event("input", { bubbles: true }));
+  fields.secret.value = secret;
+};
+async function waitForManager(fetchMock) {
+  type("discount-value", "20");
+  submit().click();
+  await vi.waitFor(() => expect(approveFields().button).not.toBeNull());
+  return fetchMock;
+}
+
+describe("split-payment.js manager approving a waiting discount at the till", () => {
+  beforeEach(() => vi.resetModules());
+  afterEach(() => {
+    approveDelayMs = 0;
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+    window.sessionStorage.clear();
+    window.localStorage.clear();
+  });
+
+  it("shows no manager fields until a request is waiting, then password-typed fields", async () => {
+    await open([{ status: 202, body: pending }]);
+    expect(approveFields().button).toBeNull();
+
+    type("discount-value", "20");
+    submit().click();
+    await vi.waitFor(() => expect(approveFields().button).not.toBeNull());
+
+    expect(approveFields().secret.type).toBe("password");
+    expect(approveFields().secret.getAttribute("autocomplete")).toBe("off");
+    expect(approveFields().button.textContent).toBe("Yönetici onayı ver");
+  });
+
+  it("sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere", async () => {
+    const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }], [approvedByManager]);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "Mudur-Sifre-1");
+    approveFields().button.click();
+    await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz onayıyla uygulandı."));
+
+    const [approval] = approveCalls(fetchMock);
+    const discount = discountCalls(fetchMock);
+    expect(approval.url).toContain("/approvals/g1/approve");
+    expect(approval).toMatchObject({ Username: "mudur1", Password: "Mudur-Sifre-1", IdempotencyKey: discount[0].IdempotencyKey });
+    expect(discount.at(-1).IdempotencyKey).toBe(discount[0].IdempotencyKey);
+    const everywhere = JSON.stringify([window.location.href, { ...window.sessionStorage }, { ...window.localStorage }]);
+    expect(everywhere).not.toContain("Mudur-Sifre-1");
+    expect(document.body.innerHTML).not.toContain("Mudur-Sifre-1");
+  });
+
+  it.each([
+    ["MANAGER_CREDENTIAL_INVALID", 403, "Yönetici adı veya şifre hatalı."],
+    ["MANAGER_LOCKED", 403, "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."],
+    ["TOO_MANY_ATTEMPTS", 429, "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."],
+    ["SELF_APPROVAL_NOT_ALLOWED", 403, "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."],
+    ["APPROVER_LACKS_PERMISSION", 403, "Bu yönetici bu işlemi onaylama yetkisine sahip değil."],
+  ])("says %s in a fixed Turkish sentence, empties the password and keeps the request waiting", async (code, status, sentence) => {
+    const fetchMock = await open([{ status: 202, body: pending }], [{ status, body: { error: { code, message: "raw english" } } }]);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "yanlis-sifre");
+    approveFields().button.click();
+    await vi.waitFor(() => expect(text()).toContain(sentence));
+
+    expect(text()).not.toContain("raw english");
+    expect(approveFields().secret.value).toBe("");
+    expect(submit().textContent).toBe("Onay durumunu kontrol et");
+    expect(discountCalls(fetchMock)).toHaveLength(1);
+  });
+
+  it("asks for both fields and sends nothing when one is empty", async () => {
+    const fetchMock = await open([{ status: 202, body: pending }]);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "");
+    approveFields().button.click();
+
+    await vi.waitFor(() => expect(text()).toContain("Yönetici adı ve şifresini girin."));
+    expect(approveCalls(fetchMock)).toHaveLength(0);
+  });
+
+  it("checks the request again when the manager had already decided it elsewhere", async () => {
+    const fetchMock = await open(
+      [{ status: 202, body: pending }, { status: 200, body: applied }],
+      [{ status: 409, body: { error: { code: "ALREADY_RESOLVED", message: "x" } } }]);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "Mudur-Sifre-1");
+    approveFields().button.click();
+
+    await vi.waitFor(() => expect(text()).toContain("İndirim uygulandı ve kaydedildi."));
+    expect(discountCalls(fetchMock)).toHaveLength(2);
+  });
+
+  it("approves with Enter in the password field", async () => {
+    const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }], [approvedByManager]);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "Mudur-Sifre-1");
+    approveFields().secret.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+
+    await vi.waitFor(() => expect(text()).toContain("Mehmet Yılmaz onayıyla uygulandı."));
+  });
+
+  it("does not re-send the old request when the form was edited while the approval was on its way", async () => {
+    approveDelayMs = 150;
+    const fetchMock = await open([{ status: 202, body: pending }, { status: 200, body: applied }], [approvedByManager]);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "Mudur-Sifre-1");
+    approveFields().button.click();
+    await vi.waitFor(() => expect(approveCalls(fetchMock)).toHaveLength(1));
+    type("discount-value", "50");
+    await new Promise((done) => setTimeout(done, 400));
+
+    expect(discountCalls(fetchMock)).toHaveLength(1);
+    expect(text()).not.toContain("onayıyla uygulandı");
+    expect(approveFields().button).toBeNull();
+  });
+
+  it("says the connection failed when the approval request cannot be sent", async () => {
+    const fetchMock = await open([{ status: 202, body: pending }], []);
+    await waitForManager(fetchMock);
+
+    fillApprover("mudur1", "Mudur-Sifre-1");
+    approveFields().button.click();
+
+    await vi.waitFor(() => expect(text()).toContain("Bağlantı kurulamadı. Tekrar deneyin."), { timeout: 4000 });
   });
 });

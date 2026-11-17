@@ -1,0 +1,20 @@
+M2-own-key-not-sent exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 42 passed (44)
+M3-no-resend-after-approval exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  3 failed | 41 passed (44)
+M4-raw-server-text exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  6 failed | 38 passed (44)
+M5-form-always exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  3 failed | 41 passed (44)
+M6-no-empty-check exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44)
+M7-no-approver-in-notice exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 42 passed (44)
+M8-autocomplete-on exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44)
+M9-password-stored exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 43 passed (44)
+M10-resend-after-edit exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 46 passed (47)
+M11-no-enter exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  3 failed | 44 passed (47)

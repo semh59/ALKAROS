@@ -1,0 +1,74 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-comp.test.js > split-payment.js comp (ikram) > lets a manager approve a waiting comp at the till with the comp request's own key
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919584098-0.930872082034721:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919584098-0.930872082034721:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919584098-0.930872082034721:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-comp.test.js (12 tests | 1 failed) 2759ms
+     × lets a manager approve a waiting comp at the till with the comp request's own key 298ms
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919586285-0.29694156951337136:287:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919586285-0.29694156951337136:540:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794919586285-0.29694156951337136:653:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (28 tests | 1 failed) 6711ms
+     × sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere 274ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-comp.test.js > split-payment.js comp (ikram) > lets a manager approve a waiting comp at the till with the comp request's own key
+AssertionError: expected 'x' to be '53fbc67c-68eb-4132-99e8-038e9a849594' // Object.is equality
+
+Expected: "53fbc67c-68eb-4132-99e8-038e9a849594"
+Received: "x"
+
+ ❯ split-payment-comp.test.js:256:37
+    254|     const approval = fetchMock.mock.calls.filter(([url]) => url.endsWi…
+    255|     expect(approval.url).toContain("/approvals/g1/approve");
+    256|     expect(approval.IdempotencyKey).toBe(compCalls(fetchMock)[0].Idemp…
+       |                                     ^
+    257|   });
+    258| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > sends the manager's name and password with the waiting request's own key, then applies the discount under the manager's name and keeps the password nowhere
+AssertionError: expected { …(4) } to match object { Username: 'mudur1', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "IdempotencyKey": "36c3a296-5316-4f7f-9073-9aea7d7c4a95",
++   "IdempotencyKey": "x",
+    "Password": "Mudur-Sifre-1",
+    "Username": "mudur1",
+  }
+
+ ❯ split-payment-discount-pending.test.js:423:22
+    421|     const discount = discountCalls(fetchMock);
+    422|     expect(approval.url).toContain("/approvals/g1/approve");
+    423|     expect(approval).toMatchObject({ Username: "mudur1", Password: "Mu…
+       |                      ^
+    424|     expect(discount.at(-1).IdempotencyKey).toBe(discount[0].Idempotenc…
+    425|     const everywhere = JSON.stringify([window.location.href, { ...wind…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 42 passed (44)
+   Start at  15:46:20
+   Duration  8.25s (transform 2.76s, setup 89ms, import 238ms, tests 9.48s, environment 3.36s)
+
