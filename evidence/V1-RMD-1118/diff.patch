@@ -1,0 +1,221 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+index 1a869b5ea..f938a0e49 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+@@ -94,6 +94,24 @@ describe("the till header", () => {
+     expect(menuTexts()).not.toEqual(expect.arrayContaining(["Ürün menüsü"]));
+   });
+ 
++  it("offers Son satışlar in the menu only to a session that may request a refund, and opens it", async () => {
++    await renderHome({ capabilities: ["orders.create", "payments.refund.request"] });
++    await tap(userButton());
++    const entry = [...document.querySelectorAll(".header-menu a")].find((item) => item.textContent === "Son satışlar");
++    expect(entry?.getAttribute("href")).toBe("/recent-sales");
++
++    await tap(entry!);
++    expect(window.location.pathname).toBe("/recent-sales");
++    window.history.replaceState({}, "", "/");
++  });
++
++  it("does not offer Son satışlar without the refund request permission", async () => {
++    await renderHome({ capabilities: ["orders.create"] });
++    await tap(userButton());
++
++    expect(menuTexts()).not.toContain("Son satışlar");
++  });
++
+   it("closes the menu after a choice and on Escape", async () => {
+     await renderHome();
+     await tap(userButton());
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 627d2306e..3ec25de16 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -790,6 +790,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       )}
+       {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
+       <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
++      {capabilities.includes("payments.refund.request") && <a className="header-action" href="/recent-sales" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/recent-sales"); } }}>{navLabels.recentSales}</a>}
+       {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Ürün menüsü</a>}
+       {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
+       <button data-telemetry-id="b.routes.cashier.4"
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index 871d6fc4c..44807e0cb 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -1583,3 +1583,46 @@ describe("workspace /tables last update time", () => {
+     expect(document.body.textContent).toContain("Son güncelleme 14:32:00");
+   });
+ });
++
++describe("workspace /recent-sales route", () => {
++  let root: Root | null = null;
++
++  async function open(capabilities: readonly string[]) {
++    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
++      const path = String(input);
++      if (path.endsWith("/billing/recent-sales")) return jsonResponse({ hasOpenSession: true, sales: [{ billId: "b-1", tableNumber: "5", closedAt: "2026-09-24T11:32:00Z", amount: 540, methods: ["Cash"] }] });
++      return jsonResponse([]);
++    }));
++    window.history.replaceState({}, "", "/recent-sales");
++    document.body.innerHTML = '<div id="root"></div>';
++    root = createRoot(document.getElementById("root")!);
++    await act(async () => root!.render(
++      <RouterProvider>
++        <ExperiencePage terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" displayName="Test" capabilities={capabilities} path="/recent-sales" backendStatus="online" onLogout={async () => {}} />
++      </RouterProvider>));
++    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
++  }
++
++  afterEach(async () => {
++    if (root) await act(async () => root!.unmount());
++    root = null;
++    vi.unstubAllGlobals();
++    vi.restoreAllMocks();
++  });
++
++  it("shows the recent sales to a session that may request a refund and lists the entry in the main navigation", async () => {
++    await open(["orders.create", "tables.status", "payments.refund.request"]);
++
++    expect(document.querySelector(".recent-sales__row")?.textContent).toContain("Masa 5");
++    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).toContain("Son satışlar");
++    expect(document.querySelector(".production-shell__nav > a[aria-current='page']")?.textContent).toBe("Son satışlar");
++  });
++
++  it("is closed to a session that may not request a refund", async () => {
++    await open(["orders.create", "tables.status"]);
++
++    expect(document.body.textContent).toContain("Bu alana erişim izniniz yok");
++    expect(document.querySelector(".recent-sales__row")).toBeNull();
++    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).not.toContain("Son satışlar");
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index ead07ed76..a4823c4c7 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -4,13 +4,14 @@ import { tryGetItem, trySetItem } from "../storage";
+ import { useRouter } from "../router";
+ import { canStartTableOrder } from "./tableOrderAvailability";
+ import { TableOrderBridge, type AwaitingCheck } from "./TableOrderBridge";
+-import { managementText, navLabels, roleLabelFor } from "../strings";
++import { managementText, navLabels, recentSalesText, roleLabelFor } from "../strings";
+ import { formatClockTime } from "../format";
+ import { ProductionShell } from "../shell";
+ import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
+ import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableRecord, type TableWorkspaceState } from "../features/tables";
+ import { PendingChecksWorkspace, usePendingChecksAlert } from "../features/pending-checks";
+ import { loadPendingChecks } from "../features/pending-checks/pendingChecksApi";
++import { RecentSalesWorkspace } from "../features/recent-sales";
+ import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
+ import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
+ import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogProductDetailsInput, type CatalogWorkspaceState } from "../features/catalog";
+@@ -76,6 +77,7 @@ export function ExperiencePage({
+   const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
+   const routeNeedsReportsView = path === "/authorization" || path === "/management";
+   const routeNeedsBillsSplit = path === "/billing";
++  const routeNeedsRefundRequest = path === "/recent-sales";
+   const routeNeedsKitchenAdvance = path === "/kitchen";
+   // V12-OUI-004: online food is one screen; its settings tab (V12-OUI-003's platform API settings) is a manager's
+   // integration setting, like the QNB and relay screens. The old separate paths open the matching tab.
+@@ -90,6 +92,8 @@ export function ExperiencePage({
+       ? capabilitySet.has("reports.view")
+       : routeNeedsBillsSplit
+         ? capabilitySet.has("bills.split")
++        : routeNeedsRefundRequest
++        ? capabilitySet.has("payments.refund.request")
+         : routeNeedsKitchenAdvance
+           // V1-IAM-028: either grant opens the tab — kitchen.advance so a
+           // kitchen-staff-only session can reach it, orders.send so no
+@@ -147,6 +151,7 @@ export function ExperiencePage({
+     { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
+     { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split", primary: false },
+     { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "clock", requiredCapability: "orders.create", badge: pendingCheckCount },
++    { id: "recent-sales", label: navLabels.recentSales, href: "/recent-sales", icon: "register", requiredCapability: "payments.refund.request" },
+     // V12-OUI-004: one entry for online food (orders, and for a manager its settings); same permission as accepting a QR order.
+     { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "send", requiredCapability: "orders.create", primary: false },
+     // V1-IAM-028: kitchen.advance is additive — every role that held
+@@ -160,8 +165,8 @@ export function ExperiencePage({
+     { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "lock", requiredCapability: "reports.view", primary: false },
+     { id: "management", label: navLabels.management, href: "/management", icon: "brand", requiredCapability: "reports.view", primary: false },
+   ];
+-  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
+-  const description = path === "/tables" ? "" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
++  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : path === "/recent-sales" ? recentSalesText.title : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
++  const description = path === "/tables" ? "" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : path === "/recent-sales" ? recentSalesText.description : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
+ 
+   return <ProductionShell
+     session={session}
+@@ -170,7 +175,7 @@ export function ExperiencePage({
+     freshness={freshness}
+     navigation={navigation}
+     onNavigate={navigate}
+-    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
++    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : path === "/recent-sales" ? "recent-sales" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
+     workspaceTitle={title}
+     workspaceDescription={description}
+     headerActions={cashSession ? <CashSessionLink status={cashSession} className="experience-header-link" /> : undefined}
+@@ -183,6 +188,7 @@ export function ExperiencePage({
+     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
++    {path === "/recent-sales" && canOpenRoute && <RecentSalesWorkspace terminalId={terminalId} />}
+     {onlineTab !== null && (
+       <OnlineFoodHub
+         terminalId={terminalId}
+@@ -196,7 +202,7 @@ export function ExperiencePage({
+     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
+     {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
+     {path === "/management" && canOpenRoute && <ManagementArea capabilities={capabilitySet} />}
+-    {onlineTab === null && !(["/", "/tables", "/billing", "/pending-checks", "/catalog", "/kitchen", "/system-health", "/authorization", "/management"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
++    {onlineTab === null && !(["/", "/tables", "/billing", "/pending-checks", "/recent-sales", "/catalog", "/kitchen", "/system-health", "/authorization", "/management"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+   </ProductionShell>;
+ }
+ 
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index ba62ad000..0f7dd47a6 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -47,6 +47,7 @@ export const navLabels = {
+   tables: "Masalar",
+   billing: "Hesap",
+   pendingChecks: "Bekleyen hesaplar",
++  recentSales: "Son satışlar",
+   onlineFood: "Online Yemek",
+   kitchen: "Mutfak",
+   catalog: "Menü",
+@@ -1470,3 +1471,21 @@ export const kitchenlessText = {
+   sendFirst: "Gönderilmemiş ürünler var; mutfağa gönderin ya da hesabı ödeyin.",
+   addedCount: (count: number) => `${count} kalem kasada eklendi (mutfağa gitmedi)`,
+ } as const;
++
++/** Son satışlar: kasiyerin açık oturumunda kapanan hesaplar; satıra dokununca iade sayfası açılır. */
++export const recentSalesText = {
++  title: "Son satışlar",
++  description: "Bu kasa oturumunda kapanan hesaplar; iade için bir satıra dokunun",
++  loading: "Son satışlar yükleniyor…",
++  empty: "Bu oturumda kapanmış satış yok",
++  noSession: "Son satışları görmek için önce kasayı açın",
++  refresh: "Yenile",
++  open: "İade sayfasını aç ›",
++  quickSale: "Hızlı satış",
++  stale: (time: string) => `Aşağıdaki liste eski olabilir: son yenileme ${time}.`,
++  failed: "Son satışlar okunamadı.",
++  unreachable: "Sunucuya ulaşılamadı. Son satışlar okunamadı.",
++  forbidden: "Bu listeyi görmek için yetkiniz yok.",
++  methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
++  unknownMethod: "Bilinmiyor",
++} as const;
+diff --git a/src/Clients/PosTerminal/src/touchTargets.test.ts b/src/Clients/PosTerminal/src/touchTargets.test.ts
+index b048d6bd7..671b7223c 100644
+--- a/src/Clients/PosTerminal/src/touchTargets.test.ts
++++ b/src/Clients/PosTerminal/src/touchTargets.test.ts
+@@ -16,6 +16,8 @@ const targets: ReadonlyArray<readonly [file: string, selector: string]> = [
+   ["./styles.css", ".dialog-close {"],
+   ["./styles.css", ".search-field input {"],
+   ["./features/pending-checks/pending-checks.css", ".pending-checks__recall {"],
++  ["./features/recent-sales/recent-sales.css", ".recent-sales__row {"],
++  ["./features/recent-sales/recent-sales.css", ".recent-sales__refresh {"],
+   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-workspace__feedback button {"],
+   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-density button, .kitchen-view-mode button {"],
+   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-flag-btn {"],

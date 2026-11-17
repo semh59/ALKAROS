@@ -1,0 +1,88 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/touchTargets.test.ts (24 tests | 2 failed | 6 skipped) 34ms
+     × ./features/recent-sales/recent-sales.css .recent-sales__row { is at least 48 px high and wide 6ms
+     × ./features/recent-sales/recent-sales.css .recent-sales__refresh { is at least 48 px high and wide 1ms
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (0 test)
+ ❯ src/routes/workspace.test.tsx (66 tests | 1 failed | 64 skipped) 141ms
+     × shows the recent sales to a session that may request a refund and lists the entry in the main navigation 111ms
+ ❯ src/routes/Cashier.header.test.tsx (11 tests | 1 failed | 9 skipped) 2919ms
+     × offers Son satışlar in the menu only to a session that may request a refund, and opens it 2810ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx [ src/features/recent-sales/RecentSalesWorkspace.test.tsx ]
+Error: Failed to resolve import "./RecentSalesWorkspace" from "src/features/recent-sales/RecentSalesWorkspace.test.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx:5:37
+  3  |  import { createRoot } from "react-dom/client";
+  4  |  import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+  5  |  import { RecentSalesWorkspace } from "./RecentSalesWorkspace";
+     |                                        ^
+  6  |  var _jsxFileName = "D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx";
+  7  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
+ ❯ TransformPluginContext._formatLog node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:31147:39
+ ❯ TransformPluginContext.error node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:31144:14
+ ❯ normalizeUrl node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:28083:18
+ ❯ node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:28153:30
+ ❯ TransformPluginContext.transform node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:28119:4
+ ❯ EnvironmentPluginContainer.transform node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:30932:14
+ ❯ loadAndTransform node_modules/.pnpm/vite@8.2.2_@types+node@26.2.0/node_modules/vite/dist/node/chunks/node.js:20671:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/touchTargets.test.ts > touch targets > ./features/recent-sales/recent-sales.css .recent-sales__row { is at least 48 px high and wide
+ FAIL  src/touchTargets.test.ts > touch targets > ./features/recent-sales/recent-sales.css .recent-sales__refresh { is at least 48 px high and wide
+Error: ENOENT: no such file or directory, open 'D:\PROJECT\ALKAROS\src\Clients\PosTerminal\src\features\recent-sales\recent-sales.css'
+ ❯ read src/touchTargets.test.ts:5:32
+      3|
+      4| const MINIMUM_PX = 48;
+      5| const read = (path: string) => readFileSync(new URL(path, import.meta.…
+       |                                ^
+      6|
+      7| // Controls staff press with wet or greasy hands; each entry is the op…
+ ❯ src/touchTargets.test.ts:39:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/routes/Cashier.header.test.tsx > the till header > offers Son satışlar in the menu only to a session that may request a refund, and opens it
+AssertionError: expected undefined to be '/recent-sales' // Object.is equality
+
+- Expected:
+"/recent-sales"
+
++ Received:
+undefined
+
+ ❯ src/routes/Cashier.header.test.tsx:101:41
+     99|     await tap(userButton());
+    100|     const entry = [...document.querySelectorAll(".header-menu a")].fin…
+    101|     expect(entry?.getAttribute("href")).toBe("/recent-sales");
+       |                                         ^
+    102|
+    103|     await tap(entry!);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /recent-sales route > shows the recent sales to a session that may request a refund and lists the entry in the main navigation
+AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+ ❯ src/routes/workspace.test.tsx:1616:71
+    1614|     await open(["orders.create", "tables.status", "payments.refund.req…
+    1615|
+    1616|     expect(document.querySelector(".recent-sales__row")?.textContent).…
+       |                                                                       ^
+    1617|     expect([...document.querySelectorAll(".production-shell__nav > a")…
+    1618|     expect(document.querySelector(".production-shell__nav > a[aria-cur…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  4 failed | 18 passed | 79 skipped (101)
+   Start at  09:48:41
+   Duration  6.12s (transform 4.14s, setup 0ms, import 3.50s, tests 3.09s, environment 6.53s)
+

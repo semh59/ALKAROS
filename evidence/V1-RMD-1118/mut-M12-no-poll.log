@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (12 tests | 1 failed) 152ms
+     × reads again every minute and stops reading after it is closed 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > reads again every minute and stops reading after it is closed
+AssertionError: expected "vi.fn()" to be called 2 times, but got 1 times
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:135:25
+    133|
+    134|       await act(async () => { vi.advanceTimersByTime(60_000); });
+    135|       expect(fetchMock).toHaveBeenCalledTimes(2);
+       |                         ^
+    136|
+    137|       act(() => root!.unmount());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  09:56:23
+   Duration  1.84s (transform 239ms, setup 0ms, import 355ms, tests 152ms, environment 1.03s)
+

@@ -1,0 +1,57 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (12 tests | 12 failed) 67ms
+     × lists each sale with its place, closing time, amount and every payment method in Turkish 32ms
+     × opens the payment page with the refund section open when a sale is tapped 4ms
+     × says there is nothing yet when the session has no closed sale 4ms
+     × asks the cashier to open the till first when there is no open session 3ms
+     × shows a loading sentence until the answer arrives 3ms
+     × shows a fixed Turkish sentence for status 403 and never the server body 3ms
+     × shows a fixed Turkish sentence for status 500 and never the server body 2ms
+     × keeps the old list with a stale warning when a refresh fails, and recovers on the next success 3ms
+     × lets only the newest answer write the list when two reads overlap 3ms
+     × reads again every minute and stops reading after it is closed 4ms
+     × names the amount and methods in the row label so a screen reader hears what is shown 2ms
+     × does not break on an answer without a sales list 2ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > lists each sale with its place, closing time, amount and every payment method in Turkish
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > opens the payment page with the refund section open when a sale is tapped
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > says there is nothing yet when the session has no closed sale
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > asks the cashier to open the till first when there is no open session
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > shows a loading sentence until the answer arrives
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > shows a fixed Turkish sentence for status 403 and never the server body
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > shows a fixed Turkish sentence for status 500 and never the server body
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > keeps the old list with a stale warning when a refresh fails, and recovers on the next success
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > lets only the newest answer write the list when two reads overlap
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > reads again every minute and stops reading after it is closed
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > names the amount and methods in the row label so a screen reader hears what is shown
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > does not break on an answer without a sales list
+TypeError: Cannot read properties of undefined (reading 'map')
+ ❯ RecentSalesWorkspace src/features/recent-sales/RecentSalesWorkspace.tsx:57:26
+     55|       {recent !== null && recent.hasOpenSession && recent.sales.length…
+     56|       <ul className="recent-sales__list">
+     57|         {(recent?.sales).map((sale) => (
+       |                          ^
+     58|           <li key={sale.billId}>
+     59|             <button data-telemetry-id="b.recent-sales.recentsalesworks…
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+ ❯ beginWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:11778:18
+ ❯ runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ ❯ workLoopSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ ❯ renderRootSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+ ❯ performWorkOnRoot node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:16583:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  12 failed (12)
+   Start at  09:56:29
+   Duration  2.44s (transform 258ms, setup 0ms, import 381ms, tests 67ms, environment 995ms)
+

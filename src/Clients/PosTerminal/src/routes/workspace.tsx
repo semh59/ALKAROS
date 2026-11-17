@@ -4,13 +4,14 @@ import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
 import { canStartTableOrder } from "./tableOrderAvailability";
 import { TableOrderBridge, type AwaitingCheck } from "./TableOrderBridge";
-import { managementText, navLabels, roleLabelFor } from "../strings";
+import { managementText, navLabels, recentSalesText, roleLabelFor } from "../strings";
 import { formatClockTime } from "../format";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
 import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableRecord, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace, usePendingChecksAlert } from "../features/pending-checks";
 import { loadPendingChecks } from "../features/pending-checks/pendingChecksApi";
+import { RecentSalesWorkspace } from "../features/recent-sales";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogProductDetailsInput, type CatalogWorkspaceState } from "../features/catalog";
@@ -76,6 +77,7 @@ export function ExperiencePage({
   const routeNeedsCatalogManage = path === "/catalog" || path === "/system-health";
   const routeNeedsReportsView = path === "/authorization" || path === "/management";
   const routeNeedsBillsSplit = path === "/billing";
+  const routeNeedsRefundRequest = path === "/recent-sales";
   const routeNeedsKitchenAdvance = path === "/kitchen";
   // V12-OUI-004: online food is one screen; its settings tab (V12-OUI-003's platform API settings) is a manager's
   // integration setting, like the QNB and relay screens. The old separate paths open the matching tab.
@@ -90,6 +92,8 @@ export function ExperiencePage({
       ? capabilitySet.has("reports.view")
       : routeNeedsBillsSplit
         ? capabilitySet.has("bills.split")
+        : routeNeedsRefundRequest
+        ? capabilitySet.has("payments.refund.request")
         : routeNeedsKitchenAdvance
           // V1-IAM-028: either grant opens the tab — kitchen.advance so a
           // kitchen-staff-only session can reach it, orders.send so no
@@ -147,6 +151,7 @@ export function ExperiencePage({
     { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
     { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split", primary: false },
     { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "clock", requiredCapability: "orders.create", badge: pendingCheckCount },
+    { id: "recent-sales", label: navLabels.recentSales, href: "/recent-sales", icon: "register", requiredCapability: "payments.refund.request" },
     // V12-OUI-004: one entry for online food (orders, and for a manager its settings); same permission as accepting a QR order.
     { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "send", requiredCapability: "orders.create", primary: false },
     // V1-IAM-028: kitchen.advance is additive — every role that held
@@ -160,8 +165,8 @@ export function ExperiencePage({
     { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "lock", requiredCapability: "reports.view", primary: false },
     { id: "management", label: navLabels.management, href: "/management", icon: "brand", requiredCapability: "reports.view", primary: false },
   ];
-  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
-  const description = path === "/tables" ? "" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
+  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : path === "/recent-sales" ? recentSalesText.title : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : path === "/management" ? managementText.title : "Kasa satış";
+  const description = path === "/tables" ? "" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : path === "/recent-sales" ? recentSalesText.description : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : path === "/management" ? managementText.description : "Gerçek zamanlı sipariş ve müşteri ekranı";
 
   return <ProductionShell
     session={session}
@@ -170,7 +175,7 @@ export function ExperiencePage({
     freshness={freshness}
     navigation={navigation}
     onNavigate={navigate}
-    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
+    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : path === "/recent-sales" ? "recent-sales" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
     headerActions={cashSession ? <CashSessionLink status={cashSession} className="experience-header-link" /> : undefined}
@@ -183,6 +188,7 @@ export function ExperiencePage({
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
+    {path === "/recent-sales" && canOpenRoute && <RecentSalesWorkspace terminalId={terminalId} />}
     {onlineTab !== null && (
       <OnlineFoodHub
         terminalId={terminalId}
@@ -196,7 +202,7 @@ export function ExperiencePage({
     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
     {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
     {path === "/management" && canOpenRoute && <ManagementArea capabilities={capabilitySet} />}
-    {onlineTab === null && !(["/", "/tables", "/billing", "/pending-checks", "/catalog", "/kitchen", "/system-health", "/authorization", "/management"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+    {onlineTab === null && !(["/", "/tables", "/billing", "/pending-checks", "/recent-sales", "/catalog", "/kitchen", "/system-health", "/authorization", "/management"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
   </ProductionShell>;
 }
 

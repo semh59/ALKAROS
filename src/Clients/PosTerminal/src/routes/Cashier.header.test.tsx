@@ -94,6 +94,24 @@ describe("the till header", () => {
     expect(menuTexts()).not.toEqual(expect.arrayContaining(["Ürün menüsü"]));
   });
 
+  it("offers Son satışlar in the menu only to a session that may request a refund, and opens it", async () => {
+    await renderHome({ capabilities: ["orders.create", "payments.refund.request"] });
+    await tap(userButton());
+    const entry = [...document.querySelectorAll(".header-menu a")].find((item) => item.textContent === "Son satışlar");
+    expect(entry?.getAttribute("href")).toBe("/recent-sales");
+
+    await tap(entry!);
+    expect(window.location.pathname).toBe("/recent-sales");
+    window.history.replaceState({}, "", "/");
+  });
+
+  it("does not offer Son satışlar without the refund request permission", async () => {
+    await renderHome({ capabilities: ["orders.create"] });
+    await tap(userButton());
+
+    expect(menuTexts()).not.toContain("Son satışlar");
+  });
+
   it("closes the menu after a choice and on Escape", async () => {
     await renderHome();
     await tap(userButton());

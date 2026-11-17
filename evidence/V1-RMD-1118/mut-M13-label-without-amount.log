@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (12 tests | 1 failed) 149ms
+     × names the amount and methods in the row label so a screen reader hears what is shown 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > names the amount and methods in the row label so a screen reader hears what is shown
+AssertionError: expected 'Masa 5 · 14:32, Nakit: iade sayfasını…' to match /Masa 5 · 14:32, Nakit, .*540,00.*iade…/
+
+- Expected:
+/Masa 5 · 14:32, Nakit, .*540,00.*iade sayfasını aç/
+
++ Received:
+"Masa 5 · 14:32, Nakit: iade sayfasını aç"
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:150:86
+    148|     await render();
+    149|
+    150|     expect(document.querySelector(".recent-sales__row")?.getAttribute(…
+       |                                                                                      ^
+    151|   });
+    152|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  09:56:26
+   Duration  1.91s (transform 254ms, setup 0ms, import 373ms, tests 149ms, environment 1.09s)
+

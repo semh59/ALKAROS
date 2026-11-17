@@ -16,6 +16,8 @@ const targets: ReadonlyArray<readonly [file: string, selector: string]> = [
   ["./styles.css", ".dialog-close {"],
   ["./styles.css", ".search-field input {"],
   ["./features/pending-checks/pending-checks.css", ".pending-checks__recall {"],
+  ["./features/recent-sales/recent-sales.css", ".recent-sales__row {"],
+  ["./features/recent-sales/recent-sales.css", ".recent-sales__refresh {"],
   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-workspace__feedback button {"],
   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-density button, .kitchen-view-mode button {"],
   ["./features/kitchen-operations/kitchen-operations.css", ".kitchen-flag-btn {"],

@@ -47,6 +47,7 @@ export const navLabels = {
   tables: "Masalar",
   billing: "Hesap",
   pendingChecks: "Bekleyen hesaplar",
+  recentSales: "Son satışlar",
   onlineFood: "Online Yemek",
   kitchen: "Mutfak",
   catalog: "Menü",
@@ -1469,4 +1470,22 @@ export const kitchenlessText = {
   notSent: "Mutfağa gönderilmedi",
   sendFirst: "Gönderilmemiş ürünler var; mutfağa gönderin ya da hesabı ödeyin.",
   addedCount: (count: number) => `${count} kalem kasada eklendi (mutfağa gitmedi)`,
+} as const;
+
+/** Son satışlar: kasiyerin açık oturumunda kapanan hesaplar; satıra dokununca iade sayfası açılır. */
+export const recentSalesText = {
+  title: "Son satışlar",
+  description: "Bu kasa oturumunda kapanan hesaplar; iade için bir satıra dokunun",
+  loading: "Son satışlar yükleniyor…",
+  empty: "Bu oturumda kapanmış satış yok",
+  noSession: "Son satışları görmek için önce kasayı açın",
+  refresh: "Yenile",
+  open: "İade sayfasını aç ›",
+  quickSale: "Hızlı satış",
+  stale: (time: string) => `Aşağıdaki liste eski olabilir: son yenileme ${time}.`,
+  failed: "Son satışlar okunamadı.",
+  unreachable: "Sunucuya ulaşılamadı. Son satışlar okunamadı.",
+  forbidden: "Bu listeyi görmek için yetkiniz yok.",
+  methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
+  unknownMethod: "Bilinmiyor",
 } as const;

@@ -1,0 +1,70 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:779:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+ ❯ src/routes/workspace.test.tsx (66 tests | 1 failed) 2496ms
+     × is closed to a session that may not request a refund 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /recent-sales route > is closed to a session that may not request a refund
+AssertionError: expected <button …(4)>…(4)</button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  aria-label="Masa 5 · 14:32 satışı için iade sayfasını aç"
+  class="recent-sales__row"
+  data-telemetry-id="b.recent-sales.recentsalesworkspace.2"
+  type="button"
+>
+  <span
+    class="recent-sales__title"
+  >
+    Masa 5 · 14:32
+  </span>
+  <span
+    class="recent-sales__methods"
+  >
+    Nakit
+  </span>
+  <span
+    class="recent-sales__amount"
+  >
+    ₺540,00
+  </span>
+  <span
+    class="recent-sales__action"
+  >
+    İade sayfasını aç ›
+  </span>
+</button>
+
+ ❯ src/routes/workspace.test.tsx:1624:58
+    1622|     await open(["orders.create", "tables.status"]);
+    1623|
+    1624|     expect(document.querySelector(".recent-sales__row")).toBeNull();
+       |                                                          ^
+    1625|     expect([...document.querySelectorAll(".production-shell__nav > a")…
+    1626|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 108 passed (109)
+   Start at  09:52:37
+   Duration  6.56s (transform 3.72s, setup 0ms, import 3.19s, tests 6.18s, environment 3.69s)
+

@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (12 tests | 1 failed) 158ms
+     × lets only the newest answer write the list when two reads overlap 18ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > lets only the newest answer write the list when two reads overlap
+AssertionError: expected <button …(4)>…(4)</button>
+…(1) to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:124:61
+    122|     await act(async () => { releaseSlow(answer({ hasOpenSession: true,…
+    123|
+    124|     expect(document.querySelectorAll(".recent-sales__row")).toHaveLeng…
+       |                                                             ^
+    125|   });
+    126|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  09:56:17
+   Duration  1.89s (transform 257ms, setup 0ms, import 376ms, tests 158ms, environment 1.06s)
+

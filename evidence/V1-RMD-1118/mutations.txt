@@ -1,0 +1,17 @@
+M1-no-open-refund exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M2-no-session-sentence exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M3-raw-method exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M4-no-stale-warning exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M5-route-open-to-all exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M6-menu-link-for-all exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M7-row-too-small exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M8-forbidden-as-failed exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+M9-empty-with-session-missing exit 1       Tests  1 failed | 108 passed (109) | restored cmp ok
+DONE
+M10-no-stale-answer-guard exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok
+M11-no-interval-cleanup exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok
+M12-no-poll exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok
+M13-label-without-amount exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok
+M14-no-sales-default exit 1       Tests  12 failed (12) | restored cmp ok
+M15-no-sales-default-load exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok
+DONE2

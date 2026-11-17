@@ -790,6 +790,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
       )}
       {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
       <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
+      {capabilities.includes("payments.refund.request") && <a className="header-action" href="/recent-sales" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/recent-sales"); } }}>{navLabels.recentSales}</a>}
       {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Ürün menüsü</a>}
       {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
       <button data-telemetry-id="b.routes.cashier.4"

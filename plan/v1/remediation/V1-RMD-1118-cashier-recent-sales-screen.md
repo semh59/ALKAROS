@@ -1,7 +1,7 @@
 # V1-RMD-1118 - Kasiyer ekranında "Son satışlar": kapanmış hesaptan iade sayfasına tek dokunuş
 
 - Task ID: V1-RMD-1118
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Planned

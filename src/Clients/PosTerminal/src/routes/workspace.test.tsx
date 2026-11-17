@@ -1583,3 +1583,46 @@ describe("workspace /tables last update time", () => {
     expect(document.body.textContent).toContain("Son güncelleme 14:32:00");
   });
 });
+
+describe("workspace /recent-sales route", () => {
+  let root: Root | null = null;
+
+  async function open(capabilities: readonly string[]) {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.endsWith("/billing/recent-sales")) return jsonResponse({ hasOpenSession: true, sales: [{ billId: "b-1", tableNumber: "5", closedAt: "2026-09-24T11:32:00Z", amount: 540, methods: ["Cash"] }] });
+      return jsonResponse([]);
+    }));
+    window.history.replaceState({}, "", "/recent-sales");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" displayName="Test" capabilities={capabilities} path="/recent-sales" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>));
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("shows the recent sales to a session that may request a refund and lists the entry in the main navigation", async () => {
+    await open(["orders.create", "tables.status", "payments.refund.request"]);
+
+    expect(document.querySelector(".recent-sales__row")?.textContent).toContain("Masa 5");
+    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).toContain("Son satışlar");
+    expect(document.querySelector(".production-shell__nav > a[aria-current='page']")?.textContent).toBe("Son satışlar");
+  });
+
+  it("is closed to a session that may not request a refund", async () => {
+    await open(["orders.create", "tables.status"]);
+
+    expect(document.body.textContent).toContain("Bu alana erişim izniniz yok");
+    expect(document.querySelector(".recent-sales__row")).toBeNull();
+    expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).not.toContain("Son satışlar");
+  });
+});
