@@ -1,0 +1,44 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-manager-approval.test.js (11 tests | 10 failed) 12694ms
+     × offers labelled manager name and password fields once the tolerance is exceeded 1244ms
+     × sends the manager name and password with the override and shows the closed summary 1243ms
+     × stops with a Turkish sentence and sends nothing when only one of the two fields is filled 1251ms
+     × sends no credentials when both fields are empty, so a manager closing under their own account still works 1232ms
+     × says MANAGER_CREDENTIAL_INVALID with one fixed sentence, never the server text, and empties the password 1253ms
+     × says MANAGER_LOCKED with one fixed sentence, never the server text, and empties the password 1235ms
+     × says TOO_MANY_ATTEMPTS with one fixed sentence, never the server text, and empties the password 1230ms
+     × says SELF_APPROVAL_NOT_ALLOWED with one fixed sentence, never the server text, and empties the password 1252ms
+     × says APPROVER_LACKS_PERMISSION with one fixed sentence, never the server text, and empties the password 1245ms
+     × keeps the password out of every place the page could keep it 1232ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > offers labelled manager name and password fields once the tolerance is exceeded
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > sends the manager name and password with the override and shows the closed summary
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > stops with a Turkish sentence and sends nothing when only one of the two fields is filled
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > sends no credentials when both fields are empty, so a manager closing under their own account still works
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > says MANAGER_CREDENTIAL_INVALID with one fixed sentence, never the server text, and empties the password
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > says MANAGER_LOCKED with one fixed sentence, never the server text, and empties the password
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > says TOO_MANY_ATTEMPTS with one fixed sentence, never the server text, and empties the password
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > says SELF_APPROVAL_NOT_ALLOWED with one fixed sentence, never the server text, and empties the password
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > says APPROVER_LACKS_PERMISSION with one fixed sentence, never the server text, and empties the password
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > keeps the password out of every place the page could keep it
+AssertionError: expected null not to be null
+ ❯ cash-session-close-manager-approval.test.js:63:61
+     61|   await type("#difference-explanation", "sayım doğru");
+     62|   $("#submit-close").click();
+     63|   await vi.waitFor(() => expect($("#manager-username")).not.toBeNull()…
+       |                                                             ^
+     64|   return calls;
+     65| }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  10 failed | 1 passed (11)
+   Start at  23:03:53
+   Duration  13.97s (transform 413ms, setup 23ms, import 53ms, tests 12.69s, environment 950ms)
+

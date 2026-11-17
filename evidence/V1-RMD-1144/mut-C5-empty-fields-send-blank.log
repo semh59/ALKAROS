@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-manager-approval.test.js (16 tests | 1 failed) 3634ms
+     × sends no credentials when both fields are empty, so a manager closing under their own account still works 304ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > sends no credentials when both fields are empty, so a manager closing under their own account still works
+AssertionError: expected { ActualCash: 500, …(6) } to not have property "ManagerUsername"
+
+- Expected:
+undefined
+
++ Received:
+""
+
+ ❯ cash-session-close-manager-approval.test.js:140:39
+    138|
+    139|     await vi.waitFor(() => expect(closes(calls)).toHaveLength(2));
+    140|     expect(closes(calls)[1].body).not.toHaveProperty("ManagerUsername"…
+       |                                       ^
+    141|     expect(closes(calls)[1].body).not.toHaveProperty("ManagerPassword"…
+    142|     expect(closes(calls)[1].body.IsSupervisorOverride).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  23:05:46
+   Duration  4.87s (transform 398ms, setup 24ms, import 47ms, tests 3.63s, environment 918ms)
+

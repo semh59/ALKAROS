@@ -1,7 +1,7 @@
 # V1-RMD-1144 - Kasa kapanışında "Yönetici burada onaylasın": fark toleransı aşılınca yönetici adı ve şifre
 
 - Task ID: V1-RMD-1144
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,96 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 9bfd11438..640d5d48b 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -41,7 +41,7 @@
+     summaryExpected: null,
+     // Typed-but-unsent values live in state, not only in the DOM: every re-render (busy, error,
+     // notice) rebuilds the screen, and the fields must come back exactly as the cashier left them.
+-    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false, noSaleNote: '' },
++    drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', managerUsername: '', acknowledged: false, noSaleNote: '' },
+     zeroCountPrompt: false,
+     pendingDecision: null,
+     userId: null,
+@@ -136,6 +136,11 @@
+     INVALID_CASH_SESSION_STATE: 'Kasa oturumu bu işlem için uygun durumda değil.',
+     CASH_SESSION_NOT_FOUND: 'Kasa oturumu bulunamadı.',
+     CASH_VARIANCE_THRESHOLD_EXCEEDED: 'Fark tolerans sınırını aşıyor; yönetici onayı gerekiyor.',
++    MANAGER_CREDENTIAL_INVALID: 'Yönetici adı veya şifre hatalı.',
++    MANAGER_LOCKED: 'Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir.',
++    TOO_MANY_ATTEMPTS: 'Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın.',
++    SELF_APPROVAL_NOT_ALLOWED: 'Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir.',
++    APPROVER_LACKS_PERMISSION: 'Bu yönetici bu işlemi onaylama yetkisine sahip değil.',
+     CASH_SESSION_OWNER_REQUIRED: 'Bu kasa oturumunu yalnız oturumu açan kasiyer veya bir yönetici sayabilir ve kapatabilir.',
+     CASH_COUNT_REQUIRED: 'Kasa sayımı kaydedilmeden kasa kapatılamaz; önce parayı sayıp kaydedin.',
+     CASH_COUNT_MISMATCH: 'Kapanışta girilen tutar kayıtlı son sayımla aynı olmalı; gerekirse yeniden sayın.',
+@@ -386,7 +391,7 @@
+     state.movements = null;
+     state.movementsError = false;
+     state.notice = null;
+-    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', acknowledged: false, noSaleNote: '' };
++    state.drafts = { amount: '', notes: '', counted: '', countNotes: '', explanation: '', managerUsername: '', acknowledged: false, noSaleNote: '' };
+     state.drawer = null;
+     state.noSaleReason = null;
+     state.noSaleKey = null;
+@@ -637,7 +642,7 @@
+     state.unsettledPayments = body && body.unsettledPaymentCount ? body.unsettledPaymentCount : 0;
+   }
+ 
+-  function submitClose(isSupervisorOverride, explanation) {
++  function submitClose(isSupervisorOverride, explanation, manager) {
+     setBusy(true);
+     api(cashSessionsBase() + '/' + state.session.cashSessionId + '/close', {
+       method: 'POST',
+@@ -648,6 +653,8 @@
+         OverrideReason: isSupervisorOverride ? explanation || null : null,
+         DifferenceExplanation: explanation || null,
+         AcknowledgeUnsettled: !!state.drafts.acknowledged,
++        ManagerUsername: manager ? manager.username : undefined,
++        ManagerPassword: manager ? manager.password : undefined,
+       },
+     }).then(function (result) {
+       state.busy = false;
+@@ -1313,9 +1320,15 @@
+       (exceeded
+         ? '<div class="cs-alert cs-alert-danger" role="alert"><span class="cs-alert-icon">!</span>' +
+           '<div><div class="cs-alert-title">Fark tolerans sınırını aşıyor</div>' +
+-          '<div class="cs-alert-body">Devam etmek için yönetici onayı ve açıklama gerekir.</div></div></div>' +
++          '<div class="cs-alert-body">Devam etmek için açıklama yazın; yönetici yanınızda kendi kullanıcı adı ve şifresini girsin.</div></div></div>' +
+           '<label class="cs-field-label" for="override-reason">Yönetici Açıklaması</label>' +
+-          '<textarea class="cs-textarea" id="override-reason" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>'
++          '<textarea class="cs-textarea" id="override-reason" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>' +
++          '<label class="cs-field-label" for="manager-username">Yönetici kullanıcı adı</label>' +
++          '<input class="cs-input" type="text" id="manager-username" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
++          escapeHtml(state.drafts.managerUsername) + '">' +
++          '<label class="cs-field-label" for="manager-password">Yönetici şifresi</label>' +
++          '<input class="cs-input" type="password" id="manager-password" autocomplete="new-password" maxlength="256">' +
++          '<p class="cs-field-hint">Yönetici hesabıyla kendiniz kapatıyorsanız bu iki alanı boş bırakın.</p>'
+         : hasDifference
+           ? '<label class="cs-field-label" for="difference-explanation">Fark Açıklaması (zorunlu)</label>' +
+             '<textarea class="cs-textarea" id="difference-explanation" maxlength="500">' + escapeHtml(state.drafts.explanation) + '</textarea>'
+@@ -1368,8 +1381,15 @@
+         setError('Kasada fark var; kapatmak için fark açıklaması yazın.');
+         return;
+       }
++      var username = exceeded ? document.getElementById('manager-username').value.trim() : '';
++      // The password lives only in its field: never in state, so the next render empties it.
++      var password = exceeded ? document.getElementById('manager-password').value : '';
++      if (!username !== !password) {
++        setError('Yönetici kullanıcı adı ve şifresi birlikte girilmelidir.');
++        return;
++      }
+       state.drafts.explanation = explanation;
+-      submitClose(exceeded, explanation);
++      submitClose(exceeded, explanation, username ? { username: username, password: password } : null);
+     });
+   }
+ 
+@@ -1452,7 +1472,7 @@
+     // The screen still in the DOM is the previous one when the phase just changed; its fields are not drafts.
+     if (renderedKey !== screenKey()) return;
+     [['movement-amount', 'amount'], ['movement-notes', 'notes'], ['counted-amount', 'counted'],
+-      ['count-notes', 'countNotes'], ['override-reason', 'explanation'],
++      ['count-notes', 'countNotes'], ['override-reason', 'explanation'], ['manager-username', 'managerUsername'],
+       ['difference-explanation', 'explanation'], ['no-sale-note', 'noSaleNote']].forEach(function (pair) {
+       var element = document.getElementById(pair[0]);
+       if (element && app.contains(element)) state.drafts[pair[1]] = element.value;

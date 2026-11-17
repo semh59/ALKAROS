@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-manager-approval.test.js (16 tests | 1 failed) 4623ms
+     × says SELF_APPROVAL_NOT_ALLOWED with one fixed sentence, never the server text, and empties the password 1322ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-manager-approval.test.js > cash-session.js manager approval at the till > says SELF_APPROVAL_NOT_ALLOWED with one fixed sentence, never the server text, and empties the password
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'Kendi talebinizi onaylayamazsınız; yö…'
+
+- Expected
++ Received
+
+- Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir.
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!HataBu işlem için yetkiniz yok.Beklenen₺1.000,00Sayılan₺500,00Fark-₺500,00Kapanışta kabul edilen fark: en çok ₺50,00 (yönetici ayarı); fazlası yönetici onayı ister.!Fark tolerans sınırını aşıyorDevam etmek için yönetici onayı ve açıklama gerekir.Yönetici Açıklamasısayım doğruYönetici kullanıcı adıYönetici şifresiYönetici hesabıyla kendiniz kapatıyorsanız bu iki alanı boş bırakın.Kasayı KapatSayımı düzelt
++   
++   
++
+
+ ❯ cash-session-close-manager-approval.test.js:156:43
+    154|     await approve("mudur", "Mudur-Sifre-1");
+    155|
+    156|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    157|     expect(text()).not.toContain("RAW SERVER TEXT");
+    158|     expect(text()).not.toContain(code);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 15 passed (16)
+   Start at  23:06:09
+   Duration  6.02s (transform 416ms, setup 24ms, import 56ms, tests 4.62s, environment 1.03s)
+

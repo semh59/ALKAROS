@@ -1,0 +1,2 @@
+- qa-frontend: KABUL; dusuk: yeniden cizim sifreyi siler (RESULT'ta risk)
+- qa-ux-tasarim: 3 dusuk; #1 (uyari metni yoneticinin yaninda yazacagini soylesin) uygulandi + test; #2 ipucu rol bazli degil, #3 etiket yazimi: acik risk
