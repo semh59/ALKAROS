@@ -1,0 +1,7 @@
+# V1-RMD-1117 sonuc
+Dogrulama (kod): sunucuda odenmis hesaplari listeleyen uc yoktu (awaiting-payment Paid'i bilerek disarida birakir); sema degisikligi gerekmedi, migration yok.
+Cozum: GET /api/v1/terminals/{terminalId}/billing/recent-sales (RecentSalesStore.cs + BillingSplitApplication.cs). Yetki payments.refund.request (refund-requests ile ayni). Cagiranin kendi acik (Open/Counting/Closing) kasa oturumunda, bu kasada (bills.terminal_id) kapanan en yeni 20 Paid hesap; masa (hesap, yoksa siparis, yoksa null), kapanis, net tutar (tahsis - iade), yontemler (PaymentMethodLookup). Oturum yoksa hasOpenSession=false ve bos liste. Iade/onay/limit kodu degismedi.
+Kanit: red.log 6 kirmizi (404); green.log 8 yesil; arch-apiconventions.log 17 yesil; green-billing-refund.log PaymentRefund+BillTerminalAccess 133 yesil (store/test son degisikliginden once, RecentSales sonra yeniden kosuldu 8 yesil); mutations.txt M1-M11 killed (cp+cmp).
+Duzeltmeler qa'dan sonra: sahipsiz (terminal_id NULL) hesap artik listelenmez (sizinti riski); Counting oturumu testi eklendi.
+Acik risk: tam iade edilen hesap iptal oldugundan listelenmez; kismi iadede tutar kalan tahsildir; Account/Eft yontem etiketleri sunucu testinde ayri dogrulanmadi (ortak PaymentMethodLookup).
+Acik risk (qa-bulgu-dogrulayici): cash.session.override sahibi yonetici kasada tahsilat yaparsa hesap sahiplenmez (terminal_id NULL); onun kendi oturumundaki satislari listede gorunmez. Sizinti yerine kasitli tercih; gerekirse ayri gorev.

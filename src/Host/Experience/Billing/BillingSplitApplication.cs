@@ -108,6 +108,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
         services.TryAddSingleton<BillCancellationStore>();
         services.TryAddSingleton<PaymentRefundStore>();
+        services.TryAddSingleton<RecentSalesStore>();
         services.AddBillTerminalAccess();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
@@ -532,6 +533,19 @@ public static class BillingSplitApplication
 
             var selfApprovalAllowed = await ManagerSelfApprovalSetting.IsEnabledAsync(settings, cancellationToken);
             return Results.Ok(requests.Select(request => request with { MayDecide = selfApprovalAllowed || request.RequestedBy != principal.UserId }));
+        });
+
+        refundsGroup.MapGet("/recent-sales", async (
+            Guid terminalId,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            RecentSalesStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+            return Results.Ok(await store.ListAsync(principal.UserId, terminalId, cancellationToken));
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (

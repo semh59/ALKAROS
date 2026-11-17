@@ -1,0 +1,11 @@
+M1-no-paid-filter exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M2-no-session-window exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M3-no-terminal-filter exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M4-limit-21 exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 28 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M5-oldest-first exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M7-no-permission exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M8-ignore-reversals exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M9-no-order-table-fallback exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam:     7, Süre: 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0) | restored cmp ok
+M6-any-cashier-session (test fixed, rerun) exit 1 Başarısız! - Başarısız:     1, Başarılı:     6, Atlanan:     0, Toplam: | restored cmp ok
+M10-unowned-bills-visible exit 1 Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: | restored cmp ok
+M11-counting-not-open exit 1 Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: | restored cmp ok

@@ -1,0 +1,294 @@
+diff --git a/src/Host/Experience/Billing/BillingSplitApplication.cs b/src/Host/Experience/Billing/BillingSplitApplication.cs
+index fc5eb1b07..451d1725d 100644
+--- a/src/Host/Experience/Billing/BillingSplitApplication.cs
++++ b/src/Host/Experience/Billing/BillingSplitApplication.cs
+@@ -108,6 +108,7 @@ public static class BillingSplitApplication
+         services.TryAddSingleton<ICashierQueueAnnouncer, NoOpCashierQueueAnnouncer>();
+         services.TryAddSingleton<BillCancellationStore>();
+         services.TryAddSingleton<PaymentRefundStore>();
++        services.TryAddSingleton<RecentSalesStore>();
+         services.AddBillTerminalAccess();
+         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
+         services.TryAddTransient<BillingSplitExceptionFilter>();
+@@ -534,6 +535,19 @@ public static class BillingSplitApplication
+             return Results.Ok(requests.Select(request => request with { MayDecide = selfApprovalAllowed || request.RequestedBy != principal.UserId }));
+         });
+ 
++        refundsGroup.MapGet("/recent-sales", async (
++            Guid terminalId,
++            IBillingSplitSessionAuthorizer authorizer,
++            IAuthorizationService authorization,
++            RecentSalesStore store,
++            HttpContext context,
++            CancellationToken cancellationToken) =>
++        {
++            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
++            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
++            return Results.Ok(await store.ListAsync(principal.UserId, terminalId, cancellationToken));
++        });
++
+         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (
+             Guid terminalId,
+             Guid requestId,
+using ALKAROS.Billing.BillFoundation;
+using Npgsql;
+using NpgsqlTypes;
+
+namespace ALKAROS.Host.Experience.Billing;
+
+public sealed record RecentSaleV1(Guid BillId, string? TableNumber, DateTimeOffset ClosedAt, decimal Amount, IReadOnlyList<string> Methods);
+
+/// <summary>The paid bills the caller closed in their own open drawer session; empty when there is no such session.</summary>
+public sealed record RecentSalesV1(bool HasOpenSession, IReadOnlyList<RecentSaleV1> Sales);
+
+public sealed class RecentSalesStore(NpgsqlDataSource dataSource)
+{
+    public const int Limit = 20;
+
+    public async Task<RecentSalesV1> ListAsync(Guid cashierUserId, Guid terminalId, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(
+            $"""
+            WITH own_session AS (
+                SELECT opened_at FROM cash.cash_sessions
+                WHERE terminal_id = @terminal AND cashier_user_id = @cashier AND status IN ('Open', 'Counting', 'Closing')
+                LIMIT 1)
+            SELECT b.bill_id,
+                   COALESCE(bt.table_number, (SELECT ot.table_number FROM orders.orders o
+                                              JOIN table_mgmt.tables ot ON ot.table_id = o.table_id
+                                              WHERE {BillOrderLink.Matches("b", "o.order_id")}
+                                              ORDER BY o.created_at LIMIT 1)),
+                   b.closed_at,
+                   COALESCE((SELECT SUM(a.amount) FROM payments.payment_allocations a WHERE a.bill_id = b.bill_id), 0)
+                     - COALESCE((SELECT SUM(r.amount) FROM payments.payment_reversals r
+                                 JOIN payments.payments rp ON rp.payment_id = r.payment_id
+                                 WHERE rp.bill_id = b.bill_id), 0),
+                   ARRAY(SELECT DISTINCT {PaymentMethodLookup.Sql("p.payment_id")} AS method
+                         FROM payments.payments p
+                         WHERE p.bill_id = b.bill_id AND p.status IN ('Approved', 'PartiallyRefunded')
+                         ORDER BY 1)
+            FROM own_session s
+            JOIN billing.bills b ON b.status = 'Paid' AND b.closed_at >= s.opened_at
+                                AND b.terminal_id = @terminal
+            LEFT JOIN table_mgmt.tables bt ON bt.table_id = b.table_id
+            ORDER BY b.closed_at DESC, b.bill_id
+            LIMIT {Limit};
+            """);
+        command.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
+        command.Parameters.Add("cashier", NpgsqlDbType.Uuid).Value = cashierUserId;
+
+        var sales = new List<RecentSaleV1>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            sales.Add(new RecentSaleV1(
+                reader.GetGuid(0),
+                reader.IsDBNull(1) ? null : reader.GetString(1),
+                reader.GetFieldValue<DateTimeOffset>(2),
+                reader.GetDecimal(3),
+                reader.GetFieldValue<string[]>(4)));
+        }
+
+        if (sales.Count > 0)
+            return new RecentSalesV1(true, sales);
+
+        await reader.CloseAsync();
+        await using var open = dataSource.CreateCommand(
+            """
+            SELECT EXISTS (SELECT 1 FROM cash.cash_sessions
+                           WHERE terminal_id = @terminal AND cashier_user_id = @cashier AND status IN ('Open', 'Counting', 'Closing'));
+            """);
+        open.Parameters.Add("terminal", NpgsqlDbType.Uuid).Value = terminalId;
+        open.Parameters.Add("cashier", NpgsqlDbType.Uuid).Value = cashierUserId;
+        return new RecentSalesV1((bool)(await open.ExecuteScalarAsync(cancellationToken))!, sales);
+    }
+}
+using System.Net;
+using System.Net.Http.Json;
+using Xunit;
+
+namespace ALKAROS.Host.Experience.Billing.Tests;
+
+public sealed partial class PaymentRefundHttpTests
+{
+    [Fact]
+    public async Task RecentSalesListsAPaidBillOfTheOwnSessionWithItsTableAmountAndEveryMethod()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await CashPaymentAsync(seeded.BillId, 100m);
+        await CardPaymentAsync(seeded.BillId, 50m);
+        await OpenSessionAsync(_cashierId);
+        await CloseBillAsync(seeded.BillId, DateTimeOffset.UtcNow.AddSeconds(5), _terminalId);
+        var tableNumber = await Scalar<string>(
+            "SELECT t.table_number FROM billing.bills b JOIN table_mgmt.tables t ON t.table_id = b.table_id WHERE b.bill_id = @p", seeded.BillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.True(recent.HasOpenSession);
+        var sale = Assert.Single(recent.Sales);
+        Assert.Equal(seeded.BillId, sale.BillId);
+        Assert.Equal(tableNumber, sale.TableNumber);
+        Assert.Equal(150m, sale.Amount);
+        Assert.Equal(["Card", "Cash"], sale.Methods);
+    }
+
+    [Fact]
+    public async Task RecentSalesShowsWhatIsLeftAfterAPartialRefund()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await CloseBillAsync(seeded.BillId, DateTimeOffset.UtcNow.AddSeconds(5), _terminalId);
+        await Execute(
+            """
+            INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            VALUES (gen_random_uuid(), @p, 'PartialRefund', 30, 'Eksik ürün', @u, 'recent-' || @p::text, now());
+            """, paymentId, ("u", _cashierId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.Equal(70m, Assert.Single(recent.Sales).Amount);
+    }
+
+    [Fact]
+    public async Task RecentSalesTakesTheTableFromTheOrderWhenTheCheckLeftItsTableAndHasNoneForAQuickSale()
+    {
+        var sent = await _database.SeedBillAsync();
+        await CashPaymentAsync(sent.BillId, 100m);
+        var quick = await _database.SeedBillAsync();
+        await CashPaymentAsync(quick.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await CloseBillAsync(sent.BillId, DateTimeOffset.UtcNow.AddSeconds(5), _terminalId);
+        await CloseBillAsync(quick.BillId, DateTimeOffset.UtcNow.AddSeconds(6), _terminalId);
+        var tableNumber = await Scalar<string>(
+            "SELECT t.table_number FROM billing.bills b JOIN table_mgmt.tables t ON t.table_id = b.table_id WHERE b.bill_id = @p", sent.BillId);
+        await Execute("UPDATE billing.bills SET table_id = NULL WHERE bill_id = @p", sent.BillId);
+        await Execute(
+            "UPDATE orders.orders SET table_id = NULL WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @p)", quick.BillId);
+        await Execute("UPDATE billing.bills SET table_id = NULL WHERE bill_id = @p", quick.BillId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.Equal(tableNumber, recent.Sales.Single(sale => sale.BillId == sent.BillId).TableNumber);
+        Assert.Null(recent.Sales.Single(sale => sale.BillId == quick.BillId).TableNumber);
+    }
+
+    [Fact]
+    public async Task RecentSalesLeavesOutBillsThatAreNotPaidClosedBeforeTheSessionOrOwnedByAnotherTill()
+    {
+        var open = await _database.SeedBillAsync();
+        var before = await _database.SeedBillAsync();
+        var elsewhere = await _database.SeedBillAsync();
+        var cancelled = await _database.SeedBillAsync();
+        var unowned = await _database.SeedBillAsync();
+        var mine = await _database.SeedBillAsync();
+        foreach (var bill in new[] { open, before, elsewhere, cancelled, unowned, mine })
+            await CashPaymentAsync(bill.BillId, 10m);
+        await OpenSessionAsync(_cashierId);
+        var later = DateTimeOffset.UtcNow.AddSeconds(5);
+        await CloseBillAsync(before.BillId, DateTimeOffset.UtcNow.AddHours(-2), _terminalId);
+        await CloseBillAsync(elsewhere.BillId, later, Guid.NewGuid());
+        await CloseBillAsync(cancelled.BillId, later, _terminalId);
+        await Execute("UPDATE billing.bills SET status = 'Cancelled', cancelled_at = now() WHERE bill_id = @p", cancelled.BillId);
+        await CloseBillAsync(unowned.BillId, later, _terminalId);
+        await Execute("UPDATE billing.bills SET terminal_id = NULL WHERE bill_id = @p", unowned.BillId);
+        await CloseBillAsync(mine.BillId, later, _terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.Equal(mine.BillId, Assert.Single(recent.Sales).BillId);
+    }
+
+    [Fact]
+    public async Task RecentSalesListsTheNewestTwentyFirst()
+    {
+        await OpenSessionAsync(_cashierId);
+        var first = DateTimeOffset.UtcNow.AddSeconds(5);
+        var ids = new List<Guid>();
+        for (var index = 0; index < 22; index++)
+        {
+            var bill = await _database.SeedBillAsync();
+            await CashPaymentAsync(bill.BillId, 10m);
+            await CloseBillAsync(bill.BillId, first.AddSeconds(index), _terminalId);
+            ids.Add(bill.BillId);
+        }
+
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.Equal(Enumerable.Reverse(ids).Take(20), recent.Sales.Select(sale => sale.BillId));
+    }
+
+    [Fact]
+    public async Task RecentSalesIsEmptyAndSaysSoWhenTheCallerHasNoOpenSession()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_managerId);
+        await CloseBillAsync(seeded.BillId, DateTimeOffset.UtcNow.AddSeconds(5), _terminalId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.False(recent.HasOpenSession);
+        Assert.Empty(recent.Sales);
+    }
+
+    [Fact]
+    public async Task RecentSalesStillListsWhileTheDrawerIsBeingCounted()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await CashPaymentAsync(seeded.BillId, 100m);
+        var sessionId = await OpenSessionAsync(_cashierId);
+        await CloseBillAsync(seeded.BillId, DateTimeOffset.UtcNow.AddSeconds(5), _terminalId);
+        await Execute("UPDATE cash.cash_sessions SET status = 'Counting' WHERE cash_session_id = @p", sessionId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var recent = await RecentSalesAsync(client);
+
+        Assert.True(recent.HasOpenSession);
+        Assert.Single(recent.Sales);
+    }
+
+    [Fact]
+    public async Task RecentSalesNeedsThePermissionToRequestARefund()
+    {
+        var (_, noPermissionCookie) = await _database.SeedSessionWithPermissionsAsync(_terminalId, "waiter");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(RecentSalesRequest(noPermissionCookie));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    private Task CloseBillAsync(Guid billId, DateTimeOffset closedAt, Guid terminalId) => Execute(
+        "UPDATE billing.bills SET status = 'Paid', closed_at = @at, terminal_id = @t WHERE bill_id = @p",
+        billId, ("at", closedAt), ("t", terminalId));
+
+    private HttpRequestMessage RecentSalesRequest(string cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{_terminalId:D}/billing/recent-sales");
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return request;
+    }
+
+    private async Task<RecentSalesV1> RecentSalesAsync(HttpClient client)
+    {
+        using var response = await client.SendAsync(RecentSalesRequest(_cashierCookie));
+        Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
+        return (await response.Content.ReadFromJsonAsync<RecentSalesV1>())!;
+    }
+}
