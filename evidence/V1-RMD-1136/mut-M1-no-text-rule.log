@@ -1,0 +1,77 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (37 tests | 9 failed) 604ms
+       × shows both with Turkish names, a warning not to switch the drawer on before trying it, and an empty address as a dash 20ms
+       × refuses the address 192.168.1.50 with the hint and never calls the server 10ms
+       × refuses the address 192.168.1.50:70000 with the hint and never calls the server 7ms
+       × refuses the address 192.168.1.50:0 with the hint and never calls the server 6ms
+       × refuses the address bir iki:9100 with the hint and never calls the server 8ms
+       × refuses the address -a-:9100 with the hint and never calls the server 7ms
+       × refuses the address host.:9100 with the hint and never calls the server 7ms
+       × refuses the address http://192.168.1.50:9100 with the hint and never calls the server 8ms
+       × saves a well-formed address trimmed, and an empty one clears it 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > shows both with Turkish names, a warning not to switch the drawer on before trying it, and an empty address as a dash
+AssertionError: expected [ 'Düzenle' ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:285:64
+    283|       expect(document.body.textContent).toContain("Kasa çekmecesini ya…
+    284|       expect(document.body.textContent).toContain("Kasa yazıcısı adres…
+    285|       expect(buttons().filter((label) => label === "Düzenle")).toHaveL…
+       |                                                                ^
+    286|       await press("Düzenle");
+    287|       expect(document.body.textContent).toContain("Gerçek yazıcı ve çe…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address 192.168.1.50 with the hint and never calls the server
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address 192.168.1.50:70000 with the hint and never calls the server
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address 192.168.1.50:0 with the hint and never calls the server
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address bir iki:9100 with the hint and never calls the server
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address -a-:9100 with the hint and never calls the server
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address host.:9100 with the hint and never calls the server
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address http://192.168.1.50:9100 with the hint and never calls the server
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/management/testKit.tsx:24:32
+     22| export async function press(text: string) {
+     23|   const button = [...document.querySelectorAll("button")].find((candid…
+     24|   await act(async () => button.click());
+       |                                ^
+     25| }
+     26|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ press src/features/management/testKit.tsx:24:9
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:305:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > saves a well-formed address trimmed, and an empty one clears it
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/management/testKit.tsx:24:32
+     22| export async function press(text: string) {
+     23|   const button = [...document.querySelectorAll("button")].find((candid…
+     24|   await act(async () => button.click());
+       |                                ^
+     25| }
+     26|
+ ❯ process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ press src/features/management/testKit.tsx:24:9
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:317:13
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 28 passed (37)
+   Start at  18:30:22
+   Duration  3.10s (transform 898ms, setup 0ms, import 1.23s, tests 604ms, environment 1.01s)
+

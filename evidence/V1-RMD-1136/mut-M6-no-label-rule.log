@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (37 tests | 1 failed) 522ms
+       × refuses the address -a-:9100 with the hint and never calls the server 16ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses the address -a-:9100 with the hint and never calls the server
+AssertionError: expected undefined to be 'Kasa yazıcısının adresi ve portu, örn…' // Object.is equality
+
+- Expected:
+"Kasa yazıcısının adresi ve portu, örn. 192.168.1.50:9100; boş bırakırsanız çekmece açılmaz"
+
++ Received:
+undefined
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:310:29
+    308|         await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+    309|
+    310|         expect(alertText()).toBe(hint);
+       |                             ^
+    311|         expect(client.update).not.toHaveBeenCalled();
+    312|       });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  18:30:50
+   Duration  2.94s (transform 897ms, setup 0ms, import 1.24s, tests 522ms, environment 925ms)
+

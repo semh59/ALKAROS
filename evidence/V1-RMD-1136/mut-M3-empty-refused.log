@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (37 tests | 1 failed) 648ms
+       × saves a well-formed address trimmed, and an empty one clears it 43ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > saves a well-formed address trimmed, and an empty one clears it
+AssertionError: expected last "vi.fn()" call to have been called with [ 'cash.drawer_printer_address', …(3) ]
+
+- Expected
++ Received
+
+  [
+    "cash.drawer_printer_address",
+-   "",
++   "kasa-yazici.lan:9101",
+    1,
+-   "Yazıcı kalktı",
++   "Yazıcı değişti",
+  ]
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:327:29
+    325|       await typeInto(idOfField("Yeni değer"), "");
+    326|       await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+    327|       expect(client.update).toHaveBeenLastCalledWith("cash.drawer_prin…
+       |                             ^
+    328|     });
+    329|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  18:30:33
+   Duration  3.29s (transform 971ms, setup 0ms, import 1.37s, tests 648ms, environment 1.00s)
+

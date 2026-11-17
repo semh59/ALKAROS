@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (39 tests | 1 failed) 724ms
+       × refuses a host name longer than 253 characters 30ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > refuses a host name longer than 253 characters
+AssertionError: expected undefined to be 'Kasa yazıcısının adresi ve portu, örn…' // Object.is equality
+
+- Expected:
+"Kasa yazıcısının adresi ve portu, örn. 192.168.1.50:9100; boş bırakırsanız çekmece açılmaz"
+
++ Received:
+undefined
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:323:27
+    321|       await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+    322|
+    323|       expect(alertText()).toBe(hint);
+       |                           ^
+    324|       expect(client.update).not.toHaveBeenCalled();
+    325|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 38 passed (39)
+   Start at  18:36:13
+   Duration  3.24s (transform 894ms, setup 0ms, import 1.25s, tests 724ms, environment 994ms)
+

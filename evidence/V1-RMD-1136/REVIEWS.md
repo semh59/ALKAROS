@@ -1,0 +1,2 @@
+- qa-frontend: KABUL (dusuk: bos deger testi "—" dogrulamasi ve 253 karakter testi eklendi, M12)
+- qa-ux-tasarim (kilavuz): KABUL (dusuk: adim 5 cumlesi sadelestirildi, port/ping ayrimi ve kapali oturum notu eklendi)

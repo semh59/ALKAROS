@@ -43,9 +43,25 @@ export const settingLabel = (key: string) => labels[key] ?? "Tanımsız ayar";
 export type SettingEditRule =
   | { kind: "toggle" }
   | { kind: "number"; min: number; max: number; hint: string }
-  | { kind: "minutes"; min: number; max: number; hint: string };
+  | { kind: "minutes"; min: number; max: number; hint: string }
+  | { kind: "text"; hint: string; isValid: (value: string) => boolean };
 
-const numericRules: Record<string, SettingEditRule> = {
+/** host:port with no spaces; the same rule the server applies. An empty value means "no printer". */
+export function isPrinterAddress(value: string): boolean {
+  if (value === "") return true;
+  const parts = value.split(":");
+  if (parts.length !== 2) return false;
+  const [host, port] = parts;
+  if (host.length === 0 || host.length > 253 || !/^[A-Za-z0-9.-]+$/.test(host)) return false;
+  if (host.split(".").some((label) => label === "" || label.startsWith("-") || label.endsWith("-"))) return false;
+  return /^\d+$/.test(port) && Number(port) >= 1 && Number(port) <= 65535;
+}
+
+const textRules: Record<string, Extract<SettingEditRule, { kind: "text" }>> = {
+  "cash.drawer_printer_address": { kind: "text", hint: "Kasa yazıcısının adresi ve portu, örn. 192.168.1.50:9100; boş bırakırsanız çekmece açılmaz", isValid: isPrinterAddress },
+};
+
+const numericRules: Record<string, Extract<SettingEditRule, { kind: "number" | "minutes" }>> = {
   "waiter.max_active_tables": { kind: "number", min: 0, max: 50, hint: "0 ile 50 arası; 0 = sınırsız" },
   "kitchen.dense_mode_threshold": { kind: "number", min: 1, max: 99, hint: "1 ile 99 arası" },
   "cash.cash_out_approval_threshold": { kind: "number", min: 0, max: 1000000, hint: "0 ile 1.000.000 ₺ arası; bu tutarın üstündeki nakit çıkışlar yönetici onayı ister" },
@@ -56,7 +72,7 @@ const numericRules: Record<string, SettingEditRule> = {
 
 export function editRule(setting: Pick<SettingRecord, "key" | "dataType" | "active">): SettingEditRule | undefined {
   if (!setting.active) return undefined;
-  return setting.dataType === "Toggle" ? { kind: "toggle" } : numericRules[setting.key];
+  return setting.dataType === "Toggle" ? { kind: "toggle" } : numericRules[setting.key] ?? textRules[setting.key];
 }
 
 /** "00:05:00" → 5, "1.00:00:00" → 1440. */

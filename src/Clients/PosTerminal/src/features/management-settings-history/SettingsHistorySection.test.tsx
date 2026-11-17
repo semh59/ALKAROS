@@ -269,6 +269,78 @@ describe("settings history section", () => {
     expect(client.update).toHaveBeenCalledWith("approvals.manager_self_approval_enabled", "true", 5, "Müdür yokken");
   });
 
+  describe("the cash drawer settings", () => {
+    const drawerOn = { ...toggle, settingId: "d1", key: "cash.drawer_kick_enabled", value: "false", requiresRestart: false, rowVersion: 2 };
+    const address = { settingId: "d2", key: "cash.drawer_printer_address", value: "", dataType: "Text", requiresRestart: false, active: true, updatedAt: "2026-11-17T08:00:00Z", rowVersion: 1 };
+    const drawerClient = (value = "", only?: "toggle" | "address") => fakeClient({
+      listSettings: vi.fn().mockResolvedValue(only === "toggle" ? [drawerOn] : only === "address" ? [{ ...address, value }] : [drawerOn, { ...address, value }]),
+    });
+    const hint = "Kasa yazıcısının adresi ve portu, örn. 192.168.1.50:9100; boş bırakırsanız çekmece açılmaz";
+
+    it("shows both with Turkish names, a warning not to switch the drawer on before trying it, and an empty address as a dash", async () => {
+      await render(<SettingsHistorySection client={drawerClient()} />);
+
+      expect(document.body.textContent).toContain("Kasa çekmecesini yazıcıdan aç");
+      expect(document.body.textContent).toContain("Kasa yazıcısı adresi");
+      expect(document.querySelector("tr:has(td)")?.parentElement?.textContent).toContain("—");
+      expect(buttons().filter((label) => label === "Düzenle")).toHaveLength(2);
+      await press("Düzenle");
+      expect(document.body.textContent).toContain("Gerçek yazıcı ve çekmecede denemeden açmayın; varsayılan kapalıdır.");
+    });
+
+    it("switches the drawer on with a reason", async () => {
+      const client = drawerClient("", "toggle");
+      await render(<SettingsHistorySection client={client} />);
+      await press("Düzenle");
+      await typeInto(idOfField("Yeni değer"), "true");
+      await typeInto(idOfField("Değişiklik gerekçesi"), "Cihaz denendi");
+      await submit("Ayarı değiştir: Kasa çekmecesini yazıcıdan aç");
+
+      expect(client.update).toHaveBeenCalledWith("cash.drawer_kick_enabled", "true", 2, "Cihaz denendi");
+    });
+
+    it.each(["192.168.1.50", "192.168.1.50:70000", "192.168.1.50:0", "bir iki:9100", "-a-:9100", "host.:9100", "http://192.168.1.50:9100", "192.168.1.50:9100:1"])(
+      "refuses the address %s with the hint and never calls the server", async (bad) => {
+        const client = drawerClient("", "address");
+        await render(<SettingsHistorySection client={client} />);
+        await press("Düzenle");
+        await typeInto(idOfField("Değişiklik gerekçesi"), "Yazıcı takıldı");
+        await typeInto(idOfField("Yeni değer"), bad);
+        await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+
+        expect(alertText()).toBe(hint);
+        expect(client.update).not.toHaveBeenCalled();
+      });
+
+    it("refuses a host name longer than 253 characters", async () => {
+      const client = drawerClient("", "address");
+      await render(<SettingsHistorySection client={client} />);
+      await press("Düzenle");
+      await typeInto(idOfField("Değişiklik gerekçesi"), "Uzun ad");
+      await typeInto(idOfField("Yeni değer"), `${"a".repeat(254)}:9100`);
+      await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+
+      expect(alertText()).toBe(hint);
+      expect(client.update).not.toHaveBeenCalled();
+    });
+
+    it("saves a well-formed address trimmed, and an empty one clears it", async () => {
+      const client = drawerClient("192.168.1.50:9100", "address");
+      await render(<SettingsHistorySection client={client} />);
+      await press("Düzenle");
+      await typeInto(idOfField("Değişiklik gerekçesi"), "Yazıcı değişti");
+      await typeInto(idOfField("Yeni değer"), "  kasa-yazici.lan:9101 ");
+      await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+      expect(client.update).toHaveBeenLastCalledWith("cash.drawer_printer_address", "kasa-yazici.lan:9101", 1, "Yazıcı değişti");
+
+      await press("Düzenle");
+      await typeInto(idOfField("Değişiklik gerekçesi"), "Yazıcı kalktı");
+      await typeInto(idOfField("Yeni değer"), "");
+      await submit("Ayarı değiştir: Kasa yazıcısı adresi");
+      expect(client.update).toHaveBeenLastCalledWith("cash.drawer_printer_address", "", 1, "Yazıcı kalktı");
+    });
+  });
+
   it("refuses an empty reason, an unchanged value and an out-of-range number without calling the server", async () => {
     const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([waiterLimit]) });
     await render(<SettingsHistorySection client={client} />);

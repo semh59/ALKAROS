@@ -64,6 +64,36 @@ real printer. Before go-live, on the actual hardware from the matrix:
 - [ ] Park / recall a ticket; totals and item list survive.
 - [ ] Pull the network cable: the client fails closed (no silent mock catalog).
 
+### Kasa çekmecesi (gerçek cihaz, Semih'in deneyeceği adımlar)
+
+**Önce uyarı: bu özellik varsayılan olarak KAPALIDIR. Üretimde, bu denemeyi yapmadan açılmaz.**
+
+Gerekenler: çekmece kablosu (RJ11/RJ12) bağlı bir fiş yazıcısı, yazıcının ağ adresi (IP) ve ham yazıcı portu (çoğu yazıcıda 9100), bir kasa oturumu ve bir açık hesap.
+
+| Adım | Ne yapılır | Beklenen sonuç |
+|---|---|---|
+| 1 | Çekmece kablosunu yazıcının "çekmece" (DK/Drawer) çıkışına takın; yazıcıyı ağa bağlayın, adresini yazıcının kendi durum fişinden okuyun. | Yazıcı ağda görünür; başka bir bilgisayardan `ping` yanıt verir. |
+| 2 | Yönetim > Ayarlar'da "Kasa yazıcısı adresi" için Düzenle'ye basın, `adres:port` yazın (örn. `192.168.1.50:9100`), gerekçe yazıp kaydedin. | "Ayar kaydedildi."; adres listede görünür. Hatalı biçimde Türkçe uyarı çıkar, kaydedilmez. |
+| 3 | "Kasa çekmecesini yazıcıdan aç" ayarını Evet yapın (gerekçe: "Cihaz denemesi"). | Ayar listesinde "Evet". |
+| 4 | Kasada oturum açın; nakit ödeme alın (bir hesabı nakit tahsil edin). | Ödeme biter ve çekmece kendiliğinden açılır. Kart ve havale ödemesinde çekmece AÇILMAZ. |
+| 5 | Ödeme bittikten sonra ekranı yenileyip hesabı yeniden açın. | Çekmece kendiliğinden yeniden açılmaz (çift gönderim denemesi geliştirici testindedir). |
+| 6 | Kasa oturumu ekranında "Satış yok"a basın; "Bozuk para" seçip "Çekmeceyi aç"a basın. | "Çekmece açıldı." çıkar, çekmece açılır; "Bu vardiyada satışsız açma: 1" görünür; kasadaki beklenen tutar DEĞİŞMEZ. |
+| 7 | "Satış yok" > "Sayım", sonra "Diğer" (not yazmadan deneyin, sonra notla). | Notsuz "Diğer" reddedilir ("“Diğer” için not yazın."); notla açılır. |
+| 8 | Aynı oturumda beş kez "Satış yok" yapın. | Beşincide Türkçe uyarı çıkar ("Bu vardiyada 5 kez satışsız çekmece açıldı."). |
+| 9 | Kasayı sayıp kapatın; yönetici denetim kaydında kapanış olayına bakın (veya geliştiriciden kapanış kaydındaki `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerKickFailedCount` sayılarını isteyin). | Sayılar yaptığınız denemelerle eşleşir. |
+| 10 | Ayarı Hayır yapın ve nakit ödeme ile "Satış yok"u yeniden deneyin. | Ödeme normal alınır, çekmece açılmaz; "Satış yok" düğmesi görünmez. |
+
+Sorun giderme:
+
+- **`ping` yanıt veriyor ama çekmece açılmıyor**: `ping` yalnız yazıcının ağda olduğunu gösterir; ham yazıcı portunun (çoğu yazıcıda 9100) açık olduğunu göstermez, yazıcı ayarından kontrol edin.
+- **Çekmece açılmıyor, ekranda "Çekmece açılamadı; yazıcı bağlantısını kontrol edin."**: yazıcı kapalı veya adres/port yanlış; sunucu bilgisayarından yazıcının adresine ve portuna ulaşılabildiğini doğrulayın. Sunucu Docker içinde çalışıyorsa konteynerin yazıcı ağına erişebildiğinden emin olun.
+- **Hata yok ama çekmece açılmıyor**: kablo yazıcının çekmece çıkışında mı; çekmece kilitli (anahtar konumu) olmasın; yazıcı çekmece komutunu (ESC p) desteklemiyor veya farklı bir pin bekliyor olabilir (Star ve Xprinter modelleri cihazsız doğrulanamadı; bulgunuzu geliştiriciye bildirin).
+- **Çekmece iki kez açılıyor**: yazıcının kendi ayarında "belge sonunda çekmece aç" seçeneği de açık olabilir; birini kapatın.
+- **"Satış yok" düğmesi görünmüyor**: ayar kapalı, adres boş/hatalı veya kasiyerin "Çekmeceyi satışsız açma" yetkisi yok (Rol yönetiminden verilir); oturum başka kasiyere aitse de görünmez; kasa oturumu kapanmışsa "Satış yok" yalnız açık veya sayımdaki oturumda çalışır.
+- **Nakit ödemede kasiyer 2 saniye bekliyor**: yazıcıya ulaşılamıyor; ödeme yine de alınır, adresi/ağı düzeltin.
+
+Bilinen sınırlar: işletme için tek kasa yazıcısı tanımlanır (terminal başına ayrı çekmece yok); satışsız açmanın mevzuat yorumu mali müşavire sorulmalıdır.
+
 ### Waiter PWA (Android 14 tablet, Chrome, TalkBack)
 
 - [ ] Installs to home screen from the manifest; launches full-screen.

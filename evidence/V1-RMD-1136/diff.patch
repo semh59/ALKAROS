@@ -1,0 +1,190 @@
+diff --git a/docs/qa/device-browser-test-plan.md b/docs/qa/device-browser-test-plan.md
+index c74d9ff0e..be14eb911 100644
+--- a/docs/qa/device-browser-test-plan.md
++++ b/docs/qa/device-browser-test-plan.md
+@@ -64,6 +64,36 @@ real printer. Before go-live, on the actual hardware from the matrix:
+ - [ ] Park / recall a ticket; totals and item list survive.
+ - [ ] Pull the network cable: the client fails closed (no silent mock catalog).
+ 
++### Kasa çekmecesi (gerçek cihaz, Semih'in deneyeceği adımlar)
++
++**Önce uyarı: bu özellik varsayılan olarak KAPALIDIR. Üretimde, bu denemeyi yapmadan açılmaz.**
++
++Gerekenler: çekmece kablosu (RJ11/RJ12) bağlı bir fiş yazıcısı, yazıcının ağ adresi (IP) ve ham yazıcı portu (çoğu yazıcıda 9100), bir kasa oturumu ve bir açık hesap.
++
++| Adım | Ne yapılır | Beklenen sonuç |
++|---|---|---|
++| 1 | Çekmece kablosunu yazıcının "çekmece" (DK/Drawer) çıkışına takın; yazıcıyı ağa bağlayın, adresini yazıcının kendi durum fişinden okuyun. | Yazıcı ağda görünür; başka bir bilgisayardan `ping` yanıt verir. |
++| 2 | Yönetim > Ayarlar'da "Kasa yazıcısı adresi" için Düzenle'ye basın, `adres:port` yazın (örn. `192.168.1.50:9100`), gerekçe yazıp kaydedin. | "Ayar kaydedildi."; adres listede görünür. Hatalı biçimde Türkçe uyarı çıkar, kaydedilmez. |
++| 3 | "Kasa çekmecesini yazıcıdan aç" ayarını Evet yapın (gerekçe: "Cihaz denemesi"). | Ayar listesinde "Evet". |
++| 4 | Kasada oturum açın; nakit ödeme alın (bir hesabı nakit tahsil edin). | Ödeme biter ve çekmece kendiliğinden açılır. Kart ve havale ödemesinde çekmece AÇILMAZ. |
++| 5 | Ödeme bittikten sonra ekranı yenileyip hesabı yeniden açın. | Çekmece kendiliğinden yeniden açılmaz (çift gönderim denemesi geliştirici testindedir). |
++| 6 | Kasa oturumu ekranında "Satış yok"a basın; "Bozuk para" seçip "Çekmeceyi aç"a basın. | "Çekmece açıldı." çıkar, çekmece açılır; "Bu vardiyada satışsız açma: 1" görünür; kasadaki beklenen tutar DEĞİŞMEZ. |
++| 7 | "Satış yok" > "Sayım", sonra "Diğer" (not yazmadan deneyin, sonra notla). | Notsuz "Diğer" reddedilir ("“Diğer” için not yazın."); notla açılır. |
++| 8 | Aynı oturumda beş kez "Satış yok" yapın. | Beşincide Türkçe uyarı çıkar ("Bu vardiyada 5 kez satışsız çekmece açıldı."). |
++| 9 | Kasayı sayıp kapatın; yönetici denetim kaydında kapanış olayına bakın (veya geliştiriciden kapanış kaydındaki `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerKickFailedCount` sayılarını isteyin). | Sayılar yaptığınız denemelerle eşleşir. |
++| 10 | Ayarı Hayır yapın ve nakit ödeme ile "Satış yok"u yeniden deneyin. | Ödeme normal alınır, çekmece açılmaz; "Satış yok" düğmesi görünmez. |
++
++Sorun giderme:
++
++- **`ping` yanıt veriyor ama çekmece açılmıyor**: `ping` yalnız yazıcının ağda olduğunu gösterir; ham yazıcı portunun (çoğu yazıcıda 9100) açık olduğunu göstermez, yazıcı ayarından kontrol edin.
++- **Çekmece açılmıyor, ekranda "Çekmece açılamadı; yazıcı bağlantısını kontrol edin."**: yazıcı kapalı veya adres/port yanlış; sunucu bilgisayarından yazıcının adresine ve portuna ulaşılabildiğini doğrulayın. Sunucu Docker içinde çalışıyorsa konteynerin yazıcı ağına erişebildiğinden emin olun.
++- **Hata yok ama çekmece açılmıyor**: kablo yazıcının çekmece çıkışında mı; çekmece kilitli (anahtar konumu) olmasın; yazıcı çekmece komutunu (ESC p) desteklemiyor veya farklı bir pin bekliyor olabilir (Star ve Xprinter modelleri cihazsız doğrulanamadı; bulgunuzu geliştiriciye bildirin).
++- **Çekmece iki kez açılıyor**: yazıcının kendi ayarında "belge sonunda çekmece aç" seçeneği de açık olabilir; birini kapatın.
++- **"Satış yok" düğmesi görünmüyor**: ayar kapalı, adres boş/hatalı veya kasiyerin "Çekmeceyi satışsız açma" yetkisi yok (Rol yönetiminden verilir); oturum başka kasiyere aitse de görünmez; kasa oturumu kapanmışsa "Satış yok" yalnız açık veya sayımdaki oturumda çalışır.
++- **Nakit ödemede kasiyer 2 saniye bekliyor**: yazıcıya ulaşılamıyor; ödeme yine de alınır, adresi/ağı düzeltin.
++
++Bilinen sınırlar: işletme için tek kasa yazıcısı tanımlanır (terminal başına ayrı çekmece yok); satışsız açmanın mevzuat yorumu mali müşavire sorulmalıdır.
++
+ ### Waiter PWA (Android 14 tablet, Chrome, TalkBack)
+ 
+ - [ ] Installs to home screen from the manifest; launches full-screen.
+diff --git a/src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.tsx b/src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.tsx
+index f19e58ab0..14550ebae 100644
+--- a/src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.tsx
++++ b/src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.tsx
+@@ -26,7 +26,10 @@ export function SettingEditor({ client, setting, onSaved, onConflict, onCancel }
+   async function submit(event: FormEvent) {
+     event.preventDefault();
+     let newValue = value;
+-    if (rule!.kind !== "toggle") {
++    if (rule!.kind === "text") {
++      newValue = value.trim();
++      if (!rule!.isValid(newValue)) return setProblem(rule!.hint);
++    } else if (rule!.kind !== "toggle") {
+       const number = Number(value);
+       if (value.trim() === "" || !Number.isInteger(number)) return setProblem(t.invalidNumber);
+       if (number < rule!.min || number > rule!.max) return setProblem(rule!.hint);
+@@ -53,7 +56,7 @@ export function SettingEditor({ client, setting, onSaved, onConflict, onCancel }
+       ? <SelectField label={t.newValue} hint={settingDescription(setting.key)} value={value} onChange={(event) => setValue(event.target.value)}>
+         <option value="true">{t.yes}</option><option value="false">{t.no}</option>
+       </SelectField>
+-      : <TextField label={rule.kind === "minutes" ? t.newValueMinutes : t.newValue} hint={rule.hint} inputMode="numeric"
++      : <TextField label={rule.kind === "minutes" ? t.newValueMinutes : t.newValue} hint={rule.hint} inputMode={rule.kind === "text" ? "text" : "numeric"}
+         value={value} onChange={(event) => setValue(event.target.value)} />}
+     <TextField label={t.reasonLabel} hint={t.reasonHint} maxLength={MaxReasonLength} value={reason} onChange={(event) => setReason(event.target.value)} />
+     {problem && <p role="alert" className="msh__problem">{problem}</p>}
+diff --git a/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx b/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx
+index e6117e4ca..b6bb8b445 100644
+--- a/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx
++++ b/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx
+@@ -269,6 +269,78 @@ describe("settings history section", () => {
+     expect(client.update).toHaveBeenCalledWith("approvals.manager_self_approval_enabled", "true", 5, "Müdür yokken");
+   });
+ 
++  describe("the cash drawer settings", () => {
++    const drawerOn = { ...toggle, settingId: "d1", key: "cash.drawer_kick_enabled", value: "false", requiresRestart: false, rowVersion: 2 };
++    const address = { settingId: "d2", key: "cash.drawer_printer_address", value: "", dataType: "Text", requiresRestart: false, active: true, updatedAt: "2026-11-17T08:00:00Z", rowVersion: 1 };
++    const drawerClient = (value = "", only?: "toggle" | "address") => fakeClient({
++      listSettings: vi.fn().mockResolvedValue(only === "toggle" ? [drawerOn] : only === "address" ? [{ ...address, value }] : [drawerOn, { ...address, value }]),
++    });
++    const hint = "Kasa yazıcısının adresi ve portu, örn. 192.168.1.50:9100; boş bırakırsanız çekmece açılmaz";
++
++    it("shows both with Turkish names, a warning not to switch the drawer on before trying it, and an empty address as a dash", async () => {
++      await render(<SettingsHistorySection client={drawerClient()} />);
++
++      expect(document.body.textContent).toContain("Kasa çekmecesini yazıcıdan aç");
++      expect(document.body.textContent).toContain("Kasa yazıcısı adresi");
++      expect(document.querySelector("tr:has(td)")?.parentElement?.textContent).toContain("—");
++      expect(buttons().filter((label) => label === "Düzenle")).toHaveLength(2);
++      await press("Düzenle");
++      expect(document.body.textContent).toContain("Gerçek yazıcı ve çekmecede denemeden açmayın; varsayılan kapalıdır.");
++    });
++
++    it("switches the drawer on with a reason", async () => {
++      const client = drawerClient("", "toggle");
++      await render(<SettingsHistorySection client={client} />);
++      await press("Düzenle");
++      await typeInto(idOfField("Yeni değer"), "true");
++      await typeInto(idOfField("Değişiklik gerekçesi"), "Cihaz denendi");
++      await submit("Ayarı değiştir: Kasa çekmecesini yazıcıdan aç");
++
++      expect(client.update).toHaveBeenCalledWith("cash.drawer_kick_enabled", "true", 2, "Cihaz denendi");
++    });
++
++    it.each(["192.168.1.50", "192.168.1.50:70000", "192.168.1.50:0", "bir iki:9100", "-a-:9100", "host.:9100", "http://192.168.1.50:9100", "192.168.1.50:9100:1"])(
++      "refuses the address %s with the hint and never calls the server", async (bad) => {
++        const client = drawerClient("", "address");
++        await render(<SettingsHistorySection client={client} />);
++        await press("Düzenle");
++        await typeInto(idOfField("Değişiklik gerekçesi"), "Yazıcı takıldı");
++        await typeInto(idOfField("Yeni değer"), bad);
++        await submit("Ayarı değiştir: Kasa yazıcısı adresi");
++
++        expect(alertText()).toBe(hint);
++        expect(client.update).not.toHaveBeenCalled();
++      });
++
++    it("refuses a host name longer than 253 characters", async () => {
++      const client = drawerClient("", "address");
++      await render(<SettingsHistorySection client={client} />);
++      await press("Düzenle");
++      await typeInto(idOfField("Değişiklik gerekçesi"), "Uzun ad");
++      await typeInto(idOfField("Yeni değer"), `${"a".repeat(254)}:9100`);
++      await submit("Ayarı değiştir: Kasa yazıcısı adresi");
++
++      expect(alertText()).toBe(hint);
++      expect(client.update).not.toHaveBeenCalled();
++    });
++
++    it("saves a well-formed address trimmed, and an empty one clears it", async () => {
++      const client = drawerClient("192.168.1.50:9100", "address");
++      await render(<SettingsHistorySection client={client} />);
++      await press("Düzenle");
++      await typeInto(idOfField("Değişiklik gerekçesi"), "Yazıcı değişti");
++      await typeInto(idOfField("Yeni değer"), "  kasa-yazici.lan:9101 ");
++      await submit("Ayarı değiştir: Kasa yazıcısı adresi");
++      expect(client.update).toHaveBeenLastCalledWith("cash.drawer_printer_address", "kasa-yazici.lan:9101", 1, "Yazıcı değişti");
++
++      await press("Düzenle");
++      await typeInto(idOfField("Değişiklik gerekçesi"), "Yazıcı kalktı");
++      await typeInto(idOfField("Yeni değer"), "");
++      await submit("Ayarı değiştir: Kasa yazıcısı adresi");
++      expect(client.update).toHaveBeenLastCalledWith("cash.drawer_printer_address", "", 1, "Yazıcı kalktı");
++    });
++  });
++
+   it("refuses an empty reason, an unchanged value and an out-of-range number without calling the server", async () => {
+     const client = fakeClient({ listSettings: vi.fn().mockResolvedValue([waiterLimit]) });
+     await render(<SettingsHistorySection client={client} />);
+diff --git a/src/Clients/PosTerminal/src/features/management-settings-history/models.ts b/src/Clients/PosTerminal/src/features/management-settings-history/models.ts
+index e0ea99118..541d1b71f 100644
+--- a/src/Clients/PosTerminal/src/features/management-settings-history/models.ts
++++ b/src/Clients/PosTerminal/src/features/management-settings-history/models.ts
+@@ -43,9 +43,25 @@ export const settingLabel = (key: string) => labels[key] ?? "Tanımsız ayar";
+ export type SettingEditRule =
+   | { kind: "toggle" }
+   | { kind: "number"; min: number; max: number; hint: string }
+-  | { kind: "minutes"; min: number; max: number; hint: string };
++  | { kind: "minutes"; min: number; max: number; hint: string }
++  | { kind: "text"; hint: string; isValid: (value: string) => boolean };
+ 
+-const numericRules: Record<string, SettingEditRule> = {
++/** host:port with no spaces; the same rule the server applies. An empty value means "no printer". */
++export function isPrinterAddress(value: string): boolean {
++  if (value === "") return true;
++  const parts = value.split(":");
++  if (parts.length !== 2) return false;
++  const [host, port] = parts;
++  if (host.length === 0 || host.length > 253 || !/^[A-Za-z0-9.-]+$/.test(host)) return false;
++  if (host.split(".").some((label) => label === "" || label.startsWith("-") || label.endsWith("-"))) return false;
++  return /^\d+$/.test(port) && Number(port) >= 1 && Number(port) <= 65535;
++}
++
++const textRules: Record<string, Extract<SettingEditRule, { kind: "text" }>> = {
++  "cash.drawer_printer_address": { kind: "text", hint: "Kasa yazıcısının adresi ve portu, örn. 192.168.1.50:9100; boş bırakırsanız çekmece açılmaz", isValid: isPrinterAddress },
++};
++
++const numericRules: Record<string, Extract<SettingEditRule, { kind: "number" | "minutes" }>> = {
+   "waiter.max_active_tables": { kind: "number", min: 0, max: 50, hint: "0 ile 50 arası; 0 = sınırsız" },
+   "kitchen.dense_mode_threshold": { kind: "number", min: 1, max: 99, hint: "1 ile 99 arası" },
+   "cash.cash_out_approval_threshold": { kind: "number", min: 0, max: 1000000, hint: "0 ile 1.000.000 ₺ arası; bu tutarın üstündeki nakit çıkışlar yönetici onayı ister" },
+@@ -56,7 +72,7 @@ const numericRules: Record<string, SettingEditRule> = {
+ 
+ export function editRule(setting: Pick<SettingRecord, "key" | "dataType" | "active">): SettingEditRule | undefined {
+   if (!setting.active) return undefined;
+-  return setting.dataType === "Toggle" ? { kind: "toggle" } : numericRules[setting.key];
++  return setting.dataType === "Toggle" ? { kind: "toggle" } : numericRules[setting.key] ?? textRules[setting.key];
+ }
+ 
+ /** "00:05:00" → 5, "1.00:00:00" → 1440. */

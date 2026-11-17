@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (37 tests | 1 failed) 743ms
+       × shows both with Turkish names, a warning not to switch the drawer on before trying it, and an empty address as a dash 23ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the cash drawer settings > shows both with Turkish names, a warning not to switch the drawer on before trying it, and an empty address as a dash
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' to contain 'Gerçek yazıcı ve çekmecede denemeden …'
+
+Expected: "Gerçek yazıcı ve çekmecede denemeden açmayın; varsayılan kapalıdır."
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemKasa çekmecesini yazıcıdan açHayır30.09.2026 11:00—DüzenleGeçmişi gösterKasa yazıcısı adresi—17.11.2026 11:00—DüzenleGeçmişi gösterAyarı değiştir: Kasa çekmecesini yazıcıdan açYeni değerNakit ödeme alınınca ve kasiyer "Satış yok" dediğinde çekmece yazıcı üzerinden açılır. Açın; varsayılan kapalıdır.EvetHayırDeğişiklik gerekçesiNeden değiştirdiğinizi yazın; geçmişte görünür.KaydetVazgeç"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:287:41
+    285|       expect(buttons().filter((label) => label === "Düzenle")).toHaveL…
+    286|       await press("Düzenle");
+    287|       expect(document.body.textContent).toContain("Gerçek yazıcı ve çe…
+       |                                         ^
+    288|     });
+    289|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  18:31:12
+   Duration  3.27s (transform 911ms, setup 0ms, import 1.25s, tests 743ms, environment 1.00s)
+

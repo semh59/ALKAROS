@@ -26,7 +26,10 @@ export function SettingEditor({ client, setting, onSaved, onConflict, onCancel }
   async function submit(event: FormEvent) {
     event.preventDefault();
     let newValue = value;
-    if (rule!.kind !== "toggle") {
+    if (rule!.kind === "text") {
+      newValue = value.trim();
+      if (!rule!.isValid(newValue)) return setProblem(rule!.hint);
+    } else if (rule!.kind !== "toggle") {
       const number = Number(value);
       if (value.trim() === "" || !Number.isInteger(number)) return setProblem(t.invalidNumber);
       if (number < rule!.min || number > rule!.max) return setProblem(rule!.hint);
@@ -53,7 +56,7 @@ export function SettingEditor({ client, setting, onSaved, onConflict, onCancel }
       ? <SelectField label={t.newValue} hint={settingDescription(setting.key)} value={value} onChange={(event) => setValue(event.target.value)}>
         <option value="true">{t.yes}</option><option value="false">{t.no}</option>
       </SelectField>
-      : <TextField label={rule.kind === "minutes" ? t.newValueMinutes : t.newValue} hint={rule.hint} inputMode="numeric"
+      : <TextField label={rule.kind === "minutes" ? t.newValueMinutes : t.newValue} hint={rule.hint} inputMode={rule.kind === "text" ? "text" : "numeric"}
         value={value} onChange={(event) => setValue(event.target.value)} />}
     <TextField label={t.reasonLabel} hint={t.reasonHint} maxLength={MaxReasonLength} value={reason} onChange={(event) => setReason(event.target.value)} />
     {problem && <p role="alert" className="msh__problem">{problem}</p>}
