@@ -24,6 +24,7 @@ Kasiyer denemesi 15 (bulgu 6): "Tutar" ve "Alınan para" (Hesap Ödeme) ile "Nak
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
   - tests/Clients/StaticApps/cashier-touch-targets.test.js
+  - tests/Clients/StaticApps/split-payment-table-note.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
