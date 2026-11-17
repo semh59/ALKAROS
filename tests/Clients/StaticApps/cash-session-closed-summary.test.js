@@ -98,3 +98,33 @@ describe("cash-session.js closed summary: drawer lines", () => {
     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan çekmece denemesi", value: "4" });
   });
 });
+
+describe("cash-session.js closed summary: count corrections", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    window.history.replaceState({}, "", "/");
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+  });
+
+  it.each([
+    ["no count answer at all", {}],
+    ["a count that was never corrected", { count: { firstCountedAmount: 1000, correctionCount: 0 } }],
+  ])("shows no count line for %s", async (_name, body) => {
+    await closeWith(body);
+
+    expect($("#closed-count-first")).toBeNull();
+    expect($("#closed-count-corrections")).toBeNull();
+  });
+
+  it.each([1, 2])("names the first count and how often the count was corrected (%i)", async (corrections) => {
+    await closeWith({ count: { firstCountedAmount: 900, correctionCount: corrections } });
+
+    expect(row("#closed-count-corrections")).toEqual({ label: "Sayım düzeltildi", value: `${corrections} kez` });
+    expect(row("#closed-count-first").label).toBe("İlk sayım");
+    expect(row("#closed-count-first").value).toContain("900,00");
+  });
+});
+

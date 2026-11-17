@@ -194,15 +194,17 @@ public static partial class DualScreenApplication
             var tolerance = await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken);
             // The expected cash and the unsettled counts are read by the close itself under the session lock; the
             // unacknowledged-warning check and the audit event run inside the same transaction, after every rule of the close was judged.
+            var counts = new CashCloseStore.CountHistory(null, 0);
             var (session, closedEvent) = await sessions.CloseSessionAsync(
                 new CloseCashSessionCommand(
                     cashSessionId, request.ActualCash, principal.UserId,
                     request.IsSupervisorOverride, request.OverrideReason, request.DifferenceExplanation, mayActForOwner),
                 tolerance,
-                (closed, locked, token) => closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
+                async (closed, locked, token) => counts = await closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
                 cancellationToken);
             return Results.Ok(new CloseCashSessionResultV1(
-                session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken)));
+                session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken),
+                new CloseCountSummaryV1(counts.FirstCountedAmount, counts.Corrections)));
         });
 
         group.MapPost("/{cashSessionId:guid}/reconcile", async (
@@ -421,7 +423,11 @@ public sealed record CloseCashSessionRequestV1(
 /// <summary>The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and pulses that did not.</summary>
 public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int KickFailedCount);
 
-public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decimal Difference, CloseDrawerSummaryV1? Drawer);
+/// <summary>How the closing amount was counted: the first count, and how many later counts replaced it.</summary>
+public sealed record CloseCountSummaryV1(decimal? FirstCountedAmount, int CorrectionCount);
+
+public sealed record CloseCashSessionResultV1(
+    CashSessionSnapshot Session, decimal Difference, CloseDrawerSummaryV1? Drawer, CloseCountSummaryV1 Count);
 
 /// <summary>
 /// V13-CSH-004 (Ek, 2026-09-18): CashSessionSnapshot.ExpectedCash is only

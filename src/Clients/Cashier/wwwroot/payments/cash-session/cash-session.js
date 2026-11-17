@@ -1383,6 +1383,14 @@
         : '');
   }
 
+  // Only a count that was replaced gets a line: a first count that stands needs none.
+  function closedCountRows() {
+    var count = state.closeResult && state.closeResult.count;
+    if (!count || !(count.correctionCount > 0)) return '';
+    return '<div class="cs-summary-row" id="closed-count-first"><span>İlk sayım</span><span class="value">' + formatMoney(count.firstCountedAmount) + '</span></div>' +
+      '<div class="cs-summary-row" id="closed-count-corrections"><span>Sayım düzeltildi</span><span class="value">' + count.correctionCount + ' kez</span></div>';
+  }
+
   function renderClosed() {
     var s = state.session;
     var difference = state.closeResult ? state.closeResult.difference : 0;
@@ -1401,6 +1409,7 @@
       '<div class="cs-summary-row"><span>Fark</span><span class="value" style="color:' +
       (Math.abs(difference) > 0.005 ? 'var(--color-danger)' : 'var(--color-success)') + '">' +
       formatMoney(difference) + '</span></div>' +
+      closedCountRows() +
       closedDrawerRows() +
       '</div>' +
       '<button class="cs-btn cs-btn-primary" id="reopen" style="width:100%">Yeni Vardiya Aç</button>' +

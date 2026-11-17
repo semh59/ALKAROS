@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (10 tests | 1 failed) 2883ms
+     × names the first count and how often the count was corrected (1) 291ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: count corrections > names the first count and how often the count was corrected (1)
+AssertionError: expected null to deeply equal { label: 'Sayım düzeltildi', …(1) }
+
+- Expected:
+{
+  "label": "Sayım düzeltildi",
+  "value": "1 kez",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:125:46
+    123|     await closeWith({ count: { firstCountedAmount: 900, correctionCoun…
+    124|
+    125|     expect(row("#closed-count-corrections")).toEqual({ label: "Sayım d…
+       |                                              ^
+    126|     expect(row("#closed-count-first").label).toBe("İlk sayım");
+    127|     expect(row("#closed-count-first").value).toContain("900,00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  21:46:46
+   Duration  4.35s (transform 342ms, setup 35ms, import 52ms, tests 2.88s, environment 1.08s)
+

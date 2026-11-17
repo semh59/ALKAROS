@@ -1,0 +1,198 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index e90829fca..9bfd11438 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -1383,6 +1383,14 @@
+         : '');
+   }
+ 
++  // Only a count that was replaced gets a line: a first count that stands needs none.
++  function closedCountRows() {
++    var count = state.closeResult && state.closeResult.count;
++    if (!count || !(count.correctionCount > 0)) return '';
++    return '<div class="cs-summary-row" id="closed-count-first"><span>İlk sayım</span><span class="value">' + formatMoney(count.firstCountedAmount) + '</span></div>' +
++      '<div class="cs-summary-row" id="closed-count-corrections"><span>Sayım düzeltildi</span><span class="value">' + count.correctionCount + ' kez</span></div>';
++  }
++
+   function renderClosed() {
+     var s = state.session;
+     var difference = state.closeResult ? state.closeResult.difference : 0;
+@@ -1401,6 +1409,7 @@
+       '<div class="cs-summary-row"><span>Fark</span><span class="value" style="color:' +
+       (Math.abs(difference) > 0.005 ? 'var(--color-danger)' : 'var(--color-success)') + '">' +
+       formatMoney(difference) + '</span></div>' +
++      closedCountRows() +
+       closedDrawerRows() +
+       '</div>' +
+       '<button class="cs-btn cs-btn-primary" id="reopen" style="width:100%">Yeni Vardiya Aç</button>' +
+diff --git a/src/Host/DualScreen/CashCloseStore.cs b/src/Host/DualScreen/CashCloseStore.cs
+index 9f44f38b8..544ae79da 100644
+--- a/src/Host/DualScreen/CashCloseStore.cs
++++ b/src/Host/DualScreen/CashCloseStore.cs
+@@ -32,6 +32,31 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+                (SELECT count(*) FROM payments.payments WHERE status IN ('Pending', 'Unknown', 'ReconciliationRequired'));
+         """;
+ 
++    /// <summary>
++    /// What the session's recorded counts say about how the closing amount came to be: every count is an insert-only
++    /// row, so the first one survives the corrections that followed it (a repeat of the same count within seconds is not
++    /// a row). The correction count is the number of rows after the first.
++    /// </summary>
++    public sealed record CountHistory(decimal? FirstCountedAmount, int Entries)
++    {
++        public int Corrections => Math.Max(Entries - 1, 0);
++    }
++
++    private const string CountHistorySql =
++        """
++        SELECT (SELECT counted_amount FROM cash.cash_counts WHERE cash_session_id = @id ORDER BY counted_at, cash_count_id LIMIT 1),
++               (SELECT count(*) FROM cash.cash_counts WHERE cash_session_id = @id);
++        """;
++
++    private static async Task<CountHistory> ReadCountHistoryAsync(ILockedCashSession locked, Guid cashSessionId, CancellationToken cancellationToken)
++    {
++        await using var command = new NpgsqlCommand(CountHistorySql, locked.Connection, locked.Transaction);
++        command.Parameters.AddWithValue("id", cashSessionId);
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        await reader.ReadAsync(cancellationToken);
++        return new CountHistory(reader.IsDBNull(0) ? null : reader.GetDecimal(0), checked((int)reader.GetInt64(1)));
++    }
++
+     public Task<Unsettled> ReadUnsettledAsync(CancellationToken cancellationToken)
+         => ReadAsync(dataSource.CreateCommand(UnsettledSql), cancellationToken);
+ 
+@@ -50,12 +75,13 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+     /// Runs inside the close transaction after the session is updated: the counts are read here, so the audit event
+     /// carries what the server saw at the close; an unacknowledged warning rolls the whole close back.
+     /// </summary>
+-    public async Task AuditClosedAsync(
++    public async Task<CountHistory> AuditClosedAsync(
+         CashSessionClosedEvent closed, bool acknowledged, decimal tolerance, ILockedCashSession locked,
+         CancellationToken cancellationToken)
+     {
+         var unsettled = await ReadUnsettledAsync(locked, cancellationToken);
+         var drawer = await CashDrawerService.CountAsync(locked.Connection, locked.Transaction, closed.CashSessionId, cancellationToken);
++        var counts = await ReadCountHistoryAsync(locked, closed.CashSessionId, cancellationToken);
+         if (unsettled.Any && !acknowledged)
+             throw new CashCloseUnsettledNotAcknowledgedException(closed.CashSessionId, unsettled.OpenBills, unsettled.UnsettledPayments);
+ 
+@@ -72,8 +98,10 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+                     closedBy = closed.ClosedBy, tolerance,
+                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
+                     drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,
++                    firstCountedAmount = counts.FirstCountedAmount, countEntries = counts.Entries,
+                 }, AuditJson)),
+             locked.Connection, locked.Transaction, cancellationToken);
++        return counts;
+     }
+ 
+     public Task AuditReconciledAsync(CashSessionReconciledEvent reconciled, ILockedCashSession locked, CancellationToken cancellationToken)
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index 0007688b8..3afef872a 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -194,15 +194,17 @@ public static partial class DualScreenApplication
+             var tolerance = await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken);
+             // The expected cash and the unsettled counts are read by the close itself under the session lock; the
+             // unacknowledged-warning check and the audit event run inside the same transaction, after every rule of the close was judged.
++            var counts = new CashCloseStore.CountHistory(null, 0);
+             var (session, closedEvent) = await sessions.CloseSessionAsync(
+                 new CloseCashSessionCommand(
+                     cashSessionId, request.ActualCash, principal.UserId,
+                     request.IsSupervisorOverride, request.OverrideReason, request.DifferenceExplanation, mayActForOwner),
+                 tolerance,
+-                (closed, locked, token) => closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
++                async (closed, locked, token) => counts = await closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
+                 cancellationToken);
+             return Results.Ok(new CloseCashSessionResultV1(
+-                session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken)));
++                session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken),
++                new CloseCountSummaryV1(counts.FirstCountedAmount, counts.Corrections)));
+         });
+ 
+         group.MapPost("/{cashSessionId:guid}/reconcile", async (
+@@ -421,7 +423,11 @@ public sealed record CloseCashSessionRequestV1(
+ /// <summary>The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and pulses that did not.</summary>
+ public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int KickFailedCount);
+ 
+-public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decimal Difference, CloseDrawerSummaryV1? Drawer);
++/// <summary>How the closing amount was counted: the first count, and how many later counts replaced it.</summary>
++public sealed record CloseCountSummaryV1(decimal? FirstCountedAmount, int CorrectionCount);
++
++public sealed record CloseCashSessionResultV1(
++    CashSessionSnapshot Session, decimal Difference, CloseDrawerSummaryV1? Drawer, CloseCountSummaryV1 Count);
+ 
+ /// <summary>
+ /// V13-CSH-004 (Ek, 2026-09-18): CashSessionSnapshot.ExpectedCash is only
+diff --git a/tests/Clients/StaticApps/cash-session-closed-summary.test.js b/tests/Clients/StaticApps/cash-session-closed-summary.test.js
+index 7d0380634..bd9a38fdb 100644
+--- a/tests/Clients/StaticApps/cash-session-closed-summary.test.js
++++ b/tests/Clients/StaticApps/cash-session-closed-summary.test.js
+@@ -98,3 +98,33 @@ describe("cash-session.js closed summary: drawer lines", () => {
+     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan çekmece denemesi", value: "4" });
+   });
+ });
++
++describe("cash-session.js closed summary: count corrections", () => {
++  beforeEach(() => {
++    vi.resetModules();
++    window.history.replaceState({}, "", "/");
++  });
++  afterEach(() => {
++    vi.unstubAllGlobals();
++    document.body.innerHTML = "";
++  });
++
++  it.each([
++    ["no count answer at all", {}],
++    ["a count that was never corrected", { count: { firstCountedAmount: 1000, correctionCount: 0 } }],
++  ])("shows no count line for %s", async (_name, body) => {
++    await closeWith(body);
++
++    expect($("#closed-count-first")).toBeNull();
++    expect($("#closed-count-corrections")).toBeNull();
++  });
++
++  it.each([1, 2])("names the first count and how often the count was corrected (%i)", async (corrections) => {
++    await closeWith({ count: { firstCountedAmount: 900, correctionCount: corrections } });
++
++    expect(row("#closed-count-corrections")).toEqual({ label: "Sayım düzeltildi", value: `${corrections} kez` });
++    expect(row("#closed-count-first").label).toBe("İlk sayım");
++    expect(row("#closed-count-first").value).toContain("900,00");
++  });
++});
++
+diff --git a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+index 1df8a8dac..036bcbb5d 100644
+--- a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+@@ -234,6 +234,29 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+         Assert.Equal(HttpStatusCode.OK, (await drawer.CloseAsync(100m, acknowledge: true)).StatusCode);
+     }
+ 
++    [Theory]
++    [InlineData("100", 100, 1, 0)]
++    [InlineData("90,100", 90, 2, 1)]
++    [InlineData("90,95,100", 90, 3, 2)]
++    [InlineData("100,100", 100, 1, 0)]
++    public async Task TheClosingRecordAndAnswerKeepTheFirstCountAndHowOftenItWasCorrected(
++        string counts, double first, int entries, int corrections)
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        await drawer.StartCountAsync();
++        var amounts = counts.Split(',').Select(decimal.Parse).ToArray();
++        foreach (var amount in amounts)
++            await drawer.CountAsync(amount);
++
++        var response = await drawer.CloseAsync(amounts[^1], explanation: "sayim");
++
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        var audit = Assert.Single(await _database.CloseAuditAsync(drawer.SessionId));
++        Assert.Equal((first, entries), ((double)audit.GetProperty("firstCountedAmount").GetDecimal(), audit.GetProperty("countEntries").GetInt32()));
++        var answer = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("count");
++        Assert.Equal((first, corrections), ((double)answer.GetProperty("firstCountedAmount").GetDecimal(), answer.GetProperty("correctionCount").GetInt32()));
++    }
++
+     [Fact]
+     public async Task ACloseWithNothingUnsettledNeedsNoAcknowledgementAndTheAuditSaysSo()
+     {

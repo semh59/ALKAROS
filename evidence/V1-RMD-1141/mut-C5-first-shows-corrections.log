@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (9 tests | 1 failed) 2649ms
+     × names the first count and how often the count was corrected 290ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: count corrections > names the first count and how often the count was corrected
+AssertionError: expected '₺2,00' to contain '900,00'
+
+Expected: "900,00"
+Received: "₺2,00"
+
+ ❯ cash-session-closed-summary.test.js:127:46
+    125|     expect(row("#closed-count-corrections")).toEqual({ label: "Sayım d…
+    126|     expect(row("#closed-count-first").label).toBe("İlk sayım");
+    127|     expect(row("#closed-count-first").value).toContain("900,00");
+       |                                              ^
+    128|   });
+    129| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  21:41:46
+   Duration  4.01s (transform 332ms, setup 25ms, import 45ms, tests 2.65s, environment 1.02s)
+

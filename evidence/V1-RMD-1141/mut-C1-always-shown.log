@@ -1,0 +1,45 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (9 tests | 1 failed) 2666ms
+     × shows no count line for a count that was never corrected 294ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: count corrections > shows no count line for a count that was never corrected
+AssertionError: expected <div class="cs-summary-row" …(1)>…(2)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="cs-summary-row"
+  id="closed-count-first"
+>
+  <span>
+    İlk sayım
+  </span>
+  <span
+    class="value"
+  >
+    ₺1.000,00
+  </span>
+</div>
+
+ ❯ cash-session-closed-summary.test.js:118:38
+    116|     await closeWith(body);
+    117|
+    118|     expect($("#closed-count-first")).toBeNull();
+       |                                      ^
+    119|     expect($("#closed-count-corrections")).toBeNull();
+    120|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  21:41:19
+   Duration  3.95s (transform 304ms, setup 24ms, import 49ms, tests 2.67s, environment 935ms)
+

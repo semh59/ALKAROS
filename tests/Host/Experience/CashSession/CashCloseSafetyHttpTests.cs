@@ -234,6 +234,29 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, (await drawer.CloseAsync(100m, acknowledge: true)).StatusCode);
     }
 
+    [Theory]
+    [InlineData("100", 100, 1, 0)]
+    [InlineData("90,100", 90, 2, 1)]
+    [InlineData("90,95,100", 90, 3, 2)]
+    [InlineData("100,100", 100, 1, 0)]
+    public async Task TheClosingRecordAndAnswerKeepTheFirstCountAndHowOftenItWasCorrected(
+        string counts, double first, int entries, int corrections)
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        await drawer.StartCountAsync();
+        var amounts = counts.Split(',').Select(decimal.Parse).ToArray();
+        foreach (var amount in amounts)
+            await drawer.CountAsync(amount);
+
+        var response = await drawer.CloseAsync(amounts[^1], explanation: "sayim");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var audit = Assert.Single(await _database.CloseAuditAsync(drawer.SessionId));
+        Assert.Equal((first, entries), ((double)audit.GetProperty("firstCountedAmount").GetDecimal(), audit.GetProperty("countEntries").GetInt32()));
+        var answer = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("count");
+        Assert.Equal((first, corrections), ((double)answer.GetProperty("firstCountedAmount").GetDecimal(), answer.GetProperty("correctionCount").GetInt32()));
+    }
+
     [Fact]
     public async Task ACloseWithNothingUnsettledNeedsNoAcknowledgementAndTheAuditSaysSo()
     {

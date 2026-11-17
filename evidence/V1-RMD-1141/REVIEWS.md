@@ -1,0 +1,2 @@
+- qa-guvenlik-yetki: KABUL (hile yolu yok: tablo insert-only, okuma kapanis transaction'inda; dusuk: counted_by yazilmiyor, DB trigger yok -> RESULT'ta risk)
+- qa-ux-tasarim: KABUL (dusuk: ton yargisiz; sifir satiri, "Ilk sayilan" terimi ve gruplama onerileri uygulanmadi, RESULT'ta not)

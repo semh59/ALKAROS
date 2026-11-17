@@ -32,6 +32,31 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
                (SELECT count(*) FROM payments.payments WHERE status IN ('Pending', 'Unknown', 'ReconciliationRequired'));
         """;
 
+    /// <summary>
+    /// What the session's recorded counts say about how the closing amount came to be: every count is an insert-only
+    /// row, so the first one survives the corrections that followed it (a repeat of the same count within seconds is not
+    /// a row). The correction count is the number of rows after the first.
+    /// </summary>
+    public sealed record CountHistory(decimal? FirstCountedAmount, int Entries)
+    {
+        public int Corrections => Math.Max(Entries - 1, 0);
+    }
+
+    private const string CountHistorySql =
+        """
+        SELECT (SELECT counted_amount FROM cash.cash_counts WHERE cash_session_id = @id ORDER BY counted_at, cash_count_id LIMIT 1),
+               (SELECT count(*) FROM cash.cash_counts WHERE cash_session_id = @id);
+        """;
+
+    private static async Task<CountHistory> ReadCountHistoryAsync(ILockedCashSession locked, Guid cashSessionId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(CountHistorySql, locked.Connection, locked.Transaction);
+        command.Parameters.AddWithValue("id", cashSessionId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        await reader.ReadAsync(cancellationToken);
+        return new CountHistory(reader.IsDBNull(0) ? null : reader.GetDecimal(0), checked((int)reader.GetInt64(1)));
+    }
+
     public Task<Unsettled> ReadUnsettledAsync(CancellationToken cancellationToken)
         => ReadAsync(dataSource.CreateCommand(UnsettledSql), cancellationToken);
 
@@ -50,12 +75,13 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
     /// Runs inside the close transaction after the session is updated: the counts are read here, so the audit event
     /// carries what the server saw at the close; an unacknowledged warning rolls the whole close back.
     /// </summary>
-    public async Task AuditClosedAsync(
+    public async Task<CountHistory> AuditClosedAsync(
         CashSessionClosedEvent closed, bool acknowledged, decimal tolerance, ILockedCashSession locked,
         CancellationToken cancellationToken)
     {
         var unsettled = await ReadUnsettledAsync(locked, cancellationToken);
         var drawer = await CashDrawerService.CountAsync(locked.Connection, locked.Transaction, closed.CashSessionId, cancellationToken);
+        var counts = await ReadCountHistoryAsync(locked, closed.CashSessionId, cancellationToken);
         if (unsettled.Any && !acknowledged)
             throw new CashCloseUnsettledNotAcknowledgedException(closed.CashSessionId, unsettled.OpenBills, unsettled.UnsettledPayments);
 
@@ -72,8 +98,10 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
                     closedBy = closed.ClosedBy, tolerance,
                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
                     drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,
+                    firstCountedAmount = counts.FirstCountedAmount, countEntries = counts.Entries,
                 }, AuditJson)),
             locked.Connection, locked.Transaction, cancellationToken);
+        return counts;
     }
 
     public Task AuditReconciledAsync(CashSessionReconciledEvent reconciled, ILockedCashSession locked, CancellationToken cancellationToken)
