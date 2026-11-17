@@ -16,7 +16,7 @@
   if (returnTo) {
     var backLink = document.querySelector('.cs-back');
     backLink.setAttribute('href', returnTo);
-    backLink.textContent = '← Hesaba dön';
+    backLink.textContent = /^\/tables(?:[?#]|$)/.test(returnTo) ? '← Masalara dön' : '← Hesaba dön';
   }
   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
 

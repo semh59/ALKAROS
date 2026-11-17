@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (12 tests | 2 failed) 1848ms
+     × turns the back link into the bill and goes there once the drawer is open 163ms
+     × does not call another page the tables 96ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > turns the back link into the bill and goes there once the drawer is open
+AssertionError: expected '← Masalara dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Masalara dön"
+
+ ❯ cash-session-return-to.test.js:45:39
+     43|   it("turns the back link into the bill and goes there once the drawer…
+     44|     const assign = await openPageWith(BILL);
+     45|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     46|     expect($(".cs-back").getAttribute("href")).toBe(BILL);
+     47|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > does not call another page the tables
+AssertionError: expected '← Masalara dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Masalara dön"
+
+ ❯ cash-session-return-to.test.js:61:39
+     59|   it("does not call another page the tables", async () => {
+     60|     await openPageWith("/tables-report");
+     61|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     62|   });
+     63|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 10 passed (12)
+   Start at  08:59:05
+   Duration  3.28s (transform 390ms, setup 25ms, import 43ms, tests 1.85s, environment 1.09s)
+

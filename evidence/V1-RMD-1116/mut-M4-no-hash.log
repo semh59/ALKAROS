@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (12 tests | 1 failed) 1845ms
+     × names the tables when the cashier came from /tables#top 102ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > names the tables when the cashier came from /tables#top
+AssertionError: expected '← Hesaba dön' to be '← Masalara dön' // Object.is equality
+
+Expected: "← Masalara dön"
+Received: "← Hesaba dön"
+
+ ❯ cash-session-return-to.test.js:53:39
+     51|   it.each([["/tables"], ["/tables?floor=2"], ["/tables#top"]])("names …
+     52|     const assign = await openPageWith(tables);
+     53|     expect($(".cs-back").textContent).toBe("← Masalara dön");
+       |                                       ^
+     54|     expect($(".cs-back").getAttribute("href")).toBe(tables);
+     55|     $("#open-btn").click();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  08:59:16
+   Duration  3.18s (transform 363ms, setup 25ms, import 47ms, tests 1.85s, environment 1.01s)
+

@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-return-to.test.js (12 tests | 1 failed) 1918ms
+     × does not call another page the tables 103ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-return-to.test.js > cash-session.js returns to the bill the cashier came from > does not call another page the tables
+AssertionError: expected '← Masalara dön' to be '← Hesaba dön' // Object.is equality
+
+Expected: "← Hesaba dön"
+Received: "← Masalara dön"
+
+ ❯ cash-session-return-to.test.js:61:39
+     59|   it("does not call another page the tables", async () => {
+     60|     await openPageWith("/tables-report");
+     61|     expect($(".cs-back").textContent).toBe("← Hesaba dön");
+       |                                       ^
+     62|   });
+     63|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  08:59:35
+   Duration  3.29s (transform 367ms, setup 28ms, import 44ms, tests 1.92s, environment 1.04s)
+

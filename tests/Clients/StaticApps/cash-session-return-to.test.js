@@ -48,6 +48,19 @@ describe("cash-session.js returns to the bill the cashier came from", () => {
     await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(BILL));
   });
 
+  it.each([["/tables"], ["/tables?floor=2"], ["/tables#top"]])("names the tables when the cashier came from %s", async (tables) => {
+    const assign = await openPageWith(tables);
+    expect($(".cs-back").textContent).toBe("← Masalara dön");
+    expect($(".cs-back").getAttribute("href")).toBe(tables);
+    $("#open-btn").click();
+    await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(tables));
+  });
+
+  it("does not call another page the tables", async () => {
+    await openPageWith("/tables-report");
+    expect($(".cs-back").textContent).toBe("← Hesaba dön");
+  });
+
   it.each(["//evil.example/x", "https://evil.example/x", "/" + String.fromCharCode(92) + "evil.example", "javascript:alert(1)", "bill", "/a b"])(
     "ignores the unsafe returnTo %s: no navigation and the plain back link",
     async (unsafe) => {

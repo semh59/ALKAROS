@@ -1,0 +1,37 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 3a7633385..618a31168 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -16,7 +16,7 @@
+   if (returnTo) {
+     var backLink = document.querySelector('.cs-back');
+     backLink.setAttribute('href', returnTo);
+-    backLink.textContent = '← Hesaba dön';
++    backLink.textContent = /^\/tables(?:[?#]|$)/.test(returnTo) ? '← Masalara dön' : '← Hesaba dön';
+   }
+   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
+ 
+diff --git a/tests/Clients/StaticApps/cash-session-return-to.test.js b/tests/Clients/StaticApps/cash-session-return-to.test.js
+index f6ba3f19f..51117e49e 100644
+--- a/tests/Clients/StaticApps/cash-session-return-to.test.js
++++ b/tests/Clients/StaticApps/cash-session-return-to.test.js
+@@ -48,6 +48,19 @@ describe("cash-session.js returns to the bill the cashier came from", () => {
+     await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(BILL));
+   });
+ 
++  it.each([["/tables"], ["/tables?floor=2"], ["/tables#top"]])("names the tables when the cashier came from %s", async (tables) => {
++    const assign = await openPageWith(tables);
++    expect($(".cs-back").textContent).toBe("← Masalara dön");
++    expect($(".cs-back").getAttribute("href")).toBe(tables);
++    $("#open-btn").click();
++    await vi.waitFor(() => expect(assign).toHaveBeenCalledWith(tables));
++  });
++
++  it("does not call another page the tables", async () => {
++    await openPageWith("/tables-report");
++    expect($(".cs-back").textContent).toBe("← Hesaba dön");
++  });
++
+   it.each(["//evil.example/x", "https://evil.example/x", "/" + String.fromCharCode(92) + "evil.example", "javascript:alert(1)", "bill", "/a b"])(
+     "ignores the unsafe returnTo %s: no navigation and the plain back link",
+     async (unsafe) => {
