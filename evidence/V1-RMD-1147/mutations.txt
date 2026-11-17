@@ -1,0 +1,6 @@
+M1-queue-never-used exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  6 failed | 3 passed (9)
+M2-queue-dropped-after-first-answer exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  3 failed | 6 passed (9)
+M3-second-read-loop-off exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  2 failed | 7 passed (9)
+M4-count-lost exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  2 failed | 7 passed (9)
+M5-stale-revision exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  2 failed | 7 passed (9)
+M6-silent-drop-back exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  1 failed | 8 passed (9)

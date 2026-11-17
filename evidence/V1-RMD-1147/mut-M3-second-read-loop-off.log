@@ -1,0 +1,63 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (9 tests | 2 failed) 4665ms
+     × a tap that lands while the order is being read again is sent on the fresh revision, once 179ms
+     × loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported 843ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > a tap that lands while the order is being read again is sent on the fresh revision, once
+AssertionError: expected [ { productId: 'p-ayran', …(2) } ] to deeply equal [ Array(2) ]
+
+- Expected
++ Received
+
+@@ -2,11 +2,6 @@
+    {
+      "expectedRevision": 4,
+      "productId": "p-ayran",
+      "quantity": 1,
+    },
+-   {
+-     "expectedRevision": 5,
+-     "productId": "p-cay",
+-     "quantity": 1,
+-   },
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:152:25
+    150|     await settle();
+    151|
+    152|     expect(till.bodies).toEqual([
+       |                         ^
+    153|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    154|       { productId: "p-cay", quantity: 1, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported
+AssertionError: expected 3 to be 6 // Object.is equality
+
+- Expected
++ Received
+
+- 6
++ 3
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:247:33
+    245|     const tapped = (id: string) => products.filter((name) => (name ===…
+    246|     expect(reported).toBeNull();
+    247|     expect(sent.get("p-ayran")).toBe(tapped("p-ayran"));
+       |                                 ^
+    248|     expect(sent.get("p-cay")).toBe(tapped("p-cay"));
+    249|     // Each request carries the revision the answer before it returned…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  23:37:16
+   Duration  6.27s (transform 1.82s, setup 0ms, import 138ms, tests 4.66s, environment 1.19s)
+

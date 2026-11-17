@@ -1,0 +1,80 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (9 tests | 3 failed) 4367ms
+     × keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned 2409ms
+     × after a failed queued add the rest of the queue is dropped and nothing is resent 219ms
+     × loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported 786ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned
+AssertionError: expected [ Array(2) ] to deeply equal [ Array(3) ]
+
+- Expected
++ Received
+
+@@ -7,11 +7,6 @@
+    {
+      "expectedRevision": 5,
+      "productId": "p-ayran",
+      "quantity": 2,
+    },
+-   {
+-     "expectedRevision": 6,
+-     "productId": "p-cay",
+-     "quantity": 1,
+-   },
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:122:25
+    120|     await settle();
+    121|
+    122|     expect(till.bodies).toEqual([
+       |                         ^
+    123|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    124|       { productId: "p-ayran", quantity: 2, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > after a failed queued add the rest of the queue is dropped and nothing is resent
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain '2 dokunuş eklenmedi'
+
+Expected: "2 dokunuş eklenmedi"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışDeniz KayaSınırlı erişim · Diğer ▾sunucu metni 1 dokunuş eklenmedi. Siparişi kontrol edip eksikleri tekrar ekleyin.×⌂Tümü301Ana Yemek102İçecek2HIZLI SİPARİŞTüm ürünler⌕Ana YemekPideSKU-1₺100,00KDV dahilİçecekAyranSKU-2₺20,00KDV dahilİçecekÇaySKU-3₺10,00KDV dahilAKTİF SİPARİŞSipariş 10ürünSoldaki katalogdan ürün seçin."
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:169:39
+    167|
+    168|     expect(till.bodies).toHaveLength(2);
+    169|     expect(document.body.textContent).toContain("2 dokunuş eklenmedi");
+       |                                       ^
+    170|   });
+    171|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported
+AssertionError: expected 5 to be 6 // Object.is equality
+
+- Expected
++ Received
+
+- 6
++ 5
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:247:33
+    245|     const tapped = (id: string) => products.filter((name) => (name ===…
+    246|     expect(reported).toBeNull();
+    247|     expect(sent.get("p-ayran")).toBe(tapped("p-ayran"));
+       |                                 ^
+    248|     expect(sent.get("p-cay")).toBe(tapped("p-cay"));
+    249|     // Each request carries the revision the answer before it returned…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 6 passed (9)
+   Start at  23:37:07
+   Duration  5.83s (transform 1.77s, setup 0ms, import 127ms, tests 4.37s, environment 1.06s)
+

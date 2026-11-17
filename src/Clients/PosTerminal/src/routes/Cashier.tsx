@@ -726,7 +726,12 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   };
 
   const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
-    if (addingProduct.current) return;
+    if (addingProduct.current) {
+      // An add is still in flight and this product (a confirmed option choice, a second tap that beat the redraw) cannot join its queue: say so.
+      setFeedbackKind("error");
+      setError(`${product.name} eklenmedi; önceki ekleme sürerken seçildi. Siparişi kontrol edip tekrar ekleyin.`);
+      return;
+    }
     if (kitchenlessReason) {
       if (product.modifierGroups?.length) {
         setFeedbackKind("error");

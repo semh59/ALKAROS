@@ -1,0 +1,77 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (9 tests | 2 failed) 4808ms
+     × keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned 2723ms
+     × loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported 905ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned
+AssertionError: expected [ Array(3) ] to deeply equal [ Array(3) ]
+
+- Expected
++ Received
+
+@@ -8,10 +8,10 @@
+      "expectedRevision": 5,
+      "productId": "p-ayran",
+      "quantity": 2,
+    },
+    {
+-     "expectedRevision": 6,
++     "expectedRevision": 5,
+      "productId": "p-cay",
+      "quantity": 1,
+    },
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:122:25
+    120|     await settle();
+    121|
+    122|     expect(till.bodies).toEqual([
+       |                         ^
+    123|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    124|       { productId: "p-ayran", quantity: 2, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported
+AssertionError: expected [ 4, 5, 6, 6, 6, 6, 6, 6, 12 ] to deeply equal [ 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+
+- Expected
++ Received
+
+  [
+    4,
+    5,
+    6,
+-   7,
+-   8,
+-   9,
+-   10,
+-   11,
++   6,
++   6,
++   6,
++   6,
++   6,
+    12,
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:250:62
+    248|     expect(sent.get("p-cay")).toBe(tapped("p-cay"));
+    249|     // Each request carries the revision the answer before it returned…
+    250|     expect(till.bodies.map((body) => body.expectedRevision)).toEqual(t…
+       |                                                              ^
+    251|   });
+    252| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  23:37:34
+   Duration  6.32s (transform 2.00s, setup 0ms, import 135ms, tests 4.81s, environment 1.04s)
+

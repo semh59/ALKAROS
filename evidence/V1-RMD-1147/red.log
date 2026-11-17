@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (9 tests | 1 failed) 5176ms
+     × says so when an option choice is confirmed while a scanned product is still being added, instead of dropping it 198ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > says so when an option choice is confirmed while a scanned product is still being added, instead of dropping it
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Pide eklenmedi'
+
+Expected: "Pide eklenmedi"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü301Ana Yemek102İçecek2HIZLI SİPARİŞTüm ürünler⌕Ana YemekPideSKU-1₺100,00KDV dahilİçecekAyranSKU-2₺20,00KDV dahilİçecekÇaySKU-3₺10,00KDV dahilAKTİF SİPARİŞSipariş 10ürünSoldaki katalogdan ürün seçin."
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:224:39
+    222|
+    223|     expect(till.bodies.map((body) => body.productId)).toEqual(["p-cay"…
+    224|     expect(document.body.textContent).toContain("Pide eklenmedi");
+       |                                       ^
+    225|   });
+    226|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  23:34:05
+   Duration  6.66s (transform 2.04s, setup 0ms, import 125ms, tests 5.18s, environment 1.10s)
+

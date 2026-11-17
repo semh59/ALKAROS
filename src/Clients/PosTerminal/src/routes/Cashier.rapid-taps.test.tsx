@@ -57,7 +57,8 @@ async function openTill({
   failAt = 0,
   failStatus = 500,
   holdReloadAt = 0,
-}: { failAt?: number; failStatus?: number; holdReloadAt?: number } = {}): Promise<Till> {
+  latency,
+}: { failAt?: number; failStatus?: number; holdReloadAt?: number; latency?: (post: number) => number } = {}): Promise<Till> {
   let revision = 4;
   let posts = 0;
   let release: () => void = () => undefined;
@@ -77,6 +78,7 @@ async function openTill({
     if (path.endsWith("/catalog")) return jsonResponse(catalog);
     if (path.endsWith("/orders/active")) {
       const answer = snapshot();
+      if (latency) await new Promise((resolve) => setTimeout(resolve, latency(posts)));
       if (reloadHeld && posts === holdReloadAt) { reloadHeld = false; await reloadGate; }
       return jsonResponse(answer);
     }
@@ -84,7 +86,8 @@ async function openTill({
     if (path.endsWith("/items") && method === "POST") {
       posts++;
       till.bodies.push(JSON.parse(String(init!.body)));
-      if (posts === 1) await firstGate;
+      if (latency) await new Promise((resolve) => setTimeout(resolve, latency(posts)));
+      else if (posts === 1) await firstGate;
       if (posts === failAt) return jsonResponse({ error: { code: "X", message: "sunucu metni" } }, failStatus);
       revision++;
       return jsonResponse({ orderId: "order-open", revision });
@@ -201,5 +204,49 @@ describe("Cashier product taps while an add is still in flight", () => {
     till.release();
     await settle();
     expect(card("Pide").disabled).toBe(false);
+  });
+
+  it("says so when an option choice is confirmed while a scanned product is still being added, instead of dropping it", async () => {
+    const till = await openTill();
+    await tap(card("Pide"));
+    const search = document.querySelector<HTMLInputElement>('input[aria-label="Ürün ara"]')!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(search, "SKU-3");
+      search.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await act(async () => { search.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); });
+    await tap(document.querySelector('input[type="radio"]')!);
+
+    await tap([...document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Siparişe ekle")!);
+    till.release();
+    await settle();
+
+    expect(till.bodies.map((body) => body.productId)).toEqual(["p-cay"]);
+    expect(document.body.textContent).toContain("Pide eklenmedi");
+  });
+
+  it("loses no tap when they come 20-50 ms apart against a server answering in 0-80 ms: every tap is sent once or reported", async () => {
+    // Fixed pseudo-random gaps and latencies, so a failure repeats.
+    let seed = 7;
+    const next = (max: number) => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed % max; };
+    const till = await openTill({ latency: () => next(81) });
+    const products = ["Ayran", "Çay", "Ayran", "Ayran", "Çay", "Çay", "Ayran", "Çay", "Ayran", "Ayran", "Çay", "Çay"];
+
+    for (const name of products) {
+      await tap(card(name));
+      await act(async () => { await new Promise((resolve) => setTimeout(resolve, 20 + next(31))); });
+    }
+    await vi.waitFor(() => expect(document.body.textContent).not.toContain("sıraya alındı"), { timeout: 5000 });
+    await settle();
+
+    const sent = new Map<string, number>();
+    for (const body of till.bodies) sent.set(body.productId, (sent.get(body.productId) ?? 0) + body.quantity);
+    const reported = /(\d+) dokunuş eklenmedi/.exec(document.body.textContent ?? "");
+    const tapped = (id: string) => products.filter((name) => (name === "Ayran" ? "p-ayran" : "p-cay") === id).length;
+    expect(reported).toBeNull();
+    expect(sent.get("p-ayran")).toBe(tapped("p-ayran"));
+    expect(sent.get("p-cay")).toBe(tapped("p-cay"));
+    // Each request carries the revision the answer before it returned: 4, 5, 6 ...
+    expect(till.bodies.map((body) => body.expectedRevision)).toEqual(till.bodies.map((_, index) => 4 + index));
   });
 });

@@ -1,0 +1,2 @@
+- qa-test-kalitesi: KABUL DEGIL -> okuma gecikmesi rastgele yapildi, revizyon zinciri tam esitlik, gereksiz assert kaldirildi, secici+tarayici yolu icin test eklendi; hata sonrasi rastgele test: eski sabit testler kapsar (risk)
+- qa-performans-dayaniklilik: sessiz kayip yollari: secici onayi (duzeltildi), kitchenless ikinci dokunus (artik uyari), arama Enter (metin silinmez, gorunur), baska execute sirasinda kilitli dugme (gorunur kilit)
