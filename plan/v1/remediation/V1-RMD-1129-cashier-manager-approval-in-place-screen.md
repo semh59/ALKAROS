@@ -1,7 +1,7 @@
 # V1-RMD-1129 - Kasiyer ekranında "Yönetici burada onaylasın": indirim ve ikram bekleme durumunda yerinde onay
 
 - Task ID: V1-RMD-1129
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
