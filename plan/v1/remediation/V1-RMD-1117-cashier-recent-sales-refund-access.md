@@ -1,7 +1,7 @@
 # V1-RMD-1117 - Kasiyerin kendi oturumunda kapanan ödenmiş hesapları listeleyen salt okunur uç
 
 - Task ID: V1-RMD-1117
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Planned
