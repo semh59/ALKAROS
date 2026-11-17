@@ -1,0 +1,101 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says TOO_MANY_ATTEMPTS in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942480685-0.03510872026597567:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942480685-0.03510872026597567:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942480685-0.03510872026597567:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > approves with Enter in the password field
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942482936-0.4799001159776891:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942482936-0.4799001159776891:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942482936-0.4799001159776891:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > does not re-send the old request when the form was edited while the approval was on its way
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942484091-0.07197659649295596:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942484091-0.07197659649295596:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942484091-0.07197659649295596:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says the connection failed when the approval request cannot be sent
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942484725-0.34378519259329055:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942484725-0.34378519259329055:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794942484725-0.34378519259329055:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (31 tests | 4 failed) 10579ms
+     × says TOO_MANY_ATTEMPTS in a fixed Turkish sentence, empties the password and keeps the request waiting 1245ms
+     × approves with Enter in the password field 1155ms
+     × does not re-send the old request when the form was edited while the approval was on its way 634ms
+     × says the connection failed when the approval request cannot be sent 1166ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says TOO_MANY_ATTEMPTS in a fixed Turkish sentence, empties the password and keeps the request waiting
+AssertionError: expected 'TahsilatHesap toplamı₺100,00Ödenen₺0,…' to contain 'Çok fazla hatalı deneme yapıldı. En g…'
+
+Expected: "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."
+Received: "TahsilatHesap toplamı₺100,00Ödenen₺0,00Kalan₺100,00Ödeme yöntemiNakitKredi/Banka KartıEFT/HavaleHesaba yaz (cari)Tutar₺2 kişi3 kişi4 kişiAlınan para (isteğe bağlı)₺₺5,00₺10,00₺20,00₺50,00₺100,00₺200,00Tam tutarÖdemeyi EkleEşit bölüştürHesaplaÜrüne veya kişiye göre bölİndirim ve bahşişİndirim / düzeltme ekleİndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.Müşteri sadakatiPromosyonHizmet telafisi (şikayet/hata düzeltmesi)Yönetici takdiri / düzeltme%5%10%20Yüzde (%)Tutar (₺)Onay durumunu kontrol etYönetici burada onaylasınÇok fazla hatalı deneme yapıldı. En geç 30 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın.Yönetici onayı verGönüllü bahşiş ekle%10%15%20Bahşiş ekleİkramİkramMüşteri memnuniyetiYönetici ikramıÖzel misafirHizmet özrüKalanın tamamıİkram etİade ve iptalHesabı iptal etİptal gerekçesiGerekçe seçinMüşteri vazgeçtiYanlış siparişMutfak hatasıÜrün sorunluİkramYanlış tutar girildiDiğerSiparişi de iptal etİşaretlerseniz sipariş de iptal edilir ve geri alınamaz. Hazırlanmış kalemler fire sayılır, hazırlanmamışların stoğu geri gelir, masa boşalır. İşaretlemezseniz yalnız hesap iptal edilir; sipariş masada kalır, yeniden hesap açabilirsiniz.Hesabı iptal etmek için bir gerekçe seçin ya da yazın.Hesabı iptal et"
+
+ ❯ split-payment-discount-pending.test.js:445:43
+    443|     fillApprover("mudur1", "yanlis-sifre");
+    444|     approveFields().button.click();
+    445|     await vi.waitFor(() => expect(text()).toContain(sentence));
+       |                                           ^
+    446|
+    447|     expect(text()).not.toContain("raw english");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > approves with Enter in the password field
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says the connection failed when the approval request cannot be sent
+AssertionError: expected null not to be null
+ ❯ split-payment-discount-pending.test.js:388:61
+    386|   type("discount-value", "20");
+    387|   submit().click();
+    388|   await vi.waitFor(() => expect(approveFields().button).not.toBeNull()…
+       |                                                             ^
+    389|   return fetchMock;
+    390| }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > does not re-send the old request when the form was edited while the approval was on its way
+AssertionError: expected [ { …(5) }, { …(5) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ split-payment-discount-pending.test.js:498:38
+    496|     await new Promise((done) => setTimeout(done, 400));
+    497|
+    498|     expect(discountCalls(fetchMock)).toHaveLength(1);
+       |                                      ^
+    499|     expect(text()).not.toContain("onayıyla uygulandı");
+    500|     expect(approveFields().button).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 27 passed (31)
+   Start at  22:07:53
+   Duration  12.02s (transform 1.93s, setup 26ms, import 73ms, tests 10.58s, environment 1.06s)
+

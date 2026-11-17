@@ -1,0 +1,2 @@
+- qa-guvenlik-yetki: KABUL (bilgi sizintisi yok, "en cok 15 dakika" kodla dogru, Window public yan etkisiz; dusuk: sabit metin Window degisirse yanlis kalir -> test sure sabitini metne baglar)
+- ui-turkce-metin-uzmani: BULGU ("en cok" dogal degil) -> "en gec" metinleri uygulandi ve testler/mutantlar guncellendi

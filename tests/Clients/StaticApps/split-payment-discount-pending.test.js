@@ -432,8 +432,8 @@ describe("split-payment.js manager approving a waiting discount at the till", ()
 
   it.each([
     ["MANAGER_CREDENTIAL_INVALID", 403, "Yönetici adı veya şifre hatalı."],
-    ["MANAGER_LOCKED", 403, "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."],
-    ["TOO_MANY_ATTEMPTS", 429, "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."],
+    ["MANAGER_LOCKED", 403, "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."],
+    ["TOO_MANY_ATTEMPTS", 429, "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."],
     ["SELF_APPROVAL_NOT_ALLOWED", 403, "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."],
     ["APPROVER_LACKS_PERMISSION", 403, "Bu yönetici bu işlemi onaylama yetkisine sahip değil."],
   ])("says %s in a fixed Turkish sentence, empties the password and keeps the request waiting", async (code, status, sentence) => {

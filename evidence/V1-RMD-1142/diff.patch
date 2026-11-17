@@ -1,0 +1,95 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index a230780e7..2452daf60 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -185,9 +185,9 @@
+     ALREADY_RESOLVED: 'Bu talep zaten yanıtlanmış.',
+     APPROVER_LACKS_PERMISSION: 'Bu yönetici bu işlemi onaylama yetkisine sahip değil.',
+     MANAGER_CREDENTIAL_INVALID: 'Yönetici adı veya şifre hatalı.',
+-    MANAGER_LOCKED: 'Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın.',
++    MANAGER_LOCKED: 'Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir.',
+     SELF_APPROVAL_NOT_ALLOWED: 'Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir.',
+-    TOO_MANY_ATTEMPTS: 'Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın.',
++    TOO_MANY_ATTEMPTS: 'Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın.',
+     ACTIVE_CASH_SESSION_EXISTS: 'Bu terminalde zaten açık bir kasa oturumu var.',
+     ALLOWANCE_BELOW_USED: 'İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.',
+     BILL_BUSY: 'Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin.',
+diff --git a/src/Host/Experience/Billing/BillingSplitApplication.cs b/src/Host/Experience/Billing/BillingSplitApplication.cs
+index 48eb5487c..c597e5bd9 100644
+--- a/src/Host/Experience/Billing/BillingSplitApplication.cs
++++ b/src/Host/Experience/Billing/BillingSplitApplication.cs
+@@ -930,8 +930,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
+         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
+         BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
+         KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
+-        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."),
+-        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."),
++        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."),
++        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."),
+         ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
+         AuthorizationSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
+         ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
+@@ -1002,7 +1002,7 @@ public sealed class InPlaceApprovalThrottle
+ {
+     public const int MaxFailures = 3;
+     private const int MaxKeys = 10_000;
+-    private static readonly TimeSpan Window = TimeSpan.FromMinutes(15);
++    public static readonly TimeSpan Window = TimeSpan.FromMinutes(15);
+     private readonly ConcurrentDictionary<string, (int Failures, DateTimeOffset Since)> _state = new();
+ 
+     public bool IsBlocked(string key, DateTimeOffset now)
+diff --git a/tests/Clients/StaticApps/split-payment-discount-pending.test.js b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+index 9aa3f88fd..d39d4bd4b 100644
+--- a/tests/Clients/StaticApps/split-payment-discount-pending.test.js
++++ b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+@@ -432,8 +432,8 @@ describe("split-payment.js manager approving a waiting discount at the till", ()
+ 
+   it.each([
+     ["MANAGER_CREDENTIAL_INVALID", 403, "Yönetici adı veya şifre hatalı."],
+-    ["MANAGER_LOCKED", 403, "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."],
+-    ["TOO_MANY_ATTEMPTS", 429, "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."],
++    ["MANAGER_LOCKED", 403, "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."],
++    ["TOO_MANY_ATTEMPTS", 429, "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."],
+     ["SELF_APPROVAL_NOT_ALLOWED", 403, "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."],
+     ["APPROVER_LACKS_PERMISSION", 403, "Bu yönetici bu işlemi onaylama yetkisine sahip değil."],
+   ])("says %s in a fixed Turkish sentence, empties the password and keeps the request waiting", async (code, status, sentence) => {
+diff --git a/tests/Host/Experience/Billing/BillingSplitHttpTests.cs b/tests/Host/Experience/Billing/BillingSplitHttpTests.cs
+index 8b6ecffa7..05bffb65c 100644
+--- a/tests/Host/Experience/Billing/BillingSplitHttpTests.cs
++++ b/tests/Host/Experience/Billing/BillingSplitHttpTests.cs
+@@ -1336,6 +1336,9 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
+     private static async Task<string?> ErrorCodeAsync(HttpResponseMessage response)
+         => (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())?.Error.Code;
+ 
++    private static async Task<BillingSplitError?> ReadErrorAsync(HttpResponseMessage response)
++        => (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())?.Error;
++
+     private async Task<(Guid TerminalId, string Cookie, Guid RequesterId, Guid BillId, string Key, Guid GrantId, string DiscountPath)> PendingDiscountAsync(
+         HttpClient client, string role = "waiter", params string[] permissions)
+     {
+@@ -1406,7 +1409,11 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
+             waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+ 
+         Assert.Equal(HttpStatusCode.Forbidden, locked.StatusCode);
+-        Assert.Equal("MANAGER_LOCKED", await ErrorCodeAsync(locked));
++        var error = await ReadErrorAsync(locked);
++        Assert.Equal("MANAGER_LOCKED", error?.Code);
++        Assert.Equal(
++            $"Bu yönetici hesabı geçici olarak kilitlendi; en geç {(int)AuthenticationService.DefaultLockoutDuration.TotalMinutes} dakika sonra açılır. Yönetici kendi ekranından onaylayabilir.",
++            error?.Message);
+         Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+     }
+ 
+@@ -1428,7 +1435,11 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
+         using var stopped = await client.SendAsync(ApproveInPlace(
+             waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+         Assert.Equal((HttpStatusCode)429, stopped.StatusCode);
+-        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
++        var error = await ReadErrorAsync(stopped);
++        Assert.Equal("TOO_MANY_ATTEMPTS", error?.Code);
++        Assert.Equal(
++            $"Çok fazla hatalı deneme yapıldı. En geç {(int)InPlaceApprovalThrottle.Window.TotalMinutes} dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın.",
++            error?.Message);
+         Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+         Assert.Equal(3L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
+         Assert.False(await _database.IsLockedAsync(managerId));

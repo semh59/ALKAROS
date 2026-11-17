@@ -930,8 +930,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
         BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
         KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
-        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."),
-        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."),
+        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."),
+        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."),
         ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
         AuthorizationSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
         ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
@@ -1002,7 +1002,7 @@ public sealed class InPlaceApprovalThrottle
 {
     public const int MaxFailures = 3;
     private const int MaxKeys = 10_000;
-    private static readonly TimeSpan Window = TimeSpan.FromMinutes(15);
+    public static readonly TimeSpan Window = TimeSpan.FromMinutes(15);
     private readonly ConcurrentDictionary<string, (int Failures, DateTimeOffset Since)> _state = new();
 
     public bool IsBlocked(string key, DateTimeOffset now)

@@ -1336,6 +1336,9 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     private static async Task<string?> ErrorCodeAsync(HttpResponseMessage response)
         => (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())?.Error.Code;
 
+    private static async Task<BillingSplitError?> ReadErrorAsync(HttpResponseMessage response)
+        => (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())?.Error;
+
     private async Task<(Guid TerminalId, string Cookie, Guid RequesterId, Guid BillId, string Key, Guid GrantId, string DiscountPath)> PendingDiscountAsync(
         HttpClient client, string role = "waiter", params string[] permissions)
     {
@@ -1406,7 +1409,11 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
 
         Assert.Equal(HttpStatusCode.Forbidden, locked.StatusCode);
-        Assert.Equal("MANAGER_LOCKED", await ErrorCodeAsync(locked));
+        var error = await ReadErrorAsync(locked);
+        Assert.Equal("MANAGER_LOCKED", error?.Code);
+        Assert.Equal(
+            $"Bu yönetici hesabı geçici olarak kilitlendi; en geç {(int)AuthenticationService.DefaultLockoutDuration.TotalMinutes} dakika sonra açılır. Yönetici kendi ekranından onaylayabilir.",
+            error?.Message);
         Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
     }
 
@@ -1428,7 +1435,11 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         using var stopped = await client.SendAsync(ApproveInPlace(
             waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
         Assert.Equal((HttpStatusCode)429, stopped.StatusCode);
-        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
+        var error = await ReadErrorAsync(stopped);
+        Assert.Equal("TOO_MANY_ATTEMPTS", error?.Code);
+        Assert.Equal(
+            $"Çok fazla hatalı deneme yapıldı. En geç {(int)InPlaceApprovalThrottle.Window.TotalMinutes} dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın.",
+            error?.Message);
         Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
         Assert.Equal(3L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
         Assert.False(await _database.IsLockedAsync(managerId));

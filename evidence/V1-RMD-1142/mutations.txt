@@ -1,0 +1,6 @@
+C1-client-too-many-old exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  3 failed | 28 passed (31)
+C2-client-locked-old exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  3 failed | 28 passed (31)
+C3-client-30-minutes exit 1 restored cmp ok | Test Files  1 failed (1) / Tests  4 failed | 27 passed (31)
+S1-server-too-many-old exit 1 restored cmp ok | ALKAROS.Host.Experience.Billing.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll / Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 12 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+S2-server-locked-old exit 1 restored cmp ok | ALKAROS.Host.Experience.Billing.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll / Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 12 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+S3-window-ten-minutes exit 1 restored cmp ok | ALKAROS.Host.Experience.Billing.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll / Başarısız! - Başarısız:     1, Başarılı:     2, Atlanan:     0, Toplam:     3, Süre: 12 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
