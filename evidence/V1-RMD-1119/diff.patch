@@ -1,0 +1,91 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 4384ece04..9898d0a01 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -1168,8 +1168,8 @@
+       '<div class="sp-card sp-center-text">' +
+       '<span class="sp-icon-circle danger">!</span>' +
+       '<h1 class="sp-title">Hesap Bulunamadı</h1>' +
+-      '<p class="sp-subtitle">Hesap açılamadı. Bekleyen hesaplardan tekrar seçin.</p>' +
+-      '<a class="sp-btn sp-btn-primary" href="/pending-checks">Bekleyen hesaplara dön</a>' +
++      '<p class="sp-subtitle">Hesap açılamadı. ' + QUEUE_BACK.reselect + '</p>' +
++      '<a class="sp-btn sp-btn-primary" href="' + QUEUE_BACK.href + '">' + QUEUE_BACK.label + '</a>' +
+       '</div>';
+   }
+ 
+@@ -2252,7 +2252,10 @@
+       'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">' + label + '</a>';
+   }
+ 
+-  var BACK_LINK = backLink('/pending-checks', 'Bekleyen hesaplara dön');
++  var QUEUE_BACK = queryParam('from') === 'recent-sales'
++    ? { href: '/recent-sales', label: 'Son satışlara dön', reselect: 'Son satışlardan tekrar seçin.' }
++    : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
++  var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
+ 
+   function renderCancelled() {
+     app.innerHTML =
+diff --git a/tests/Clients/StaticApps/split-payment-cash-return-link.test.js b/tests/Clients/StaticApps/split-payment-cash-return-link.test.js
+index b73f4dcb9..69456c621 100644
+--- a/tests/Clients/StaticApps/split-payment-cash-return-link.test.js
++++ b/tests/Clients/StaticApps/split-payment-cash-return-link.test.js
+@@ -34,3 +34,59 @@ describe("the closed-drawer notice brings the cashier back to this bill", () =>
+     expect(url.searchParams.get("returnTo")).toBe(`/cashier/payments/split-payment/index.html?billId=${BILL_ID}`);
+   });
+ });
++
++const settled = { billId: BILL_ID, payableAmount: 100, allocatedTotal: 100, remainingAmount: 0, allocations: [], unsettledPayment: null };
++const backLinks = () => [...document.querySelectorAll("#app a.sp-btn")].filter((a) => /dön$/.test(a.textContent) && /pending-checks|recent-sales/.test(a.getAttribute("href"))).map((a) => ({ text: a.textContent, href: a.getAttribute("href") }));
++
++async function openPaid(query) {
++  window.history.replaceState({}, "", `/cashier/payments/split-payment/index.html?billId=${BILL_ID}${query}`);
++  installFetchRouter([
++    { test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } },
++    { test: (url, init) => url.endsWith("/tenders/") && (init?.method ?? "GET") === "GET", body: settled },
++    { test: (url) => url.includes("/cash-sessions/active"), body: { cashSessionId: "66666666-6666-6666-6666-666666666666" } },
++    { test: (url) => url.endsWith("/adjustments"), body: { adjustments: [], summary: null } },
++    { test: (url) => url.endsWith("/refund-requests"), body: [] },
++    { test: (url) => url.endsWith("/receipt"), body: { items: [], status: "Paid", tableNumber: null } },
++  ]);
++  await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
++  await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
++}
++
++async function openMissing(query) {
++  window.history.replaceState({}, "", `/cashier/payments/split-payment/index.html${query}`);
++  installFetchRouter([{ test: (url) => url.endsWith("/api/v1/auth/session/current"), body: { terminalId: TERMINAL_ID, userId: "u1" } }]);
++  await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "split-payment.js"));
++  await vi.waitFor(() => expect(document.querySelector("#app .sp-title")?.textContent).toBe("Hesap Bulunamadı"));
++}
++
++describe("the way back follows where the cashier came from", () => {
++  beforeEach(() => vi.resetModules());
++  afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ""; });
++
++  it("goes back to the recent sales from a paid bill opened there", async () => {
++    await openPaid("&open=refund&from=recent-sales");
++
++    expect(backLinks()).toEqual([{ text: "Son satışlara dön", href: "/recent-sales" }]);
++  });
++
++  it("goes back to the recent sales when the bill could not be found", async () => {
++    await openMissing("?from=recent-sales");
++
++    expect(backLinks()).toEqual([{ text: "Son satışlara dön", href: "/recent-sales" }]);
++    expect(document.querySelector("#app .sp-subtitle").textContent).toBe("Hesap açılamadı. Son satışlardan tekrar seçin.");
++  });
++
++  it.each(["", "&from=other", "&from=/evil", "&from=recent-sales-x"])("keeps the pending checks link for a paid bill opened with %j", async (query) => {
++    await openPaid(query);
++
++    expect(backLinks()).toEqual([{ text: "Bekleyen hesaplara dön", href: "/pending-checks" }]);
++  });
++
++  it("keeps the pending checks link when the bill could not be found and nothing says where we came from", async () => {
++    await openMissing("");
++
++    expect(backLinks()).toEqual([{ text: "Bekleyen hesaplara dön", href: "/pending-checks" }]);
++    expect(document.querySelector("#app .sp-subtitle").textContent).toBe("Hesap açılamadı. Bekleyen hesaplardan tekrar seçin.");
++  });
++});
++

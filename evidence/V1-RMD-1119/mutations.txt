@@ -1,0 +1,6 @@
+M1-ignores-from exit 1       Tests  2 failed | 6 passed (8) | restored cmp ok
+M2-any-from exit 1       Tests  3 failed | 5 passed (8) | restored cmp ok
+M4-paid-link-fixed exit 1       Tests  1 failed | 7 passed (8) | restored cmp ok
+M5-label-not-changed exit 1       Tests  2 failed | 6 passed (8) | restored cmp ok
+M3-missing-bill-fixed-link exit 1       Tests  1 failed | 7 passed (8) | restored cmp ok
+M6-subtitle-not-changed exit 1       Tests  1 failed | 7 passed (8) | restored cmp ok

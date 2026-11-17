@@ -1168,8 +1168,8 @@
       '<div class="sp-card sp-center-text">' +
       '<span class="sp-icon-circle danger">!</span>' +
       '<h1 class="sp-title">Hesap Bulunamadı</h1>' +
-      '<p class="sp-subtitle">Hesap açılamadı. Bekleyen hesaplardan tekrar seçin.</p>' +
-      '<a class="sp-btn sp-btn-primary" href="/pending-checks">Bekleyen hesaplara dön</a>' +
+      '<p class="sp-subtitle">Hesap açılamadı. ' + QUEUE_BACK.reselect + '</p>' +
+      '<a class="sp-btn sp-btn-primary" href="' + QUEUE_BACK.href + '">' + QUEUE_BACK.label + '</a>' +
       '</div>';
   }
 
@@ -2252,7 +2252,10 @@
       'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">' + label + '</a>';
   }
 
-  var BACK_LINK = backLink('/pending-checks', 'Bekleyen hesaplara dön');
+  var QUEUE_BACK = queryParam('from') === 'recent-sales'
+    ? { href: '/recent-sales', label: 'Son satışlara dön', reselect: 'Son satışlardan tekrar seçin.' }
+    : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
+  var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
 
   function renderCancelled() {
     app.innerHTML =

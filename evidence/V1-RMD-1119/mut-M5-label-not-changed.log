@@ -1,0 +1,72 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-cash-return-link.test.js > the way back follows where the cashier came from > goes back to the recent sales from a paid bill opened there
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794898810878-0.6994270680055756:268:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794898810878-0.6994270680055756:464:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794898810878-0.6994270680055756:577:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-cash-return-link.test.js (8 tests | 2 failed) 975ms
+     × goes back to the recent sales from a paid bill opened there 134ms
+     × goes back to the recent sales when the bill could not be found 73ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-cash-return-link.test.js > the way back follows where the cashier came from > goes back to the recent sales from a paid bill opened there
+AssertionError: expected [ { …(2) } ] to deeply equal [ { text: 'Son satışlara dön', …(1) } ]
+
+- Expected
++ Received
+
+  [
+    {
+      "href": "/recent-sales",
+-     "text": "Son satışlara dön",
++     "text": "Bekleyen hesaplara dön",
+    },
+  ]
+
+ ❯ split-payment-cash-return-link.test.js:69:25
+     67|     await openPaid("&open=refund&from=recent-sales");
+     68|
+     69|     expect(backLinks()).toEqual([{ text: "Son satışlara dön", href: "/…
+       |                         ^
+     70|   });
+     71|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-cash-return-link.test.js > the way back follows where the cashier came from > goes back to the recent sales when the bill could not be found
+AssertionError: expected [ { …(2) } ] to deeply equal [ { text: 'Son satışlara dön', …(1) } ]
+
+- Expected
++ Received
+
+  [
+    {
+      "href": "/recent-sales",
+-     "text": "Son satışlara dön",
++     "text": "Bekleyen hesaplara dön",
+    },
+  ]
+
+ ❯ split-payment-cash-return-link.test.js:75:25
+     73|     await openMissing("?from=recent-sales");
+     74|
+     75|     expect(backLinks()).toEqual([{ text: "Son satışlara dön", href: "/…
+       |                         ^
+     76|   });
+     77|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  10:00:09
+   Duration  2.39s (transform 480ms, setup 25ms, import 61ms, tests 975ms, environment 1.04s)
+
