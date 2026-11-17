@@ -1,7 +1,7 @@
 # V1-RMD-1151 - Ödeme öncesi "Hesap" ön fişi: mali olmayan bilgi fişi, ayrı sayaç, masa akışı ve Bekleyen hesaplar'dan tek dokunuşla
 
 - Task ID: V1-RMD-1151
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Planned
