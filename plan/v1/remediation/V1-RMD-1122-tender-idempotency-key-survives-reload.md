@@ -1,7 +1,7 @@
 # V1-RMD-1122 - Tahsilat işlem anahtarı sayfa yenilenince kaybolmaz
 
 - Task ID: V1-RMD-1122
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
