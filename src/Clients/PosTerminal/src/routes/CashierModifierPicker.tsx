@@ -25,6 +25,15 @@ export function CashierModifierPicker({ product, onConfirm, onCancel }: {
     return () => opener?.focus();
   }, []);
 
+  // On the window, not the backdrop: tapping plain text inside the dialog moves the focus to the body, where a backdrop handler never sees the key.
+  useEffect(() => {
+    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") onCancel();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [onCancel]);
+
   const toggle = (group: CatalogModifierGroup, modifierId: string) =>
     setChosen((current) => {
       const next = new Set(current);
@@ -38,11 +47,6 @@ export function CashierModifierPicker({ product, onConfirm, onCancel }: {
     });
 
   const trapFocus = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Escape") {
-      event.preventDefault();
-      onCancel();
-      return;
-    }
     if (event.key !== "Tab") return;
     const controls = [...event.currentTarget.querySelectorAll<HTMLElement>(focusableSelector)];
     const first = controls[0];

@@ -1,0 +1,81 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.modifier-picker.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.modifier-picker.test.tsx
+index e5b09f0a3..f4d17d3d6 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.modifier-picker.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.modifier-picker.test.tsx
+@@ -152,4 +152,44 @@ describe("Cashier asks for a product's options before selling it", () => {
+     expect(document.querySelector('[role="dialog"]')).toBeNull();
+     expect(added).toEqual([]);
+   });
++
++  const press = (target: EventTarget, key: string) => act(async () => {
++    target.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
++    await new Promise((resolve) => setTimeout(resolve, 0));
++  });
++
++  it("closes on Escape and hands the focus back to the product card", async () => {
++    const added = await openCashier();
++    const pide = card("Pide");
++    pide.focus();
++
++    await click(pide);
++    await press(document.activeElement!, "Escape");
++
++    expect(document.querySelector('[role="dialog"]')).toBeNull();
++    expect(document.activeElement).toBe(pide);
++    expect(added).toEqual([]);
++  });
++
++  it("closes on Escape even after the cashier tapped plain text inside the window and the focus left it", async () => {
++    await openCashier();
++
++    await click(card("Pide"));
++    (document.activeElement as HTMLElement).blur();
++    await press(document.body, "a");
++    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
++    await press(document.body, "Escape");
++
++    expect(document.querySelector('[role="dialog"]')).toBeNull();
++  });
++
++  it("closes when the cashier presses outside the window", async () => {
++    const added = await openCashier();
++
++    await click(card("Pide"));
++    await act(async () => { document.querySelector(".dialog-backdrop")!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); });
++
++    expect(document.querySelector('[role="dialog"]')).toBeNull();
++    expect(added).toEqual([]);
++  });
+ });
+diff --git a/src/Clients/PosTerminal/src/routes/CashierModifierPicker.tsx b/src/Clients/PosTerminal/src/routes/CashierModifierPicker.tsx
+index ee01dcb38..c98b596ee 100644
+--- a/src/Clients/PosTerminal/src/routes/CashierModifierPicker.tsx
++++ b/src/Clients/PosTerminal/src/routes/CashierModifierPicker.tsx
+@@ -25,6 +25,15 @@ export function CashierModifierPicker({ product, onConfirm, onCancel }: {
+     return () => opener?.focus();
+   }, []);
+ 
++  // On the window, not the backdrop: tapping plain text inside the dialog moves the focus to the body, where a backdrop handler never sees the key.
++  useEffect(() => {
++    const closeOnEscape = (event: globalThis.KeyboardEvent) => {
++      if (event.key === "Escape") onCancel();
++    };
++    window.addEventListener("keydown", closeOnEscape);
++    return () => window.removeEventListener("keydown", closeOnEscape);
++  }, [onCancel]);
++
+   const toggle = (group: CatalogModifierGroup, modifierId: string) =>
+     setChosen((current) => {
+       const next = new Set(current);
+@@ -38,11 +47,6 @@ export function CashierModifierPicker({ product, onConfirm, onCancel }: {
+     });
+ 
+   const trapFocus = (event: KeyboardEvent<HTMLDivElement>) => {
+-    if (event.key === "Escape") {
+-      event.preventDefault();
+-      onCancel();
+-      return;
+-    }
+     if (event.key !== "Tab") return;
+     const controls = [...event.currentTarget.querySelectorAll<HTMLElement>(focusableSelector)];
+     const first = controls[0];

@@ -1,0 +1,4 @@
+M1-escape-noop exit 1 restored cmp ok
+M2-any-key-closes exit 1 restored cmp ok
+M3-backdrop-noop exit 1 restored cmp ok
+M4-focus-not-returned exit 1 restored cmp ok

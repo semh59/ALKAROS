@@ -1,0 +1,191 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx (7 tests | 2 failed) 2854ms
+     × closes on Escape and hands the focus back to the product card 77ms
+     × closes on Escape even after the cashier tapped plain text inside the window and the focus left it 101ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.modifier-picker.test.tsx > Cashier asks for a product's options before selling it > closes on Escape and hands the focus back to the product card
+AssertionError: expected <div class="pairing-dialog" …(3)>…(3)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  aria-labelledby="modifier-picker-title"
+  aria-modal="true"
+  class="pairing-dialog"
+  role="dialog"
+>
+  <div
+    class="dialog-heading"
+  >
+    <div>
+      <span
+        class="eyebrow dark"
+      >
+        SEÇENEKLER
+      </span>
+      <h2
+        id="modifier-picker-title"
+      >
+        Pide
+      </h2>
+    </div>
+    <button
+      aria-label="Seçenek penceresini kapat"
+      class="dialog-close"
+      data-telemetry-id="b.routes.cashiermodifierpicker.1"
+    >
+      ×
+    </button>
+  </div>
+  <fieldset
+    class="modifier-group"
+  >
+    <legend>
+      Porsiyon boyu
+       (zorunlu)
+    </legend>
+    <label>
+      <input
+        name="g1"
+        type="radio"
+      />
+      Büyük boy
+       +₺5,00
+    </label>
+    <label>
+      <input
+        name="g1"
+        type="radio"
+      />
+      Küçük boy
+    </label>
+  </fieldset>
+  <div
+    class="dialog-actions"
+  >
+    <button
+      class="secondary"
+      data-telemetry-id="b.routes.cashiermodifierpicker.2"
+    >
+      Vazgeç
+    </button>
+    <button
+      class="primary"
+      data-telemetry-id="b.routes.cashiermodifierpicker.3"
+      disabled=""
+    >
+      Siparişe ekle
+    </button>
+  </div>
+</div>
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:169:55
+    167|     await press(document.activeElement!, "Escape");
+    168|
+    169|     expect(document.querySelector('[role="dialog"]')).toBeNull();
+       |                                                       ^
+    170|     expect(document.activeElement).toBe(pide);
+    171|     expect(added).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.modifier-picker.test.tsx > Cashier asks for a product's options before selling it > closes on Escape even after the cashier tapped plain text inside the window and the focus left it
+AssertionError: expected <div class="pairing-dialog" …(3)>…(3)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  aria-labelledby="modifier-picker-title"
+  aria-modal="true"
+  class="pairing-dialog"
+  role="dialog"
+>
+  <div
+    class="dialog-heading"
+  >
+    <div>
+      <span
+        class="eyebrow dark"
+      >
+        SEÇENEKLER
+      </span>
+      <h2
+        id="modifier-picker-title"
+      >
+        Pide
+      </h2>
+    </div>
+    <button
+      aria-label="Seçenek penceresini kapat"
+      class="dialog-close"
+      data-telemetry-id="b.routes.cashiermodifierpicker.1"
+    >
+      ×
+    </button>
+  </div>
+  <fieldset
+    class="modifier-group"
+  >
+    <legend>
+      Porsiyon boyu
+       (zorunlu)
+    </legend>
+    <label>
+      <input
+        name="g1"
+        type="radio"
+      />
+      Büyük boy
+       +₺5,00
+    </label>
+    <label>
+      <input
+        name="g1"
+        type="radio"
+      />
+      Küçük boy
+    </label>
+  </fieldset>
+  <div
+    class="dialog-actions"
+  >
+    <button
+      class="secondary"
+      data-telemetry-id="b.routes.cashiermodifierpicker.2"
+    >
+      Vazgeç
+    </button>
+    <button
+      class="primary"
+      data-telemetry-id="b.routes.cashiermodifierpicker.3"
+      disabled=""
+    >
+      Siparişe ekle
+    </button>
+  </div>
+</div>
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:183:55
+    181|     await press(document.body, "Escape");
+    182|
+    183|     expect(document.querySelector('[role="dialog"]')).toBeNull();
+       |                                                       ^
+    184|   });
+    185|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  08:52:16
+   Duration  4.18s (transform 1.66s, setup 0ms, import 115ms, tests 2.85s, environment 950ms)
+

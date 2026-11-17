@@ -1,7 +1,7 @@
 # V1-RMD-1115 - Seçenek penceresi Escape ile her durumda kapanır
 
 - Task ID: V1-RMD-1115
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

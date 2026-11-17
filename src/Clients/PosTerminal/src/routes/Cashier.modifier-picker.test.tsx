@@ -152,4 +152,44 @@ describe("Cashier asks for a product's options before selling it", () => {
     expect(document.querySelector('[role="dialog"]')).toBeNull();
     expect(added).toEqual([]);
   });
+
+  const press = (target: EventTarget, key: string) => act(async () => {
+    target.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+
+  it("closes on Escape and hands the focus back to the product card", async () => {
+    const added = await openCashier();
+    const pide = card("Pide");
+    pide.focus();
+
+    await click(pide);
+    await press(document.activeElement!, "Escape");
+
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(document.activeElement).toBe(pide);
+    expect(added).toEqual([]);
+  });
+
+  it("closes on Escape even after the cashier tapped plain text inside the window and the focus left it", async () => {
+    await openCashier();
+
+    await click(card("Pide"));
+    (document.activeElement as HTMLElement).blur();
+    await press(document.body, "a");
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+    await press(document.body, "Escape");
+
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+  });
+
+  it("closes when the cashier presses outside the window", async () => {
+    const added = await openCashier();
+
+    await click(card("Pide"));
+    await act(async () => { document.querySelector(".dialog-backdrop")!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); });
+
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(added).toEqual([]);
+  });
 });

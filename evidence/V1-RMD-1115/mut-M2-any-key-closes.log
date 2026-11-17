@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx (7 tests | 1 failed) 3102ms
+     × closes on Escape even after the cashier tapped plain text inside the window and the focus left it 82ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.modifier-picker.test.tsx > Cashier asks for a product's options before selling it > closes on Escape even after the cashier tapped plain text inside the window and the focus left it
+AssertionError: expected null not to be null
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:180:59
+    178|     (document.activeElement as HTMLElement).blur();
+    179|     await press(document.body, "a");
+    180|     expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+       |                                                           ^
+    181|     await press(document.body, "Escape");
+    182|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  08:52:22
+   Duration  4.65s (transform 1.83s, setup 0ms, import 129ms, tests 3.10s, environment 1.08s)
+

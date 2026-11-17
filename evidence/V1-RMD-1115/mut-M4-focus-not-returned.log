@@ -1,0 +1,315 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx (7 tests | 1 failed) 3135ms
+     × closes on Escape and hands the focus back to the product card 141ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.modifier-picker.test.tsx > Cashier asks for a product's options before selling it > closes on Escape and hands the focus back to the product card
+AssertionError: expected <body><div id="root">…(1)</div></body> to be <button …(2)>…(3)</button> // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,5 +1,169 @@
++ <body>
++   <div
++     id="root"
++   >
++     <main
++       class="cashier-shell"
++     >
++       <header
++         class="pos-header"
++       >
++         <div
++           class="pos-brand"
++         >
++           <div
++             class="brand-mark compact"
++           >
++             A
++           </div>
++           <div>
++             <strong>
++               ALKAROS
++             </strong>
++             <span>
++               Kasa satış
++             </span>
++           </div>
++         </div>
++         <div
++           class="system-state connection-state online"
++           role="status"
++         >
++           <span
++             aria-hidden="true"
++           />
++           Bağlantı var
++         </div>
++         <div
++           class="pos-header-actions"
++         >
++           <nav
++             aria-label="Çalışma alanı"
++             class="view-switch"
++           >
++             <a
++               href="/tables"
++             >
++               Masalar
++             </a>
++             <a
++               aria-current="page"
++               href="/"
++             >
++               Hızlı satış
++             </a>
++           </nav>
++           <button
++             aria-controls="header-menu"
++             aria-expanded="false"
++             class="operator-card"
++             data-telemetry-id="b.routes.cashier.42"
++           >
++             <span>
++               Deniz Kaya
++             </span>
++             <small>
++               Sınırlı erişim
++                · Diğer ▾
++             </small>
++           </button>
++         </div>
++       </header>
++       <div
++         class="pos-workspace"
++       >
++         <div
++           aria-label="Ürün kategorileri"
++           class="category-rail"
++           role="tablist"
++           tabindex="-1"
++         >
++           <button
++             aria-selected="true"
++             class="active"
++             data-telemetry-id="b.routes.cashier.12"
++             role="tab"
++             tabindex="0"
++           >
++             <span
++               class="category-glyph"
++             >
++               ⌂
++             </span>
++             Tümü
++             <small>
++               3
++             </small>
++           </button>
++           <button
++             aria-selected="false"
++             class=""
++             data-telemetry-id="b.routes.cashier.13"
++             role="tab"
++             tabindex="-1"
++           >
++             <span
++               class="category-glyph"
++             >
++               01
++             </span>
++             Ana Yemek
++             <small>
++               2
++             </small>
++           </button>
++           <button
++             aria-selected="false"
++             class=""
++             data-telemetry-id="b.routes.cashier.13"
++             role="tab"
++             tabindex="-1"
++           >
++             <span
++               class="category-glyph"
++             >
++               02
++             </span>
++             İçecek
++             <small>
++               1
++             </small>
++           </button>
++         </div>
++         <section
++           class="catalog-workspace"
++         >
++           <div
++             class="catalog-toolbar"
++           >
++             <div>
++               <span
++                 class="eyebrow dark"
++               >
++                 HIZLI SİPARİŞ
++               </span>
++               <h1>
++                 Tüm ürünler
++               </h1>
++             </div>
++             <label
++               class="search-field"
++             >
++               <span>
++                 ⌕
++               </span>
++               <input
++                 aria-label="Ürün ara"
++                 placeholder="Ürün veya SKU ara"
++                 value=""
++               />
++             </label>
++           </div>
++           <div
++             class="product-grid"
++           >
+              <button
+                class="product-card"
+                data-telemetry-id="b.routes.cashier.14"
+              >
+                <span
+@@ -26,5 +190,113 @@
+                      KDV dahil
+                    </small>
+                  </span>
+                </span>
+              </button>
++             <button
++               class="product-card"
++               data-telemetry-id="b.routes.cashier.14"
++             >
++               <span
++                 class="product-category"
++               >
++                 Ana Yemek
++               </span>
++               <strong>
++                 Tost
++               </strong>
++               <span
++                 class="product-card-footer"
++               >
++                 <small>
++                   SKU-3
++                 </small>
++                 <span
++                   class="product-price"
++                 >
++                   <b>
++                     ₺50,00
++                   </b>
++                   <small>
++                     KDV dahil
++                   </small>
++                 </span>
++               </span>
++             </button>
++             <button
++               class="product-card"
++               data-telemetry-id="b.routes.cashier.14"
++             >
++               <span
++                 class="product-category"
++               >
++                 İçecek
++               </span>
++               <strong>
++                 Ayran
++               </strong>
++               <span
++                 class="product-card-footer"
++               >
++                 <small>
++                   SKU-2
++                 </small>
++                 <span
++                   class="product-price"
++                 >
++                   <b>
++                     ₺20,00
++                   </b>
++                   <small>
++                     KDV dahil
++                   </small>
++                 </span>
++               </span>
++             </button>
++           </div>
++         </section>
++         <aside
++           class="ticket-panel"
++         >
++           <div
++             class="ticket-heading"
++           >
++             <div>
++               <span
++                 class="eyebrow dark"
++               >
++                 AKTİF SİPARİŞ
++               </span>
++               <h2>
++                 Sipariş 1
++               </h2>
++             </div>
++             <div
++               class="ticket-meta"
++             >
++               <strong>
++                 0
++               </strong>
++               <span>
++                 ürün
++               </span>
++             </div>
++           </div>
++           <div
++             aria-atomic="false"
++             aria-live="polite"
++             class="ticket-lines"
++           >
++             <div
++               class="ticket-empty"
++             >
++               Soldaki katalogdan ürün seçin.
++             </div>
++           </div>
++           <div
++             class="ticket-footer"
++           />
++         </aside>
++       </div>
++     </main>
++   </div>
++ </body>
+
+ ❯ src/routes/Cashier.modifier-picker.test.tsx:170:36
+    168|
+    169|     expect(document.querySelector('[role="dialog"]')).toBeNull();
+    170|     expect(document.activeElement).toBe(pide);
+       |                                    ^
+    171|     expect(added).toEqual([]);
+    172|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  08:52:36
+   Duration  4.49s (transform 1.80s, setup 0ms, import 118ms, tests 3.13s, environment 980ms)
+
