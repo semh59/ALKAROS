@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (7 tests | 1 failed) 4129ms
+     × a tap while the order is read again after a failure starts its own add and is not lost 206ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > a tap while the order is read again after a failure starts its own add and is not lost
+AssertionError: expected [ 'p-ayran', 'p-cay' ] to deeply equal [ 'p-ayran', 'p-cay', 'p-ayran' ]
+
+- Expected
++ Received
+
+  [
+    "p-ayran",
+    "p-cay",
+-   "p-ayran",
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:180:55
+    178|     await settle();
+    179|
+    180|     expect(till.bodies.map((body) => body.productId)).toEqual(["p-ayra…
+       |                                                       ^
+    181|     expect(document.body.textContent).not.toContain("sıraya alındı");
+    182|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  14:43:58
+   Duration  6.30s (transform 4.15s, setup 0ms, import 305ms, tests 8.85s, environment 2.28s)
+

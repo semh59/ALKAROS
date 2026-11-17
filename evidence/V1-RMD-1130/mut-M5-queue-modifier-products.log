@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (7 tests | 1 failed) 3861ms
+     × a product that needs an option choice stays locked while an add is in flight 112ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > a product that needs an option choice stays locked while an add is in flight
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:200:35
+    198|
+    199|     await tap(card("Ayran"));
+    200|     expect(card("Pide").disabled).toBe(true);
+       |                                   ^
+    201|     till.release();
+    202|     await settle();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  14:43:14
+   Duration  6.27s (transform 3.76s, setup 0ms, import 274ms, tests 8.53s, environment 2.32s)
+

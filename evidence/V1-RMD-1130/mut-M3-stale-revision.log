@@ -1,0 +1,44 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (7 tests | 1 failed) 3742ms
+     × keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned 2543ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned
+AssertionError: expected [ Array(3) ] to deeply equal [ Array(3) ]
+
+- Expected
++ Received
+
+@@ -3,11 +3,11 @@
+      "expectedRevision": 4,
+      "productId": "p-ayran",
+      "quantity": 1,
+    },
+    {
+-     "expectedRevision": 5,
++     "expectedRevision": 4,
+      "productId": "p-ayran",
+      "quantity": 2,
+    },
+    {
+      "expectedRevision": 6,
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:119:25
+    117|     await settle();
+    118|
+    119|     expect(till.bodies).toEqual([
+       |                         ^
+    120|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    121|       { productId: "p-ayran", quantity: 2, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  14:42:56
+   Duration  6.10s (transform 3.46s, setup 0ms, import 246ms, tests 8.12s, environment 2.53s)
+

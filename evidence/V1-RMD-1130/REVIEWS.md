@@ -1,0 +1,2 @@
+- qa-frontend: RED(5 bulgu) -> duzeltildi -> KABUL
+- qa-bulgu-dogrulayici: RED (hatadan sonra okuma penceresinde kayip) -> duzeltildi (closeTapQueue, test, M9) -> KABUL

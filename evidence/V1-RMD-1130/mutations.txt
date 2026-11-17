@@ -1,0 +1,18 @@
+M1-drop-taps exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  6 failed | 20 passed (26)
+M2-grid-locked exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  5 failed | 21 passed (26)
+M3-stale-revision exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 25 passed (26)
+M4-resend-after-failure exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 24 passed (26)
+M5-queue-modifier-products exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 25 passed (26)
+M6-count-lost exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 24 passed (26)
+M7-silent-loss exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 25 passed (26)
+M8-no-indicator exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 25 passed (26)
+M9-queue-open-during-reload exit 1 restored cmp ok ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 25 passed (26)

@@ -1,0 +1,68 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (7 tests | 1 failed) 3930ms
+     × keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned 2762ms
+ ❯ src/routes/Cashier.first-touch.test.tsx (19 tests | 1 failed) 4596ms
+     × a second tap while the first is still opening does not open a second order 105ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > a second tap while the first is still opening does not open a second order
+AssertionError: expected [ 1, 1 ] to deeply equal [ 1, 2 ]
+
+- Expected
++ Received
+
+  [
+    1,
+-   2,
++   1,
+  ]
+
+ ❯ src/routes/Cashier.first-touch.test.tsx:182:54
+    180|
+    181|     expect(posts(till, "/orders")).toHaveLength(1);
+    182|     expect(till.bodies.map((body) => body.quantity)).toEqual([1, 2]);
+       |                                                      ^
+    183|   });
+    184|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned
+AssertionError: expected [ Array(3) ] to deeply equal [ Array(3) ]
+
+- Expected
++ Received
+
+@@ -5,11 +5,11 @@
+      "quantity": 1,
+    },
+    {
+      "expectedRevision": 5,
+      "productId": "p-ayran",
+-     "quantity": 2,
++     "quantity": 1,
+    },
+    {
+      "expectedRevision": 6,
+      "productId": "p-cay",
+      "quantity": 1,
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:119:25
+    117|     await settle();
+    118|
+    119|     expect(till.bodies).toEqual([
+       |                         ^
+    120|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    121|       { productId: "p-ayran", quantity: 2, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 24 passed (26)
+   Start at  14:43:23
+   Duration  6.31s (transform 3.82s, setup 0ms, import 296ms, tests 8.53s, environment 2.40s)
+

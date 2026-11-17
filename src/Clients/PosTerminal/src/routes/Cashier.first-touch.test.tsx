@@ -179,7 +179,7 @@ describe("Cashier opens the order on the first product tap", () => {
     await settle();
 
     expect(posts(till, "/orders")).toHaveLength(1);
-    expect(till.bodies).toHaveLength(1);
+    expect(till.bodies.map((body) => body.quantity)).toEqual([1, 2]);
   });
 
   it("a product with required options opens the order only after the choice is confirmed, never when it is cancelled", async () => {

@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (7 tests | 1 failed) 4234ms
+     × tells the cashier how many taps are waiting while the add is in flight 146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > tells the cashier how many taps are waiting while the add is in flight
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain '2 dokunuş sıraya alındı'
+
+Expected: "2 dokunuş sıraya alındı"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü301Ana Yemek102İçecek2HIZLI SİPARİŞTüm ürünler⌕Ana YemekPideSKU-1₺100,00KDV dahilİçecekAyranSKU-2₺20,00KDV dahilİçecekÇaySKU-3₺10,00KDV dahilAKTİF SİPARİŞSipariş 10ürünSoldaki katalogdan ürün seçin."
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:133:39
+    131|     await tap(card("Çay"));
+    132|
+    133|     expect(document.body.textContent).toContain("2 dokunuş sıraya alın…
+       |                                       ^
+    134|     till.release();
+    135|     await settle();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  14:43:47
+   Duration  8.08s (transform 4.42s, setup 0ms, import 571ms, tests 9.08s, environment 4.52s)
+

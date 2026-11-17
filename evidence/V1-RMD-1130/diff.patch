@@ -1,0 +1,143 @@
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.first-touch.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.first-touch.test.tsx
+index 9793492cc..c871d6b58 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.first-touch.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.first-touch.test.tsx
+@@ -179,7 +179,7 @@ describe("Cashier opens the order on the first product tap", () => {
+     await settle();
+ 
+     expect(posts(till, "/orders")).toHaveLength(1);
+-    expect(till.bodies).toHaveLength(1);
++    expect(till.bodies.map((body) => body.quantity)).toEqual([1, 2]);
+   });
+ 
+   it("a product with required options opens the order only after the choice is confirmed, never when it is cancelled", async () => {
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index 3ec25de16..bf38385fb 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -174,6 +174,11 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const knownHelpIds = useRef(new Set<string>());
+   // One tap = one action: a second tap during the first one must not open a second order.
+   const addingProduct = useRef(false);
++  const [adding, setAdding] = useState(false);
++  const queuedTaps = useRef(new Map<string, number>());
++  const queueOpen = useRef(false);
++  const sendingTaps = useRef(0);
++  const [queuedCount, setQueuedCount] = useState(0);
+   const userMenuButton = useRef<HTMLButtonElement>(null);
+   const pairingDialog = useRef<HTMLDivElement>(null);
+ 
+@@ -687,7 +692,14 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     }
+   };
+ 
++  const tapQueueable = (product: CatalogProduct) => !kitchenlessReason && !product.modifierGroups?.length;
++
+   const chooseProduct = (product: CatalogProduct) => {
++    if (queueOpen.current && tapQueueable(product)) {
++      queuedTaps.current.set(product.productId, (queuedTaps.current.get(product.productId) ?? 0) + 1);
++      setQueuedCount((count) => count + 1);
++      return;
++    }
+     if (product.modifierGroups?.length && !kitchenlessReason) setPickingProduct(product);
+     else void addProduct(product);
+   };
+@@ -705,10 +717,10 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+ 
+   // A scanner types the SKU and presses Enter: an exact SKU (any category) or a search narrowed to one product is sold.
+   const addSearchedProduct = () => {
+-    if (busy || !normalizedSearch) return;
++    if ((busy && !adding) || !normalizedSearch) return;
+     const match = catalog.find((product) => foldSearch(product.sku) === normalizedSearch)
+       ?? (visibleProducts.length === 1 ? visibleProducts[0] : undefined);
+-    if (!match) return;
++    if (!match || (adding && !tapQueueable(match))) return;
+     setSearch("");
+     chooseProduct(match);
+   };
+@@ -736,20 +748,67 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       return;
+     }
+     addingProduct.current = true;
++    queueOpen.current = true;
++    setAdding(true);
++    // Taps that arrive while an add is in flight wait in queuedTaps; each is sent once on the revision the previous answer
++    // returned. A failure drops what is left: adding an item carries no operation key, so a resend could add it twice.
++    const drainQueuedTaps = async (orderId: string, revision: number) => {
++      let current = revision;
++      while (queuedTaps.current.size) {
++        const [queuedId, count] = queuedTaps.current.entries().next().value!;
++        queuedTaps.current.delete(queuedId);
++        sendingTaps.current = count;
++        current = (await api.addItem(terminalId, orderId, queuedId, current, [], count)).revision;
++        sendingTaps.current = 0;
++        setQueuedCount((total) => total - count);
++      }
++    };
++    let queueClosed = false;
++    const closeTapQueue = () => {
++      if (queueClosed) return;
++      queueClosed = true;
++      queueOpen.current = false;
++      queuedTaps.current.clear();
++      sendingTaps.current = 0;
++      setQueuedCount(0);
++      addingProduct.current = false;
++      setAdding(false);
++    };
+     try {
+-      await execute(async () => {
++      let ok = await execute(async () => {
+         const reused = activeOrder?.editable || activeOrder?.acceptsRound ? activeOrder : null;
+         const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await openOrder();
+         try {
+-          await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);
++          const added = await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);
++          await drainQueuedTaps(target.orderId, added.revision);
+         } catch (reason) {
+           // The order just opened is the till's active one: show it, so the next tap fills it instead of opening another (a 409 is reloaded by execute).
+           if (!reused && !(reason instanceof ApiError && reason.status === 409)) await reloadOrder().catch(() => undefined);
+           throw reason;
+         }
+       });
++      // Taps that came in while the order was being read again go out on the freshly read revision.
++      while (ok && queuedTaps.current.size) {
++        ok = await execute(async () => {
++          const current = await api.activeOrder(terminalId);
++          if (!current?.orderId || !(current.editable || current.acceptsRound)) {
++            throw new ApiError(409, "ORDER_CHANGED", "Sipariş değişti; son dokunuşlar eklenmedi. Siparişi kontrol edin.");
++          }
++          await drainQueuedTaps(current.orderId, current.revision);
++        });
++      }
++      if (!ok) {
++        const lost = sendingTaps.current + [...queuedTaps.current.values()].reduce((sum, count) => sum + count, 0);
++        // The queue closes before the order is read again, so a tap in that window starts its own add instead of being dropped.
++        closeTapQueue();
++        if (lost > 0) {
++          await reloadOrder().catch(() => undefined);
++          setFeedbackKind("error");
++          setError((previous) => `${previous ? `${previous} ` : ""}${lost} dokunuş eklenmedi. Siparişi kontrol edip eksikleri tekrar ekleyin.`);
++        }
++      }
+     } finally {
+-      addingProduct.current = false;
++      closeTapQueue();
+     }
+   };
+ 
+@@ -946,12 +1005,13 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+             </label>
+           </div>
+ 
++          {queuedCount > 0 && <div className="alert information" role="status">{queuedCount} dokunuş sıraya alındı, ekleniyor…</div>}
+           <div className="product-grid">
+             {visibleProducts.map((product) => (
+               <button data-telemetry-id="b.routes.cashier.14"
+                 className="product-card"
+                 key={product.productId}
+-                disabled={busy}
++                disabled={busy && !(adding && tapQueueable(product))}
+                 onClick={() => chooseProduct(product)}
+               >
+                 <span className="product-category">{product.categoryName}</span>

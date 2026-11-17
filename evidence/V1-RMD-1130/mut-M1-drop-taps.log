@@ -1,0 +1,161 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx (7 tests | 5 failed) 3566ms
+     × keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned 2400ms
+     × tells the cashier how many taps are waiting while the add is in flight 126ms
+     × a tap that lands while the order is being read again is sent on the fresh revision, once 222ms
+     × after a failed queued add the rest of the queue is dropped and nothing is resent 236ms
+     × a tap while the order is read again after a failure starts its own add and is not lost 240ms
+ ❯ src/routes/Cashier.first-touch.test.tsx (19 tests | 1 failed) 4371ms
+     × a second tap while the first is still opening does not open a second order 120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.first-touch.test.tsx > Cashier opens the order on the first product tap > a second tap while the first is still opening does not open a second order
+AssertionError: expected [ 1 ] to deeply equal [ 1, 2 ]
+
+- Expected
++ Received
+
+  [
+    1,
+-   2,
+  ]
+
+ ❯ src/routes/Cashier.first-touch.test.tsx:182:54
+    180|
+    181|     expect(posts(till, "/orders")).toHaveLength(1);
+    182|     expect(till.bodies.map((body) => body.quantity)).toEqual([1, 2]);
+       |                                                      ^
+    183|   });
+    184|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > keeps the grid enabled and sends every tap exactly once, chained on the revision each answer returned
+AssertionError: expected [ { productId: 'p-ayran', …(2) } ] to deeply equal [ Array(3) ]
+
+- Expected
++ Received
+
+@@ -2,16 +2,6 @@
+    {
+      "expectedRevision": 4,
+      "productId": "p-ayran",
+      "quantity": 1,
+    },
+-   {
+-     "expectedRevision": 5,
+-     "productId": "p-ayran",
+-     "quantity": 2,
+-   },
+-   {
+-     "expectedRevision": 6,
+-     "productId": "p-cay",
+-     "quantity": 1,
+-   },
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:119:25
+    117|     await settle();
+    118|
+    119|     expect(till.bodies).toEqual([
+       |                         ^
+    120|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    121|       { productId: "p-ayran", quantity: 2, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > tells the cashier how many taps are waiting while the add is in flight
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain '2 dokunuş sıraya alındı'
+
+Expected: "2 dokunuş sıraya alındı"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü301Ana Yemek102İçecek2HIZLI SİPARİŞTüm ürünler⌕Ana YemekPideSKU-1₺100,00KDV dahilİçecekAyranSKU-2₺20,00KDV dahilİçecekÇaySKU-3₺10,00KDV dahilAKTİF SİPARİŞSipariş 10ürünSoldaki katalogdan ürün seçin."
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:133:39
+    131|     await tap(card("Çay"));
+    132|
+    133|     expect(document.body.textContent).toContain("2 dokunuş sıraya alın…
+       |                                       ^
+    134|     till.release();
+    135|     await settle();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > a tap that lands while the order is being read again is sent on the fresh revision, once
+AssertionError: expected [ { productId: 'p-ayran', …(2) } ] to deeply equal [ Array(2) ]
+
+- Expected
++ Received
+
+@@ -2,11 +2,6 @@
+    {
+      "expectedRevision": 4,
+      "productId": "p-ayran",
+      "quantity": 1,
+    },
+-   {
+-     "expectedRevision": 5,
+-     "productId": "p-cay",
+-     "quantity": 1,
+-   },
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:149:25
+    147|     await settle();
+    148|
+    149|     expect(till.bodies).toEqual([
+       |                         ^
+    150|       { productId: "p-ayran", quantity: 1, expectedRevision: 4 },
+    151|       { productId: "p-cay", quantity: 1, expectedRevision: 5 },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > after a failed queued add the rest of the queue is dropped and nothing is resent
+AssertionError: expected [ { productId: 'p-ayran', …(2) } ] to have a length of 2 but got 1
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:165:25
+    163|     await settle();
+    164|
+    165|     expect(till.bodies).toHaveLength(2);
+       |                         ^
+    166|     expect(document.body.textContent).toContain("2 dokunuş eklenmedi");
+    167|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/routes/Cashier.rapid-taps.test.tsx > Cashier product taps while an add is still in flight > a tap while the order is read again after a failure starts its own add and is not lost
+AssertionError: expected [ 'p-ayran', 'p-ayran' ] to deeply equal [ 'p-ayran', 'p-cay', 'p-ayran' ]
+
+- Expected
++ Received
+
+  [
+    "p-ayran",
+-   "p-cay",
+    "p-ayran",
+  ]
+
+ ❯ src/routes/Cashier.rapid-taps.test.tsx:180:55
+    178|     await settle();
+    179|
+    180|     expect(till.bodies.map((body) => body.productId)).toEqual(["p-ayra…
+       |                                                       ^
+    181|     expect(document.body.textContent).not.toContain("sıraya alındı");
+    182|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 20 passed (26)
+   Start at  14:42:39
+   Duration  5.80s (transform 3.42s, setup 0ms, import 232ms, tests 7.94s, environment 2.10s)
+
