@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (12 tests | 1 failed) 189ms
+     × opens the payment page with the refund section open when a sale is tapped 26ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > opens the payment page with the refund section open when a sale is tapped
+AssertionError: expected "vi.fn()" to be called with arguments: [ Array(1) ]
+
+Received:
+
+  1st vi.fn() call:
+
+  [
+-   "/cashier/payments/split-payment/index.html?billId=b%201&open=refund&from=recent-sales",
++   "/cashier/payments/split-payment/index.html?billId=b%201&open=refund",
+  ]
+
+
+Number of calls: 1
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:60:24
+     58|     await act(async () => { (document.querySelector(".recent-sales__ro…
+     59|
+     60|     expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-p…
+       |                        ^
+     61|   });
+     62|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed (12)
+   Start at  10:05:37
+   Duration  2.05s (transform 258ms, setup 0ms, import 377ms, tests 189ms, environment 1.07s)
+

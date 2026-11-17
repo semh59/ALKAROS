@@ -57,7 +57,7 @@ describe("RecentSalesWorkspace", () => {
 
     await act(async () => { (document.querySelector(".recent-sales__row") as HTMLButtonElement).click(); });
 
-    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b%201&open=refund");
+    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b%201&open=refund&from=recent-sales");
   });
 
   it("says there is nothing yet when the session has no closed sale", async () => {

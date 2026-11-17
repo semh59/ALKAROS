@@ -1,0 +1,2 @@
+M1-no-from exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok
+M2-no-open-refund exit 1       Tests  1 failed | 11 passed (12) | restored cmp ok

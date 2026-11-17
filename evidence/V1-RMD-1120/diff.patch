@@ -1,0 +1,27 @@
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
+index 90ecf093a..79aac1862 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
+@@ -57,7 +57,7 @@ describe("RecentSalesWorkspace", () => {
+ 
+     await act(async () => { (document.querySelector(".recent-sales__row") as HTMLButtonElement).click(); });
+ 
+-    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b%201&open=refund");
++    expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b%201&open=refund&from=recent-sales");
+   });
+ 
+   it("says there is nothing yet when the session has no closed sale", async () => {
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts b/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
+index bf0351144..6c64d1c04 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
++++ b/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
+@@ -36,7 +36,7 @@ export async function loadRecentSales(terminalId: string, fetcher: typeof fetch
+   return response.json() as Promise<RecentSales>;
+ }
+ 
+-/** The payment page with its refund section already open. */
+-export const refundHref = (billId: string) => `${collectionHref(billId)}&open=refund`;
++/** The payment page with its refund section already open; `from` makes its way back lead here. */
++export const refundHref = (billId: string) => `${collectionHref(billId)}&open=refund&from=recent-sales`;
+ 
+ export const methodLabel = (method: string) => recentSalesText.methods[method] ?? recentSalesText.unknownMethod;

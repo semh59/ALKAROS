@@ -1,7 +1,7 @@
 # V1-RMD-1120 - Son satışlar satırı ödeme sayfasını from=recent-sales ile açar
 
 - Task ID: V1-RMD-1120
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

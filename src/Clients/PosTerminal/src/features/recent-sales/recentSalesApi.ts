@@ -36,7 +36,7 @@ export async function loadRecentSales(terminalId: string, fetcher: typeof fetch 
   return response.json() as Promise<RecentSales>;
 }
 
-/** The payment page with its refund section already open. */
-export const refundHref = (billId: string) => `${collectionHref(billId)}&open=refund`;
+/** The payment page with its refund section already open; `from` makes its way back lead here. */
+export const refundHref = (billId: string) => `${collectionHref(billId)}&open=refund&from=recent-sales`;
 
 export const methodLabel = (method: string) => recentSalesText.methods[method] ?? recentSalesText.unknownMethod;
