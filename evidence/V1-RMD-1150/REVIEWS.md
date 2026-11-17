@@ -1,0 +1,2 @@
+- qa-mevzuat-uyum: on fis karari repoda yok; e-Adisyon/orijinal-kopya/ibare riskleri ve 3 soru -> RESULT 1
+- qa-bulgu-dogrulayici: RET (stok cumlesi yanlisti: urun iadesinde 'Stoga geri donus' alani var, onceden secili degil; on fis arama cumlesi ve e-Adisyon ifadesi gevsekti) -> RESULT duzeltildi, karar ayni

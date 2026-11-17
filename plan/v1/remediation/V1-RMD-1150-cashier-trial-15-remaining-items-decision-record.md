@@ -1,7 +1,7 @@
 # V1-RMD-1150 - Kasiyer denemesi 15: kalan maddeler için karar kaydı (Hesap ön fişi, tek dokunuşla satışsız çekmece, iade/iptal varsayılanları)
 
 - Task ID: V1-RMD-1150
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: analysis
 - Surface state: Existing
