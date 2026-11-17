@@ -1,0 +1,89 @@
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+index 4345b2938..f92de8646 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+@@ -38,6 +38,7 @@ describe("cash session status", () => {
+     root = null;
+     registerSessionExpiredHandler(null);
+     vi.unstubAllGlobals();
++    window.history.replaceState({}, "", "/");
+   });
+ 
+   it("reads the active session of this terminal and shows Kasa: Açık without a band", async () => {
+@@ -56,9 +57,17 @@ describe("cash session status", () => {
+     expect(text()).toContain("Kasa: Kapalı");
+     const band = document.querySelector(".cash-session-band")!;
+     expect(band.textContent).toContain("Kasa oturumu kapalı");
+-    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+     expect(band.querySelector("a")!.textContent).toBe("Kasayı aç");
+-    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
++  });
++
++  it("a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here", async () => {
++    window.history.replaceState({}, "", "/tables?zone=a");
++    fetchMock.mockResolvedValue(answer(404));
++    await show();
++
++    const expected = "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da";
++    expect(document.querySelector(".cash-session-band a")!.getAttribute("href")).toBe(expected);
++    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe(expected);
+   });
+ 
+   it.each([500, 503, 429])("a %i is a failed read, never 'closed'", async (status) => {
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+index e2ccc5caa..0dbb14c87 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+@@ -1,6 +1,6 @@
+ import { useCallback, useEffect, useRef, useState } from "react";
+ import { cashSessionText } from "../../strings";
+-import { cashSessionPageHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
++import { cashSessionOpenHref, cashSessionPageHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
+ import "./cash-session-status.css";
+ 
+ export interface CashSessionStatus {
+@@ -52,7 +52,7 @@ export function CashSessionLink({ status, className = "header-action" }: { statu
+   const key = status.state ?? "checking";
+   if (key === "forbidden") return <span className={`${className} cash-session-link cash-session-link--forbidden`} role="status">{cashSessionText.forbidden}</span>;
+   const text = key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key];
+-  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref} title={text}>{text}</a>;
++  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={key === "closed" ? cashSessionOpenHref() : cashSessionPageHref} title={text}>{text}</a>;
+ }
+ 
+ /** Shown above the work area while nothing says the user's own drawer is open. */
+@@ -62,7 +62,7 @@ export function CashSessionBand({ status }: { status: CashSessionStatus }) {
+   return <div className="cash-session-band" role="status">
+     <span>{cashSessionText[`${state}Band`]}</span>
+     {state !== "unknown"
+-      ? <a href={cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
++      ? <a href={state === "closed" ? cashSessionOpenHref() : cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
+       : <button data-telemetry-id="b.features.cash-session-status.1" type="button" onClick={status.reload}>{cashSessionText.retry}</button>}
+   </div>;
+ }
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts b/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
+index 7a4fb0b4f..68d6d56ff 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/cashSessionStatusApi.ts
+@@ -5,6 +5,9 @@ export type CashSessionState = "open" | "notOwned" | "closed" | "forbidden" | "u
+ /** Where the cashier opens, counts and closes the drawer. */
+ export const cashSessionPageHref = "/cashier/payments/cash-session/index.html";
+ 
++/** The drawer page that brings the cashier back to the current page once the drawer is open (it accepts only a same-origin path). */
++export const cashSessionOpenHref = () => `${cashSessionPageHref}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`;
++
+ /**
+  * Whether this terminal has an open drawer, and whether it is the signed-in user's: cash is taken only into the own session.
+  * Only the server's 404 means "closed"; 403 means this user may not use
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index 412b6cd37..871d6fc4c 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -1543,7 +1543,7 @@ describe("workspace header drawer button", () => {
+ 
+     const link = document.querySelector<HTMLAnchorElement>("a.cash-session-link")!;
+     expect(link.textContent).toBe("Kasa: Kapalı");
+-    expect(link.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
++    expect(link.getAttribute("href")).toMatch(/^\/cashier\/payments\/cash-session\/index\.html\?returnTo=%2F/);
+     expect(document.querySelector(".cash-session-band")?.textContent).toContain("Kasa oturumu kapalı");
+   });
+ 

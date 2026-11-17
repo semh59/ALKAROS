@@ -38,6 +38,7 @@ describe("cash session status", () => {
     root = null;
     registerSessionExpiredHandler(null);
     vi.unstubAllGlobals();
+    window.history.replaceState({}, "", "/");
   });
 
   it("reads the active session of this terminal and shows Kasa: Açık without a band", async () => {
@@ -56,9 +57,17 @@ describe("cash session status", () => {
     expect(text()).toContain("Kasa: Kapalı");
     const band = document.querySelector(".cash-session-band")!;
     expect(band.textContent).toContain("Kasa oturumu kapalı");
-    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
     expect(band.querySelector("a")!.textContent).toBe("Kasayı aç");
-    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+  });
+
+  it("a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here", async () => {
+    window.history.replaceState({}, "", "/tables?zone=a");
+    fetchMock.mockResolvedValue(answer(404));
+    await show();
+
+    const expected = "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da";
+    expect(document.querySelector(".cash-session-band a")!.getAttribute("href")).toBe(expected);
+    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe(expected);
   });
 
   it.each([500, 503, 429])("a %i is a failed read, never 'closed'", async (status) => {

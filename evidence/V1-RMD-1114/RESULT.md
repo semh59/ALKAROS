@@ -1,0 +1,6 @@
+# V1-RMD-1114 sonuc
+Dogrulama (kod): Masalar'daki "Kasa: Kapali" basligi ve kasa kapali bandindaki "Kasayi ac" baglantisi duz /cashier/payments/cash-session/index.html adresine gidiyordu (CashSessionStatus.tsx); 1102'nin returnTo'su yalniz odeme sayfasindan gelince calisiyordu. Alarm gercek.
+Duzeltme: cashSessionOpenHref() = kasa sayfasi + ?returnTo=<mevcut yol+sorgu> (encodeURIComponent); yalniz state "closed" iken baslik baglantisi ve bandin "Kasayi ac" baglantisi bunu kullanir, diger durumlar ayni. Kasa sayfasi (cash-session.js, 1102) degismedi: returnTo'yu yalniz tek bir "/" ile baslayan, "//", ters egik cizgi, bosluk ve kontrol karakteri icermeyen yol ise kabul eder, aksi halde yok sayar (acik yonlendirme yok; kendi testi 1102'de).
+Kanit: red.log (yeni test kirmizi), green.log 32+64 test yesil, mutations.txt M1-M5 killed, client-build-gate.log exit 0.
+Acik risk: baglanti href'i render aninda hesaplanir; yol pushState ile degisip bilesen yeniden cizilmezse eski yol kalabilir (yonlendirici her gecista yeniden cizer, canli denemede dogrulanmali). Kasa acilinca donulen sayfa kasayi acmaya basladigin sayfadir (Masalar, Satis vb.).
+Acik risk (qa): kasa sayfasindaki geri baglanti metni her returnTo'da '← Hesaba dön' (cash-session.js, 1102 sahipligi, kapsam disi; Masalar'dan gelince yanıltıcı olabilir, ayri gorev).

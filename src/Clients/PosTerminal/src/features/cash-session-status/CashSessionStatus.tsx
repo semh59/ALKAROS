@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cashSessionText } from "../../strings";
-import { cashSessionPageHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
+import { cashSessionOpenHref, cashSessionPageHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
 import "./cash-session-status.css";
 
 export interface CashSessionStatus {
@@ -52,7 +52,7 @@ export function CashSessionLink({ status, className = "header-action" }: { statu
   const key = status.state ?? "checking";
   if (key === "forbidden") return <span className={`${className} cash-session-link cash-session-link--forbidden`} role="status">{cashSessionText.forbidden}</span>;
   const text = key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key];
-  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionPageHref} title={text}>{text}</a>;
+  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={key === "closed" ? cashSessionOpenHref() : cashSessionPageHref} title={text}>{text}</a>;
 }
 
 /** Shown above the work area while nothing says the user's own drawer is open. */
@@ -62,7 +62,7 @@ export function CashSessionBand({ status }: { status: CashSessionStatus }) {
   return <div className="cash-session-band" role="status">
     <span>{cashSessionText[`${state}Band`]}</span>
     {state !== "unknown"
-      ? <a href={cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
+      ? <a href={state === "closed" ? cashSessionOpenHref() : cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
       : <button data-telemetry-id="b.features.cash-session-status.1" type="button" onClick={status.reload}>{cashSessionText.retry}</button>}
   </div>;
 }

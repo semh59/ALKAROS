@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (32 tests | 1 failed) 2744ms
+     × an open session of another user says so in the header and in a band that names who may close it 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open session of another user says so in the header and in a band that names who may close it
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html"
+Received: "/cashier/payments/cash-session/index.html?returnTo=%2F"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:94:100
+     92|     expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashi…
+     93|     expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu …
+     94|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+       |                                                                                                    ^
+     95|   });
+     96|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 95 passed (96)
+   Start at  18:31:35
+   Duration  6.40s (transform 3.42s, setup 0ms, import 3.03s, tests 5.01s, environment 2.21s)
+

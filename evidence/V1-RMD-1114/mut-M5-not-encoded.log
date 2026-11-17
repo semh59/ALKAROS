@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (32 tests | 1 failed) 2440ms
+     × a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here 14ms
+ ❯ src/routes/workspace.test.tsx (64 tests | 1 failed) 2299ms
+     × shows the drawer state as a link to the drawer page, and a band while it is not open 27ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace header drawer button > shows the drawer state as a link to the drawer page, and a band while it is not open
+AssertionError: expected '/cashier/payments/cash-session/index.…' to match /^\/cashier\/payments\/cash-se…/cashier\
+
+- Expected:
+/^\/cashier\/payments\/cash-session\/index\.html\?returnTo=%2F/
+
++ Received:
+"/cashier/payments/cash-session/index.html?returnTo=/authorization"
+
+ ❯ src/routes/workspace.test.tsx:1546:39
+    1544|     const link = document.querySelector<HTMLAnchorElement>("a.cash-ses…
+    1545|     expect(link.textContent).toBe("Kasa: Kapalı");
+    1546|     expect(link.getAttribute("href")).toMatch(/^\/cashier\/payments\/c…
+       |                                       ^
+    1547|     expect(document.querySelector(".cash-session-band")?.textContent).…
+    1548|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da"
+Received: "/cashier/payments/cash-session/index.html?returnTo=/tables?zone=a"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:69:82
+     67|
+     68|     const expected = "/cashier/payments/cash-session/index.html?return…
+     69|     expect(document.querySelector(".cash-session-band a")!.getAttribut…
+       |                                                                                  ^
+     70|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+     71|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 94 passed (96)
+   Start at  18:31:53
+   Duration  6.12s (transform 3.04s, setup 0ms, import 2.83s, tests 4.74s, environment 2.14s)
+

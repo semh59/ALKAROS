@@ -1543,7 +1543,7 @@ describe("workspace header drawer button", () => {
 
     const link = document.querySelector<HTMLAnchorElement>("a.cash-session-link")!;
     expect(link.textContent).toBe("Kasa: Kapalı");
-    expect(link.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+    expect(link.getAttribute("href")).toMatch(/^\/cashier\/payments\/cash-session\/index\.html\?returnTo=%2F/);
     expect(document.querySelector(".cash-session-band")?.textContent).toContain("Kasa oturumu kapalı");
   });
 

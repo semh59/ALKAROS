@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (32 tests | 1 failed) 2788ms
+     × a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > a closed drawer opens through links that carry the current page as returnTo, so opening it comes back here
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da"
+Received: "/cashier/payments/cash-session/index.html?returnTo=%2Ftables"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:69:82
+     67|
+     68|     const expected = "/cashier/payments/cash-session/index.html?return…
+     69|     expect(document.querySelector(".cash-session-band a")!.getAttribut…
+       |                                                                                  ^
+     70|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+     71|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 95 passed (96)
+   Start at  18:31:44
+   Duration  6.17s (transform 3.39s, setup 0ms, import 3.09s, tests 4.83s, environment 2.13s)
+

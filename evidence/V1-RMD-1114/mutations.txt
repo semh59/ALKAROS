@@ -1,0 +1,5 @@
+M1-header-plain exit 1 restored cmp ok
+M2-band-plain exit 1 restored cmp ok
+M3-open-href-when-not-closed exit 1 restored cmp ok
+M4-search-dropped exit 1 restored cmp ok
+M5-not-encoded exit 1 restored cmp ok

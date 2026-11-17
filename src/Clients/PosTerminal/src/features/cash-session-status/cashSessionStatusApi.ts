@@ -5,6 +5,9 @@ export type CashSessionState = "open" | "notOwned" | "closed" | "forbidden" | "u
 /** Where the cashier opens, counts and closes the drawer. */
 export const cashSessionPageHref = "/cashier/payments/cash-session/index.html";
 
+/** The drawer page that brings the cashier back to the current page once the drawer is open (it accepts only a same-origin path). */
+export const cashSessionOpenHref = () => `${cashSessionPageHref}?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+
 /**
  * Whether this terminal has an open drawer, and whether it is the signed-in user's: cash is taken only into the own session.
  * Only the server's 404 means "closed"; 403 means this user may not use
