@@ -178,6 +178,9 @@ public static partial class DualScreenApplication
         // manual cash-in/cash-out with the drawer ceiling and the manager approval above the threshold.
         builder.Services.AddScoped<CashMovementStore>();
         builder.Services.AddScoped<CashCloseStore>();
+        // The physical drawer: opened through the receipt printer on a cash payment and by hand as "no sale".
+        builder.Services.AddSingleton<ALKAROS.Kitchen.PrintQueue.ICashDrawerKicker, ALKAROS.Kitchen.PrintQueue.TcpCashDrawerKicker>();
+        builder.Services.AddScoped<CashDrawerService>();
         builder.Services.AddSingleton<SubmitOrderHandler>();
         builder.Services.AddTableManagementExperience();
         builder.Services.AddCatalogManagement();

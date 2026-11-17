@@ -55,6 +55,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
         CancellationToken cancellationToken)
     {
         var unsettled = await ReadUnsettledAsync(locked, cancellationToken);
+        var drawer = await CashDrawerService.CountAsync(locked.Connection, locked.Transaction, closed.CashSessionId, cancellationToken);
         if (unsettled.Any && !acknowledged)
             throw new CashCloseUnsettledNotAcknowledgedException(closed.CashSessionId, unsettled.OpenBills, unsettled.UnsettledPayments);
 
@@ -70,6 +71,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
                     overrideBySessionCashier = closed.IsSupervisorOverride && closed.ClosedBy == locked.Record.Snapshot.CashierUserId,
                     closedBy = closed.ClosedBy, tolerance,
                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
+                    drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,
                 }, AuditJson)),
             locked.Connection, locked.Transaction, cancellationToken);
     }

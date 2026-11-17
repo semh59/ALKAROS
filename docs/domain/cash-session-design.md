@@ -151,3 +151,18 @@ Manual movements, close, reconcile   -> sections 4 and 5
 The state machine in section 3 is the one the code runs: a session leaves `Open` only through `StartCount`
 (`Open` -> `Counting`), closes from `Counting`, and `Closing` is accepted as a close source but no command enters it
 today.
+
+## 8. Physical cash drawer
+
+The drawer is cabled to a receipt printer and opens on an ESC/POS pulse sent over TCP (`ICashDrawerKicker`). It is off
+by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.drawer_printer_address`).
+
+- A cash tender that succeeds and is not a replay opens the drawer, best effort: a failed send never changes the
+  payment's answer. Card, transfer and account payments never open it.
+- "No sale" (`POST .../cash-drawer/no-sale`) needs `cash.drawer.kick`, the session's own cashier, an idempotency key and
+  a reason (Bozuk para, Sayım, Diğer; `Other` needs a note), on an open or counting session. The audit event is written
+  before the pulse; after a cash payment it is written after the pulse (the payment must not wait on it).
+- Every opening is a `cash.drawer.opened` audit event of the session (`kind` Sale or NoSale); a failed send is
+  `cash.drawer.kick-failed`. Nothing is written to the cash ledger, so the expected cash does not move.
+- The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount` and `drawerKickFailedCount`.
+  From the fifth no-sale opening of a session the answer carries a warning.

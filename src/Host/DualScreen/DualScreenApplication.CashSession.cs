@@ -275,6 +275,7 @@ public static partial class DualScreenApplication
             HttpContext context,
             ICashSessionRepository sessionRepository,
             BillTerminalAccess billAccess,
+            CashDrawerService drawer,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
@@ -302,6 +303,9 @@ public static partial class DualScreenApplication
                 throw;
             }
             await billAccess.ClaimAsync(context, terminalId, request.BillId);
+            // Cash went into the drawer, so it opens; a replay of a payment already taken must not open it twice.
+            if (!result.WasReplayed)
+                await drawer.KickForSaleAsync(cashSessionId, terminalId, request.BillId, principal.UserId, context.TraceIdentifier, cancellationToken);
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
             // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
             await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
@@ -309,6 +313,7 @@ public static partial class DualScreenApplication
         });
 
         group.MapCashMovementRoutes();
+        group.MapCashDrawerRoutes();
 
         return group;
     }

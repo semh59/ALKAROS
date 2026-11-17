@@ -1,0 +1,922 @@
+diff --git a/docs/domain/cash-session-design.md b/docs/domain/cash-session-design.md
+index 58b6da283..2862cc868 100644
+--- a/docs/domain/cash-session-design.md
++++ b/docs/domain/cash-session-design.md
+@@ -151,3 +151,18 @@ Manual movements, close, reconcile   -> sections 4 and 5
+ The state machine in section 3 is the one the code runs: a session leaves `Open` only through `StartCount`
+ (`Open` -> `Counting`), closes from `Counting`, and `Closing` is accepted as a close source but no command enters it
+ today.
++
++## 8. Physical cash drawer
++
++The drawer is cabled to a receipt printer and opens on an ESC/POS pulse sent over TCP (`ICashDrawerKicker`). It is off
++by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.drawer_printer_address`).
++
++- A cash tender that succeeds and is not a replay opens the drawer, best effort: a failed send never changes the
++  payment's answer. Card, transfer and account payments never open it.
++- "No sale" (`POST .../cash-drawer/no-sale`) needs `cash.drawer.kick`, the session's own cashier, an idempotency key and
++  a reason (Bozuk para, Sayım, Diğer; `Other` needs a note), on an open or counting session. The audit event is written
++  before the pulse; after a cash payment it is written after the pulse (the payment must not wait on it).
++- Every opening is a `cash.drawer.opened` audit event of the session (`kind` Sale or NoSale); a failed send is
++  `cash.drawer.kick-failed`. Nothing is written to the cash ledger, so the expected cash does not move.
++- The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount` and `drawerKickFailedCount`.
++  From the fifth no-sale opening of a session the answer carries a warning.
+diff --git a/plan/v1/remediation/V1-RMD-1134-cash-drawer-open-endpoints.md b/plan/v1/remediation/V1-RMD-1134-cash-drawer-open-endpoints.md
+index 936bc8fb2..becabb734 100644
+--- a/plan/v1/remediation/V1-RMD-1134-cash-drawer-open-endpoints.md
++++ b/plan/v1/remediation/V1-RMD-1134-cash-drawer-open-endpoints.md
+@@ -1,7 +1,7 @@
+ # V1-RMD-1134 - Fiziksel kasa çekmecesi: nakit ödemede kendiliğinden açılma, "Satış yok" ucu, denetim izi, kapanış sayacı
+ 
+ - Task ID: V1-RMD-1134
+-- Status: InProgress
++- Status: Done
+ - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
+ - Work type: implementation
+ - Surface state: Existing
+diff --git a/src/Host/Composition/Errors/ApiErrorCatalog.cs b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+index 81920a5bd..3e12a3bee 100644
+--- a/src/Host/Composition/Errors/ApiErrorCatalog.cs
++++ b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+@@ -732,6 +732,9 @@ public static class ApiErrorCatalog
+             InvalidCashTransactionAmountException => (400, "VALIDATION_FAILED", "Tutar sıfırdan büyük olmalı, en fazla iki ondalık basamak içermeli ve sınırı aşmamalı."),
+             InvalidCashMovementReasonException => (400, "CASH_MOVEMENT_REASON_INVALID", "Açıklama zorunludur ve en çok 500 karakter olabilir."),
+             CashOutExceedsDrawerException => (409, "CASH_OUT_EXCEEDS_DRAWER", "Çıkış tutarı kasadaki nakdi aşıyor."),
++            CashDrawerDisabledException => (409, "CASH_DRAWER_DISABLED", "Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir."),
++            CashDrawerSessionNotOpenException => (409, "CASH_DRAWER_SESSION_NOT_OPEN", "Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır."),
++            InvalidCashDrawerReasonException => (400, "CASH_DRAWER_REASON_INVALID", "Bir gerekçe seçin; \"Diğer\" için not yazın (en çok 200 karakter)."),
+             CashMovementRequestNotFoundException => (404, "CASH_MOVEMENT_REQUEST_NOT_FOUND", "Çıkış talebi bulunamadı."),
+             CashMovementRequestStateException => (409, "CASH_MOVEMENT_REQUEST_STATE", "Bu çıkış talebi artık beklemiyor."),
+             CashMovementRequestNotOwnSessionException => (409, "CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "Bu çıkış talebi, talep sahibinin kendi kasa oturumunda açılmamış; onaylanamaz. Reddedin; talep sahibi kendi oturumundan yeniden istesin."),
+diff --git a/src/Host/DualScreen/CashCloseStore.cs b/src/Host/DualScreen/CashCloseStore.cs
+index 2c739e64e..9f44f38b8 100644
+--- a/src/Host/DualScreen/CashCloseStore.cs
++++ b/src/Host/DualScreen/CashCloseStore.cs
+@@ -55,6 +55,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+         CancellationToken cancellationToken)
+     {
+         var unsettled = await ReadUnsettledAsync(locked, cancellationToken);
++        var drawer = await CashDrawerService.CountAsync(locked.Connection, locked.Transaction, closed.CashSessionId, cancellationToken);
+         if (unsettled.Any && !acknowledged)
+             throw new CashCloseUnsettledNotAcknowledgedException(closed.CashSessionId, unsettled.OpenBills, unsettled.UnsettledPayments);
+ 
+@@ -70,6 +71,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+                     overrideBySessionCashier = closed.IsSupervisorOverride && closed.ClosedBy == locked.Record.Snapshot.CashierUserId,
+                     closedBy = closed.ClosedBy, tolerance,
+                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
++                    drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,
+                 }, AuditJson)),
+             locked.Connection, locked.Transaction, cancellationToken);
+     }
+diff --git a/src/Host/DualScreen/CashDrawerService.cs b/src/Host/DualScreen/CashDrawerService.cs
+new file mode 100644
+index 000000000..553808d03
+--- /dev/null
++++ b/src/Host/DualScreen/CashDrawerService.cs
+@@ -0,0 +1,266 @@
++using System.Text.Json;
++using ALKAROS.Audit.EventStore;
++using ALKAROS.Identity.Authorization;
++using ALKAROS.Identity.Authorization.Catalog;
++using ALKAROS.Kitchen.PrintQueue;
++using ALKAROS.Settings.CashDrawer;
++using ALKAROS.Settings.TypedSettings;
++using Microsoft.Extensions.Logging;
++using Npgsql;
++
++namespace ALKAROS.Host.DualScreen;
++
++/// <summary>Why a cashier opens the drawer without a sale; <see cref="Name"/> is what the till shows.</summary>
++public sealed record CashDrawerReasonV1(string Code, string Name);
++
++public sealed record NoSaleDrawerRequestV1(string IdempotencyKey, string? ReasonCode, string? Note);
++
++public sealed record CashDrawerOpenResultV1(bool Delivered, int NoSaleCount, string? Warning, bool Replayed);
++
++public sealed record CashDrawerStatusV1(
++    bool Enabled, bool CanKick, int NoSaleCount, int WarningCount, IReadOnlyList<CashDrawerReasonV1> Reasons);
++
++/// <summary>The drawer openings the audit trail holds for one cash session, by kind.</summary>
++public sealed record CashDrawerCounts(int SaleOpenings, int NoSaleOpenings, int FailedKicks);
++
++public sealed class CashDrawerDisabledException()
++    : Exception("The cash drawer is switched off or has no printer address.");
++
++public sealed class CashDrawerSessionNotOpenException()
++    : Exception("The cash session is no longer open or being counted.");
++
++public sealed class InvalidCashDrawerReasonException()
++    : Exception("A no-sale opening needs one of the listed reasons; 'Other' needs a note of at most 200 characters.");
++
++/// <summary>
++/// Opens the physical cash drawer through the receipt printer: automatically when cash is taken, and by hand as "no
++/// sale". Every opening is an audit event of the cash session; none of it touches the cash ledger. Opening the drawer
++/// after a payment is best effort and never changes the payment's answer.
++/// </summary>
++public sealed partial class CashDrawerService(
++    NpgsqlDataSource dataSource,
++    IAuditEventStore audit,
++    IRoleRepository roles,
++    ISettingsService settings,
++    ICashDrawerKicker kicker,
++    ILogger<CashDrawerService> logger)
++{
++    /// <summary>
++    /// A shift has a few legitimate no-sale openings (change, count); from the fifth the manager should look. A code
++    /// constant, not a setting.
++    /// </summary>
++    public const int NoSaleWarningCount = 5;
++
++    private const int MaxNoteLength = 200;
++    private const int MaxKeyLength = 64;
++    private const string Opened = "cash.drawer.opened";
++    private const string KickFailed = "cash.drawer.kick-failed";
++    private static readonly TimeSpan AuditTimeLimit = TimeSpan.FromSeconds(5);
++
++    public static readonly IReadOnlyList<CashDrawerReasonV1> Reasons =
++    [
++        new("ChangeCoins", "Bozuk para"),
++        new("Count", "Sayım"),
++        new("Other", "Diğer"),
++    ];
++
++    public async Task<CashDrawerStatusV1> StatusAsync(Guid cashSessionId, Guid userId, CancellationToken cancellationToken)
++    {
++        // Read, not asked: a till that merely wonders whether to show the button must not write a denial record.
++        var canKick = (await roles.GetPermissionCodesForUserAsync(userId, cancellationToken)).Contains(ApplicationPermissions.CashDrawerKick);
++        var enabled = await CashDrawerSettings.GetActiveTargetAsync(settings, cancellationToken) is not null;
++        var counts = await CountAsync(dataSource, cashSessionId, cancellationToken);
++        return new CashDrawerStatusV1(enabled, canKick, counts.NoSaleOpenings, NoSaleWarningCount, Reasons);
++    }
++
++    /// <summary>The audit-trail counts of one session; the close reads them inside its own transaction.</summary>
++    public static async Task<CashDrawerCounts> CountAsync(
++        NpgsqlDataSource dataSource, Guid cashSessionId, CancellationToken cancellationToken)
++    {
++        await using var command = dataSource.CreateCommand(CountsSql);
++        return await ReadCountsAsync(command, cashSessionId, cancellationToken);
++    }
++
++    public static async Task<CashDrawerCounts> CountAsync(
++        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid cashSessionId, CancellationToken cancellationToken)
++    {
++        await using var command = new NpgsqlCommand(CountsSql, connection, transaction);
++        return await ReadCountsAsync(command, cashSessionId, cancellationToken);
++    }
++
++    /// <summary>Opens the drawer for a cash payment that was just taken. Never throws: the payment already stands.</summary>
++    public async Task KickForSaleAsync(
++        Guid cashSessionId, Guid terminalId, Guid billId, Guid userId, string correlationId, CancellationToken cancellationToken)
++    {
++        try
++        {
++            if (await CashDrawerSettings.GetActiveTargetAsync(settings, cancellationToken) is not { } target)
++                return;
++            var result = await kicker.KickAsync(target.Host, target.Port, cancellationToken);
++            if (!result.Delivered)
++                KickFailedLog(logger, cashSessionId, result.Failure);
++            await AppendAsync(
++                result.Delivered ? Opened : KickFailed, cashSessionId, userId, correlationId, reason: "Sale",
++                new { kind = "Sale", terminalId, billId, failure = result.Failure });
++        }
++        catch (Exception exception)
++        {
++            // Includes a caller that hung up and the audit time limit: the payment stands whatever happens here.
++            SaleKickFailedLog(logger, cashSessionId, exception);
++        }
++    }
++
++    public async Task<CashDrawerOpenResultV1> OpenWithoutSaleAsync(
++        Guid cashSessionId, Guid terminalId, Guid userId, NoSaleDrawerRequestV1 request, CancellationToken cancellationToken)
++    {
++        var (reasonName, note) = ValidateReason(request);
++        var key = request.IdempotencyKey?.Trim();
++        if (string.IsNullOrEmpty(key) || key.Length > MaxKeyLength)
++            throw new ArgumentException("IdempotencyKey is required (at most 64 characters).", nameof(request));
++        var target = await CashDrawerSettings.GetActiveTargetAsync(settings, cancellationToken)
++            ?? throw new CashDrawerDisabledException();
++        var correlationId = "nosale:" + key;
++
++        // The record is written before the pulse: a drawer that opens without a record is the one thing this must not do.
++        var recorded = await RecordNoSaleAsync(
++            cashSessionId, terminalId, userId, request.ReasonCode, correlationId,
++            note is null ? reasonName : $"{reasonName}: {note}", note, cancellationToken);
++        if (recorded.ReplayDelivered is { } replay)
++            return new CashDrawerOpenResultV1(replay, recorded.Count, recorded.Warning, Replayed: true);
++
++        var result = await kicker.KickAsync(target.Host, target.Port, cancellationToken);
++        if (!result.Delivered)
++        {
++            KickFailedLog(logger, cashSessionId, result.Failure);
++            await TryAppendFailureAsync(cashSessionId, userId, correlationId, result.Failure);
++        }
++
++        return new CashDrawerOpenResultV1(result.Delivered, recorded.Count, recorded.Warning, Replayed: false);
++    }
++
++    private sealed record NoSaleRecord(bool? ReplayDelivered, int Count, string? Warning);
++
++    /// <summary>The connection is released before the pulse goes out, so a printer that does not answer holds no connection.</summary>
++    private async Task<NoSaleRecord> RecordNoSaleAsync(
++        Guid cashSessionId, Guid terminalId, Guid userId, string? reasonCode, string correlationId, string reason, string? note,
++        CancellationToken cancellationToken)
++    {
++        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
++        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
++        // One lock per session serializes the key check and the count; the shared row lock holds the close back while a
++        // pulse is recorded, so an opening after the close can never be missing from the closing record.
++        await using (var @lock = new NpgsqlCommand(
++            """
++            SELECT pg_advisory_xact_lock(hashtextextended(@key, 0));
++            SELECT status FROM cash.cash_sessions WHERE cash_session_id = @id FOR SHARE;
++            """, connection, transaction))
++        {
++            @lock.Parameters.AddWithValue("key", "cash-drawer:" + cashSessionId.ToString("N"));
++            @lock.Parameters.AddWithValue("id", cashSessionId);
++            await using var reader = await @lock.ExecuteReaderAsync(cancellationToken);
++            await reader.NextResultAsync(cancellationToken);
++            if (!await reader.ReadAsync(cancellationToken) || reader.GetString(0) is not ("Open" or "Counting"))
++                throw new CashDrawerSessionNotOpenException();
++        }
++
++        var seen = await CountAsync(connection, transaction, cashSessionId, cancellationToken);
++        if (await ReplayAsync(connection, transaction, cashSessionId, correlationId, cancellationToken) is { } replay)
++            return new NoSaleRecord(replay, seen.NoSaleOpenings, WarningFor(seen.NoSaleOpenings));
++
++        var count = seen.NoSaleOpenings + 1;
++        var warning = WarningFor(count);
++        await audit.AppendAsync(
++            Event(Opened, cashSessionId, userId, correlationId, reason,
++                new { kind = "NoSale", reasonCode, note, terminalId, warned = warning is not null }),
++            connection, transaction, cancellationToken);
++        await transaction.CommitAsync(cancellationToken);
++        return new NoSaleRecord(null, count, warning);
++    }
++
++    private static string? WarningFor(int noSaleCount)
++        => noSaleCount >= NoSaleWarningCount ? $"Bu vardiyada {noSaleCount} kez satışsız çekmece açıldı." : null;
++
++    private static (string Name, string? Note) ValidateReason(NoSaleDrawerRequestV1 request)
++    {
++        var reason = Reasons.FirstOrDefault(r => r.Code == request.ReasonCode) ?? throw new InvalidCashDrawerReasonException();
++        var note = request.Note?.Trim();
++        if (string.IsNullOrEmpty(note))
++            note = null;
++        if (note is { Length: > MaxNoteLength } || (note is null && reason.Code == "Other") || note?.Any(char.IsControl) == true)
++            throw new InvalidCashDrawerReasonException();
++        return (reason.Name, note);
++    }
++
++    /// <summary>Null when the key was never used; otherwise whether the earlier opening reached the drawer.</summary>
++    private static async Task<bool?> ReplayAsync(
++        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid cashSessionId, string correlationId, CancellationToken cancellationToken)
++    {
++        await using var command = new NpgsqlCommand(
++            """
++            SELECT bool_or(event_name = 'cash.drawer.opened'), bool_or(event_name = 'cash.drawer.kick-failed')
++            FROM audit.audit_events
++            WHERE aggregate_type = 'CashSession' AND aggregate_id = @id AND correlation_id = @correlation
++              AND event_name IN ('cash.drawer.opened', 'cash.drawer.kick-failed');
++            """, connection, transaction);
++        command.Parameters.AddWithValue("id", cashSessionId);
++        command.Parameters.AddWithValue("correlation", correlationId);
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        await reader.ReadAsync(cancellationToken);
++        if (reader.IsDBNull(0))
++            return null;
++        return reader.IsDBNull(1) || !reader.GetBoolean(1);
++    }
++
++    private async Task TryAppendFailureAsync(Guid cashSessionId, Guid userId, string correlationId, string? failure)
++    {
++        try
++        {
++            await AppendAsync(KickFailed, cashSessionId, userId, correlationId, "NoSale", new { kind = "NoSale", failure });
++        }
++        catch (Exception exception)
++        {
++            FailureNotRecordedLog(logger, cashSessionId, exception);
++        }
++    }
++
++    private async Task AppendAsync(string eventName, Guid cashSessionId, Guid userId, string correlationId, string reason, object state)
++    {
++        // The caller may already have hung up; the record is still worth a short try of its own.
++        using var deadline = new CancellationTokenSource(AuditTimeLimit);
++        await audit.AppendAsync(Event(eventName, cashSessionId, userId, correlationId, reason, state), deadline.Token);
++    }
++
++    private static AuditEvent Event(string eventName, Guid cashSessionId, Guid userId, string correlationId, string reason, object state)
++        => new(
++            Guid.NewGuid(), eventName, "CashSession", cashSessionId, "User", correlationId, userId, reason,
++            afterStateJson: JsonSerializer.Serialize(state, StateJson));
++
++    private static readonly JsonSerializerOptions StateJson = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
++
++    private const string CountsSql =
++        """
++        SELECT count(*) FILTER (WHERE event_name = 'cash.drawer.opened' AND after_state_json->>'kind' = 'Sale'),
++               count(*) FILTER (WHERE event_name = 'cash.drawer.opened' AND after_state_json->>'kind' = 'NoSale'),
++               count(*) FILTER (WHERE event_name = 'cash.drawer.kick-failed')
++        FROM audit.audit_events
++        WHERE aggregate_type = 'CashSession' AND aggregate_id = @id
++          AND event_name IN ('cash.drawer.opened', 'cash.drawer.kick-failed');
++        """;
++
++    private static async Task<CashDrawerCounts> ReadCountsAsync(NpgsqlCommand command, Guid cashSessionId, CancellationToken cancellationToken)
++    {
++        command.Parameters.AddWithValue("id", cashSessionId);
++        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
++        await reader.ReadAsync(cancellationToken);
++        return new CashDrawerCounts(checked((int)reader.GetInt64(0)), checked((int)reader.GetInt64(1)), checked((int)reader.GetInt64(2)));
++    }
++
++    [LoggerMessage(EventId = 6944, Level = LogLevel.Warning, Message = "The cash drawer of session {CashSessionId} did not open: {Failure}.")]
++    private static partial void KickFailedLog(ILogger logger, Guid cashSessionId, string? failure);
++
++    [LoggerMessage(EventId = 6945, Level = LogLevel.Error, Message = "Opening the cash drawer of session {CashSessionId} after a cash payment failed; the payment stands.")]
++    private static partial void SaleKickFailedLog(ILogger logger, Guid cashSessionId, Exception exception);
++
++    [LoggerMessage(EventId = 6946, Level = LogLevel.Error, Message = "The failed drawer opening of session {CashSessionId} could not be recorded.")]
++    private static partial void FailureNotRecordedLog(ILogger logger, Guid cashSessionId, Exception exception);
++}
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashDrawer.cs b/src/Host/DualScreen/DualScreenApplication.CashDrawer.cs
+new file mode 100644
+index 000000000..01949b31c
+--- /dev/null
++++ b/src/Host/DualScreen/DualScreenApplication.CashDrawer.cs
+@@ -0,0 +1,50 @@
++using ALKAROS.Cash.SessionLifecycle;
++using ALKAROS.Identity.Authorization;
++using ALKAROS.Identity.Authorization.Catalog;
++using Microsoft.AspNetCore.Builder;
++using Microsoft.AspNetCore.Http;
++using Microsoft.AspNetCore.Routing;
++
++namespace ALKAROS.Host.DualScreen;
++
++public static partial class DualScreenApplication
++{
++    /// <summary>The physical drawer: whether the till may show "no sale", and opening the drawer without a sale.</summary>
++    private static void MapCashDrawerRoutes(this RouteGroupBuilder group)
++    {
++        group.MapGet("/{cashSessionId:guid}/cash-drawer", async (
++            Guid terminalId,
++            Guid cashSessionId,
++            ICashSessionRepository sessionRepository,
++            CashDrawerService drawer,
++            DualScreenStore store,
++            IAuthorizationService authorization,
++            HttpContext context,
++            CancellationToken cancellationToken) =>
++        {
++            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
++            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            return Results.Ok(await drawer.StatusAsync(cashSessionId, principal.UserId, cancellationToken));
++        });
++
++        group.MapPost("/{cashSessionId:guid}/cash-drawer/no-sale", async (
++            Guid terminalId,
++            Guid cashSessionId,
++            NoSaleDrawerRequestV1 request,
++            ICashSessionRepository sessionRepository,
++            CashDrawerService drawer,
++            DualScreenStore store,
++            IAuthorizationService authorization,
++            HttpContext context,
++            CancellationToken cancellationToken) =>
++        {
++            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
++            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
++            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.CashDrawerKick, cancellationToken);
++            // The drawer belongs to the cashier whose session it is, the same rule as taking cash into it.
++            if (session.Snapshot.CashierUserId != principal.UserId)
++                throw new CashTenderSessionNotOwnedException();
++            return Results.Ok(await drawer.OpenWithoutSaleAsync(cashSessionId, terminalId, principal.UserId, request, cancellationToken));
++        });
++    }
++}
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index 22e04f626..5378806d7 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -275,6 +275,7 @@ public static partial class DualScreenApplication
+             HttpContext context,
+             ICashSessionRepository sessionRepository,
+             BillTerminalAccess billAccess,
++            CashDrawerService drawer,
+             CancellationToken cancellationToken) =>
+         {
+             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+@@ -302,6 +303,9 @@ public static partial class DualScreenApplication
+                 throw;
+             }
+             await billAccess.ClaimAsync(context, terminalId, request.BillId);
++            // Cash went into the drawer, so it opens; a replay of a payment already taken must not open it twice.
++            if (!result.WasReplayed)
++                await drawer.KickForSaleAsync(cashSessionId, terminalId, request.BillId, principal.UserId, context.TraceIdentifier, cancellationToken);
+             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
+             // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
+             await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
+@@ -309,6 +313,7 @@ public static partial class DualScreenApplication
+         });
+ 
+         group.MapCashMovementRoutes();
++        group.MapCashDrawerRoutes();
+ 
+         return group;
+     }
+diff --git a/src/Host/DualScreen/DualScreenApplication.cs b/src/Host/DualScreen/DualScreenApplication.cs
+index df775702b..02c55dd82 100644
+--- a/src/Host/DualScreen/DualScreenApplication.cs
++++ b/src/Host/DualScreen/DualScreenApplication.cs
+@@ -178,6 +178,9 @@ public static partial class DualScreenApplication
+         // manual cash-in/cash-out with the drawer ceiling and the manager approval above the threshold.
+         builder.Services.AddScoped<CashMovementStore>();
+         builder.Services.AddScoped<CashCloseStore>();
++        // The physical drawer: opened through the receipt printer on a cash payment and by hand as "no sale".
++        builder.Services.AddSingleton<ALKAROS.Kitchen.PrintQueue.ICashDrawerKicker, ALKAROS.Kitchen.PrintQueue.TcpCashDrawerKicker>();
++        builder.Services.AddScoped<CashDrawerService>();
+         builder.Services.AddSingleton<SubmitOrderHandler>();
+         builder.Services.AddTableManagementExperience();
+         builder.Services.AddCatalogManagement();
+diff --git a/tests/Host/Errors/ApiErrorCatalogTests.cs b/tests/Host/Errors/ApiErrorCatalogTests.cs
+index 55a7d7f02..b672a4d65 100644
+--- a/tests/Host/Errors/ApiErrorCatalogTests.cs
++++ b/tests/Host/Errors/ApiErrorCatalogTests.cs
+@@ -243,6 +243,9 @@ public sealed class ApiErrorCatalogTests
+         { null, Uninitialized<InvalidCashTransactionAmountException>(), 400, "VALIDATION_FAILED", "Tutar sıfırdan büyük olmalı, en fazla iki ondalık basamak içermeli ve sınırı aşmamalı." },
+         { null, Uninitialized<InvalidCashMovementReasonException>(), 400, "CASH_MOVEMENT_REASON_INVALID", "Açıklama zorunludur ve en çok 500 karakter olabilir." },
+         { null, Uninitialized<CashOutExceedsDrawerException>(), 409, "CASH_OUT_EXCEEDS_DRAWER", "Çıkış tutarı kasadaki nakdi aşıyor." },
++        { null, Uninitialized<CashDrawerDisabledException>(), 409, "CASH_DRAWER_DISABLED", "Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir." },
++        { null, Uninitialized<CashDrawerSessionNotOpenException>(), 409, "CASH_DRAWER_SESSION_NOT_OPEN", "Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır." },
++        { null, Uninitialized<InvalidCashDrawerReasonException>(), 400, "CASH_DRAWER_REASON_INVALID", "Bir gerekçe seçin; \"Diğer\" için not yazın (en çok 200 karakter)." },
+         { null, Uninitialized<CashMovementRequestNotFoundException>(), 404, "CASH_MOVEMENT_REQUEST_NOT_FOUND", "Çıkış talebi bulunamadı." },
+         { null, Uninitialized<CashMovementRequestStateException>(), 409, "CASH_MOVEMENT_REQUEST_STATE", "Bu çıkış talebi artık beklemiyor." },
+         { null, Uninitialized<CashMovementSelfApprovalException>(), 403, "CASH_MOVEMENT_SELF_APPROVAL", "Kendi çıkış talebinizi onaylayamazsınız; başka bir yönetici onaylamalı." },
+diff --git a/tests/Host/Experience/CashSession/CashDrawerHttpTests.cs b/tests/Host/Experience/CashSession/CashDrawerHttpTests.cs
+new file mode 100644
+index 000000000..d93d18f78
+--- /dev/null
++++ b/tests/Host/Experience/CashSession/CashDrawerHttpTests.cs
+@@ -0,0 +1,460 @@
++using System.Collections.Concurrent;
++using System.Net;
++using System.Net.Http.Json;
++using System.Net.Sockets;
++using System.Text;
++using System.Text.Json;
++using ALKAROS.Host.DualScreen;
++using ALKAROS.Identity.Authorization.Catalog;
++using Microsoft.AspNetCore.Builder;
++using Microsoft.AspNetCore.Hosting.Server;
++using Microsoft.AspNetCore.Hosting.Server.Features;
++using Microsoft.Extensions.DependencyInjection;
++using Xunit;
++
++namespace ALKAROS.Host.Experience.CashSession.Tests;
++
++/// <summary>
++/// The physical cash drawer: a cash payment opens it, "no sale" opens it with a mandatory reason, every opening is
++/// audited and counted on the closing record. A local TCP listener stands in for the receipt printer, so the bytes
++/// the drawer would get are checked for real.
++/// </summary>
++[Collection("CashSession HTTP")]
++public sealed class CashDrawerHttpTests : IAsyncLifetime
++{
++    private static readonly byte[] Pulse = [0x1B, 0x70, 0x00, 0x19, 0xFA];
++    private readonly CashSessionHttpTestDatabase _database = new();
++    private readonly string _webRoot = Path.Combine(Path.GetTempPath(), $"alkaros-rmd1134-webroot-{Guid.NewGuid():N}");
++
++    public async Task InitializeAsync()
++    {
++        Directory.CreateDirectory(_webRoot);
++        File.WriteAllText(Path.Combine(_webRoot, "index.html"), "<!doctype html><html><body>Test</body></html>");
++        await _database.InitializeAsync();
++    }
++
++    public async Task DisposeAsync()
++    {
++        await _database.DisposeAsync();
++        if (Directory.Exists(_webRoot))
++            Directory.Delete(_webRoot, recursive: true);
++    }
++
++    [Fact]
++    public async Task ACashPaymentOpensTheDrawerOnceAndTheOpeningIsAudited()
++    {
++        await using var rig = await RigAsync();
++
++        var tender = await rig.TenderAsync(80m, 100m, "tender-1");
++
++        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
++        Assert.Equal([Pulse], await rig.KicksAsync(1));
++        var opened = Assert.Single(await rig.DrawerAuditAsync(), row => row.Event == "cash.drawer.opened");
++        Assert.Equal("Sale", opened.Kind);
++        Assert.Equal(rig.UserId, opened.Actor);
++    }
++
++    [Fact]
++    public async Task AReplayedCashPaymentDoesNotOpenTheDrawerAgain()
++    {
++        await using var rig = await RigAsync();
++        var billId = await _database.SeedBillAsync(payable: 80m);
++
++        Assert.Equal(HttpStatusCode.OK, (await rig.TenderAsync(80m, 100m, "tender-replay", billId)).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await rig.TenderAsync(80m, 100m, "tender-replay", billId)).StatusCode);
++
++        Assert.Single(await rig.KicksAsync(1));
++        await Task.Delay(300);
++        Assert.Single(rig.ReceivedKicks);
++        Assert.Single(await rig.DrawerAuditAsync(), row => row.Event == "cash.drawer.opened");
++    }
++
++    [Fact]
++    public async Task ACashPaymentWithTheDrawerOffTakesTheMoneyAndSendsNothing()
++    {
++        await using var rig = await RigAsync(enabled: false);
++
++        var tender = await rig.TenderAsync(80m, 100m, "tender-off");
++
++        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
++        await Task.Delay(300);
++        Assert.Empty(rig.ReceivedKicks);
++        Assert.Empty(await rig.DrawerAuditAsync());
++    }
++
++    [Fact]
++    public async Task APrinterThatCannotBeReachedNeverFailsTheCashPaymentAndTheFailureIsRecorded()
++    {
++        await using var rig = await RigAsync(address: $"127.0.0.1:{FreePort()}");
++
++        var tender = await rig.TenderAsync(80m, 100m, "tender-down");
++
++        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
++        Assert.Equal(80m, (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("approvedAmount").GetDecimal());
++        var audit = await rig.DrawerAuditAsync();
++        Assert.Equal(["cash.drawer.kick-failed"], audit.Select(row => row.Event));
++        Assert.Equal("Sale", audit[0].Kind);
++    }
++
++    [Fact]
++    public async Task NoSaleOpensTheDrawerRecordsTheReasonAndMovesNoMoney()
++    {
++        await using var rig = await RigAsync();
++        var expectedBefore = await rig.ExpectedCashAsync();
++
++        var response = await rig.NoSaleAsync("ns-1", "ChangeCoins", null);
++
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
++        Assert.True(body.GetProperty("delivered").GetBoolean());
++        Assert.Equal(1, body.GetProperty("noSaleCount").GetInt32());
++        Assert.False(body.GetProperty("replayed").GetBoolean());
++        Assert.Equal([Pulse], await rig.KicksAsync(1));
++        var opened = Assert.Single(await rig.DrawerAuditAsync());
++        Assert.Equal(("cash.drawer.opened", "NoSale", "Bozuk para", rig.UserId), (opened.Event, opened.Kind, opened.Reason, opened.Actor));
++        Assert.Equal(expectedBefore, await rig.ExpectedCashAsync());
++        Assert.Equal(0L, await _database.CountLedgerRowsAsync(rig.SessionId, "Sale"));
++    }
++
++    [Theory]
++    [InlineData("Count", null, "Sayım")]
++    [InlineData("Count", "gün sonu", "Sayım: gün sonu")]
++    [InlineData("Other", "kasa tamiri", "Diğer: kasa tamiri")]
++    public async Task EveryListedReasonIsAcceptedAndOtherCarriesItsNote(string code, string? note, string reason)
++    {
++        await using var rig = await RigAsync();
++
++        var response = await rig.NoSaleAsync("ns-reasons", code, note);
++
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        Assert.Equal(reason, Assert.Single(await rig.DrawerAuditAsync()).Reason);
++    }
++
++    [Theory]
++    [InlineData(null, null)]
++    [InlineData("", null)]
++    [InlineData("Whatever", null)]
++    [InlineData("Whatever", "bir not")]
++    [InlineData("Other", null)]
++    [InlineData("Other", "   ")]
++    [InlineData("ChangeCoins", "x")]
++    public async Task NoSaleWithoutAValidReasonIsRefusedAndTheDrawerStaysShut(string? code, string? note)
++    {
++        await using var rig = await RigAsync();
++        var tooLong = code == "ChangeCoins" ? new string('n', 201) : note;
++
++        var response = await rig.NoSaleAsync("ns-bad", code, tooLong);
++
++        await AssertErrorAsync(response, HttpStatusCode.BadRequest, "CASH_DRAWER_REASON_INVALID", "gerekçe");
++        await Task.Delay(300);
++        Assert.Empty(rig.ReceivedKicks);
++        Assert.Empty(await rig.DrawerAuditAsync());
++    }
++
++    [Fact]
++    public async Task NoSaleNeedsItsOwnPermissionNotJustTheDrawerOne()
++    {
++        await using var rig = await RigAsync(permissions: [ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake]);
++
++        var response = await rig.NoSaleAsync("ns-denied", "Count", null);
++
++        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
++        await Task.Delay(300);
++        Assert.Empty(rig.ReceivedKicks);
++        Assert.DoesNotContain(await rig.DrawerAuditAsync(), row => row.Event == "cash.drawer.opened");
++    }
++
++    [Fact]
++    public async Task NoSaleWithTheDrawerOffIsRefusedInTurkish()
++    {
++        await using var rig = await RigAsync(enabled: false);
++
++        var response = await rig.NoSaleAsync("ns-off", "Count", null);
++
++        await AssertErrorAsync(response, HttpStatusCode.Conflict, "CASH_DRAWER_DISABLED", "çekmece");
++        Assert.Empty(await rig.DrawerAuditAsync());
++    }
++
++    [Fact]
++    public async Task NoSaleOnAnotherCashiersSessionIsRefused()
++    {
++        await using var rig = await RigAsync();
++        var other = await _database.SeedCashierSessionWithPermissionsAsync(
++            rig.TerminalId, "other-" + Guid.NewGuid().ToString("N")[..6],
++            ApplicationPermissions.CashDrawer, ApplicationPermissions.CashDrawerKick);
++
++        var response = await rig.NoSaleAsync("ns-other", "Count", null, other);
++
++        await AssertErrorAsync(response, HttpStatusCode.Conflict, "CASH_SESSION_NOT_OWNED", "kasa");
++        await Task.Delay(300);
++        Assert.Empty(rig.ReceivedKicks);
++    }
++
++    [Fact]
++    public async Task NoSaleWhileTheCashIsBeingCountedIsAllowedButNotOnAClosedSession()
++    {
++        await using var rig = await RigAsync();
++        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-count", "Count", null)).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 100m })).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/close", new { ActualCash = 100m })).StatusCode);
++
++        var late = await rig.NoSaleAsync("ns-late", "Count", null);
++
++        await AssertErrorAsync(late, HttpStatusCode.Conflict, "CASH_DRAWER_SESSION_NOT_OPEN", "kapanmış");
++        Assert.Single(await rig.KicksAsync(1));
++        Assert.Single(await rig.DrawerAuditAsync());
++    }
++
++    [Fact]
++    public async Task TwoNoSalesAtOnceAreCountedOneAfterTheOther()
++    {
++        await using var rig = await RigAsync();
++
++        var responses = await Task.WhenAll(Enumerable.Range(1, 4).Select(i => rig.NoSaleAsync("ns-par-" + i, "Count", null)));
++
++        var counts = new List<int>();
++        foreach (var response in responses)
++            counts.Add((await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("noSaleCount").GetInt32());
++        Assert.Equal([1, 2, 3, 4], counts.Order());
++    }
++
++    [Fact]
++    public async Task ARepeatedNoSaleKeyOpensTheDrawerAndWritesTheRecordOnlyOnce()
++    {
++        await using var rig = await RigAsync();
++
++        var first = await rig.NoSaleAsync("ns-same", "Count", null);
++        var second = await rig.NoSaleAsync("ns-same", "Count", null);
++
++        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
++        var replay = await second.Content.ReadFromJsonAsync<JsonElement>();
++        Assert.True(replay.GetProperty("replayed").GetBoolean());
++        Assert.Equal(1, replay.GetProperty("noSaleCount").GetInt32());
++        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
++        Assert.Single(await rig.KicksAsync(1));
++        await Task.Delay(300);
++        Assert.Single(rig.ReceivedKicks);
++        Assert.Single(await rig.DrawerAuditAsync());
++    }
++
++    [Fact]
++    public async Task ANoSaleToAPrinterThatCannotBeReachedKeepsTheRecordAndSaysTheDrawerDidNotOpen()
++    {
++        await using var rig = await RigAsync(address: $"127.0.0.1:{FreePort()}");
++
++        var response = await rig.NoSaleAsync("ns-down", "Count", null);
++
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
++        Assert.False(body.GetProperty("delivered").GetBoolean());
++        Assert.Equal(["cash.drawer.kick-failed", "cash.drawer.opened"], (await rig.DrawerAuditAsync()).Select(row => row.Event).Order());
++    }
++
++    [Fact]
++    public async Task TheFifthNoSaleInASessionCarriesAWarning()
++    {
++        await using var rig = await RigAsync();
++
++        var warnings = new List<string?>();
++        for (var i = 1; i <= 5; i++)
++        {
++            var response = await rig.NoSaleAsync("ns-many-" + i, "Count", null);
++            warnings.Add((await response.Content.ReadFromJsonAsync<JsonElement>()).TryGetProperty("warning", out var warning) && warning.ValueKind == JsonValueKind.String ? warning.GetString() : null);
++        }
++
++        Assert.All(warnings.Take(4), Assert.Null);
++        Assert.Contains("5", warnings[4]);
++    }
++
++    [Fact]
++    public async Task TheClosingRecordCountsEveryDrawerOpeningOfTheSession()
++    {
++        await using var rig = await RigAsync();
++        Assert.Equal(HttpStatusCode.OK, (await rig.TenderAsync(80m, 100m, "tender-close")).StatusCode);
++        await rig.KicksAsync(1);
++        Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-c1", "Count", null)).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-c2", "ChangeCoins", null)).StatusCode);
++
++        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
++        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 180m })).StatusCode);
++        var closed = await rig.PostAsync("/close", new { ActualCash = 180m });
++        Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
++
++        var state = await rig.ClosedStateAsync();
++        Assert.Equal((1, 2, 0), (state.GetProperty("drawerSaleOpenCount").GetInt32(), state.GetProperty("drawerNoSaleCount").GetInt32(), state.GetProperty("drawerKickFailedCount").GetInt32()));
++    }
++
++    [Fact]
++    public async Task TheStatusSaysWhetherTheButtonShouldShowAndOffersTheReasons()
++    {
++        await using var on = await RigAsync();
++        await on.NoSaleAsync("ns-s1", "Count", null);
++        var enabled = await on.StatusAsync();
++        Assert.True(enabled.GetProperty("enabled").GetBoolean());
++        Assert.True(enabled.GetProperty("canKick").GetBoolean());
++        Assert.Equal(1, enabled.GetProperty("noSaleCount").GetInt32());
++        Assert.Equal(5, enabled.GetProperty("warningCount").GetInt32());
++        Assert.Equal(["ChangeCoins:Bozuk para", "Count:Sayım", "Other:Diğer"], enabled.GetProperty("reasons").EnumerateArray().Select(r => $"{r.GetProperty("code").GetString()}:{r.GetProperty("name").GetString()}"));
++
++        await using var off = await RigAsync(enabled: false, permissions: [ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake]);
++        var disabled = await off.StatusAsync();
++        Assert.False(disabled.GetProperty("enabled").GetBoolean());
++        Assert.False(disabled.GetProperty("canKick").GetBoolean());
++    }
++
++    private async Task<Rig> RigAsync(bool enabled = true, string? address = null, string[]? permissions = null)
++    {
++        var listener = new TcpListener(IPAddress.Loopback, 0);
++        listener.Start();
++        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
++        await _database.SetSettingAsync("cash.drawer_kick_enabled", "Boolean", enabled ? "true" : "false");
++        await _database.SetSettingAsync("cash.drawer_printer_address", "String", address ?? $"127.0.0.1:{port}");
++        var terminalId = Guid.NewGuid();
++        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(
++            terminalId, "drawer-" + Guid.NewGuid().ToString("N")[..8],
++            permissions ?? [ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake, ApplicationPermissions.CashDrawerKick]);
++        var app = DualScreenApplication.Build(new DualScreenOptions(
++            _database.ConnectionString, _webRoot, "http://127.0.0.1:0", TrustedProxies: [IPAddress.Loopback]));
++        await app.StartAsync();
++        var server = app.Services.GetRequiredService<IServer>();
++        var client = new HttpClient { BaseAddress = new Uri(server.Features.Get<IServerAddressesFeature>()!.Addresses.Single()) };
++        var rig = new Rig(app, client, listener, _database, terminalId, cookie);
++        rig.UserId = await _database.UserIdForCookieAsync(cookie);
++        var opened = await rig.SendAsync($"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
++        rig.SessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
++        return rig;
++    }
++
++    private static int FreePort()
++    {
++        using var probe = new TcpListener(IPAddress.Loopback, 0);
++        probe.Start();
++        return ((IPEndPoint)probe.LocalEndpoint).Port;
++    }
++
++    private static async Task AssertErrorAsync(HttpResponseMessage response, HttpStatusCode status, string code, string messagePart)
++    {
++        Assert.Equal(status, response.StatusCode);
++        var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
++        Assert.Equal(code, error.GetProperty("code").GetString());
++        Assert.Contains(messagePart, error.GetProperty("message").GetString(), StringComparison.OrdinalIgnoreCase);
++    }
++
++    private sealed record DrawerAuditRow(string Event, string? Kind, string? Reason, Guid? Actor);
++
++    private sealed class Rig : IAsyncDisposable
++    {
++        private readonly WebApplication _app;
++        private readonly HttpClient _client;
++        private readonly TcpListener _listener;
++        private readonly CashSessionHttpTestDatabase _database;
++        private readonly string _owner;
++        private readonly CancellationTokenSource _stop = new();
++        private readonly Task _accepting;
++
++        public Rig(WebApplication app, HttpClient client, TcpListener listener, CashSessionHttpTestDatabase database, Guid terminalId, string owner)
++        {
++            (_app, _client, _listener, _database, TerminalId, _owner) = (app, client, listener, database, terminalId, owner);
++            _accepting = AcceptAsync();
++        }
++
++        public Guid TerminalId { get; }
++        public Guid SessionId { get; set; }
++        public Guid UserId { get; set; }
++        public ConcurrentQueue<byte[]> ReceivedKicks { get; } = new();
++
++        private string SessionPath => $"/api/v1/terminals/{TerminalId:D}/cash-sessions/{SessionId:D}";
++
++        public async ValueTask DisposeAsync()
++        {
++            await _stop.CancelAsync();
++            _listener.Stop();
++            try { await _accepting; } catch (Exception) when (_stop.IsCancellationRequested) { }
++            _client.Dispose();
++            await _app.DisposeAsync();
++        }
++
++        public async Task<byte[][]> KicksAsync(int expected)
++        {
++            for (var i = 0; i < 100 && ReceivedKicks.Count < expected; i++)
++                await Task.Delay(50);
++            return [.. ReceivedKicks];
++        }
++
++        public Task<HttpResponseMessage> SendAsync(string path, string cookie, object body)
++        {
++            var request = new HttpRequestMessage(HttpMethod.Post, path)
++            {
++                Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json"),
++            };
++            return Send(request, cookie);
++        }
++
++        public Task<HttpResponseMessage> PostAsync(string suffix, object body) => SendAsync(SessionPath + suffix, _owner, body);
++
++        public async Task<Guid> NewBillAsync(decimal payable) => await _database.SeedBillAsync(payable);
++
++        public async Task<HttpResponseMessage> TenderAsync(decimal due, decimal tendered, string key, Guid? billId = null)
++            => await PostAsync("/cash-tender", new { BillId = billId ?? await NewBillAsync(due), AmountDue = due, TenderedAmount = tendered, IdempotencyKey = key });
++
++        public Task<HttpResponseMessage> NoSaleAsync(string key, string? reasonCode, string? note, string? cookie = null)
++            => SendAsync(SessionPath + "/cash-drawer/no-sale", cookie ?? _owner, new { IdempotencyKey = key, ReasonCode = reasonCode, Note = note });
++
++        public async Task<JsonElement> StatusAsync()
++        {
++            var response = await Send(new HttpRequestMessage(HttpMethod.Get, SessionPath + "/cash-drawer"), _owner);
++            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++            return await response.Content.ReadFromJsonAsync<JsonElement>();
++        }
++
++        public async Task<decimal> ExpectedCashAsync()
++        {
++            var response = await Send(new HttpRequestMessage(HttpMethod.Get, SessionPath + "/expected-cash"), _owner);
++            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++            return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal();
++        }
++
++        public async Task<DrawerAuditRow[]> DrawerAuditAsync()
++        {
++            await using var command = _database.DataSource.CreateCommand(
++                """
++                SELECT event_name, after_state_json->>'kind', reason, actor_id FROM audit.audit_events
++                WHERE aggregate_id = @id AND event_name LIKE 'cash.drawer.%' ORDER BY occurred_at;
++                """);
++            command.Parameters.AddWithValue("id", SessionId);
++            var rows = new List<DrawerAuditRow>();
++            await using var reader = await command.ExecuteReaderAsync();
++            while (await reader.ReadAsync())
++                rows.Add(new DrawerAuditRow(reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetString(1), reader.IsDBNull(2) ? null : reader.GetString(2), reader.IsDBNull(3) ? null : reader.GetGuid(3)));
++            return [.. rows];
++        }
++
++        public async Task<JsonElement> ClosedStateAsync()
++        {
++            await using var command = _database.DataSource.CreateCommand(
++                "SELECT after_state_json::text FROM audit.audit_events WHERE aggregate_id = @id AND event_name = 'cash.session.closed';");
++            command.Parameters.AddWithValue("id", SessionId);
++            return JsonDocument.Parse((string)(await command.ExecuteScalarAsync())!).RootElement.Clone();
++        }
++
++        private async Task AcceptAsync()
++        {
++            while (!_stop.IsCancellationRequested)
++            {
++                using var connection = await _listener.AcceptTcpClientAsync(_stop.Token);
++                using var buffer = new MemoryStream();
++                await connection.GetStream().CopyToAsync(buffer, _stop.Token);
++                ReceivedKicks.Enqueue(buffer.ToArray());
++            }
++        }
++
++        private Task<HttpResponseMessage> Send(HttpRequestMessage request, string cookie)
++        {
++            request.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.10");
++            request.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
++            request.Headers.TryAddWithoutValidation("Cookie", cookie);
++            return _client.SendAsync(request);
++        }
++    }
++}

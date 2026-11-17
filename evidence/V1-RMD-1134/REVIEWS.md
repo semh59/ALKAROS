@@ -1,0 +1,2 @@
+- qa-backend: KABUL (orta: kanca OCE'yi yutmuyordu -> duzeltildi; orta: no-sale oturum durumu -> Open/Counting + FOR SHARE + test + M19/M20; dusuk: sayac yarisi -> oturum basina kilit + test + M21; dusuk notlar RESULT'ta)
+- qa-performans-dayaniklilik: KABUL (orta: baglanti darbe sirasinda tutuluyordu -> kayit ayri metoda, baglanti darbeden once birakilir; orta/dusuk: tekrar yaniti ve kapanis sonrasi kick-failed sayaci kabul edilen sinir, RESULT'ta)
