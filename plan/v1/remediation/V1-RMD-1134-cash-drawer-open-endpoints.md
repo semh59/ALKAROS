@@ -1,7 +1,7 @@
 # V1-RMD-1134 - Fiziksel kasa çekmecesi: nakit ödemede kendiliğinden açılma, "Satış yok" ucu, denetim izi, kapanış sayacı
 
 - Task ID: V1-RMD-1134
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
