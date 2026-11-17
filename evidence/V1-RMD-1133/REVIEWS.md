@@ -1,0 +1,2 @@
+- qa-entegrasyon-cihaz: KABUL (orta: gecersiz host/port istisnasi -> duzeltildi + test + M9; zaman asimi testi zayif -> Failure dogrulamasi + M10; dusuk notlar riske yazildi)
+- qa-test-kalitesi: KABUL (orta: zaman asimi Failure -> M10; varsayilan sinir -> test + M11; yazma-hatasi dali riske yazildi)

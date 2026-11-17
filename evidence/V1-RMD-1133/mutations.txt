@@ -1,0 +1,10 @@
+M1-wrong-duration exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:     4, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M3-no-time-limit exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 23 s - ALKAROS.Kitchen.PrintQueue.T
+M4-ignores-caller-cancel exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M7-adds-status-query exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:     4, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M8-silent-failure-text exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:     4, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M2-socket-error-throws exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M5-failure-reported-delivered exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     5, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M9-argument-errors-escape exit 1 restored cmp ok | Başarısız! - Başarısız:     3, Başarılı:     5, Atlanan:     0, Toplam:     8, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M10-timeout-says-cancelled exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te
+M11-default-limit-one-hour exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 2 s - ALKAROS.Kitchen.PrintQueue.Te

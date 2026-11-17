@@ -1,0 +1,5 @@
+# V1-RMD-1133 sonuc
+CashDrawerKick.cs: EscPosCashDrawer.PulseBytes = 1B 70 00 19 FA; ICashDrawerKicker.KickAsync -> CashDrawerKickResult(Delivered, Failure); TcpCashDrawerKicker tek deneme, 2 sn sinir, durum sorgusu ve yeniden deneme yok; baglanti/ag/gecersiz adres/iptal/zaman asimi istisna degil deger olarak doner. Mutfak fisi hatti (formatter, IPrinterTransport) degismedi.
+Plan sapmasi: plan "KitchenModule icinde kayitli" diyordu; kayit geri alindi cunku reachability denetimi (consistency-audit) Host'tan erisilmeyen DI kaydini reddediyor ve izin listesi bu gorevin yuzeyinde degil. DI kaydi ve gercek cagri V1-RMD-1134'te (DualScreenApplication.cs). Bu yuzden M6 (kayit eksik mutanti) yok.
+Kanit: red.log (derleme kirmizi), green-project.log (50 test, tum PrintQueue projesi), mutations.txt M1-M5, M7-M11 killed (cp+cmp), consistency-audit ve plan-audit temiz.
+Acik risk: Star/Xprinter ESC p cihazsiz dogrulanamadi; zaman asimi testi ag ortamina bagli (M3 yine de olur); yazma-hatasi (write failed) dali testsiz (RST gerektirir, kirilgan); Failure metinleri ham Ingilizce, ekrana basilmaz (1134 yalniz kaydeder/Turkce cumle verir).

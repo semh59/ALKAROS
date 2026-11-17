@@ -1,0 +1,165 @@
+diff --git a/src/Modules/Kitchen/PrintQueue/CashDrawerKick.cs b/src/Modules/Kitchen/PrintQueue/CashDrawerKick.cs
+new file mode 100644
+index 000000000..062f18b12
+--- /dev/null
++++ b/src/Modules/Kitchen/PrintQueue/CashDrawerKick.cs
+@@ -0,0 +1,64 @@
++namespace ALKAROS.Kitchen.PrintQueue;
++
++using System.Net.Sockets;
++
++/// <summary>
++/// The cash drawer is cabled to the receipt printer and opens on a pulse command. It is sent on its own, never as part
++/// of a kitchen ticket: a ticket must not open the drawer.
++/// </summary>
++public static class EscPosCashDrawer
++{
++    /// <summary>ESC p m t1 t2: pin 0, 50 ms on (t1 = 25 x 2 ms), 500 ms off (t2 = 250 x 2 ms).</summary>
++    public static ReadOnlySpan<byte> PulseBytes => [0x1B, 0x70, 0x00, 0x19, 0xFA];
++}
++
++/// <summary>A failed send is a value, not an exception: the caller records it and the payment or request goes on.</summary>
++public readonly record struct CashDrawerKickResult(bool Delivered, string? Failure);
++
++public interface ICashDrawerKicker
++{
++    Task<CashDrawerKickResult> KickAsync(string host, int port, CancellationToken cancellationToken = default);
++}
++
++/// <summary>
++/// One attempt over a raw TCP printer port, bounded by a time limit. No status query and no retry: opening the
++/// drawer must never hold up a payment.
++/// </summary>
++public sealed class TcpCashDrawerKicker : ICashDrawerKicker
++{
++    public static readonly TimeSpan DefaultTimeLimit = TimeSpan.FromSeconds(2);
++    private readonly TimeSpan _timeLimit;
++
++    public TcpCashDrawerKicker() : this(DefaultTimeLimit)
++    {
++    }
++
++    public TcpCashDrawerKicker(TimeSpan timeLimit) => _timeLimit = timeLimit;
++
++    public async Task<CashDrawerKickResult> KickAsync(string host, int port, CancellationToken cancellationToken = default)
++    {
++        using var limit = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
++        limit.CancelAfter(_timeLimit);
++        try
++        {
++            using var client = new TcpClient();
++            await client.ConnectAsync(host, port, limit.Token);
++            var stream = client.GetStream();
++            await stream.WriteAsync(EscPosCashDrawer.PulseBytes.ToArray(), limit.Token);
++            await stream.FlushAsync(limit.Token);
++            return new CashDrawerKickResult(true, null);
++        }
++        catch (OperationCanceledException)
++        {
++            return new CashDrawerKickResult(false, cancellationToken.IsCancellationRequested ? "cancelled" : "timed out");
++        }
++        catch (ArgumentException)
++        {
++            return new CashDrawerKickResult(false, "invalid address");
++        }
++        catch (Exception exception) when (exception is SocketException or IOException)
++        {
++            return new CashDrawerKickResult(false, exception is SocketException socket ? socket.SocketErrorCode.ToString() : "write failed");
++        }
++    }
++}
+diff --git a/tests/Modules/Kitchen/PrintQueue/CashDrawerKickTests.cs b/tests/Modules/Kitchen/PrintQueue/CashDrawerKickTests.cs
+new file mode 100644
+index 000000000..9ce800e36
+--- /dev/null
++++ b/tests/Modules/Kitchen/PrintQueue/CashDrawerKickTests.cs
+@@ -0,0 +1,89 @@
++namespace ALKAROS.Kitchen.PrintQueue.Tests;
++
++using System.Diagnostics;
++using System.Net;
++using System.Net.Sockets;
++using FluentAssertions;
++using Xunit;
++
++/// <summary>The drawer pulse goes to a local TCP listener standing in for the receipt printer; no hardware needed.</summary>
++public sealed class CashDrawerKickTests
++{
++    [Fact]
++    public void ThePulseIsEscPAtPinZeroFiftyMillisecondsOnAndFiveHundredOff()
++        => EscPosCashDrawer.PulseBytes.ToArray().Should().Equal(0x1B, 0x70, 0x00, 0x19, 0xFA);
++
++    [Fact]
++    public async Task KickAsyncDeliversExactlyThePulseAndNothingElse()
++    {
++        using var listener = new TcpListener(IPAddress.Loopback, 0);
++        listener.Start();
++        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
++        var received = ReadAllAsync(listener);
++
++        var result = await new TcpCashDrawerKicker().KickAsync(IPAddress.Loopback.ToString(), port);
++
++        result.Should().Be(new CashDrawerKickResult(true, null));
++        (await received).Should().Equal(0x1B, 0x70, 0x00, 0x19, 0xFA);
++    }
++
++    [Fact]
++    public async Task KickAsyncReportsARefusedConnectionWithoutThrowing()
++    {
++        var port = FreePort();
++
++        // Windows retries a refused loopback connection for about two seconds before it reports the refusal.
++        var result = await new TcpCashDrawerKicker(TimeSpan.FromSeconds(10)).KickAsync(IPAddress.Loopback.ToString(), port);
++
++        result.Delivered.Should().BeFalse();
++        result.Failure.Should().Be("ConnectionRefused");
++    }
++
++    [Theory]
++    [InlineData("", 9100)]
++    [InlineData("192.168.1.50", 70000)]
++    public async Task KickAsyncReportsAnInvalidAddressWithoutThrowing(string host, int port)
++        => (await new TcpCashDrawerKicker().KickAsync(host, port)).Should().Be(new CashDrawerKickResult(false, "invalid address"));
++
++    [Fact]
++    public async Task KickAsyncReportsACancelledCallerWithoutThrowing()
++    {
++        using var listener = new TcpListener(IPAddress.Loopback, 0);
++        listener.Start();
++        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
++        using var cancelled = new CancellationTokenSource();
++        await cancelled.CancelAsync();
++
++        var result = await new TcpCashDrawerKicker().KickAsync(IPAddress.Loopback.ToString(), port, cancelled.Token);
++
++        result.Delivered.Should().BeFalse();
++        result.Failure.Should().Contain("cancel");
++    }
++
++    [Fact]
++    public async Task KickAsyncGivesUpAtItsTimeLimitOnAnAddressThatNeverAnswers()
++    {
++        var watch = Stopwatch.StartNew();
++
++        // 192.0.2.1 is reserved for documentation (RFC 5737): packets are dropped or refused, never answered.
++        var result = await new TcpCashDrawerKicker(TimeSpan.FromMilliseconds(300)).KickAsync("192.0.2.1", 9100);
++
++        result.Delivered.Should().BeFalse();
++        watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(5));
++    }
++
++    private static int FreePort()
++    {
++        using var probe = new TcpListener(IPAddress.Loopback, 0);
++        probe.Start();
++        return ((IPEndPoint)probe.LocalEndpoint).Port;
++    }
++
++    private static async Task<byte[]> ReadAllAsync(TcpListener listener)
++    {
++        using var client = await listener.AcceptTcpClientAsync();
++        using var buffer = new MemoryStream();
++        await client.GetStream().CopyToAsync(buffer);
++        return buffer.ToArray();
++    }
++}
