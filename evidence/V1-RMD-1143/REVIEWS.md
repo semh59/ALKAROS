@@ -1,0 +1,2 @@
+- qa-guvenlik-yetki: KABUL; orta bulgu (kullanici adi kutusundaki sifre denetime dusebilir) duzeltildi + test + mutant S11; dusuk bulgular RESULT'ta acik risk
+- qa-api-uclar: KABUL; 3 dusuk (override=false yok sayilir, sayac sifirlama zamani, ikinci self-approval sinifi) acik risk

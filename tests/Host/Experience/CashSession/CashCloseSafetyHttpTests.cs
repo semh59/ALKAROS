@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +24,8 @@ namespace ALKAROS.Host.Experience.CashSession.Tests;
 [Collection("CashSession HTTP")]
 public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
 {
+    private const string ManagerPassword = "Mudur-Sifre-1";
+
     private const string ToleranceKey = "cash.close_variance_tolerance";
     private const string SelfApprovalKey = "approvals.manager_self_approval_enabled";
 
@@ -432,6 +435,152 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AManagerWhoTypesHerPasswordAtTheTillApprovesTheOverAToleranceCloseAndIsRecorded()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        var manager = await drawer.ManagerWithPasswordAsync();
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var audit = Assert.Single(await _database.CloseAuditAsync(drawer.SessionId));
+        Assert.True(audit.GetProperty("supervisorOverride").GetBoolean());
+        Assert.Equal(manager.UserId, audit.GetProperty("overrideApprovedBy").GetGuid());
+        Assert.Equal(await drawer.OwnerIdAsync(), audit.GetProperty("closedBy").GetGuid());
+        Assert.False(audit.GetProperty("overrideBySessionCashier").GetBoolean());
+        Assert.Equal("Closed", await drawer.StatusAsync());
+        Assert.Equal(0, await _database.AuditRowsContainingAsync(drawer.SessionId, ManagerPassword));
+    }
+
+    [Fact]
+    public async Task AWrongManagerPasswordIsRefusedRecordedWithoutThePasswordAndLeavesTheSessionCounting()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        var manager = await drawer.ManagerWithPasswordAsync();
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, "yanlis-sifre");
+
+        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
+        Assert.Equal("Counting", await drawer.StatusAsync());
+        Assert.Equal(1, await _database.AuditCountAsync(drawer.SessionId, "cash.close.approval_failed"));
+        Assert.Equal(0, await _database.AuditRowsContainingAsync(drawer.SessionId, "yanlis-sifre"));
+    }
+
+    [Fact]
+    public async Task ALockedManagerAccountIsRefusedEvenWithTheCorrectPassword()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        var manager = await drawer.ManagerWithPasswordAsync();
+        await _database.LockUserAsync(manager.UserId);
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
+
+        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "MANAGER_LOCKED", "en geç 15 dakika");
+        Assert.Equal("Counting", await drawer.StatusAsync());
+    }
+
+    [Fact]
+    public async Task AManagerWithoutTheOverridePermissionCannotApproveTheClose()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        var manager = await drawer.ManagerWithPasswordAsync(ApplicationPermissions.CashDrawer);
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
+
+        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "APPROVER_LACKS_PERMISSION", "yetki");
+        Assert.Equal("Counting", await drawer.StatusAsync());
+    }
+
+    [Fact]
+    public async Task TheCashierCannotApproveHerOwnCloseWithHerOwnPassword()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m, ownerPermissions: [ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride]);
+        var ownerId = await drawer.OwnerIdAsync();
+        await _database.SetPasswordAsync(ownerId, ManagerPassword);
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        var response = await drawer.CloseWithManagerAsync(20m, "csh004-role-" + ownerId.ToString("N")[..8], ManagerPassword);
+
+        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "kendi");
+        Assert.Equal("Counting", await drawer.StatusAsync());
+    }
+
+    [Fact]
+    public async Task ThreeWrongManagerPasswordsStopTheCashierEvenWithTheRightOneAfterwards()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        var manager = await drawer.ManagerWithPasswordAsync();
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures; attempt++)
+            await AssertErrorAsync(await drawer.CloseWithManagerAsync(20m, manager.Username, "yanlis-" + attempt), HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
+
+        var stopped = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
+
+        await AssertErrorAsync(stopped, HttpStatusCode.TooManyRequests, "TOO_MANY_ATTEMPTS", "15 dakika");
+        Assert.Equal("Counting", await drawer.StatusAsync());
+    }
+
+    [Fact]
+    public async Task APasswordTypedIntoTheUsernameBoxIsNotKeptInTheAttemptRecord()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        await drawer.CloseWithManagerAsync(20m, "Gizli-Sifre-77", "yanlis");
+
+        Assert.Equal(1, await _database.AuditCountAsync(drawer.SessionId, "cash.close.approval_failed"));
+        Assert.Equal(0, await _database.AuditRowsContainingAsync(drawer.SessionId, "Gizli-Sifre-77"));
+        Assert.Equal(1, await _database.AuditRowsContainingAsync(drawer.SessionId, "Gi***"));
+    }
+
+    [Fact]
+    public async Task ARefusedSelfApprovalDoesNotWipeTheCashiersFailureCount()
+    {
+        await using var drawer = await DrawerAsync(opening: 100m, ownerPermissions: [ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride]);
+        var ownerId = await drawer.OwnerIdAsync();
+        await _database.SetPasswordAsync(ownerId, ManagerPassword);
+        var manager = await drawer.ManagerWithPasswordAsync();
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+        await drawer.CloseWithManagerAsync(20m, "yok-1", "yanlis");
+        await drawer.CloseWithManagerAsync(20m, "yok-2", "yanlis");
+        await AssertErrorAsync(await drawer.CloseWithManagerAsync(20m, "csh004-role-" + ownerId.ToString("N")[..8], ManagerPassword), HttpStatusCode.Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "kendi");
+        await drawer.CloseWithManagerAsync(20m, "yok-3", "yanlis");
+
+        var stopped = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
+
+        await AssertErrorAsync(stopped, HttpStatusCode.TooManyRequests, "TOO_MANY_ATTEMPTS", "15 dakika");
+    }
+
+    [Theory]
+    [InlineData(null, "x")]
+    [InlineData("", "x")]
+    [InlineData("u", null)]
+    public async Task ACloseWithOnlyHalfOfTheManagerCredentialsIsABadRequestAndCostsNoAttempt(string? username, string? password)
+    {
+        await using var drawer = await DrawerAsync(opening: 100m);
+        await drawer.StartCountAsync();
+        await drawer.CountAsync(20m);
+
+        var response = await drawer.CloseWithManagerAsync(20m, username, password);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(0, await _database.AuditCountAsync(drawer.SessionId, "cash.close.approval_failed"));
+        Assert.Equal("Counting", await drawer.StatusAsync());
+    }
+
+    [Fact]
     public async Task ASessionOfAnotherTerminalIsNotFoundOnThisTerminalsRoutes()
     {
         await using var first = await DrawerAsync(opening: 100m);
@@ -589,6 +738,21 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
         public async Task StartCountAsync() => Assert.Equal(HttpStatusCode.OK, (await PostAsync("/start-count", new { })).StatusCode);
 
         public async Task CountAsync(decimal amount) => Assert.Equal(HttpStatusCode.OK, (await PostAsync("/counts", new { CountedAmount = amount })).StatusCode);
+
+        public Task<HttpResponseMessage> CloseWithManagerAsync(decimal actual, string? username, string? password)
+            => PostAsync("/close", new
+            {
+                ActualCash = actual, DifferenceExplanation = "sayim farki", IsSupervisorOverride = true, OverrideReason = "sayim farki",
+                ManagerUsername = username, ManagerPassword = password,
+            });
+
+        public async Task<(Guid UserId, string Username)> ManagerWithPasswordAsync(params string[] permissions)
+        {
+            var cookie = await CookieAsync("approver", permissions.Length > 0 ? permissions : [ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride]);
+            var userId = await database.UserIdForCookieAsync(cookie);
+            await database.SetPasswordAsync(userId, ManagerPassword);
+            return (userId, "csh004-role-" + userId.ToString("N")[..8]);
+        }
 
         public Task<HttpResponseMessage> CloseAsync(decimal actual, string? explanation = null, bool acknowledge = false, string? cookie = null)
             => PostAsync("/close", new { ActualCash = actual, DifferenceExplanation = explanation, AcknowledgeUnsettled = acknowledge }, cookie);

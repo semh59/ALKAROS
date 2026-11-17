@@ -76,7 +76,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
     /// carries what the server saw at the close; an unacknowledged warning rolls the whole close back.
     /// </summary>
     public async Task<CountHistory> AuditClosedAsync(
-        CashSessionClosedEvent closed, bool acknowledged, decimal tolerance, ILockedCashSession locked,
+        CashSessionClosedEvent closed, bool acknowledged, decimal tolerance, Guid? overrideApprovedBy, ILockedCashSession locked,
         CancellationToken cancellationToken)
     {
         var unsettled = await ReadUnsettledAsync(locked, cancellationToken);
@@ -94,7 +94,8 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
                 {
                     status = "Closed", closed.ExpectedCash, closed.ActualCash, closed.Difference,
                     differenceExplanation = closed.DifferenceExplanation, supervisorOverride = closed.IsSupervisorOverride,
-                    overrideBySessionCashier = closed.IsSupervisorOverride && closed.ClosedBy == locked.Record.Snapshot.CashierUserId,
+                    overrideBySessionCashier = closed.IsSupervisorOverride && overrideApprovedBy is null && closed.ClosedBy == locked.Record.Snapshot.CashierUserId,
+                    overrideApprovedBy,
                     closedBy = closed.ClosedBy, tolerance,
                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
                     drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,

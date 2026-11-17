@@ -1,7 +1,7 @@
 # V1-RMD-1143 - Kasa kapanışında fark toleransı aşılınca yerinde yönetici onayı: uç
 
 - Task ID: V1-RMD-1143
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

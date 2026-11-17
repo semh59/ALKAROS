@@ -166,6 +166,13 @@ by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.dra
   before the pulse; after a cash payment it is written after the pulse (the payment must not wait on it).
 - Every opening is a `cash.drawer.opened` audit event of the session (`kind` Sale or NoSale); a failed send is
   `cash.drawer.kick-failed`. Nothing is written to the cash ledger, so the expected cash does not move.
+- An over-tolerance close is approved by a manager at the till: the close request may carry `ManagerUsername` and
+  `ManagerPassword` next to `IsSupervisorOverride`. The server checks them like any sign-in (PBKDF2, lockout; a PIN is
+  not accepted) behind the shared in-place approval throttle (3 failures per cashier and per manager name, 15 minutes),
+  requires `cash.session.override` of that manager and refuses the cashier approving with their own account. The
+  approver is written to `cash.session.closed` as `overrideApprovedBy`; each failed attempt is a
+  `cash.close.approval_failed` event without the password (the attempted name is kept as its first two characters plus a length, in case a password was typed into the name box). Without credentials the caller's own override permission
+  is asked, as before.
 - The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount` and `drawerKickFailedCount`.
   `drawerNoSaleCount` and the warning count only the openings whose pulse reached the printer: the audit record of a
   no-sale is written before the pulse, so a pulse that failed (a `kick-failed` event of the same correlation id) is

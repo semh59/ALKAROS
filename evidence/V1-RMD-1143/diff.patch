@@ -1,0 +1,454 @@
+diff --git a/docs/domain/cash-session-design.md b/docs/domain/cash-session-design.md
+index df589fce8..39e5f8f30 100644
+--- a/docs/domain/cash-session-design.md
++++ b/docs/domain/cash-session-design.md
+@@ -166,6 +166,13 @@ by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.dra
+   before the pulse; after a cash payment it is written after the pulse (the payment must not wait on it).
+ - Every opening is a `cash.drawer.opened` audit event of the session (`kind` Sale or NoSale); a failed send is
+   `cash.drawer.kick-failed`. Nothing is written to the cash ledger, so the expected cash does not move.
++- An over-tolerance close is approved by a manager at the till: the close request may carry `ManagerUsername` and
++  `ManagerPassword` next to `IsSupervisorOverride`. The server checks them like any sign-in (PBKDF2, lockout; a PIN is
++  not accepted) behind the shared in-place approval throttle (3 failures per cashier and per manager name, 15 minutes),
++  requires `cash.session.override` of that manager and refuses the cashier approving with their own account. The
++  approver is written to `cash.session.closed` as `overrideApprovedBy`; each failed attempt is a
++  `cash.close.approval_failed` event without the password (the attempted name is kept as its first two characters plus a length, in case a password was typed into the name box). Without credentials the caller's own override permission
++  is asked, as before.
+ - The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount` and `drawerKickFailedCount`.
+   `drawerNoSaleCount` and the warning count only the openings whose pulse reached the printer: the audit record of a
+   no-sale is written before the pulse, so a pulse that failed (a `kick-failed` event of the same correlation id) is
+diff --git a/src/Host/Composition/Errors/ApiErrorCatalog.cs b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+index 3e12a3bee..5a01930e3 100644
+--- a/src/Host/Composition/Errors/ApiErrorCatalog.cs
++++ b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+@@ -732,6 +732,11 @@ public static class ApiErrorCatalog
+             InvalidCashTransactionAmountException => (400, "VALIDATION_FAILED", "Tutar sıfırdan büyük olmalı, en fazla iki ondalık basamak içermeli ve sınırı aşmamalı."),
+             InvalidCashMovementReasonException => (400, "CASH_MOVEMENT_REASON_INVALID", "Açıklama zorunludur ve en çok 500 karakter olabilir."),
+             CashOutExceedsDrawerException => (409, "CASH_OUT_EXCEEDS_DRAWER", "Çıkış tutarı kasadaki nakdi aşıyor."),
++            ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitlendi; en geç 15 dakika sonra açılır. Yönetici kendi ekranından onaylayabilir."),
++            ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
++            InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme yapıldı. En geç 15 dakika sonra tekrar deneyin ya da yönetici kendi ekranından onaylasın."),
++            CashCloseSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
++            ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
+             CashDrawerDisabledException => (409, "CASH_DRAWER_DISABLED", "Para çekmecesi bağlantısı kapalı; yönetici Ayarlar ekranından açabilir."),
+             CashDrawerSessionNotOpenException => (409, "CASH_DRAWER_SESSION_NOT_OPEN", "Kasa oturumu kapanmış; satışsız açma yalnız açık veya sayımdaki kasada yapılır."),
+             InvalidCashDrawerReasonException => (400, "CASH_DRAWER_REASON_INVALID", "Bir gerekçe seçin; \"Diğer\" için not yazın (en çok 200 karakter)."),
+diff --git a/src/Host/DualScreen/CashCloseStore.cs b/src/Host/DualScreen/CashCloseStore.cs
+index 544ae79da..7bdd3fa14 100644
+--- a/src/Host/DualScreen/CashCloseStore.cs
++++ b/src/Host/DualScreen/CashCloseStore.cs
+@@ -76,7 +76,7 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+     /// carries what the server saw at the close; an unacknowledged warning rolls the whole close back.
+     /// </summary>
+     public async Task<CountHistory> AuditClosedAsync(
+-        CashSessionClosedEvent closed, bool acknowledged, decimal tolerance, ILockedCashSession locked,
++        CashSessionClosedEvent closed, bool acknowledged, decimal tolerance, Guid? overrideApprovedBy, ILockedCashSession locked,
+         CancellationToken cancellationToken)
+     {
+         var unsettled = await ReadUnsettledAsync(locked, cancellationToken);
+@@ -94,7 +94,8 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
+                 {
+                     status = "Closed", closed.ExpectedCash, closed.ActualCash, closed.Difference,
+                     differenceExplanation = closed.DifferenceExplanation, supervisorOverride = closed.IsSupervisorOverride,
+-                    overrideBySessionCashier = closed.IsSupervisorOverride && closed.ClosedBy == locked.Record.Snapshot.CashierUserId,
++                    overrideBySessionCashier = closed.IsSupervisorOverride && overrideApprovedBy is null && closed.ClosedBy == locked.Record.Snapshot.CashierUserId,
++                    overrideApprovedBy,
+                     closedBy = closed.ClosedBy, tolerance,
+                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
+                     drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,
+diff --git a/src/Host/DualScreen/DualScreenApplication.CashSession.cs b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+index 3afef872a..d564da300 100644
+--- a/src/Host/DualScreen/DualScreenApplication.CashSession.cs
++++ b/src/Host/DualScreen/DualScreenApplication.CashSession.cs
+@@ -1,11 +1,14 @@
+ using ALKAROS.Audit.EventStore;
+ using ALKAROS.Payments.Allocations.Persistence;
++using System.Text.Json;
+ using Microsoft.Extensions.Logging;
+ using ALKAROS.Cash.Contracts;
+ using ALKAROS.Cash.SessionLifecycle;
+ using ALKAROS.Cash.TenderHandler;
+ using ALKAROS.Cash.TransactionLedger;
++using ALKAROS.Host.Experience.Authorization;
+ using ALKAROS.Host.Experience.Billing;
++using ALKAROS.Identity.Authentication;
+ using ALKAROS.Identity.Authorization;
+ using ALKAROS.Identity.Authorization.Catalog;
+ using ALKAROS.Settings.CashCloseTolerance;
+@@ -174,6 +177,9 @@ public static partial class DualScreenApplication
+             ICashSessionRepository sessionRepository,
+             NpgsqlDataSource dataSource,
+             ILoggerFactory loggerFactory,
++            AuthenticationService authentication,
++            InPlaceApprovalThrottle throttle,
++            IAuditEventStore auditEvents,
+             CancellationToken cancellationToken) =>
+         {
+             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+@@ -186,10 +192,22 @@ public static partial class DualScreenApplication
+             // V1-RMD-236: IsSupervisorOverride bypasses CashSessionPolicy's own
+             // variance-tolerance check below — without this, any cashier could
+             // self-declare the override and close with an unlimited variance.
++            // Without a typed manager credential the caller's own override permission is asked, as before; with one, a manager
++            // at the till approves and the cashier needs no permission.
++            Guid? approvedBy = null;
+             if (request.IsSupervisorOverride)
+             {
+-                await authorization.AuthorizeAsync(
+-                    principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
++                if (request.ManagerUsername is null && request.ManagerPassword is null)
++                {
++                    await authorization.AuthorizeAsync(
++                        principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
++                }
++                else
++                {
++                    approvedBy = await ApproveCloseInPlaceAsync(
++                        request, principal.UserId, cashSessionId, authentication, authorization, throttle, auditEvents,
++                        context.TraceIdentifier, cancellationToken);
++                }
+             }
+             var tolerance = await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken);
+             // The expected cash and the unsettled counts are read by the close itself under the session lock; the
+@@ -200,7 +218,7 @@ public static partial class DualScreenApplication
+                     cashSessionId, request.ActualCash, principal.UserId,
+                     request.IsSupervisorOverride, request.OverrideReason, request.DifferenceExplanation, mayActForOwner),
+                 tolerance,
+-                async (closed, locked, token) => counts = await closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
++                async (closed, locked, token) => counts = await closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, approvedBy, locked, token),
+                 cancellationToken);
+             return Results.Ok(new CloseCashSessionResultV1(
+                 session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken),
+@@ -326,6 +344,66 @@ public static partial class DualScreenApplication
+         return group;
+     }
+ 
++    // A password typed into the username box must not reach the audit trail, so only the first two characters are kept.
++    private static string MaskedForAudit(string username) => username[..Math.Min(2, username.Length)] + "***";
++
++    /// <summary>
++    /// A manager at the till approves an over-tolerance close with the manager's own username and password: the same
++    /// sign-in check, throttle and self-approval rule as approving a waiting discount in place. Returns the approving manager.
++    /// </summary>
++    private static async Task<Guid> ApproveCloseInPlaceAsync(
++        CloseCashSessionRequestV1 request, Guid cashierUserId, Guid cashSessionId, AuthenticationService authentication,
++        IAuthorizationService authorization, InPlaceApprovalThrottle throttle, IAuditEventStore auditEvents, string correlationId,
++        CancellationToken cancellationToken)
++    {
++        if (string.IsNullOrWhiteSpace(request.ManagerUsername) || string.IsNullOrEmpty(request.ManagerPassword)
++            || request.ManagerUsername.Length > 64 || request.ManagerPassword.Length > 256)
++            throw new ArgumentException("ManagerUsername (at most 64) and ManagerPassword (at most 256) are both required.", nameof(request));
++
++        var username = request.ManagerUsername.Trim();
++        var cashierKey = $"cashier:{cashierUserId:N}";
++        var managerKey = $"manager:{username.ToUpperInvariant()}";
++        if (throttle.IsBlocked(cashierKey, DateTimeOffset.UtcNow) || throttle.IsBlocked(managerKey, DateTimeOffset.UtcNow))
++            throw new InPlaceApprovalThrottledException();
++
++        var login = await authentication.LoginAsync(username, request.ManagerPassword, DateTimeOffset.UtcNow, cancellationToken);
++        if (login is not LoginSuccess manager)
++        {
++            var lockedOut = login is LoginFailure { Reason: LoginFailureReason.LockedOut };
++            throttle.RecordFailure(cashierKey, DateTimeOffset.UtcNow);
++            throttle.RecordFailure(managerKey, DateTimeOffset.UtcNow);
++            await auditEvents.AppendAsync(
++                new AuditEvent(
++                    id: Guid.NewGuid(),
++                    eventName: "cash.close.approval_failed",
++                    aggregateType: "CashSession",
++                    aggregateId: cashSessionId,
++                    actorType: "User",
++                    correlationId: correlationId,
++                    actorId: cashierUserId,
++                    reason: lockedOut ? "manager_locked" : "credential_invalid",
++                    afterStateJson: JsonSerializer.Serialize(new { attemptedUsername = MaskedForAudit(username), attemptedUsernameLength = username.Length })),
++                cancellationToken);
++            throw new ManagerCredentialException(lockedOut);
++        }
++
++        if (manager.UserId == cashierUserId)
++            throw new CashCloseSelfApprovalException();
++        try
++        {
++            await authorization.AuthorizeAsync(manager.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
++        }
++        catch (AuthorizationDeniedException)
++        {
++            throw new ApproverLacksPermissionException(ApplicationPermissions.CashSessionOverride);
++        }
++
++        // Only an approval that goes through clears the counts, as in the discount approval.
++        throttle.Reset(cashierKey);
++        throttle.Reset(managerKey);
++        return manager.UserId;
++    }
++
+     /// <summary>
+     /// The drawer counts of the session that was just closed. A no-sale opening cannot be recorded on a closed session; a
+     /// pulse that failed during the close can still log its failure afterwards, so a failed-pulse count may be one higher
+@@ -399,6 +477,9 @@ public static partial class DualScreenApplication
+             context, terminalId, store, authorization, ApplicationPermissions.CashDrawer, cancellationToken);
+ }
+ 
++/// <summary>The manager who typed the credentials at the till is the cashier closing the session.</summary>
++public sealed class CashCloseSelfApprovalException() : Exception("A cashier cannot approve their own over-tolerance close.");
++
+ /// <summary>A cash tender named a drawer session that belongs to another cashier.</summary>
+ public sealed class CashTenderSessionNotOwnedException()
+     : Exception("A cash tender can only be posted to the caller's own open cash session.");
+@@ -418,7 +499,7 @@ public sealed record RecordCashCountRequestV1(decimal CountedAmount, string? Not
+ /// </summary>
+ public sealed record CloseCashSessionRequestV1(
+     decimal ActualCash, bool IsSupervisorOverride = false, string? OverrideReason = null,
+-    string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false);
++    string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false, string? ManagerUsername = null, string? ManagerPassword = null);
+ 
+ /// <summary>The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and pulses that did not.</summary>
+ public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int KickFailedCount);
+diff --git a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+index 036bcbb5d..d8576206f 100644
+--- a/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
+@@ -3,6 +3,7 @@ using System.Net.Http.Json;
+ using System.Text;
+ using System.Text.Json;
+ using ALKAROS.Host.DualScreen;
++using ALKAROS.Host.Experience.Billing;
+ using ALKAROS.Identity.Authorization.Catalog;
+ using ALKAROS.Orders.OrderAggregate;
+ using Microsoft.AspNetCore.Builder;
+@@ -23,6 +24,8 @@ namespace ALKAROS.Host.Experience.CashSession.Tests;
+ [Collection("CashSession HTTP")]
+ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+ {
++    private const string ManagerPassword = "Mudur-Sifre-1";
++
+     private const string ToleranceKey = "cash.close_variance_tolerance";
+     private const string SelfApprovalKey = "approvals.manager_self_approval_enabled";
+ 
+@@ -431,6 +434,152 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+         Assert.Equal("Counting", await drawer.StatusAsync());
+     }
+ 
++    [Fact]
++    public async Task AManagerWhoTypesHerPasswordAtTheTillApprovesTheOverAToleranceCloseAndIsRecorded()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        var manager = await drawer.ManagerWithPasswordAsync();
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
++
++        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
++        var audit = Assert.Single(await _database.CloseAuditAsync(drawer.SessionId));
++        Assert.True(audit.GetProperty("supervisorOverride").GetBoolean());
++        Assert.Equal(manager.UserId, audit.GetProperty("overrideApprovedBy").GetGuid());
++        Assert.Equal(await drawer.OwnerIdAsync(), audit.GetProperty("closedBy").GetGuid());
++        Assert.False(audit.GetProperty("overrideBySessionCashier").GetBoolean());
++        Assert.Equal("Closed", await drawer.StatusAsync());
++        Assert.Equal(0, await _database.AuditRowsContainingAsync(drawer.SessionId, ManagerPassword));
++    }
++
++    [Fact]
++    public async Task AWrongManagerPasswordIsRefusedRecordedWithoutThePasswordAndLeavesTheSessionCounting()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        var manager = await drawer.ManagerWithPasswordAsync();
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, "yanlis-sifre");
++
++        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
++        Assert.Equal("Counting", await drawer.StatusAsync());
++        Assert.Equal(1, await _database.AuditCountAsync(drawer.SessionId, "cash.close.approval_failed"));
++        Assert.Equal(0, await _database.AuditRowsContainingAsync(drawer.SessionId, "yanlis-sifre"));
++    }
++
++    [Fact]
++    public async Task ALockedManagerAccountIsRefusedEvenWithTheCorrectPassword()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        var manager = await drawer.ManagerWithPasswordAsync();
++        await _database.LockUserAsync(manager.UserId);
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
++
++        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "MANAGER_LOCKED", "en geç 15 dakika");
++        Assert.Equal("Counting", await drawer.StatusAsync());
++    }
++
++    [Fact]
++    public async Task AManagerWithoutTheOverridePermissionCannotApproveTheClose()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        var manager = await drawer.ManagerWithPasswordAsync(ApplicationPermissions.CashDrawer);
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        var response = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
++
++        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "APPROVER_LACKS_PERMISSION", "yetki");
++        Assert.Equal("Counting", await drawer.StatusAsync());
++    }
++
++    [Fact]
++    public async Task TheCashierCannotApproveHerOwnCloseWithHerOwnPassword()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m, ownerPermissions: [ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride]);
++        var ownerId = await drawer.OwnerIdAsync();
++        await _database.SetPasswordAsync(ownerId, ManagerPassword);
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        var response = await drawer.CloseWithManagerAsync(20m, "csh004-role-" + ownerId.ToString("N")[..8], ManagerPassword);
++
++        await AssertErrorAsync(response, HttpStatusCode.Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "kendi");
++        Assert.Equal("Counting", await drawer.StatusAsync());
++    }
++
++    [Fact]
++    public async Task ThreeWrongManagerPasswordsStopTheCashierEvenWithTheRightOneAfterwards()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        var manager = await drawer.ManagerWithPasswordAsync();
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures; attempt++)
++            await AssertErrorAsync(await drawer.CloseWithManagerAsync(20m, manager.Username, "yanlis-" + attempt), HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
++
++        var stopped = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
++
++        await AssertErrorAsync(stopped, HttpStatusCode.TooManyRequests, "TOO_MANY_ATTEMPTS", "15 dakika");
++        Assert.Equal("Counting", await drawer.StatusAsync());
++    }
++
++    [Fact]
++    public async Task APasswordTypedIntoTheUsernameBoxIsNotKeptInTheAttemptRecord()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        await drawer.CloseWithManagerAsync(20m, "Gizli-Sifre-77", "yanlis");
++
++        Assert.Equal(1, await _database.AuditCountAsync(drawer.SessionId, "cash.close.approval_failed"));
++        Assert.Equal(0, await _database.AuditRowsContainingAsync(drawer.SessionId, "Gizli-Sifre-77"));
++        Assert.Equal(1, await _database.AuditRowsContainingAsync(drawer.SessionId, "Gi***"));
++    }
++
++    [Fact]
++    public async Task ARefusedSelfApprovalDoesNotWipeTheCashiersFailureCount()
++    {
++        await using var drawer = await DrawerAsync(opening: 100m, ownerPermissions: [ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride]);
++        var ownerId = await drawer.OwnerIdAsync();
++        await _database.SetPasswordAsync(ownerId, ManagerPassword);
++        var manager = await drawer.ManagerWithPasswordAsync();
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++        await drawer.CloseWithManagerAsync(20m, "yok-1", "yanlis");
++        await drawer.CloseWithManagerAsync(20m, "yok-2", "yanlis");
++        await AssertErrorAsync(await drawer.CloseWithManagerAsync(20m, "csh004-role-" + ownerId.ToString("N")[..8], ManagerPassword), HttpStatusCode.Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "kendi");
++        await drawer.CloseWithManagerAsync(20m, "yok-3", "yanlis");
++
++        var stopped = await drawer.CloseWithManagerAsync(20m, manager.Username, ManagerPassword);
++
++        await AssertErrorAsync(stopped, HttpStatusCode.TooManyRequests, "TOO_MANY_ATTEMPTS", "15 dakika");
++    }
++
++    [Theory]
++    [InlineData(null, "x")]
++    [InlineData("", "x")]
++    [InlineData("u", null)]
++    public async Task ACloseWithOnlyHalfOfTheManagerCredentialsIsABadRequestAndCostsNoAttempt(string? username, string? password)
++    {
++        await using var drawer = await DrawerAsync(opening: 100m);
++        await drawer.StartCountAsync();
++        await drawer.CountAsync(20m);
++
++        var response = await drawer.CloseWithManagerAsync(20m, username, password);
++
++        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
++        Assert.Equal(0, await _database.AuditCountAsync(drawer.SessionId, "cash.close.approval_failed"));
++        Assert.Equal("Counting", await drawer.StatusAsync());
++    }
++
+     [Fact]
+     public async Task ASessionOfAnotherTerminalIsNotFoundOnThisTerminalsRoutes()
+     {
+@@ -590,6 +739,21 @@ public sealed class CashCloseSafetyHttpTests : IAsyncLifetime
+ 
+         public async Task CountAsync(decimal amount) => Assert.Equal(HttpStatusCode.OK, (await PostAsync("/counts", new { CountedAmount = amount })).StatusCode);
+ 
++        public Task<HttpResponseMessage> CloseWithManagerAsync(decimal actual, string? username, string? password)
++            => PostAsync("/close", new
++            {
++                ActualCash = actual, DifferenceExplanation = "sayim farki", IsSupervisorOverride = true, OverrideReason = "sayim farki",
++                ManagerUsername = username, ManagerPassword = password,
++            });
++
++        public async Task<(Guid UserId, string Username)> ManagerWithPasswordAsync(params string[] permissions)
++        {
++            var cookie = await CookieAsync("approver", permissions.Length > 0 ? permissions : [ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride]);
++            var userId = await database.UserIdForCookieAsync(cookie);
++            await database.SetPasswordAsync(userId, ManagerPassword);
++            return (userId, "csh004-role-" + userId.ToString("N")[..8]);
++        }
++
+         public Task<HttpResponseMessage> CloseAsync(decimal actual, string? explanation = null, bool acknowledge = false, string? cookie = null)
+             => PostAsync("/close", new { ActualCash = actual, DifferenceExplanation = explanation, AcknowledgeUnsettled = acknowledge }, cookie);
+ 
+diff --git a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+index 13752837e..b8bd9621d 100644
+--- a/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
++++ b/tests/Host/Experience/CashSession/CashSessionHttpTests.cs
+@@ -4,6 +4,7 @@ using System.Text;
+ using System.Text.Json;
+ using ALKAROS.Billing.BillFoundation;
+ using ALKAROS.Host.DualScreen;
++using ALKAROS.Identity.Authentication;
+ using ALKAROS.Identity.Authorization.Catalog;
+ using ALKAROS.Identity.DeviceSessions;
+ using ALKAROS.Orders.OrderAggregate;
+@@ -988,6 +989,39 @@ internal sealed class CashSessionHttpTestDatabase
+         return (Guid)(await command.ExecuteScalarAsync())!;
+     }
+ 
++    public async Task SetPasswordAsync(Guid userId, string password)
++    {
++        await using var command = DataSource.CreateCommand("UPDATE identity.users SET password_hash = @hash WHERE user_id = @id;");
++        command.Parameters.AddWithValue("hash", new PasswordHasher().Hash(password));
++        command.Parameters.AddWithValue("id", userId);
++        await command.ExecuteNonQueryAsync();
++    }
++
++    public async Task LockUserAsync(Guid userId)
++    {
++        await using var command = DataSource.CreateCommand("UPDATE identity.users SET locked_until = now() + interval '15 minutes' WHERE user_id = @id;");
++        command.Parameters.AddWithValue("id", userId);
++        await command.ExecuteNonQueryAsync();
++    }
++
++    public async Task<long> AuditCountAsync(Guid cashSessionId, string eventName)
++    {
++        await using var command = DataSource.CreateCommand("SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @name;");
++        command.Parameters.AddWithValue("id", cashSessionId);
++        command.Parameters.AddWithValue("name", eventName);
++        return (long)(await command.ExecuteScalarAsync())!;
++    }
++
++    /// <summary>Audit rows of the session that carry the text anywhere (state, reason, correlation): a secret must never be one of them.</summary>
++    public async Task<long> AuditRowsContainingAsync(Guid cashSessionId, string text)
++    {
++        await using var command = DataSource.CreateCommand(
++            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND (after_state_json::text LIKE '%' || @text || '%' OR coalesce(before_state_json::text, '') LIKE '%' || @text || '%' OR coalesce(reason, '') LIKE '%' || @text || '%');");
++        command.Parameters.AddWithValue("id", cashSessionId);
++        command.Parameters.AddWithValue("text", text);
++        return (long)(await command.ExecuteScalarAsync())!;
++    }
++
+     public async Task DeactivateSettingAsync(string key)
+     {
+         await using var command = DataSource.CreateCommand("UPDATE settings.settings SET active = false WHERE setting_key = @key;");

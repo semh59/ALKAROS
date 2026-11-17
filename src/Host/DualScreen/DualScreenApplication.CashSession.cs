@@ -1,11 +1,14 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Payments.Allocations.Persistence;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
+using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Settings.CashCloseTolerance;
@@ -174,6 +177,9 @@ public static partial class DualScreenApplication
             ICashSessionRepository sessionRepository,
             NpgsqlDataSource dataSource,
             ILoggerFactory loggerFactory,
+            AuthenticationService authentication,
+            InPlaceApprovalThrottle throttle,
+            IAuditEventStore auditEvents,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
@@ -186,10 +192,22 @@ public static partial class DualScreenApplication
             // V1-RMD-236: IsSupervisorOverride bypasses CashSessionPolicy's own
             // variance-tolerance check below — without this, any cashier could
             // self-declare the override and close with an unlimited variance.
+            // Without a typed manager credential the caller's own override permission is asked, as before; with one, a manager
+            // at the till approves and the cashier needs no permission.
+            Guid? approvedBy = null;
             if (request.IsSupervisorOverride)
             {
-                await authorization.AuthorizeAsync(
-                    principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
+                if (request.ManagerUsername is null && request.ManagerPassword is null)
+                {
+                    await authorization.AuthorizeAsync(
+                        principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
+                }
+                else
+                {
+                    approvedBy = await ApproveCloseInPlaceAsync(
+                        request, principal.UserId, cashSessionId, authentication, authorization, throttle, auditEvents,
+                        context.TraceIdentifier, cancellationToken);
+                }
             }
             var tolerance = await CloseVarianceToleranceSetting.GetToleranceAsync(settings, cancellationToken);
             // The expected cash and the unsettled counts are read by the close itself under the session lock; the
@@ -200,7 +218,7 @@ public static partial class DualScreenApplication
                     cashSessionId, request.ActualCash, principal.UserId,
                     request.IsSupervisorOverride, request.OverrideReason, request.DifferenceExplanation, mayActForOwner),
                 tolerance,
-                async (closed, locked, token) => counts = await closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
+                async (closed, locked, token) => counts = await closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, approvedBy, locked, token),
                 cancellationToken);
             return Results.Ok(new CloseCashSessionResultV1(
                 session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken),
@@ -326,6 +344,66 @@ public static partial class DualScreenApplication
         return group;
     }
 
+    // A password typed into the username box must not reach the audit trail, so only the first two characters are kept.
+    private static string MaskedForAudit(string username) => username[..Math.Min(2, username.Length)] + "***";
+
+    /// <summary>
+    /// A manager at the till approves an over-tolerance close with the manager's own username and password: the same
+    /// sign-in check, throttle and self-approval rule as approving a waiting discount in place. Returns the approving manager.
+    /// </summary>
+    private static async Task<Guid> ApproveCloseInPlaceAsync(
+        CloseCashSessionRequestV1 request, Guid cashierUserId, Guid cashSessionId, AuthenticationService authentication,
+        IAuthorizationService authorization, InPlaceApprovalThrottle throttle, IAuditEventStore auditEvents, string correlationId,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request.ManagerUsername) || string.IsNullOrEmpty(request.ManagerPassword)
+            || request.ManagerUsername.Length > 64 || request.ManagerPassword.Length > 256)
+            throw new ArgumentException("ManagerUsername (at most 64) and ManagerPassword (at most 256) are both required.", nameof(request));
+
+        var username = request.ManagerUsername.Trim();
+        var cashierKey = $"cashier:{cashierUserId:N}";
+        var managerKey = $"manager:{username.ToUpperInvariant()}";
+        if (throttle.IsBlocked(cashierKey, DateTimeOffset.UtcNow) || throttle.IsBlocked(managerKey, DateTimeOffset.UtcNow))
+            throw new InPlaceApprovalThrottledException();
+
+        var login = await authentication.LoginAsync(username, request.ManagerPassword, DateTimeOffset.UtcNow, cancellationToken);
+        if (login is not LoginSuccess manager)
+        {
+            var lockedOut = login is LoginFailure { Reason: LoginFailureReason.LockedOut };
+            throttle.RecordFailure(cashierKey, DateTimeOffset.UtcNow);
+            throttle.RecordFailure(managerKey, DateTimeOffset.UtcNow);
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "cash.close.approval_failed",
+                    aggregateType: "CashSession",
+                    aggregateId: cashSessionId,
+                    actorType: "User",
+                    correlationId: correlationId,
+                    actorId: cashierUserId,
+                    reason: lockedOut ? "manager_locked" : "credential_invalid",
+                    afterStateJson: JsonSerializer.Serialize(new { attemptedUsername = MaskedForAudit(username), attemptedUsernameLength = username.Length })),
+                cancellationToken);
+            throw new ManagerCredentialException(lockedOut);
+        }
+
+        if (manager.UserId == cashierUserId)
+            throw new CashCloseSelfApprovalException();
+        try
+        {
+            await authorization.AuthorizeAsync(manager.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
+        }
+        catch (AuthorizationDeniedException)
+        {
+            throw new ApproverLacksPermissionException(ApplicationPermissions.CashSessionOverride);
+        }
+
+        // Only an approval that goes through clears the counts, as in the discount approval.
+        throttle.Reset(cashierKey);
+        throttle.Reset(managerKey);
+        return manager.UserId;
+    }
+
     /// <summary>
     /// The drawer counts of the session that was just closed. A no-sale opening cannot be recorded on a closed session; a
     /// pulse that failed during the close can still log its failure afterwards, so a failed-pulse count may be one higher
@@ -399,6 +477,9 @@ public static partial class DualScreenApplication
             context, terminalId, store, authorization, ApplicationPermissions.CashDrawer, cancellationToken);
 }
 
+/// <summary>The manager who typed the credentials at the till is the cashier closing the session.</summary>
+public sealed class CashCloseSelfApprovalException() : Exception("A cashier cannot approve their own over-tolerance close.");
+
 /// <summary>A cash tender named a drawer session that belongs to another cashier.</summary>
 public sealed class CashTenderSessionNotOwnedException()
     : Exception("A cash tender can only be posted to the caller's own open cash session.");
@@ -418,7 +499,7 @@ public sealed record RecordCashCountRequestV1(decimal CountedAmount, string? Not
 /// </summary>
 public sealed record CloseCashSessionRequestV1(
     decimal ActualCash, bool IsSupervisorOverride = false, string? OverrideReason = null,
-    string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false);
+    string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false, string? ManagerUsername = null, string? ManagerPassword = null);
 
 /// <summary>The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and pulses that did not.</summary>
 public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int KickFailedCount);

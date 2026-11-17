@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Orders.OrderAggregate;
@@ -986,6 +987,39 @@ internal sealed class CashSessionHttpTestDatabase
         await using var command = DataSource.CreateCommand("SELECT user_id FROM identity.device_sessions WHERE token_hash = @hash;");
         command.Parameters.AddWithValue("hash", DeviceSessionToken.Hash(cookie["alkaros.cashier=".Length..]));
         return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task SetPasswordAsync(Guid userId, string password)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE identity.users SET password_hash = @hash WHERE user_id = @id;");
+        command.Parameters.AddWithValue("hash", new PasswordHasher().Hash(password));
+        command.Parameters.AddWithValue("id", userId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task LockUserAsync(Guid userId)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE identity.users SET locked_until = now() + interval '15 minutes' WHERE user_id = @id;");
+        command.Parameters.AddWithValue("id", userId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<long> AuditCountAsync(Guid cashSessionId, string eventName)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @name;");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        command.Parameters.AddWithValue("name", eventName);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    /// <summary>Audit rows of the session that carry the text anywhere (state, reason, correlation): a secret must never be one of them.</summary>
+    public async Task<long> AuditRowsContainingAsync(Guid cashSessionId, string text)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND (after_state_json::text LIKE '%' || @text || '%' OR coalesce(before_state_json::text, '') LIKE '%' || @text || '%' OR coalesce(reason, '') LIKE '%' || @text || '%');");
+        command.Parameters.AddWithValue("id", cashSessionId);
+        command.Parameters.AddWithValue("text", text);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task DeactivateSettingAsync(string key)
