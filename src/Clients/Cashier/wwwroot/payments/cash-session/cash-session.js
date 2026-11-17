@@ -971,6 +971,7 @@
 
   function renderMovementSummary(isIn) {
     var amount = Number(state.drafts.amount);
+    // Blind count: the expected cash only feeds the guard below and is never shown before the count is sent.
     var expected = state.summaryExpected;
     var threshold = state.movements ? state.movements.approvalThreshold : null;
     var needsApproval = !isIn && threshold != null && amount > threshold;
@@ -983,8 +984,6 @@
       '<div class="cs-summary-row"><span>Yön</span><span class="value">' + (isIn ? 'Nakit Giriş' : 'Nakit Çıkış') + '</span></div>' +
       '<div class="cs-summary-row"><span>Tutar</span><span class="value">' + formatMoney(amount) + '</span></div>' +
       '<div class="cs-summary-row"><span>Açıklama</span><span class="value">' + escapeHtml(state.drafts.notes.trim()) + '</span></div>' +
-      '<div class="cs-summary-row"><span>Kasadaki beklenen nakit</span><span class="value">' +
-      (expected != null ? formatMoney(expected) : '—') + '</span></div>' +
       (needsApproval
         ? '<div class="cs-alert cs-alert-danger" role="status" id="approval-warning"><span class="cs-alert-icon">!</span>' +
           '<div class="cs-alert-body">Yönetici onayı gerekecek. Onaylanana kadar bu tutar kasadan düşmez.</div></div>'

@@ -1,0 +1,2 @@
+M1-row-shown exit 1 restored cmp ok
+M2-guard-removed exit 1 restored cmp ok

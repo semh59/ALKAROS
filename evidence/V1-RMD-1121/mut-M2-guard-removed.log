@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-blind-count.test.js (3 tests | 1 failed) 668ms
+     × still stops a cash-out larger than the drawer without naming the amount 178ms
+ ❯ cash-session-movement.test.js (67 tests | 1 failed) 12444ms
+     × blocks saving a cash-out that is more than the drawer holds 166ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-blind-count.test.js > cash-session.js blind count: the expected cash stays hidden until the count is sent > still stops a cash-out larger than the drawer without naming the amount
+AssertionError: expected null not to be null
+ ❯ cash-session-blind-count.test.js:78:38
+     76|     await summaryFor("out", "5000");
+     77|
+     78|     expect($("#drawer-warning")).not.toBeNull();
+       |                                      ^
+     79|     expect($("#movement-confirm").disabled).toBe(true);
+     80|     expect(text()).not.toMatch(EXPECTED_TEXT);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > blocks saving a cash-out that is more than the drawer holds
+AssertionError: expected null not to be null
+ ❯ cash-session-movement.test.js:179:38
+    177|     await open({ expected: 100 });
+    178|     await toSummary("out", "150", "fazla");
+    179|     expect($("#drawer-warning")).not.toBeNull();
+       |                                      ^
+    180|     expect($("#movement-confirm").disabled).toBe(true);
+    181|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 68 passed (70)
+   Start at  10:17:55
+   Duration  14.01s (transform 2.24s, setup 51ms, import 217ms, tests 13.11s, environment 2.28s)
+
+exit code: 1

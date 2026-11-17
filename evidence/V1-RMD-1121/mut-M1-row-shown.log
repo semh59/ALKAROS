@@ -1,0 +1,90 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-blind-count.test.js (3 tests | 2 failed) 661ms
+     × shows no expected amount on the open session or while a cash movement is entered 267ms
+     × still stops a cash-out larger than the drawer without naming the amount 169ms
+ ❯ cash-session-movement.test.js (67 tests | 1 failed) 12399ms
+     × shows a summary of direction, amount and reason before saving, without the expected cash 186ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-blind-count.test.js > cash-session.js blind count: the expected cash stays hidden until the count is sent > shows no expected amount on the open session or while a cash movement is entered
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiKayd…' not to match /1\.234,56/
+
+- Expected:
+/1\.234,56/
+
++ Received:
+"
+  ← Kasaya dön
+  Kasa HareketiKaydetmeden Önce Kontrol EdinYönNakit GirişTutar₺25,00AçıklamamarketKasadaki beklenen nakit₺1.234,56DüzeltOnayla ve kaydet
+  
+  
+"
+
+ ❯ cash-session-blind-count.test.js:68:24
+     66|
+     67|     await summaryFor("in", "25");
+     68|     expect(text()).not.toMatch(EXPECTED_TEXT);
+       |                        ^
+     69|     expect(text()).not.toContain("Kasadaki beklenen nakit");
+     70|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  cash-session-blind-count.test.js > cash-session.js blind count: the expected cash stays hidden until the count is sent > still stops a cash-out larger than the drawer without naming the amount
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiKayd…' not to match /1\.234,56/
+
+- Expected:
+/1\.234,56/
+
++ Received:
+"
+  ← Kasaya dön
+  Kasa HareketiKaydetmeden Önce Kontrol EdinYönNakit ÇıkışTutar₺5.000,00AçıklamamarketKasadaki beklenen nakit₺1.234,56!Yönetici onayı gerekecek. Onaylanana kadar bu tutar kasadan düşmez.!Çıkış tutarı kasadaki beklenen nakdi aşıyor; kaydedilemez.DüzeltOnaya gönder
+  
+  
+"
+
+ ❯ cash-session-blind-count.test.js:80:24
+     78|     expect($("#drawer-warning")).not.toBeNull();
+     79|     expect($("#movement-confirm").disabled).toBe(true);
+     80|     expect(text()).not.toMatch(EXPECTED_TEXT);
+       |                        ^
+     81|   });
+     82|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash movements > shows a summary of direction, amount and reason before saving, without the expected cash
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiKayd…' not to contain '1.200,00'
+
+- Expected
++ Received
+
+- 1.200,00
++
++   ← Kasaya dön
++   Kasa HareketiKaydetmeden Önce Kontrol EdinYönNakit ÇıkışTutar₺40,00AçıklamamarketKasadaki beklenen nakit₺1.200,00DüzeltOnayla ve kaydet
++   
++   
++
+
+ ❯ cash-session-movement.test.js:154:25
+    152|     expect(summary).toContain("40,00");
+    153|     expect(summary).toContain("market");
+    154|     expect(summary).not.toContain("1.200,00");
+       |                         ^
+    155|     expect($("#approval-warning")).toBeNull();
+    156|     expect(posted(calls, "/cash-movements")).toHaveLength(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 67 passed (70)
+   Start at  10:17:38
+   Duration  13.95s (transform 2.21s, setup 37ms, import 148ms, tests 13.06s, environment 2.33s)
+
+exit code: 1

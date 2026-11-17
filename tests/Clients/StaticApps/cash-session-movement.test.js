@@ -143,7 +143,7 @@ describe("cash-session.js cash movements", () => {
     expect(posted(calls, "/cash-movements")).toHaveLength(0);
   });
 
-  it("shows a summary of direction, amount, reason and expected cash before saving", async () => {
+  it("shows a summary of direction, amount and reason before saving, without the expected cash", async () => {
     const { calls } = await open({ expected: 1200 });
     await toSummary("out", "40", "  market  ");
 
@@ -151,7 +151,7 @@ describe("cash-session.js cash movements", () => {
     expect(summary).toContain("Nakit Çıkış");
     expect(summary).toContain("40,00");
     expect(summary).toContain("market");
-    expect(summary).toContain("1.200,00");
+    expect(summary).not.toContain("1.200,00");
     expect($("#approval-warning")).toBeNull();
     expect(posted(calls, "/cash-movements")).toHaveLength(0);
   });
