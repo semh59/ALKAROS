@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/workspace.test.tsx (69 tests | 1 failed) 2324ms
+     × sends the cashier to the payment page with the way back to this screen 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /billing route opens an order's bill once > sends the cashier to the payment page with the way back to this screen
+AssertionError: expected '/cashier/payments/split-payment/index…' to be '/cashier/payments/split-payment/index…' // Object.is equality
+
+Expected: "/cashier/payments/split-payment/index.html?billId=55555555-5555-5555-5555-555555555555&from=billing"
+Received: "/cashier/payments/split-payment/index.html?billId=55555555-5555-5555-5555-555555555555"
+
+ ❯ src/routes/workspace.test.tsx:1539:8
+    1537|
+    1538|     expect(document.querySelector("a.billing-route__collect")!.getAttr…
+    1539|       .toBe("/cashier/payments/split-payment/index.html?billId=5555555…
+       |        ^
+    1540|   });
+    1541| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 101 passed (102)
+   Start at  23:55:46
+   Duration  7.12s (transform 3.55s, setup 0ms, import 3.23s, tests 5.12s, environment 3.26s)
+

@@ -501,7 +501,7 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
         // inbound link from anywhere in the running app.
         <a
           className="billing-route__collect"
-          href={`/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(design.billId)}`}
+          href={`/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(design.billId)}&from=billing`}
         >
           Tahsilata geç
         </a>

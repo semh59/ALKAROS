@@ -1515,6 +1515,29 @@ describe("workspace /billing route opens an order's bill once", () => {
     expect(document.body.textContent).toContain("H-1");
     expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("/from-order/"))).toHaveLength(1);
   });
+
+  it("sends the cashier to the payment page with the way back to this screen", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/from-order/")) return billingJson(orderBillDesign);
+      if (path.endsWith("/owners")) return billingJson([]);
+      throw new Error(`unexpected fetch: ${path}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    window.history.replaceState({}, "", "/billing?orderId=77777777-7777-7777-7777-777777777777");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="66666666-6666-6666-6666-666666666666" displayName="Test" capabilities={["bills.split"]}
+          path="/billing" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>,
+    ));
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+
+    expect(document.querySelector("a.billing-route__collect")!.getAttribute("href"))
+      .toBe("/cashier/payments/split-payment/index.html?billId=55555555-5555-5555-5555-555555555555&from=billing");
+  });
 });
 
 describe("workspace header drawer button", () => {

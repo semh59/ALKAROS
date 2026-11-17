@@ -70,6 +70,15 @@ describe("cash session status", () => {
     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe(expected);
   });
 
+  it("an open drawer link carries the current page too, so the drawer page's way back leads here", async () => {
+    window.history.replaceState({}, "", "/tables?zone=a");
+    fetchMock.mockResolvedValue(answer(200, { cashSessionId: "s-1", cashierUserId: "u-1" }));
+    await show();
+
+    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href"))
+      .toBe("/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da");
+  });
+
   it.each([500, 503, 429])("a %i is a failed read, never 'closed'", async (status) => {
     fetchMock.mockResolvedValue(answer(status, { error: { message: "raw server text" } }));
     await show();
@@ -89,9 +98,9 @@ describe("cash session status", () => {
     expect(text()).not.toContain("Kasa: Açık");
     const band = document.querySelector(".cash-session-band")!;
     expect(band.textContent).toContain("Oturumu açan kasiyer ya da bir yönetici kapatmalı");
-    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html?returnTo=%2F");
     expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu gör");
-    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
+    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html?returnTo=%2F");
   });
 
   it("names the owner of another user's session in the header, read from the owner endpoint", async () => {

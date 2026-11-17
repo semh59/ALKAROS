@@ -2433,7 +2433,9 @@
 
   var QUEUE_BACK = queryParam('from') === 'recent-sales'
     ? { href: '/recent-sales', label: 'Son satışlara dön', reselect: 'Son satışlardan tekrar seçin.' }
-    : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
+    : queryParam('from') === 'billing' && queryParam('billId')
+      ? { href: '/billing?billId=' + encodeURIComponent(queryParam('billId')), label: 'Hesap bölmeye dön', splitScreen: true, reselect: 'Hesap bölme ekranından tekrar seçin.' }
+      : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
   var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
 
   function renderCancelled() {
@@ -2879,7 +2881,8 @@
       (state.receiptConfirm
         ? '<button class="sp-btn sp-btn-secondary" type="button" id="cancel-receipt" data-receipt-action="cancel">Vazgeç</button>'
         : '') +
-      BACK_LINK +
+      // A paid bill has no split screen to go back to: from there the next job is the only way on.
+      (QUEUE_BACK.splitScreen ? '' : BACK_LINK) +
       '</div>' +
       '<div class="sp-card">' + renderFold('refundPaid', 'İade', renderRefundSection(false), refundNeedsAttention()) + '</div>' +
       renderReceiptReset();

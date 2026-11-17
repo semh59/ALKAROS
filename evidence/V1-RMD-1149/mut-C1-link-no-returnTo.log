@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (33 tests | 2 failed) 2593ms
+     × an open drawer link carries the current page too, so the drawer page's way back leads here 12ms
+     × an open session of another user says so in the header and in a band that names who may close it 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open drawer link carries the current page too, so the drawer page's way back leads here
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da"
+Received: "/cashier/payments/cash-session/index.html"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:79:8
+     77|
+     78|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+     79|       .toBe("/cashier/payments/cash-session/index.html?returnTo=%2Ftab…
+       |        ^
+     80|   });
+     81|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open session of another user says so in the header and in a band that names who may close it
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2F"
+Received: "/cashier/payments/cash-session/index.html"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:103:100
+    101|     expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashi…
+    102|     expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu …
+    103|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+       |                                                                                                    ^
+    104|   });
+    105|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 100 passed (102)
+   Start at  23:55:26
+   Duration  6.83s (transform 3.36s, setup 0ms, import 3.08s, tests 4.99s, environment 2.82s)
+

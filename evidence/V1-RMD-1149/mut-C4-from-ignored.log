@@ -1,0 +1,73 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-back-link-origin.test.js > the way back from the payment page to the bill split screen > adds no way back to the split screen on a paid bill: the next job is the only way on
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794948910167-0.9021848557498924:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794948910167-0.9021848557498924:597:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794948910167-0.9021848557498924:711:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-back-link-origin.test.js (3 tests | 2 failed) 562ms
+     × adds no way back to the split screen on a paid bill: the next job is the only way on 261ms
+     × goes back to this bill's split screen when the bill could not be found there 147ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-back-link-origin.test.js > the way back from the payment page to the bill split screen > adds no way back to the split screen on a paid bill: the next job is the only way on
+AssertionError: expected [ { …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "href": "/pending-checks",
++     "text": "Bekleyen hesaplara dön",
++   },
++ ]
+
+ ❯ split-payment-back-link-origin.test.js:49:25
+     47|     await openPaid("&from=billing");
+     48|
+     49|     expect(backLinks()).toEqual([]);
+       |                         ^
+     50|   });
+     51|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-back-link-origin.test.js > the way back from the payment page to the bill split screen > goes back to this bill's split screen when the bill could not be found there
+AssertionError: expected [ { …(2) } ] to deeply equal [ { text: 'Hesap bölmeye dön', …(1) } ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "href": "/billing?billId=22222222-2222-2222-2222-222222222222",
+-     "text": "Hesap bölmeye dön",
++     "href": "/pending-checks",
++     "text": "Bekleyen hesaplara dön",
+    },
+  ]
+
+ ❯ split-payment-back-link-origin.test.js:55:25
+     53|     await openMissing(`?billId=${BILL_ID}&from=billing`);
+     54|
+     55|     expect(backLinks()).toEqual([{ text: "Hesap bölmeye dön", href: `/…
+       |                         ^
+     56|     expect(document.querySelector("#app .sp-subtitle").textContent).to…
+     57|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 9 passed (11)
+   Start at  23:55:08
+   Duration  3.39s (transform 1.05s, setup 66ms, import 142ms, tests 1.87s, environment 3.19s)
+

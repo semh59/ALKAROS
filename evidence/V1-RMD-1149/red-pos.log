@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx (33 tests | 2 failed) 2837ms
+     × an open drawer link carries the current page too, so the drawer page's way back leads here 13ms
+     × an open session of another user says so in the header and in a band that names who may close it 4ms
+ ❯ src/routes/workspace.test.tsx (69 tests | 1 failed) 2178ms
+     × sends the cashier to the payment page with the way back to this screen 28ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /billing route opens an order's bill once > sends the cashier to the payment page with the way back to this screen
+AssertionError: expected '/cashier/payments/split-payment/index…' to be '/cashier/payments/split-payment/index…' // Object.is equality
+
+Expected: "/cashier/payments/split-payment/index.html?billId=55555555-5555-5555-5555-555555555555&from=billing"
+Received: "/cashier/payments/split-payment/index.html?billId=55555555-5555-5555-5555-555555555555"
+
+ ❯ src/routes/workspace.test.tsx:1539:8
+    1537|
+    1538|     expect(document.querySelector("a.billing-route__collect")!.getAttr…
+    1539|       .toBe("/cashier/payments/split-payment/index.html?billId=5555555…
+       |        ^
+    1540|   });
+    1541| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open drawer link carries the current page too, so the drawer page's way back leads here
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da"
+Received: "/cashier/payments/cash-session/index.html"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:79:8
+     77|
+     78|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+     79|       .toBe("/cashier/payments/cash-session/index.html?returnTo=%2Ftab…
+       |        ^
+     80|   });
+     81|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/cash-session-status/CashSessionStatus.test.tsx > cash session status > an open session of another user says so in the header and in a band that names who may close it
+AssertionError: expected '/cashier/payments/cash-session/index.…' to be '/cashier/payments/cash-session/index.…' // Object.is equality
+
+Expected: "/cashier/payments/cash-session/index.html?returnTo=%2F"
+Received: "/cashier/payments/cash-session/index.html"
+
+ ❯ src/features/cash-session-status/CashSessionStatus.test.tsx:101:59
+     99|     const band = document.querySelector(".cash-session-band")!;
+    100|     expect(band.textContent).toContain("Oturumu açan kasiyer ya da bir…
+    101|     expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashi…
+       |                                                           ^
+    102|     expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu …
+    103|     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-l…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 99 passed (102)
+   Start at  23:50:54
+   Duration  6.81s (transform 3.65s, setup 0ms, import 3.33s, tests 5.01s, environment 2.69s)
+

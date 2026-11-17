@@ -1,0 +1,134 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index a69ba3165..5e03afde4 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2433,7 +2433,9 @@
+ 
+   var QUEUE_BACK = queryParam('from') === 'recent-sales'
+     ? { href: '/recent-sales', label: 'Son satışlara dön', reselect: 'Son satışlardan tekrar seçin.' }
+-    : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
++    : queryParam('from') === 'billing' && queryParam('billId')
++      ? { href: '/billing?billId=' + encodeURIComponent(queryParam('billId')), label: 'Hesap bölmeye dön', splitScreen: true, reselect: 'Hesap bölme ekranından tekrar seçin.' }
++      : { href: '/pending-checks', label: 'Bekleyen hesaplara dön', reselect: 'Bekleyen hesaplardan tekrar seçin.' };
+   var BACK_LINK = backLink(QUEUE_BACK.href, QUEUE_BACK.label);
+ 
+   function renderCancelled() {
+@@ -2879,7 +2881,8 @@
+       (state.receiptConfirm
+         ? '<button class="sp-btn sp-btn-secondary" type="button" id="cancel-receipt" data-receipt-action="cancel">Vazgeç</button>'
+         : '') +
+-      BACK_LINK +
++      // A paid bill has no split screen to go back to: from there the next job is the only way on.
++      (QUEUE_BACK.splitScreen ? '' : BACK_LINK) +
+       '</div>' +
+       '<div class="sp-card">' + renderFold('refundPaid', 'İade', renderRefundSection(false), refundNeedsAttention()) + '</div>' +
+       renderReceiptReset();
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+index f92de8646..585fc6adb 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.test.tsx
+@@ -70,6 +70,15 @@ describe("cash session status", () => {
+     expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe(expected);
+   });
+ 
++  it("an open drawer link carries the current page too, so the drawer page's way back leads here", async () => {
++    window.history.replaceState({}, "", "/tables?zone=a");
++    fetchMock.mockResolvedValue(answer(200, { cashSessionId: "s-1", cashierUserId: "u-1" }));
++    await show();
++
++    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href"))
++      .toBe("/cashier/payments/cash-session/index.html?returnTo=%2Ftables%3Fzone%3Da");
++  });
++
+   it.each([500, 503, 429])("a %i is a failed read, never 'closed'", async (status) => {
+     fetchMock.mockResolvedValue(answer(status, { error: { message: "raw server text" } }));
+     await show();
+@@ -89,9 +98,9 @@ describe("cash session status", () => {
+     expect(text()).not.toContain("Kasa: Açık");
+     const band = document.querySelector(".cash-session-band")!;
+     expect(band.textContent).toContain("Oturumu açan kasiyer ya da bir yönetici kapatmalı");
+-    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
++    expect(band.querySelector("a")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html?returnTo=%2F");
+     expect(band.querySelector("a")!.textContent).toBe("Kasa oturumunu gör");
+-    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html");
++    expect(document.querySelector<HTMLAnchorElement>("a.cash-session-link")!.getAttribute("href")).toBe("/cashier/payments/cash-session/index.html?returnTo=%2F");
+   });
+ 
+   it("names the owner of another user's session in the header, read from the owner endpoint", async () => {
+diff --git a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+index 0dbb14c87..89381e76f 100644
+--- a/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
++++ b/src/Clients/PosTerminal/src/features/cash-session-status/CashSessionStatus.tsx
+@@ -1,6 +1,6 @@
+ import { useCallback, useEffect, useRef, useState } from "react";
+ import { cashSessionText } from "../../strings";
+-import { cashSessionOpenHref, cashSessionPageHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
++import { cashSessionOpenHref, readCashSessionOwnerName, readCashSessionState, type CashSessionState } from "./cashSessionStatusApi";
+ import "./cash-session-status.css";
+ 
+ export interface CashSessionStatus {
+@@ -52,7 +52,7 @@ export function CashSessionLink({ status, className = "header-action" }: { statu
+   const key = status.state ?? "checking";
+   if (key === "forbidden") return <span className={`${className} cash-session-link cash-session-link--forbidden`} role="status">{cashSessionText.forbidden}</span>;
+   const text = key === "notOwned" && status.ownerName ? `${cashSessionText.notOwned} (${status.ownerName})` : cashSessionText[key];
+-  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={key === "closed" ? cashSessionOpenHref() : cashSessionPageHref} title={text}>{text}</a>;
++  return <a className={`${className} cash-session-link cash-session-link--${key}`} href={cashSessionOpenHref()} title={text}>{text}</a>;
+ }
+ 
+ /** Shown above the work area while nothing says the user's own drawer is open. */
+@@ -62,7 +62,7 @@ export function CashSessionBand({ status }: { status: CashSessionStatus }) {
+   return <div className="cash-session-band" role="status">
+     <span>{cashSessionText[`${state}Band`]}</span>
+     {state !== "unknown"
+-      ? <a href={state === "closed" ? cashSessionOpenHref() : cashSessionPageHref}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
++      ? <a href={cashSessionOpenHref()}>{state === "closed" ? cashSessionText.openAction : cashSessionText.viewAction}</a>
+       : <button data-telemetry-id="b.features.cash-session-status.1" type="button" onClick={status.reload}>{cashSessionText.retry}</button>}
+   </div>;
+ }
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index bec900fe6..2652e9de8 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -1515,6 +1515,29 @@ describe("workspace /billing route opens an order's bill once", () => {
+     expect(document.body.textContent).toContain("H-1");
+     expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("/from-order/"))).toHaveLength(1);
+   });
++
++  it("sends the cashier to the payment page with the way back to this screen", async () => {
++    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
++      const path = String(input);
++      if (path.includes("/from-order/")) return billingJson(orderBillDesign);
++      if (path.endsWith("/owners")) return billingJson([]);
++      throw new Error(`unexpected fetch: ${path}`);
++    });
++    vi.stubGlobal("fetch", fetchMock);
++    window.history.replaceState({}, "", "/billing?orderId=77777777-7777-7777-7777-777777777777");
++    document.body.innerHTML = '<div id="root"></div>';
++    root = createRoot(document.getElementById("root")!);
++    await act(async () => root!.render(
++      <RouterProvider>
++        <ExperiencePage terminalId="66666666-6666-6666-6666-666666666666" displayName="Test" capabilities={["bills.split"]}
++          path="/billing" backendStatus="online" onLogout={async () => {}} />
++      </RouterProvider>,
++    ));
++    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
++
++    expect(document.querySelector("a.billing-route__collect")!.getAttribute("href"))
++      .toBe("/cashier/payments/split-payment/index.html?billId=55555555-5555-5555-5555-555555555555&from=billing");
++  });
+ });
+ 
+ describe("workspace header drawer button", () => {
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index e1b5ca77f..90751ea6f 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -501,7 +501,7 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
+         // inbound link from anywhere in the running app.
+         <a
+           className="billing-route__collect"
+-          href={`/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(design.billId)}`}
++          href={`/cashier/payments/split-payment/index.html?billId=${encodeURIComponent(design.billId)}&from=billing`}
+         >
+           Tahsilata geç
+         </a>

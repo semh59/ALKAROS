@@ -1,0 +1,2 @@
+- ui-akis-uzmani: orta bulgu (odendi ekraninda anlamsiz geri baglanti) uygulandi + test + C6; digerleri KABUL
+- qa-frontend: KABUL; olu export (gorev disi dosya) risk
