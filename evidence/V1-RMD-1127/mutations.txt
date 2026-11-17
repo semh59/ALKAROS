@@ -1,0 +1,5 @@
+M1-forced-manual exit 1 restored cmp ok
+M2-amount-cleared exit 1 restored cmp ok
+M3-notes-cleared exit 1 restored cmp ok
+M4-denoms-cleared exit 1 restored cmp ok
+M5-expected-leak exit 1 restored cmp ok

@@ -1,0 +1,66 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-blind-count.test.js (3 tests | 1 failed) 1689ms
+     × shows no expected amount on the count screen, then shows it once the count is sent, and hides it again on a recount 1250ms
+ ❯ cash-session-close-recount.test.js (6 tests | 3 failed) 4563ms
+     × takes the cashier back to the count with the denomination entries still filled and closes with the corrected count 1318ms
+     × keeps a single typed amount and the count note when the cashier goes back to correct the count 1244ms
+     × asks for the acknowledgement of open business again after a recount 1241ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-blind-count.test.js > cash-session.js blind count: the expected cash stays hidden until the count is sent > shows no expected amount on the count screen, then shows it once the count is sent, and hides it again on a recount
+AssertionError: expected null not to be null
+ ❯ cash-session-blind-count.test.js:97:56
+     95|
+     96|     $("#recount").click();
+     97|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+       |                                                        ^
+     98|     expect(text()).not.toMatch(EXPECTED_TEXT);
+     99|     expect(text()).not.toContain("Beklenen");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > takes the cashier back to the count with the denomination entries still filled and closes with the corrected count
+AssertionError: expected null not to be null
+ ❯ cash-session-close-recount.test.js:62:56
+     60|
+     61|     $("#recount").click();
+     62|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+       |                                                        ^
+     63|     expect($("#denom-100").value).toBe("10");
+     64|     expect($("#counted-amount")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > keeps a single typed amount and the count note when the cashier goes back to correct the count
+AssertionError: expected null not to be null
+ ❯ cash-session-close-recount.test.js:82:61
+     80|     await vi.waitFor(() => expect($("#toggle-count-mode")).not.toBeNul…
+     81|     $("#toggle-count-mode").click();
+     82|     await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull()…
+       |                                                             ^
+     83|     type("#counted-amount", "870.50");
+     84|     type("#count-notes", "bozuk para eksik");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > asks for the acknowledgement of open business again after a recount
+AssertionError: expected null not to be null
+ ❯ cash-session-close-recount.test.js:124:56
+    122|
+    123|     $("#recount").click();
+    124|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+       |                                                        ^
+    125|     $("#submit-count").click();
+    126|     await vi.waitFor(() => expect($("#ack-unsettled")).not.toBeNull());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 5 passed (9)
+   Start at  11:08:51
+   Duration  6.10s (transform 367ms, setup 37ms, import 85ms, tests 6.25s, environment 2.36s)
+

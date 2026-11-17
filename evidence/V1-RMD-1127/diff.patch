@@ -1,0 +1,95 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 670a69828..2e222d032 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -533,8 +533,6 @@
+       state.varianceExceeded = false;
+       state.zeroCountPrompt = false;
+       state.notice = null;
+-      state.drafts.counted = '';
+-      state.drafts.countNotes = '';
+       state.error = null;
+       // CashSessionSnapshot.ExpectedCash yalnız /close'un kendi yazma
+       // yolunda tazelenir - kapatmadan önce hâlâ açılıştaki eski değeri
+@@ -1199,9 +1197,7 @@
+       '</div>';
+     document.getElementById('recount').addEventListener('click', function () {
+       state.phase = 'counting';
+-      state.countMode = 'manual';
+       state.drafts.acknowledged = false;
+-      state.drafts.counted = counted.toFixed(2);
+       state.varianceExceeded = false;
+       state.error = null;
+       render();
+diff --git a/tests/Clients/StaticApps/cash-session-blind-count.test.js b/tests/Clients/StaticApps/cash-session-blind-count.test.js
+index 8b6f28463..c03c59883 100644
+--- a/tests/Clients/StaticApps/cash-session-blind-count.test.js
++++ b/tests/Clients/StaticApps/cash-session-blind-count.test.js
+@@ -94,7 +94,7 @@ describe("cash-session.js blind count: the expected cash stays hidden until the
+     expect(text()).toMatch(EXPECTED_TEXT);
+ 
+     $("#recount").click();
+-    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
++    await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+     expect(text()).not.toMatch(EXPECTED_TEXT);
+     expect(text()).not.toContain("Beklenen");
+   });
+diff --git a/tests/Clients/StaticApps/cash-session-close-recount.test.js b/tests/Clients/StaticApps/cash-session-close-recount.test.js
+index 1fc46ea8e..6cd55f7c7 100644
+--- a/tests/Clients/StaticApps/cash-session-close-recount.test.js
++++ b/tests/Clients/StaticApps/cash-session-close-recount.test.js
+@@ -54,14 +54,15 @@ describe("cash-session.js closing screen: recount and ready reasons", () => {
+   beforeEach(() => { vi.resetModules(); window.history.replaceState({}, "", "/"); });
+   afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ""; });
+ 
+-  it("takes the cashier back to the count with the typed amount and closes with the corrected count", async () => {
++  it("takes the cashier back to the count with the denomination entries still filled and closes with the corrected count", async () => {
+     const calls = await toClosing(10);
+     expect($("#recount").textContent).toBe("Sayımı düzelt");
+ 
+     $("#recount").click();
+-    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
+-    expect($("#counted-amount").value).toBe("1000.00");
+-    type("#counted-amount", "900");
++    await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
++    expect($("#denom-100").value).toBe("10");
++    expect($("#counted-amount")).toBeNull();
++    type("#denom-100", "9");
+     $("#submit-count").click();
+     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+ 
+@@ -73,6 +74,25 @@ describe("cash-session.js closing screen: recount and ready reasons", () => {
+     expect(sent(calls, "/close")[0].body.ActualCash).toBe(900);
+   });
+ 
++  it("keeps a single typed amount and the count note when the cashier goes back to correct the count", async () => {
++    const calls = await toClosing(10);
++    $("#recount").click();
++    await vi.waitFor(() => expect($("#toggle-count-mode")).not.toBeNull());
++    $("#toggle-count-mode").click();
++    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
++    type("#counted-amount", "870.50");
++    type("#count-notes", "bozuk para eksik");
++    $("#submit-count").click();
++    await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
++
++    $("#recount").click();
++    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
++
++    expect($("#counted-amount").value).toBe("870.50");
++    expect($("#count-notes").value).toBe("bozuk para eksik");
++    expect(sent(calls, "/counts").map((c) => c.body.CountedAmount)).toEqual([1000, 870.5]);
++  });
++
+   it("offers ready reasons for a difference and a tap writes the text into the explanation", async () => {
+     const calls = await toClosing(9);
+     const presets = [...document.querySelectorAll("[data-reason-preset]")];
+@@ -101,7 +121,7 @@ describe("cash-session.js closing screen: recount and ready reasons", () => {
+     await vi.waitFor(() => expect($("#ack-unsettled").checked).toBe(true));
+ 
+     $("#recount").click();
+-    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
++    await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+     $("#submit-count").click();
+     await vi.waitFor(() => expect($("#ack-unsettled")).not.toBeNull());
+ 

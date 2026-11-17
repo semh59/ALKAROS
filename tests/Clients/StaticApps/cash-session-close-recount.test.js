@@ -54,14 +54,15 @@ describe("cash-session.js closing screen: recount and ready reasons", () => {
   beforeEach(() => { vi.resetModules(); window.history.replaceState({}, "", "/"); });
   afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ""; });
 
-  it("takes the cashier back to the count with the typed amount and closes with the corrected count", async () => {
+  it("takes the cashier back to the count with the denomination entries still filled and closes with the corrected count", async () => {
     const calls = await toClosing(10);
     expect($("#recount").textContent).toBe("Sayımı düzelt");
 
     $("#recount").click();
-    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
-    expect($("#counted-amount").value).toBe("1000.00");
-    type("#counted-amount", "900");
+    await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+    expect($("#denom-100").value).toBe("10");
+    expect($("#counted-amount")).toBeNull();
+    type("#denom-100", "9");
     $("#submit-count").click();
     await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
 
@@ -71,6 +72,25 @@ describe("cash-session.js closing screen: recount and ready reasons", () => {
     $("#submit-close").click();
     await vi.waitFor(() => expect(sent(calls, "/close")).toHaveLength(1));
     expect(sent(calls, "/close")[0].body.ActualCash).toBe(900);
+  });
+
+  it("keeps a single typed amount and the count note when the cashier goes back to correct the count", async () => {
+    const calls = await toClosing(10);
+    $("#recount").click();
+    await vi.waitFor(() => expect($("#toggle-count-mode")).not.toBeNull());
+    $("#toggle-count-mode").click();
+    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
+    type("#counted-amount", "870.50");
+    type("#count-notes", "bozuk para eksik");
+    $("#submit-count").click();
+    await vi.waitFor(() => expect($("#submit-close")).not.toBeNull());
+
+    $("#recount").click();
+    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
+
+    expect($("#counted-amount").value).toBe("870.50");
+    expect($("#count-notes").value).toBe("bozuk para eksik");
+    expect(sent(calls, "/counts").map((c) => c.body.CountedAmount)).toEqual([1000, 870.5]);
   });
 
   it("offers ready reasons for a difference and a tap writes the text into the explanation", async () => {
@@ -101,7 +121,7 @@ describe("cash-session.js closing screen: recount and ready reasons", () => {
     await vi.waitFor(() => expect($("#ack-unsettled").checked).toBe(true));
 
     $("#recount").click();
-    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
+    await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     $("#submit-count").click();
     await vi.waitFor(() => expect($("#ack-unsettled")).not.toBeNull());
 

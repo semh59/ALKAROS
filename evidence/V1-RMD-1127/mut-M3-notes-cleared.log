@@ -1,0 +1,32 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-recount.test.js (6 tests | 1 failed) 1696ms
+     × keeps a single typed amount and the count note when the cashier goes back to correct the count 278ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > keeps a single typed amount and the count note when the cashier goes back to correct the count
+AssertionError: expected '' to be 'bozuk para eksik' // Object.is equality
+
+- Expected
++ Received
+
+- bozuk para eksik
+
+ ❯ cash-session-close-recount.test.js:92:37
+     90|
+     91|     expect($("#counted-amount").value).toBe("870.50");
+     92|     expect($("#count-notes").value).toBe("bozuk para eksik");
+       |                                     ^
+     93|     expect(sent(calls, "/counts").map((c) => c.body.CountedAmount)).to…
+     94|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 8 passed (9)
+   Start at  11:09:06
+   Duration  3.13s (transform 334ms, setup 31ms, import 83ms, tests 2.30s, environment 2.21s)
+

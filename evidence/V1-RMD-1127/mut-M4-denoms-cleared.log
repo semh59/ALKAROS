@@ -1,0 +1,43 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-recount.test.js (6 tests | 2 failed) 2629ms
+     × takes the cashier back to the count with the denomination entries still filled and closes with the corrected count 329ms
+     × asks for the acknowledgement of open business again after a recount 1249ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > takes the cashier back to the count with the denomination entries still filled and closes with the corrected count
+AssertionError: expected '0' to be '10' // Object.is equality
+
+Expected: "10"
+Received: "0"
+
+ ❯ cash-session-close-recount.test.js:63:35
+     61|     $("#recount").click();
+     62|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+     63|     expect($("#denom-100").value).toBe("10");
+       |                                   ^
+     64|     expect($("#counted-amount")).toBeNull();
+     65|     type("#denom-100", "9");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-close-recount.test.js > cash-session.js closing screen: recount and ready reasons > asks for the acknowledgement of open business again after a recount
+AssertionError: expected null not to be null
+ ❯ cash-session-close-recount.test.js:126:60
+    124|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+    125|     $("#submit-count").click();
+    126|     await vi.waitFor(() => expect($("#ack-unsettled")).not.toBeNull());
+       |                                                            ^
+    127|
+    128|     expect($("#ack-unsettled").checked).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 7 passed (9)
+   Start at  11:09:12
+   Duration  4.35s (transform 396ms, setup 52ms, import 100ms, tests 3.25s, environment 2.55s)
+

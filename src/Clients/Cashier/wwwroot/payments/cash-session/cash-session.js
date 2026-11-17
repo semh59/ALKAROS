@@ -533,8 +533,6 @@
       state.varianceExceeded = false;
       state.zeroCountPrompt = false;
       state.notice = null;
-      state.drafts.counted = '';
-      state.drafts.countNotes = '';
       state.error = null;
       // CashSessionSnapshot.ExpectedCash yalnız /close'un kendi yazma
       // yolunda tazelenir - kapatmadan önce hâlâ açılıştaki eski değeri
@@ -1199,9 +1197,7 @@
       '</div>';
     document.getElementById('recount').addEventListener('click', function () {
       state.phase = 'counting';
-      state.countMode = 'manual';
       state.drafts.acknowledged = false;
-      state.drafts.counted = counted.toFixed(2);
       state.varianceExceeded = false;
       state.error = null;
       render();

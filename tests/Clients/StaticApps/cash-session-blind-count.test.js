@@ -94,7 +94,7 @@ describe("cash-session.js blind count: the expected cash stays hidden until the 
     expect(text()).toMatch(EXPECTED_TEXT);
 
     $("#recount").click();
-    await vi.waitFor(() => expect($("#counted-amount")).not.toBeNull());
+    await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     expect(text()).not.toMatch(EXPECTED_TEXT);
     expect(text()).not.toContain("Beklenen");
   });

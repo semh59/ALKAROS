@@ -1,0 +1,2 @@
+- qa-frontend: KABUL (kupur modunda not geri gelisi ayri test edilmedi; kucuk not)
+- qa-bulgu-dogrulayici: KABUL (testleri yeniden kosturdu, 147 yesil, M1-M5 gercek assert)
