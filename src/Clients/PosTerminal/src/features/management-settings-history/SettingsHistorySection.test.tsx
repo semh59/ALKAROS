@@ -85,6 +85,7 @@ describe("settings history section", () => {
       "garson.guest_live_bill_enabled", "garson.help_request_enabled", "garson.party_size_enabled", "garson.personal_comp_budget_enabled",
       "garson.seat_assignment_enabled", "garson.shift_handoff_notes_enabled", "garson.shift_summary_enabled", "garson.voluntary_tip_enabled",
       "cash.cash_out_approval_threshold", "approvals.manager_self_approval_enabled",
+      "cash.drawer_kick_enabled", "cash.drawer_printer_address",
     ];
     const client = fakeClient({ listSettings: vi.fn().mockResolvedValue(keys.map((key, index) => ({ ...toggle, key, settingId: `k${index}` }))) });
     await render(<SettingsHistorySection client={client} />);

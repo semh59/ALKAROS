@@ -19,6 +19,7 @@ const permissionLabels: Record<string, string> = {
   "bills.split": "Hesap bölme",
   "bills.void": "Gönderilmiş kalemi iptal etme",
   "cash.drawer": "Para çekmecesi işlemleri ve sayım",
+  "cash.drawer.kick": "Çekmeceyi satışsız açma",
   "cash.session.override": "Farklı kasa oturumunu yönetici onayıyla kapatma",
   "catalog.manage": "Ürün kataloğunu yönetme",
   "floorplan.manage": "Salon, masa yerleşimi ve kapasite düzenleme",

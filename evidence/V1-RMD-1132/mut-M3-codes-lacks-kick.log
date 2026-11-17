@@ -1,0 +1,8 @@
+D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.51]     ALKAROS.Identity.Authorization.Tests.Catalog.ApplicationPermissionsTests.CatalogHasTwentySixDistinctCodes [FAIL]
+[xUnit.net 00:00:00.64]     ALKAROS.Identity.Authorization.Tests.Catalog.ApplicationPermissionsTests.OpeningTheDrawerWithoutASaleIsHeldByCashierSupervisorAndManagerButNotWaiter [FAIL]
+[xUnit.net 00:00:00.66]     ALKAROS.Identity.Authorization.Tests.Catalog.ApplicationPermissionsTests.EveryRoleGrantIsAKnownCode [FAIL]
+[xUnit.net 00:00:01.06]     ALKAROS.Identity.Authorization.Tests.Catalog.PermissionSplitDatabaseTests.SeededGrantsMatchTheCatalogRoleMapForEveryRole [FAIL]
+
+Başarısız! - Başarısız:     4, Başarılı:    47, Atlanan:     0, Toplam:    51, Süre: 942 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0)

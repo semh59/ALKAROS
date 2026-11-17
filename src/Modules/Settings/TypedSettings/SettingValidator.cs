@@ -4,6 +4,7 @@ using System.Xml;
 using ALKAROS.Settings.BillAdjustmentCap;
 using ALKAROS.Settings.BusinessIdentity;
 using ALKAROS.Settings.CashCloseTolerance;
+using ALKAROS.Settings.CashDrawer;
 using ALKAROS.Settings.CashMovementApproval;
 using ALKAROS.Settings.KitchenDenseModeThreshold;
 using ALKAROS.Settings.QrOrderExpiry;
@@ -61,6 +62,7 @@ public sealed class SettingValidator : ISettingValidator
         [CashOutApprovalThresholdSetting.Key] = (v => WholeNumberBetween(v, 0, CashOutApprovalThresholdSetting.MaxValue), "Nakit çıkış onay eşiği 0 ile 1.000.000 TL arasında tam sayı olmalı (0 = her çıkış onay ister)."),
         [CloseVarianceToleranceSetting.Key] = (v => WholeNumberBetween(v, 0, CloseVarianceToleranceSetting.MaxValue), "Kasa kapanış fark toleransı 0 ile 500 TL arasında tam sayı olmalı."),
         [BillAdjustmentTotalCapSetting.Key] = (v => WholeNumberBetween(v, 0, BillAdjustmentTotalCapSetting.MaxValue), "Hesap başına ikram ve indirim sınırı 0 ile 100.000 TL arasında tam sayı olmalı (0 = her ikram ve indirim onay ister)."),
+        [CashDrawerSettings.PrinterAddressKey] = (v => v.Length == 0 || CashDrawerSettings.TryParseAddress(v, out _, out _), "Kasa yazıcısı adresi adres:port biçiminde olmalı (örn. 192.168.1.50:9100); port 1 ile 65535 arasında olmalı."),
         [BusinessNameSetting.Key] = (v => v.Length <= 80 && !v.Any(char.IsControl), "İşletme adı en çok 80 karakter olabilir ve denetim karakteri içeremez."),
     };
 

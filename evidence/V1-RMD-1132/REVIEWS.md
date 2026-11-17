@@ -1,0 +1,2 @@
+- qa-veritabani: KABUL (2 dusuk bulgu: adres bosluk kirpma ve bos host etiketi -> duzeltildi, test + M12/M13 killed)
+- qa-guvenlik-yetki: KABUL (2 dusuk: host:port kisiti yok/SSRF notu -> riske yazildi; IPv6 desteklenmez -> not)

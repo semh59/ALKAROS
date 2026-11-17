@@ -53,6 +53,7 @@ export const permissionLabels: Record<string, string> = {
   "tables.transfer": "Masa taşıma",
   "tables.merge": "Masa birleştirme",
   "cash.drawer": "Kasa çekmecesi",
+  "cash.drawer.kick": "Çekmeceyi satışsız açma",
 };
 
 export function permissionLabel(code: string): string {

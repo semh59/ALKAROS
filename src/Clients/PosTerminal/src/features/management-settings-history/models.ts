@@ -12,6 +12,8 @@ const labels: Record<string, string> = {
   "business.name": "İşletme adı",
   "cash.cash_out_approval_threshold": "Nakit çıkış onay eşiği",
   "cash.close_variance_tolerance": "Kasa kapanış fark toleransı",
+  "cash.drawer_kick_enabled": "Kasa çekmecesini yazıcıdan aç",
+  "cash.drawer_printer_address": "Kasa yazıcısı adresi",
   "kitchen.dense_mode_threshold": "Mutfak yoğun mod eşiği",
   "kitchen.live_sync_enabled": "Mutfak canlı eşitleme",
   "waiter.max_active_tables": "Garson başına en fazla açık masa",
@@ -29,6 +31,7 @@ const labels: Record<string, string> = {
 };
 
 const descriptions: Record<string, string> = {
+  "cash.drawer_kick_enabled": "Nakit ödeme alınınca ve kasiyer \"Satış yok\" dediğinde çekmece yazıcı üzerinden açılır. Gerçek yazıcı ve çekmecede denemeden açmayın; varsayılan kapalıdır.",
   "kitchen.live_sync_enabled": "Mutfak ekranı (KDS) kullanıyorsanız açın. Açıkken kalemin durumu (Hazırlanıyor, Hazır, Servis edildi) siparişe yansır ve garsona hazır bildirimi gider. Hazır biletler servis edilene kadar panoda ayrı bölümde durur. Kapalıyken bu bölüm kalkar ve sipariş durumu değişmez.",
 };
 

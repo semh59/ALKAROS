@@ -9,7 +9,7 @@ import { alertText, buttons, press, render, submit, type, unmount } from "../man
 import { ManagementApiError } from "../management/http";
 
 const codes = [
-  "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.session.override", "catalog.manage", "floorplan.manage",
+  "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.drawer.kick", "cash.session.override", "catalog.manage", "floorplan.manage",
   "identity.device_sessions.manage", "identity.permissions.manage", "identity.roles.manage", "identity.users.manage", "integrations.manage",
   "inventory.manage", "kitchen.advance", "kitchen.availability.suspend", "kitchen.reprint", "kitchen.routing.manage", "menu.manage",
   "observability.manage", "operations.backup", "orders.create", "orders.send", "orders.transfer-server", "orders.transfer-server-any",

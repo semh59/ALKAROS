@@ -1,0 +1,14 @@
+M1-waiter-granted exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:    49, Atlanan:     0, Toplam:    51, Süre: 1 s - ALKAROS.Identity.Authorizatio
+M2-cashier-lacks-kick exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:    49, Atlanan:     0, Toplam:    51, Süre: 714 ms - ALKAROS.Identity.Authoriza
+M3-codes-lacks-kick exit 1 restored cmp ok | Başarısız! - Başarısız:     4, Başarılı:    47, Atlanan:     0, Toplam:    51, Süre: 942 ms - ALKAROS.Identity.Authoriza
+M4-port-zero-allowed exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:    90, Atlanan:     0, Toplam:    91, Süre: 5 s - ALKAROS.Settings.TypedSetting
+M5-off-still-active exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:    90, Atlanan:     0, Toplam:    91, Süre: 5 s - ALKAROS.Settings.TypedSetting
+M6-validator-rule-open exit 1 restored cmp ok | Başarısız! - Başarısız:     3, Başarılı:    88, Atlanan:     0, Toplam:    91, Süre: 5 s - ALKAROS.Settings.TypedSetting
+M7-space-in-host exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:    89, Atlanan:     0, Toplam:    91, Süre: 5 s - ALKAROS.Settings.TypedSetting
+M8-default-on exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Setti
+M9-down-keeps-grants exit 1 restored cmp ok | Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 15 s - ALKAROS.Host.Tests.dll (net8
+M10-no-setting-label exit 1 restored cmp ok | Test Files  1 failed | 3 passed (4) | Tests  1 failed | 55 passed (56)
+M11-no-permission-label exit 1 restored cmp ok | Test Files  1 failed | 3 passed (4) | Tests  1 failed | 55 passed (56)
+DONE
+M12-no-label-rule exit 1 restored cmp ok | Başarısız! - Başarısız:     3, Başarılı:    92, Atlanan:     0, Toplam:    95, Süre: 4 s - ALKAROS.Settings.TypedSetting
+M13-trims-address exit 1 restored cmp ok | Başarısız! - Başarısız:     2, Başarılı:    93, Atlanan:     0, Toplam:    95, Süre: 5 s - ALKAROS.Settings.TypedSetting

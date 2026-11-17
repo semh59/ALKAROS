@@ -232,6 +232,36 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCashDrawerSettingsAreListedOffAndWithoutAPrinterAddress()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/settings/");
+
+        var all = (await response.Content.ReadFromJsonAsync<SettingRecordV1[]>())!;
+        var enabled = Assert.Single(all, r => r.Key == "cash.drawer_kick_enabled");
+        var address = Assert.Single(all, r => r.Key == "cash.drawer_printer_address");
+        Assert.Equal(("false", "Toggle", "cash"), (enabled.Value, enabled.DataType, enabled.ModuleOwner));
+        Assert.Equal(("", "Text", "cash"), (address.Value, address.DataType, address.ModuleOwner));
+    }
+
+    [Theory]
+    [InlineData("192.168.1.50", false)]
+    [InlineData("192.168.1.50:70000", false)]
+    [InlineData("192.168.1.50:9100", true)]
+    public async Task ThePrinterAddressAcceptsHostAndPortOnly(string value, bool accepted)
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var listing = await client.GetAsync("/api/v1/management/settings/");
+
+        using var response = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/cash.drawer_printer_address", new UpdateSettingValueV1(value, ExpectedRowVersion: 1));
+
+        Assert.Equal(accepted ? HttpStatusCode.OK : HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(accepted ? value : "", await _database.GetRawValueAsync("cash.drawer_printer_address"));
+    }
+
+    [Fact]
     public async Task TheBillAdjustmentCapIsListedWithTheComplimentaryBudgetCeilingAsItsDefault()
     {
         using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);

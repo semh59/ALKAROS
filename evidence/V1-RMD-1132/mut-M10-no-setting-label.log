@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (27 tests | 1 failed) 607ms
+     × every setting the server ships by default has a Turkish name 36ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > every setting the server ships by default has a Turkish name
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' not to contain 'Tanımsız ayar'
+
+Expected: "Tanımsız ayar"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemQR siparişi onay bekleme süresiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterAyrı rezervasyon istasyonuEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterServis sırası (kurs) yönetimiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterMisafirin canlı hesap görünümüEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterGarson yardım çağrısıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKişi sayısı sorulmasıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKişisel ikram bütçesiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKoltuk atamasıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterVardiya devir notlarıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterVardiya özetiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterİsteğe bağlı bahşişEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterNakit çıkış onay eşiğiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterYönetici kendi talebini ve kendi kasa mutabakatını onaylayabilirEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKasa çekmecesini yazıcıdan açEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterTanımsız ayarEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:92:43
+     90|     const client = fakeClient({ listSettings: vi.fn().mockResolvedValu…
+     91|     await render(<SettingsHistorySection client={client} />);
+     92|     expect(document.body.textContent).not.toContain("Tanımsız ayar");
+       |                                           ^
+     93|   });
+     94|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 55 passed (56)
+   Start at  16:35:08
+   Duration  4.31s (transform 3.28s, setup 0ms, import 4.72s, tests 2.56s, environment 5.63s)
+

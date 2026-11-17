@@ -560,6 +560,24 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheDrawerKickPermissionGoesToCashierAndUpAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string holders = "SELECT string_agg(r.code, ',' ORDER BY r.code) FROM identity.role_permissions rp JOIN identity.roles r ON r.role_id = rp.role_id JOIN identity.permissions p ON p.permission_id = rp.permission_id WHERE p.code = 'cash.drawer.kick';";
+        const string rows = "SELECT count(*) FROM identity.permissions WHERE code = 'cash.drawer.kick';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal("cashier,manager,supervisor", await ScalarAsync<string>(source, holders));
+
+        RollBackDownTo("231");
+        Assert.Equal(0L, await ScalarAsync<long>(source, rows));
+        Assert.Equal(1L, await ScalarAsync<long>(source, "SELECT count(*) FROM identity.permissions WHERE code = 'orders.add-without-kitchen';"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal("cashier,manager,supervisor", await ScalarAsync<string>(source, holders));
+        Assert.Equal(1L, await ScalarAsync<long>(source, rows));
+    }
+
+    [Fact]
     public async Task TheStockMovementTypeRuleAllowsTransferAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string allowsTransfer = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_stock_movements_movement_type' AND pg_get_constraintdef(oid) LIKE '%Transfer%';";

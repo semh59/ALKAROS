@@ -10,6 +10,7 @@ using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.KitchenDenseModeThreshold;
 using ALKAROS.Settings.KitchenLiveSync;
 using ALKAROS.Settings.CashCloseTolerance;
+using ALKAROS.Settings.CashDrawer;
 using ALKAROS.Settings.ManagerSelfApproval;
 using ALKAROS.Settings.QrOrderExpiry;
 using ALKAROS.Settings.ReservationStation;
@@ -159,6 +160,7 @@ public static class SettingsManagementEndpoints
         await GarsonFeatureToggles.EnsureAllRegisteredAsync(settings, cancellationToken);
         await CashOutApprovalThresholdSetting.EnsureRegisteredAsync(settings, cancellationToken);
         await ManagerSelfApprovalSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await CashDrawerSettings.EnsureRegisteredAsync(settings, cancellationToken);
         await CloseVarianceToleranceSetting.EnsureRegisteredAsync(settings, cancellationToken);
         await BillAdjustmentTotalCapSetting.EnsureRegisteredAsync(settings, SettingsBillAdjustmentTotalCap.DefaultCap, cancellationToken);
     }

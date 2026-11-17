@@ -1,0 +1,6 @@
+D:\PROJECT\ALKAROS\tests\Modules\Identity\Authorization\bin\Debug\net8.0\ALKAROS.Identity.Authorization.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.40]     ALKAROS.Identity.Authorization.Tests.Catalog.PermissionSplitDatabaseTests.SeededGrantsMatchTheCatalogRoleMapForEveryRole [FAIL]
+[xUnit.net 00:00:01.43]     ALKAROS.Identity.Authorization.Tests.Catalog.PermissionSplitDatabaseTests.WaiterRoleExistsAndHoldsExactlyOrderTakingTableStatusSelfTransferAndKitchenAdvance [FAIL]
+
+Başarısız! - Başarısız:     2, Başarılı:    49, Atlanan:     0, Toplam:    51, Süre: 1 s - ALKAROS.Identity.Authorization.Tests.dll (net8.0)

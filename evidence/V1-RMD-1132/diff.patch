@@ -1,0 +1,350 @@
+diff --git a/database/MigrationComposition/order.json b/database/MigrationComposition/order.json
+index bce98f971..c337baac3 100644
+--- a/database/MigrationComposition/order.json
++++ b/database/MigrationComposition/order.json
+@@ -9,7 +9,7 @@
+   },
+   "phaseBRange": {
+     "min": "031",
+-    "max": "230"
++    "max": "231"
+   },
+   "migrations": [
+     {
+@@ -1977,6 +1977,15 @@
+         "role_permissions"
+       ],
+       "deferredConstraints": []
++    },
++    {
++      "id": "231",
++      "phase": "B",
++      "tables": [
++        "permissions",
++        "role_permissions"
++      ],
++      "deferredConstraints": []
+     }
+   ]
+ }
+diff --git a/docs/architecture/settings-ownership.md b/docs/architecture/settings-ownership.md
+index c96bb281e..257269be4 100644
+--- a/docs/architecture/settings-ownership.md
++++ b/docs/architecture/settings-ownership.md
+@@ -60,6 +60,8 @@ history row naming who changed it).
+ | `reservations.dedicated_station_enabled` | tables | Toggle | false | true/false |
+ | `cash.cash_out_approval_threshold` | cash | WholeNumber | 500 | 0–1,000,000 TRY; a cash-out above it needs manager approval, 0 = every cash-out |
+ | `cash.close_variance_tolerance` | cash | WholeNumber | 50 | 0–500 TRY (hard ceiling, also applied when the value is read); the closing difference above which a manager override is needed |
++| `cash.drawer_kick_enabled` | cash | Toggle | false | Opens the physical cash drawer through the receipt printer on a cash payment and on "no sale"; stays off until tried on real hardware |
++| `cash.drawer_printer_address` | cash | Text | (empty) | `host:port` of the printer the drawer is cabled to; empty = no drawer; one printer for the whole business |
+ | `approvals.manager_self_approval_enabled` | cash | Toggle | false | true/false; lets a manager approve their own cash-out request or reconcile a session they ran or closed (shared by every approval flow) |
+ | `garson.*_enabled` (nine feature switches) | waiter | Toggle | true | true/false |
+ 
+diff --git a/src/Clients/PosTerminal/src/features/authorization-decisions/models.ts b/src/Clients/PosTerminal/src/features/authorization-decisions/models.ts
+index 023a33fcf..b3e25332c 100644
+--- a/src/Clients/PosTerminal/src/features/authorization-decisions/models.ts
++++ b/src/Clients/PosTerminal/src/features/authorization-decisions/models.ts
+@@ -53,6 +53,7 @@ export const permissionLabels: Record<string, string> = {
+   "tables.transfer": "Masa taşıma",
+   "tables.merge": "Masa birleştirme",
+   "cash.drawer": "Kasa çekmecesi",
++  "cash.drawer.kick": "Çekmeceyi satışsız açma",
+ };
+ 
+ export function permissionLabel(code: string): string {
+diff --git a/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx b/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx
+index 78d7e9bed..e6117e4ca 100644
+--- a/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx
++++ b/src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.test.tsx
+@@ -85,6 +85,7 @@ describe("settings history section", () => {
+       "garson.guest_live_bill_enabled", "garson.help_request_enabled", "garson.party_size_enabled", "garson.personal_comp_budget_enabled",
+       "garson.seat_assignment_enabled", "garson.shift_handoff_notes_enabled", "garson.shift_summary_enabled", "garson.voluntary_tip_enabled",
+       "cash.cash_out_approval_threshold", "approvals.manager_self_approval_enabled",
++      "cash.drawer_kick_enabled", "cash.drawer_printer_address",
+     ];
+     const client = fakeClient({ listSettings: vi.fn().mockResolvedValue(keys.map((key, index) => ({ ...toggle, key, settingId: `k${index}` }))) });
+     await render(<SettingsHistorySection client={client} />);
+diff --git a/src/Clients/PosTerminal/src/features/management-settings-history/models.ts b/src/Clients/PosTerminal/src/features/management-settings-history/models.ts
+index 24c3ab7f3..e0ea99118 100644
+--- a/src/Clients/PosTerminal/src/features/management-settings-history/models.ts
++++ b/src/Clients/PosTerminal/src/features/management-settings-history/models.ts
+@@ -12,6 +12,8 @@ const labels: Record<string, string> = {
+   "business.name": "İşletme adı",
+   "cash.cash_out_approval_threshold": "Nakit çıkış onay eşiği",
+   "cash.close_variance_tolerance": "Kasa kapanış fark toleransı",
++  "cash.drawer_kick_enabled": "Kasa çekmecesini yazıcıdan aç",
++  "cash.drawer_printer_address": "Kasa yazıcısı adresi",
+   "kitchen.dense_mode_threshold": "Mutfak yoğun mod eşiği",
+   "kitchen.live_sync_enabled": "Mutfak canlı eşitleme",
+   "waiter.max_active_tables": "Garson başına en fazla açık masa",
+@@ -29,6 +31,7 @@ const labels: Record<string, string> = {
+ };
+ 
+ const descriptions: Record<string, string> = {
++  "cash.drawer_kick_enabled": "Nakit ödeme alınınca ve kasiyer \"Satış yok\" dediğinde çekmece yazıcı üzerinden açılır. Gerçek yazıcı ve çekmecede denemeden açmayın; varsayılan kapalıdır.",
+   "kitchen.live_sync_enabled": "Mutfak ekranı (KDS) kullanıyorsanız açın. Açıkken kalemin durumu (Hazırlanıyor, Hazır, Servis edildi) siparişe yansır ve garsona hazır bildirimi gider. Hazır biletler servis edilene kadar panoda ayrı bölümde durur. Kapalıyken bu bölüm kalkar ve sipariş durumu değişmez.",
+ };
+ 
+diff --git a/src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx b/src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx
+index 1fd7e9e86..d59d0956b 100644
+--- a/src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx
++++ b/src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx
+@@ -9,7 +9,7 @@ import { alertText, buttons, press, render, submit, type, unmount } from "../man
+ import { ManagementApiError } from "../management/http";
+ 
+ const codes = [
+-  "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.session.override", "catalog.manage", "floorplan.manage",
++  "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.drawer.kick", "cash.session.override", "catalog.manage", "floorplan.manage",
+   "identity.device_sessions.manage", "identity.permissions.manage", "identity.roles.manage", "identity.users.manage", "integrations.manage",
+   "inventory.manage", "kitchen.advance", "kitchen.availability.suspend", "kitchen.reprint", "kitchen.routing.manage", "menu.manage",
+   "observability.manage", "operations.backup", "orders.create", "orders.send", "orders.transfer-server", "orders.transfer-server-any",
+diff --git a/src/Clients/PosTerminal/src/features/management-staff-roles/models.ts b/src/Clients/PosTerminal/src/features/management-staff-roles/models.ts
+index 56a5b5c6c..d09d33858 100644
+--- a/src/Clients/PosTerminal/src/features/management-staff-roles/models.ts
++++ b/src/Clients/PosTerminal/src/features/management-staff-roles/models.ts
+@@ -19,6 +19,7 @@ const permissionLabels: Record<string, string> = {
+   "bills.split": "Hesap bölme",
+   "bills.void": "Gönderilmiş kalemi iptal etme",
+   "cash.drawer": "Para çekmecesi işlemleri ve sayım",
++  "cash.drawer.kick": "Çekmeceyi satışsız açma",
+   "cash.session.override": "Farklı kasa oturumunu yönetici onayıyla kapatma",
+   "catalog.manage": "Ürün kataloğunu yönetme",
+   "floorplan.manage": "Salon, masa yerleşimi ve kapasite düzenleme",
+diff --git a/src/Host/Composition/Migrations/MigrationManifest.cs b/src/Host/Composition/Migrations/MigrationManifest.cs
+index d4ce9bc31..99af91a91 100644
+--- a/src/Host/Composition/Migrations/MigrationManifest.cs
++++ b/src/Host/Composition/Migrations/MigrationManifest.cs
+@@ -37,7 +37,7 @@ public sealed class MigrationManifest
+     public const string PhaseAMin = "001";
+     public const string PhaseAMax = "030";
+     public const string PhaseBMin = "031";
+-    public const string PhaseBMax = "230";
++    public const string PhaseBMax = "231";
+ 
+     private MigrationManifest(IReadOnlyList<MigrationManifestEntry> migrations)
+     {
+diff --git a/src/Host/Experience/Settings/SettingsManagementEndpoints.cs b/src/Host/Experience/Settings/SettingsManagementEndpoints.cs
+index 8a362d850..1f25b3ef6 100644
+--- a/src/Host/Experience/Settings/SettingsManagementEndpoints.cs
++++ b/src/Host/Experience/Settings/SettingsManagementEndpoints.cs
+@@ -10,6 +10,7 @@ using ALKAROS.Settings.GarsonFeatureToggles;
+ using ALKAROS.Settings.KitchenDenseModeThreshold;
+ using ALKAROS.Settings.KitchenLiveSync;
+ using ALKAROS.Settings.CashCloseTolerance;
++using ALKAROS.Settings.CashDrawer;
+ using ALKAROS.Settings.ManagerSelfApproval;
+ using ALKAROS.Settings.QrOrderExpiry;
+ using ALKAROS.Settings.ReservationStation;
+@@ -159,6 +160,7 @@ public static class SettingsManagementEndpoints
+         await GarsonFeatureToggles.EnsureAllRegisteredAsync(settings, cancellationToken);
+         await CashOutApprovalThresholdSetting.EnsureRegisteredAsync(settings, cancellationToken);
+         await ManagerSelfApprovalSetting.EnsureRegisteredAsync(settings, cancellationToken);
++        await CashDrawerSettings.EnsureRegisteredAsync(settings, cancellationToken);
+         await CloseVarianceToleranceSetting.EnsureRegisteredAsync(settings, cancellationToken);
+         await BillAdjustmentTotalCapSetting.EnsureRegisteredAsync(settings, SettingsBillAdjustmentTotalCap.DefaultCap, cancellationToken);
+     }
+diff --git a/src/Modules/Identity/Authorization/Catalog/ApplicationPermissions.cs b/src/Modules/Identity/Authorization/Catalog/ApplicationPermissions.cs
+index 2a48bf9a5..07fac0d36 100644
+--- a/src/Modules/Identity/Authorization/Catalog/ApplicationPermissions.cs
++++ b/src/Modules/Identity/Authorization/Catalog/ApplicationPermissions.cs
+@@ -35,6 +35,8 @@ public static class ApplicationPermissions
+     /// <summary>Approving or rejecting a refund request; supervisor tier and up, never the requester.</summary>
+     public const string PaymentsRefundApprove = "payments.refund.approve";
+     public const string CashDrawer = "cash.drawer";
++    /// <summary>Opening the physical cash drawer without a sale ("no sale"); cashier tier and up. <see cref="CashDrawer"/> is the till-session permission and never fires the drawer.</summary>
++    public const string CashDrawerKick = "cash.drawer.kick";
+     /// <summary>
+     /// V1-RMD-401: taking a payment on a bill (card/EFT tender, and the cash tender together with
+     /// <see cref="CashDrawer"/>). Cashier tier by default; a business that hands its waiters a card terminal grants
+@@ -122,7 +124,7 @@ public static class ApplicationPermissions
+         OrdersTransferServer, OrdersTransferServerAny,
+         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
+         ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake, BillsCancel,
+-        PaymentsRefundRequest, PaymentsRefundApprove, OrdersAddWithoutKitchen,
++        PaymentsRefundRequest, PaymentsRefundApprove, OrdersAddWithoutKitchen, CashDrawerKick,
+     };
+ 
+     // orders.transfer-server (self hand-off) sits alongside orders.create/
+@@ -139,7 +141,7 @@ public static class ApplicationPermissions
+         { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
+ 
+     private static readonly string[] CashierFloorSet =
+-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest, OrdersAddWithoutKitchen };
++        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest, OrdersAddWithoutKitchen, CashDrawerKick };
+ 
+     private static readonly string[] SupervisorEscalations =
+         {
+diff --git a/src/Modules/Settings/TypedSettings/SettingValidator.cs b/src/Modules/Settings/TypedSettings/SettingValidator.cs
+index 5882ddb29..7c06f2df5 100644
+--- a/src/Modules/Settings/TypedSettings/SettingValidator.cs
++++ b/src/Modules/Settings/TypedSettings/SettingValidator.cs
+@@ -4,6 +4,7 @@ using System.Xml;
+ using ALKAROS.Settings.BillAdjustmentCap;
+ using ALKAROS.Settings.BusinessIdentity;
+ using ALKAROS.Settings.CashCloseTolerance;
++using ALKAROS.Settings.CashDrawer;
+ using ALKAROS.Settings.CashMovementApproval;
+ using ALKAROS.Settings.KitchenDenseModeThreshold;
+ using ALKAROS.Settings.QrOrderExpiry;
+@@ -61,6 +62,7 @@ public sealed class SettingValidator : ISettingValidator
+         [CashOutApprovalThresholdSetting.Key] = (v => WholeNumberBetween(v, 0, CashOutApprovalThresholdSetting.MaxValue), "Nakit çıkış onay eşiği 0 ile 1.000.000 TL arasında tam sayı olmalı (0 = her çıkış onay ister)."),
+         [CloseVarianceToleranceSetting.Key] = (v => WholeNumberBetween(v, 0, CloseVarianceToleranceSetting.MaxValue), "Kasa kapanış fark toleransı 0 ile 500 TL arasında tam sayı olmalı."),
+         [BillAdjustmentTotalCapSetting.Key] = (v => WholeNumberBetween(v, 0, BillAdjustmentTotalCapSetting.MaxValue), "Hesap başına ikram ve indirim sınırı 0 ile 100.000 TL arasında tam sayı olmalı (0 = her ikram ve indirim onay ister)."),
++        [CashDrawerSettings.PrinterAddressKey] = (v => v.Length == 0 || CashDrawerSettings.TryParseAddress(v, out _, out _), "Kasa yazıcısı adresi adres:port biçiminde olmalı (örn. 192.168.1.50:9100); port 1 ile 65535 arasında olmalı."),
+         [BusinessNameSetting.Key] = (v => v.Length <= 80 && !v.Any(char.IsControl), "İşletme adı en çok 80 karakter olabilir ve denetim karakteri içeremez."),
+     };
+ 
+diff --git a/tests/Host/Experience/Settings/SettingsManagementHttpTests.cs b/tests/Host/Experience/Settings/SettingsManagementHttpTests.cs
+index 33fd90172..df6c0737c 100644
+--- a/tests/Host/Experience/Settings/SettingsManagementHttpTests.cs
++++ b/tests/Host/Experience/Settings/SettingsManagementHttpTests.cs
+@@ -231,6 +231,36 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
+         Assert.Equal(accepted ? value : "50", await _database.GetRawValueAsync("cash.close_variance_tolerance"));
+     }
+ 
++    [Fact]
++    public async Task TheCashDrawerSettingsAreListedOffAndWithoutAPrinterAddress()
++    {
++        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
++
++        using var response = await client.GetAsync("/api/v1/management/settings/");
++
++        var all = (await response.Content.ReadFromJsonAsync<SettingRecordV1[]>())!;
++        var enabled = Assert.Single(all, r => r.Key == "cash.drawer_kick_enabled");
++        var address = Assert.Single(all, r => r.Key == "cash.drawer_printer_address");
++        Assert.Equal(("false", "Toggle", "cash"), (enabled.Value, enabled.DataType, enabled.ModuleOwner));
++        Assert.Equal(("", "Text", "cash"), (address.Value, address.DataType, address.ModuleOwner));
++    }
++
++    [Theory]
++    [InlineData("192.168.1.50", false)]
++    [InlineData("192.168.1.50:70000", false)]
++    [InlineData("192.168.1.50:9100", true)]
++    public async Task ThePrinterAddressAcceptsHostAndPortOnly(string value, bool accepted)
++    {
++        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
++        using var listing = await client.GetAsync("/api/v1/management/settings/");
++
++        using var response = await client.PutAsJsonAsync(
++            "/api/v1/management/settings/cash.drawer_printer_address", new UpdateSettingValueV1(value, ExpectedRowVersion: 1));
++
++        Assert.Equal(accepted ? HttpStatusCode.OK : HttpStatusCode.BadRequest, response.StatusCode);
++        Assert.Equal(accepted ? value : "", await _database.GetRawValueAsync("cash.drawer_printer_address"));
++    }
++
+     [Fact]
+     public async Task TheBillAdjustmentCapIsListedWithTheComplimentaryBudgetCeilingAsItsDefault()
+     {
+diff --git a/tests/Host/MigrationComposition/Manifest/ManifestTests.cs b/tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+index 6ee1c4502..bb2d3cdda 100644
+--- a/tests/Host/MigrationComposition/Manifest/ManifestTests.cs
++++ b/tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+@@ -9,7 +9,7 @@ public sealed class ManifestTests : IDisposable
+     private static readonly string[] FirstEntryTables = ["idempotency_keys"];
+     private static readonly string[] RuntimeManifestIds =
+     [
+-        "001", "002", "003", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022", "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035", "036", "037", "038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048", "049", "050", "051", "052", "053", "054", "055", "056", "057", "058", "059", "060", "061", "062", "063", "064", "065", "066", "067", "068", "069", "070", "071", "072", "073", "074", "075", "076", "077", "078", "079", "080", "081", "082", "083", "084", "085", "086", "087", "088", "089", "090", "091", "092", "093", "094", "095", "096", "097", "098", "099", "100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "140", "141", "142", "143", "144", "145", "146", "147", "148", "149", "150", "151", "152", "153", "154", "155", "156", "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169", "170", "171", "172", "173", "174", "175", "176", "177", "178", "179", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189", "190", "191", "192", "193", "194", "195", "196", "197", "198", "199", "200", "201", "202", "203", "204", "205", "206", "207", "208", "209", "210", "211", "212", "213", "214", "215", "216", "217", "218", "219", "220", "221", "222", "223", "224", "225", "226", "227", "228", "229", "230"
++        "001", "002", "003", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022", "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035", "036", "037", "038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048", "049", "050", "051", "052", "053", "054", "055", "056", "057", "058", "059", "060", "061", "062", "063", "064", "065", "066", "067", "068", "069", "070", "071", "072", "073", "074", "075", "076", "077", "078", "079", "080", "081", "082", "083", "084", "085", "086", "087", "088", "089", "090", "091", "092", "093", "094", "095", "096", "097", "098", "099", "100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "140", "141", "142", "143", "144", "145", "146", "147", "148", "149", "150", "151", "152", "153", "154", "155", "156", "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169", "170", "171", "172", "173", "174", "175", "176", "177", "178", "179", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189", "190", "191", "192", "193", "194", "195", "196", "197", "198", "199", "200", "201", "202", "203", "204", "205", "206", "207", "208", "209", "210", "211", "212", "213", "214", "215", "216", "217", "218", "219", "220", "221", "222", "223", "224", "225", "226", "227", "228", "229", "230", "231"
+     ];
+     // V1-RMD-244: this literal (and RuntimeManifestIds/the count below) has
+     // now gone stale THREE times (098 in V1-RMD-157, 099 in V1-WTR-012, and
+@@ -51,7 +51,7 @@ public sealed class ManifestTests : IDisposable
+     // And for migration 185 (shift refund allowance on cash sessions, approval mode on refund requests).
+     // And for migration 186 (items and quantities a refund request pays back).
+     // And for migration 187 (error events, their occurrences and the monitoring counters).
+-    // And for migration 191 (raw UI interaction log) and 192 (trace id column on it); 193 adds the printer profile column; 194 adds the table-wide clear guard on audit.audit_events; 195 adds the grant and delegation guards; 197 makes setting history immutable and bounds the logo table; 198 adds the acknowledgement columns on help requests; 199 keeps the push signing key as an envelope; 200 makes the pending hand-off note unique per waiter; 201 bounds the screensaver and display expiry rows and indexes two lookups; 202 adds the terminal key hash; 203 keeps every order and bill a merged table brought; 204 moves a table's status timestamp whenever its status changes; 196 seeds the waiter discount policy; 223 adds the receipt first-print columns to bills; 224 adds the date index on the daily balance records; 225 adds the invoiced customer retention class; 226 adds the terminal display name; 227 adds the Transfer stock movement type; 228 refuses nil table pointers; 229 marks lines added without a kitchen ticket; 230 seeds the permission to add them (the last entry).
++    // And for migration 191 (raw UI interaction log) and 192 (trace id column on it); 193 adds the printer profile column; 194 adds the table-wide clear guard on audit.audit_events; 195 adds the grant and delegation guards; 197 makes setting history immutable and bounds the logo table; 198 adds the acknowledgement columns on help requests; 199 keeps the push signing key as an envelope; 200 makes the pending hand-off note unique per waiter; 201 bounds the screensaver and display expiry rows and indexes two lookups; 202 adds the terminal key hash; 203 keeps every order and bill a merged table brought; 204 moves a table's status timestamp whenever its status changes; 196 seeds the waiter discount policy; 223 adds the receipt first-print columns to bills; 224 adds the date index on the daily balance records; 225 adds the invoiced customer retention class; 226 adds the terminal display name; 227 adds the Transfer stock movement type; 228 refuses nil table pointers; 229 marks lines added without a kitchen ticket; 230 seeds the permission to add them; 231 seeds the permission to open the drawer without a sale (the last entry).
+     private static readonly string[] LastEntryTables = ["permissions", "role_permissions"];
+     private readonly string _directory = Path.Combine(
+         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
+@@ -80,7 +80,7 @@ public sealed class ManifestTests : IDisposable
+     {
+         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
+ 
+-        Assert.Equal(229, manifest.Migrations.Count);
++        Assert.Equal(230, manifest.Migrations.Count);
+         Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
+         Assert.Equal(
+             FirstEntryTables,
+diff --git a/tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs b/tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs
+index 1cf1ae7a6..0c87bc454 100644
+--- a/tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs
++++ b/tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs
+@@ -559,6 +559,24 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
+         Assert.Equal(2L, await ScalarAsync<long>(source, columns));
+     }
+ 
++    [Fact]
++    public async Task TheDrawerKickPermissionGoesToCashierAndUpAndRollingBackRemovesItAndItAppliesOnceMore()
++    {
++        const string holders = "SELECT string_agg(r.code, ',' ORDER BY r.code) FROM identity.role_permissions rp JOIN identity.roles r ON r.role_id = rp.role_id JOIN identity.permissions p ON p.permission_id = rp.permission_id WHERE p.code = 'cash.drawer.kick';";
++        const string rows = "SELECT count(*) FROM identity.permissions WHERE code = 'cash.drawer.kick';";
++        Migrate(OrderPath(), MigrationsPath());
++        await using var source = NpgsqlDataSource.Create(ConnectionString());
++        Assert.Equal("cashier,manager,supervisor", await ScalarAsync<string>(source, holders));
++
++        RollBackDownTo("231");
++        Assert.Equal(0L, await ScalarAsync<long>(source, rows));
++        Assert.Equal(1L, await ScalarAsync<long>(source, "SELECT count(*) FROM identity.permissions WHERE code = 'orders.add-without-kitchen';"));
++
++        Migrate(OrderPath(), MigrationsPath());
++        Assert.Equal("cashier,manager,supervisor", await ScalarAsync<string>(source, holders));
++        Assert.Equal(1L, await ScalarAsync<long>(source, rows));
++    }
++
+     [Fact]
+     public async Task TheStockMovementTypeRuleAllowsTransferAndRollingBackRemovesItAndItAppliesOnceMore()
+     {
+diff --git a/tests/Modules/Identity/Authorization/Catalog/ApplicationPermissionsTests.cs b/tests/Modules/Identity/Authorization/Catalog/ApplicationPermissionsTests.cs
+index 854f61a6a..a94f66e5e 100644
+--- a/tests/Modules/Identity/Authorization/Catalog/ApplicationPermissionsTests.cs
++++ b/tests/Modules/Identity/Authorization/Catalog/ApplicationPermissionsTests.cs
+@@ -10,7 +10,7 @@ public sealed class ApplicationPermissionsTests
+     public void CatalogHasTwentySixDistinctCodes()
+     {
+         // payments.take is the 23rd code, bills.cancel the 24th, then the two refund permissions.
+-        ApplicationPermissions.Codes.Should().HaveCount(27);
++        ApplicationPermissions.Codes.Should().HaveCount(28);
+         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
+         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
+     }
+@@ -94,6 +94,17 @@ public sealed class ApplicationPermissionsTests
+         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter].Should().NotContain(ApplicationPermissions.OrdersAddWithoutKitchen);
+     }
+ 
++    [Fact]
++    public void OpeningTheDrawerWithoutASaleIsHeldByCashierSupervisorAndManagerButNotWaiter()
++    {
++        ApplicationPermissions.CashDrawerKick.Should().Be("cash.drawer.kick");
++        ApplicationPermissions.Codes.Should().Contain(ApplicationPermissions.CashDrawerKick);
++        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(ApplicationPermissions.CashDrawerKick);
++        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.CashDrawerKick);
++        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.CashDrawerKick);
++        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter].Should().NotContain(ApplicationPermissions.CashDrawerKick);
++    }
++
+     [Fact]
+     public void CashierHoldsReserveButNotVoidCompOrDiscountOutright()
+     {
+diff --git a/tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs b/tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs
+index 89bcdde68..633f8ac4e 100644
+--- a/tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs
++++ b/tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs
+@@ -57,6 +57,7 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
+             Mig("V1-RMD-506", "181-bills-cancel-permission.up.sql"),
+             Mig("V1-RMD-508", "184-refund-permissions.up.sql"),
+             Mig("V1-RMD-979", "230-add-without-kitchen-permission.up.sql"),
++            Mig("V1-RMD-1132", "231-cash-drawer-kick-permission.up.sql"),
+         };
+ 
+         foreach (var path in scripts)
+@@ -80,6 +81,9 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
+     /// </summary>
+     public async Task ApplyDownSplitAsync()
+     {
++        await RunAsync(
++            DataSource,
++            await File.ReadAllTextAsync(Mig("V1-RMD-1132", "231-cash-drawer-kick-permission.down.sql")));
+         await RunAsync(
+             DataSource,
+             await File.ReadAllTextAsync(Mig("V1-RMD-979", "230-add-without-kitchen-permission.down.sql")));

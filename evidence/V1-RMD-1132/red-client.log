@@ -1,0 +1,44 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-staff-roles/RolesPanels.test.tsx (10 tests | 1 failed) 610ms
+     × every permission the server ships has a Turkish name 8ms
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx (27 tests | 1 failed) 798ms
+     × every setting the server ships by default has a Turkish name 44ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > every setting the server ships by default has a Turkish name
+AssertionError: expected 'AyarlarAyarŞimdiki değerSon değişikli…' not to contain 'Tanımsız ayar'
+
+Expected: "Tanımsız ayar"
+Received: "AyarlarAyarŞimdiki değerSon değişiklikNotİşlemQR siparişi onay bekleme süresiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterAyrı rezervasyon istasyonuEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterServis sırası (kurs) yönetimiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterMisafirin canlı hesap görünümüEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterGarson yardım çağrısıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKişi sayısı sorulmasıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKişisel ikram bütçesiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterKoltuk atamasıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterVardiya devir notlarıEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterVardiya özetiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterİsteğe bağlı bahşişEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterNakit çıkış onay eşiğiEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterYönetici kendi talebini ve kendi kasa mutabakatını onaylayabilirEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterTanımsız ayarEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi gösterTanımsız ayarEvet30.09.2026 11:00Yeniden başlatma gerekirDüzenleGeçmişi göster"
+
+ ❯ src/features/management-settings-history/SettingsHistorySection.test.tsx:92:43
+     90|     const client = fakeClient({ listSettings: vi.fn().mockResolvedValu…
+     91|     await render(<SettingsHistorySection client={client} />);
+     92|     expect(document.body.textContent).not.toContain("Tanımsız ayar");
+       |                                           ^
+     93|   });
+     94|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/management-staff-roles/RolesPanels.test.tsx > roles and permissions panels > every permission the server ships has a Turkish name
+AssertionError: cash.drawer.kick: expected 'Tanımsız izin' not to be 'Tanımsız izin' // Object.is equality
+ ❯ src/features/management-staff-roles/RolesPanels.test.tsx:66:71
+     64|
+     65|   it("every permission the server ships has a Turkish name", () => {
+     66|     for (const code of codes) expect(permissionLabel(code), code).not.…
+       |                                                                       ^
+     67|   });
+     68|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 35 passed (37)
+   Start at  16:11:46
+   Duration  3.97s (transform 1.35s, setup 0ms, import 1.98s, tests 1.41s, environment 2.41s)
+

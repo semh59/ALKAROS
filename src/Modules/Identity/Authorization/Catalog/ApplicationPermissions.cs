@@ -35,6 +35,8 @@ public static class ApplicationPermissions
     /// <summary>Approving or rejecting a refund request; supervisor tier and up, never the requester.</summary>
     public const string PaymentsRefundApprove = "payments.refund.approve";
     public const string CashDrawer = "cash.drawer";
+    /// <summary>Opening the physical cash drawer without a sale ("no sale"); cashier tier and up. <see cref="CashDrawer"/> is the till-session permission and never fires the drawer.</summary>
+    public const string CashDrawerKick = "cash.drawer.kick";
     /// <summary>
     /// V1-RMD-401: taking a payment on a bill (card/EFT tender, and the cash tender together with
     /// <see cref="CashDrawer"/>). Cashier tier by default; a business that hands its waiters a card terminal grants
@@ -122,7 +124,7 @@ public static class ApplicationPermissions
         OrdersTransferServer, OrdersTransferServerAny,
         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
         ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake, BillsCancel,
-        PaymentsRefundRequest, PaymentsRefundApprove, OrdersAddWithoutKitchen,
+        PaymentsRefundRequest, PaymentsRefundApprove, OrdersAddWithoutKitchen, CashDrawerKick,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -139,7 +141,7 @@ public static class ApplicationPermissions
         { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
 
     private static readonly string[] CashierFloorSet =
-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest, OrdersAddWithoutKitchen };
+        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest, OrdersAddWithoutKitchen, CashDrawerKick };
 
     private static readonly string[] SupervisorEscalations =
         {

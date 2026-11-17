@@ -1,7 +1,7 @@
 # V1-RMD-1132 - Fiziksel kasa çekmecesi: "çekmeceyi aç" yetkisi ve açma/kapama ile yazıcı adresi ayarları
 
 - Task ID: V1-RMD-1132
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

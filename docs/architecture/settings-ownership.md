@@ -60,6 +60,8 @@ history row naming who changed it).
 | `reservations.dedicated_station_enabled` | tables | Toggle | false | true/false |
 | `cash.cash_out_approval_threshold` | cash | WholeNumber | 500 | 0–1,000,000 TRY; a cash-out above it needs manager approval, 0 = every cash-out |
 | `cash.close_variance_tolerance` | cash | WholeNumber | 50 | 0–500 TRY (hard ceiling, also applied when the value is read); the closing difference above which a manager override is needed |
+| `cash.drawer_kick_enabled` | cash | Toggle | false | Opens the physical cash drawer through the receipt printer on a cash payment and on "no sale"; stays off until tried on real hardware |
+| `cash.drawer_printer_address` | cash | Text | (empty) | `host:port` of the printer the drawer is cabled to; empty = no drawer; one printer for the whole business |
 | `approvals.manager_self_approval_enabled` | cash | Toggle | false | true/false; lets a manager approve their own cash-out request or reconcile a session they ran or closed (shared by every approval flow) |
 | `garson.*_enabled` (nine feature switches) | waiter | Toggle | true | true/false |
 
