@@ -23,6 +23,11 @@ Kasiyer denemesi 15 (bulgu 10, küçük akış düzeltmeleri): "Kasayı Kapat: S
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
   - tests/Clients/StaticApps/cash-session-close.test.js
   - tests/Clients/StaticApps/cash-session-closed-summary.test.js
+  - tests/Clients/StaticApps/cash-session-blind-count.test.js
+  - tests/Clients/StaticApps/cash-session-close-manager-approval.test.js
+  - tests/Clients/StaticApps/cash-session-close-recount.test.js
+  - tests/Clients/StaticApps/cash-session-connection-errors.test.js
+  - tests/Clients/StaticApps/cash-session-movement.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
