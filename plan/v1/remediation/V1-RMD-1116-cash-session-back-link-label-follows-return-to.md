@@ -1,7 +1,7 @@
 # V1-RMD-1116 - Kasa açılış sayfasında geri bağlantısı nereye gittiğini doğru söyler
 
 - Task ID: V1-RMD-1116
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
