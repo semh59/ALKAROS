@@ -1,7 +1,7 @@
 # V1-RMD-1138 - Teslim edilmeyen "Satış yok" darbesi sayaca ve "5 kez açıldı" uyarısına yazılmaz
 
 - Task ID: V1-RMD-1138
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

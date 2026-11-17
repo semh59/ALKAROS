@@ -299,6 +299,78 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task FailedNoSalePulsesAreNeitherCountedNorWarnedAboutButAreCountedApart()
+    {
+        await using var rig = await RigAsync(address: $"127.0.0.1:{FreePort()}");
+
+        for (var i = 1; i <= 5; i++)
+        {
+            var body = await (await rig.NoSaleAsync("ns-fail-" + i, "Count", null)).Content.ReadFromJsonAsync<JsonElement>();
+            Assert.False(body.GetProperty("delivered").GetBoolean());
+            Assert.Equal(0, body.GetProperty("noSaleCount").GetInt32());
+            Assert.Equal(JsonValueKind.Null, body.GetProperty("warning").ValueKind);
+        }
+
+        Assert.Equal(0, (await rig.StatusAsync()).GetProperty("noSaleCount").GetInt32());
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 100m })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/close", new { ActualCash = 100m })).StatusCode);
+        var state = await rig.ClosedStateAsync();
+        Assert.Equal((0, 5), (state.GetProperty("drawerNoSaleCount").GetInt32(), state.GetProperty("drawerKickFailedCount").GetInt32()));
+    }
+
+    [Fact]
+    public async Task ADeliveredNoSaleAfterFailedOnesIsCountedOnceAndTheFifthDeliveredOneWarns()
+    {
+        await using var rig = await RigAsync();
+        await _database.SetSettingAsync("cash.drawer_printer_address", "String", $"127.0.0.1:{FreePort()}");
+        for (var i = 1; i <= 3; i++)
+            await rig.NoSaleAsync("ns-lost-" + i, "Count", null);
+        await _database.SetSettingAsync("cash.drawer_printer_address", "String", $"127.0.0.1:{rig.PrinterPort}");
+
+        var counts = new List<int>();
+        var warnings = new List<JsonValueKind>();
+        for (var i = 1; i <= 5; i++)
+        {
+            var body = await (await rig.NoSaleAsync("ns-sent-" + i, "Count", null)).Content.ReadFromJsonAsync<JsonElement>();
+            counts.Add(body.GetProperty("noSaleCount").GetInt32());
+            warnings.Add(body.GetProperty("warning").ValueKind);
+        }
+
+        Assert.Equal([1, 2, 3, 4, 5], counts);
+        Assert.Equal([JsonValueKind.Null, JsonValueKind.Null, JsonValueKind.Null, JsonValueKind.Null, JsonValueKind.String], warnings);
+    }
+
+    [Fact]
+    public async Task AFailedNoSaleAfterFourDeliveredOnesKeepsTheCountAndRaisesNoWarning()
+    {
+        await using var rig = await RigAsync();
+        for (var i = 1; i <= 4; i++)
+            await rig.NoSaleAsync("ns-four-" + i, "Count", null);
+        await _database.SetSettingAsync("cash.drawer_printer_address", "String", $"127.0.0.1:{FreePort()}");
+
+        var failed = await (await rig.NoSaleAsync("ns-fifth-lost", "Count", null)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.False(failed.GetProperty("delivered").GetBoolean());
+        Assert.Equal(4, failed.GetProperty("noSaleCount").GetInt32());
+        Assert.Equal(JsonValueKind.Null, failed.GetProperty("warning").ValueKind);
+    }
+
+    [Fact]
+    public async Task ARepeatedFailedNoSaleKeyChangesNoCount()
+    {
+        await using var rig = await RigAsync(address: $"127.0.0.1:{FreePort()}");
+
+        await rig.NoSaleAsync("ns-fail-same", "Count", null);
+        var replay = await (await rig.NoSaleAsync("ns-fail-same", "Count", null)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.True(replay.GetProperty("replayed").GetBoolean());
+        Assert.False(replay.GetProperty("delivered").GetBoolean());
+        Assert.Equal(0, replay.GetProperty("noSaleCount").GetInt32());
+        Assert.Equal(0, (await rig.StatusAsync()).GetProperty("noSaleCount").GetInt32());
+    }
+
+    [Fact]
     public async Task TheFifthNoSaleInASessionCarriesAWarning()
     {
         await using var rig = await RigAsync();
@@ -407,6 +479,7 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         }
 
         public Guid TerminalId { get; }
+        public int PrinterPort => ((IPEndPoint)_listener.LocalEndpoint).Port;
         public Guid SessionId { get; set; }
         public Guid UserId { get; set; }
         public ConcurrentQueue<byte[]> ReceivedKicks { get; } = new();

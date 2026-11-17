@@ -142,7 +142,10 @@ public sealed partial class CashDrawerService(
             await TryAppendFailureAsync(cashSessionId, userId, correlationId, result.Failure);
         }
 
-        return new CashDrawerOpenResultV1(result.Delivered, recorded.Count, recorded.Warning, Replayed: false);
+        // The record went in before the pulse and counted this opening; a pulse that never arrived takes it back out.
+        return result.Delivered
+            ? new CashDrawerOpenResultV1(true, recorded.Count, recorded.Warning, Replayed: false)
+            : new CashDrawerOpenResultV1(false, recorded.Count - 1, null, Replayed: false);
     }
 
     private sealed record NoSaleRecord(bool? ReplayDelivered, int Count, string? Warning);
@@ -246,12 +249,15 @@ public sealed partial class CashDrawerService(
 
     private const string CountsSql =
         """
-        SELECT count(*) FILTER (WHERE event_name = 'cash.drawer.opened' AND after_state_json->>'kind' = 'Sale'),
-               count(*) FILTER (WHERE event_name = 'cash.drawer.opened' AND after_state_json->>'kind' = 'NoSale'),
-               count(*) FILTER (WHERE event_name = 'cash.drawer.kick-failed')
-        FROM audit.audit_events
-        WHERE aggregate_type = 'CashSession' AND aggregate_id = @id
-          AND event_name IN ('cash.drawer.opened', 'cash.drawer.kick-failed');
+        SELECT count(*) FILTER (WHERE e.event_name = 'cash.drawer.opened' AND e.after_state_json->>'kind' = 'Sale'),
+               count(*) FILTER (WHERE e.event_name = 'cash.drawer.opened' AND e.after_state_json->>'kind' = 'NoSale'
+                                AND NOT EXISTS (SELECT 1 FROM audit.audit_events f
+                                                WHERE f.aggregate_type = 'CashSession' AND f.aggregate_id = e.aggregate_id
+                                                  AND f.event_name = 'cash.drawer.kick-failed' AND f.correlation_id = e.correlation_id)),
+               count(*) FILTER (WHERE e.event_name = 'cash.drawer.kick-failed')
+        FROM audit.audit_events e
+        WHERE e.aggregate_type = 'CashSession' AND e.aggregate_id = @id
+          AND e.event_name IN ('cash.drawer.opened', 'cash.drawer.kick-failed');
         """;
 
     private static async Task<CashDrawerCounts> ReadCountsAsync(NpgsqlCommand command, Guid cashSessionId, CancellationToken cancellationToken)

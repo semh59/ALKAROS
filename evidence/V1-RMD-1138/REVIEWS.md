@@ -1,0 +1,2 @@
+- qa-veritabani: KABUL (SQL gecerli, indeksler yeterli, correlation_id NOT NULL; dusuk: kick-failed yazilamazsa sayi ile yanit ayrisir)
+- qa-backend: BULGU (orta x3 esanlilik/kick-failed yazilamama pencereleri, dusuk x2): kabul edilen sinir olarak RESULT'ta acik risk yazildi; kod degismedi

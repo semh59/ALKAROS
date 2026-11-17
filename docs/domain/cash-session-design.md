@@ -167,4 +167,7 @@ by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.dra
 - Every opening is a `cash.drawer.opened` audit event of the session (`kind` Sale or NoSale); a failed send is
   `cash.drawer.kick-failed`. Nothing is written to the cash ledger, so the expected cash does not move.
 - The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount` and `drawerKickFailedCount`.
-  From the fifth no-sale opening of a session the answer carries a warning.
+  `drawerNoSaleCount` and the warning count only the openings whose pulse reached the printer: the audit record of a
+  no-sale is written before the pulse, so a pulse that failed (a `kick-failed` event of the same correlation id) is
+  counted in `drawerKickFailedCount` instead and never counts towards the warning. From the fifth delivered no-sale
+  opening of a session the answer carries a warning.

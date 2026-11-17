@@ -1,0 +1,6 @@
+# V1-RMD-1138 sonuc
+Dogrulama: bulgu 3 gercekti (kayit darbeden once yazildigi icin teslim edilmeyen darbe de sayiliyordu).
+Duzeltme: CountsSql - ayni oturumda ayni korelasyon kimligiyle kick-failed kaydi olan NoSale acma kaydi sayilmaz; kick-failed sayisi (satis ve satissiz) ayri kalir. OpenWithoutSaleAsync darbe teslim edilmediyse sayiyi bu denemesiz ve uyarisiz doner. Kayit-once-darbe-sonra sirasi degismedi. docs/domain/cash-session-design.md guncellendi.
+Kanit: red.log (3 kirmizi), green.log (CashDrawerHttpTests 31/31) ve green-m4.log (sonradan eklenen 4. test dahil FailedNoSale 3/3), mutations.txt M1-M6 killed (cp+cmp; M4 ilk turda yasadi, dorduncu test eklenip oldu).
+Bilinen sinir: acma kaydindaki "warned" bayragi darbe oncesi tahmindir (basarisiz darbede true kalabilir); ekran ve rapor ondan okumaz. kick-failed kaydi yazilamazsa (hata yutulur, gunluge yazilir) o deneme teslim edilmis sayilir. Kayit ile kick-failed arasindaki kisa pencerede esanli bir okuma denemeyi sayabilir.
+Acik risk (qa-backend, orta, belgelendi, duzeltilmedi): darbe suresince (en cok 1 sn) kayit sayilmis gorunur; bu pencerede gelen esanli okuma ya da kapanis denemeyi teslim edilmis sayabilir, kick-failed kapanistan sonra yazilirsa kapanis kaydi bir fazla kalir. Kapanis penceresi icin darbe sonrasi kayit sirasini degistirmek guvenlik degismezini (kayitsiz acma yok) bozar.
