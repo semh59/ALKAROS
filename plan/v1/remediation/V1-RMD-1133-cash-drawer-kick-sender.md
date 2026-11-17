@@ -1,7 +1,7 @@
 # V1-RMD-1133 - Fiziksel kasa çekmecesi: yazıcıya çekmece darbesi (ESC p) gönderen ayrı gönderici
 
 - Task ID: V1-RMD-1133
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
