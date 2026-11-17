@@ -1,7 +1,7 @@
 # V1-RMD-1149 - Kasa bağlantıları kasiyerin geldiği yeri taşır (Kasa ve Hesap Ödeme)
 
 - Task ID: V1-RMD-1149
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
