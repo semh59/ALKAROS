@@ -88,15 +88,20 @@ public sealed partial class CashDrawerService(
         return await ReadCountsAsync(command, cashSessionId, cancellationToken);
     }
 
-    /// <summary>Opens the drawer for a cash payment that was just taken. Never throws: the payment already stands.</summary>
-    public async Task KickForSaleAsync(
+    /// <summary>
+    /// Opens the drawer for a cash payment that was just taken; never throws, the payment already stands. Whether the
+    /// pulse reached the printer: null when the drawer is off or the attempt itself broke down before an answer.
+    /// </summary>
+    public async Task<bool?> KickForSaleAsync(
         Guid cashSessionId, Guid terminalId, Guid billId, Guid userId, string correlationId, CancellationToken cancellationToken)
     {
+        bool? delivered = null;
         try
         {
             if (await CashDrawerSettings.GetActiveTargetAsync(settings, cancellationToken) is not { } target)
-                return;
+                return null;
             var result = await kicker.KickAsync(target.Host, target.Port, cancellationToken);
+            delivered = result.Delivered;
             if (!result.Delivered)
                 KickFailedLog(logger, cashSessionId, result.Failure);
             await AppendAsync(
@@ -108,6 +113,8 @@ public sealed partial class CashDrawerService(
             // Includes a caller that hung up and the audit time limit: the payment stands whatever happens here.
             SaleKickFailedLog(logger, cashSessionId, exception);
         }
+
+        return delivered;
     }
 
     public async Task<CashDrawerOpenResultV1> OpenWithoutSaleAsync(

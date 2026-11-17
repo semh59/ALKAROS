@@ -97,6 +97,53 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCashPaymentAnswerSaysWhetherTheDrawerOpened()
+    {
+        await using var delivered = await RigAsync();
+        var opened = await (await delivered.TenderAsync(80m, 100m, "answer-opened")).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(opened.GetProperty("drawerOpened").GetBoolean());
+        Assert.Equal(80m, opened.GetProperty("approvedAmount").GetDecimal());
+        Assert.Equal(20m, opened.GetProperty("changeAmount").GetDecimal());
+
+        await using var down = await RigAsync(address: $"127.0.0.1:{FreePort()}");
+        var failed = await (await down.TenderAsync(80m, 100m, "answer-failed")).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.False(failed.GetProperty("drawerOpened").GetBoolean());
+
+        await using var off = await RigAsync(enabled: false);
+        var untried = await (await off.TenderAsync(80m, 100m, "answer-off")).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(JsonValueKind.Null, untried.GetProperty("drawerOpened").ValueKind);
+    }
+
+    [Fact]
+    public async Task AReplayedCashPaymentAnswersWithoutTryingTheDrawer()
+    {
+        await using var rig = await RigAsync();
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await rig.TenderAsync(80m, 100m, "answer-replay", billId);
+
+        var replay = await (await rig.TenderAsync(80m, 100m, "answer-replay", billId)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.True(replay.GetProperty("wasReplayed").GetBoolean());
+        Assert.Equal(JsonValueKind.Null, replay.GetProperty("drawerOpened").ValueKind);
+    }
+
+    [Fact]
+    public async Task APrinterThatNeverAnswersHoldsTheCashPaymentForAboutASecondAtMost()
+    {
+        await using var rig = await RigAsync(address: "192.0.2.1:9100");
+        await rig.TenderAsync(80m, 100m, "slow-warmup");
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var tender = await rig.TenderAsync(80m, 100m, "slow-printer");
+        watch.Stop();
+
+        Assert.Equal(HttpStatusCode.OK, tender.StatusCode);
+        Assert.InRange(watch.Elapsed, TimeSpan.Zero, TimeSpan.FromMilliseconds(1700));
+        Assert.False((await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("drawerOpened").GetBoolean());
+        Assert.Equal(2, (await rig.DrawerAuditAsync()).Count(row => row.Event == "cash.drawer.kick-failed"));
+    }
+
+    [Fact]
     public async Task NoSaleOpensTheDrawerRecordsTheReasonAndMovesNoMoney()
     {
         await using var rig = await RigAsync();

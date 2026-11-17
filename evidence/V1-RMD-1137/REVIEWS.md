@@ -1,0 +1,2 @@
+- qa-backend: KABUL (dusuk: denetim kaydi bekleme siniri, drawerOpened anlami belgeye yazildi)
+- qa-performans-dayaniklilik: KABUL (orta: 1 sn sinir gercek cihazda dogrulanmali ve yanlis alarm riski RESULT'ta; denetim kaydi bekleme notu)

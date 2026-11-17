@@ -74,8 +74,8 @@ public sealed class CashDrawerKickTests
     }
 
     [Fact]
-    public void TheDefaultTimeLimitKeepsAPaymentWaitingTwoSecondsAtMost()
-        => TcpCashDrawerKicker.DefaultTimeLimit.Should().BeLessThanOrEqualTo(TimeSpan.FromSeconds(2));
+    public void TheDefaultTimeLimitKeepsAPaymentWaitingOneSecondAtMost()
+        => TcpCashDrawerKicker.DefaultTimeLimit.Should().BeLessThanOrEqualTo(TimeSpan.FromSeconds(1));
 
     private static int FreePort()
     {

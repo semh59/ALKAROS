@@ -26,7 +26,7 @@ public interface ICashDrawerKicker
 /// </summary>
 public sealed class TcpCashDrawerKicker : ICashDrawerKicker
 {
-    public static readonly TimeSpan DefaultTimeLimit = TimeSpan.FromSeconds(2);
+    public static readonly TimeSpan DefaultTimeLimit = TimeSpan.FromSeconds(1);
     private readonly TimeSpan _timeLimit;
 
     public TcpCashDrawerKicker() : this(DefaultTimeLimit)

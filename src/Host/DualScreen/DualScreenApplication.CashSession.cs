@@ -303,13 +303,15 @@ public static partial class DualScreenApplication
                 throw;
             }
             await billAccess.ClaimAsync(context, terminalId, request.BillId);
-            // Cash went into the drawer, so it opens; a replay of a payment already taken must not open it twice.
-            if (!result.WasReplayed)
-                await drawer.KickForSaleAsync(cashSessionId, terminalId, request.BillId, principal.UserId, context.TraceIdentifier, cancellationToken);
+            // Cash went into the drawer, so it opens; a replay of a payment already taken must not open it twice. The pulse
+            // runs while the bill is closed, so a printer that does not answer costs at most its own time limit.
+            var drawerKick = result.WasReplayed
+                ? Task.FromResult<bool?>(null)
+                : drawer.KickForSaleAsync(cashSessionId, terminalId, request.BillId, principal.UserId, context.TraceIdentifier, cancellationToken);
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
             // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
             await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
-            return Results.Ok(result);
+            return Results.Ok(CashTenderResponseV1.From(result, await drawerKick));
         });
 
         group.MapCashMovementRoutes();
@@ -407,6 +409,20 @@ public sealed record ReconcileCashSessionRequestV1(string? Notes);
 
 public sealed record CashTenderRequestV1(
     Guid BillId, decimal AmountDue, decimal TenderedAmount, string IdempotencyKey);
+
+/// <summary>
+/// The cash tender result plus what happened to the drawer: true when the pulse reached the printer, false when it was
+/// tried and did not, null when the drawer is off or the answer is a replay.
+/// </summary>
+public sealed record CashTenderResponseV1(
+    Guid PaymentId, Guid PaymentAllocationId, Guid CashTransactionId, decimal ApprovedAmount, decimal ChangeAmount,
+    bool WasReplayed, bool? DrawerOpened)
+{
+    public static CashTenderResponseV1 From(CashTenderResult result, bool? drawerOpened)
+        => new(
+            result.PaymentId, result.PaymentAllocationId, result.CashTransactionId, result.ApprovedAmount, result.ChangeAmount,
+            result.WasReplayed, drawerOpened);
+}
 
 /// <summary>V13-CSH-004: manual cash-in/cash-out drawer movement, outside any sale.</summary>
 public enum CashMovementDirectionV1

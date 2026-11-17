@@ -158,7 +158,9 @@ The drawer is cabled to a receipt printer and opens on an ESC/POS pulse sent ove
 by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.drawer_printer_address`).
 
 - A cash tender that succeeds and is not a replay opens the drawer, best effort: a failed send never changes the
-  payment's answer. Card, transfer and account payments never open it.
+  payment's answer. Card, transfer and account payments never open it. The send has one attempt and a one-second limit
+  and runs while the bill is closed; the answer carries `drawerOpened` (true: the pulse was handed to the printer, which
+  does not prove the drawer sprang open; false: tried and failed; null: the drawer is off, or the answer is a replay).
 - "No sale" (`POST .../cash-drawer/no-sale`) needs `cash.drawer.kick`, the session's own cashier, an idempotency key and
   a reason (Bozuk para, Sayım, Diğer; `Other` needs a note), on an open or counting session. The audit event is written
   before the pulse; after a cash payment it is written after the pulse (the payment must not wait on it).
