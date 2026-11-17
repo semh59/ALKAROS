@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
+using Npgsql;
 
 namespace ALKAROS.Host.DualScreen;
 
@@ -171,6 +172,8 @@ public static partial class DualScreenApplication
             IAuthorizationService authorization,
             HttpContext context,
             ICashSessionRepository sessionRepository,
+            NpgsqlDataSource dataSource,
+            ILoggerFactory loggerFactory,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
@@ -198,7 +201,8 @@ public static partial class DualScreenApplication
                 tolerance,
                 (closed, locked, token) => closeStore.AuditClosedAsync(closed, request.AcknowledgeUnsettled, tolerance, locked, token),
                 cancellationToken);
-            return Results.Ok(new CloseCashSessionResultV1(session, closedEvent.Difference));
+            return Results.Ok(new CloseCashSessionResultV1(
+                session, closedEvent.Difference, await ReadCloseDrawerSummaryAsync(dataSource, loggerFactory, cashSessionId, cancellationToken)));
         });
 
         group.MapPost("/{cashSessionId:guid}/reconcile", async (
@@ -321,6 +325,30 @@ public static partial class DualScreenApplication
     }
 
     /// <summary>
+    /// The drawer counts of the session that was just closed. A no-sale opening cannot be recorded on a closed session; a
+    /// pulse that failed during the close can still log its failure afterwards, so a failed-pulse count may be one higher
+    /// than the closing record's. The close is already committed, so a failed read must not turn it into an error the
+    /// cashier would answer by closing again: the summary just goes without the drawer lines.
+    /// </summary>
+    private static async Task<CloseDrawerSummaryV1?> ReadCloseDrawerSummaryAsync(
+        NpgsqlDataSource dataSource, ILoggerFactory loggerFactory, Guid cashSessionId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var drawer = await CashDrawerService.CountAsync(dataSource, cashSessionId, cancellationToken);
+            return new CloseDrawerSummaryV1(drawer.SaleOpenings, drawer.NoSaleOpenings, drawer.FailedKicks);
+        }
+        catch (Exception exception) when (exception is NpgsqlException or InvalidOperationException or OperationCanceledException)
+        {
+            CloseDrawerSummaryFailedLog(loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.CashClose"), cashSessionId, exception);
+            return null;
+        }
+    }
+
+    [LoggerMessage(EventId = 6947, Level = LogLevel.Warning, Message = "The drawer counts of the closed cash session {CashSessionId} could not be read; the summary goes without them.")]
+    private static partial void CloseDrawerSummaryFailedLog(ILogger logger, Guid cashSessionId, Exception exception);
+
+    /// <summary>
     /// V1-RMD-411 (V1-RMD-393 F-08): a drawer session belongs to one terminal. A cashier signed in on terminal B must
     /// not count, close, reconcile, move cash in or out of, or sell into terminal A's session by naming its id in B's
     /// route; a foreign session answers exactly like an unknown one.
@@ -390,7 +418,10 @@ public sealed record CloseCashSessionRequestV1(
     decimal ActualCash, bool IsSupervisorOverride = false, string? OverrideReason = null,
     string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false);
 
-public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decimal Difference);
+/// <summary>The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and pulses that did not.</summary>
+public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int KickFailedCount);
+
+public sealed record CloseCashSessionResultV1(CashSessionSnapshot Session, decimal Difference, CloseDrawerSummaryV1? Drawer);
 
 /// <summary>
 /// V13-CSH-004 (Ek, 2026-09-18): CashSessionSnapshot.ExpectedCash is only

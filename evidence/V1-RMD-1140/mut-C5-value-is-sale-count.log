@@ -1,0 +1,82 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (5 tests | 3 failed) 1492ms
+     × shows the no-sale count, and only that, when pulses all arrived 294ms
+     × says zero no-sale openings when the drawer was used for sales only 294ms
+     × adds the failed attempts line when pulses did not arrive 286ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > shows the no-sale count, and only that, when pulses all arrived
+AssertionError: expected { Object (label, value) } to deeply equal { Object (label, value) }
+
+- Expected
++ Received
+
+  {
+    "label": "Satışsız çekmece açma",
+-   "value": "2",
++   "value": "3",
+  }
+
+ ❯ cash-session-closed-summary.test.js:75:43
+     73|     await closeWith({ drawer: { saleOpenCount: 3, noSaleCount: 2, kick…
+     74|
+     75|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     76|     expect($("#closed-drawer-failed")).toBeNull();
+     77|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > says zero no-sale openings when the drawer was used for sales only
+AssertionError: expected { Object (label, value) } to deeply equal { Object (label, value) }
+
+- Expected
++ Received
+
+  {
+    "label": "Satışsız çekmece açma",
+-   "value": "0",
++   "value": "1",
+  }
+
+ ❯ cash-session-closed-summary.test.js:82:43
+     80|     await closeWith({ drawer: { saleOpenCount: 1, noSaleCount: 0, kick…
+     81|
+     82|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     83|   });
+     84|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > adds the failed attempts line when pulses did not arrive
+AssertionError: expected { Object (label, value) } to deeply equal { Object (label, value) }
+
+- Expected
++ Received
+
+  {
+    "label": "Satışsız çekmece açma",
+-   "value": "1",
++   "value": "0",
+  }
+
+ ❯ cash-session-closed-summary.test.js:88:43
+     86|     await closeWith({ drawer: { saleOpenCount: 0, noSaleCount: 1, kick…
+     87|
+     88|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     89|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+     90|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  21:19:45
+   Duration  2.78s (transform 194ms, setup 26ms, import 51ms, tests 1.49s, environment 955ms)
+

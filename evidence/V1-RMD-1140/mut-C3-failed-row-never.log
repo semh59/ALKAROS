@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (5 tests | 1 failed) 1504ms
+     × adds the failed attempts line when pulses did not arrive 292ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > adds the failed attempts line when pulses did not arrive
+AssertionError: expected null to deeply equal { …(2) }
+
+- Expected:
+{
+  "label": "Açılamayan çekmece denemesi",
+  "value": "4",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:89:42
+     87|
+     88|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+     89|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+       |                                          ^
+     90|   });
+     91| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  21:19:34
+   Duration  2.79s (transform 194ms, setup 24ms, import 43ms, tests 1.50s, environment 953ms)
+

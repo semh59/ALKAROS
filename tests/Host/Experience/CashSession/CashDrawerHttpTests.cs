@@ -405,6 +405,41 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCloseAnswerCarriesTheSameDrawerCountsAsTheClosingRecord()
+    {
+        await using var rig = await RigAsync();
+        Assert.Equal(HttpStatusCode.OK, (await rig.TenderAsync(80m, 100m, "tender-answer")).StatusCode);
+        await rig.KicksAsync(1);
+        Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-a1", "Count", null)).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-a2", "ChangeCoins", null)).StatusCode);
+        await _database.SetSettingAsync("cash.drawer_printer_address", "String", $"127.0.0.1:{FreePort()}");
+        Assert.False((await (await rig.NoSaleAsync("ns-a3", "Count", null)).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("delivered").GetBoolean());
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 180m })).StatusCode);
+
+        var closed = await (await rig.PostAsync("/close", new { ActualCash = 180m })).Content.ReadFromJsonAsync<JsonElement>();
+
+        var drawer = closed.GetProperty("drawer");
+        Assert.Equal((1, 2, 1), (drawer.GetProperty("saleOpenCount").GetInt32(), drawer.GetProperty("noSaleCount").GetInt32(), drawer.GetProperty("kickFailedCount").GetInt32()));
+        var record = await rig.ClosedStateAsync();
+        Assert.Equal((1, 2, 1), (record.GetProperty("drawerSaleOpenCount").GetInt32(), record.GetProperty("drawerNoSaleCount").GetInt32(), record.GetProperty("drawerKickFailedCount").GetInt32()));
+        Assert.Equal(0m, closed.GetProperty("difference").GetDecimal());
+    }
+
+    [Fact]
+    public async Task TheCloseAnswerSaysZeroDrawerOpeningsWhenTheDrawerIsOff()
+    {
+        await using var rig = await RigAsync(enabled: false);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 100m })).StatusCode);
+
+        var closed = await (await rig.PostAsync("/close", new { ActualCash = 100m })).Content.ReadFromJsonAsync<JsonElement>();
+
+        var drawer = closed.GetProperty("drawer");
+        Assert.Equal((0, 0, 0), (drawer.GetProperty("saleOpenCount").GetInt32(), drawer.GetProperty("noSaleCount").GetInt32(), drawer.GetProperty("kickFailedCount").GetInt32()));
+    }
+
+    [Fact]
     public async Task TheStatusSaysWhetherTheButtonShouldShowAndOffersTheReasons()
     {
         await using var on = await RigAsync();

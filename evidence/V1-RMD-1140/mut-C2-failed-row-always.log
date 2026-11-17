@@ -1,0 +1,45 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (5 tests | 1 failed) 1500ms
+     × shows the no-sale count, and only that, when pulses all arrived 294ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > shows the no-sale count, and only that, when pulses all arrived
+AssertionError: expected <div class="cs-summary-row" …(1)>…(2)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  class="cs-summary-row"
+  id="closed-drawer-failed"
+>
+  <span>
+    Açılamayan çekmece denemesi
+  </span>
+  <span
+    class="value"
+  >
+    0
+  </span>
+</div>
+
+ ❯ cash-session-closed-summary.test.js:76:40
+     74|
+     75|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+     76|     expect($("#closed-drawer-failed")).toBeNull();
+       |                                        ^
+     77|   });
+     78|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  21:19:29
+   Duration  2.92s (transform 191ms, setup 24ms, import 42ms, tests 1.50s, environment 1.09s)
+

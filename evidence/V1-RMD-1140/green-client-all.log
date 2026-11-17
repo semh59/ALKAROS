@@ -1,0 +1,108 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says MANAGER_LOCKED in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794939998820-0.7114164172893018:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794939998820-0.7114164172893018:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794939998820-0.7114164172893018:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says SELF_APPROVAL_NOT_ALLOWED in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940001103-0.9900656626207058:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940001103-0.9900656626207058:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940001103-0.9900656626207058:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says APPROVER_LACKS_PERMISSION in a fixed Turkish sentence, empties the password and keeps the request waiting
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940002509-0.8317393105057392:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940002509-0.8317393105057392:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940002509-0.8317393105057392:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > asks for both fields and sends nothing when one is empty
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940003867-0.6250891293058976:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940003867-0.6250891293058976:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940003867-0.6250891293058976:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > checks the request again when the manager had already decided it elsewhere
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940005049-0.7496865494256953:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940005049-0.7496865494256953:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940005049-0.7496865494256953:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > does not re-send the old request when the form was edited while the approval was on its way
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940006945-0.10612962953057836:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940006945-0.10612962953057836:545:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794940006945-0.10612962953057836:658:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-discount-pending.test.js (31 tests | 6 failed) 19917ms
+     × says MANAGER_LOCKED in a fixed Turkish sentence, empties the password and keeps the request waiting 1612ms
+     × says SELF_APPROVAL_NOT_ALLOWED in a fixed Turkish sentence, empties the password and keeps the request waiting 1404ms
+     × says APPROVER_LACKS_PERMISSION in a fixed Turkish sentence, empties the password and keeps the request waiting 1361ms
+     × asks for both fields and sends nothing when one is empty 1182ms
+     × checks the request again when the manager had already decided it elsewhere 1422ms
+     × does not re-send the old request when the form was edited while the approval was on its way 898ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says MANAGER_LOCKED in a fixed Turkish sentence, empties the password and keeps the request waiting
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says SELF_APPROVAL_NOT_ALLOWED in a fixed Turkish sentence, empties the password and keeps the request waiting
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > says APPROVER_LACKS_PERMISSION in a fixed Turkish sentence, empties the password and keeps the request waiting
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > asks for both fields and sends nothing when one is empty
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > checks the request again when the manager had already decided it elsewhere
+AssertionError: expected null not to be null
+ ❯ split-payment-discount-pending.test.js:388:61
+    386|   type("discount-value", "20");
+    387|   submit().click();
+    388|   await vi.waitFor(() => expect(approveFields().button).not.toBeNull()…
+       |                                                             ^
+    389|   return fetchMock;
+    390| }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  split-payment-discount-pending.test.js > split-payment.js manager approving a waiting discount at the till > does not re-send the old request when the form was edited while the approval was on its way
+AssertionError: expected [ { …(5) }, { …(5) } ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ split-payment-discount-pending.test.js:498:38
+    496|     await new Promise((done) => setTimeout(done, 400));
+    497|
+    498|     expect(discountCalls(fetchMock)).toHaveLength(1);
+       |                                      ^
+    499|     expect(text()).not.toContain("onayıyla uygulandı");
+    500|     expect(approveFields().button).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+
+ Test Files  1 failed | 66 passed (67)
+      Tests  6 failed | 745 passed (751)
+   Start at  21:26:19
+   Duration  45.53s (transform 153.56s, setup 3.37s, import 12.04s, tests 293.82s, environment 142.38s)
+

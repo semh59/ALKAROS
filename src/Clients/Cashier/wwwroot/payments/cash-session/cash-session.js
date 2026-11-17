@@ -1373,6 +1373,16 @@
     });
   }
 
+  // Shown only when the drawer was used in this shift, so a till without a drawer sees nothing about it.
+  function closedDrawerRows() {
+    var drawer = state.closeResult && state.closeResult.drawer;
+    if (!drawer || !(drawer.saleOpenCount + drawer.noSaleCount + drawer.kickFailedCount > 0)) return '';
+    return '<div class="cs-summary-row" id="closed-drawer-no-sale"><span>Satışsız çekmece açma</span><span class="value">' + drawer.noSaleCount + '</span></div>' +
+      (drawer.kickFailedCount > 0
+        ? '<div class="cs-summary-row" id="closed-drawer-failed"><span>Açılamayan çekmece denemesi</span><span class="value">' + drawer.kickFailedCount + '</span></div>'
+        : '');
+  }
+
   function renderClosed() {
     var s = state.session;
     var difference = state.closeResult ? state.closeResult.difference : 0;
@@ -1391,6 +1401,7 @@
       '<div class="cs-summary-row"><span>Fark</span><span class="value" style="color:' +
       (Math.abs(difference) > 0.005 ? 'var(--color-danger)' : 'var(--color-success)') + '">' +
       formatMoney(difference) + '</span></div>' +
+      closedDrawerRows() +
       '</div>' +
       '<button class="cs-btn cs-btn-primary" id="reopen" style="width:100%">Yeni Vardiya Aç</button>' +
       '</div>';

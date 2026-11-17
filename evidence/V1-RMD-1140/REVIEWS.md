@@ -1,0 +1,2 @@
+- qa-api-uclar: BULGU orta (kapanis commit sonrasi sayim hatasi 500 olur) -> try/catch + null + gunluk ile duzeltildi; dusuk (yorum, kick-failed gecikmesi) -> yorum duzeltildi, RESULT'ta risk; sozlesme geriye uyumlu: KABUL
+- qa-frontend: KABUL (dusuk: test genisletildi: buyuk/kucuk harf, satir kimlikleri, 0 satis + basarisiz darbe birlesimi)

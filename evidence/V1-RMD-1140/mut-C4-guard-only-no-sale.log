@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (5 tests | 1 failed) 1494ms
+     × says zero no-sale openings when the drawer was used for sales only 290ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > says zero no-sale openings when the drawer was used for sales only
+AssertionError: expected null to deeply equal { Object (label, value) }
+
+- Expected:
+{
+  "label": "Satışsız çekmece açma",
+  "value": "0",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:82:43
+     80|     await closeWith({ drawer: { saleOpenCount: 1, noSaleCount: 0, kick…
+     81|
+     82|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     83|   });
+     84|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  21:19:40
+   Duration  2.95s (transform 201ms, setup 26ms, import 44ms, tests 1.49s, environment 1.08s)
+
