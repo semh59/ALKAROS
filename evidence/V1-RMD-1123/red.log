@@ -1,0 +1,164 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-connection-errors.test.js (6 tests | 6 failed) 6909ms
+     × login: nothing was sent, try again 1142ms
+     × opening the drawer: it may have been opened, refresh and check before opening again 1128ms
+     × movement check screen: nothing was saved yet, try again 1111ms
+     × starting the count: it may have started, refresh and check 1124ms
+     × sending the count: it may not be saved, refresh, check and enter it again if needed 1178ms
+     × re-reading the expected amount: it only reads, so just check the connection and try again 1224ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > login: nothing was sent, try again
+AssertionError: expected '\n  ← Kasaya dön\n  ALKAROSKasa Giriş…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   ALKAROSKasa GirişiKasa oturumunu yönetmek için giriş yapın.!HataSunucuya ulaşılamadı.Kullanıcı adıŞifreGiriş Yap
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:65:43
+     63|     $("#login-form").dispatchEvent(new Event("submit", { bubbles: true…
+     64|
+     65|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+     66|     expect(text()).toContain("Giriş yapılamadı");
+     67|     expect(text()).toContain("tekrar deneyin");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > opening the drawer: it may have been opened, refresh and check before opening again
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa AçılışıVardi…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   Kasa AçılışıVardiyayı BaşlatÇekmecede bulunan başlangıç tutarını girin.!HataSunucuya ulaşılamadı.Açılış Tutarı₺Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın.Kasayı Aç
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:76:43
+     74|     $("#open-btn").click();
+     75|
+     76|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+     77|     expect(text()).toContain("Kasa açılmış olabilir");
+     78|     expect(text()).toContain("sayfayı yenileyip kasa durumunu kontrol …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > movement check screen: nothing was saved yet, try again
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   Kasa HareketiNakit Giriş!HataSunucuya ulaşılamadı.Tutar₺AçıklamaBozuk paraBankaTakviyemarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:93:43
+     91|     $("#movement-submit").click();
+     92|
+     93|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+     94|     expect(text()).toContain("Hareket henüz kaydedilmedi");
+     95|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > starting the count: it may have started, refresh and check
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık!HataSunucuya ulaşılamadı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:103:43
+    101|     $("#start-count").click();
+    102|
+    103|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+    104|     expect(text()).toContain("Sayım başlamış olabilir");
+    105|     expect(text()).toContain("sayfayı yenileyip kasa durumunu kontrol …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > sending the count: it may not be saved, refresh, check and enter it again if needed
+AssertionError: expected '\n  ← Kasaya dön\n  SayımÇekmecedeki …' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   SayımÇekmecedeki Nakdi SayınHer kupürden kaç adet olduğunu girin, toplam otomatik hesaplanır.!HataSunucuya ulaşılamadı.200 ₺₺0,00100 ₺₺1.000,0050 ₺₺0,0020 ₺₺0,0010 ₺₺0,005 ₺₺0,001 ₺₺0,0050 kr₺0,00Toplam₺1.000,00Not (isteğe bağlı)Kupürüm yok, tek tutar gireceğimSayımı Kaydet
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:119:43
+    117|     $("#submit-count").click();
+    118|
+    119|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+    120|     expect(text()).toContain("Sayımınız kaydedilmemiş olabilir");
+    121|     expect(text()).toContain("gerekirse sayımı tekrar girin");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > re-reading the expected amount: it only reads, so just check the connection and try again
+AssertionError: expected '\n  ← Kasaya dön\n  KapatmaFark Teyid…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   KapatmaFark Teyidi!HataSunucuya ulaşılamadı.Beklenen—Sayılan₺1.000,00Beklenen tutar okunamadı; kasayı kapatmak için yeniden okuyun.Beklenen tutarı yeniden okuKasayı KapatSayımı düzelt
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:137:43
+    135|     $("#reread-expected").click();
+    136|
+    137|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+    138|     expect(text()).toContain("Beklenen tutar okunamadı");
+    139|     expect(text()).not.toContain("kaydedilmemiş olabilir");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  10:33:15
+   Duration  8.29s (transform 255ms, setup 24ms, import 49ms, tests 6.91s, environment 1.02s)
+
+exit code: 1

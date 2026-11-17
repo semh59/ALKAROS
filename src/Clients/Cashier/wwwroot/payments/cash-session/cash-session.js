@@ -379,7 +379,7 @@
       bootstrap();
     }).catch(function () {
       state.busy = false;
-      setError('Sunucuya ulaşılamadı.');
+      setError('Bağlantı kesildi. Giriş yapılamadı; bağlantınızı kontrol edip tekrar deneyin.');
     });
   }
 
@@ -415,7 +415,7 @@
         return loadMovements();
       }).catch(function () {
         state.busy = false;
-        setError('Sunucuya ulaşılamadı.');
+        setError('Bağlantı kesildi. Kasa açılmış olabilir; sayfayı yenileyip kasa durumunu kontrol edin, açıksa o oturumla devam edin.');
       });
   }
 
@@ -478,7 +478,7 @@
       render();
     }).catch(function () {
       state.busy = false;
-      setError('Sunucuya ulaşılamadı.');
+      setError('Bağlantı kesildi. Hareket henüz kaydedilmedi; bağlantınızı kontrol edip tekrar deneyin.');
     });
   }
 
@@ -513,7 +513,7 @@
         render();
       }).catch(function () {
         state.busy = false;
-        setError('Sunucuya ulaşılamadı.');
+        setError('Bağlantı kesildi. Sayım başlamış olabilir; sayfayı yenileyip kasa durumunu kontrol edin.');
       });
   }
 
@@ -551,7 +551,7 @@
         });
     }).catch(function () {
       state.busy = false;
-      setError('Sunucuya ulaşılamadı.');
+      setError('Bağlantı kesildi. Sayımınız kaydedilmemiş olabilir; sayımı tekrar gönderin (en son sayım geçerlidir).');
     });
   }
 
@@ -644,7 +644,7 @@
       render();
     }).catch(function () {
       state.busy = false;
-      setError('Sunucuya ulaşılamadı.');
+      setError('Bağlantı kesildi. Beklenen tutar okunamadı; bağlantınızı kontrol edip tekrar deneyin.');
     });
   }
 

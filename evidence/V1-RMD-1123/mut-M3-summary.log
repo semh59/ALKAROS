@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-connection-errors.test.js (6 tests | 1 failed) 2116ms
+     × movement check screen: nothing was saved yet, try again 1120ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > movement check screen: nothing was saved yet, try again
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa HareketiNaki…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   Kasa HareketiNakit Giriş!HataSunucuya ulaşılamadı.Tutar₺AçıklamaBozuk paraBankaTakviyemarketVazgeçDevam
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:93:43
+     91|     $("#movement-submit").click();
+     92|
+     93|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+     94|     expect(text()).toContain("Hareket henüz kaydedilmedi");
+     95|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  10:34:14
+   Duration  3.44s (transform 207ms, setup 24ms, import 42ms, tests 2.12s, environment 999ms)
+
+exit code: 1

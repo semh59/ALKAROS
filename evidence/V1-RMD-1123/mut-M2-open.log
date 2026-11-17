@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-connection-errors.test.js (6 tests | 1 failed) 2105ms
+     × opening the drawer: it may have been opened, refresh and check before opening again 1116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > opening the drawer: it may have been opened, refresh and check before opening again
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa AçılışıVardi…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   Kasa AçılışıVardiyayı BaşlatÇekmecede bulunan başlangıç tutarını girin.!HataSunucuya ulaşılamadı.Açılış Tutarı₺Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın.Kasayı Aç
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:76:43
+     74|     $("#open-btn").click();
+     75|
+     76|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+     77|     expect(text()).toContain("Kasa açılmış olabilir");
+     78|     expect(text()).toContain("sayfayı yenileyip kasa durumunu kontrol …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  10:34:08
+   Duration  3.43s (transform 221ms, setup 23ms, import 47ms, tests 2.11s, environment 999ms)
+
+exit code: 1

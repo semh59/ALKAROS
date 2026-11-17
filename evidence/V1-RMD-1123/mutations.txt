@@ -1,0 +1,6 @@
+M1-login exit 1 restored cmp ok
+M2-open exit 1 restored cmp ok
+M3-summary exit 1 restored cmp ok
+M4-startcount exit 1 restored cmp ok
+M5-count exit 1 restored cmp ok
+M6-reread exit 1 restored cmp ok

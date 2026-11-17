@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-connection-errors.test.js (6 tests | 1 failed) 2104ms
+     × starting the count: it may have started, refresh and check 1116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > starting the count: it may have started, refresh and check
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçık!HataSunucuya ulaşılamadı.Açılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.Kasayı Kapat: Sayıma Başla
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:103:43
+    101|     $("#start-count").click();
+    102|
+    103|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+    104|     expect(text()).toContain("Sayım başlamış olabilir");
+    105|     expect(text()).toContain("sayfayı yenileyip kasa durumunu kontrol …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  10:34:21
+   Duration  3.42s (transform 199ms, setup 23ms, import 42ms, tests 2.10s, environment 983ms)
+
+exit code: 1

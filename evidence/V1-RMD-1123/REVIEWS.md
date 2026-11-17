@@ -1,0 +1,2 @@
+- qa-ux-tasarim: ILK TUR RED -> (1) sayim mesajinin "sayfayi yenile" yonlendirmesi durumu geri okumuyor: duzeltildi, mesaj artik "sayimi tekrar gonderin (en son sayim gecerlidir)" (sunucu en son sayimi kullanir, CashSessionLifecycleService); (2) 463/495/244/278/633 ile ifade birligi: kapsam disi, acik risk olarak kaydedildi. Diger mesajlar kodla uyumlu.
+- qa-bulgu-dogrulayici: KABUL -> red/green/M1-M6/diff/sahiplik tutarli; E2E mesajlara bagimli degil.
