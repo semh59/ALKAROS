@@ -1,7 +1,7 @@
 # V1-RMD-1126 - Kasa oturumu: bağlantı hataları tek kalıpta
 
 - Task ID: V1-RMD-1126
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

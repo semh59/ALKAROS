@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { loadApp } from "./support/loadApp.js";
 
@@ -73,8 +74,8 @@ describe("cash-session.js connection-lost messages say what happened and what to
     await vi.waitFor(() => expect($("#open-btn")).not.toBeNull());
     $("#open-btn").click();
 
-    await vi.waitFor(() => expect(text()).toContain(LOST));
-    expect(text()).toContain("Kasa açılmış olabilir");
+    await vi.waitFor(() => expect(text()).toContain("Kasa açılmış olabilir"));
+    expect(text()).toContain(LOST);
     expect(text()).toContain("sayfayı yenileyip kasa durumunu kontrol edin");
   });
 
@@ -137,5 +138,12 @@ describe("cash-session.js connection-lost messages say what happened and what to
     await vi.waitFor(() => expect(text()).toContain(LOST));
     expect(text()).toContain("Beklenen tutar okunamadı");
     expect(text()).not.toContain("kaydedilmemiş olabilir");
+  });
+
+  it("says every connection loss with the one wording, never 'Sunucuya ulaşılamadı' or 'Bağlantı koptu'", () => {
+    const source = readFileSync(scriptPath, "utf8");
+
+    expect(source).not.toMatch(/Sunucuya ulaşılamadı|Bağlantı koptu/);
+    expect([...source.matchAll(/'(Bağlantı kesildi\.[^']*)'/g)].length).toBeGreaterThanOrEqual(11);
   });
 });

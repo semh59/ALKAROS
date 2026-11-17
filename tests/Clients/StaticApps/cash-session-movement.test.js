@@ -259,7 +259,7 @@ describe("cash-session.js cash movements", () => {
     await toSummary("out", "40", "market");
 
     $("#movement-confirm").click();
-    await vi.waitFor(() => expect(text()).toContain("Sunucuya ulaşılamadı."));
+    await vi.waitFor(() => expect(text()).toContain("Bağlantı kesildi."));
     await vi.waitFor(() => expect($("#movement-confirm")).not.toBeNull());
     $("#movement-confirm").click();
     await vi.waitFor(() => expect(posted(calls, "/cash-movements")).toHaveLength(2));
@@ -518,7 +518,7 @@ describe("cash-session.js counting and closing", () => {
     $("#submit-close").click();
     await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
 
-    expect($("#cs-notice").textContent).toContain("kasa kapanmış olabilir");
+    expect($("#cs-notice").textContent).toContain("Kasa kapanmış olabilir");
     expect(activeReads()).toBe(before + 1);
   });
 
@@ -880,6 +880,6 @@ describe("cash-session.js counting and closing details", () => {
     $("#submit-close").click();
     await vi.waitFor(() => expect(text()).toContain("Kasa durumu okunamadı"));
 
-    expect($("#cs-notice").textContent).toContain("kasa kapanmış olabilir");
+    expect($("#cs-notice").textContent).toContain("Kasa kapanmış olabilir");
   });
 });

@@ -1,0 +1,2 @@
+- qa-frontend: KABUL (RESULT x7 -> x6 duzeltildi)
+- qa-bulgu-dogrulayici: KABUL (M1/M4 yalniz kaynak-metin testiyle olur; kabul edilen risk)

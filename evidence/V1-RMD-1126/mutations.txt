@@ -1,0 +1,6 @@
+M1-load-old exit 1 restored cmp ok
+M2-close-notice-old exit 1 restored cmp ok
+M3-confirm-old exit 1 restored cmp ok
+M4-decision-old exit 1 restored cmp ok
+M5-prefix-dropped exit 1 restored cmp ok
+M6-read-old exit 1 restored cmp ok

@@ -50,7 +50,7 @@ describe("cash-session.js when the active session cannot be read", () => {
     await loadApp(htmlPath, scriptPath);
 
     await vi.waitFor(() => expect(text()).toContain("Kasa Bilgisi Okunamadı"));
-    expect(text()).toContain("Sunucuya ulaşılamadı");
+    expect(text()).toContain("Bağlantı kesildi.");
     expect(text()).not.toContain("Oturum kontrol ediliyor");
     expect(document.getElementById("cs-reload")).not.toBeNull();
   });

@@ -1,0 +1,51 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-connection-errors.test.js (7 tests | 2 failed) 2558ms
+     × login: nothing was sent, try again 1300ms
+     × says every connection loss with the one wording, never 'Sunucuya ulaşılamadı' or 'Bağlantı koptu' 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > login: nothing was sent, try again
+AssertionError: expected '\n  ← Kasaya dön\n  ALKAROSKasa Giriş…' to contain 'Bağlantı kesildi.'
+
+- Expected
++ Received
+
+- Bağlantı kesildi.
++
++   ← Kasaya dön
++   ALKAROSKasa GirişiKasa oturumunu yönetmek için giriş yapın.!HataGiriş yapılamadı; bağlantınızı kontrol edip tekrar deneyin.Kullanıcı adıŞifreGiriş Yap
++   
++   
++
+
+ ❯ cash-session-connection-errors.test.js:66:43
+     64|     $("#login-form").dispatchEvent(new Event("submit", { bubbles: true…
+     65|
+     66|     await vi.waitFor(() => expect(text()).toContain(LOST));
+       |                                           ^
+     67|     expect(text()).toContain("Giriş yapılamadı");
+     68|     expect(text()).toContain("tekrar deneyin");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-connection-errors.test.js > cash-session.js connection-lost messages say what happened and what to do > says every connection loss with the one wording, never 'Sunucuya ulaşılamadı' or 'Bağlantı koptu'
+AssertionError: expected 10 to be greater than or equal to 11
+ ❯ cash-session-connection-errors.test.js:147:73
+    145|
+    146|     expect(source).not.toMatch(/Sunucuya ulaşılamadı|Bağlantı koptu/);
+    147|     expect([...source.matchAll(/'(Bağlantı kesildi\.[^']*)'/g)].length…
+       |                                                                         ^
+    148|   });
+    149| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 8 passed (9)
+      Tests  2 failed | 144 passed (146)
+   Start at  11:05:27
+   Duration  16.04s (transform 8.51s, setup 257ms, import 1.89s, tests 31.58s, environment 19.68s)
+

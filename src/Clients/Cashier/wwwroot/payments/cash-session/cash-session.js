@@ -241,7 +241,7 @@
       state.capabilities = result.body.capabilities || [];
       loadActiveSession();
     }).catch(function () {
-      state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
+      state.error = 'Bağlantı kesildi. Oturum durumu okunamadı; bağlantınızı kontrol edip yeniden deneyin.';
       state.phase = 'loadError';
       render();
     });
@@ -275,7 +275,7 @@
         render();
       });
     }).catch(function () {
-      failActiveSessionRead('Kasa durumu okunamadı. Sunucuya ulaşılamadı; bağlantınızı kontrol edip yeniden deneyin.');
+      failActiveSessionRead('Bağlantı kesildi. Kasa durumu okunamadı; bağlantınızı kontrol edip yeniden deneyin.');
     });
   }
 
@@ -460,7 +460,7 @@
       return loadMovements();
     }).catch(function () {
       state.busy = false;
-      setError('Sunucuya ulaşılamadı. Kayıt gitmiş olabilir; nakit hareketlerini kontrol edin, yoksa aynı işlemi tekrar deneyin.');
+      setError('Bağlantı kesildi. Kayıt gitmiş olabilir; nakit hareketlerini kontrol edin, yoksa aynı işlemi tekrar deneyin.');
     });
   }
 
@@ -492,7 +492,7 @@
         return loadMovements();
       }).catch(function () {
         state.busy = false;
-        setError('Sunucuya ulaşılamadı. Karar gitmiş olabilir; nakit hareketlerini kontrol edin.');
+        setError('Bağlantı kesildi. Karar gitmiş olabilir; nakit hareketlerini kontrol edin.');
       });
   }
 
@@ -630,7 +630,7 @@
       // The close may have landed before the connection dropped: say so and read the real state again.
       state.busy = false;
       state.error = null;
-      state.notice = 'Bağlantı koptu; kasa kapanmış olabilir. Güncel durum yeniden okundu.';
+      state.notice = 'Bağlantı kesildi. Kasa kapanmış olabilir; güncel durum yeniden okundu.';
       loadActiveSession();
     });
   }
