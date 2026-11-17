@@ -22,6 +22,7 @@ Kasiyer denemesi 15 (bulgu 7): yönetici onayı bekleyen indirim ya da ikram tal
   - tests/Clients/StaticApps/split-payment-approval-restore.test.js
   - src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
   - tests/Clients/StaticApps/split-payment-discount-pending.test.js
+  - tests/Clients/StaticApps/split-payment-comp.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
