@@ -1,7 +1,7 @@
 # V1-RMD-1127 - Sayımı düzelt: önceki girişler dolu gelir
 
 - Task ID: V1-RMD-1127
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
