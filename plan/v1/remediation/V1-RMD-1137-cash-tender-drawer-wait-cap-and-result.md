@@ -1,7 +1,7 @@
 # V1-RMD-1137 - Nakit ödemede çekmece beklemesi en çok 1 sn ve çekmece sonucu ödeme yanıtında
 
 - Task ID: V1-RMD-1137
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
