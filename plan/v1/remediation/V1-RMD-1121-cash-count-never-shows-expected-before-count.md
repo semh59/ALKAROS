@@ -1,7 +1,7 @@
 # V1-RMD-1121 - Kasa sayımı bitmeden beklenen nakit hiçbir ekranda görünmez
 
 - Task ID: V1-RMD-1121
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
