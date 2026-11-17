@@ -1,7 +1,7 @@
 # V1-RMD-1139 - Ödeme ekranında "Çekmece açılamadı, elle açın" sakin uyarısı
 
 - Task ID: V1-RMD-1139
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
