@@ -13,12 +13,9 @@ Kasiyer deneyimi turu 14: ödenmiş hesaba iade için kasiyer ekranlarından ula
 ## Owned surface
 
 - `evidence/V1-RMD-1118/**`
+- `src/Clients/PosTerminal/src/features/recent-sales/**` (yeni)
+- `src/Host/Experience/Billing/RecentSalesStore.cs` (V1-RMD-1117'de eklendi; yalnız sahiplik kaydı, bu görev dokunmaz)
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - src/Clients/PosTerminal/src/features/recent-sales/index.ts
-  - src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
-  - src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.tsx
-  - src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
-  - src/Clients/PosTerminal/src/features/recent-sales/recent-sales.css
   - src/Clients/PosTerminal/src/strings.ts
   - src/Clients/PosTerminal/src/routes/workspace.tsx
   - src/Clients/PosTerminal/src/routes/workspace.test.tsx
