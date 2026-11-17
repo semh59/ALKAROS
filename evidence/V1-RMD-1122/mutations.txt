@@ -1,0 +1,6 @@
+M1-stored-record-ignored exit 1 restored cmp ok
+M2-remaining-not-in-context exit 1 restored cmp ok
+M3-key-not-removed exit 1 restored cmp ok
+M4-amount-not-in-context exit 1 restored cmp ok
+M5-note-not-in-context exit 1 restored cmp ok
+M6-no-age-limit exit 1 restored cmp ok

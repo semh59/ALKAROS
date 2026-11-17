@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-tender-key-persistence.test.js (8 tests | 1 failed) 2909ms
+     × mints a new key for a different amount after the reload 385ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-tender-key-persistence.test.js > split-payment.js tender idempotency key survives a page reload > mints a new key for a different amount after the reload
+AssertionError: expected '71e5dbe8-a47f-40ad-a15b-fc161bb100da' not to be '71e5dbe8-a47f-40ad-a15b-fc161bb100da' // Object.is equality
+ ❯ split-payment-tender-key-persistence.test.js:104:43
+    102|     await pay(tenders, 2);
+    103|
+    104|     expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyK…
+       |                                           ^
+    105|   });
+    106|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  10:29:06
+   Duration  4.33s (transform 763ms, setup 28ms, import 46ms, tests 2.91s, environment 1.09s)
+
+exit code: 1

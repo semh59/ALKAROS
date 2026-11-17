@@ -1,0 +1,2 @@
+- qa-frontend: KABUL -> cift tahsilat/yanlis anahtar senaryosu temiz. Bulgulardan uygulandi: bellekteki kayit da baglamla eslesir (not degisince yeni anahtar), 10 dk yas siniri, yorumlar guncel, 5xx/not/yas testleri eklendi. Acik: kasa oturumu/kullanici baglamda yok (nakitte sunucu 409 ile korur).
+- qa-bulgu-dogrulayici: KABUL -> red/green/M1-M6/diff/sahiplik tutarli; dusuk: alan yorumu "temizlenir" ifadesi (storage kaydi baglam eslesmesiyle korunur).

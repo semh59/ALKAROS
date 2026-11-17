@@ -59,8 +59,9 @@
     // V1-RMD-314 (independent 2026-09-26 audit, finding K3): the tender idempotency key for the CURRENT
     // amount/method attempt - generated once (lazily, in submitTender) and kept across a retry (a network
     // failure where the request may have actually landed server-side), so "tekrar dene" replays instead of
-    // minting a fresh key that the server can never recognise as the same attempt. Cleared on success (a
-    // genuinely new tender needs a fresh key) and whenever the method or amount actually changes.
+    // minting a fresh key that the server can never recognise as the same attempt. Cleared on a real server answer (a
+    // genuinely new tender needs a fresh key) and a changed context never matches the stored record. Holds a
+    // {context, key, at} record (see tenderKeyFor); the same record in sessionStorage survives a reload.
     tenderIdempotencyKey: null,
     // V1-RMD-292: billing.bill_adjustments summary/list - discount, voluntary tip and any other fee already
     // applied to this bill (billing/bills/{id}/adjustments, GET only for this task; discount/tip are the only
@@ -569,8 +570,8 @@
       state.locked = !!state.summary.unsettledPayment;
       state.amountDraft = remainingAmount().toFixed(2);
       if (remainingAmount() <= 0.004) enterPaid(); else state.phase = 'ready';
-      // V1-RMD-314: a fresh load re-derives everything from server truth - any in-flight key from before
-      // this load is stale.
+      // V1-RMD-314: a fresh load re-derives everything from server truth; the in-memory record is dropped and
+      // only the stored one, matched by context (including the new remaining amount), can come back.
       state.tenderIdempotencyKey = null;
       loadRefundRequests();
       loadSavedShares();
@@ -1014,6 +1015,29 @@
     return state.customers.filter(function (c) { return c.customerId === state.selectedCustomerId; })[0] || null;
   }
 
+  // The key outlives a page reload (a lost response is retried after the cashier refreshes), but only for the
+  // exact same bill state: the remaining amount is part of the context, so a request that did land (and
+  // lowered it) never gets its key replayed onto a new payment.
+  var TENDER_KEY_STORAGE = 'alkaros_tender_idempotency';
+  var TENDER_KEY_MAX_AGE_MS = 10 * 60 * 1000;
+
+  // state.tenderIdempotencyKey holds the {context, key, at} record; storage only carries it across a reload.
+  function tenderKeyFor(context) {
+    var stored = null;
+    try { stored = JSON.parse(window.sessionStorage.getItem(TENDER_KEY_STORAGE)); } catch (err) { stored = null; }
+    var now = Date.now();
+    var record = [state.tenderIdempotencyKey, stored].filter(function (candidate) {
+      return candidate && candidate.context === context && now - candidate.at < TENDER_KEY_MAX_AGE_MS;
+    })[0] || { context: context, key: crypto.randomUUID(), at: now };
+    try { window.sessionStorage.setItem(TENDER_KEY_STORAGE, JSON.stringify(record)); } catch (err) { /* unavailable: the in-memory record still covers a retry without a reload */ }
+    return record;
+  }
+
+  function forgetTenderKey() {
+    state.tenderIdempotencyKey = null;
+    try { window.sessionStorage.removeItem(TENDER_KEY_STORAGE); } catch (err) { /* nothing stored */ }
+  }
+
   function submitTender() {
     if (!state.selectedMethod) {
       setError('Ödeme yöntemini seçin.');
@@ -1056,8 +1080,11 @@
     state.changeDue = null;
     // V1-RMD-314: reuse the in-flight key across a retry of this exact attempt - see the field's own
     // doc comment. A brand-new key is minted only when none is pending.
-    if (!state.tenderIdempotencyKey) state.tenderIdempotencyKey = crypto.randomUUID();
-    var idempotencyKey = state.tenderIdempotencyKey;
+    state.tenderIdempotencyKey = tenderKeyFor([
+      state.billId, state.selectedMethod, amount.toFixed(2), hasTendered ? tendered.toFixed(2) : '',
+      state.selectedMethod === 'Account' ? state.selectedCustomerId : '', state.noteDraft || '', remainingAmount().toFixed(2),
+    ].join('|'));
+    var idempotencyKey = state.tenderIdempotencyKey.key;
 
     var request = state.selectedMethod === 'Account'
       ? api(billBase() + '/account-charge', {
@@ -1092,7 +1119,7 @@
       state.busy = false;
       // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
       // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
-      if (result.status < 500) state.tenderIdempotencyKey = null;
+      if (result.status < 500) forgetTenderKey();
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
         // A concurrently-created unresolved Payment (e.g. another tab, or
@@ -1112,7 +1139,7 @@
       }
       if (result.body && result.body.outcome === 'Declined') {
         // Ret para kaydı oluşturmaz; yeniden denemede yeni anahtar kullanılır.
-        state.tenderIdempotencyKey = null;
+        forgetTenderKey();
         state.error = 'Ödeme reddedildi. Başka bir yöntem deneyin.';
         render();
         return;

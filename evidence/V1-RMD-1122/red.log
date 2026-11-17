@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-tender-key-persistence.test.js (5 tests | 1 failed) 1791ms
+     × replays the same key after a lost response and a reload of the same bill state 470ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-tender-key-persistence.test.js > split-payment.js tender idempotency key survives a page reload > replays the same key after a lost response and a reload of the same bill state
+AssertionError: expected 'ba64d585-36a2-434d-8bfc-b97cbafb400b' to be '62a3af7b-e633-41a6-896f-b5954cf850dc' // Object.is equality
+
+Expected: "62a3af7b-e633-41a6-896f-b5954cf850dc"
+Received: "ba64d585-36a2-434d-8bfc-b97cbafb400b"
+
+ ❯ split-payment-tender-key-persistence.test.js:74:39
+     72|     await pay(tenders, 2);
+     73|
+     74|     expect(tenders[1].IdempotencyKey).toBe(tenders[0].IdempotencyKey);
+       |                                       ^
+     75|   });
+     76|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  10:24:09
+   Duration  3.14s (transform 520ms, setup 25ms, import 50ms, tests 1.79s, environment 1.00s)
+
+exit code: 1

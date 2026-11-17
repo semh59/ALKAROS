@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-tender-key-persistence.test.js (8 tests | 1 failed) 2878ms
+     × mints a new key when the note changes between two retries without a reload 322ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-tender-key-persistence.test.js > split-payment.js tender idempotency key survives a page reload > mints a new key when the note changes between two retries without a reload
+AssertionError: expected '2bddddce-3a9a-420e-9246-bf024a44057c' not to be '2bddddce-3a9a-420e-9246-bf024a44057c' // Object.is equality
+ ❯ split-payment-tender-key-persistence.test.js:131:43
+    129|     await pay(tenders, 2);
+    130|
+    131|     expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyK…
+       |                                           ^
+    132|   });
+    133|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  10:29:13
+   Duration  4.35s (transform 803ms, setup 23ms, import 44ms, tests 2.88s, environment 1.14s)
+
+exit code: 1

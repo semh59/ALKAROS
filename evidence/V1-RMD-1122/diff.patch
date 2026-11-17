@@ -1,0 +1,267 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 9898d0a01..f01b8d6eb 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -59,8 +59,9 @@
+     // V1-RMD-314 (independent 2026-09-26 audit, finding K3): the tender idempotency key for the CURRENT
+     // amount/method attempt - generated once (lazily, in submitTender) and kept across a retry (a network
+     // failure where the request may have actually landed server-side), so "tekrar dene" replays instead of
+-    // minting a fresh key that the server can never recognise as the same attempt. Cleared on success (a
+-    // genuinely new tender needs a fresh key) and whenever the method or amount actually changes.
++    // minting a fresh key that the server can never recognise as the same attempt. Cleared on a real server answer (a
++    // genuinely new tender needs a fresh key) and a changed context never matches the stored record. Holds a
++    // {context, key, at} record (see tenderKeyFor); the same record in sessionStorage survives a reload.
+     tenderIdempotencyKey: null,
+     // V1-RMD-292: billing.bill_adjustments summary/list - discount, voluntary tip and any other fee already
+     // applied to this bill (billing/bills/{id}/adjustments, GET only for this task; discount/tip are the only
+@@ -569,8 +570,8 @@
+       state.locked = !!state.summary.unsettledPayment;
+       state.amountDraft = remainingAmount().toFixed(2);
+       if (remainingAmount() <= 0.004) enterPaid(); else state.phase = 'ready';
+-      // V1-RMD-314: a fresh load re-derives everything from server truth - any in-flight key from before
+-      // this load is stale.
++      // V1-RMD-314: a fresh load re-derives everything from server truth; the in-memory record is dropped and
++      // only the stored one, matched by context (including the new remaining amount), can come back.
+       state.tenderIdempotencyKey = null;
+       loadRefundRequests();
+       loadSavedShares();
+@@ -1014,6 +1015,29 @@
+     return state.customers.filter(function (c) { return c.customerId === state.selectedCustomerId; })[0] || null;
+   }
+ 
++  // The key outlives a page reload (a lost response is retried after the cashier refreshes), but only for the
++  // exact same bill state: the remaining amount is part of the context, so a request that did land (and
++  // lowered it) never gets its key replayed onto a new payment.
++  var TENDER_KEY_STORAGE = 'alkaros_tender_idempotency';
++  var TENDER_KEY_MAX_AGE_MS = 10 * 60 * 1000;
++
++  // state.tenderIdempotencyKey holds the {context, key, at} record; storage only carries it across a reload.
++  function tenderKeyFor(context) {
++    var stored = null;
++    try { stored = JSON.parse(window.sessionStorage.getItem(TENDER_KEY_STORAGE)); } catch (err) { stored = null; }
++    var now = Date.now();
++    var record = [state.tenderIdempotencyKey, stored].filter(function (candidate) {
++      return candidate && candidate.context === context && now - candidate.at < TENDER_KEY_MAX_AGE_MS;
++    })[0] || { context: context, key: crypto.randomUUID(), at: now };
++    try { window.sessionStorage.setItem(TENDER_KEY_STORAGE, JSON.stringify(record)); } catch (err) { /* unavailable: the in-memory record still covers a retry without a reload */ }
++    return record;
++  }
++
++  function forgetTenderKey() {
++    state.tenderIdempotencyKey = null;
++    try { window.sessionStorage.removeItem(TENDER_KEY_STORAGE); } catch (err) { /* nothing stored */ }
++  }
++
+   function submitTender() {
+     if (!state.selectedMethod) {
+       setError('Ödeme yöntemini seçin.');
+@@ -1056,8 +1080,11 @@
+     state.changeDue = null;
+     // V1-RMD-314: reuse the in-flight key across a retry of this exact attempt - see the field's own
+     // doc comment. A brand-new key is minted only when none is pending.
+-    if (!state.tenderIdempotencyKey) state.tenderIdempotencyKey = crypto.randomUUID();
+-    var idempotencyKey = state.tenderIdempotencyKey;
++    state.tenderIdempotencyKey = tenderKeyFor([
++      state.billId, state.selectedMethod, amount.toFixed(2), hasTendered ? tendered.toFixed(2) : '',
++      state.selectedMethod === 'Account' ? state.selectedCustomerId : '', state.noteDraft || '', remainingAmount().toFixed(2),
++    ].join('|'));
++    var idempotencyKey = state.tenderIdempotencyKey.key;
+ 
+     var request = state.selectedMethod === 'Account'
+       ? api(billBase() + '/account-charge', {
+@@ -1092,7 +1119,7 @@
+       state.busy = false;
+       // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
+       // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
+-      if (result.status < 500) state.tenderIdempotencyKey = null;
++      if (result.status < 500) forgetTenderKey();
+       if (!result.ok) {
+         state.error = describeHttpFailure(result.status, result.body);
+         // A concurrently-created unresolved Payment (e.g. another tab, or
+@@ -1112,7 +1139,7 @@
+       }
+       if (result.body && result.body.outcome === 'Declined') {
+         // Ret para kaydı oluşturmaz; yeniden denemede yeni anahtar kullanılır.
+-        state.tenderIdempotencyKey = null;
++        forgetTenderKey();
+         state.error = 'Ödeme reddedildi. Başka bir yöntem deneyin.';
+         render();
+         return;
+diff --git a/tests/Clients/StaticApps/split-payment-tender-key-persistence.test.js b/tests/Clients/StaticApps/split-payment-tender-key-persistence.test.js
+new file mode 100644
+index 000000000..296f8e0fd
+--- /dev/null
++++ b/tests/Clients/StaticApps/split-payment-tender-key-persistence.test.js
+@@ -0,0 +1,172 @@
++import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { fileURLToPath } from "node:url";
++import { dirname, resolve } from "node:path";
++import { loadApp } from "./support/loadApp.js";
++
++const here = dirname(fileURLToPath(import.meta.url));
++const pageDir = resolve(here, "..", "..", "..", "src/Clients/Cashier/wwwroot/payments/split-payment");
++const htmlPath = resolve(pageDir, "index.html");
++const scriptPath = resolve(pageDir, "split-payment.js");
++
++const TERMINAL_ID = "11111111-1111-1111-1111-111111111111";
++const BILL_ID = "22222222-2222-2222-2222-222222222222";
++const SESSION_ID = "66666666-6666-6666-6666-666666666666";
++
++const reply = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body, headers: { get: () => null } });
++const $ = (selector) => document.querySelector(selector);
++
++/** A scripted server: `world.remaining` is what the bill still owes; `world.tender` answers the cash-tender POST. */
++function install(world) {
++  const tenders = [];
++  vi.stubGlobal("fetch", vi.fn(async (url, init) => {
++    const method = init?.method ?? "GET";
++    if (url.endsWith("/api/v1/auth/session/current")) return reply(200, { terminalId: TERMINAL_ID, userId: "u1" });
++    if (url.endsWith("/tenders/") && method === "GET") {
++      return reply(200, { billId: BILL_ID, payableAmount: 100, allocatedTotal: 100 - world.remaining, remainingAmount: world.remaining, allocations: [], unsettledPayment: null });
++    }
++    if (url.includes("/cash-sessions/active")) return reply(200, { cashSessionId: SESSION_ID, cashierUserId: "u1" });
++    if (url.endsWith("/adjustments")) return reply(200, { adjustments: [], summary: null });
++    if (url.endsWith("/refund-requests")) return reply(200, []);
++    if (url.endsWith("/show-on-display")) return reply(204, {});
++    if ((url.endsWith("/cash-tender") || url.endsWith("/tenders/")) && method === "POST") {
++      tenders.push(JSON.parse(init.body));
++      if (world.networkDown) throw new TypeError("Failed to fetch");
++      return world.tender ?? reply(200, { approvedAmount: 100, changeAmount: 0 });
++    }
++    throw new Error(`unrouted ${method} ${url}`);
++  }));
++  return tenders;
++}
++
++/** Loads the page like a fresh visit (a reload gives the same bill a new page instance). */
++async function visit() {
++  window.history.replaceState({}, "", `/?billId=${BILL_ID}`);
++  await loadApp(htmlPath, scriptPath);
++  await vi.waitFor(() => expect($("#submit-tender")).not.toBeNull());
++}
++
++async function pay(tenders, count) {
++  $("#submit-tender").click();
++  await vi.waitFor(() => expect(tenders).toHaveLength(count));
++  await vi.waitFor(() => expect($("#submit-tender").disabled).toBe(false));
++}
++
++describe("split-payment.js tender idempotency key survives a page reload", () => {
++  let world;
++  beforeEach(() => {
++    vi.resetModules();
++    window.sessionStorage.clear();
++    world = { remaining: 100, networkDown: true };
++  });
++  afterEach(() => {
++    vi.unstubAllGlobals();
++    document.body.innerHTML = "";
++  });
++
++  it("replays the same key after a lost response and a reload of the same bill state", async () => {
++    const tenders = install(world);
++    await visit();
++    await pay(tenders, 1);
++
++    await visit();
++    await pay(tenders, 2);
++
++    expect(tenders[1].IdempotencyKey).toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("mints a new key when the reload shows the first request had landed (same amount, smaller remaining)", async () => {
++    const tenders = install(world);
++    await visit();
++    $("#amount-draft").value = "40";
++    $("#amount-draft").dispatchEvent(new Event("input", { bubbles: true }));
++    await pay(tenders, 1);
++
++    world.remaining = 60;
++    await visit();
++    $("#amount-draft").value = "40";
++    $("#amount-draft").dispatchEvent(new Event("input", { bubbles: true }));
++    await pay(tenders, 2);
++
++    expect(tenders[1].Amount ?? tenders[1].AmountDue).toBe(tenders[0].Amount ?? tenders[0].AmountDue);
++    expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("mints a new key for a different amount after the reload", async () => {
++    const tenders = install(world);
++    await visit();
++    await pay(tenders, 1);
++
++    await visit();
++    $("#amount-draft").value = "40";
++    $("#amount-draft").dispatchEvent(new Event("input", { bubbles: true }));
++    await pay(tenders, 2);
++
++    expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("forgets the key once the server has answered for real, so the next attempt is a new payment", async () => {
++    world.networkDown = false;
++    world.tender = reply(409, { error: { code: "CASH_SESSION_NOT_OWNED", message: "x" } });
++    const tenders = install(world);
++    await visit();
++    await pay(tenders, 1);
++
++    await visit();
++    await pay(tenders, 2);
++
++    expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("mints a new key when the note changes between two retries without a reload", async () => {
++    const tenders = install(world);
++    await visit();
++    $('.sp-method-chip[data-method="Eft"]').click();
++    $("#eft-confirm").click();
++    await pay(tenders, 1);
++
++    $("#note-draft").value = "farkli not";
++    $("#note-draft").dispatchEvent(new Event("input", { bubbles: true }));
++    await pay(tenders, 2);
++
++    expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("does not replay a stored key older than ten minutes", async () => {
++    const tenders = install(world);
++    const now = Date.now();
++    const clock = vi.spyOn(Date, "now").mockReturnValue(now);
++    await visit();
++    await pay(tenders, 1);
++
++    clock.mockReturnValue(now + 11 * 60 * 1000);
++    await visit();
++    await pay(tenders, 2);
++    clock.mockRestore();
++
++    expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("keeps the key across a server error (5xx), because that request may have landed", async () => {
++    world.networkDown = false;
++    world.tender = reply(503, { error: { code: "UNAVAILABLE", message: "x" } });
++    const tenders = install(world);
++    await visit();
++    await pay(tenders, 1);
++
++    await visit();
++    await pay(tenders, 2);
++
++    expect(tenders[1].IdempotencyKey).toBe(tenders[0].IdempotencyKey);
++  });
++
++  it("keeps working when session storage is unavailable", async () => {
++    const tenders = install(world);
++    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => { throw new Error("blocked"); });
++    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("blocked"); });
++    await visit();
++    await pay(tenders, 1);
++
++    expect(tenders[0].IdempotencyKey).toMatch(/^[0-9a-f-]{36}$/);
++    vi.restoreAllMocks();
++  });
++});

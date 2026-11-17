@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-tender-key-persistence.test.js (8 tests | 2 failed) 3019ms
+     × replays the same key after a lost response and a reload of the same bill state 533ms
+     × keeps the key across a server error (5xx), because that request may have landed 397ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-tender-key-persistence.test.js > split-payment.js tender idempotency key survives a page reload > replays the same key after a lost response and a reload of the same bill state
+AssertionError: expected '83ffcc4f-fb69-4dcf-b8e2-22536cdc9e83' to be '34a5d756-fb21-47fd-b2f6-a95f850c6d0b' // Object.is equality
+
+Expected: "34a5d756-fb21-47fd-b2f6-a95f850c6d0b"
+Received: "83ffcc4f-fb69-4dcf-b8e2-22536cdc9e83"
+
+ ❯ split-payment-tender-key-persistence.test.js:74:39
+     72|     await pay(tenders, 2);
+     73|
+     74|     expect(tenders[1].IdempotencyKey).toBe(tenders[0].IdempotencyKey);
+       |                                       ^
+     75|   });
+     76|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-tender-key-persistence.test.js > split-payment.js tender idempotency key survives a page reload > keeps the key across a server error (5xx), because that request may have landed
+AssertionError: expected 'c7ac20fc-db08-4018-afb3-58360d21c459' to be 'cd832402-0c1a-4378-a28a-a426462d4613' // Object.is equality
+
+Expected: "cd832402-0c1a-4378-a28a-a426462d4613"
+Received: "c7ac20fc-db08-4018-afb3-58360d21c459"
+
+ ❯ split-payment-tender-key-persistence.test.js:159:39
+    157|     await pay(tenders, 2);
+    158|
+    159|     expect(tenders[1].IdempotencyKey).toBe(tenders[0].IdempotencyKey);
+       |                                       ^
+    160|   });
+    161|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 6 passed (8)
+   Start at  10:28:45
+   Duration  4.38s (transform 842ms, setup 24ms, import 56ms, tests 3.02s, environment 1.02s)
+
+exit code: 1

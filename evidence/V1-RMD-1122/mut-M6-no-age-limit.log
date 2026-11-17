@@ -1,0 +1,27 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-tender-key-persistence.test.js (8 tests | 1 failed) 2923ms
+     × does not replay a stored key older than ten minutes 428ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-tender-key-persistence.test.js > split-payment.js tender idempotency key survives a page reload > does not replay a stored key older than ten minutes
+AssertionError: expected '433ad1e9-7726-4fff-819b-8d9398000f5c' not to be '433ad1e9-7726-4fff-819b-8d9398000f5c' // Object.is equality
+ ❯ split-payment-tender-key-persistence.test.js:146:43
+    144|     clock.mockRestore();
+    145|
+    146|     expect(tenders[1].IdempotencyKey).not.toBe(tenders[0].IdempotencyK…
+       |                                           ^
+    147|   });
+    148|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  10:29:20
+   Duration  4.29s (transform 831ms, setup 24ms, import 43ms, tests 2.92s, environment 1.04s)
+
+exit code: 1
