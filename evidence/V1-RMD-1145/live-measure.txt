@@ -1,0 +1,5 @@
+Canli olcum (Chromium/Playwright, gercek CSS, getBoundingClientRect; sayfa: evidence/V1-RMD-1145/measure.html)
+Tutar kutusu (.sp-amount-field) yukseklik: 768 px ekran 48, 600 px ekran 48, 1080 px ekran 56; yazi alani = kutu - kenarlik (46/46/54), yani yazi alani kutuyu doldurur.
+Kasa kutusu (.cs-amount-field): 61 (yazi alani 59) tum ekranlarda.
+Kutunun sol kenarina dokunma (elementFromPoint) kutunun kendisini (label) verir: dokunus yazi alanina yonlenir.
+Onceki durum (raporda): dis kutu 48, ic alan 30-35.

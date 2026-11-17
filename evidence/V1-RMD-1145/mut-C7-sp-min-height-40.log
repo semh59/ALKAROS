@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-touch-targets.test.js (15 tests | 1 failed) 23ms
+     × payments/split-payment/split-payment.css .sp-amount-field { is at least 48 px high and wide 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-touch-targets.test.js > till pages touch targets > payments/split-payment/split-payment.css .sp-amount-field { is at least 48 px high and wide
+AssertionError: expected 40 to be greater than or equal to 48
+ ❯ cashier-touch-targets.test.js:46:44
+     44|     const sizes = sizesOf(read(file), selector);
+     45|     expect(sizes.length).toBeGreaterThan(0);
+     46|     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(MINI…
+       |                                            ^
+     47|   });
+     48|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 31 passed (32)
+   Start at  23:12:00
+   Duration  2.95s (transform 628ms, setup 54ms, import 130ms, tests 1.50s, environment 3.29s)
+

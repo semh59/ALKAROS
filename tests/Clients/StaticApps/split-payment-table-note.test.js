@@ -150,7 +150,7 @@ describe("split-payment.js table name and kitchen-less note", () => {
     expect(wideShort[3]).toMatch(/\.sp-quick-cash\s*\{[^}]*repeat\(7,/);
     expect(wideShort[3]).toMatch(/\.sp-quick-cash \.sp-btn\s*\{[^}]*font-size:\s*16px/);
     expect(shortScreen[2]).not.toMatch(/repeat\(7,/);
-    expect(shortScreen[2]).toMatch(/\.sp-amount-field\s*\{[^}]*padding:\s*8px/);
+    expect(shortScreen[2]).toMatch(/\.sp-amount-field input\s*\{[^}]*padding:\s*8px 0/);
     expect(shortScreen[2]).toMatch(/\.sp-summary-row\.is-remaining\s*\{[^}]*padding:\s*2px/);
   });
 });

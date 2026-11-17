@@ -106,13 +106,14 @@ body {
   display: flex; align-items: center;
   border: 1.5px solid var(--color-brand);
   border-radius: var(--radius-md);
-  padding: 12px 16px;
+  padding: 0 16px;
+  min-height: var(--touch-target);
   background: var(--color-canvas);
 }
 .sp-amount-field input {
   flex-grow: 1; border: none; background: transparent;
   font-size: 22px; font-weight: 700; color: var(--color-ink);
-  font-family: inherit; padding: 0; min-width: 0;
+  font-family: inherit; padding: 12px 0; min-width: 0; align-self: stretch;
 }
 .sp-amount-field:focus-within { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 .sp-amount-suffix { font-size: 16px; font-weight: 700; color: var(--color-text-muted); }
@@ -244,7 +245,7 @@ html { scroll-padding-bottom: 80px; }
   #submit-tender { position: static; box-shadow: none; }
   .sp-shell { padding: 8px 24px; }
   .sp-card { gap: 10px; padding-top: 16px; padding-bottom: 16px; margin-top: 0; }
-  .sp-amount-field { padding: 8px 16px; }
+  .sp-amount-field input { padding: 8px 0; }
   .sp-summary-row.is-remaining { padding: 2px; }
 }
 .sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }

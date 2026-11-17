@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-amount-field-label.test.js (8 tests | 1 failed) 21ms
+     × cash-session/cash-session.js hides the currency sign cs-amount-suffix from the accessible name of the box 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-amount-field-label.test.js > till amount boxes > cash-session/cash-session.js hides the currency sign cs-amount-suffix from the accessible name of the box
+AssertionError: expected 2 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ cashier-amount-field-label.test.js:24:96
+     22|     ["cash-session/cash-session.js", "cs-amount-suffix", 3],
+     23|   ])("%s hides the currency sign %s from the accessible name of the bo…
+     24|     expect(read(file).split(`<span class="${suffix}" aria-hidden="true…
+       |                                                                                                ^
+     25|   });
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  23:14:05
+   Duration  1.48s (transform 29ms, setup 24ms, import 28ms, tests 21ms, environment 1.13s)
+

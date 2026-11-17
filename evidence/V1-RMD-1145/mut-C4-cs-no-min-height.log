@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-touch-targets.test.js (15 tests | 1 failed) 22ms
+     × payments/cash-session/cash-session.css .cs-amount-field { is at least 48 px high and wide 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-touch-targets.test.js > till pages touch targets > payments/cash-session/cash-session.css .cs-amount-field { is at least 48 px high and wide
+AssertionError: expected 0 to be greater than 0
+ ❯ cashier-touch-targets.test.js:45:26
+     43|   it.each(targets)("%s %s is at least 48 px high and wide", (file, sel…
+     44|     const sizes = sizesOf(read(file), selector);
+     45|     expect(sizes.length).toBeGreaterThan(0);
+       |                          ^
+     46|     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(MINI…
+     47|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 31 passed (32)
+   Start at  23:11:44
+   Duration  3.01s (transform 691ms, setup 53ms, import 154ms, tests 1.57s, environment 3.29s)
+

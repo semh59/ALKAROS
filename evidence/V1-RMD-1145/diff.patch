@@ -1,0 +1,148 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
+index 0244fec73..894980b4b 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.css
+@@ -119,7 +119,8 @@ body {
+   align-items: center;
+   border: 1.5px solid var(--color-brand);
+   border-radius: var(--radius-md);
+-  padding: 12px 16px;
++  padding: 0 16px;
++  min-height: var(--touch-target);
+   background: var(--color-canvas);
+ }
+ .cs-amount-field input {
+@@ -130,8 +131,9 @@ body {
+   font-weight: 700;
+   color: var(--color-ink);
+   font-family: inherit;
+-  padding: 0;
++  padding: 12px 0;
+   min-width: 0;
++  align-self: stretch;
+ }
+ .cs-amount-field:focus-within { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+ .cs-amount-suffix { font-size: 18px; font-weight: 700; color: var(--color-text-muted); }
+diff --git a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+index 640d5d48b..0db8c7f4c 100644
+--- a/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
++++ b/src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
+@@ -790,9 +790,9 @@
+       errorAlert() +
+       noticeAlert() +
+       '<label class="cs-field-label" for="opening-balance">Açılış Tutarı</label>' +
+-      '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
++      '<label class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
+       'value="' + (suggested != null ? Number(suggested).toFixed(2) : '0.00') + '">' +
+-      '<span class="cs-amount-suffix">₺</span></div>' +
++      '<span class="cs-amount-suffix" aria-hidden="true">₺</span></label>' +
+       '<span class="cs-field-hint" id="opening-hint">' + (suggested != null
+         ? 'Önerilen tutar: ' + escapeHtml(formatMoney(suggested)) + ' (son kapanışta sayılan nakit). Çekmecedeki parayı sayıp gerekirse değiştirin.'
+         : 'Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın.') + '</span>' +
+@@ -1062,9 +1062,9 @@
+       errorAlert() +
+       '<form id="movement-form" novalidate>' +
+       '<label class="cs-field-label" for="movement-amount">Tutar</label>' +
+-      '<div class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0.01" id="movement-amount" placeholder="0,00" value="' +
++      '<label class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0.01" id="movement-amount" placeholder="0,00" value="' +
+       escapeHtml(state.drafts.amount) + '">' +
+-      '<span class="cs-amount-suffix">₺</span></div>' +
++      '<span class="cs-amount-suffix" aria-hidden="true">₺</span></label>' +
+       '<label class="cs-field-label" for="movement-notes">Açıklama</label>' +
+       '<div class="cs-chips">' + (isIn ? IN_REASONS : OUT_REASONS).map(function (reason) {
+         return '<button class="cs-chip" type="button" data-reason="' + escapeHtml(reason) + '">' + escapeHtml(reason) + '</button>';
+@@ -1205,9 +1205,9 @@
+       (isDenom
+         ? renderDenominationRows()
+         : ('<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
+-           '<div class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0" id="counted-amount"' +
++           '<label class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0" id="counted-amount"' +
+            (state.zeroCountPrompt ? ' disabled' : '') + ' value="' + escapeHtml(state.drafts.counted || '0.00') + '">' +
+-           '<span class="cs-amount-suffix">₺</span></div>')) +
++           '<span class="cs-amount-suffix" aria-hidden="true">₺</span></label>')) +
+       '<label class="cs-field-label" for="count-notes">Not <span style="font-weight:400;color:var(--color-text-dim)">(isteğe bağlı)</span></label>' +
+       '<textarea class="cs-textarea" id="count-notes"' + (state.zeroCountPrompt ? ' disabled' : '') + '>' + escapeHtml(state.drafts.countNotes) + '</textarea>' +
+       '<button class="cs-btn cs-btn-ghost" id="toggle-count-mode" type="button"' + (state.zeroCountPrompt ? ' disabled' : '') + '>' +
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+index b95f82d07..27dc0eb41 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css
+@@ -106,13 +106,14 @@ body {
+   display: flex; align-items: center;
+   border: 1.5px solid var(--color-brand);
+   border-radius: var(--radius-md);
+-  padding: 12px 16px;
++  padding: 0 16px;
++  min-height: var(--touch-target);
+   background: var(--color-canvas);
+ }
+ .sp-amount-field input {
+   flex-grow: 1; border: none; background: transparent;
+   font-size: 22px; font-weight: 700; color: var(--color-ink);
+-  font-family: inherit; padding: 0; min-width: 0;
++  font-family: inherit; padding: 12px 0; min-width: 0; align-self: stretch;
+ }
+ .sp-amount-field:focus-within { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+ .sp-amount-suffix { font-size: 16px; font-weight: 700; color: var(--color-text-muted); }
+@@ -244,7 +245,7 @@ html { scroll-padding-bottom: 80px; }
+   #submit-tender { position: static; box-shadow: none; }
+   .sp-shell { padding: 8px 24px; }
+   .sp-card { gap: 10px; padding-top: 16px; padding-bottom: 16px; margin-top: 0; }
+-  .sp-amount-field { padding: 8px 16px; }
++  .sp-amount-field input { padding: 8px 0; }
+   .sp-summary-row.is-remaining { padding: 2px; }
+ }
+ .sp-fold > summary { min-height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-weight: 700; color: var(--color-ink); list-style: none; }
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 2452daf60..57ec4f69d 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -2463,16 +2463,16 @@
+       (state.locked ? '' :
+         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
+         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
+-        '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
+-        '<span class="sp-amount-suffix">₺</span></div>' +
++        '<label class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
++        '<span class="sp-amount-suffix" aria-hidden="true">₺</span></label>' +
+         '<div class="sp-row" role="group" aria-label="Eşit bölme">' +
+         [2, 3, 4].map(function (people) {
+           return '<button class="sp-btn sp-btn-secondary" type="button" data-split-people="' + people + '">' + people + ' kişi</button>';
+         }).join('') + '</div></div>' +
+         (state.selectedMethod === 'Cash'
+           ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-muted)">(isteğe bağlı)</span></span>' +
+-            '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
+-            '<span class="sp-amount-suffix">₺</span></div>' + renderQuickCash() +
++            '<label class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
++            '<span class="sp-amount-suffix" aria-hidden="true">₺</span></label>' + renderQuickCash() +
+             '<div class="sp-change-preview" id="change-preview" role="status"></div></div>'
+           : '') +
+         (state.selectedMethod === 'BankCard' || state.selectedMethod === 'Eft'
+diff --git a/tests/Clients/StaticApps/cashier-touch-targets.test.js b/tests/Clients/StaticApps/cashier-touch-targets.test.js
+index 6bb08ecb3..c1c2707ab 100644
+--- a/tests/Clients/StaticApps/cashier-touch-targets.test.js
++++ b/tests/Clients/StaticApps/cashier-touch-targets.test.js
+@@ -14,8 +14,10 @@ const targets = [
+   ["payments/cash-session/cash-session.css", ".cs-chip {"],
+   ["payments/cash-session/cash-session.css", ".cs-denom-count {"],
+   ["payments/cash-session/cash-session.css", ".cs-check input {"],
++  ["payments/cash-session/cash-session.css", ".cs-amount-field {"],
+   ["payments/split-payment/split-payment.css", '.sp-confirm-row input[type="checkbox"] {'],
+   ["payments/split-payment/split-payment.css", ".sp-check input {"],
++  ["payments/split-payment/split-payment.css", ".sp-amount-field {"],
+   ["payments/split-payment/split-payment.css", ".sp-fold > summary {"],
+   ["payments/split-payment/split-payment.css", ".sp-btn {"],
+   ["payments/split-payment/split-payment.css", ".sp-method-chip {"],
+diff --git a/tests/Clients/StaticApps/split-payment-table-note.test.js b/tests/Clients/StaticApps/split-payment-table-note.test.js
+index 91727a5c9..ace1b41ea 100644
+--- a/tests/Clients/StaticApps/split-payment-table-note.test.js
++++ b/tests/Clients/StaticApps/split-payment-table-note.test.js
+@@ -150,7 +150,7 @@ describe("split-payment.js table name and kitchen-less note", () => {
+     expect(wideShort[3]).toMatch(/\.sp-quick-cash\s*\{[^}]*repeat\(7,/);
+     expect(wideShort[3]).toMatch(/\.sp-quick-cash \.sp-btn\s*\{[^}]*font-size:\s*16px/);
+     expect(shortScreen[2]).not.toMatch(/repeat\(7,/);
+-    expect(shortScreen[2]).toMatch(/\.sp-amount-field\s*\{[^}]*padding:\s*8px/);
++    expect(shortScreen[2]).toMatch(/\.sp-amount-field input\s*\{[^}]*padding:\s*8px 0/);
+     expect(shortScreen[2]).toMatch(/\.sp-summary-row\.is-remaining\s*\{[^}]*padding:\s*2px/);
+   });
+ });

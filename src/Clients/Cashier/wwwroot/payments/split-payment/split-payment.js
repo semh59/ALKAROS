@@ -2463,16 +2463,16 @@
       (state.locked ? '' :
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
-        '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
-        '<span class="sp-amount-suffix">₺</span></div>' +
+        '<label class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
+        '<span class="sp-amount-suffix" aria-hidden="true">₺</span></label>' +
         '<div class="sp-row" role="group" aria-label="Eşit bölme">' +
         [2, 3, 4].map(function (people) {
           return '<button class="sp-btn sp-btn-secondary" type="button" data-split-people="' + people + '">' + people + ' kişi</button>';
         }).join('') + '</div></div>' +
         (state.selectedMethod === 'Cash'
           ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-muted)">(isteğe bağlı)</span></span>' +
-            '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
-            '<span class="sp-amount-suffix">₺</span></div>' + renderQuickCash() +
+            '<label class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
+            '<span class="sp-amount-suffix" aria-hidden="true">₺</span></label>' + renderQuickCash() +
             '<div class="sp-change-preview" id="change-preview" role="status"></div></div>'
           : '') +
         (state.selectedMethod === 'BankCard' || state.selectedMethod === 'Eft'

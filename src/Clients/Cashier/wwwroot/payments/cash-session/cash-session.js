@@ -790,9 +790,9 @@
       errorAlert() +
       noticeAlert() +
       '<label class="cs-field-label" for="opening-balance">Açılış Tutarı</label>' +
-      '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
+      '<label class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
       'value="' + (suggested != null ? Number(suggested).toFixed(2) : '0.00') + '">' +
-      '<span class="cs-amount-suffix">₺</span></div>' +
+      '<span class="cs-amount-suffix" aria-hidden="true">₺</span></label>' +
       '<span class="cs-field-hint" id="opening-hint">' + (suggested != null
         ? 'Önerilen tutar: ' + escapeHtml(formatMoney(suggested)) + ' (son kapanışta sayılan nakit). Çekmecedeki parayı sayıp gerekirse değiştirin.'
         : 'Önceki kapanıştan öneri yok; çekmecedeki parayı sayıp yazın.') + '</span>' +
@@ -1062,9 +1062,9 @@
       errorAlert() +
       '<form id="movement-form" novalidate>' +
       '<label class="cs-field-label" for="movement-amount">Tutar</label>' +
-      '<div class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0.01" id="movement-amount" placeholder="0,00" value="' +
+      '<label class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0.01" id="movement-amount" placeholder="0,00" value="' +
       escapeHtml(state.drafts.amount) + '">' +
-      '<span class="cs-amount-suffix">₺</span></div>' +
+      '<span class="cs-amount-suffix" aria-hidden="true">₺</span></label>' +
       '<label class="cs-field-label" for="movement-notes">Açıklama</label>' +
       '<div class="cs-chips">' + (isIn ? IN_REASONS : OUT_REASONS).map(function (reason) {
         return '<button class="cs-chip" type="button" data-reason="' + escapeHtml(reason) + '">' + escapeHtml(reason) + '</button>';
@@ -1205,9 +1205,9 @@
       (isDenom
         ? renderDenominationRows()
         : ('<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
-           '<div class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0" id="counted-amount"' +
+           '<label class="cs-amount-field"><input type="number" inputmode="decimal" step="0.01" min="0" id="counted-amount"' +
            (state.zeroCountPrompt ? ' disabled' : '') + ' value="' + escapeHtml(state.drafts.counted || '0.00') + '">' +
-           '<span class="cs-amount-suffix">₺</span></div>')) +
+           '<span class="cs-amount-suffix" aria-hidden="true">₺</span></label>')) +
       '<label class="cs-field-label" for="count-notes">Not <span style="font-weight:400;color:var(--color-text-dim)">(isteğe bağlı)</span></label>' +
       '<textarea class="cs-textarea" id="count-notes"' + (state.zeroCountPrompt ? ' disabled' : '') + '>' + escapeHtml(state.drafts.countNotes) + '</textarea>' +
       '<button class="cs-btn cs-btn-ghost" id="toggle-count-mode" type="button"' + (state.zeroCountPrompt ? ' disabled' : '') + '>' +

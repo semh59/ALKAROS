@@ -1,0 +1,2 @@
+- ui-erisilebilirlik-dokunma: KABUL; dusuk: ₺ adi kirletiyor -> aria-hidden uygulandi + test + C9; kasa kutusu 61 px alcak ekran: acik risk
+- qa-frontend: KABUL; ayni dusuk uygulandi; testler kaynak metin denetimi (live-measure ile tamam)

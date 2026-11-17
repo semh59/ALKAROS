@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cashier-amount-field-label.test.js (6 tests | 1 failed) 18ms
+     × cash-session/cash-session.js draws every cs-amount-field as a label around its input, so a tap anywhere in the box focuses the input 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cashier-amount-field-label.test.js > till amount boxes > cash-session/cash-session.js draws every cs-amount-field as a label around its input, so a tap anywhere in the box focuses the input
+AssertionError: expected 2 to be 3 // Object.is equality
+
+- Expected
++ Received
+
+- 3
++ 2
+
+ ❯ cashier-amount-field-label.test.js:16:70
+     14|   ])("%s draws every %s as a label around its input, so a tap anywhere…
+     15|     const source = read(file);
+     16|     expect(source.split(`<label class="${box}"><input `).length - 1).t…
+       |                                                                      ^
+     17|     expect(source).not.toContain(`<div class="${box}"`);
+     18|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 31 passed (32)
+   Start at  23:11:33
+   Duration  3.06s (transform 670ms, setup 49ms, import 147ms, tests 1.51s, environment 3.62s)
+

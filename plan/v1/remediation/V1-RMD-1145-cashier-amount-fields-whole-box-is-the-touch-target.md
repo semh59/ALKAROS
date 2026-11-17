@@ -1,7 +1,7 @@
 # V1-RMD-1145 - Kasa tutar alanlarında kutunun tamamına dokunmak odaklar (48 px hedef)
 
 - Task ID: V1-RMD-1145
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
