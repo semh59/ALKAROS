@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 105ms
+     × keeps the slip in the page only while it prints, so no other print can pick it up 12ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:56
+   Duration  2.87s (transform 586ms, setup 0ms, import 1.11s, tests 1.53s, environment 3.34s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > keeps the slip in the page only while it prints, so no other print can pick it up
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:55:70
+     53|
+     54|     expect(during).toEqual([true, true]);
+     55|     expect(document.body.classList.contains("pre-receipt-printing")).t…
+       |                                                                      ^
+     56|     expect(document.getElementById("pre-receipt-print")).toBeNull();
+     57|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

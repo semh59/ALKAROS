@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 107ms
+     × starts the next print of an order with a new key after the server refused one 7ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:54:11
+   Duration  2.97s (transform 550ms, setup 0ms, import 1.10s, tests 1.66s, environment 3.43s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > starts the next print of an order with a new key after the server refused one
+AssertionError: expected '33520398-c98d-46b5-8563-f235218c6667' not to be '33520398-c98d-46b5-8563-f235218c6667' // Object.is equality
+ ❯ src/features/pending-checks/preReceipt.test.ts:85:25
+     83|     await expect(printPreReceipt("t-1", "o-8", answer as unknown as ty…
+     84|
+     85|     expect(keys[1]).not.toBe(keys[0]);
+       |                         ^
+     86|   });
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

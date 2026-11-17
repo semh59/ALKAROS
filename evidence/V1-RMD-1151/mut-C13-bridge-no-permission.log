@@ -1,0 +1,84 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (56 tests | 2 failed) 440ms
+       × is not offered to a user who cannot take payments 15ms
+     × does not offer a bill nobody may open: a non-manager without the bill permission gets no button and no promise 6ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 109 passed (111)
+   Start at  02:53:45
+   Duration  3.05s (transform 627ms, setup 0ms, import 1.12s, tests 1.55s, environment 3.85s)
+
+stderr | src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > is not offered to a user who cannot take payments
+An update to TableOrderBridge inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/routes/TableOrderBridge.test.tsx > TableOrderBridge > does not offer a bill nobody may open: a non-manager without the bill permission gets no button and no promise
+An update to TableOrderBridge inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > is not offered to a user who cannot take payments
+AssertionError: expected <button …(4)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  aria-busy="false"
+  class="secondary"
+  data-telemetry-id="b.routes.tableorderbridge.pre-receipt"
+  type="button"
+>
+  Hesap fişi
+</button>
+
+ ❯ src/routes/TableOrderBridge.test.tsx:98:36
+     96|       render({ canCollect: false });
+     97|
+     98|       expect(button("Hesap fişi")).toBeUndefined();
+       |                                    ^
+     99|     });
+    100|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > does not offer a bill nobody may open: a non-manager without the bill permission gets no button and no promise
+AssertionError: expected <button …(4)></button> to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/routes/TableOrderBridge.test.tsx:155:49
+    153|     render({ canManage: false, canCollect: false, table: { tableId: "t…
+    154|
+    155|     expect(document.querySelectorAll("button")).toHaveLength(0);
+       |                                                 ^
+    156|     expect(document.querySelector(".table-order-bridge")?.textContent)…
+    157|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

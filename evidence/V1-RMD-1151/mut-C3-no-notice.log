@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 111ms
+     × posts a fresh key, draws the slip and prints once 64ms
+ ❯ src/routes/TableOrderBridge.test.tsx (56 tests | 1 failed) 427ms
+       × prints the slip of the table's order with one tap and opens no bill 29ms
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 109 passed (111)
+   Start at  02:53:06
+   Duration  2.80s (transform 566ms, setup 0ms, import 1.10s, tests 1.51s, environment 3.29s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > prints the slip of the table's order with one tap and opens no bill
+AssertionError: expected 'HesapHesap fişi no: 3Masa: T-418.11.2…' to contain 'Bu belge mali fiş değildir.'
+
+Expected: "Bu belge mali fiş değildir."
+Received: "HesapHesap fişi no: 3Masa: T-418.11.2026 13:002 × Çay₺50,00Toplam₺50,00"
+
+ ❯ src/routes/TableOrderBridge.test.tsx:81:73
+     79|       expect(otherCalls(fetchMock).map(([url, init]) => `${init?.metho…
+     80|       expect(print).toHaveBeenCalledTimes(1);
+     81|       expect(document.getElementById("pre-receipt-print")?.textContent…
+       |                                                                         ^
+     82|       expect(navigateTo).not.toHaveBeenCalled();
+     83|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > posts a fresh key, draws the slip and prints once
+AssertionError: expected 'HesapHesap fişi no: 2Masa: 518.11.202…' to contain 'Bu belge mali fiş değildir.'
+
+Expected: "Bu belge mali fiş değildir."
+Received: "HesapHesap fişi no: 2Masa: 518.11.2026 13:002 × Köfte <b>₺200,001 × Ayran₺30,00Bahşiş₺10,00İndirim-₺5,00Düzeltme₺1,00Toplam₺235,00Ödenen₺100,00Kalan₺135,00"
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:31:20
+     29|     expect([url, init.method, JSON.parse(String(init.body)).idempotenc…
+     30|     expect(print).toHaveBeenCalledTimes(1);
+     31|     expect(text()).toContain("Bu belge mali fiş değildir.");
+       |                    ^
+     32|     expect(text()).toContain("Hesap fişi no: 2");
+     33|     expect(text()).toContain("Masa: 5");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

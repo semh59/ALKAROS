@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (56 tests | 1 failed) 461ms
+       × says in Turkish why a slip was refused and prints nothing 18ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:52
+   Duration  2.95s (transform 609ms, setup 0ms, import 1.06s, tests 1.57s, environment 3.61s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > says in Turkish why a slip was refused and prints nothing
+AssertionError: expected undefined to be 'Bu hesap ödenmiş; ödenmiş hesabın fiş…' // Object.is equality
+
+- Expected:
+"Bu hesap ödenmiş; ödenmiş hesabın fişini Hesap bölme ekranından yazdırın."
+
++ Received:
+undefined
+
+ ❯ src/routes/TableOrderBridge.test.tsx:91:81
+     89|       await click("Hesap fişi");
+     90|
+     91|       expect(document.querySelector(".table-order-bridge__error")?.tex…
+       |                                                                                 ^
+     92|       expect(print).not.toHaveBeenCalled();
+     93|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

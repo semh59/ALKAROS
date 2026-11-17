@@ -717,6 +717,237 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Empty(await PrintEventsAsync(billId, "bill.receipt.original.reset"));
     }
 
+    private static string PreReceiptPath(Guid terminalId, Guid orderId) => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/pre-receipt";
+
+    private async Task<Guid> SubmittedOrderOfAsync(Guid billId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "UPDATE orders.orders SET status = 'Submitted' WHERE order_id = (SELECT order_id FROM billing.bills WHERE bill_id = @id) RETURNING order_id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    private static Task<HttpResponseMessage> PostPreReceiptAsync(HttpClient client, Guid terminalId, Guid orderId, string? cookie, Guid? key = null)
+        => PostJsonAsync(client, PreReceiptPath(terminalId, orderId), cookie, new { IdempotencyKey = key ?? Guid.NewGuid() });
+
+    [Fact]
+    public async Task APreReceiptOfAnOrderWithoutABillListsItsLinesCountsFromOneAndOpensNoBill()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-order", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var first = await PostPreReceiptAsync(client, terminalId, orderId, cookie);
+        var second = await PostPreReceiptAsync(client, terminalId, orderId, cookie);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var body = await first.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(1, body.GetProperty("printNumber").GetInt32());
+        Assert.Equal(orderId, body.GetProperty("orderId").GetGuid());
+        var line = Assert.Single(body.GetProperty("lines").EnumerateArray());
+        Assert.Equal(("Test Item", 1m, 100m, 100m), (line.GetProperty("name").GetString(), line.GetProperty("quantity").GetDecimal(), line.GetProperty("unitPrice").GetDecimal(), line.GetProperty("amount").GetDecimal()));
+        Assert.Equal((100m, 0m), (body.GetProperty("total").GetDecimal(), body.GetProperty("paidAmount").GetDecimal()));
+        Assert.Equal(2, (await second.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("printNumber").GetInt32());
+        Assert.Equal(2, (await PrintEventsAsync(orderId, "order.pre-receipt.printed")).Count);
+        await using var bills = _database.DataSource.CreateCommand("SELECT count(*) FROM billing.bills WHERE order_id = @o AND status <> 'Cancelled';");
+        bills.Parameters.AddWithValue("o", orderId);
+        Assert.Equal(0L, await bills.ExecuteScalarAsync());
+    }
+
+    [Fact]
+    public async Task APreReceiptOfAnOrderWithoutABillLeavesOutCancelledLines()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-cancelled-line", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using (var cancel = _database.DataSource.CreateCommand("UPDATE orders.order_items SET status = 'Cancelled' WHERE order_id = @o;"))
+        {
+            cancel.Parameters.AddWithValue("o", orderId);
+            await cancel.ExecuteNonQueryAsync();
+        }
+
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var body = await (await PostPreReceiptAsync(client, terminalId, orderId, cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        Assert.Empty(body.GetProperty("lines").EnumerateArray());
+        Assert.Equal(0m, body.GetProperty("total").GetDecimal());
+    }
+
+    [Fact]
+    public async Task APreReceiptOfAnOrderWithABillCarriesTheAdjustmentsTheTotalAndWhatWasPaid()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-bill", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var actor = await UserIdAsync();
+        await new PostgresBillAdjustmentRepository(_database.DataSource).AddAsync(
+            BillAdjustment.CreateTip(Guid.NewGuid(), billId, 10m, "Tip", actor, createdBy: actor));
+        await _database.SeedCollectedAsync(billId, 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostPreReceiptAsync(client, terminalId, await SubmittedOrderOfAsync(billId), cookie);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal((110m, 40m), (body.GetProperty("total").GetDecimal(), body.GetProperty("paidAmount").GetDecimal()));
+        var adjustment = Assert.Single(body.GetProperty("adjustments").EnumerateArray());
+        Assert.Equal(("Tip", 10m), (adjustment.GetProperty("type").GetString(), adjustment.GetProperty("amount").GetDecimal()));
+    }
+
+    [Fact]
+    public async Task APreReceiptNeverUsesUpThePaidBillsOriginal()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-separate", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await PostPreReceiptAsync(client, terminalId, orderId, cookie);
+        await PostPreReceiptAsync(client, terminalId, orderId, cookie);
+        await AssertNothingPrintedAsync(billId);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        var original = await PostAsync(client, PrintPath(terminalId, billId), cookie);
+
+        Assert.False((await original.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("isCopy").GetBoolean());
+        Assert.Single(await PrintEventsAsync(billId, "bill.receipt.printed"));
+        Assert.Equal(2, (await PrintEventsAsync(orderId, "order.pre-receipt.printed")).Count);
+    }
+
+    [Fact]
+    public async Task APreReceiptOfAPaidBillIsRefusedAndNothingIsRecorded()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-paid", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SetBillStatusAsync(billId, "Paid");
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostPreReceiptAsync(client, terminalId, orderId, cookie);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("BILL_NOT_UNPAID", (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Empty(await PrintEventsAsync(orderId, "order.pre-receipt.printed"));
+    }
+
+    [Theory]
+    [InlineData("Draft")]
+    [InlineData("Cancelled")]
+    [InlineData("Rejected")]
+    [InlineData("Completed")]
+    public async Task APreReceiptOfAnOrderThatIsNotReadyForABillIsRefusedAndNothingIsRecorded(string status)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-not-ready", true, "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using (var change = _database.DataSource.CreateCommand("UPDATE orders.orders SET status = @s WHERE order_id = @o;"))
+        {
+            change.Parameters.AddWithValue("s", status);
+            change.Parameters.AddWithValue("o", orderId);
+            await change.ExecuteNonQueryAsync();
+        }
+
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostPreReceiptAsync(client, terminalId, orderId, cookie);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("ORDER_NOT_OPEN", (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Empty(await PrintEventsAsync(orderId, "order.pre-receipt.printed"));
+    }
+
+    [Fact]
+    public async Task APreReceiptNeedsPaymentsTakeAKeyAndAKnownOrderAndLeavesNothingBehind()
+    {
+        var terminalId = Guid.NewGuid();
+        var waiterTerminal = Guid.NewGuid();
+        var waiter = await _database.SeedCashierSessionAsync(waiterTerminal, "pre-receipt-waiter", takesPayments: false);
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-cashier", true, "bills.split");
+        var orderId = await SubmittedOrderOfAsync(await _database.SeedBillAsync(payable: 100m));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var forbidden = await PostPreReceiptAsync(client, waiterTerminal, orderId, waiter);
+        var anonymous = await PostPreReceiptAsync(client, terminalId, orderId, null);
+        var missing = await PostPreReceiptAsync(client, terminalId, Guid.NewGuid(), cashier);
+        var noKey = await PostJsonAsync(client, PreReceiptPath(terminalId, orderId), cashier, new { IdempotencyKey = Guid.Empty });
+
+        Assert.Equal(
+            [HttpStatusCode.Forbidden, HttpStatusCode.Unauthorized, HttpStatusCode.NotFound, HttpStatusCode.BadRequest],
+            [forbidden.StatusCode, anonymous.StatusCode, missing.StatusCode, noKey.StatusCode]);
+        Assert.Empty(await PrintEventsAsync(orderId, "order.pre-receipt.printed"));
+    }
+
+    [Fact]
+    public async Task APreReceiptOfABillThatAnotherTerminalOwnsIsRefusedButAnOverrideHolderMayPrintIt()
+    {
+        var owner = Guid.NewGuid();
+        var other = Guid.NewGuid();
+        var otherCookie = await _database.SeedCashierSessionAsync(other, "pre-receipt-other", true, "bills.split");
+        var managerCookie = await _database.SeedCashierSessionAsync(other, "pre-receipt-manager", true, "cash.session.override", "bills.split");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using (var claim = _database.DataSource.CreateCommand("UPDATE billing.bills SET terminal_id = @t WHERE bill_id = @b;"))
+        {
+            claim.Parameters.AddWithValue("t", owner);
+            claim.Parameters.AddWithValue("b", billId);
+            await claim.ExecuteNonQueryAsync();
+        }
+
+        var orderId = await SubmittedOrderOfAsync(billId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var refused = await PostPreReceiptAsync(client, other, orderId, otherCookie);
+        var manager = await PostPreReceiptAsync(client, other, orderId, managerCookie);
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, manager.StatusCode);
+        Assert.Single(await PrintEventsAsync(orderId, "order.pre-receipt.printed"));
+    }
+
+    [Fact]
+    public async Task ResendingAPreReceiptWithTheSameKeyKeepsItsNumberAndParallelOnesGetDistinctNumbers()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "pre-receipt-race", true, "bills.split");
+        var orderId = await SubmittedOrderOfAsync(await _database.SeedBillAsync(payable: 100m));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var key = Guid.NewGuid();
+
+        var first = await PostPreReceiptAsync(client, terminalId, orderId, cookie, key);
+        var again = await PostPreReceiptAsync(client, terminalId, orderId, cookie, key);
+        var parallel = await Task.WhenAll(Enumerable.Range(0, 5).Select(_ => PostPreReceiptAsync(client, terminalId, orderId, cookie)));
+
+        var numbers = new List<int>();
+        foreach (var response in new[] { first, again }.Concat(parallel))
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            numbers.Add((await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("printNumber").GetInt32());
+        }
+
+        Assert.Equal([1, 1], numbers.Take(2).ToArray());
+        Assert.Equal([2, 3, 4, 5, 6], numbers.Skip(2).Order().ToArray());
+        Assert.Equal(6, (await PrintEventsAsync(orderId, "order.pre-receipt.printed")).Count);
+    }
+
     private static object ResetBody(string reason) => new { Reason = reason, IdempotencyKey = Guid.NewGuid() };
 
     private static string ResetPath(Guid terminalId, Guid billId) => ReceiptPath(terminalId, billId) + "/original-reset";

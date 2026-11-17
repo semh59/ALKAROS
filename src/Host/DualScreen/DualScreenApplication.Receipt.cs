@@ -5,6 +5,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.PaymentAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -41,6 +42,22 @@ public sealed record BillReceiptV1(
     DateTimeOffset? OriginalPrintedAt = null,
     bool IsCopy = false,
     string? TableNumber = null);
+
+public sealed record BillPreReceiptLineV1(string Name, decimal Quantity, decimal UnitPrice, decimal Amount);
+
+/// <summary>The slip printed before payment; <paramref name="PrintNumber"/> counts these prints only, never the paid bill's original or copy.</summary>
+public sealed record BillPreReceiptV1(
+    Guid OrderId,
+    int PrintNumber,
+    DateTimeOffset PrintedAt,
+    string? TableNumber,
+    string CurrencyCode,
+    IReadOnlyList<BillPreReceiptLineV1> Lines,
+    IReadOnlyList<BillReceiptAdjustmentV1> Adjustments,
+    decimal Total,
+    decimal PaidAmount);
+
+public sealed record BillPreReceiptRequestV1(Guid IdempotencyKey);
 
 public sealed record BillReceiptOriginalResetRequestV1(string? Reason, Guid IdempotencyKey);
 
@@ -209,6 +226,115 @@ public static partial class DualScreenApplication
             .WithMetadata(new BillRouteDoesNotClaim())
             .AddEndpointFilter<BillTerminalAccessFilter>()
             .RequireRateLimiting("terminal-write");
+
+        // The slip handed over before payment. It belongs to the order, not to a bill: opening a bill would stop the table
+        // taking items, so the lines come from the open bill when there is one and from the order otherwise. Its number is its
+        // own count of recorded prints, kept apart from the paid bill's original and copy.
+        app.MapPost("/api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/pre-receipt", async (
+                Guid terminalId,
+                Guid orderId,
+                BillPreReceiptRequestV1 request,
+                IOrderRepository orders,
+                IBillRepository billRepository,
+                IBillAdjustmentRepository adjustmentRepository,
+                IPaymentRepository paymentRepository,
+                IAuditEventStore auditEvents,
+                NpgsqlDataSource dataSource,
+                BillTerminalAccess billAccess,
+                DualScreenStore store,
+                IAuthorizationService authorization,
+                HttpContext context,
+                CancellationToken cancellationToken) =>
+            {
+                var principal = await RequireCashierPermissionAsync(
+                    context, terminalId, store, authorization, ApplicationPermissions.BillsSplit, cancellationToken);
+                if (request.IdempotencyKey == Guid.Empty)
+                    return ReceiptError(context, StatusCodes.Status400BadRequest, "IDEMPOTENCY_KEY_REQUIRED", "İstek bir tekrar anahtarı taşımalı.");
+
+                var order = await orders.GetByIdAsync(orderId, cancellationToken);
+                if (order is null)
+                    return ReceiptError(context, StatusCodes.Status404NotFound, "NOT_FOUND", "Sipariş bulunamadı.");
+                // A draft is not sent yet and cannot be billed either, so it has nothing to hand over.
+                if (order.Status is OrderState.Draft or OrderState.Cancelled or OrderState.Rejected or OrderState.Completed)
+                    return ReceiptError(context, StatusCodes.Status409Conflict, "ORDER_NOT_OPEN", "Bu sipariş hesaba hazır değil.");
+
+                // The row lock numbers the prints one at a time. Everything that decides what is printed is read under it, so the
+                // check that the bill is not paid, the terminal that owns it and the number all belong to one moment; a refused
+                // or failed print returns before the commit and leaves no number used.
+                await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+                await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+                await using (var locked = new NpgsqlCommand("SELECT 1 FROM orders.orders WHERE order_id = @id FOR NO KEY UPDATE;", connection, transaction))
+                {
+                    locked.Parameters.Add("id", NpgsqlDbType.Uuid).Value = orderId;
+                    await locked.ExecuteScalarAsync(cancellationToken);
+                }
+
+                var bill = await FindOrderBillAsync(connection, transaction, orderId, cancellationToken);
+                if (bill?.Status == nameof(BillState.Paid))
+                    return ReceiptError(context, StatusCodes.Status409Conflict, "BILL_NOT_UNPAID", "Bu hesap ödenmiş; ödenmiş hesabın fişi ayrıdır.");
+                BillPreReceiptV1 sheet;
+                if (bill is null)
+                {
+                    sheet = new BillPreReceiptV1(
+                        orderId, 0, DateTimeOffset.UtcNow, await BillOrderNotes.TableNumberAsync(dataSource, order.TableId, cancellationToken), order.CurrencyCode,
+                        order.Items.Where(i => i.CountsInOrderTotals)
+                            .Select(i => new BillPreReceiptLineV1(i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount)).ToList(),
+                        [], order.Total, 0m);
+                }
+                else
+                {
+                    await billAccess.RequireAsync(context, terminalId, bill.Value.BillId, cancellationToken, claim: false);
+                    var receipt = await BuildReceiptAsync(
+                        (await billRepository.GetByIdAsync(bill.Value.BillId, cancellationToken))!,
+                        adjustmentRepository, paymentRepository, dataSource, null, false, cancellationToken);
+                    sheet = new BillPreReceiptV1(
+                        orderId, 0, DateTimeOffset.UtcNow, receipt.TableNumber, receipt.CurrencyCode,
+                        receipt.Items.Select(i => new BillPreReceiptLineV1(i.Name, i.Quantity, i.UnitPrice, i.Amount)).ToList(),
+                        receipt.Adjustments, receipt.PayableAmount, receipt.Payments.Sum(p => p.Amount - p.RefundedAmount));
+                }
+
+                // The same key again after a lost answer keeps the number it got; the lines are read afresh.
+                var replayed = await FindPreReceiptReplayAsync(orderId, request.IdempotencyKey, connection, transaction, cancellationToken);
+                if (replayed is not null)
+                    return Results.Ok(sheet with { PrintNumber = replayed.Value });
+                await using var count = new NpgsqlCommand(
+                    "SELECT count(*) FROM audit.audit_events WHERE aggregate_type = 'Order' AND aggregate_id = @id AND event_name = 'order.pre-receipt.printed';",
+                    connection, transaction);
+                count.Parameters.AddWithValue("id", orderId);
+                var number = (int)(long)(await count.ExecuteScalarAsync(cancellationToken))! + 1;
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        Guid.NewGuid(), "order.pre-receipt.printed", "Order", orderId, "User", context.TraceIdentifier, principal.UserId,
+                        afterStateJson: JsonSerializer.Serialize(new { terminalId, printNumber = number, idempotencyKey = request.IdempotencyKey })),
+                    connection, transaction, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return Results.Ok(sheet with { PrintNumber = number });
+            })
+            .WithTags("BillReceipt")
+            .RequireRateLimiting("terminal-write");
+    }
+
+    private static async Task<(Guid BillId, string Status)?> FindOrderBillAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            $"SELECT b.bill_id, b.status FROM billing.bills b WHERE {BillOrderLink.Matches("b", "@order_id")} AND b.status <> 'Cancelled' ORDER BY b.opened_at DESC LIMIT 1;",
+            connection, transaction);
+        command.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken) ? (reader.GetGuid(0), reader.GetString(1)) : null;
+    }
+
+    private static async Task<int?> FindPreReceiptReplayAsync(
+        Guid orderId, Guid idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT (after_state_json->>'printNumber')::int FROM audit.audit_events WHERE aggregate_type = 'Order' AND aggregate_id = @id " +
+            "AND event_name = 'order.pre-receipt.printed' AND after_state_json->>'idempotencyKey' = @key LIMIT 1;",
+            connection, transaction);
+        command.Parameters.AddWithValue("id", orderId);
+        command.Parameters.AddWithValue("key", idempotencyKey.ToString());
+        return await command.ExecuteScalarAsync(cancellationToken) as int?;
     }
 
     private static async Task<DateTimeOffset?> FindResetReplayAsync(

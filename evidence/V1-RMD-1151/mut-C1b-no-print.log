@@ -1,0 +1,78 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 2 failed) 109ms
+     × posts a fresh key, draws the slip and prints once 57ms
+     × keeps the slip in the page only while it prints, so no other print can pick it up 9ms
+ ❯ src/routes/TableOrderBridge.test.tsx (56 tests | 1 failed) 436ms
+       × prints the slip of the table's order with one tap and opens no bill 29ms
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1000ms
+       × prints the slip of a check, billed or not, with one tap and without opening a bill 108ms
+
+ Test Files  3 failed (3)
+      Tests  4 failed | 107 passed (111)
+   Start at  02:54:35
+   Duration  2.94s (transform 597ms, setup 0ms, import 1.12s, tests 1.55s, environment 3.56s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > prints the slip of the table's order with one tap and opens no bill
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/routes/TableOrderBridge.test.tsx:80:21
+     78|
+     79|       expect(otherCalls(fetchMock).map(([url, init]) => `${init?.metho…
+     80|       expect(print).toHaveBeenCalledTimes(1);
+       |                     ^
+     81|       expect(document.getElementById("pre-receipt-print")?.textContent…
+     82|       expect(navigateTo).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > prints the slip of a check, billed or not, with one tap and without opening a bill
+AssertionError: expected "vi.fn()" to be called 2 times, but got 0 times
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:90:21
+     88|       const posts = fetchMock.mock.calls.filter(([, init]) => init?.me…
+     89|       expect(posts).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-rec…
+     90|       expect(print).toHaveBeenCalledTimes(2);
+       |                     ^
+     91|       expect(document.getElementById("pre-receipt-print")?.textContent…
+     92|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > posts a fresh key, draws the slip and prints once
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/features/pending-checks/preReceipt.test.ts:30:19
+     28|     const [url, init] = fetcher.mock.calls[0] as unknown as [string, R…
+     29|     expect([url, init.method, JSON.parse(String(init.body)).idempotenc…
+     30|     expect(print).toHaveBeenCalledTimes(1);
+       |                   ^
+     31|     expect(text()).toContain("Bu belge mali fiş değildir.");
+     32|     expect(text()).toContain("Hesap fişi no: 2");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > keeps the slip in the page only while it prints, so no other print can pick it up
+AssertionError: expected [ false, false ] to deeply equal [ true, true ]
+
+- Expected
++ Received
+
+  [
+-   true,
+-   true,
++   false,
++   false,
+  ]
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:54:20
+     52|     window.dispatchEvent(new Event("afterprint"));
+     53|
+     54|     expect(during).toEqual([true, true]);
+       |                    ^
+     55|     expect(document.body.classList.contains("pre-receipt-printing")).t…
+     56|     expect(document.getElementById("pre-receipt-print")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

@@ -1,0 +1,143 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 2 failed) 119ms
+     × replaces the previous slip instead of stacking another 22ms
+     × turns BILL_NOT_UNPAID into a Turkish sentence and prints nothing 7ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 109 passed (111)
+   Start at  02:53:18
+   Duration  2.98s (transform 525ms, setup 0ms, import 1.14s, tests 1.79s, environment 3.33s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > replaces the previous slip instead of stacking another
+AssertionError: expected …(2) to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:93:61
+     91|     await printPreReceipt("t-1", "o-1", fetcher, vi.fn());
+     92|
+     93|     expect(document.querySelectorAll("#pre-receipt-print")).toHaveLeng…
+       |                                                             ^
+     94|   });
+     95|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > turns BILL_NOT_UNPAID into a Turkish sentence and prints nothing
+AssertionError: expected <div id="pre-receipt-print">…(5)</div> to be null
+
+- Expected:
+null
+
++ Received:
+<div
+  id="pre-receipt-print"
+>
+  <h1>
+    Hesap
+  </h1>
+  <p
+    class="pre-receipt__note"
+  >
+    Bu belge mali fiş değildir.
+  </p>
+  <p>
+    Hesap fişi no: 2
+    <br />
+    Masa: 5
+    <br />
+    18.11.2026 13:00
+  </p>
+  <table>
+    <tr>
+      <td>
+        2 × Köfte &lt;b&gt;
+      </td>
+      <td>
+        ₺200,00
+      </td>
+    </tr>
+    <tr>
+      <td>
+        1 × Ayran
+      </td>
+      <td>
+        ₺30,00
+      </td>
+    </tr>
+  </table>
+  <table>
+    <tr>
+      <td>
+        Bahşiş
+      </td>
+      <td>
+        ₺10,00
+      </td>
+    </tr>
+    <tr>
+      <td>
+        İndirim
+      </td>
+      <td>
+        -₺5,00
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Düzeltme
+      </td>
+      <td>
+        ₺1,00
+      </td>
+    </tr>
+    <tr
+      class="pre-receipt__total"
+    >
+      <td>
+        Toplam
+      </td>
+      <td>
+        ₺235,00
+      </td>
+    </tr>
+    <tr>
+      <td>
+        Ödenen
+      </td>
+      <td>
+        ₺100,00
+      </td>
+    </tr>
+    <tr
+      class="pre-receipt__total"
+    >
+      <td>
+        Kalan
+      </td>
+      <td>
+        ₺135,00
+      </td>
+    </tr>
+  </table>
+</div>
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:106:58
+    104|       .rejects.toEqual(new PreReceiptError(message));
+    105|     expect(print).not.toHaveBeenCalled();
+    106|     expect(document.getElementById("pre-receipt-print")).toBeNull();
+       |                                                          ^
+    107|   });
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

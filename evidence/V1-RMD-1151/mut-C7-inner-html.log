@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 155ms
+     × draws lines as text, adjustments in Turkish, and the paid and remaining amounts 27ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:22
+   Duration  3.01s (transform 746ms, setup 0ms, import 1.25s, tests 1.67s, environment 3.50s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > draws lines as text, adjustments in Turkish, and the paid and remaining amounts
+AssertionError: expected <b></b> to be null
+
+- Expected:
+null
+
++ Received:
+<b />
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:39:60
+     37|     await printPreReceipt("t-1", "o-1", (async () => reply(200, sheet)…
+     38|
+     39|     expect(document.querySelector("#pre-receipt-print b")).toBeNull();
+       |                                                            ^
+     40|     expect(text()).toContain("2 × Köfte <b>");
+     41|     for (const expected of ["Bahşiş", "İndirim", "Düzeltme"]) expect(t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

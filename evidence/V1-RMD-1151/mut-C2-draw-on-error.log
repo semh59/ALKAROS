@@ -1,0 +1,144 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 5 failed) 132ms
+     × starts the next print of an order with a new key after the server refused one 9ms
+     × turns BILL_NOT_UNPAID into a Turkish sentence and prints nothing 7ms
+     × turns BILL_OTHER_TERMINAL into a Turkish sentence and prints nothing 2ms
+     × turns SURPRISE into a Turkish sentence and prints nothing 2ms
+     × says the server could not be reached, and a 401 ends the session 3ms
+ ❯ src/routes/TableOrderBridge.test.tsx (56 tests | 1 failed) 501ms
+       × says in Turkish why a slip was refused and prints nothing 30ms
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1146ms
+       × shows a Turkish reason when the slip was refused and prints nothing 32ms
+
+ Test Files  3 failed (3)
+      Tests  7 failed | 104 passed (111)
+   Start at  02:53:02
+   Duration  3.17s (transform 659ms, setup 0ms, import 1.28s, tests 1.78s, environment 3.65s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > says in Turkish why a slip was refused and prints nothing
+AssertionError: expected 'Hesap fişi hazırlanamadı. Tekrar dene…' to be 'Bu hesap ödenmiş; ödenmiş hesabın fiş…' // Object.is equality
+
+Expected: "Bu hesap ödenmiş; ödenmiş hesabın fişini Hesap bölme ekranından yazdırın."
+Received: "Hesap fişi hazırlanamadı. Tekrar deneyin."
+
+ ❯ src/routes/TableOrderBridge.test.tsx:91:81
+     89|       await click("Hesap fişi");
+     90|
+     91|       expect(document.querySelector(".table-order-bridge__error")?.tex…
+       |                                                                                 ^
+     92|       expect(print).not.toHaveBeenCalled();
+     93|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > shows a Turkish reason when the slip was refused and prints nothing
+AssertionError: expected 'Hesap fişi hazırlanamadı. Tekrar dene…' to be 'Bu sipariş hesaba hazır değil (gönder…' // Object.is equality
+
+Expected: "Bu sipariş hesaba hazır değil (gönderilmemiş, iptal edilmiş ya da kapanmış). Listeyi yenileyin."
+Received: "Hesap fişi hazırlanamadı. Tekrar deneyin."
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:107:77
+    105|       await tap(1);
+    106|
+    107|       expect(document.querySelector(".pending-checks__error")?.textCon…
+       |                                                                             ^
+    108|       expect(print).not.toHaveBeenCalled();
+    109|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > starts the next print of an order with a new key after the server refused one
+AssertionError: expected TypeError: sheet.lines is not iterable to be an instance of PreReceiptError
+ ❯ src/features/pending-checks/preReceipt.test.ts:82:92
+     80|     });
+     81|
+     82|     await expect(printPreReceipt("t-1", "o-8", answer as unknown as ty…
+       |                                                                                            ^
+     83|     await expect(printPreReceipt("t-1", "o-8", answer as unknown as ty…
+     84|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > turns BILL_NOT_UNPAID into a Turkish sentence and prints nothing
+AssertionError: expected TypeError: sheet.lines is not iterable to deeply equal Error: Bu hesap ödenmiş; ödenmiş hesabın …
+
+- Expected
++ Received
+
+- PreReceiptError {
+-   "message": "Bu hesap ödenmiş; ödenmiş hesabın fişini Hesap bölme ekranından yazdırın.",
++ TypeError {
++   "message": "sheet.lines is not iterable",
+  }
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:103:141
+    101|     const print = vi.fn();
+    102|
+    103|     await expect(printPreReceipt("t-1", "o-1", (async () => reply(stat…
+       |                                                                                                                                             ^
+    104|       .rejects.toEqual(new PreReceiptError(message));
+    105|     expect(print).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > turns BILL_OTHER_TERMINAL into a Turkish sentence and prints nothing
+AssertionError: expected TypeError: sheet.lines is not iterable to deeply equal Error: Bu hesap başka bir kasada açık; ya…
+
+- Expected
++ Received
+
+- PreReceiptError {
+-   "message": "Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici hesap fişi basabilir.",
++ TypeError {
++   "message": "sheet.lines is not iterable",
+  }
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:103:141
+    101|     const print = vi.fn();
+    102|
+    103|     await expect(printPreReceipt("t-1", "o-1", (async () => reply(stat…
+       |                                                                                                                                             ^
+    104|       .rejects.toEqual(new PreReceiptError(message));
+    105|     expect(print).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > turns SURPRISE into a Turkish sentence and prints nothing
+AssertionError: expected TypeError: sheet.lines is not iterable to deeply equal Error: Hesap fişi hazırlanamadı. Tekrar d…
+
+- Expected
++ Received
+
+- PreReceiptError {
+-   "message": "Hesap fişi hazırlanamadı. Tekrar deneyin.",
++ TypeError {
++   "message": "sheet.lines is not iterable",
+  }
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:103:141
+    101|     const print = vi.fn();
+    102|
+    103|     await expect(printPreReceipt("t-1", "o-1", (async () => reply(stat…
+       |                                                                                                                                             ^
+    104|       .rejects.toEqual(new PreReceiptError(message));
+    105|     expect(print).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > says the server could not be reached, and a 401 ends the session
+AssertionError: expected TypeError: sheet.lines is not iterable to be an instance of PreReceiptError
+ ❯ src/features/pending-checks/preReceipt.test.ts:115:103
+    113|     await expect(printPreReceipt("t-1", "o-1", (async () => { throw ne…
+    114|       .rejects.toEqual(new PreReceiptError("Sunucuya ulaşılamadı. Hesa…
+    115|     await expect(printPreReceipt("t-1", "o-1", (async () => reply(401,…
+       |                                                                                                       ^
+    116|     expect(expired).toHaveBeenCalledTimes(1);
+    117|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+

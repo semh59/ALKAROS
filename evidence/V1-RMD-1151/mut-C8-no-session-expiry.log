@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 99ms
+     × says the server could not be reached, and a 401 ends the session 5ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:25
+   Duration  2.94s (transform 562ms, setup 0ms, import 1.14s, tests 1.55s, environment 3.25s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > says the server could not be reached, and a 401 ends the session
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/features/pending-checks/preReceipt.test.ts:116:21
+    114|       .rejects.toEqual(new PreReceiptError("Sunucuya ulaşılamadı. Hesa…
+    115|     await expect(printPreReceipt("t-1", "o-1", (async () => reply(401,…
+    116|     expect(expired).toHaveBeenCalledTimes(1);
+       |                     ^
+    117|   });
+    118| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

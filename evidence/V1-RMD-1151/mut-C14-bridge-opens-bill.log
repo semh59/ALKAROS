@@ -1,0 +1,52 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/TableOrderBridge.test.tsx (56 tests | 2 failed) 430ms
+       × prints the slip of the table's order with one tap and opens no bill 30ms
+       × says in Turkish why a slip was refused and prints nothing 16ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 109 passed (111)
+   Start at  02:53:49
+   Duration  2.93s (transform 778ms, setup 0ms, import 1.39s, tests 1.54s, environment 3.22s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > prints the slip of the table's order with one tap and opens no bill
+AssertionError: expected [ …(2) ] to deeply equal [ Array(1) ]
+
+- Expected
++ Received
+
+  [
++   "POST /api/v1/terminals/t-1/billing/bills/from-order/o-1",
+    "POST /api/v1/terminals/t-1/orders/o-1/pre-receipt",
+  ]
+
+ ❯ src/routes/TableOrderBridge.test.tsx:79:84
+     77|       await click("Hesap fişi");
+     78|
+     79|       expect(otherCalls(fetchMock).map(([url, init]) => `${init?.metho…
+       |                                                                                    ^
+     80|       expect(print).toHaveBeenCalledTimes(1);
+     81|       expect(document.getElementById("pre-receipt-print")?.textContent…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/TableOrderBridge.test.tsx > TableOrderBridge > Hesap fişi > says in Turkish why a slip was refused and prints nothing
+AssertionError: expected 'Hesap fişi hazırlanamadı. Tekrar dene…' to be 'Bu hesap ödenmiş; ödenmiş hesabın fiş…' // Object.is equality
+
+Expected: "Bu hesap ödenmiş; ödenmiş hesabın fişini Hesap bölme ekranından yazdırın."
+Received: "Hesap fişi hazırlanamadı. Tekrar deneyin."
+
+ ❯ src/routes/TableOrderBridge.test.tsx:91:81
+     89|       await click("Hesap fişi");
+     90|
+     91|       expect(document.querySelector(".table-order-bridge__error")?.tex…
+       |                                                                                 ^
+     92|       expect(print).not.toHaveBeenCalled();
+     93|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -64,6 +64,41 @@ describe("TableOrderBridge", () => {
     expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-new");
   });
 
+  describe("Hesap fişi", () => {
+    const slip = { orderId: "o-1", printNumber: 3, printedAt: "2026-11-18T10:00:00Z", tableNumber: "T-4", currencyCode: "TRY", lines: [{ name: "Çay", quantity: 2, unitPrice: 25, amount: 50 }], adjustments: [], total: 50, paidAmount: 0 };
+    const print = vi.fn();
+    beforeEach(() => { print.mockReset(); Object.defineProperty(window, "print", { value: print, configurable: true, writable: true }); });
+    afterEach(() => document.getElementById("pre-receipt-print")?.remove());
+
+    it("prints the slip of the table's order with one tap and opens no bill", async () => {
+      const fetchMock = stubFetch(() => reply(200, slip));
+      const { navigateTo } = render();
+
+      await click("Hesap fişi");
+
+      expect(otherCalls(fetchMock).map(([url, init]) => `${init?.method} ${url}`)).toEqual(["POST /api/v1/terminals/t-1/orders/o-1/pre-receipt"]);
+      expect(print).toHaveBeenCalledTimes(1);
+      expect(document.getElementById("pre-receipt-print")?.textContent).toContain("Bu belge mali fiş değildir.");
+      expect(navigateTo).not.toHaveBeenCalled();
+    });
+
+    it("says in Turkish why a slip was refused and prints nothing", async () => {
+      stubFetch(() => reply(409, { error: { code: "BILL_NOT_UNPAID", message: "English text" } }));
+      render();
+
+      await click("Hesap fişi");
+
+      expect(document.querySelector(".table-order-bridge__error")?.textContent).toBe("Bu hesap ödenmiş; ödenmiş hesabın fişini Hesap bölme ekranından yazdırın.");
+      expect(print).not.toHaveBeenCalled();
+    });
+
+    it("is not offered to a user who cannot take payments", () => {
+      render({ canCollect: false });
+
+      expect(button("Hesap fişi")).toBeUndefined();
+    });
+  });
+
   it("Öde goes straight to a bill the table already has", async () => {
     const fetchMock = stubFetch();
     const { navigateTo } = render({ table: { tableId: "tb-4", tableNumber: "T-4", currentOrderId: null, currentBillId: "b-1", rowVersion: 1 } });

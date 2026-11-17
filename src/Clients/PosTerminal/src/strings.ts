@@ -1416,6 +1416,30 @@ export const refundMethodLabels: Record<string, string> = {
   Account: "Cari hesap",
 };
 
+/** The "Hesap fişi" slip printed before payment: a non-fiscal information slip with its own print counter. */
+export const preReceiptText = {
+  action: "Hesap fişi",
+  busy: "Hazırlanıyor…",
+  title: "Hesap",
+  notFiscal: "Bu belge mali fiş değildir.",
+  number: (count: number) => `Hesap fişi no: ${count}`,
+  table: (table: string) => `Masa: ${table}`,
+  total: "Toplam",
+  paid: "Ödenen",
+  remaining: "Kalan",
+  adjustmentFallback: "Düzeltme",
+  adjustments: { DiscountPercentage: "İndirim", DiscountAmount: "İndirim", ServiceFee: "Hizmet bedeli", Kuver: "Kuver", Tip: "Bahşiş" } as Record<string, string>,
+  offline: "Sunucuya ulaşılamadı. Hesap fişi basılamadı.",
+  failed: "Hesap fişi hazırlanamadı. Tekrar deneyin.",
+  failures: {
+    BILL_NOT_UNPAID: "Bu hesap ödenmiş; ödenmiş hesabın fişini Hesap bölme ekranından yazdırın.",
+    ORDER_NOT_OPEN: "Bu sipariş hesaba hazır değil (gönderilmemiş, iptal edilmiş ya da kapanmış). Listeyi yenileyin.",
+    NOT_FOUND: "Sipariş bulunamadı. Listeyi yenileyin.",
+    FORBIDDEN: "Hesap fişi basma yetkiniz yok.",
+    BILL_OTHER_TERMINAL: "Bu hesap başka bir kasada açık; yalnızca o kasa veya bir yönetici hesap fişi basabilir.",
+  } as Record<string, string>,
+} as const;
+
 /** The drawer (kasa oturumu) button and band shown on every till screen. */
 export const cashSessionText = {
   checking: "Kasa: Kontrol…",

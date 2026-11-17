@@ -70,6 +70,45 @@ describe("PendingChecksWorkspace", () => {
 
   const ok = (body: unknown) => ({ ok: true, status: 200, json: async () => body });
 
+  describe("Hesap fişi", () => {
+    const slip = { orderId: "o-1", printNumber: 1, printedAt: "2026-11-18T10:00:00Z", tableNumber: "5", currencyCode: "TRY", lines: [{ name: "Köfte", quantity: 3, unitPrice: 180, amount: 540 }], adjustments: [], total: 540, paidAmount: 0 };
+    const print = vi.fn();
+    beforeEach(() => { print.mockReset(); Object.defineProperty(window, "print", { value: print, configurable: true, writable: true }); });
+    afterEach(() => document.getElementById("pre-receipt-print")?.remove());
+    const route = (preReceipt: () => unknown) => fetchMock.mockImplementation(async (url: string) => (url.includes("awaiting-payment") ? ok(sample) : preReceipt()));
+    const tap = (index: number) => act(async () => { (document.querySelectorAll<HTMLButtonElement>('button[aria-label^="Hesap fişi"]')[index]!).click(); });
+
+    it("prints the slip of a check, billed or not, with one tap and without opening a bill", async () => {
+      route(() => ok(slip));
+      await render();
+
+      await tap(0);
+      await tap(1);
+
+      const posts = fetchMock.mock.calls.filter(([, init]) => init?.method === "POST").map(([url]) => url);
+      expect(posts).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-receipt", "/api/v1/terminals/t-1/orders/o-2/pre-receipt"]);
+      expect(print).toHaveBeenCalledTimes(2);
+      expect(document.getElementById("pre-receipt-print")?.textContent).toContain("Hesap fişi no: 1");
+    });
+
+    it("offers no slip to a cashier who may not work with bills", async () => {
+      route(() => ok(slip));
+      await render(vi.fn(), { canCancel: true, canMerge: false });
+
+      expect(document.querySelectorAll('button[aria-label^="Hesap fişi"]')).toHaveLength(0);
+    });
+
+    it("shows a Turkish reason when the slip was refused and prints nothing", async () => {
+      route(() => ({ ok: false, status: 409, json: async () => ({ error: { code: "ORDER_NOT_OPEN" } }) }));
+      await render();
+
+      await tap(1);
+
+      expect(document.querySelector(".pending-checks__error")?.textContent).toBe("Bu sipariş hesaba hazır değil (gönderilmemiş, iptal edilmiş ya da kapanmış). Listeyi yenileyin.");
+      expect(print).not.toHaveBeenCalled();
+    });
+  });
+
   it("keeps the newest list when an older read finishes last", async () => {
     let finishOld: (value: unknown) => void = () => undefined;
     fetchMock

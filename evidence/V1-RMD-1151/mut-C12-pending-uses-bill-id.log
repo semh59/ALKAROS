@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1098ms
+       × prints the slip of a check, billed or not, with one tap and without opening a bill 114ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:41
+   Duration  3.17s (transform 827ms, setup 0ms, import 1.33s, tests 1.68s, environment 3.67s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > prints the slip of a check, billed or not, with one tap and without opening a bill
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+    "/api/v1/terminals/t-1/orders/o-1/pre-receipt",
+-   "/api/v1/terminals/t-1/orders/o-2/pre-receipt",
++   "/api/v1/terminals/t-1/orders/b-2/pre-receipt",
+  ]
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:89:21
+     87|
+     88|       const posts = fetchMock.mock.calls.filter(([, init]) => init?.me…
+     89|       expect(posts).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-rec…
+       |                     ^
+     90|       expect(print).toHaveBeenCalledTimes(2);
+     91|       expect(document.getElementById("pre-receipt-print")?.textContent…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

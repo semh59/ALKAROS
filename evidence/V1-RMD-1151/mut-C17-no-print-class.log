@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 108ms
+     × keeps the slip in the page only while it prints, so no other print can pick it up 16ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:54:00
+   Duration  2.94s (transform 521ms, setup 0ms, import 1.05s, tests 1.55s, environment 3.27s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > keeps the slip in the page only while it prints, so no other print can pick it up
+AssertionError: expected [ false, true ] to deeply equal [ true, true ]
+
+- Expected
++ Received
+
+  [
+-   true,
++   false,
+    true,
+  ]
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:54:20
+     52|     window.dispatchEvent(new Event("afterprint"));
+     53|
+     54|     expect(during).toEqual([true, true]);
+       |                    ^
+     55|     expect(document.body.classList.contains("pre-receipt-printing")).t…
+     56|     expect(document.getElementById("pre-receipt-print")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

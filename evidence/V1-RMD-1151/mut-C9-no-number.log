@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 113ms
+     × posts a fresh key, draws the slip and prints once 64ms
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1016ms
+       × prints the slip of a check, billed or not, with one tap and without opening a bill 111ms
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  2 failed | 109 passed (111)
+   Start at  02:53:29
+   Duration  2.98s (transform 562ms, setup 0ms, import 1.14s, tests 1.56s, environment 3.66s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > prints the slip of a check, billed or not, with one tap and without opening a bill
+AssertionError: expected 'HesapBu belge mali fiş değildir.Masa:…' to contain 'Hesap fişi no: 1'
+
+Expected: "Hesap fişi no: 1"
+Received: "HesapBu belge mali fiş değildir.Masa: 518.11.2026 13:003 × Köfte₺540,00Toplam₺540,00"
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:91:73
+     89|       expect(posts).toEqual(["/api/v1/terminals/t-1/orders/o-1/pre-rec…
+     90|       expect(print).toHaveBeenCalledTimes(2);
+     91|       expect(document.getElementById("pre-receipt-print")?.textContent…
+       |                                                                         ^
+     92|     });
+     93|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > posts a fresh key, draws the slip and prints once
+AssertionError: expected 'HesapBu belge mali fiş değildir.Masa:…' to contain 'Hesap fişi no: 2'
+
+Expected: "Hesap fişi no: 2"
+Received: "HesapBu belge mali fiş değildir.Masa: 518.11.2026 13:002 × Köfte <b>₺200,001 × Ayran₺30,00Bahşiş₺10,00İndirim-₺5,00Düzeltme₺1,00Toplam₺235,00Ödenen₺100,00Kalan₺135,00"
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:32:20
+     30|     expect(print).toHaveBeenCalledTimes(1);
+     31|     expect(text()).toContain("Bu belge mali fiş değildir.");
+     32|     expect(text()).toContain("Hesap fişi no: 2");
+       |                    ^
+     33|     expect(text()).toContain("Masa: 5");
+     34|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

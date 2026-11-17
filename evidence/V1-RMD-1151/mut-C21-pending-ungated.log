@@ -1,0 +1,34 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1012ms
+       × offers no slip to a cashier who may not work with bills 27ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:54:15
+   Duration  2.97s (transform 563ms, setup 0ms, import 1.09s, tests 1.55s, environment 3.71s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > offers no slip to a cashier who may not work with bills
+AssertionError: expected <button …(5)></button>
+…(1) to have a length of +0 but got 2
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:98:77
+     96|       await render(vi.fn(), { canCancel: true, canMerge: false });
+     97|
+     98|       expect(document.querySelectorAll('button[aria-label^="Hesap fişi…
+       |                                                                             ^
+     99|     });
+    100|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

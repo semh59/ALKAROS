@@ -5,7 +5,8 @@ import { formatMoney } from "../format";
 import { BillingSplitApiError } from "../features/billing";
 import { collectionHrefForOrder } from "../collectOrder";
 import { collectionHref } from "../features/pending-checks/pendingChecksApi";
-import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, servedBillNote } from "../strings";
+import { printPreReceipt, PreReceiptError } from "../features/pending-checks/preReceipt";
+import { billOnOtherTillText, kitchenStateNotes, kitchenlessText, preReceiptText, servedBillNote } from "../strings";
 
 interface BridgeTable {
   tableId: string;
@@ -64,6 +65,8 @@ export function TableOrderBridge({
 }: TableOrderBridgeProps) {
   const [collecting, setCollecting] = useState(false);
   const [collectError, setCollectError] = useState<string>();
+  const [printing, setPrinting] = useState(false);
+  const [printError, setPrintError] = useState<string>();
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string>();
   // Sending changes the lines but not the table row, so the effect below needs its own cue to read them again.
@@ -120,6 +123,19 @@ export function TableOrderBridge({
       setCollecting(false);
     }
   };
+  const slipOrderId = table.currentOrderId ?? sentCheck?.orderId;
+  const printSlip = async () => {
+    if (!slipOrderId) return;
+    setPrinting(true);
+    setPrintError(undefined);
+    try {
+      await printPreReceipt(terminalId, slipOrderId);
+    } catch (reason) {
+      setPrintError(reason instanceof PreReceiptError ? reason.message : preReceiptText.failed);
+    } finally {
+      setPrinting(false);
+    }
+  };
   return <section className="table-order-bridge" aria-label="Masa hesabı">
     <p id="table-order-bridge-note" className="table-order-bridge__note">{otherTill && hasCheck && canCollect ? billOnOtherTillText : sentCheck ? "Garson hesabı kasaya gönderdi; ödemeyi almak için Öde'ye basın." : !canManage
       ? hasCheck && canCollect ? "Bu masadaki hesabı ödeme ekranından alın." : "Bu masada sizin yapabileceğiniz bir işlem yok."
@@ -143,6 +159,13 @@ export function TableOrderBridge({
       >{busy ? "Sipariş hazırlanıyor…" : table.currentOrderId ? "Ürün ekle" : "Sipariş al"}</button>}
       {unsent > 0 && canManage && !billed && <button data-telemetry-id="b.routes.tableorderbridge.send" className="secondary" type="button" disabled={busy || sending || collecting} aria-busy={sending} onClick={() => void send()}>{sending ? "Gönderiliyor…" : `Mutfağa gönder (${unsent})`}</button>}
       {sentOrder && canAddWithoutKitchen && !billed && <button data-telemetry-id="b.routes.tableorderbridge.kitchenless" className="secondary" type="button" disabled={busy || sending || collecting} onClick={onAddWithoutKitchen}>{kitchenlessText.open}</button>}
+      {slipOrderId && (hasCheck || sentCheck) && canCollect && <button data-telemetry-id="b.routes.tableorderbridge.pre-receipt"
+        className="secondary"
+        type="button"
+        disabled={busy || collecting || printing || otherTill}
+        aria-busy={printing}
+        onClick={() => void printSlip()}
+      >{printing ? preReceiptText.busy : preReceiptText.action}</button>}
     </div>
     {hasCheck && (canCollect || canManage) && <div className="table-order-bridge__mini">
       {canCollect && <button data-telemetry-id="b.routes.tableorderbridge.split" className="secondary" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(billingHref)}>Böl</button>}
@@ -151,7 +174,7 @@ export function TableOrderBridge({
     {hasCheck && canManage && !onTransfer && !otherTill && <small className="table-order-bridge__reason">Bu masa şu anda taşınamaz.</small>}
     {table.currentBillId && canCollect && <div className="table-order-bridge__danger"><button data-telemetry-id="b.routes.tableorderbridge.cancel" className="table-order-bridge__cancel" type="button" disabled={busy || collecting || otherTill} onClick={() => navigateTo(`${collectionHref(table.currentBillId!)}&open=refund`)}>İptal / iade</button></div>}
     {canManage && !orderAllowed && !sentCheck && <small className="table-order-bridge__reason">Masa şu anda sipariş almaya uygun değil (rezerve, temizlikte veya kapalı); durumunu Diğer işlemler menüsünden değiştirin.</small>}
-    {(error ?? collectError ?? sendError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError}</p>}
+    {(error ?? collectError ?? sendError ?? printError) && <p className="table-order-bridge__error" role="alert">{error ?? collectError ?? sendError ?? printError}</p>}
     {hasCheck ? !canReadLines ? null : read === "failed" ? <p className="table-order-bridge__lines-note">Hesap kalemleri alınamadı. Masayı yenileyip tekrar deneyin.</p>
       : read && <>
         <ul className="table-order-bridge__lines" aria-label="Hesap kalemleri">

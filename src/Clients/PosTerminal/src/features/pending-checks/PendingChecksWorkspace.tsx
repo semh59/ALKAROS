@@ -4,10 +4,11 @@ import { notifySessionExpired } from "../../api";
 import { BillingSplitApiError, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
-import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, recallConfirmText, servedRecallNote } from "../../strings";
+import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, preReceiptText, recallConfirmText, servedRecallNote } from "../../strings";
 import { collectionHrefForOrder } from "../../collectOrder";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
+import { printPreReceipt, PreReceiptError } from "./preReceipt";
 import "./pending-checks.css";
 
 // V1-RMD-287: the live push below refreshes the list at once; this poll is only the safety net for a
@@ -49,6 +50,8 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
   const [liveLinkUp, setLiveLinkUp] = useState(true);
   const [loadedAt, setLoadedAt] = useState<Date>();
   const [cancelNotice, setCancelNotice] = useState<string>();
+  const [printing, setPrinting] = useState<string>();
+  const [printError, setPrintError] = useState<string>();
   const [recallAsking, setRecallAsking] = useState<string>();
   const [cancelling, setCancelling] = useState<{ orderId: string; choice: string; reason: string; confirming: boolean; busy: boolean; key: string; error?: string }>();
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -137,6 +140,18 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
     }
   };
 
+  const printSlip = async (check: PendingCheck) => {
+    setPrinting(check.orderId);
+    setPrintError(undefined);
+    try {
+      await printPreReceipt(terminalId, check.orderId);
+    } catch (reason) {
+      setPrintError(reason instanceof PreReceiptError ? reason.message : preReceiptText.failed);
+    } finally {
+      setPrinting(undefined);
+    }
+  };
+
   const mergeTable = checks?.find((row) => row.orderId === selected[0]);
   const mergeTableId = mergeTable?.tableId;
   const mergeOffered = mayMerge && (checks ?? []).some((row, _, all) => canMerge(row) && all.some((other) => other !== row && canMerge(other) && other.tableId === row.tableId));
@@ -201,6 +216,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
     <section className="pending-checks" aria-label="Bekleyen hesaplar">
       {error && <p className="pending-checks__error" role="alert">{error}</p>}
       {mergeError && <p className="pending-checks__error" role="alert">{mergeError}</p>}
+      {printError && <p className="pending-checks__error" role="alert">{printError}</p>}
       {cancelNotice && !cancelling && <p className="pending-checks__error" role="alert">{cancelNotice}</p>}
       {!liveLinkUp && <p className="pending-checks__offline" role="status">Canlı güncelleme yok: liste en geç dakikada bir yenilenir, yeni hesap geldiğinde ses çalmayabilir.</p>}
       {error && checks !== null && loadedAt && <p className="pending-checks__stale" role="status">Aşağıdaki liste eski olabilir: son yenileme {sentAt(loadedAt.toISOString())}.</p>}
@@ -257,6 +273,16 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
                 {openingOrderId === check.orderId && <span className="pending-checks__opening">Açılıyor…</span>}
                 {check.billId === null && !mayMerge && <span className="pending-checks__meta">{openBillDeniedText}</span>}
               </button>
+              {mayMerge && <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.pre-receipt"
+                type="button"
+                className="pending-checks__recall"
+                disabled={openingOrderId !== undefined || merging || printing !== undefined}
+                aria-busy={printing === check.orderId}
+                onClick={() => void printSlip(check)}
+                aria-label={`${preReceiptText.action}, ${checkTitle(check)}`}
+              >
+                {printing === check.orderId ? preReceiptText.busy : preReceiptText.action}
+              </button>}
               {check.paidAmount === 0 && check.tableId && servedRecallBlocked(check) && (
                 <p className="pending-checks__meta pending-checks__served-note">{servedRecallNote}</p>
               )}

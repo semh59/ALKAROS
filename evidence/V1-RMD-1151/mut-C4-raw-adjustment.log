@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 103ms
+     × draws lines as text, adjustments in Turkish, and the paid and remaining amounts 19ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:10
+   Duration  2.87s (transform 526ms, setup 0ms, import 1.03s, tests 1.60s, environment 3.26s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > draws lines as text, adjustments in Turkish, and the paid and remaining amounts
+AssertionError: expected 'HesapBu belge mali fiş değildir.Hesap…' to contain 'Bahşiş'
+
+Expected: "Bahşiş"
+Received: "HesapBu belge mali fiş değildir.Hesap fişi no: 2Masa: 518.11.2026 13:002 × Köfte <b>₺200,001 × Ayran₺30,00Tip₺10,00DiscountAmount-₺5,00Mystery₺1,00Toplam₺235,00Ödenen₺100,00Kalan₺135,00"
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:41:78
+     39|     expect(document.querySelector("#pre-receipt-print b")).toBeNull();
+     40|     expect(text()).toContain("2 × Köfte <b>");
+     41|     for (const expected of ["Bahşiş", "İndirim", "Düzeltme"]) expect(t…
+       |                                                                              ^
+     42|     expect(text()).not.toMatch(/Tip|Mystery|DiscountAmount/);
+     43|     expect(text()).toMatch(/Ödenen.*100,00/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (45 tests | 1 failed) 1008ms
+       × shows a Turkish reason when the slip was refused and prints nothing 31ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:53:37
+   Duration  2.88s (transform 550ms, setup 0ms, import 1.07s, tests 1.53s, environment 3.38s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > Hesap fişi > shows a Turkish reason when the slip was refused and prints nothing
+AssertionError: expected undefined to be 'Bu sipariş hesaba hazır değil (gönder…' // Object.is equality
+
+- Expected:
+"Bu sipariş hesaba hazır değil (gönderilmemiş, iptal edilmiş ya da kapanmış). Listeyi yenileyin."
+
++ Received:
+undefined
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:107:77
+    105|       await tap(1);
+    106|
+    107|       expect(document.querySelector(".pending-checks__error")?.textCon…
+       |                                                                             ^
+    108|       expect(print).not.toHaveBeenCalled();
+    109|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

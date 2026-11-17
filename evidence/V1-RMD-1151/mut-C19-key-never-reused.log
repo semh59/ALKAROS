@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/preReceipt.test.ts (10 tests | 1 failed) 106ms
+     × retries a print the server may have recorded with the same key, and a settled print with a new one 18ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 110 passed (111)
+   Start at  02:54:07
+   Duration  2.95s (transform 570ms, setup 0ms, import 1.11s, tests 1.68s, environment 3.26s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/preReceipt.test.ts > printPreReceipt > retries a print the server may have recorded with the same key, and a settled print with a new one
+AssertionError: expected 'ccdc4790-5f77-446a-87fd-17a6ac653e41' to be '25ada6c6-dbca-47f2-95b0-caee482cbd63' // Object.is equality
+
+Expected: "25ada6c6-dbca-47f2-95b0-caee482cbd63"
+Received: "ccdc4790-5f77-446a-87fd-17a6ac653e41"
+
+ ❯ src/features/pending-checks/preReceipt.test.ts:71:21
+     69|     await printPreReceipt("t-1", "o-9", answer as unknown as typeof fe…
+     70|
+     71|     expect(keys[1]).toBe(keys[0]);
+       |                     ^
+     72|     expect(keys[2]).not.toBe(keys[0]);
+     73|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

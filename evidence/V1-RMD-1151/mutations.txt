@@ -1,0 +1,34 @@
+H1-count-bill-receipts KILLED - counter reads another event type
+H2-no-row-lock KILLED - numbering without the order row lock
+H3-no-replay KILLED - same key counts again
+H5-no-terminal-check KILLED - another terminal's bill is printed
+H7-cancelled-lines-listed KILLED - cancelled lines listed
+H8-paid-always-zero KILLED - paid amount dropped
+H9-no-key-check KILLED - missing key accepted
+H11-number-off-by-one KILLED - first print numbered 0
+H12-bill-items-ignored KILLED - bill adjustments dropped
+H4-paid-allowed KILLED - paid bill gets a pre-receipt
+H6-draft-allowed KILLED - draft order gets a pre-receipt
+H6c-closed-allowed KILLED - cancelled, rejected and completed orders get a pre-receipt
+H10-wrong-permission KILLED - orders.create instead of bills.split
+C2-draw-on-error KILLED - refused print goes on to draw and print
+C3-no-notice KILLED - non-fiscal notice missing
+C4-raw-adjustment KILLED - raw English enum on the slip
+C5-no-paid-rows KILLED - paid and remaining rows dropped
+C6-stacks-slips KILLED - every print adds another slip
+C7-inner-html KILLED - line names injected as markup
+C8-no-session-expiry KILLED - 401 does not end the session
+C9-no-number KILLED - print number missing
+C10-remaining-is-total KILLED - remaining shows the total
+C11-pending-error-lost KILLED - pending list swallows a refused print
+C12-pending-uses-bill-id KILLED - pending list prints by bill id
+C13-bridge-no-permission KILLED - table slip offered without payments.take
+C14-bridge-opens-bill KILLED - table slip opens a bill first
+C15-bridge-error-lost KILLED - table swallows a refused print
+C16-no-afterprint-cleanup KILLED - slip stays in the page after printing
+C17-no-print-class KILLED - print rules never switch on
+C18-key-kept-after-success KILLED - next print reuses a settled key
+C19-key-never-reused KILLED - retry after a lost answer counts again
+C20-key-kept-after-refusal KILLED - refused print keeps its key
+C21-pending-ungated KILLED - slip offered without bills.split
+C1b-no-print KILLED - slip drawn but never printed

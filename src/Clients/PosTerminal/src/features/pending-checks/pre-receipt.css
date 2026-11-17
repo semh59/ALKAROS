@@ -1,0 +1,10 @@
+#pre-receipt-print { display: none; }
+@media print {
+  body.pre-receipt-printing > *:not(#pre-receipt-print) { display: none !important; }
+  body.pre-receipt-printing #pre-receipt-print { display: block; width: 72mm; margin: 0 auto; color: #000; background: #fff; font-size: 14px; }
+  #pre-receipt-print h1 { font-size: 18px; text-align: center; margin: 0 0 4px; }
+  #pre-receipt-print table { width: 100%; border-collapse: collapse; margin: 6px 0; border-top: 1px dashed #000; }
+  #pre-receipt-print td:last-child { text-align: right; white-space: nowrap; }
+  #pre-receipt-print .pre-receipt__total td { font-weight: 700; }
+  #pre-receipt-print .pre-receipt__note { text-align: center; font-weight: 700; margin: 4px 0; }
+}
