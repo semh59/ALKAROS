@@ -1,7 +1,7 @@
 # V1-RMD-1146 - Bekleyen indirim ve ikram onay talebi sayfa yenilenince ekrana geri gelir
 
 - Task ID: V1-RMD-1146
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

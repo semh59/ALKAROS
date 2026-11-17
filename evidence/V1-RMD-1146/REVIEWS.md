@@ -1,0 +1,2 @@
+- qa-frontend: KABUL DEGIL (orta: yukleme basarisiz olursa kayit silinir) -> uygulandi + test + C12; dusuk: kasiyer kimligi -> uygulandi; cift yoklama: risk
+- qa-guvenlik-yetki: orta: kasiyer degisince eski govde yeni kasiyerde dolar -> userId baglama + test + C11/C13; XSS/yetki: yeni yetki vermez (sunucu RequesterUserId + yonetici sifresi)

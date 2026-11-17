@@ -1,0 +1,188 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 57ec4f69d..a69ba3165 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -380,7 +380,7 @@
+   }
+   // Resends a waiting request with its own key without redrawing: only a decided answer (applied or refused) is
+   // shown; "still waiting" and server failures stay silent so the form is not rebuilt every few seconds.
+-  function probeApproval(kind) {
++  function probeApproval(kind, redrawWhenSilent) {
+     var isDiscount = kind === 'discount';
+     var signature = isDiscount ? state.discountRequestSignature : state.compRequestSignature;
+     var body = JSON.parse(signature);
+@@ -389,11 +389,14 @@
+     api(billBase() + '/' + kind, { method: 'POST', body: body }).then(function (result) {
+       if (result.status >= 500 || (result.ok && result.body && result.body.status === 'Pending')) {
+         state[kind + 'Busy'] = false;
++        // The one check right after a refresh follows a draw that showed the button busy.
++        if (redrawWhenSilent) render();
+         return;
+       }
+       return isDiscount ? discountAnswered(result, signature) : compAnswered(result, signature);
+     }).catch(function () {
+       state[kind + 'Busy'] = false;
++      if (redrawWhenSilent) render();
+     });
+   }
+   function renderApproveHere(kind) {
+@@ -457,7 +460,56 @@
+       render();
+     });
+   }
++  // A request waiting for a manager outlives a page refresh: its grant number, key and body go to sessionStorage (never a
++  // name or password), so the screen can take the request up again and the manager can still approve it here.
++  var PENDING_APPROVAL_STORAGE = 'alkaros_pending_approval';
++  // Nothing is written or wiped before the stored record has been read back: a screen that failed to load (sign-in, network)
++  // must not erase a request that is still waiting.
++  var approvalsRestored = false;
++  function persistApprovals() {
++    if (!approvalsRestored) return;
++    var record = { billId: state.billId, userId: state.userId };
++    ['discount', 'comp'].forEach(function (kind) {
++      var key = state[kind + 'IdempotencyKey'];
++      if (state[kind + 'Pending'] && key && state[kind + 'GrantId'] && state[kind + 'RequestSignature']) {
++        record[kind] = { grantId: state[kind + 'GrantId'], key: key, body: state[kind + 'RequestSignature'] };
++      }
++    });
++    try {
++      if (record.discount || record.comp) window.sessionStorage.setItem(PENDING_APPROVAL_STORAGE, JSON.stringify(record));
++      else window.sessionStorage.removeItem(PENDING_APPROVAL_STORAGE);
++    } catch (err) { /* storage unavailable: only the restore after a refresh is lost */ }
++  }
++  function restoreApprovals() {
++    approvalsRestored = true;
++    var record = null;
++    try { record = JSON.parse(window.sessionStorage.getItem(PENDING_APPROVAL_STORAGE)); } catch (err) { record = null; }
++    // A request is its cashier's own: another sign-in on this tab never picks it up.
++    if (!record || record.billId !== state.billId || record.userId !== state.userId) return;
++    ['discount', 'comp'].forEach(function (kind) {
++      var saved = record[kind];
++      var body = null;
++      try { body = saved ? JSON.parse(saved.body) : null; } catch (err) { body = null; }
++      if (!body || !saved.key || !saved.grantId) return;
++      state[kind + 'Pending'] = true;
++      state[kind + 'GrantId'] = saved.grantId;
++      state[kind + 'IdempotencyKey'] = saved.key;
++      state[kind + 'RequestSignature'] = saved.body;
++      state[kind + 'Notice'] = kind === 'discount' ? DISCOUNT_WAITING_NOTICE : COMP_WAITING_NOTICE;
++      if (kind === 'discount') {
++        state.discountCalcType = body.CalculationType;
++        state.discountValueDraft = String(body.Value);
++        state.discountReason = body.ReasonCode;
++        state.discountNoteDraft = body.Notes || '';
++      } else {
++        state.compAmountDraft = String(body.Amount);
++        state.compReason = body.ReasonCode;
++        state.compNoteDraft = body.Notes || '';
++      }
++    });
++  }
+   function ensureApprovalPoll() {
++    persistApprovals();
+     var waiting = state.discountPending || state.compPending;
+     if (waiting && !approvalPollTimer) {
+       approvalPollTimer = window.setInterval(function () {
+@@ -653,10 +705,14 @@
+       // V1-RMD-314: a fresh load re-derives everything from server truth; the in-memory record is dropped and
+       // only the stored one, matched by context (including the new remaining amount), can come back.
+       state.tenderIdempotencyKey = null;
++      restoreApprovals();
+       loadRefundRequests();
+       loadSavedShares();
+       showBillOnCustomerDisplay();
+       render();
++      // A request restored after a refresh may have been decided meanwhile: ask once now, not only at the next poll.
++      if (state.discountPending) probeApproval('discount', true);
++      if (state.compPending) probeApproval('comp', true);
+     }).catch(function () {
+       state.error = 'Hesap bilgisi okunamadı. Bağlantınızı kontrol edin.';
+       state.phase = 'loadError';
+@@ -865,6 +921,8 @@
+     };
+   }
+ 
++  var DISCOUNT_WAITING_NOTICE = 'İndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
++  var COMP_WAITING_NOTICE = 'İkram talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
+   function discountAnswered(result, discountSignature) {
+     state.discountBusy = false;
+     // A definitive answer consumes the key; a request waiting for a manager keeps it, because resending the same
+@@ -893,7 +951,7 @@
+     }
+     if (waiting) {
+       state.discountGrantId = result.body.grantId;
+-      state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
++      state.discountNotice = DISCOUNT_WAITING_NOTICE;
+       render();
+       return;
+     }
+@@ -963,7 +1021,7 @@
+     }
+     if (waiting) {
+       state.compGrantId = result.body.grantId;
+-      state.compNotice = 'İkram talebiniz yönetici onayına gönderildi. Onaylanınca kendiliğinden uygulanır; isterseniz "Onay durumunu kontrol et" düğmesine de basabilirsiniz. O zamana kadar hesap değişmez.';
++      state.compNotice = COMP_WAITING_NOTICE;
+       render();
+       return;
+     }
+@@ -2625,6 +2683,7 @@
+       state.discountConfirm = false;
+       state.discountPending = false;
+       state.discountNotice = null;
++      persistApprovals();
+       var notice = document.getElementById('discount-notice');
+       if (notice) notice.remove();
+       var button = document.getElementById('submit-discount');
+@@ -2642,7 +2701,7 @@
+       button.addEventListener('click', function () { undoAdjustment(button.getAttribute('data-undo-adjustment')); });
+     });
+     // Editing the request after it went to a manager starts a new one; the old pending request is left to expire.
+-    function editedComp() { state.compConfirm = false; state.compPending = false; state.compNotice = null; }
++    function editedComp() { state.compConfirm = false; state.compPending = false; state.compNotice = null; persistApprovals(); }
+     var compReasonInput = document.getElementById('comp-reason');
+     if (compReasonInput) compReasonInput.addEventListener('change', function () { state.compReason = this.value; editedComp(); });
+     var compAmountInput = document.getElementById('comp-amount');
+diff --git a/tests/Clients/StaticApps/split-payment-comp.test.js b/tests/Clients/StaticApps/split-payment-comp.test.js
+index 79bb04b03..a75c637ab 100644
+--- a/tests/Clients/StaticApps/split-payment-comp.test.js
++++ b/tests/Clients/StaticApps/split-payment-comp.test.js
+@@ -57,7 +57,10 @@ const text = () => document.getElementById("fold-comp").textContent;
+ const settle = () => new Promise((done) => setTimeout(done, 20));
+ 
+ describe("split-payment.js comp (ikram)", () => {
+-  beforeEach(() => vi.resetModules());
++  beforeEach(() => {
++    vi.resetModules();
++    window.sessionStorage.clear();
++  });
+   afterEach(() => {
+     vi.unstubAllGlobals();
+     document.body.innerHTML = "";
+diff --git a/tests/Clients/StaticApps/split-payment-discount-pending.test.js b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+index d39d4bd4b..dda762a34 100644
+--- a/tests/Clients/StaticApps/split-payment-discount-pending.test.js
++++ b/tests/Clients/StaticApps/split-payment-discount-pending.test.js
+@@ -73,7 +73,10 @@ function holdDiscountAnswers(fetchMock, free) {
+ }
+ 
+ describe("split-payment.js discount waiting for a manager", () => {
+-  beforeEach(() => vi.resetModules());
++  beforeEach(() => {
++    vi.resetModules();
++    window.sessionStorage.clear();
++  });
+   afterEach(() => {
+     vi.unstubAllGlobals();
+     document.body.innerHTML = "";
+@@ -390,7 +393,10 @@ async function waitForManager(fetchMock) {
+ }
+ 
+ describe("split-payment.js manager approving a waiting discount at the till", () => {
+-  beforeEach(() => vi.resetModules());
++  beforeEach(() => {
++    vi.resetModules();
++    window.sessionStorage.clear();
++  });
+   afterEach(() => {
+     approveDelayMs = 0;
+     vi.unstubAllGlobals();

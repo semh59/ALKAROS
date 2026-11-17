@@ -57,7 +57,10 @@ const text = () => document.getElementById("fold-comp").textContent;
 const settle = () => new Promise((done) => setTimeout(done, 20));
 
 describe("split-payment.js comp (ikram)", () => {
-  beforeEach(() => vi.resetModules());
+  beforeEach(() => {
+    vi.resetModules();
+    window.sessionStorage.clear();
+  });
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";

@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-approval-restore.test.js > split-payment.js waiting approval after a page refresh > brings the waiting discount back: form, notice, check button and the approve-here box of the manager
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946726002-0.43672918706935704:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946726002-0.43672918706935704:588:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946726002-0.43672918706935704:702:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-approval-restore.test.js > split-payment.js waiting approval after a page refresh > brings the waiting discount back: form, notice, check button and the approve-here box of the manager
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946726275-0.42720137453064133:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946726275-0.42720137453064133:588:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946726275-0.42720137453064133:702:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-approval-restore.test.js (8 tests | 1 failed) 2454ms
+     × brings the waiting discount back: form, notice, check button and the approve-here box of the manager 460ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-approval-restore.test.js > split-payment.js waiting approval after a page refresh > brings the waiting discount back: form, notice, check button and the approve-here box of the manager
+AssertionError: expected 'Gönderiliyor…' to be 'Onay durumunu kontrol et' // Object.is equality
+
+Expected: "Onay durumunu kontrol et"
+Received: "Gönderiliyor…"
+
+ ❯ split-payment-approval-restore.test.js:84:42
+     82|     expect(document.getElementById("discount-value").value).toBe("20");
+     83|     expect(document.getElementById("discount-note").value).toBe("müşte…
+     84|     expect(submitDiscount().textContent).toBe("Onay durumunu kontrol e…
+       |                                          ^
+     85|     expect(document.getElementById("discount-approve-here")).not.toBeN…
+     86|     expect(requests(second, "/discount").every((body) => body.Idempote…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  23:18:44
+   Duration  3.78s (transform 826ms, setup 25ms, import 53ms, tests 2.45s, environment 986ms)
+

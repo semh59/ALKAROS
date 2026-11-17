@@ -1,0 +1,56 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+stderr | split-payment-approval-restore.test.js > split-payment.js waiting approval after a page refresh > forgets the request when the form is edited, so a refresh shows an empty form
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946893568-0.7384457677403821:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946893568-0.7384457677403821:591:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946893568-0.7384457677403821:705:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+stderr | split-payment-approval-restore.test.js > split-payment.js waiting approval after a page refresh > forgets the request when the form is edited, so a refresh shows an empty form
+Müşteri ekranına bağlanamadı: Error: No fetch route matched POST /api/v1/terminals/11111111-1111-1111-1111-111111111111/billing/bills/22222222-2222-2222-2222-222222222222/show-on-display
+    at D:/PROJECT/ALKAROS/tests/Clients/StaticApps/support/fetchRouter.js:32:13
+    at Mock (file:///D:/PROJECT/ALKAROS/tests/Clients/StaticApps/node_modules/.pnpm/@vitest+spy@4.1.11/node_modules/@vitest/spy/dist/index.js:332:34)
+    at api (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946893756-0.11575100228871615:288:12)
+    at showBillOnCustomerDisplay (D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946893756-0.11575100228871615:591:5)
+    at D:/PROJECT/ALKAROS/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js?t=1794946893756-0.11575100228871615:705:7
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+ ❯ split-payment-approval-restore.test.js (8 tests | 1 failed) 2444ms
+     × forgets the request when the form is edited, so a refresh shows an empty form 321ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-approval-restore.test.js > split-payment.js waiting approval after a page refresh > forgets the request when the form is edited, so a refresh shows an empty form
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   [
++     "alkaros_pending_approval",
++     "{\"billId\":\"22222222-2222-2222-2222-222222222222\",\"discount\":{\"grantId\":\"g1\",\"key\":\"0324f4d3-90f6-46ca-b0e0-29c504f4c176\",\"body\":\"{\\\"CalculationType\\\":\\\"Percentage\\\",\\\"Value\\\":20,\\\"ReasonCode\\\":\\\"ManagerDiscretion\\\",\\\"Notes\\\":null}\"}}",
++   ],
++ ]
+
+ ❯ split-payment-approval-restore.test.js:126:22
+    124|     await open([]);
+    125|
+    126|     expect(stored()).toEqual([]);
+       |                      ^
+    127|     expect(document.getElementById("discount-value").value).toBe("");
+    128|     expect(text()).not.toContain("yönetici onayına gönderildi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  23:21:31
+   Duration  3.81s (transform 834ms, setup 23ms, import 58ms, tests 2.44s, environment 1.02s)
+

@@ -73,7 +73,10 @@ function holdDiscountAnswers(fetchMock, free) {
 }
 
 describe("split-payment.js discount waiting for a manager", () => {
-  beforeEach(() => vi.resetModules());
+  beforeEach(() => {
+    vi.resetModules();
+    window.sessionStorage.clear();
+  });
   afterEach(() => {
     vi.unstubAllGlobals();
     document.body.innerHTML = "";
@@ -390,7 +393,10 @@ async function waitForManager(fetchMock) {
 }
 
 describe("split-payment.js manager approving a waiting discount at the till", () => {
-  beforeEach(() => vi.resetModules());
+  beforeEach(() => {
+    vi.resetModules();
+    window.sessionStorage.clear();
+  });
   afterEach(() => {
     approveDelayMs = 0;
     vi.unstubAllGlobals();
