@@ -188,7 +188,7 @@ export function ExperiencePage({
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
-    {path === "/recent-sales" && canOpenRoute && <RecentSalesWorkspace terminalId={terminalId} />}
+    {path === "/recent-sales" && canOpenRoute && <RecentSalesWorkspace terminalId={terminalId} closedBandShown={cashSession?.state === "closed"} />}
     {onlineTab !== null && (
       <OnlineFoodHub
         terminalId={terminalId}

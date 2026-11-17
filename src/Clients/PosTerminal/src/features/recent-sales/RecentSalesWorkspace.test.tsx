@@ -2,6 +2,7 @@
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { registerSessionExpiredHandler } from "../../api";
 import { RecentSalesWorkspace } from "./RecentSalesWorkspace";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -26,9 +27,9 @@ describe("RecentSalesWorkspace", () => {
     vi.unstubAllGlobals();
   });
 
-  async function render(navigateTo = vi.fn()) {
+  async function render(navigateTo = vi.fn(), closedBandShown = false) {
     root = createRoot(document.getElementById("root")!);
-    await act(async () => { root!.render(<RecentSalesWorkspace terminalId="t-1" navigateTo={navigateTo} />); });
+    await act(async () => { root!.render(<RecentSalesWorkspace terminalId="t-1" navigateTo={navigateTo} closedBandShown={closedBandShown} />); });
     return navigateTo;
   }
   const text = () => document.body.textContent ?? "";
@@ -75,6 +76,14 @@ describe("RecentSalesWorkspace", () => {
     expect(text()).not.toContain("Bu oturumda kapanmış satış yok");
   });
 
+  it("does not repeat the closed-till message when the shell band already says it", async () => {
+    fetchMock.mockResolvedValue(answer({ hasOpenSession: false, sales: [] }));
+    await render(vi.fn(), true);
+
+    expect(text()).not.toContain("Son satışları görmek için önce kasayı açın");
+    expect(text()).not.toContain("Bu oturumda kapanmış satış yok");
+  });
+
   it("shows a loading sentence until the answer arrives", async () => {
     fetchMock.mockReturnValue(new Promise(() => undefined));
     await render();
@@ -83,7 +92,7 @@ describe("RecentSalesWorkspace", () => {
   });
 
   it.each([
-    [401, "Oturum süresi doldu, yeniden giriş yapın."],
+    [401, "Son satışlar okunamadı."],
     [403, "Bu listeyi görmek için yetkiniz yok."],
     [500, "Son satışlar okunamadı."],
   ])("shows a fixed Turkish sentence for status %i and never the server body", async (status, sentence) => {
@@ -92,6 +101,16 @@ describe("RecentSalesWorkspace", () => {
 
     expect(document.querySelector("[role='alert']")?.textContent).toBe(sentence);
     expect(text()).not.toContain("SqlException");
+  });
+
+  it("hands a 401 to the shell's session-ended handler", async () => {
+    const ended = vi.fn();
+    registerSessionExpiredHandler(ended);
+    fetchMock.mockResolvedValue(answer({}, 401));
+    await render();
+    registerSessionExpiredHandler(null);
+
+    expect(ended).toHaveBeenCalled();
   });
 
   it("keeps the old list with a stale warning when a refresh fails, and recovers on the next success", async () => {

@@ -1,0 +1,2 @@
+- qa-frontend: KABUL -> 401 sentence unreachable, shell session-end intact, closedBandShown logic right; gap (401 notify untested) closed with a new test + M5.
+- qa-bulgu-dogrulayici: ilk tur RED (green.log sayisi ve M2/M4 loglari eski test dosyasiyla); duzeltildi: green.log ve M1-M5 yeniden kosuldu (95 yesil, hepsi killed), RESULT.md duzeltildi.

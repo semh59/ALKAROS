@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (15 tests | 1 failed) 214ms
+     × hands a 401 to the shell's session-ended handler 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > hands a 401 to the shell's session-ended handler
+AssertionError: expected "vi.fn()" to be called at least once
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:113:19
+    111|     registerSessionExpiredHandler(null);
+    112|
+    113|     expect(ended).toHaveBeenCalled();
+       |                   ^
+    114|   });
+    115|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 82 passed (83)
+   Start at  11:01:40
+   Duration  6.34s (transform 2.01s, setup 0ms, import 2.85s, tests 2.72s, environment 2.20s)
+

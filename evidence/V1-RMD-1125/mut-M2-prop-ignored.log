@@ -1,0 +1,48 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (15 tests | 1 failed) 195ms
+     × does not repeat the closed-till message when the shell band already says it 10ms
+ ❯ src/routes/workspace.test.tsx (68 tests | 1 failed) 2325ms
+     × says the till is closed once, in the band, not again in the list 36ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /recent-sales route > says the till is closed once, in the band, not again in the list
+AssertionError: expected 'Ana içeriğe geçKullanıcıTestRolSınırl…' not to contain 'Son satışları görmek için önce kasayı…'
+
+Expected: "Son satışları görmek için önce kasayı açın"
+Received: "Ana içeriğe geçKullanıcıTestRolSınırlı erişimGüncel · Çevrimiçi doğrulandıKasa: KapalıMasalarBekleyen hesaplarSon satışlarDiğer ▾Son satışlarBu kasa oturumunda kapanan hesaplar; iade için bir satıra dokununKasa oturumu kapalı. Nakit tahsilat için önce kasayı açın.Kasayı açYenileSon satışları görmek için önce kasayı açınMasa 5 · 14:32Nakit₺540,00İade sayfasını aç ›ÇevrimiçiVeri: Çevrimiçi doğrulandı"
+
+ ❯ src/routes/workspace.test.tsx:1626:43
+    1624|
+    1625|     expect(document.querySelectorAll(".cash-session-band")).toHaveLeng…
+    1626|     expect(document.body.textContent).not.toContain("Son satışları gör…
+       |                                           ^
+    1627|   });
+    1628|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > does not repeat the closed-till message when the shell band already says it
+AssertionError: expected 'YenileSon satışları görmek için önce …' not to contain 'Son satışları görmek için önce kasayı…'
+
+Expected: "Son satışları görmek için önce kasayı açın"
+Received: "YenileSon satışları görmek için önce kasayı açın"
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:83:24
+     81|     await render(vi.fn(), true);
+     82|
+     83|     expect(text()).not.toContain("Son satışları görmek için önce kasay…
+       |                        ^
+     84|     expect(text()).not.toContain("Bu oturumda kapanmış satış yok");
+     85|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 81 passed (83)
+   Start at  11:01:13
+   Duration  6.23s (transform 2.06s, setup 0ms, import 2.94s, tests 2.52s, environment 2.26s)
+

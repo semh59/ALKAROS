@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/workspace.test.tsx (68 tests | 1 failed) 2305ms
+     × keeps the list message when no band is shown 28ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /recent-sales route > keeps the list message when no band is shown
+AssertionError: expected 'Ana içeriğe geçKullanıcıTestRolSınırl…' to contain 'Son satışları görmek için önce kasayı…'
+
+Expected: "Son satışları görmek için önce kasayı açın"
+Received: "Ana içeriğe geçKullanıcıTestRolSınırlı erişimGüncel · Çevrimiçi doğrulandıMasalarBekleyen hesaplarSon satışlarDiğer ▾Son satışlarBu kasa oturumunda kapanan hesaplar; iade için bir satıra dokununYenileMasa 5 · 14:32Nakit₺540,00İade sayfasını aç ›ÇevrimiçiVeri: Çevrimiçi doğrulandı"
+
+ ❯ src/routes/workspace.test.tsx:1632:39
+    1630|     await open(["orders.create", "tables.status", "payments.refund.req…
+    1631|
+    1632|     expect(document.body.textContent).toContain("Son satışları görmek …
+       |                                       ^
+    1633|   });
+    1634|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 82 passed (83)
+   Start at  11:01:22
+   Duration  6.24s (transform 2.13s, setup 0ms, import 2.91s, tests 2.48s, environment 2.19s)
+

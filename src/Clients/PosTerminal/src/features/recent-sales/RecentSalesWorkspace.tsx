@@ -10,9 +10,11 @@ const saleTitle = (sale: RecentSale) =>
   `${sale.tableNumber ? `Masa ${sale.tableNumber}` : recentSalesText.quickSale} · ${formatClockMinutes(sale.closedAt)}`;
 
 /** The paid bills of the cashier's open session; a tap opens the payment page at its refund section. */
-export function RecentSalesWorkspace({ terminalId, navigateTo = (href: string) => window.location.assign(href) }: {
+export function RecentSalesWorkspace({ terminalId, navigateTo = (href: string) => window.location.assign(href), closedBandShown = false }: {
   terminalId: string;
   navigateTo?: (href: string) => void;
+  /** The shell band above already says the till is closed (and offers to open it), so the list does not say it twice. */
+  closedBandShown?: boolean;
 }) {
   const [recent, setRecent] = useState<RecentSales | null>(null);
   const [error, setError] = useState<string>();
@@ -51,7 +53,7 @@ export function RecentSalesWorkspace({ terminalId, navigateTo = (href: string) =
       {error && <p className="recent-sales__error" role="alert">{error}</p>}
       {error && recent !== null && loadedAt && <p className="recent-sales__stale" role="status">{recentSalesText.stale(formatClockMinutes(loadedAt))}</p>}
       {recent === null && !error && <p className="recent-sales__empty">{recentSalesText.loading}</p>}
-      {recent !== null && !recent.hasOpenSession && <p className="recent-sales__empty">{recentSalesText.noSession}</p>}
+      {recent !== null && !recent.hasOpenSession && !closedBandShown && <p className="recent-sales__empty">{recentSalesText.noSession}</p>}
       {recent !== null && recent.hasOpenSession && recent.sales.length === 0 && <p className="recent-sales__empty">{recentSalesText.empty}</p>}
       <ul className="recent-sales__list">
         {(recent?.sales ?? []).map((sale) => (

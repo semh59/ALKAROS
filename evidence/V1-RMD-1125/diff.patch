@@ -1,0 +1,183 @@
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
+index 8567493d2..651d98be7 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
+@@ -2,6 +2,7 @@
+ import { act } from "react";
+ import { createRoot, type Root } from "react-dom/client";
+ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
++import { registerSessionExpiredHandler } from "../../api";
+ import { RecentSalesWorkspace } from "./RecentSalesWorkspace";
+ 
+ (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+@@ -26,9 +27,9 @@ describe("RecentSalesWorkspace", () => {
+     vi.unstubAllGlobals();
+   });
+ 
+-  async function render(navigateTo = vi.fn()) {
++  async function render(navigateTo = vi.fn(), closedBandShown = false) {
+     root = createRoot(document.getElementById("root")!);
+-    await act(async () => { root!.render(<RecentSalesWorkspace terminalId="t-1" navigateTo={navigateTo} />); });
++    await act(async () => { root!.render(<RecentSalesWorkspace terminalId="t-1" navigateTo={navigateTo} closedBandShown={closedBandShown} />); });
+     return navigateTo;
+   }
+   const text = () => document.body.textContent ?? "";
+@@ -75,6 +76,14 @@ describe("RecentSalesWorkspace", () => {
+     expect(text()).not.toContain("Bu oturumda kapanmış satış yok");
+   });
+ 
++  it("does not repeat the closed-till message when the shell band already says it", async () => {
++    fetchMock.mockResolvedValue(answer({ hasOpenSession: false, sales: [] }));
++    await render(vi.fn(), true);
++
++    expect(text()).not.toContain("Son satışları görmek için önce kasayı açın");
++    expect(text()).not.toContain("Bu oturumda kapanmış satış yok");
++  });
++
+   it("shows a loading sentence until the answer arrives", async () => {
+     fetchMock.mockReturnValue(new Promise(() => undefined));
+     await render();
+@@ -83,7 +92,7 @@ describe("RecentSalesWorkspace", () => {
+   });
+ 
+   it.each([
+-    [401, "Oturum süresi doldu, yeniden giriş yapın."],
++    [401, "Son satışlar okunamadı."],
+     [403, "Bu listeyi görmek için yetkiniz yok."],
+     [500, "Son satışlar okunamadı."],
+   ])("shows a fixed Turkish sentence for status %i and never the server body", async (status, sentence) => {
+@@ -94,6 +103,16 @@ describe("RecentSalesWorkspace", () => {
+     expect(text()).not.toContain("SqlException");
+   });
+ 
++  it("hands a 401 to the shell's session-ended handler", async () => {
++    const ended = vi.fn();
++    registerSessionExpiredHandler(ended);
++    fetchMock.mockResolvedValue(answer({}, 401));
++    await render();
++    registerSessionExpiredHandler(null);
++
++    expect(ended).toHaveBeenCalled();
++  });
++
+   it("keeps the old list with a stale warning when a refresh fails, and recovers on the next success", async () => {
+     fetchMock.mockResolvedValueOnce(answer({ hasOpenSession: true, sales: [sale()] }));
+     await render();
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.tsx b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.tsx
+index 505935249..767b550fe 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.tsx
+@@ -10,9 +10,11 @@ const saleTitle = (sale: RecentSale) =>
+   `${sale.tableNumber ? `Masa ${sale.tableNumber}` : recentSalesText.quickSale} · ${formatClockMinutes(sale.closedAt)}`;
+ 
+ /** The paid bills of the cashier's open session; a tap opens the payment page at its refund section. */
+-export function RecentSalesWorkspace({ terminalId, navigateTo = (href: string) => window.location.assign(href) }: {
++export function RecentSalesWorkspace({ terminalId, navigateTo = (href: string) => window.location.assign(href), closedBandShown = false }: {
+   terminalId: string;
+   navigateTo?: (href: string) => void;
++  /** The shell band above already says the till is closed (and offers to open it), so the list does not say it twice. */
++  closedBandShown?: boolean;
+ }) {
+   const [recent, setRecent] = useState<RecentSales | null>(null);
+   const [error, setError] = useState<string>();
+@@ -51,7 +53,7 @@ export function RecentSalesWorkspace({ terminalId, navigateTo = (href: string) =
+       {error && <p className="recent-sales__error" role="alert">{error}</p>}
+       {error && recent !== null && loadedAt && <p className="recent-sales__stale" role="status">{recentSalesText.stale(formatClockMinutes(loadedAt))}</p>}
+       {recent === null && !error && <p className="recent-sales__empty">{recentSalesText.loading}</p>}
+-      {recent !== null && !recent.hasOpenSession && <p className="recent-sales__empty">{recentSalesText.noSession}</p>}
++      {recent !== null && !recent.hasOpenSession && !closedBandShown && <p className="recent-sales__empty">{recentSalesText.noSession}</p>}
+       {recent !== null && recent.hasOpenSession && recent.sales.length === 0 && <p className="recent-sales__empty">{recentSalesText.empty}</p>}
+       <ul className="recent-sales__list">
+         {(recent?.sales ?? []).map((sale) => (
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts b/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
+index 3b737f4a9..42975a25f 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
++++ b/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
+@@ -32,7 +32,7 @@ export async function loadRecentSales(terminalId: string, fetcher: typeof fetch
+   if (!response.ok) {
+     if (response.status === 401) notifySessionExpired();
+     throw new RecentSalesApiError(
+-      response.status === 401 ? recentSalesText.sessionExpired : response.status === 403 ? recentSalesText.forbidden : recentSalesText.failed,
++      response.status === 403 ? recentSalesText.forbidden : recentSalesText.failed,
+     );
+   }
+   return response.json() as Promise<RecentSales>;
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.test.tsx b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+index 44807e0cb..bec900fe6 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.test.tsx
+@@ -4,6 +4,7 @@ import { act, type ReactElement } from "react";
+ import { createRoot, type Root } from "react-dom/client";
+ import { afterEach, describe, expect, it, vi } from "vitest";
+ import { RouterProvider } from "../router";
++import type { CashSessionStatus } from "../features/cash-session-status";
+ import { ExperiencePage } from "./workspace";
+ 
+ (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+@@ -1587,10 +1588,10 @@ describe("workspace /tables last update time", () => {
+ describe("workspace /recent-sales route", () => {
+   let root: Root | null = null;
+ 
+-  async function open(capabilities: readonly string[]) {
++  async function open(capabilities: readonly string[], cashSession?: CashSessionStatus, hasOpenSession = true) {
+     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+       const path = String(input);
+-      if (path.endsWith("/billing/recent-sales")) return jsonResponse({ hasOpenSession: true, sales: [{ billId: "b-1", tableNumber: "5", closedAt: "2026-09-24T11:32:00Z", amount: 540, methods: ["Cash"] }] });
++      if (path.endsWith("/billing/recent-sales")) return jsonResponse({ hasOpenSession, sales: [{ billId: "b-1", tableNumber: "5", closedAt: "2026-09-24T11:32:00Z", amount: 540, methods: ["Cash"] }] });
+       return jsonResponse([]);
+     }));
+     window.history.replaceState({}, "", "/recent-sales");
+@@ -1598,7 +1599,7 @@ describe("workspace /recent-sales route", () => {
+     root = createRoot(document.getElementById("root")!);
+     await act(async () => root!.render(
+       <RouterProvider>
+-        <ExperiencePage terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" displayName="Test" capabilities={capabilities} path="/recent-sales" backendStatus="online" onLogout={async () => {}} />
++        <ExperiencePage terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" displayName="Test" capabilities={capabilities} cashSession={cashSession} path="/recent-sales" backendStatus="online" onLogout={async () => {}} />
+       </RouterProvider>));
+     for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+   }
+@@ -1618,6 +1619,19 @@ describe("workspace /recent-sales route", () => {
+     expect(document.querySelector(".production-shell__nav > a[aria-current='page']")?.textContent).toBe("Son satışlar");
+   });
+ 
++  it("says the till is closed once, in the band, not again in the list", async () => {
++    await open(["orders.create", "tables.status", "payments.refund.request"], { state: "closed", reload: () => {} }, false);
++
++    expect(document.querySelectorAll(".cash-session-band")).toHaveLength(1);
++    expect(document.body.textContent).not.toContain("Son satışları görmek için önce kasayı açın");
++  });
++
++  it("keeps the list message when no band is shown", async () => {
++    await open(["orders.create", "tables.status", "payments.refund.request"], undefined, false);
++
++    expect(document.body.textContent).toContain("Son satışları görmek için önce kasayı açın");
++  });
++
+   it("is closed to a session that may not request a refund", async () => {
+     await open(["orders.create", "tables.status"]);
+ 
+diff --git a/src/Clients/PosTerminal/src/routes/workspace.tsx b/src/Clients/PosTerminal/src/routes/workspace.tsx
+index a4823c4c7..e1b5ca77f 100644
+--- a/src/Clients/PosTerminal/src/routes/workspace.tsx
++++ b/src/Clients/PosTerminal/src/routes/workspace.tsx
+@@ -188,7 +188,7 @@ export function ExperiencePage({
+     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} canConfigure={capabilitySet.has("floorplan.manage")} canCollect={capabilitySet.has("bills.split")} canSeeChecks={capabilitySet.has("orders.create")} canAddWithoutKitchen={capabilitySet.has("orders.add-without-kitchen")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
+     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} onCount={setListedCheckCount} canCancel={capabilitySet.has("bills.cancel")} canMerge={capabilitySet.has("bills.split")} canCancelServed={capabilitySet.has("payments.refund.approve")} />}
+-    {path === "/recent-sales" && canOpenRoute && <RecentSalesWorkspace terminalId={terminalId} />}
++    {path === "/recent-sales" && canOpenRoute && <RecentSalesWorkspace terminalId={terminalId} closedBandShown={cashSession?.state === "closed"} />}
+     {onlineTab !== null && (
+       <OnlineFoodHub
+         terminalId={terminalId}
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index a58f871aa..0f7dd47a6 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1485,7 +1485,6 @@ export const recentSalesText = {
+   stale: (time: string) => `Aşağıdaki liste eski olabilir: son yenileme ${time}.`,
+   failed: "Son satışlar okunamadı.",
+   unreachable: "Sunucuya ulaşılamadı. Son satışlar okunamadı.",
+-  sessionExpired: "Oturum süresi doldu, yeniden giriş yapın.",
+   forbidden: "Bu listeyi görmek için yetkiniz yok.",
+   methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
+   unknownMethod: "Bilinmiyor",

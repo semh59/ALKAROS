@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (15 tests | 1 failed) 175ms
+     × shows a fixed Turkish sentence for status 403 and never the server body 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > shows a fixed Turkish sentence for status 403 and never the server body
+AssertionError: expected 'Son satışlar okunamadı.' to be 'Bu listeyi görmek için yetkiniz yok.' // Object.is equality
+
+Expected: "Bu listeyi görmek için yetkiniz yok."
+Received: "Son satışlar okunamadı."
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:102:67
+    100|     await render();
+    101|
+    102|     expect(document.querySelector("[role='alert']")?.textContent).toBe…
+       |                                                                   ^
+    103|     expect(text()).not.toContain("SqlException");
+    104|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 82 passed (83)
+   Start at  11:01:31
+   Duration  6.07s (transform 2.08s, setup 0ms, import 2.88s, tests 2.34s, environment 2.40s)
+

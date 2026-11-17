@@ -1,0 +1,5 @@
+M1-band-ignored exit 1 restored cmp ok
+M2-prop-ignored exit 1 restored cmp ok
+M3-hidden-when-no-band exit 1 restored cmp ok
+M4-403-generic exit 1 restored cmp ok
+M5-no-notify exit 1 restored cmp ok

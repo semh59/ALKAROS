@@ -1,7 +1,7 @@
 # V1-RMD-1125 - Son satışlar: erişilemeyen 401 cümlesi kalkar, kasa kapalıyken tek mesaj
 
 - Task ID: V1-RMD-1125
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (14 tests | 2 failed) 244ms
+     × does not repeat the closed-till message when the shell band already says it 13ms
+     × shows a fixed Turkish sentence for status 401 and never the server body 8ms
+ ❯ src/routes/workspace.test.tsx (68 tests | 1 failed | 61 skipped) 381ms
+     × says the till is closed once, in the band, not again in the list 45ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace /recent-sales route > says the till is closed once, in the band, not again in the list
+AssertionError: expected 'Ana içeriğe geçKullanıcıTestRolSınırl…' not to contain 'Son satışları görmek için önce kasayı…'
+
+Expected: "Son satışları görmek için önce kasayı açın"
+Received: "Ana içeriğe geçKullanıcıTestRolSınırlı erişimGüncel · Çevrimiçi doğrulandıKasa: KapalıMasalarBekleyen hesaplarSon satışlarDiğer ▾Son satışlarBu kasa oturumunda kapanan hesaplar; iade için bir satıra dokununKasa oturumu kapalı. Nakit tahsilat için önce kasayı açın.Kasayı açYenileSon satışları görmek için önce kasayı açınMasa 5 · 14:32Nakit₺540,00İade sayfasını aç ›ÇevrimiçiVeri: Çevrimiçi doğrulandı"
+
+ ❯ src/routes/workspace.test.tsx:1626:43
+    1624|
+    1625|     expect(document.querySelectorAll(".cash-session-band")).toHaveLeng…
+    1626|     expect(document.body.textContent).not.toContain("Son satışları gör…
+       |                                           ^
+    1627|   });
+    1628|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > does not repeat the closed-till message when the shell band already says it
+AssertionError: expected 'YenileSon satışları görmek için önce …' not to contain 'Son satışları görmek için önce kasayı…'
+
+Expected: "Son satışları görmek için önce kasayı açın"
+Received: "YenileSon satışları görmek için önce kasayı açın"
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:82:24
+     80|     await render(vi.fn(), true);
+     81|
+     82|     expect(text()).not.toContain("Son satışları görmek için önce kasay…
+       |                        ^
+     83|     expect(text()).not.toContain("Bu oturumda kapanmış satış yok");
+     84|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > shows a fixed Turkish sentence for status 401 and never the server body
+AssertionError: expected 'Oturum süresi doldu, yeniden giriş ya…' to be 'Son satışlar okunamadı.' // Object.is equality
+
+Expected: "Son satışlar okunamadı."
+Received: "Oturum süresi doldu, yeniden giriş yapın."
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:101:67
+     99|     await render();
+    100|
+    101|     expect(document.querySelector("[role='alert']")?.textContent).toBe…
+       |                                                                   ^
+    102|     expect(text()).not.toContain("SqlException");
+    103|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 18 passed | 61 skipped (82)
+   Start at  10:56:49
+   Duration  4.65s (transform 2.26s, setup 0ms, import 3.16s, tests 625ms, environment 2.44s)
+

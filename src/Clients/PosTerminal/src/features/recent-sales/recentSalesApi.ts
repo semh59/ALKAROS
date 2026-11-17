@@ -32,7 +32,7 @@ export async function loadRecentSales(terminalId: string, fetcher: typeof fetch 
   if (!response.ok) {
     if (response.status === 401) notifySessionExpired();
     throw new RecentSalesApiError(
-      response.status === 401 ? recentSalesText.sessionExpired : response.status === 403 ? recentSalesText.forbidden : recentSalesText.failed,
+      response.status === 403 ? recentSalesText.forbidden : recentSalesText.failed,
     );
   }
   return response.json() as Promise<RecentSales>;

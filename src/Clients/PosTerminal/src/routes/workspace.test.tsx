@@ -4,6 +4,7 @@ import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RouterProvider } from "../router";
+import type { CashSessionStatus } from "../features/cash-session-status";
 import { ExperiencePage } from "./workspace";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -1587,10 +1588,10 @@ describe("workspace /tables last update time", () => {
 describe("workspace /recent-sales route", () => {
   let root: Root | null = null;
 
-  async function open(capabilities: readonly string[]) {
+  async function open(capabilities: readonly string[], cashSession?: CashSessionStatus, hasOpenSession = true) {
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);
-      if (path.endsWith("/billing/recent-sales")) return jsonResponse({ hasOpenSession: true, sales: [{ billId: "b-1", tableNumber: "5", closedAt: "2026-09-24T11:32:00Z", amount: 540, methods: ["Cash"] }] });
+      if (path.endsWith("/billing/recent-sales")) return jsonResponse({ hasOpenSession, sales: [{ billId: "b-1", tableNumber: "5", closedAt: "2026-09-24T11:32:00Z", amount: 540, methods: ["Cash"] }] });
       return jsonResponse([]);
     }));
     window.history.replaceState({}, "", "/recent-sales");
@@ -1598,7 +1599,7 @@ describe("workspace /recent-sales route", () => {
     root = createRoot(document.getElementById("root")!);
     await act(async () => root!.render(
       <RouterProvider>
-        <ExperiencePage terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" displayName="Test" capabilities={capabilities} path="/recent-sales" backendStatus="online" onLogout={async () => {}} />
+        <ExperiencePage terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" displayName="Test" capabilities={capabilities} cashSession={cashSession} path="/recent-sales" backendStatus="online" onLogout={async () => {}} />
       </RouterProvider>));
     for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
   }
@@ -1616,6 +1617,19 @@ describe("workspace /recent-sales route", () => {
     expect(document.querySelector(".recent-sales__row")?.textContent).toContain("Masa 5");
     expect([...document.querySelectorAll(".production-shell__nav > a")].map((link) => link.textContent)).toContain("Son satışlar");
     expect(document.querySelector(".production-shell__nav > a[aria-current='page']")?.textContent).toBe("Son satışlar");
+  });
+
+  it("says the till is closed once, in the band, not again in the list", async () => {
+    await open(["orders.create", "tables.status", "payments.refund.request"], { state: "closed", reload: () => {} }, false);
+
+    expect(document.querySelectorAll(".cash-session-band")).toHaveLength(1);
+    expect(document.body.textContent).not.toContain("Son satışları görmek için önce kasayı açın");
+  });
+
+  it("keeps the list message when no band is shown", async () => {
+    await open(["orders.create", "tables.status", "payments.refund.request"], undefined, false);
+
+    expect(document.body.textContent).toContain("Son satışları görmek için önce kasayı açın");
   });
 
   it("is closed to a session that may not request a refund", async () => {
