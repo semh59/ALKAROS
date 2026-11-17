@@ -1,7 +1,7 @@
 # V1-RMD-1121 - Kasa sayımı bitmeden beklenen nakit hiçbir ekranda görünmez
 
 - Task ID: V1-RMD-1121
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
@@ -16,6 +16,7 @@ Kasiyer deneyimi turu 15: Kasa sayımı kördür; kasiyer beklenen nakdi görüp
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js
   - tests/Clients/StaticApps/cash-session-blind-count.test.js
+  - tests/Clients/StaticApps/cash-session-movement.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
