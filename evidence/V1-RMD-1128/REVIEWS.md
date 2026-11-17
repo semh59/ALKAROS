@@ -1,0 +1,2 @@
+- qa-guvenlik-yetki: RED (kilitleme DoS, denetim) -> duzeltildi -> RED (sayac sifirlama) -> duzeltildi -> KABUL
+- qa-api-uclar: KABUL (kosullu: uzunluk siniri, bellek siniri) -> duzeltildi

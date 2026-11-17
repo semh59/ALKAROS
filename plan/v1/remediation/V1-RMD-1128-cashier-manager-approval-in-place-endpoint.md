@@ -1,7 +1,7 @@
 # V1-RMD-1128 - Yerinde yönetici onayı: kasiyer ekranından indirim/ikram talebini yöneticinin şifresiyle onaylama ucu
 
 - Task ID: V1-RMD-1128
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

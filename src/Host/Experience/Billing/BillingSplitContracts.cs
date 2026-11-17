@@ -134,6 +134,17 @@ public sealed record ApplyBillDiscountResultV1(
     Guid? GrantId);
 
 /// <summary>
+/// A manager standing at the till approves a waiting discount or comp with their own username and password.
+/// <paramref name="IdempotencyKey"/> is the key of the waiting request: it proves the caller holds that request.
+/// </summary>
+public sealed record ApproveGrantInPlaceRequestV1(string IdempotencyKey, string Username, string Password)
+{
+    public override string ToString() => nameof(ApproveGrantInPlaceRequestV1);
+}
+
+public sealed record GrantApprovedInPlaceV1(Guid GrantId, Guid ApproverUserId, string ApproverName);
+
+/// <summary>
 /// V1-WTR-020: records a voluntary tip. No ReasonCode catalog (unlike
 /// discount) — a tip needs no business justification, only the amount the
 /// customer actually gave. No escalation path either: unlike bills.discount/

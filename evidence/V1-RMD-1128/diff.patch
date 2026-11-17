@@ -1,0 +1,545 @@
+diff --git a/src/Host/Experience/Billing/BillingSplitApplication.cs b/src/Host/Experience/Billing/BillingSplitApplication.cs
+index 451d1725d..48eb5487c 100644
+--- a/src/Host/Experience/Billing/BillingSplitApplication.cs
++++ b/src/Host/Experience/Billing/BillingSplitApplication.cs
+@@ -5,6 +5,8 @@ using ALKAROS.Billing.PaymentClosure;
+ using ALKAROS.Billing.SplitDesign;
+ using ALKAROS.Host.Composition.Errors;
+ using ALKAROS.Host.DualScreen;
++using ALKAROS.Host.Experience.Authorization;
++using ALKAROS.Identity.Authentication;
+ using ALKAROS.Identity.Authorization;
+ using ALKAROS.Identity.Authorization.Behavioural;
+ using ALKAROS.Identity.Authorization.Catalog;
+@@ -33,6 +35,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
+ using Microsoft.Extensions.Hosting;
+ using Microsoft.Extensions.Logging;
+ using Npgsql;
++using System.Collections.Concurrent;
+ using System.Data.Common;
+ using System.Security.Cryptography;
+ using System.Text;
+@@ -92,6 +95,12 @@ public static class BillingSplitApplication
+         services.TryAddSingleton<IBillAdjustmentTotalCap, SettingsBillAdjustmentTotalCap>();
+         services.TryAddSingleton<IBillAdjustmentTotals, BillAppliedAdjustmentTotals>();
+         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
++        // A manager approving at the till: their password is checked like a sign-in, the decision is the management screen's own.
++        services.TryAddTransient<IUserStore, PostgresUserStore>();
++        services.TryAddTransient<AuthenticationService>();
++        services.TryAddScoped<IBehaviouralTighteningService, BehaviouralTighteningService>();
++        services.TryAddScoped<AuthorizationDecisionStore>();
++        services.TryAddSingleton<InPlaceApprovalThrottle>();
+         // V1-SET-004: ApplyTipAsync checks GarsonFeature.VoluntaryTip — same
+         // DbDataSource/ISettingValidator gap every other settings-backed
+         // experience registration already had to close on its own.
+@@ -360,6 +369,85 @@ public static class BillingSplitApplication
+ 
+         // Kasada ikram: same grant engine as the discount, but under bills.comp - a cashier holds it only within the
+         // limit a manager set for that role, anything above waits for a manager decision.
++        // A manager at the till approves a waiting discount or comp with their own password. The request must be this
++        // bill's, raised by this cashier, and the caller must hold its key; the decision is the management screen's own
++        // (self-approval and approver permission checks, audit in the same transaction).
++        billsGroup.MapPost("/{billId:guid}/approvals/{grantId:guid}/approve", async (
++            Guid terminalId,
++            Guid billId,
++            Guid grantId,
++            ApproveGrantInPlaceRequestV1 request,
++            IBillingSplitSessionAuthorizer authorizer,
++            IAuthorizationGrantRepository grants,
++            AuthenticationService authentication,
++            IAuthorizationService authorization,
++            AuthorizationDecisionStore decisions,
++            IAuditEventStore auditEvents,
++            InPlaceApprovalThrottle throttle,
++            HttpContext context,
++            CancellationToken cancellationToken) =>
++        {
++            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
++            if (string.IsNullOrWhiteSpace(request.IdempotencyKey)
++                || string.IsNullOrWhiteSpace(request.Username)
++                || string.IsNullOrEmpty(request.Password)
++                || request.Username.Length > 64 || request.Password.Length > 256)
++                throw new ArgumentException("IdempotencyKey, Username (at most 64) and Password (at most 256) are required.", nameof(request));
++
++            var grant = await grants.GetAsync(grantId, cancellationToken);
++            if (grant is null
++                || grant.SubjectType != "Bill" || grant.SubjectId != billId
++                || grant.RequesterUserId != principal.UserId
++                || !string.Equals(grant.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal))
++                throw new BillingSplitNotFoundException("İstenen onay talebi bulunamadı.", "onay talebi");
++            if (!grant.IsPending)
++                throw new AuthorizationGrantAlreadyResolvedException(grantId);
++
++            // Wrong guesses count against the manager's own sign-in lock, so both the cashier and the named manager are
++            // stopped here first, before that lock is reached.
++            var cashierKey = $"cashier:{principal.UserId:N}";
++            var managerKey = $"manager:{request.Username.Trim().ToUpperInvariant()}";
++            if (throttle.IsBlocked(cashierKey, DateTimeOffset.UtcNow) || throttle.IsBlocked(managerKey, DateTimeOffset.UtcNow))
++                throw new InPlaceApprovalThrottledException();
++
++            var login = await authentication.LoginAsync(
++                request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);
++            if (login is not LoginSuccess manager)
++            {
++                var lockedOut = login is LoginFailure { Reason: LoginFailureReason.LockedOut };
++                throttle.RecordFailure(cashierKey, DateTimeOffset.UtcNow);
++                throttle.RecordFailure(managerKey, DateTimeOffset.UtcNow);
++                await auditEvents.AppendAsync(
++                    new AuditEvent(
++                        id: Guid.NewGuid(),
++                        eventName: "bill.approval.in_place_failed",
++                        aggregateType: "Bill",
++                        aggregateId: billId,
++                        actorType: "User",
++                        correlationId: context.TraceIdentifier,
++                        actorId: principal.UserId,
++                        reason: lockedOut ? "manager_locked" : "credential_invalid",
++                        afterStateJson: JsonSerializer.Serialize(new { grantId, attemptedUsername = request.Username.Trim() })),
++                    cancellationToken);
++                throw new ManagerCredentialException(lockedOut);
++            }
++
++            try
++            {
++                await authorization.AuthorizeAsync(manager.UserId, ApplicationPermissions.ReportsView, cancellationToken);
++            }
++            catch (AuthorizationDeniedException)
++            {
++                throw new ApproverLacksPermissionException(ApplicationPermissions.ReportsView);
++            }
++
++            await decisions.ApproveAsync(grantId, manager.UserId, context.TraceIdentifier, cancellationToken);
++            // Only a finished approval clears the counts: a correct password that is then refused proves nothing.
++            throttle.Reset(cashierKey);
++            throttle.Reset(managerKey);
++            return Results.Ok(new GrantApprovedInPlaceV1(grantId, manager.UserId, manager.DisplayName));
++        });
++
+         billsGroup.MapPost("/{billId:guid}/comp", async (
+             Guid terminalId,
+             Guid billId,
+@@ -842,6 +930,12 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
+         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
+         BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
+         KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
++        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."),
++        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."),
++        ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
++        AuthorizationSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
++        ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
++        AuthorizationGrantAlreadyResolvedException => (409, "ALREADY_RESOLVED", "Bu talep zaten yanıtlanmış."),
+         GrantDeniedException { Complimentary: false } => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
+         GrantDeniedException => (403, "GRANT_DENIED", "İkram isteği reddedildi."),
+         BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
+@@ -892,6 +986,42 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
+     };
+ }
+ 
++/// <summary>The manager's username and password did not check out; the message never says which part was wrong.</summary>
++public sealed class ManagerCredentialException(bool lockedOut) : Exception("Manager credential check failed.")
++{
++    public bool LockedOut { get; } = lockedOut;
++}
++
++public sealed class InPlaceApprovalThrottledException() : Exception("Too many failed manager credential attempts.");
++
++/// <summary>
++/// Counts failed manager sign-ins at the till in memory (reset by a restart), per cashier and per named manager: three in
++/// 15 minutes block that key, fewer than the manager account's own five-failure lock.
++/// </summary>
++public sealed class InPlaceApprovalThrottle
++{
++    public const int MaxFailures = 3;
++    private const int MaxKeys = 10_000;
++    private static readonly TimeSpan Window = TimeSpan.FromMinutes(15);
++    private readonly ConcurrentDictionary<string, (int Failures, DateTimeOffset Since)> _state = new();
++
++    public bool IsBlocked(string key, DateTimeOffset now)
++        => _state.TryGetValue(key, out var entry) && now - entry.Since < Window && entry.Failures >= MaxFailures;
++
++    public void RecordFailure(string key, DateTimeOffset now)
++    {
++        if (_state.Count >= MaxKeys)
++            foreach (var stale in _state.Where(pair => now - pair.Value.Since >= Window).Select(pair => pair.Key).ToList())
++                _state.TryRemove(stale, out _);
++        // Still full of live entries: refuse to track more, which blocks nobody but stops the dictionary growing.
++        if (_state.Count >= MaxKeys && !_state.ContainsKey(key)) return;
++        _state.AddOrUpdate(
++            key, (1, now), (_, entry) => now - entry.Since >= Window ? (1, now) : (entry.Failures + 1, entry.Since));
++    }
++
++    public void Reset(string key) => _state.TryRemove(key, out _);
++}
++
+ public sealed class BillingSplitUnauthorizedException : Exception
+ {
+     public BillingSplitUnauthorizedException(string message) : base(message) { }
+diff --git a/src/Host/Experience/Billing/BillingSplitContracts.cs b/src/Host/Experience/Billing/BillingSplitContracts.cs
+index 54a65a702..7779e55a3 100644
+--- a/src/Host/Experience/Billing/BillingSplitContracts.cs
++++ b/src/Host/Experience/Billing/BillingSplitContracts.cs
+@@ -133,6 +133,17 @@ public sealed record ApplyBillDiscountResultV1(
+     AdjustedBillSummaryV1? Summary,
+     Guid? GrantId);
+ 
++/// <summary>
++/// A manager standing at the till approves a waiting discount or comp with their own username and password.
++/// <paramref name="IdempotencyKey"/> is the key of the waiting request: it proves the caller holds that request.
++/// </summary>
++public sealed record ApproveGrantInPlaceRequestV1(string IdempotencyKey, string Username, string Password)
++{
++    public override string ToString() => nameof(ApproveGrantInPlaceRequestV1);
++}
++
++public sealed record GrantApprovedInPlaceV1(Guid GrantId, Guid ApproverUserId, string ApproverName);
++
+ /// <summary>
+ /// V1-WTR-020: records a voluntary tip. No ReasonCode catalog (unlike
+ /// discount) — a tip needs no business justification, only the amount the
+diff --git a/tests/Host/Experience/Billing/BillingSplitHttpTests.cs b/tests/Host/Experience/Billing/BillingSplitHttpTests.cs
+index ba2f68362..8b6ecffa7 100644
+--- a/tests/Host/Experience/Billing/BillingSplitHttpTests.cs
++++ b/tests/Host/Experience/Billing/BillingSplitHttpTests.cs
+@@ -7,6 +7,7 @@ using ALKAROS.Billing.BillFoundation;
+ using ALKAROS.Host.DualScreen;
+ using ALKAROS.Host.Experience.Billing;
+ using ALKAROS.Host.Experience.Orders;
++using ALKAROS.Identity.Authentication;
+ using ALKAROS.Identity.DeviceSessions;
+ using ALKAROS.Orders.OrderAggregate;
+ using Microsoft.AspNetCore.Builder;
+@@ -1315,6 +1316,290 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
+         Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+     }
+ 
++    private const string ManagerPassword = "Mudur-Sifre-1";
++
++    private async Task<(Guid Id, string Username)> SeedManagerAsync(params string[] permissions)
++    {
++        var (id, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "supervisor", permissions);
++        await _database.SetPasswordAsync(id, ManagerPassword);
++        return (id, "rmd103-api-" + id.ToString("N"));
++    }
++
++    private static HttpRequestMessage ApproveInPlace(
++        Guid terminalId, Guid billId, Guid grantId, string cookie, string key, string username, string password)
++        => JsonRequest(
++            HttpMethod.Post,
++            $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/approvals/{grantId:D}/approve",
++            cookie,
++            new ApproveGrantInPlaceRequestV1(key, username, password));
++
++    private static async Task<string?> ErrorCodeAsync(HttpResponseMessage response)
++        => (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())?.Error.Code;
++
++    private async Task<(Guid TerminalId, string Cookie, Guid RequesterId, Guid BillId, string Key, Guid GrantId, string DiscountPath)> PendingDiscountAsync(
++        HttpClient client, string role = "waiter", params string[] permissions)
++    {
++        var terminalId = Guid.NewGuid();
++        var (requesterId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, role, permissions);
++        var seeded = await _database.SeedBillAsync();
++        var key = Guid.NewGuid().ToString();
++        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
++        using var pending = await client.SendAsync(JsonRequest(
++            HttpMethod.Post, path, cookie, new ApplyBillDiscountRequestV1(key, "Percentage", 10m, "PromotionalOffer")));
++        var body = await pending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
++        Assert.Equal("Pending", body!.Status);
++        return (terminalId, cookie, requesterId, seeded.BillId, key, body.GrantId!.Value, path);
++    }
++
++    [Fact]
++    public async Task AManagerApprovesAWaitingDiscountAtTheTillAndItIsAppliedUnderTheirName()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var (managerId, username) = await SeedManagerAsync("bills.discount", "reports.view");
++
++        using var approved = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
++        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
++        var result = await approved.Content.ReadFromJsonAsync<GrantApprovedInPlaceV1>();
++        Assert.Equal(managerId, result!.ApproverUserId);
++        Assert.Equal(managerId, await _database.GrantApproverAsync(waiting.GrantId));
++
++        using var applied = await client.SendAsync(JsonRequest(
++            HttpMethod.Post, waiting.DiscountPath, waiting.Cookie,
++            new ApplyBillDiscountRequestV1(waiting.Key, "Percentage", 10m, "PromotionalOffer")));
++        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
++        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(waiting.BillId));
++        Assert.Equal(1L, await _database.AuditCountAsync("authorization.grant.approved", managerId, waiting.GrantId));
++    }
++
++    [Fact]
++    public async Task AWrongPasswordOrUnknownManagerIsRefusedWithoutDecidingTheRequest()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
++
++        foreach (var (name, password) in new[] { (username, "yanlis"), ("yok-" + Guid.NewGuid().ToString("N"), ManagerPassword) })
++        {
++            using var refused = await client.SendAsync(ApproveInPlace(
++                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, name, password));
++            Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
++            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(refused));
++        }
++
++        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
++    }
++
++    [Fact]
++    public async Task ALockedManagerIsRefusedEvenWithTheCorrectPassword()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var (managerId, username) = await SeedManagerAsync("bills.discount", "reports.view");
++        await _database.LockUserAsync(managerId);
++
++        using var locked = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
++
++        Assert.Equal(HttpStatusCode.Forbidden, locked.StatusCode);
++        Assert.Equal("MANAGER_LOCKED", await ErrorCodeAsync(locked));
++        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
++    }
++
++    [Fact]
++    public async Task ACashierIsStoppedAfterThreeWrongPasswordsBeforeTheManagerAccountLocksAndEveryFailureIsRecorded()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var (managerId, username) = await SeedManagerAsync("bills.discount", "reports.view");
++
++        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures; attempt++)
++        {
++            using var wrong = await client.SendAsync(ApproveInPlace(
++                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, "yanlis"));
++            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
++        }
++
++        using var stopped = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
++        Assert.Equal((HttpStatusCode)429, stopped.StatusCode);
++        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
++        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
++        Assert.Equal(3L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
++        Assert.False(await _database.IsLockedAsync(managerId));
++    }
++
++    [Fact]
++    public async Task ARefusedApprovalWithACorrectPasswordDoesNotClearTheFailureCount()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client, "cashier", "bills.split", "reports.view");
++        await _database.SetPasswordAsync(waiting.RequesterId, ManagerPassword);
++        var ownName = "rmd103-api-" + waiting.RequesterId.ToString("N");
++
++        for (var round = 0; round < 2; round++)
++        {
++            using var wrong = await client.SendAsync(ApproveInPlace(
++                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, "yok-" + round, "yanlis"));
++            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
++            using var own = await client.SendAsync(ApproveInPlace(
++                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, ownName, ManagerPassword));
++            Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", await ErrorCodeAsync(own));
++        }
++
++        using var third = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, "yok-2", "yanlis"));
++        Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(third));
++        using var stopped = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, "yok-3", "yanlis"));
++        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
++    }
++
++    [Fact]
++    public async Task ASecondCashierCannotKeepGuessingAtTheSameManagerPastThreeFailures()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var first = await PendingDiscountAsync(client);
++        var second = await PendingDiscountAsync(client);
++        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
++
++        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures; attempt++)
++        {
++            using var wrong = await client.SendAsync(ApproveInPlace(
++                first.TerminalId, first.BillId, first.GrantId, first.Cookie, first.Key, username, "yanlis"));
++            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
++        }
++
++        using var stopped = await client.SendAsync(ApproveInPlace(
++            second.TerminalId, second.BillId, second.GrantId, second.Cookie, second.Key, username, ManagerPassword));
++        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
++    }
++
++    [Theory]
++    [InlineData("", "x")]
++    [InlineData("u", "")]
++    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "x")]
++    public async Task AMissingOrOversizedUsernameOrPasswordIsABadRequestAndCostsNoAttempt(string username, string password)
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++
++        using var refused = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, password));
++
++        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
++        Assert.Equal(0L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
++    }
++
++    [Fact]
++    public void TheRequestNeverPrintsThePassword()
++        => Assert.DoesNotContain("secret-pw", new ApproveGrantInPlaceRequestV1("k", "u", "secret-pw").ToString());
++
++    [Fact]
++    public async Task TheRequesterCannotApproveTheirOwnRequestWithTheirOwnPassword()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client, "cashier", "bills.split", "reports.view");
++        await _database.SetPasswordAsync(waiting.RequesterId, ManagerPassword);
++
++        using var refused = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key,
++            "rmd103-api-" + waiting.RequesterId.ToString("N"), ManagerPassword));
++
++        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
++        Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", await ErrorCodeAsync(refused));
++        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
++    }
++
++    [Theory]
++    [InlineData("bills.discount")]
++    [InlineData("reports.view")]
++    public async Task AManagerWithoutTheRequestedPermissionOrTheManagerMarkerCannotApprove(string held)
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var (_, username) = await SeedManagerAsync(held);
++
++        using var refused = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
++
++        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
++        Assert.Equal("APPROVER_LACKS_PERMISSION", await ErrorCodeAsync(refused));
++        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
++    }
++
++    [Fact]
++    public async Task OnlyTheRequestOfThisBillByThisCashierWithItsOwnKeyCanBeApprovedHere()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var other = await PendingDiscountAsync(client);
++        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
++
++        // A bill of another till is already closed to this terminal; the other two attempts reach the request check.
++        var attempts = new[]
++        {
++            (ApproveInPlace(waiting.TerminalId, other.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword), HttpStatusCode.Forbidden),
++            (ApproveInPlace(waiting.TerminalId, waiting.BillId, other.GrantId, waiting.Cookie, other.Key, username, ManagerPassword), HttpStatusCode.NotFound),
++            (ApproveInPlace(waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, Guid.NewGuid().ToString(), username, ManagerPassword), HttpStatusCode.NotFound),
++        };
++        foreach (var (attempt, expected) in attempts)
++        {
++            using var refused = await client.SendAsync(attempt);
++            Assert.Equal(expected, refused.StatusCode);
++        }
++
++        // Same till, same cashier, but the request belongs to another bill; and the same bill and till but another cashier's request.
++        var secondBill = await _database.SeedBillAsync();
++        var secondKey = Guid.NewGuid().ToString();
++        using var secondPending = await client.SendAsync(JsonRequest(
++            HttpMethod.Post, $"/api/v1/terminals/{waiting.TerminalId:D}/billing/bills/{secondBill.BillId:D}/discount", waiting.Cookie,
++            new ApplyBillDiscountRequestV1(secondKey, "Percentage", 10m, "PromotionalOffer")));
++        var secondGrant = (await secondPending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.GrantId!.Value;
++        using var otherBill = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, secondGrant, waiting.Cookie, secondKey, username, ManagerPassword));
++        Assert.Equal(HttpStatusCode.NotFound, otherBill.StatusCode);
++
++        var (_, colleagueCookie) = await _database.SeedSessionWithPermissionsAsync(waiting.TerminalId, "waiter");
++        using var otherCashier = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, colleagueCookie, waiting.Key, username, ManagerPassword));
++        Assert.Equal(HttpStatusCode.NotFound, otherCashier.StatusCode);
++        Assert.Null(await _database.GrantApproverAsync(secondGrant));
++
++        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
++        Assert.Null(await _database.GrantApproverAsync(other.GrantId));
++    }
++
++    [Fact]
++    public async Task ARequestThatWasAlreadyDecidedIsReportedAsDecidedAndNoSessionIsRefused()
++    {
++        await using var app = await StartAsync();
++        using var client = CreateClient(app);
++        var waiting = await PendingDiscountAsync(client);
++        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
++        await _database.ApproveGrantAsync(waiting.GrantId);
++
++        using var decided = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
++        Assert.Equal(HttpStatusCode.Conflict, decided.StatusCode);
++        Assert.Equal("ALREADY_RESOLVED", await ErrorCodeAsync(decided));
++
++        using var anonymous = await client.SendAsync(ApproveInPlace(
++            waiting.TerminalId, waiting.BillId, waiting.GrantId, "", waiting.Key, username, ManagerPassword));
++        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
++    }
++
+     private static async Task<HttpResponseMessage> SendCompAsync(
+         HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillCompRequestV1 body)
+         => await client.SendAsync(JsonRequest(
+@@ -2565,6 +2850,43 @@ internal sealed class BillingSplitTestDatabase
+         return (decimal)(await command.ExecuteScalarAsync())!;
+     }
+ 
++    public Task SetPasswordAsync(Guid userId, string password)
++        => ExecuteAsync(
++            DataSource,
++            "UPDATE identity.users SET password_hash = @hash WHERE user_id = @user_id;",
++            ("user_id", userId),
++            ("hash", new PasswordHasher().Hash(password)));
++
++    public Task LockUserAsync(Guid userId)
++        => ExecuteAsync(
++            DataSource,
++            "UPDATE identity.users SET locked_until = now() + interval '15 minutes' WHERE user_id = @user_id;",
++            ("user_id", userId));
++
++    public async Task<bool> IsLockedAsync(Guid userId)
++    {
++        await using var command = DataSource.CreateCommand("SELECT coalesce(locked_until > now(), false) FROM identity.users WHERE user_id = @user_id;");
++        command.Parameters.AddWithValue("user_id", userId);
++        return (bool)(await command.ExecuteScalarAsync())!;
++    }
++
++    public async Task<Guid?> GrantApproverAsync(Guid grantId)
++    {
++        await using var command = DataSource.CreateCommand("SELECT approver_user_id FROM identity.authorization_grants WHERE grant_id = @grant_id;");
++        command.Parameters.AddWithValue("grant_id", grantId);
++        return await command.ExecuteScalarAsync() is Guid approver ? approver : null;
++    }
++
++    public async Task<long> AuditCountAsync(string eventName, Guid actorId, Guid aggregateId)
++    {
++        await using var command = DataSource.CreateCommand(
++            "SELECT count(*) FROM audit.audit_events WHERE event_name = @name AND actor_id = @actor AND aggregate_id = @aggregate;");
++        command.Parameters.AddWithValue("name", eventName);
++        command.Parameters.AddWithValue("actor", actorId);
++        command.Parameters.AddWithValue("aggregate", aggregateId);
++        return (long)(await command.ExecuteScalarAsync())!;
++    }
++
+     public async Task<decimal> GrantAmountAsync(Guid grantId)
+     {
+         await using var command = DataSource.CreateCommand("SELECT amount FROM identity.authorization_grants WHERE grant_id = @grant_id;");

@@ -5,6 +5,8 @@ using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Authorization;
+using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -33,6 +35,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
+using System.Collections.Concurrent;
 using System.Data.Common;
 using System.Security.Cryptography;
 using System.Text;
@@ -92,6 +95,12 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IBillAdjustmentTotalCap, SettingsBillAdjustmentTotalCap>();
         services.TryAddSingleton<IBillAdjustmentTotals, BillAppliedAdjustmentTotals>();
         services.TryAddSingleton<IAuthorizationGrantService, AuthorizationGrantService>();
+        // A manager approving at the till: their password is checked like a sign-in, the decision is the management screen's own.
+        services.TryAddTransient<IUserStore, PostgresUserStore>();
+        services.TryAddTransient<AuthenticationService>();
+        services.TryAddScoped<IBehaviouralTighteningService, BehaviouralTighteningService>();
+        services.TryAddScoped<AuthorizationDecisionStore>();
+        services.TryAddSingleton<InPlaceApprovalThrottle>();
         // V1-SET-004: ApplyTipAsync checks GarsonFeature.VoluntaryTip — same
         // DbDataSource/ISettingValidator gap every other settings-backed
         // experience registration already had to close on its own.
@@ -360,6 +369,85 @@ public static class BillingSplitApplication
 
         // Kasada ikram: same grant engine as the discount, but under bills.comp - a cashier holds it only within the
         // limit a manager set for that role, anything above waits for a manager decision.
+        // A manager at the till approves a waiting discount or comp with their own password. The request must be this
+        // bill's, raised by this cashier, and the caller must hold its key; the decision is the management screen's own
+        // (self-approval and approver permission checks, audit in the same transaction).
+        billsGroup.MapPost("/{billId:guid}/approvals/{grantId:guid}/approve", async (
+            Guid terminalId,
+            Guid billId,
+            Guid grantId,
+            ApproveGrantInPlaceRequestV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationGrantRepository grants,
+            AuthenticationService authentication,
+            IAuthorizationService authorization,
+            AuthorizationDecisionStore decisions,
+            IAuditEventStore auditEvents,
+            InPlaceApprovalThrottle throttle,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            if (string.IsNullOrWhiteSpace(request.IdempotencyKey)
+                || string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrEmpty(request.Password)
+                || request.Username.Length > 64 || request.Password.Length > 256)
+                throw new ArgumentException("IdempotencyKey, Username (at most 64) and Password (at most 256) are required.", nameof(request));
+
+            var grant = await grants.GetAsync(grantId, cancellationToken);
+            if (grant is null
+                || grant.SubjectType != "Bill" || grant.SubjectId != billId
+                || grant.RequesterUserId != principal.UserId
+                || !string.Equals(grant.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal))
+                throw new BillingSplitNotFoundException("İstenen onay talebi bulunamadı.", "onay talebi");
+            if (!grant.IsPending)
+                throw new AuthorizationGrantAlreadyResolvedException(grantId);
+
+            // Wrong guesses count against the manager's own sign-in lock, so both the cashier and the named manager are
+            // stopped here first, before that lock is reached.
+            var cashierKey = $"cashier:{principal.UserId:N}";
+            var managerKey = $"manager:{request.Username.Trim().ToUpperInvariant()}";
+            if (throttle.IsBlocked(cashierKey, DateTimeOffset.UtcNow) || throttle.IsBlocked(managerKey, DateTimeOffset.UtcNow))
+                throw new InPlaceApprovalThrottledException();
+
+            var login = await authentication.LoginAsync(
+                request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);
+            if (login is not LoginSuccess manager)
+            {
+                var lockedOut = login is LoginFailure { Reason: LoginFailureReason.LockedOut };
+                throttle.RecordFailure(cashierKey, DateTimeOffset.UtcNow);
+                throttle.RecordFailure(managerKey, DateTimeOffset.UtcNow);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "bill.approval.in_place_failed",
+                        aggregateType: "Bill",
+                        aggregateId: billId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: principal.UserId,
+                        reason: lockedOut ? "manager_locked" : "credential_invalid",
+                        afterStateJson: JsonSerializer.Serialize(new { grantId, attemptedUsername = request.Username.Trim() })),
+                    cancellationToken);
+                throw new ManagerCredentialException(lockedOut);
+            }
+
+            try
+            {
+                await authorization.AuthorizeAsync(manager.UserId, ApplicationPermissions.ReportsView, cancellationToken);
+            }
+            catch (AuthorizationDeniedException)
+            {
+                throw new ApproverLacksPermissionException(ApplicationPermissions.ReportsView);
+            }
+
+            await decisions.ApproveAsync(grantId, manager.UserId, context.TraceIdentifier, cancellationToken);
+            // Only a finished approval clears the counts: a correct password that is then refused proves nothing.
+            throttle.Reset(cashierKey);
+            throttle.Reset(managerKey);
+            return Results.Ok(new GrantApprovedInPlaceV1(grantId, manager.UserId, manager.DisplayName));
+        });
+
         billsGroup.MapPost("/{billId:guid}/comp", async (
             Guid terminalId,
             Guid billId,
@@ -842,6 +930,12 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
         BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
         KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
+        InPlaceApprovalThrottledException => (429, "TOO_MANY_ATTEMPTS", "Çok fazla hatalı deneme. Biraz bekleyin ya da yönetici kendi ekranından onaylasın."),
+        ManagerCredentialException { LockedOut: true } => (403, "MANAGER_LOCKED", "Bu yönetici hesabı geçici olarak kilitli; yönetici kendi ekranından onaylasın."),
+        ManagerCredentialException => (403, "MANAGER_CREDENTIAL_INVALID", "Yönetici adı veya şifre hatalı."),
+        AuthorizationSelfApprovalException => (403, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamazsınız; yöneticinin kendi hesabıyla girmesi gerekir."),
+        ApproverLacksPermissionException => (403, "APPROVER_LACKS_PERMISSION", "Bu yönetici bu işlemi onaylama yetkisine sahip değil."),
+        AuthorizationGrantAlreadyResolvedException => (409, "ALREADY_RESOLVED", "Bu talep zaten yanıtlanmış."),
         GrantDeniedException { Complimentary: false } => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
         GrantDeniedException => (403, "GRANT_DENIED", "İkram isteği reddedildi."),
         BillOtherTerminalException => (403, "BILL_OTHER_TERMINAL", BillOtherTerminalException.UserMessage),
@@ -890,6 +984,42 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };
+}
+
+/// <summary>The manager's username and password did not check out; the message never says which part was wrong.</summary>
+public sealed class ManagerCredentialException(bool lockedOut) : Exception("Manager credential check failed.")
+{
+    public bool LockedOut { get; } = lockedOut;
+}
+
+public sealed class InPlaceApprovalThrottledException() : Exception("Too many failed manager credential attempts.");
+
+/// <summary>
+/// Counts failed manager sign-ins at the till in memory (reset by a restart), per cashier and per named manager: three in
+/// 15 minutes block that key, fewer than the manager account's own five-failure lock.
+/// </summary>
+public sealed class InPlaceApprovalThrottle
+{
+    public const int MaxFailures = 3;
+    private const int MaxKeys = 10_000;
+    private static readonly TimeSpan Window = TimeSpan.FromMinutes(15);
+    private readonly ConcurrentDictionary<string, (int Failures, DateTimeOffset Since)> _state = new();
+
+    public bool IsBlocked(string key, DateTimeOffset now)
+        => _state.TryGetValue(key, out var entry) && now - entry.Since < Window && entry.Failures >= MaxFailures;
+
+    public void RecordFailure(string key, DateTimeOffset now)
+    {
+        if (_state.Count >= MaxKeys)
+            foreach (var stale in _state.Where(pair => now - pair.Value.Since >= Window).Select(pair => pair.Key).ToList())
+                _state.TryRemove(stale, out _);
+        // Still full of live entries: refuse to track more, which blocks nobody but stops the dictionary growing.
+        if (_state.Count >= MaxKeys && !_state.ContainsKey(key)) return;
+        _state.AddOrUpdate(
+            key, (1, now), (_, entry) => now - entry.Since >= Window ? (1, now) : (entry.Failures + 1, entry.Since));
+    }
+
+    public void Reset(string key) => _state.TryRemove(key, out _);
 }
 
 public sealed class BillingSplitUnauthorizedException : Exception

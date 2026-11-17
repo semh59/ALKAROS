@@ -1,0 +1,6 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:09.65]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AManagerWithoutTheRequestedPermissionOrTheManagerMarkerCannotApprove(held: "reports.view") [FAIL]
+[xUnit.net 00:00:13.76]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AManagerApprovesAWaitingDiscountAtTheTillAndItIsAppliedUnderTheirName [FAIL]
+
+Başarısız! - Başarısız:     2, Başarılı:     6, Atlanan:     0, Toplam:     8, Süre: 29 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)

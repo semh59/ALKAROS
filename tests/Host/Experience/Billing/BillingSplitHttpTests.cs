@@ -7,6 +7,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
@@ -1315,6 +1316,290 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
     }
 
+    private const string ManagerPassword = "Mudur-Sifre-1";
+
+    private async Task<(Guid Id, string Username)> SeedManagerAsync(params string[] permissions)
+    {
+        var (id, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "supervisor", permissions);
+        await _database.SetPasswordAsync(id, ManagerPassword);
+        return (id, "rmd103-api-" + id.ToString("N"));
+    }
+
+    private static HttpRequestMessage ApproveInPlace(
+        Guid terminalId, Guid billId, Guid grantId, string cookie, string key, string username, string password)
+        => JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/approvals/{grantId:D}/approve",
+            cookie,
+            new ApproveGrantInPlaceRequestV1(key, username, password));
+
+    private static async Task<string?> ErrorCodeAsync(HttpResponseMessage response)
+        => (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())?.Error.Code;
+
+    private async Task<(Guid TerminalId, string Cookie, Guid RequesterId, Guid BillId, string Key, Guid GrantId, string DiscountPath)> PendingDiscountAsync(
+        HttpClient client, string role = "waiter", params string[] permissions)
+    {
+        var terminalId = Guid.NewGuid();
+        var (requesterId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, role, permissions);
+        var seeded = await _database.SeedBillAsync();
+        var key = Guid.NewGuid().ToString();
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
+        using var pending = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, path, cookie, new ApplyBillDiscountRequestV1(key, "Percentage", 10m, "PromotionalOffer")));
+        var body = await pending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal("Pending", body!.Status);
+        return (terminalId, cookie, requesterId, seeded.BillId, key, body.GrantId!.Value, path);
+    }
+
+    [Fact]
+    public async Task AManagerApprovesAWaitingDiscountAtTheTillAndItIsAppliedUnderTheirName()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var (managerId, username) = await SeedManagerAsync("bills.discount", "reports.view");
+
+        using var approved = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
+        var result = await approved.Content.ReadFromJsonAsync<GrantApprovedInPlaceV1>();
+        Assert.Equal(managerId, result!.ApproverUserId);
+        Assert.Equal(managerId, await _database.GrantApproverAsync(waiting.GrantId));
+
+        using var applied = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, waiting.DiscountPath, waiting.Cookie,
+            new ApplyBillDiscountRequestV1(waiting.Key, "Percentage", 10m, "PromotionalOffer")));
+        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(waiting.BillId));
+        Assert.Equal(1L, await _database.AuditCountAsync("authorization.grant.approved", managerId, waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task AWrongPasswordOrUnknownManagerIsRefusedWithoutDecidingTheRequest()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
+
+        foreach (var (name, password) in new[] { (username, "yanlis"), ("yok-" + Guid.NewGuid().ToString("N"), ManagerPassword) })
+        {
+            using var refused = await client.SendAsync(ApproveInPlace(
+                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, name, password));
+            Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(refused));
+        }
+
+        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task ALockedManagerIsRefusedEvenWithTheCorrectPassword()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var (managerId, username) = await SeedManagerAsync("bills.discount", "reports.view");
+        await _database.LockUserAsync(managerId);
+
+        using var locked = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+
+        Assert.Equal(HttpStatusCode.Forbidden, locked.StatusCode);
+        Assert.Equal("MANAGER_LOCKED", await ErrorCodeAsync(locked));
+        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task ACashierIsStoppedAfterThreeWrongPasswordsBeforeTheManagerAccountLocksAndEveryFailureIsRecorded()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var (managerId, username) = await SeedManagerAsync("bills.discount", "reports.view");
+
+        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures; attempt++)
+        {
+            using var wrong = await client.SendAsync(ApproveInPlace(
+                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, "yanlis"));
+            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
+        }
+
+        using var stopped = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+        Assert.Equal((HttpStatusCode)429, stopped.StatusCode);
+        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
+        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+        Assert.Equal(3L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
+        Assert.False(await _database.IsLockedAsync(managerId));
+    }
+
+    [Fact]
+    public async Task ARefusedApprovalWithACorrectPasswordDoesNotClearTheFailureCount()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client, "cashier", "bills.split", "reports.view");
+        await _database.SetPasswordAsync(waiting.RequesterId, ManagerPassword);
+        var ownName = "rmd103-api-" + waiting.RequesterId.ToString("N");
+
+        for (var round = 0; round < 2; round++)
+        {
+            using var wrong = await client.SendAsync(ApproveInPlace(
+                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, "yok-" + round, "yanlis"));
+            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
+            using var own = await client.SendAsync(ApproveInPlace(
+                waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, ownName, ManagerPassword));
+            Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", await ErrorCodeAsync(own));
+        }
+
+        using var third = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, "yok-2", "yanlis"));
+        Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(third));
+        using var stopped = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, "yok-3", "yanlis"));
+        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
+    }
+
+    [Fact]
+    public async Task ASecondCashierCannotKeepGuessingAtTheSameManagerPastThreeFailures()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var first = await PendingDiscountAsync(client);
+        var second = await PendingDiscountAsync(client);
+        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
+
+        for (var attempt = 0; attempt < InPlaceApprovalThrottle.MaxFailures; attempt++)
+        {
+            using var wrong = await client.SendAsync(ApproveInPlace(
+                first.TerminalId, first.BillId, first.GrantId, first.Cookie, first.Key, username, "yanlis"));
+            Assert.Equal("MANAGER_CREDENTIAL_INVALID", await ErrorCodeAsync(wrong));
+        }
+
+        using var stopped = await client.SendAsync(ApproveInPlace(
+            second.TerminalId, second.BillId, second.GrantId, second.Cookie, second.Key, username, ManagerPassword));
+        Assert.Equal("TOO_MANY_ATTEMPTS", await ErrorCodeAsync(stopped));
+    }
+
+    [Theory]
+    [InlineData("", "x")]
+    [InlineData("u", "")]
+    [InlineData("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "x")]
+    public async Task AMissingOrOversizedUsernameOrPasswordIsABadRequestAndCostsNoAttempt(string username, string password)
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, password));
+
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        Assert.Equal(0L, await _database.AuditCountAsync("bill.approval.in_place_failed", waiting.RequesterId, waiting.BillId));
+    }
+
+    [Fact]
+    public void TheRequestNeverPrintsThePassword()
+        => Assert.DoesNotContain("secret-pw", new ApproveGrantInPlaceRequestV1("k", "u", "secret-pw").ToString());
+
+    [Fact]
+    public async Task TheRequesterCannotApproveTheirOwnRequestWithTheirOwnPassword()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client, "cashier", "bills.split", "reports.view");
+        await _database.SetPasswordAsync(waiting.RequesterId, ManagerPassword);
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key,
+            "rmd103-api-" + waiting.RequesterId.ToString("N"), ManagerPassword));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", await ErrorCodeAsync(refused));
+        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+    }
+
+    [Theory]
+    [InlineData("bills.discount")]
+    [InlineData("reports.view")]
+    public async Task AManagerWithoutTheRequestedPermissionOrTheManagerMarkerCannotApprove(string held)
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var (_, username) = await SeedManagerAsync(held);
+
+        using var refused = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+        Assert.Equal("APPROVER_LACKS_PERMISSION", await ErrorCodeAsync(refused));
+        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+    }
+
+    [Fact]
+    public async Task OnlyTheRequestOfThisBillByThisCashierWithItsOwnKeyCanBeApprovedHere()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var other = await PendingDiscountAsync(client);
+        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
+
+        // A bill of another till is already closed to this terminal; the other two attempts reach the request check.
+        var attempts = new[]
+        {
+            (ApproveInPlace(waiting.TerminalId, other.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword), HttpStatusCode.Forbidden),
+            (ApproveInPlace(waiting.TerminalId, waiting.BillId, other.GrantId, waiting.Cookie, other.Key, username, ManagerPassword), HttpStatusCode.NotFound),
+            (ApproveInPlace(waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, Guid.NewGuid().ToString(), username, ManagerPassword), HttpStatusCode.NotFound),
+        };
+        foreach (var (attempt, expected) in attempts)
+        {
+            using var refused = await client.SendAsync(attempt);
+            Assert.Equal(expected, refused.StatusCode);
+        }
+
+        // Same till, same cashier, but the request belongs to another bill; and the same bill and till but another cashier's request.
+        var secondBill = await _database.SeedBillAsync();
+        var secondKey = Guid.NewGuid().ToString();
+        using var secondPending = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{waiting.TerminalId:D}/billing/bills/{secondBill.BillId:D}/discount", waiting.Cookie,
+            new ApplyBillDiscountRequestV1(secondKey, "Percentage", 10m, "PromotionalOffer")));
+        var secondGrant = (await secondPending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.GrantId!.Value;
+        using var otherBill = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, secondGrant, waiting.Cookie, secondKey, username, ManagerPassword));
+        Assert.Equal(HttpStatusCode.NotFound, otherBill.StatusCode);
+
+        var (_, colleagueCookie) = await _database.SeedSessionWithPermissionsAsync(waiting.TerminalId, "waiter");
+        using var otherCashier = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, colleagueCookie, waiting.Key, username, ManagerPassword));
+        Assert.Equal(HttpStatusCode.NotFound, otherCashier.StatusCode);
+        Assert.Null(await _database.GrantApproverAsync(secondGrant));
+
+        Assert.Null(await _database.GrantApproverAsync(waiting.GrantId));
+        Assert.Null(await _database.GrantApproverAsync(other.GrantId));
+    }
+
+    [Fact]
+    public async Task ARequestThatWasAlreadyDecidedIsReportedAsDecidedAndNoSessionIsRefused()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var waiting = await PendingDiscountAsync(client);
+        var (_, username) = await SeedManagerAsync("bills.discount", "reports.view");
+        await _database.ApproveGrantAsync(waiting.GrantId);
+
+        using var decided = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, waiting.Cookie, waiting.Key, username, ManagerPassword));
+        Assert.Equal(HttpStatusCode.Conflict, decided.StatusCode);
+        Assert.Equal("ALREADY_RESOLVED", await ErrorCodeAsync(decided));
+
+        using var anonymous = await client.SendAsync(ApproveInPlace(
+            waiting.TerminalId, waiting.BillId, waiting.GrantId, "", waiting.Key, username, ManagerPassword));
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
+    }
+
     private static async Task<HttpResponseMessage> SendCompAsync(
         HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillCompRequestV1 body)
         => await client.SendAsync(JsonRequest(
@@ -2563,6 +2848,43 @@ internal sealed class BillingSplitTestDatabase
         await using var command = DataSource.CreateCommand("SELECT payable_amount FROM billing.bills WHERE bill_id = @bill_id;");
         command.Parameters.AddWithValue("bill_id", billId);
         return (decimal)(await command.ExecuteScalarAsync())!;
+    }
+
+    public Task SetPasswordAsync(Guid userId, string password)
+        => ExecuteAsync(
+            DataSource,
+            "UPDATE identity.users SET password_hash = @hash WHERE user_id = @user_id;",
+            ("user_id", userId),
+            ("hash", new PasswordHasher().Hash(password)));
+
+    public Task LockUserAsync(Guid userId)
+        => ExecuteAsync(
+            DataSource,
+            "UPDATE identity.users SET locked_until = now() + interval '15 minutes' WHERE user_id = @user_id;",
+            ("user_id", userId));
+
+    public async Task<bool> IsLockedAsync(Guid userId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT coalesce(locked_until > now(), false) FROM identity.users WHERE user_id = @user_id;");
+        command.Parameters.AddWithValue("user_id", userId);
+        return (bool)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<Guid?> GrantApproverAsync(Guid grantId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT approver_user_id FROM identity.authorization_grants WHERE grant_id = @grant_id;");
+        command.Parameters.AddWithValue("grant_id", grantId);
+        return await command.ExecuteScalarAsync() is Guid approver ? approver : null;
+    }
+
+    public async Task<long> AuditCountAsync(string eventName, Guid actorId, Guid aggregateId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM audit.audit_events WHERE event_name = @name AND actor_id = @actor AND aggregate_id = @aggregate;");
+        command.Parameters.AddWithValue("name", eventName);
+        command.Parameters.AddWithValue("actor", actorId);
+        command.Parameters.AddWithValue("aggregate", aggregateId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<decimal> GrantAmountAsync(Guid grantId)

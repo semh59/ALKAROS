@@ -1,0 +1,13 @@
+M3-no-key-check exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: cserr=0
+M4-no-manager-marker exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: cserr=0
+M5-approve-as-cashier exit 1 restored cmp ok Başarısız! - Başarısız:     2, Başarılı:     6, Atlanan:     0, Toplam: cserr=0
+M6-locked-not-mapped exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: cserr=0
+M1-any-cashier exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: cserr=0
+M2-any-bill exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: cserr=0
+M7-self-approval-unmapped exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam: cserr=0
+M8-throttle-never-blocks exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam: cserr=0
+M9-failure-not-audited exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam: cserr=0
+M10-failures-not-counted exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam: cserr=0
+M12-manager-failures-not-counted exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam: cserr=0
+M11-reset-before-approval exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:
+M13-no-length-cap exit 1 restored cmp ok Başarısız! - Başarısız:     1, Başarılı:    14, Atlanan:     0, Toplam:
