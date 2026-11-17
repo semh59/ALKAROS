@@ -1,7 +1,7 @@
 # V1-RMD-1142 - Yerinde yönetici onayı kilit mesajları bekleme süresini söyler
 
 - Task ID: V1-RMD-1142
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
