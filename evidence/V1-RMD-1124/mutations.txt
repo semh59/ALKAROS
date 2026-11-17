@@ -1,0 +1,3 @@
+M1-401-not-separate exit 1 restored cmp ok
+M2-small-text exit 1 restored cmp ok
+M3-unreadable-unit exit 1 restored cmp ok

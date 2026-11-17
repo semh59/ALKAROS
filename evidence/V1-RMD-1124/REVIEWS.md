@@ -1,0 +1,2 @@
+- qa-frontend: KABUL -> 401 yolu ve yazi boyutu kapisi dogru. Not (kapsam disi): pendingChecksApi.ts:44 "Oturum sona erdi." farkli cumle; catalogApi.ts:36 sunucu mesajini ham tasiyor olabilir (dogrulanmadi).
+- qa-bulgu-dogrulayici: KABUL -> red/green/gate/M1-M3/diff/sahiplik tutarli.

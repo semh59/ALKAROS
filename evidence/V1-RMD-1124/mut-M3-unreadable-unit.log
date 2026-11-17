@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/cashierTextSize.test.ts (12 tests | 1 failed) 32ms
+     × ./features/recent-sales/recent-sales.css writes every font size in rem or px, the units this test can read 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./features/recent-sales/recent-sales.css writes every font size in rem or px, the units this test can read
+AssertionError: expected [ '1em' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "1em",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:28:95
+     26|   it.each(screens)("%s writes every font size in rem or px, the units …
+     27|     const declared = [...read(file).replace(/\/\*[\s\S]*?\*\//g, "").m…
+     28|     expect(declared.filter((value) => !/^(clamp\()?\.?\d+(\.\d+)?(rem|…
+       |                                                                                               ^
+     29|     const shorthand = [...read(file).matchAll(/(?<![-\w])font:\s*([^;}…
+     30|     expect(shorthand.filter((value) => !/^(?:[\w.-]+\s+)*(clamp\()?\.?…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 24 passed (25)
+   Start at  10:38:18
+   Duration  1.75s (transform 236ms, setup 0ms, import 366ms, tests 166ms, environment 957ms)
+
+exit code: 1

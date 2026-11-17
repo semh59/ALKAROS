@@ -1,0 +1,52 @@
+diff --git a/src/Clients/PosTerminal/src/cashierTextSize.test.ts b/src/Clients/PosTerminal/src/cashierTextSize.test.ts
+index c4bd37fee..10c7d7cae 100644
+--- a/src/Clients/PosTerminal/src/cashierTextSize.test.ts
++++ b/src/Clients/PosTerminal/src/cashierTextSize.test.ts
+@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
+ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+ const MINIMUM_PX = 14;
+ // The cashier's screens: header and menu, sale screen, forms and the split workspace.
+-const screens = ["./styles.css", "./shell/shell.css", "./design-system/primitives.css", "./features/billing/billing.css"];
++const screens = ["./styles.css", "./shell/shell.css", "./design-system/primitives.css", "./features/billing/billing.css", "./features/recent-sales/recent-sales.css"];
+ // The customer display is read from a distance and is not a cashier screen (docs/CASHIER_UI_RULES.md 1).
+ const customerDisplay = new Set([".display-order-number span", ".display-table-head", ".privacy-note"]);
+ 
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
+index 79aac1862..8567493d2 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/recent-sales/RecentSalesWorkspace.test.tsx
+@@ -83,6 +83,7 @@ describe("RecentSalesWorkspace", () => {
+   });
+ 
+   it.each([
++    [401, "Oturum süresi doldu, yeniden giriş yapın."],
+     [403, "Bu listeyi görmek için yetkiniz yok."],
+     [500, "Son satışlar okunamadı."],
+   ])("shows a fixed Turkish sentence for status %i and never the server body", async (status, sentence) => {
+diff --git a/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts b/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
+index 6c64d1c04..3b737f4a9 100644
+--- a/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
++++ b/src/Clients/PosTerminal/src/features/recent-sales/recentSalesApi.ts
+@@ -31,7 +31,9 @@ export async function loadRecentSales(terminalId: string, fetcher: typeof fetch
+   }
+   if (!response.ok) {
+     if (response.status === 401) notifySessionExpired();
+-    throw new RecentSalesApiError(response.status === 403 ? recentSalesText.forbidden : recentSalesText.failed);
++    throw new RecentSalesApiError(
++      response.status === 401 ? recentSalesText.sessionExpired : response.status === 403 ? recentSalesText.forbidden : recentSalesText.failed,
++    );
+   }
+   return response.json() as Promise<RecentSales>;
+ }
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 0f7dd47a6..a58f871aa 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1485,6 +1485,7 @@ export const recentSalesText = {
+   stale: (time: string) => `Aşağıdaki liste eski olabilir: son yenileme ${time}.`,
+   failed: "Son satışlar okunamadı.",
+   unreachable: "Sunucuya ulaşılamadı. Son satışlar okunamadı.",
++  sessionExpired: "Oturum süresi doldu, yeniden giriş yapın.",
+   forbidden: "Bu listeyi görmek için yetkiniz yok.",
+   methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
+   unknownMethod: "Bilinmiyor",

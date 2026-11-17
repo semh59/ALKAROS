@@ -83,6 +83,7 @@ describe("RecentSalesWorkspace", () => {
   });
 
   it.each([
+    [401, "Oturum süresi doldu, yeniden giriş yapın."],
     [403, "Bu listeyi görmek için yetkiniz yok."],
     [500, "Son satışlar okunamadı."],
   ])("shows a fixed Turkish sentence for status %i and never the server body", async (status, sentence) => {

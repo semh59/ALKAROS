@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/cashierTextSize.test.ts (12 tests | 1 failed) 32ms
+     × ./features/recent-sales/recent-sales.css sets no text below 14px outside the customer display 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/cashierTextSize.test.ts > cashier text size (docs/CASHIER_UI_RULES.md 2) > ./features/recent-sales/recent-sales.css sets no text below 14px outside the customer display
+AssertionError: expected [ '.recent-sales__row = 12px' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   ".recent-sales__row = 12px",
++ ]
+
+ ❯ src/cashierTextSize.test.ts:23:19
+     21|       .filter((block) => !customerDisplay.has(block.selector))
+     22|       .flatMap((block) => sizesOf(block.body).filter((size) => size < …
+     23|     expect(small).toEqual([]);
+       |                   ^
+     24|   });
+     25|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 24 passed (25)
+   Start at  10:38:15
+   Duration  1.83s (transform 283ms, setup 0ms, import 429ms, tests 219ms, environment 996ms)
+
+exit code: 1

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const MINIMUM_PX = 14;
 // The cashier's screens: header and menu, sale screen, forms and the split workspace.
-const screens = ["./styles.css", "./shell/shell.css", "./design-system/primitives.css", "./features/billing/billing.css"];
+const screens = ["./styles.css", "./shell/shell.css", "./design-system/primitives.css", "./features/billing/billing.css", "./features/recent-sales/recent-sales.css"];
 // The customer display is read from a distance and is not a cashier screen (docs/CASHIER_UI_RULES.md 1).
 const customerDisplay = new Set([".display-order-number span", ".display-table-head", ".privacy-note"]);
 

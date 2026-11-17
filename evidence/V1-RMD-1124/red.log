@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx (13 tests | 1 failed) 160ms
+     × shows a fixed Turkish sentence for status 401 and never the server body 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/recent-sales/RecentSalesWorkspace.test.tsx > RecentSalesWorkspace > shows a fixed Turkish sentence for status 401 and never the server body
+AssertionError: expected 'Son satışlar okunamadı.' to be 'Oturum süresi doldu, yeniden giriş ya…' // Object.is equality
+
+Expected: "Oturum süresi doldu, yeniden giriş yapın."
+Received: "Son satışlar okunamadı."
+
+ ❯ src/features/recent-sales/RecentSalesWorkspace.test.tsx:93:67
+     91|     await render();
+     92|
+     93|     expect(document.querySelector("[role='alert']")?.textContent).toBe…
+       |                                                                   ^
+     94|     expect(text()).not.toContain("SqlException");
+     95|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  10:37:56
+   Duration  1.89s (transform 270ms, setup 0ms, import 416ms, tests 160ms, environment 1.04s)
+
+exit code: 1

@@ -1485,6 +1485,7 @@ export const recentSalesText = {
   stale: (time: string) => `Aşağıdaki liste eski olabilir: son yenileme ${time}.`,
   failed: "Son satışlar okunamadı.",
   unreachable: "Sunucuya ulaşılamadı. Son satışlar okunamadı.",
+  sessionExpired: "Oturum süresi doldu, yeniden giriş yapın.",
   forbidden: "Bu listeyi görmek için yetkiniz yok.",
   methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
   unknownMethod: "Bilinmiyor",
