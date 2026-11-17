@@ -422,6 +422,7 @@ describe("cash-session.js counting and closing", () => {
   async function openCounting(world = {}) {
     const result = await open(world);
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#submit-count")).not.toBeNull());
     return result;
   }
@@ -642,6 +643,7 @@ describe("cash-session.js movement flow details", () => {
   it("shows the Turkish pending-request text when the count cannot start", async () => {
     await open({ startCountReply: reply(409, { error: { code: "CASH_MOVEMENT_REQUESTS_PENDING", message: "RAW" } }) });
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect(text()).toContain("Onay bekleyen nakit çıkış talebi var"));
     expect(text()).not.toContain("RAW");
   });
@@ -784,6 +786,7 @@ describe("cash-session.js movement flow details", () => {
     await open(world);
     expect($("#movement-list").textContent).toContain("eski vardiya");
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     await type("#denom-100", "3");
     await type("#count-notes", "eski not");
@@ -797,6 +800,7 @@ describe("cash-session.js movement flow details", () => {
     await vi.waitFor(() => expect($("#cash-out")).not.toBeNull());
     expect(text()).not.toContain("eski vardiya");
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
 
     expect($("#denom-100").value).toBe("0");
@@ -818,6 +822,7 @@ describe("cash-session.js counting and closing details", () => {
   async function openCounting(world = {}) {
     const result = await open(world);
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#submit-count")).not.toBeNull());
     return result;
   }

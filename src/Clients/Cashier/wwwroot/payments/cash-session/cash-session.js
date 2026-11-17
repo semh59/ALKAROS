@@ -35,6 +35,7 @@
     openBills: 0,
     unsettledPayments: 0,
     varianceExceeded: false,
+    startCountConfirm: false,
     closeResult: null,
     movementDirection: 'in',
     movementStep: 'form',
@@ -388,6 +389,7 @@
 
   // A new shift must not inherit the previous one's list, requests, drafts or count.
   function resetForNewSession() {
+    state.startCountConfirm = false;
     state.movements = null;
     state.movementsError = false;
     state.notice = null;
@@ -831,6 +833,9 @@
   function renderOpen() {
     var s = state.session;
     var hasPending = !!(state.movements && state.movements.requests.length);
+    // The question stays only while nothing else on the screen changed under it: any busy moment or new pending request drops it.
+    var asking = state.startCountConfirm && !state.busy && !hasPending && mayActForOwner();
+    state.startCountConfirm = asking;
     app.innerHTML =
       '<div class="cs-card">' +
       '<div class="cs-header">' +
@@ -862,8 +867,13 @@
         : hasPending
         ? '<p class="cs-field-hint" id="pending-hint">Onay bekleyen çıkış varken sayıma geçilemez; önce karara bağlayın veya geri çekin.</p>'
         : '<p class="cs-field-hint" id="count-hint">Sayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.</p>') +
-      '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending || !mayActForOwner() ? 'disabled' : '') + '>' +
-      (state.busy ? 'Bekleyin…' : 'Kasayı Kapat: Sayıma Başla') + '</button>' +
+      (asking
+        ? '<div class="cs-alert cs-alert-warning" id="start-count-warning" role="alert"><span class="cs-alert-icon">!</span>' +
+          '<div class="cs-alert-body">Sayıma başlayınca kasada yeni satış ve nakit hareketi yapılamaz. Devam edilsin mi?</div></div>' +
+          '<button class="cs-btn cs-btn-primary" id="start-count-confirm" type="button">Evet, sayıma başla</button>' +
+          '<button class="cs-btn cs-btn-secondary" id="start-count-cancel" type="button">Vazgeç</button>'
+        : '<button class="cs-btn cs-btn-primary" id="start-count" ' + (state.busy || hasPending || !mayActForOwner() ? 'disabled' : '') + '>' +
+          (state.busy ? 'Bekleyin…' : 'Kasayı Kapat: Sayıma Başla') + '</button>') +
       '</div>';
     ['in', 'out'].forEach(function (direction) {
       document.getElementById('cash-' + direction).addEventListener('click', function () {
@@ -889,7 +899,22 @@
         render();
       });
     }
-    document.getElementById('start-count').addEventListener('click', startCounting);
+    var startButton = document.getElementById('start-count');
+    if (startButton) {
+      startButton.addEventListener('click', function () {
+        state.startCountConfirm = true;
+        render();
+      });
+    } else {
+      document.getElementById('start-count-confirm').addEventListener('click', function () {
+        state.startCountConfirm = false;
+        startCounting();
+      });
+      document.getElementById('start-count-cancel').addEventListener('click', function () {
+        state.startCountConfirm = false;
+        render();
+      });
+    }
     document.getElementById('refresh-movements').addEventListener('click', function () {
       state.error = null;
       state.pendingDecision = null;
@@ -1411,6 +1436,25 @@
       '<div class="cs-summary-row" id="closed-count-corrections"><span>Sayım düzeltildi</span><span class="value">' + count.correctionCount + ' kez</span></div>';
   }
 
+  // The shift is over: the cashier leaves this terminal, the next one signs in. A failed sign-out is said, never hidden.
+  function signOut() {
+    state.error = null;
+    setBusy(true);
+    api('/api/v1/auth/logout?terminalId=' + encodeURIComponent(state.terminalId), { method: 'POST' }).then(function (result) {
+      state.busy = false;
+      // A session that already ended is a finished sign-out.
+      if (!result.ok && result.status !== 401) {
+        state.error = 'Çıkış yapılamadı. Tekrar deneyin.';
+        render();
+        return;
+      }
+      window.location.assign('/');
+    }).catch(function () {
+      state.busy = false;
+      setError('Çıkış yapılamadı. Tekrar deneyin.');
+    });
+  }
+
   function renderClosed() {
     var s = state.session;
     var difference = state.closeResult ? state.closeResult.difference : 0;
@@ -1419,6 +1463,7 @@
       '<span class="cs-icon-circle success">✓</span>' +
       '<div><h1 class="cs-title">Kasa Kapatıldı</h1>' +
       '<p class="cs-subtitle">Vardiya özeti kaydedildi. Bu oturum artık salt-okunur.</p></div>' +
+      errorAlert() +
       '<div style="text-align:left;width:100%">' +
       '<div class="cs-summary-row"><span>Açılış · Kapanış</span><span class="value">' +
       new Date(s.openedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + ' – ' +
@@ -1432,8 +1477,10 @@
       closedCountRows() +
       closedDrawerRows() +
       '</div>' +
-      '<button class="cs-btn cs-btn-primary" id="reopen" style="width:100%">Yeni Vardiya Aç</button>' +
+      '<button class="cs-btn cs-btn-primary" id="cs-exit" style="width:100%"' + (state.busy ? ' disabled' : '') + '>Çıkış yap</button>' +
+      '<button class="cs-btn cs-btn-secondary" id="reopen" style="width:100%"' + (state.busy ? ' disabled' : '') + '>Yeni Vardiya Aç</button>' +
       '</div>';
+    document.getElementById('cs-exit').addEventListener('click', signOut);
     document.getElementById('reopen').addEventListener('click', function () {
       state.session = null;
       resetForNewSession();

@@ -84,6 +84,7 @@ describe("cash-session.js blind count: the expected cash stays hidden until the 
     await loadApp(htmlPath, scriptPath);
     await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     expect(text()).not.toMatch(EXPECTED_TEXT);
     expect(text()).not.toContain("Beklenen");

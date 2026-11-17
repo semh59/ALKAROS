@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (10 tests | 1 failed) 2617ms
+     × is dropped when the screen is redrawn for something else 198ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js start-count question does not come back by itself > is dropped when the screen is redrawn for something else
+AssertionError: expected <button …(3)></button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  class="cs-btn cs-btn-primary"
+  id="start-count-confirm"
+  type="button"
+>
+  Evet, sayıma başla
+</button>
+
+ ❯ cash-session-close-start-and-exit.test.js:144:39
+    142|     await vi.waitFor(() => expect($("#refresh-movements").disabled).to…
+    143|
+    144|     expect($("#start-count-confirm")).toBeNull();
+       |                                       ^
+    145|     expect($("#start-count")).not.toBeNull();
+    146|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:48:41
+   Duration  4.21s (transform 422ms, setup 26ms, import 51ms, tests 2.62s, environment 1.13s)
+

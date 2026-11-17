@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (6 tests | 1 failed) 1461ms
+     × asks once, says what the count locks, and sends nothing until the cashier says yes 159ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js starting the count > asks once, says what the count locks, and sends nothing until the cashier says yes
+AssertionError: expected '\n  ← Kasaya dön\n  Kasa OturumuAyşeA…' to contain 'Sayıma başlayınca kasada yeni satış v…'
+
+- Expected
++ Received
+
+- Sayıma başlayınca kasada yeni satış ve nakit hareketi yapılamaz. Devam edilsin mi?
++
++   ← Kasaya dön
++   Kasa OturumuAyşeAçıkAçılış Tutarı₺1.000,00Açılış Saati11:00Nakit GirişNakit ÇıkışBu oturumda nakit giriş veya çıkış yok.Listeyi yenileSayım, kasa kapanışının ilk adımıdır; başlatınca geri dönülmez, sayımdan sonra kasa kapatılır.!Devam edilsin mi?Evet, sayıma başlaVazgeç
++   
++   
++
+
+ ❯ cash-session-close-start-and-exit.test.js:83:20
+     81|     expect($("#start-count-confirm").textContent).toBe("Evet, sayıma b…
+     82|     expect($("#start-count-cancel").textContent).toBe("Vazgeç");
+     83|     expect(text()).toContain("Sayıma başlayınca kasada yeni satış ve n…
+       |                    ^
+     84|     expect(startCalls(calls)).toHaveLength(0);
+     85|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  23:44:25
+   Duration  2.78s (transform 265ms, setup 25ms, import 44ms, tests 1.46s, environment 987ms)
+

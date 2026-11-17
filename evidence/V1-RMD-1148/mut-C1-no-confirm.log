@@ -1,0 +1,94 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (6 tests | 6 failed) 744ms
+     × asks once, says what the count locks, and sends nothing until the cashier says yes 179ms
+     × goes back to the drawer screen when the cashier says no, and asks again next time 114ms
+     × starts the count on the one yes 116ms
+     × makes leaving the primary action and keeps a new shift as the secondary one 113ms
+     × signs the cashier out of this terminal and returns to the sign-in page 104ms
+     × says in Turkish when signing out failed, stays on the page and leaves the new-shift button usable 116ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js starting the count > asks once, says what the count locks, and sends nothing until the cashier says yes
+TypeError: Cannot read properties of null (reading 'textContent')
+ ❯ cash-session-close-start-and-exit.test.js:81:37
+     79|     $("#start-count").click();
+     80|
+     81|     expect($("#start-count-confirm").textContent).toBe("Evet, sayıma b…
+       |                                     ^
+     82|     expect($("#start-count-cancel").textContent).toBe("Vazgeç");
+     83|     expect(text()).toContain("Sayıma başlayınca kasada yeni satış ve n…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js starting the count > goes back to the drawer screen when the cashier says no, and asks again next time
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ cash-session-close-start-and-exit.test.js:91:29
+     89|
+     90|     $("#start-count").click();
+     91|     $("#start-count-cancel").click();
+       |                             ^
+     92|
+     93|     expect($("#start-count")).not.toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js starting the count > starts the count on the one yes
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ cash-session-close-start-and-exit.test.js:104:30
+    102|
+    103|     $("#start-count").click();
+    104|     $("#start-count-confirm").click();
+       |                              ^
+    105|
+    106|     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > makes leaving the primary action and keeps a new shift as the secondary one
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ closeTheShift cash-session-close-start-and-exit.test.js:56:28
+     54| async function closeTheShift(calls) {
+     55|   $("#start-count").click();
+     56|   $("#start-count-confirm").click();
+       |                            ^
+     57|   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+     58|   await type("#denom-100", "10");
+ ❯ cash-session-close-start-and-exit.test.js:122:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > signs the cashier out of this terminal and returns to the sign-in page
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ closeTheShift cash-session-close-start-and-exit.test.js:56:28
+     54| async function closeTheShift(calls) {
+     55|   $("#start-count").click();
+     56|   $("#start-count-confirm").click();
+       |                            ^
+     57|   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+     58|   await type("#denom-100", "10");
+ ❯ cash-session-close-start-and-exit.test.js:133:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > says in Turkish when signing out failed, stays on the page and leaves the new-shift button usable
+TypeError: Cannot read properties of null (reading 'click')
+ ❯ closeTheShift cash-session-close-start-and-exit.test.js:56:28
+     54| async function closeTheShift(calls) {
+     55|   $("#start-count").click();
+     56|   $("#start-count-confirm").click();
+       |                            ^
+     57|   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
+     58|   await type("#denom-100", "10");
+ ❯ cash-session-close-start-and-exit.test.js:144:25
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  23:43:30
+   Duration  2.28s (transform 236ms, setup 24ms, import 42ms, tests 744ms, environment 1.19s)
+

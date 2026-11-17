@@ -35,6 +35,7 @@ async function closeWith(closeBody) {
   await loadApp(htmlPath, scriptPath);
   await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
   $("#start-count").click();
+  $("#start-count-confirm").click();
   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
   $("#denom-100").value = "10";
   $("#denom-100").dispatchEvent(new Event("input", { bubbles: true }));

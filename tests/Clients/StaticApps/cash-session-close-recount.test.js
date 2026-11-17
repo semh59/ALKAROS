@@ -41,6 +41,7 @@ async function toClosing(hundreds, options) {
   await loadApp(resolve(pageDir, "index.html"), resolve(pageDir, "cash-session.js"));
   await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
   $("#start-count").click();
+  $("#start-count-confirm").click();
   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
   type("#denom-100", String(hundreds));
   $("#submit-count").click();

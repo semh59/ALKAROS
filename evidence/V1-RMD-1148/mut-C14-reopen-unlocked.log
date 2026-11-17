@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (10 tests | 1 failed) 3436ms
+     × locks the new-shift button while signing out 1298ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > locks the new-shift button while signing out
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ cash-session-close-start-and-exit.test.js:199:58
+    197|     $("#cs-exit").click();
+    198|
+    199|     await vi.waitFor(() => expect($("#reopen").disabled).toBe(true));
+       |                                                          ^
+    200|     release(reply(500, null));
+    201|     await vi.waitFor(() => expect($("#reopen").disabled).toBe(false));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:48:56
+   Duration  5.03s (transform 360ms, setup 28ms, import 48ms, tests 3.44s, environment 1.19s)
+

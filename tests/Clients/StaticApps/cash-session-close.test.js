@@ -53,6 +53,7 @@ async function toClosing(world = {}, hundreds = 10) {
   await loadApp(htmlPath, scriptPath);
   await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
   $("#start-count").click();
+  $("#start-count-confirm").click();
   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
   await type("#denom-100", String(hundreds));
   $("#submit-count").click();
@@ -265,6 +266,7 @@ describe("cash-session.js closing screen", () => {
     $("#reopen").click();
     await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     await type("#denom-100", "9");
     $("#submit-count").click();

@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (6 tests | 1 failed) 1487ms
+     × makes leaving the primary action and keeps a new shift as the secondary one 304ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > makes leaving the primary action and keeps a new shift as the secondary one
+AssertionError: expected 'cs-btn cs-btn-primary' to contain 'cs-btn-secondary'
+
+Expected: "cs-btn-secondary"
+Received: "cs-btn cs-btn-primary"
+
+ ❯ cash-session-close-start-and-exit.test.js:126:36
+    124|     expect($("#cs-exit").className).toContain("cs-btn-primary");
+    125|     expect($("#cs-exit").textContent).toBe("Çıkış yap");
+    126|     expect($("#reopen").className).toContain("cs-btn-secondary");
+       |                                    ^
+    127|     expect($("#reopen").textContent).toBe("Yeni Vardiya Aç");
+    128|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  23:43:54
+   Duration  3.09s (transform 264ms, setup 26ms, import 47ms, tests 1.49s, environment 1.24s)
+

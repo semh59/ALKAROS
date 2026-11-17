@@ -55,6 +55,7 @@ async function toManagerBlock(closeReplies = []) {
   await loadApp(htmlPath, scriptPath);
   await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
   $("#start-count").click();
+  $("#start-count-confirm").click();
   await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
   await type("#denom-100", "5");
   $("#submit-count").click();
@@ -86,6 +87,7 @@ describe("cash-session.js manager approval at the till", () => {
     await loadApp(htmlPath, scriptPath);
     await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     await type("#denom-100", "10");
     $("#submit-count").click();

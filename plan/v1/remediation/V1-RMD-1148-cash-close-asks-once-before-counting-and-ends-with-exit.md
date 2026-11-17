@@ -1,7 +1,7 @@
 # V1-RMD-1148 - Kasa kapanışı: sayıma başlamadan önce tek onay, kapanınca birincil eylem çıkış
 
 - Task ID: V1-RMD-1148
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

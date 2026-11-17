@@ -1,0 +1,2 @@
+- qa-frontend: KABUL DEGIL (yuksek: soru bayragi sizar; orta: reopen kilitsiz; dusuk: 401 ve eski hata) -> hepsi uygulandi + testler + C12-C14
+- qa-ux-tasarim: kosullu KABUL; bayrak ve 401 uygulandi; 15 px/56 px dokuman sapmasi onceden var: risk

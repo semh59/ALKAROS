@@ -1,0 +1,29 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (10 tests | 1 failed) 3458ms
+     × treats a session that already ended as signed out 1300ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > treats a session that already ended as signed out
+AssertionError: expected "vi.fn()" to be called with arguments: [ '/' ]
+
+Number of calls: 0
+
+ ❯ cash-session-close-start-and-exit.test.js:188:43
+    186|     $("#cs-exit").click();
+    187|
+    188|     await vi.waitFor(() => expect(assign).toHaveBeenCalledWith("/"));
+       |                                           ^
+    189|     expect(text()).not.toContain("Çıkış yapılamadı");
+    190|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  23:48:48
+   Duration  4.95s (transform 373ms, setup 28ms, import 49ms, tests 3.46s, environment 1.06s)
+

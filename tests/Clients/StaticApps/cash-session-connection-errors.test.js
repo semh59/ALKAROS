@@ -100,6 +100,7 @@ describe("cash-session.js connection-lost messages say what happened and what to
     await loadApp(htmlPath, scriptPath);
     await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
     $("#start-count").click();
+    $("#start-count-confirm").click();
 
     await vi.waitFor(() => expect(text()).toContain(LOST));
     expect(text()).toContain("Sayım başlamış olabilir");
@@ -112,6 +113,7 @@ describe("cash-session.js connection-lost messages say what happened and what to
     await loadApp(htmlPath, scriptPath);
     await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     await type("#denom-100", "10");
     world.down.push("/counts");
@@ -128,6 +130,7 @@ describe("cash-session.js connection-lost messages say what happened and what to
     await loadApp(htmlPath, scriptPath);
     await vi.waitFor(() => expect($("#start-count")).not.toBeNull());
     $("#start-count").click();
+    $("#start-count-confirm").click();
     await vi.waitFor(() => expect($("#denom-100")).not.toBeNull());
     await type("#denom-100", "10");
     $("#submit-count").click();

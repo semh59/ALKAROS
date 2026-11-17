@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (7 tests | 1 failed) 2515ms
+     × says in Turkish when signing out failed, stays on the page and leaves the new-shift button usable 1288ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js after the shift is closed > says in Turkish when signing out failed, stays on the page and leaves the new-shift button usable
+AssertionError: expected '\n  ← Kasaya dön\n  ✓Kasa KapatıldıVa…' to contain 'Çıkış yapılamadı. Tekrar deneyin.'
+
+- Expected
++ Received
+
+- Çıkış yapılamadı. Tekrar deneyin.
++
++   ← Kasaya dön
++   ✓Kasa KapatıldıVardiya özeti kaydedildi. Bu oturum artık salt-okunur.Açılış · Kapanış11:00 – 23:00Sayılan₺1.000,00Fark₺0,00Çıkış yapYeni Vardiya Aç
++   
++   
++
+
+ ❯ cash-session-close-start-and-exit.test.js:162:43
+    160|     $("#cs-exit").click();
+    161|
+    162|     await vi.waitFor(() => expect(text()).toContain("Çıkış yapılamadı.…
+       |                                           ^
+    163|     expect(text()).not.toContain("RAW");
+    164|     expect(logoutCalls(calls)).toHaveLength(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 passed (7)
+   Start at  23:45:24
+   Duration  4.13s (transform 277ms, setup 26ms, import 46ms, tests 2.51s, environment 1.25s)
+

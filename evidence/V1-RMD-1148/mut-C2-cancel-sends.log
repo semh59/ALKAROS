@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-close-start-and-exit.test.js (6 tests | 1 failed) 1496ms
+     × goes back to the drawer screen when the cashier says no, and asks again next time 153ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-close-start-and-exit.test.js > cash-session.js starting the count > goes back to the drawer screen when the cashier says no, and asks again next time
+AssertionError: expected [ { …(2) } ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ cash-session-close-start-and-exit.test.js:95:31
+     93|     expect($("#start-count")).not.toBeNull();
+     94|     expect($("#start-count-confirm")).toBeNull();
+     95|     expect(startCalls(calls)).toHaveLength(0);
+       |                               ^
+     96|     $("#start-count").click();
+     97|     expect($("#start-count-confirm")).not.toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  23:43:35
+   Duration  3.19s (transform 296ms, setup 27ms, import 53ms, tests 1.50s, environment 1.32s)
+
