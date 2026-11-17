@@ -77,6 +77,14 @@ describe("the till header", () => {
     ]));
   });
 
+  it("puts Çıkış first in the menu, on a full-width row of its own", async () => {
+    await renderHome();
+    await tap(userButton());
+
+    expect(menuTexts()[0]).toBe("Çıkış");
+    expect((document.querySelector(".header-menu button") as HTMLElement).style.gridColumn).toBe("1 / -1");
+  });
+
   it("offers only the actions the session may use", async () => {
     await renderHome({ capabilities: ["orders.create"] });
     await tap(userButton());

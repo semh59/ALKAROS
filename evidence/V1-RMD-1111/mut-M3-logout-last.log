@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:776:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+ ❯ src/routes/Cashier.header.test.tsx (9 tests | 1 failed) 3336ms
+     × puts Çıkış first in the menu, on a full-width row of its own 113ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.header.test.tsx > the till header > puts Çıkış first in the menu, on a full-width row of its own
+AssertionError: expected 'Müşteri ekranı' to be 'Çıkış' // Object.is equality
+
+Expected: "Çıkış"
+Received: "Müşteri ekranı"
+
+ ❯ src/routes/Cashier.header.test.tsx:84:28
+     82|     await tap(userButton());
+     83|
+     84|     expect(menuTexts()[0]).toBe("Çıkış");
+       |                            ^
+     85|     expect((document.querySelector(".header-menu button") as HTMLEleme…
+     86|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 63 passed (64)
+   Start at  08:32:54
+   Duration  5.13s (transform 2.85s, setup 0ms, import 1.74s, tests 5.11s, environment 5.03s)
+

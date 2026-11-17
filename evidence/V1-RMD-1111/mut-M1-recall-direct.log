@@ -1,0 +1,82 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (41 tests | 7 failed) 1020ms
+     × offers to send a mistaken check back only while nothing is collected, and refreshes after it 22ms
+     × asks once before sending a check back: the first tap only opens the question and Vazgeç closes it 20ms
+     × shows a fixed Turkish sentence for TABLE_HAS_OPEN_CHECK when the check cannot go back, never the server's text 13ms
+     × shows a fixed Turkish sentence for CHECK_HAS_PAYMENT when the check cannot go back, never the server's text 14ms
+     × shows a fixed Turkish sentence for CHECK_NOT_RECALLABLE when the check cannot go back, never the server's text 15ms
+     × shows a fixed Turkish sentence for CHECK_HAS_SERVED_ITEMS when the check cannot go back, never the server's text 14ms
+     × shows a fixed Turkish sentence for SOMETHING_NEW when the check cannot go back, never the server's text 12ms
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:779:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > offers to send a mistaken check back only while nothing is collected, and refreshes after it
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:196:115
+    194|
+    195|     await act(async () => {
+    196|       [...document.querySelectorAll("button")].find((button) => button…
+       |                                                                                                                   ^
+    197|     });
+    198|
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:195:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > asks once before sending a check back: the first tap only opens the question and Vazgeç closes it
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:212:27
+    210|
+    211|     await tapRecall();
+    212|     expect(recallCalls()).toBe(0);
+       |                           ^
+    213|     expect(document.querySelector('[role="alert"]')?.textContent).toBe…
+    214|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for TABLE_HAS_OPEN_CHECK when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_HAS_PAYMENT when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_NOT_RECALLABLE when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_HAS_SERVED_ITEMS when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for SOMETHING_NEW when the check cannot go back, never the server's text
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:242:115
+    240|
+    241|     await act(async () => {
+    242|       [...document.querySelectorAll("button")].find((button) => button…
+       |                                                                                                                   ^
+    243|     });
+    244|
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:241:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  7 failed | 57 passed (64)
+   Start at  08:32:38
+   Duration  5.41s (transform 3.00s, setup 0ms, import 1.93s, tests 4.92s, environment 5.68s)
+

@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (42 tests | 1 failed) 984ms
+     × opens the question for the tapped check only 18ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > opens the question for the tapped check only
+AssertionError: expected [ <button …(3)></button>, …(1) ] to have a length of 1 but got 2
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:232:124
+    230|     });
+    231|
+    232|     expect([...document.querySelectorAll("button")].filter((button) =>…
+       |                                                                                                                            ^
+    233|     expect(document.querySelectorAll("button.pending-checks__recall[ar…
+    234|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 55 passed (56)
+   Start at  08:33:36
+   Duration  2.80s (transform 712ms, setup 0ms, import 1.31s, tests 1.40s, environment 3.24s)
+

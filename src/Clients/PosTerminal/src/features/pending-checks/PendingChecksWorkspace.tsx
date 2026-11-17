@@ -4,7 +4,7 @@ import { notifySessionExpired } from "../../api";
 import { BillingSplitApiError, mergeOrdersIntoBill } from "../billing";
 import { playNewItemChime } from "../../audioAlerts";
 import { formatClockMinutes, formatMoney } from "../../format";
-import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, servedRecallNote } from "../../strings";
+import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, recallConfirmText, servedRecallNote } from "../../strings";
 import { collectionHrefForOrder } from "../../collectOrder";
 import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import { hasNewCheck } from "./usePendingChecksAlert";
@@ -49,6 +49,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
   const [liveLinkUp, setLiveLinkUp] = useState(true);
   const [loadedAt, setLoadedAt] = useState<Date>();
   const [cancelNotice, setCancelNotice] = useState<string>();
+  const [recallAsking, setRecallAsking] = useState<string>();
   const [cancelling, setCancelling] = useState<{ orderId: string; choice: string; reason: string; confirming: boolean; busy: boolean; key: string; error?: string }>();
   const [selected, setSelected] = useState<readonly string[]>([]);
   const [merging, setMerging] = useState(false);
@@ -168,6 +169,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
 
   const recall = async (check: PendingCheck) => {
     if (!check.tableId) return;
+    setRecallAsking(undefined);
     setOpeningOrderId(check.orderId);
     try {
       await recallPendingCheck(terminalId, check.orderId, check.tableId);
@@ -258,17 +260,23 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
               {check.paidAmount === 0 && check.tableId && servedRecallBlocked(check) && (
                 <p className="pending-checks__meta pending-checks__served-note">{servedRecallNote}</p>
               )}
-              {check.paidAmount === 0 && check.tableId && !servedRecallBlocked(check) && (
+              {check.paidAmount === 0 && check.tableId && !servedRecallBlocked(check) && (recallAsking === check.orderId ? (
+                <div className="pending-checks__cancel">
+                  <span role="alert">{recallConfirmText.question}</span>
+                  <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.10" type="button" className="pending-checks__cancel-confirm" disabled={openingOrderId !== undefined || cancelling !== undefined || merging} onClick={() => void recall(check)}>{recallConfirmText.yes}</button>
+                  <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.11" type="button" className="pending-checks__recall" onClick={() => setRecallAsking(undefined)}>{recallConfirmText.dismiss}</button>
+                </div>
+              ) : (
                 <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
                   type="button"
                   className="pending-checks__recall"
                   disabled={openingOrderId !== undefined || merging}
-                  onClick={() => void recall(check)}
+                  onClick={() => setRecallAsking(check.orderId)}
                   aria-label={`Yanlışlıkla gönderildi: masaya geri gönder, ${checkTitle(check)}`}
                 >
                   Yanlışlıkla gönderildi: masaya geri gönder
                 </button>
-              )}
+              ))}
               {canCancel && check.paidAmount === 0 && (cancelling?.orderId === check.orderId ? (
                 <div className="pending-checks__cancel">
                   <label>
@@ -313,7 +321,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
                   type="button"
                   className="pending-checks__recall"
                   disabled={openingOrderId !== undefined || cancelling !== undefined || merging}
-                  onClick={() => { setCancelNotice(undefined); setCancelling({ orderId: check.orderId, choice: "", reason: "", confirming: false, busy: false, key: crypto.randomUUID() }); }}
+                  onClick={() => { setCancelNotice(undefined); setRecallAsking(undefined); setCancelling({ orderId: check.orderId, choice: "", reason: "", confirming: false, busy: false, key: crypto.randomUUID() }); }}
                   aria-label={`${cancelOrderText.open}, ${checkTitle(check)}`}
                 >
                   {cancelOrderText.open}

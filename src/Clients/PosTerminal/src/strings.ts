@@ -1442,6 +1442,8 @@ export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
 /** A billed table whose bill holds a served line: the server lets only a refund approver cancel it. */
 export const servedBillNote = "Hesapta servis edilmiş ürün var; hesabı yalnız yetkili yönetici iptal edebilir. Yetkili yöneticiye başvurun.";
 
+export const recallConfirmText = { question: "Emin misiniz? Sipariş masaya geri döner.", yes: "Evet, masaya geri gönder", dismiss: "Vazgeç" };
+
 /** A till-queue check holding a served line: the server lets only a refund approver take it back to its table. */
 export const servedRecallNote = "Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun.";
 

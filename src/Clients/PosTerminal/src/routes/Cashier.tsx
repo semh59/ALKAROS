@@ -771,6 +771,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
 
   const secondaryActions = (
     <>
+      <button data-telemetry-id="b.routes.cashier.5" className="header-action" style={{ gridColumn: "1 / -1", fontWeight: 800 }} disabled={busy} onClick={() => void logout()}>
+        Çıkış
+      </button>
       <button data-telemetry-id="b.routes.cashier.2"
         className="header-action"
         onClick={() => window.open(customerDisplayHref(customerDisplayUrl), "alkaros-customer-display")}
@@ -796,9 +799,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         onClick={() => setPairingOpen(true)}
       >
         Müşteri ekranını eşleştir
-      </button>
-      <button data-telemetry-id="b.routes.cashier.5" className="header-action" disabled={busy} onClick={() => void logout()}>
-        Çıkış
       </button>
     </>
   );

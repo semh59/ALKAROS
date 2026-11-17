@@ -1,0 +1,71 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (41 tests | 7 failed) 988ms
+     × offers to send a mistaken check back only while nothing is collected, and refreshes after it 19ms
+     × asks once before sending a check back: the first tap only opens the question and Vazgeç closes it 17ms
+     × shows a fixed Turkish sentence for TABLE_HAS_OPEN_CHECK when the check cannot go back, never the server's text 12ms
+     × shows a fixed Turkish sentence for CHECK_HAS_PAYMENT when the check cannot go back, never the server's text 11ms
+     × shows a fixed Turkish sentence for CHECK_NOT_RECALLABLE when the check cannot go back, never the server's text 11ms
+     × shows a fixed Turkish sentence for CHECK_HAS_SERVED_ITEMS when the check cannot go back, never the server's text 11ms
+     × shows a fixed Turkish sentence for SOMETHING_NEW when the check cannot go back, never the server's text 10ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > offers to send a mistaken check back only while nothing is collected, and refreshes after it
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:196:115
+    194|
+    195|     await act(async () => {
+    196|       [...document.querySelectorAll("button")].find((button) => button…
+       |                                                                                                                   ^
+    197|     });
+    198|
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:195:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > asks once before sending a check back: the first tap only opens the question and Vazgeç closes it
+AssertionError: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:212:27
+    210|
+    211|     await tapRecall();
+    212|     expect(recallCalls()).toBe(0);
+       |                           ^
+    213|     expect(document.querySelector('[role="alert"]')?.textContent).toBe…
+    214|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for TABLE_HAS_OPEN_CHECK when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_HAS_PAYMENT when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_NOT_RECALLABLE when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for CHECK_HAS_SERVED_ITEMS when the check cannot go back, never the server's text
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > shows a fixed Turkish sentence for SOMETHING_NEW when the check cannot go back, never the server's text
+TypeError: Cannot read properties of undefined (reading 'click')
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:242:115
+    240|
+    241|     await act(async () => {
+    242|       [...document.querySelectorAll("button")].find((button) => button…
+       |                                                                                                                   ^
+    243|     });
+    244|
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:241:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  7 failed | 48 passed (55)
+   Start at  08:31:50
+   Duration  3.33s (transform 1.01s, setup 0ms, import 1.60s, tests 1.49s, environment 4.42s)
+

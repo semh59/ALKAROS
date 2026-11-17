@@ -1,0 +1,184 @@
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx b/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
+index 97ce7817c..d2c36beb8 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
++++ b/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
+@@ -192,10 +192,47 @@ describe("PendingChecksWorkspace", () => {
+       (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
+     });
+ 
++    await act(async () => {
++      [...document.querySelectorAll("button")].find((button) => button.textContent === "Evet, masaya geri gönder")!.click();
++    });
++
+     expect(document.body.textContent).not.toContain("S-001");
+     expect(document.body.textContent).toContain("S-002");
+   });
+ 
++  it("asks once before sending a check back: the first tap only opens the question and Vazgeç closes it", async () => {
++    fetchMock.mockResolvedValue(ok(sample));
++    await render();
++    const recallCalls = () => fetchMock.mock.calls.filter(([url]) => String(url).includes("recall-from-cashier")).length;
++    const tapRecall = () => act(async () => {
++      (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
++    });
++
++    await tapRecall();
++    expect(recallCalls()).toBe(0);
++    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Emin misiniz? Sipariş masaya geri döner.");
++
++    await act(async () => { [...document.querySelectorAll("button")].find((button) => button.textContent === "Vazgeç")!.click(); });
++    expect(document.body.textContent).not.toContain("Emin misiniz?");
++    expect(recallCalls()).toBe(0);
++
++    await tapRecall();
++    await act(async () => { [...document.querySelectorAll("button")].find((button) => button.textContent === "Evet, masaya geri gönder")!.click(); });
++    expect(recallCalls()).toBe(1);
++  });
++
++  it("opens the question for the tapped check only", async () => {
++    fetchMock.mockResolvedValue(ok([sample[0], { ...sample[0], orderId: "o-9", orderNumber: "S-009", tableId: "tb-9", createdAt: "2026-09-24T13:00:00Z" }]));
++    await render();
++
++    await act(async () => {
++      (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
++    });
++
++    expect([...document.querySelectorAll("button")].filter((button) => button.textContent === "Evet, masaya geri gönder")).toHaveLength(1);
++    expect(document.querySelectorAll("button.pending-checks__recall[aria-label^='Yanlışlıkla']")).toHaveLength(1);
++  });
++
+   it.each([
+     ["TABLE_HAS_OPEN_CHECK", "Bu masada yeni bir hesap açık; önce onu kasaya gönderin."],
+     ["CHECK_HAS_PAYMENT", "Bu hesapta tahsilat başlamış; masaya geri alınamaz."],
+@@ -213,6 +250,10 @@ describe("PendingChecksWorkspace", () => {
+       (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
+     });
+ 
++    await act(async () => {
++      [...document.querySelectorAll("button")].find((button) => button.textContent === "Evet, masaya geri gönder")!.click();
++    });
++
+     expect(document.querySelector('[role="alert"]')?.textContent).toBe(sentence);
+     expect(document.body.textContent).not.toContain("raw server text");
+   });
+diff --git a/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx b/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
+index 8dddbf7ca..f1d4c7ea0 100644
+--- a/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
++++ b/src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx
+@@ -4,7 +4,7 @@ import { notifySessionExpired } from "../../api";
+ import { BillingSplitApiError, mergeOrdersIntoBill } from "../billing";
+ import { playNewItemChime } from "../../audioAlerts";
+ import { formatClockMinutes, formatMoney } from "../../format";
+-import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, servedRecallNote } from "../../strings";
++import { cancelOrderText, kitchenlessText, cancelReasonText, mergeChecksText, openBillDeniedText, recallConfirmText, servedRecallNote } from "../../strings";
+ import { collectionHrefForOrder } from "../../collectOrder";
+ import { PendingChecksApiError, cancelPendingCheckOrder, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
+ import { hasNewCheck } from "./usePendingChecksAlert";
+@@ -49,6 +49,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
+   const [liveLinkUp, setLiveLinkUp] = useState(true);
+   const [loadedAt, setLoadedAt] = useState<Date>();
+   const [cancelNotice, setCancelNotice] = useState<string>();
++  const [recallAsking, setRecallAsking] = useState<string>();
+   const [cancelling, setCancelling] = useState<{ orderId: string; choice: string; reason: string; confirming: boolean; busy: boolean; key: string; error?: string }>();
+   const [selected, setSelected] = useState<readonly string[]>([]);
+   const [merging, setMerging] = useState(false);
+@@ -168,6 +169,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
+ 
+   const recall = async (check: PendingCheck) => {
+     if (!check.tableId) return;
++    setRecallAsking(undefined);
+     setOpeningOrderId(check.orderId);
+     try {
+       await recallPendingCheck(terminalId, check.orderId, check.tableId);
+@@ -258,17 +260,23 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
+               {check.paidAmount === 0 && check.tableId && servedRecallBlocked(check) && (
+                 <p className="pending-checks__meta pending-checks__served-note">{servedRecallNote}</p>
+               )}
+-              {check.paidAmount === 0 && check.tableId && !servedRecallBlocked(check) && (
++              {check.paidAmount === 0 && check.tableId && !servedRecallBlocked(check) && (recallAsking === check.orderId ? (
++                <div className="pending-checks__cancel">
++                  <span role="alert">{recallConfirmText.question}</span>
++                  <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.10" type="button" className="pending-checks__cancel-confirm" disabled={openingOrderId !== undefined || cancelling !== undefined || merging} onClick={() => void recall(check)}>{recallConfirmText.yes}</button>
++                  <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.11" type="button" className="pending-checks__recall" onClick={() => setRecallAsking(undefined)}>{recallConfirmText.dismiss}</button>
++                </div>
++              ) : (
+                 <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
+                   type="button"
+                   className="pending-checks__recall"
+                   disabled={openingOrderId !== undefined || merging}
+-                  onClick={() => void recall(check)}
++                  onClick={() => setRecallAsking(check.orderId)}
+                   aria-label={`Yanlışlıkla gönderildi: masaya geri gönder, ${checkTitle(check)}`}
+                 >
+                   Yanlışlıkla gönderildi: masaya geri gönder
+                 </button>
+-              )}
++              ))}
+               {canCancel && check.paidAmount === 0 && (cancelling?.orderId === check.orderId ? (
+                 <div className="pending-checks__cancel">
+                   <label>
+@@ -313,7 +321,7 @@ export function PendingChecksWorkspace({ terminalId, canCancel, canMerge: mayMer
+                   type="button"
+                   className="pending-checks__recall"
+                   disabled={openingOrderId !== undefined || cancelling !== undefined || merging}
+-                  onClick={() => { setCancelNotice(undefined); setCancelling({ orderId: check.orderId, choice: "", reason: "", confirming: false, busy: false, key: crypto.randomUUID() }); }}
++                  onClick={() => { setCancelNotice(undefined); setRecallAsking(undefined); setCancelling({ orderId: check.orderId, choice: "", reason: "", confirming: false, busy: false, key: crypto.randomUUID() }); }}
+                   aria-label={`${cancelOrderText.open}, ${checkTitle(check)}`}
+                 >
+                   {cancelOrderText.open}
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx b/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+index 60a483cb8..1a869b5ea 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.header.test.tsx
+@@ -77,6 +77,14 @@ describe("the till header", () => {
+     ]));
+   });
+ 
++  it("puts Çıkış first in the menu, on a full-width row of its own", async () => {
++    await renderHome();
++    await tap(userButton());
++
++    expect(menuTexts()[0]).toBe("Çıkış");
++    expect((document.querySelector(".header-menu button") as HTMLElement).style.gridColumn).toBe("1 / -1");
++  });
++
+   it("offers only the actions the session may use", async () => {
+     await renderHome({ capabilities: ["orders.create"] });
+     await tap(userButton());
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index cf71cd6da..627d2306e 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -771,6 +771,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+ 
+   const secondaryActions = (
+     <>
++      <button data-telemetry-id="b.routes.cashier.5" className="header-action" style={{ gridColumn: "1 / -1", fontWeight: 800 }} disabled={busy} onClick={() => void logout()}>
++        Çıkış
++      </button>
+       <button data-telemetry-id="b.routes.cashier.2"
+         className="header-action"
+         onClick={() => window.open(customerDisplayHref(customerDisplayUrl), "alkaros-customer-display")}
+@@ -797,9 +800,6 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+       >
+         Müşteri ekranını eşleştir
+       </button>
+-      <button data-telemetry-id="b.routes.cashier.5" className="header-action" disabled={busy} onClick={() => void logout()}>
+-        Çıkış
+-      </button>
+     </>
+   );
+ 
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index c3d41c4c2..ba62ad000 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1442,6 +1442,8 @@ export type KitchenlessReasonCode = (typeof kitchenlessReasons)[number]["code"];
+ /** A billed table whose bill holds a served line: the server lets only a refund approver cancel it. */
+ export const servedBillNote = "Hesapta servis edilmiş ürün var; hesabı yalnız yetkili yönetici iptal edebilir. Yetkili yöneticiye başvurun.";
+ 
++export const recallConfirmText = { question: "Emin misiniz? Sipariş masaya geri döner.", yes: "Evet, masaya geri gönder", dismiss: "Vazgeç" };
++
+ /** A till-queue check holding a served line: the server lets only a refund approver take it back to its table. */
+ export const servedRecallNote = "Hesapta servis edilmiş ürün var; masaya yalnız yetkili yönetici geri gönderebilir. Yetkili yöneticiye başvurun.";
+ 

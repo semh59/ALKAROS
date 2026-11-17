@@ -1,0 +1,41 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx (41 tests | 1 failed) 1134ms
+     × asks once before sending a check back: the first tap only opens the question and Vazgeç closes it 22ms
+Error: Not implemented: window.open
+    at module.exports (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\not-implemented.js:9:17)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\jsdom@26.1.0\node_modules\jsdom\lib\jsdom\browser\Window.js:960:7
+    at onClick (D:/PROJECT/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:779:31)
+    at executeDispatch (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19116:9)
+    at runWithFiberInDEV (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+    at processDispatchQueue (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19166:19)
+    at D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19767:9
+    at batchedUpdates$1 (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:3255:40)
+    at dispatchEventForPluginEventSystem (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:19320:7)
+    at dispatchEvent (D:\PROJECT\ALKAROS\src\Clients\PosTerminal\node_modules\.pnpm\react-dom@19.2.8_react@19.2.8\node_modules\react-dom\cjs\react-dom-client.development.js:23585:11) undefined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/pending-checks/PendingChecksWorkspace.test.tsx > PendingChecksWorkspace > asks once before sending a check back: the first tap only opens the question and Vazgeç closes it
+AssertionError: expected 'Masa 5 · 14:323 kalem · S-001Köfte, A…' not to contain 'Emin misiniz?'
+
+Expected: "Emin misiniz?"
+Received: "Masa 5 · 14:323 kalem · S-001Köfte, Ayran₺540,00Tahsil et ›Emin misiniz? Sipariş masaya geri döner.Evet, masaya geri gönderVazgeçSiparişi iptal etMasa 5 · 15:101 kalem · S-002ÇayKalan ₺50,00 (toplam ₺90,00)Tahsil et ›"
+
+ ❯ src/features/pending-checks/PendingChecksWorkspace.test.tsx:216:43
+    214|
+    215|     await act(async () => { [...document.querySelectorAll("button")].f…
+    216|     expect(document.body.textContent).not.toContain("Emin misiniz?");
+       |                                           ^
+    217|     expect(recallCalls()).toBe(0);
+    218|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 63 passed (64)
+   Start at  08:32:46
+   Duration  4.99s (transform 2.64s, setup 0ms, import 1.70s, tests 4.94s, environment 4.77s)
+

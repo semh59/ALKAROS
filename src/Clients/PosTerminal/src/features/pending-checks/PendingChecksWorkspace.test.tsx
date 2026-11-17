@@ -192,8 +192,45 @@ describe("PendingChecksWorkspace", () => {
       (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
     });
 
+    await act(async () => {
+      [...document.querySelectorAll("button")].find((button) => button.textContent === "Evet, masaya geri gönder")!.click();
+    });
+
     expect(document.body.textContent).not.toContain("S-001");
     expect(document.body.textContent).toContain("S-002");
+  });
+
+  it("asks once before sending a check back: the first tap only opens the question and Vazgeç closes it", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    await render();
+    const recallCalls = () => fetchMock.mock.calls.filter(([url]) => String(url).includes("recall-from-cashier")).length;
+    const tapRecall = () => act(async () => {
+      (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
+    });
+
+    await tapRecall();
+    expect(recallCalls()).toBe(0);
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Emin misiniz? Sipariş masaya geri döner.");
+
+    await act(async () => { [...document.querySelectorAll("button")].find((button) => button.textContent === "Vazgeç")!.click(); });
+    expect(document.body.textContent).not.toContain("Emin misiniz?");
+    expect(recallCalls()).toBe(0);
+
+    await tapRecall();
+    await act(async () => { [...document.querySelectorAll("button")].find((button) => button.textContent === "Evet, masaya geri gönder")!.click(); });
+    expect(recallCalls()).toBe(1);
+  });
+
+  it("opens the question for the tapped check only", async () => {
+    fetchMock.mockResolvedValue(ok([sample[0], { ...sample[0], orderId: "o-9", orderNumber: "S-009", tableId: "tb-9", createdAt: "2026-09-24T13:00:00Z" }]));
+    await render();
+
+    await act(async () => {
+      (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
+    });
+
+    expect([...document.querySelectorAll("button")].filter((button) => button.textContent === "Evet, masaya geri gönder")).toHaveLength(1);
+    expect(document.querySelectorAll("button.pending-checks__recall[aria-label^='Yanlışlıkla']")).toHaveLength(1);
   });
 
   it.each([
@@ -211,6 +248,10 @@ describe("PendingChecksWorkspace", () => {
 
     await act(async () => {
       (document.querySelector('button[aria-label="Yanlışlıkla gönderildi: masaya geri gönder, Masa 5 · 14:32"]') as HTMLButtonElement).click();
+    });
+
+    await act(async () => {
+      [...document.querySelectorAll("button")].find((button) => button.textContent === "Evet, masaya geri gönder")!.click();
     });
 
     expect(document.querySelector('[role="alert"]')?.textContent).toBe(sentence);

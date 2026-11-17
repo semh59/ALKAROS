@@ -1,0 +1,5 @@
+M1-recall-direct exit 1 restored cmp ok
+M2-dismiss-noop exit 1 restored cmp ok
+M3-logout-last exit 1 restored cmp ok
+M4-logout-not-wide exit 1 restored cmp ok
+M5-asks-for-other-check exit 1 restored cmp ok (killed by "tapped check only" test)
