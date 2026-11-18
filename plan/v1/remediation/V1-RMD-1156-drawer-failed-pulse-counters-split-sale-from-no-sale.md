@@ -1,7 +1,7 @@
 # V1-RMD-1156 - Çekmece sayaçları: açılamayan satışsız deneme ile ödeme sırasında açılamayan darbe ayrı sayılır
 
 - Task ID: V1-RMD-1156
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
