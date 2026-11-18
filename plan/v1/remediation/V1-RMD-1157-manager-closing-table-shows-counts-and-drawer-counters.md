@@ -1,7 +1,7 @@
 # V1-RMD-1157 - Yönetici kasa oturumları tablosu ilk sayımı, düzeltme sayısını ve çekmece sayaçlarını gösterir
 
 - Task ID: V1-RMD-1157
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
