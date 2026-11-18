@@ -1,7 +1,7 @@
 # V1-RMD-1170 - Hata ekranı iki yeni yedek alarmının Türkçe adını gösterir
 
 - Task ID: V1-RMD-1170
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
