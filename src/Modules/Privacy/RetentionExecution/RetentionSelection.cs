@@ -83,6 +83,33 @@ internal static class RetentionSelection
 
     private static readonly string InvoicedCustomerProfile = CustomerProfiles(invoiced: true);
 
+    // A session is due once the window since it was closed (or later reconciled) has elapsed and a text is left. One with a request
+    // still waiting for a decision is not: that text is needed to decide it. Open sessions are never selected.
+    private const string CashFreeText =
+        """
+        SELECT s.cash_session_id AS subject_id, GREATEST(s.closed_at, COALESCE(s.reconciled_at, s.closed_at)) AS basis_at
+        FROM cash.cash_sessions s
+        WHERE s.status IN ('Closed', 'Reconciled') AND s.closed_at IS NOT NULL
+          AND NOT EXISTS (SELECT 1 FROM cash.cash_movement_requests q WHERE q.cash_session_id = s.cash_session_id AND q.status = 'Requested')
+          AND ((s.override_reason IS NOT NULL AND s.override_reason <> @marker)
+               OR (s.reconciliation_notes IS NOT NULL AND s.reconciliation_notes <> @marker)
+               OR (s.difference_explanation IS NOT NULL AND s.difference_explanation <> @marker)
+               OR EXISTS (SELECT 1 FROM cash.cash_transactions t
+                          WHERE t.cash_session_id = s.cash_session_id AND t.notes IS NOT NULL AND t.notes <> @marker)
+               OR EXISTS (SELECT 1 FROM cash.cash_counts c
+                          WHERE c.cash_session_id = s.cash_session_id AND c.notes IS NOT NULL AND c.notes <> @marker)
+               OR EXISTS (SELECT 1 FROM cash.cash_movement_requests q
+                          WHERE q.cash_session_id = s.cash_session_id AND (q.reason <> @marker OR (q.decision_note IS NOT NULL AND q.decision_note <> @marker))))
+        """;
+
+    // Only transfers: merge rows may be written by the Tables module alone (HostForeignWriteLockTests), so their reasons are not part of this class.
+    private const string TableMovementReason =
+        """
+        SELECT t.table_transfer_id AS subject_id, t.transferred_at AS basis_at
+        FROM table_mgmt.table_transfers t
+        WHERE t.reason <> @marker
+        """;
+
     private static string CustomerProfiles(bool invoiced) =>
         $"""
         SELECT p.customer_id AS subject_id,
@@ -120,6 +147,8 @@ internal static class RetentionSelection
         RetentionClass.InvoicedCustomerProfile => InvoicedCustomerProfile,
         RetentionClass.Supplier => Supplier,
         RetentionClass.BillFreeText => BillFreeText,
+        RetentionClass.CashFreeText => CashFreeText,
+        RetentionClass.TableMovementReason => TableMovementReason,
         _ => throw new ArgumentOutOfRangeException(nameof(dataClass), dataClass, "Unknown retention class."),
     };
 

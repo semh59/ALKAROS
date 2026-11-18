@@ -21,6 +21,8 @@ apply always pick the same records. The multi-store checkpoint/resume workflow i
 | Kitchen texts | `kitchen.kitchen_ticket_items.notes` and `cancellation_reason`, `kitchen.kitchen_tickets.cancellation_reason`, the `NOT:` lines of the printed slip in `kitchen.print_jobs.payload` and `kitchen.physical_print_deliveries.payload_snapshot` / `reprint_payload`, `kitchen.physical_print_deliveries.operator_reason` (also copied into the reprint banner) | parent order past the same window (class `OrderNotes`) | each text `-> '[anonymized]'`; in a slip only the texts are replaced: the item notes after `NOT:` and the reprint reason after `NEDEN:` (a text of several lines as a whole, found through the ticket's item notes and reprint reasons, then any `NOT:` / `NEDEN:` line left), the rest of the slip stays; a scrubbed job or delivery gets `row_version + 1`. A print job still `Pending`/`Leased`/`Printing` and a delivery still `InFlight`/`ReprintInFlight`/`Unknown`/`ReprintApproved` is left alone, and stays so for good (a finished work item is permanent); every other status, including a stuck `Failed` or `AwaitingOperatorReview` job, is scrubbed. The ticket items are scrubbed after the slips, because the slips are cleaned with the item notes as they were; the helper `privacy.scrub_slip_notes` comes with migration 233. |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
 | Bill free text (`BillFreeText`, added to the retention policy by migration 232) | `billing.bill_items.notes`, `billing.bill_adjustments.notes`, `billing.bills.cancellation_reason`, `payments.refund_requests.reason` and `decision_note`, and through `payments.payments.bill_id` the payment texts: `payments.payment_status_history.reason`, `payments.payment_reversals.reason`, `payments.manual_card_confirmations.request_note` and `decision_note` | bill `status IN (Paid, Cancelled)` **and** `created_at` older than **5 years** (the order window) | each text `-> '[anonymized]'`. A bill is not due while a refund request is `Requested` or `AwaitingManualRefund`. The texts of a payment still `Initiated`, `Pending`, `Unknown` or `ReconciliationRequired` and of a manual card confirmation still `Pending` are left alone because they are needed to settle it; the rest of the bill is scrubbed, and those texts then stay for good (a finished work item is permanent). Amounts, states and dates are not touched. `payments.payment_reversals` is an append-only ledger (migration 233): its guard accepts one change only, the `reason` becoming exactly `[anonymized]` with every other column identical (the guard does not look at the row's age: which rows are due is decided by the retention job only). |
+| Cash free text (`CashFreeText`, policy 4, migration 234) | `cash.cash_transactions.notes`, `cash.cash_counts.notes`, `cash.cash_movement_requests.reason` and `decision_note`, `cash.cash_sessions.override_reason`, `reconciliation_notes`, `difference_explanation` | session `status IN (Closed, Reconciled)` **and** the later of `closed_at` and `reconciled_at` older than **5 years**; never while a movement request is still `Requested` | each text `-> '[anonymized]'` (a request is touched only once decided); amounts, directions, types, dates, session totals and the difference stay; the session gets `row_version + 1`. The ledger guard accepts exactly this change (see below) |
+| Table transfer reason (`TableMovementReason`, policy 4, migration 234) | `table_mgmt.table_transfers.reason` | `transferred_at` older than **5 years** | `reason -> '[anonymized]'` |
 
 ### Staff data that is kept, and for how long (V1-RMD-672)
 
@@ -113,17 +115,27 @@ complete financial record, only the free-text / identifying fields are scrubbed.
 
 ## Free-text columns outside this job
 
-The job scrubs the columns in the table above and nothing else. The Product Owner decided (2026-11-18) that the remaining
-free-text columns follow the same 5-year rule; the cash and table-movement texts (`cash.cash_transactions.notes`, the
-cash session, count and movement request texts, the reasons of table transfers and merges) are not scrubbed yet.
+The Product Owner decided (2026-11-18) that the free-text columns follow the same 5-year rule: money, status and dates stay,
+only the text becomes `[anonymized]`. Every free-text column of the order, kitchen, bill, payment and cash flows is covered
+by the table above except the ones below.
 
-`customer_account.account_transactions.note` is deliberately **not** scrubbed: the customer account ledger is append-only
-and legal retention (see "Customers and suppliers"), its guard has no exception, and customer data has its own windows
-(2 and 10 years), not the order window.
+| Column | Why it is not scrubbed |
+| --- | --- |
+| `customer_account.account_transactions.note` | The customer account ledger is append-only legal retention (see "Customers and suppliers"); its guard has no exception, and customer data has its own windows (2 and 10 years), not the order window. |
+| `table_mgmt.table_merges.reason`, `unmerge_reason` | Only the Tables module may write merge rows (`HostForeignWriteLockTests`), and the retention step contract needs a row count from a plain statement, so a function-based door was not enough; these reasons wait for a dedicated task and stay until then. |
+| Texts of a request still waiting for a decision (`Requested` cash movement request, refund request, `Pending` manual card confirmation), of an unsettled payment, of a print job or delivery still in flight | They are needed to finish the work in progress; the surrounding record is scrubbed and these stay. |
+| Texts of a record under a legal hold | A hold is per class and record: a `privacy.legal_holds` row protects only the record it names (an order for `OrderNotes`, a bill for `BillFreeText`, a session for `CashFreeText`, a transfer for `TableMovementReason`). An order listed in `--exclude-order-ids-file` also keeps its bills and table transfers. A cash session is not tied to an order, so only its own hold row protects it. |
+| The copy of a transfer reason in `audit.audit_events` | The audit log is append-only and kept 10 years; the reason stays there after the transfer row is scrubbed. |
+
+The cash ledger `cash.cash_transactions` is append-only. Migration 234 rewrites its guard so that the only accepted `UPDATE`
+is the one that sets `notes` to `[anonymized]` with every other column identical; an amount, type, direction or date change,
+another text, a delete and a table clear are still refused (the guard does not look at age or holds: the retention job alone decides which rows are due, and a note that is `NULL` cannot be given a value) (the existing exception for a deleted user's `recorded_by` stays).
+The closing figures read only amount and direction, so cash close and audit totals do not change.
 
 A record that an earlier run already finished is never selected again (a finished work item is permanent). Orders finished
-by a run before the kitchen texts were added (and bills finished before the payment texts) therefore keep those texts; a
-deployment younger than the 5-year window has no such records. The dry-run counters `order_notes` and `item_notes` count
+by a run before the kitchen texts were added, bills finished before the payment texts, and sessions or transfers handled
+before a later text appeared therefore keep those texts; a deployment younger than the 5-year window has no such records.
+A session reconciled after it was closed counts from the reconciliation; one reconciled only after the run already finished it keeps its reconciliation notes. The dry-run counters `order_notes` and `item_notes` count
 only the order and order line notes; an order whose only remaining text is on the kitchen side is still picked up by the apply.
 
 ## What it never touches (legal retention)
@@ -161,7 +173,7 @@ Output:
 
 ```text
 kvkk-retention: staff=<n> order_notes=<n> item_notes=<n> reservation_reasons=<n> \
-                customers=<n> suppliers=<n> bill_texts=<n> policy=<version> as_of=<date> excluded_orders=<n> apply=false
+                customers=<n> suppliers=<n> bill_texts=<n> cash_texts=<n> table_texts=<n> policy=<version> as_of=<date> excluded_orders=<n> apply=false
 ```
 
 Review the counts. When they look right, add `--apply` to write. The verb is

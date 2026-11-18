@@ -93,7 +93,7 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
             Assert.Contains("item_notes=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("reservation_reasons=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("apply=false", dryLine, StringComparison.Ordinal);
-            Assert.Contains("customers=1 suppliers=1 bill_texts=0 policy=3", dryLine, StringComparison.Ordinal);
+            Assert.Contains("customers=1 suppliers=1 bill_texts=0 cash_texts=0 table_texts=0 policy=4", dryLine, StringComparison.Ordinal);
             Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items;"));
 
             Assert.NotEqual(Marker, await ScalarAsync<string>(
@@ -758,6 +758,170 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
     {
         var failure = await Assert.ThrowsAsync<PostgresException>(action);
         return failure.SqlState;
+    }
+
+    [Fact]
+    public async Task EveryCashTextOfAnOldClosedSessionIsScrubbedWhileAmountsStayAndASecondRunChangesNothing()
+    {
+        var old = await SeedCashSessionAsync("Closed", 6);
+        var reconciled = await SeedCashSessionAsync("Reconciled", 6);
+        var recent = await SeedCashSessionAsync("Closed", 1);
+        var live = await SeedCashSessionAsync("Open", 6);
+        var pending = await SeedCashSessionAsync("Closed", 6, requestStatus: "Requested");
+        var held = await SeedCashSessionAsync("Closed", 6);
+        await ExecuteAsync(
+            "INSERT INTO privacy.legal_holds (hold_id, data_class, subject_id, reason, placed_by) VALUES (gen_random_uuid(), 'CashFreeText', @s, 'Vergi incelemesi', gen_random_uuid());",
+            ("s", held));
+
+        var before = new Dictionary<Guid, string>();
+        foreach (var session in new[] { old, reconciled, recent, live, pending, held })
+            before[session] = await CashFiguresAsync(session);
+
+        var first = Apply();
+        Assert.Contains("cash_texts=2", first, StringComparison.Ordinal);
+
+        foreach (var session in new[] { old, reconciled })
+        {
+            Assert.Equal(0L, await CashUnscrubbedAsync(session));
+            Assert.Equal(before[session], await CashFiguresAsync(session));
+            Assert.Equal(2L, await ScalarAsync<long>("SELECT row_version FROM cash.cash_sessions WHERE cash_session_id = @s;", ("s", session)));
+        }
+
+        foreach (var session in new[] { recent, live, pending, held })
+        {
+            Assert.Equal(5L, await CashUnscrubbedAsync(session));
+            Assert.Equal(before[session], await CashFiguresAsync(session));
+        }
+
+        var second = Apply();
+        Assert.Contains("cash_texts=0", second, StringComparison.Ordinal);
+        Assert.Contains("blocked=0 failed=0", second, StringComparison.Ordinal);
+        Assert.Equal(before[old], await CashFiguresAsync(old));
+
+        await ExecuteAsync("SET LOCAL session_replication_role = replica; UPDATE cash.cash_movement_requests SET status = 'Rejected', decided_by = gen_random_uuid(), decided_at = now() WHERE cash_session_id = @s;", ("s", pending));
+        Assert.Contains("cash_texts=1", Apply(), StringComparison.Ordinal);
+        Assert.Equal(0L, await CashUnscrubbedAsync(pending));
+    }
+
+    [Fact]
+    public async Task ATableTransferReasonIsScrubbedWhileTheTransfersOfAnExcludedOrderOrItsBillAHeldOneAndARecentOneStay()
+    {
+        var productId = await SeedProductAsync();
+        var heldOrder = await SeedOrderAsync(productId, status: "Completed", createdAgoYears: 6, note: Marker);
+        var heldBill = await SeedBillAsync("Paid", 6, "dava konusu");
+        await ExecuteAsync("SET LOCAL session_replication_role = replica; UPDATE billing.bills SET order_id = @o WHERE bill_id = @b;", ("o", heldOrder), ("b", heldBill.BillId));
+        var transfer = await SeedTransferAsync(6);
+        var recent = await SeedTransferAsync(1);
+        var byOrder = await SeedTransferAsync(6, orderId: heldOrder);
+        var byBill = await SeedTransferAsync(6, billId: heldBill.BillId);
+        var byHold = await SeedTransferAsync(6);
+        await ExecuteAsync(
+            "INSERT INTO privacy.legal_holds (hold_id, data_class, subject_id, reason, placed_by) VALUES (gen_random_uuid(), 'TableMovementReason', @t, 'Vergi incelemesi', gen_random_uuid());",
+            ("t", byHold));
+        var excludeFile = Path.Combine(Path.GetTempPath(), $"kvkk-hold-{Guid.NewGuid():N}.txt");
+        await File.WriteAllTextAsync(excludeFile, heldOrder + Environment.NewLine);
+        try
+        {
+            Assert.Contains("table_texts=1", Apply(excludeFile), StringComparison.Ordinal);
+            Assert.Contains("table_texts=0", Apply(excludeFile), StringComparison.Ordinal);
+        }
+        finally
+        {
+            File.Delete(excludeFile);
+        }
+
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM table_mgmt.table_transfers WHERE table_transfer_id = @id;", ("id", transfer)));
+        foreach (var kept in new[] { recent, byOrder, byBill, byHold })
+            Assert.Equal("Ali Bey istedi", await ScalarAsync<string>("SELECT reason FROM table_mgmt.table_transfers WHERE table_transfer_id = @id;", ("id", kept)));
+    }
+
+    [Fact]
+    public async Task ARequestOpenedAfterTheSessionWasQueuedHoldsTheSessionBackUntilItIsDecided()
+    {
+        var session = await SeedCashSessionAsync("Closed", 6);
+        await new PostgresRetentionExecutionService(_dataSource!).ExecuteAsync(DateTimeOffset.UtcNow, "queued");
+        await ExecuteAsync(
+            """
+            CREATE FUNCTION public.late_request() RETURNS trigger LANGUAGE plpgsql AS $f$
+            BEGIN
+                SET LOCAL session_replication_role = replica;
+                INSERT INTO cash.cash_movement_requests (request_id, cash_session_id, amount, reason, idempotency_key, status, requested_by, requested_at)
+                VALUES (gen_random_uuid(), NEW.subject_id, 5, 'sonradan acildi', 'late-key', 'Requested', gen_random_uuid(), now());
+                SET LOCAL session_replication_role = origin;
+                RETURN NEW;
+            END $f$;
+            CREATE TRIGGER late_request AFTER INSERT ON privacy.anonymization_jobs FOR EACH ROW EXECUTE FUNCTION public.late_request();
+            """);
+
+        Assert.Contains("blocked=1", Apply(), StringComparison.Ordinal);
+        Assert.Equal(6L, await CashUnscrubbedAsync(session));
+
+        await ExecuteAsync("DROP TRIGGER late_request ON privacy.anonymization_jobs;");
+        await ExecuteAsync("SET LOCAL session_replication_role = replica; UPDATE cash.cash_movement_requests SET status = 'Rejected', decided_by = gen_random_uuid(), decided_at = now() WHERE reason = 'sonradan acildi';");
+        Assert.Contains("failed=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal(0L, await CashUnscrubbedAsync(session));
+    }
+
+    private async Task<Guid> SeedCashSessionAsync(string status, int closedAgoYears, string? requestStatus = null)
+    {
+        var session = Guid.NewGuid();
+        var closed = status is "Closed" or "Reconciled";
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO cash.cash_sessions (cash_session_id, cashier_user_id, terminal_id, status, opening_balance, expected_cash, actual_cash, difference, opened_at, closed_at,
+                                            is_supervisor_override, override_reason, reconciliation_notes, difference_explanation, created_at, updated_at)
+            VALUES (@s, gen_random_uuid(), gen_random_uuid(), @st, 100, 150, 149, -1, now() - make_interval(years => @ago, hours => 8),
+                    CASE WHEN @closed THEN now() - make_interval(years => @ago) END, true, 'Ali Bey izin verdi', 'Ali Bey sayti', 'Ali Bey eksik verdi',
+                    now() - make_interval(years => @ago, hours => 8), now() - make_interval(years => @ago));
+            INSERT INTO cash.cash_counts (cash_count_id, cash_session_id, counted_amount, counted_by, notes, counted_at)
+            VALUES (gen_random_uuid(), @s, 149, gen_random_uuid(), 'Ali Bey saydi', now() - make_interval(years => @ago));
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, notes, occurred_at)
+            VALUES (gen_random_uuid(), @s, 'Opening', 'In', 100, NULL, now() - make_interval(years => @ago, hours => 8)),
+                   (gen_random_uuid(), @s, 'CashIn', 'In', 50, 'Ali Bey avans', now() - make_interval(years => @ago, hours => 6)),
+                   (gen_random_uuid(), @s, 'CashOut', 'Out', 1, 'Ali Bey sut aldi', now() - make_interval(years => @ago, hours => 5));
+            INSERT INTO cash.cash_movement_requests (request_id, cash_session_id, amount, reason, idempotency_key, status, requested_by, requested_at, decided_by, decided_at, decision_note)
+            SELECT gen_random_uuid(), @s, 5, 'Ali Bey ister', 'k-' || @s::text, @rs, gen_random_uuid(), now() - make_interval(years => @ago, hours => 7),
+                   CASE WHEN @rs <> 'Requested' THEN gen_random_uuid() END, CASE WHEN @rs <> 'Requested' THEN now() - make_interval(years => @ago, hours => 7) END,
+                   CASE WHEN @rs <> 'Requested' THEN 'Ali Bey reddetti' END
+            WHERE @rs IS NOT NULL;
+            """,
+            ("s", session), ("st", status), ("ago", closedAgoYears), ("closed", closed), ("rs", (object?)requestStatus ?? "Rejected"));
+        return session;
+    }
+
+    private Task<long> CashUnscrubbedAsync(Guid session) => ScalarAsync<long>(
+        """
+        SELECT (SELECT count(*) FROM cash.cash_transactions WHERE cash_session_id = @s AND notes IS NOT NULL AND notes <> @m)
+             + (SELECT count(*) FROM cash.cash_counts WHERE cash_session_id = @s AND notes IS NOT NULL AND notes <> @m)
+             + (SELECT count(*) FROM cash.cash_movement_requests WHERE cash_session_id = @s AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m)))
+             + (SELECT count(*) FROM cash.cash_sessions WHERE cash_session_id = @s
+                  AND ((override_reason IS NOT NULL AND override_reason <> @m) OR (reconciliation_notes IS NOT NULL AND reconciliation_notes <> @m)
+                       OR (difference_explanation IS NOT NULL AND difference_explanation <> @m)));
+        """,
+        ("s", session), ("m", Marker));
+
+    private Task<string> CashFiguresAsync(Guid session) => ScalarAsync<string>(
+        """
+        SELECT concat_ws('|',
+            (SELECT concat_ws(',', status, opening_balance, expected_cash, actual_cash, difference, opened_at, closed_at, is_supervisor_override) FROM cash.cash_sessions WHERE cash_session_id = @s),
+            (SELECT string_agg(concat_ws(',', type, direction, amount, occurred_at), ';' ORDER BY occurred_at) FROM cash.cash_transactions WHERE cash_session_id = @s),
+            (SELECT string_agg(concat_ws(',', counted_amount, counted_at), ';') FROM cash.cash_counts WHERE cash_session_id = @s),
+            (SELECT string_agg(concat_ws(',', amount, status, requested_at, decided_at), ';') FROM cash.cash_movement_requests WHERE cash_session_id = @s));
+        """,
+        ("s", session));
+
+    private async Task<Guid> SeedTransferAsync(int agoYears, Guid? orderId = null, Guid? billId = null)
+    {
+        var id = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO table_mgmt.table_transfers (table_transfer_id, source_table_id, target_table_id, order_id, bill_id, reason, transferred_by, transferred_at)
+            VALUES (@id, gen_random_uuid(), gen_random_uuid(), @o, @bl, 'Ali Bey istedi', gen_random_uuid(), now() - make_interval(years => @ago));
+            """,
+            ("id", id), ("o", (object?)orderId ?? DBNull.Value), ("bl", (object?)billId ?? DBNull.Value), ("ago", agoYears));
+        return id;
     }
 
     private sealed record SeededBill(Guid BillId, Guid ItemId, Guid AdjustmentId, Guid RefundId);

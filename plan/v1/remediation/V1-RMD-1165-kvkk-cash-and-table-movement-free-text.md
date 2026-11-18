@@ -1,7 +1,7 @@
 # V1-RMD-1165 - KVKK saklama işi kasa ve masa hareketi serbest metinlerini de temizler
 
 - Task ID: V1-RMD-1165
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

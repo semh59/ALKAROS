@@ -1,0 +1,12 @@
+database/MigrationComposition/order.json CR=0 NUL=0
+docs/compliance/kvkk-retention-runbook.md CR=0 NUL=0
+src/Host/Composition/Migrations/MigrationManifest.cs CR=0 NUL=0
+src/Host/Program.cs CR=0 NUL=0
+src/Modules/Privacy/RetentionExecution/RetentionModels.cs CR=0 NUL=0
+src/Modules/Privacy/RetentionExecution/RetentionSelection.cs CR=0 NUL=0
+tests/Host/MigrationComposition/Manifest/ManifestTests.cs CR=0 NUL=0
+tests/Host/MigrationComposition/Migrations/MigrationFileAndSchemaTests.cs CR=0 NUL=0
+tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs CR=0 NUL=0
+tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs CR=0 NUL=0
+database/migrations/V1/V1-RMD-1165/234-retention-cash-and-table-classes.down.sql CR=0 NUL=0
+database/migrations/V1/V1-RMD-1165/234-retention-cash-and-table-classes.up.sql CR=0 NUL=0

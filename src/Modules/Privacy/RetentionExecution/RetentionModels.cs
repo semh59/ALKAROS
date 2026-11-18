@@ -10,6 +10,8 @@ public enum RetentionClass
     InvoicedCustomerProfile,
     Supplier,
     BillFreeText,
+    CashFreeText,
+    TableMovementReason,
 }
 
 public sealed record RetentionCandidate(RetentionClass DataClass, Guid SubjectId, DateTimeOffset DueSince);

@@ -57,7 +57,7 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
 
         var plan = await _service.PlanAsync(AsOf);
 
-        Assert.Equal(3, plan.PolicyVersion);
+        Assert.Equal(4, plan.PolicyVersion);
         Assert.Equal(
             new HashSet<(RetentionClass, Guid)>
             {
@@ -293,6 +293,105 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
             ("rn", (object?)requestNote ?? DBNull.Value), ("dn", (object?)decisionNote ?? DBNull.Value));
     }
 
+    [Fact]
+    public async Task ThePublishedPolicyFourAddsTheCashAndTableMovementClassesWithTheOrderWindowAndKeepsTheEarlierVersions()
+    {
+        Assert.Equal(9, await _database.ScalarAsync<int>("SELECT count(*)::int FROM privacy.retention_rules WHERE policy_version = 4"));
+        Assert.Equal(2, await _database.ScalarAsync<int>(
+            "SELECT count(*)::int FROM privacy.retention_rules WHERE policy_version = 4 AND data_class IN ('CashFreeText', 'TableMovementReason') AND retention_years = 5"));
+        Assert.Equal(0, await _database.ScalarAsync<int>(
+            """
+            SELECT count(*)::int FROM privacy.retention_rules n JOIN privacy.retention_rules o ON o.data_class = n.data_class AND o.policy_version = 3
+            WHERE n.policy_version = 4 AND n.retention_years <> o.retention_years
+            """));
+        Assert.Equal(7, await _database.ScalarAsync<int>("SELECT count(*)::int FROM privacy.retention_rules WHERE policy_version = 3"));
+    }
+
+    [Fact]
+    public async Task AClosedCashSessionIsDueFiveYearsAfterItWasClosedWhileATextRemainsAndAnOpenOrPendingOneNever()
+    {
+        var byOverride = await SeedCashSessionAsync("Closed", Ago(5, 2), overrideReason: "Ali Bey izin verdi");
+        var byReconciliation = await SeedCashSessionAsync("Reconciled", Ago(5, 2), reconciliationNotes: "Ali Bey sayti");
+        var byExplanation = await SeedCashSessionAsync("Closed", Ago(5, 2), differenceExplanation: "Ali Bey eksik verdi");
+        var byCount = await SeedCashSessionAsync("Closed", Ago(5, 2), countNote: "Ali Bey saydi");
+        var byTransaction = await SeedCashSessionAsync("Closed", Ago(5, 2), transactionNote: "Ali Bey avans");
+        var byRequestReason = await SeedCashSessionAsync("Closed", Ago(5, 2), requestStatus: "Rejected", requestReason: "Ali Bey avans", decisionNote: "[anonymized]");
+        var byDecisionNote = await SeedCashSessionAsync("Reconciled", Ago(5, 2), requestStatus: "Rejected", requestReason: "[anonymized]", decisionNote: "Ali Bey reddetti");
+        await SeedCashSessionAsync("Closed", Ago(5, 2), overrideReason: "[anonymized]", reconciliationNotes: "[anonymized]", differenceExplanation: "[anonymized]",
+            countNote: "[anonymized]", transactionNote: "[anonymized]", requestStatus: "Rejected", requestReason: "[anonymized]", decisionNote: "[anonymized]");
+        await SeedCashSessionAsync("Closed", Ago(5, 2));
+        await SeedCashSessionAsync("Closed", Ago(4, 11), transactionNote: "yakin");
+        await SeedCashSessionAsync("Reconciled", Ago(6), transactionNote: "yeni mutabakat", reconciledAt: Ago(2));
+        foreach (var live in new[] { "Open", "Counting", "Closing" })
+            await SeedCashSessionAsync(live, null, overrideReason: "acik", countNote: "acik", transactionNote: "acik", opened: Ago(8));
+        await SeedCashSessionAsync("Closed", Ago(8), transactionNote: "bekleyen talep", requestStatus: "Requested", requestReason: "bekliyor");
+
+        var plan = await _service.PlanAsync(AsOf);
+
+        Assert.Equal(
+            new HashSet<(RetentionClass, Guid)>
+            {
+                (RetentionClass.CashFreeText, byOverride), (RetentionClass.CashFreeText, byReconciliation), (RetentionClass.CashFreeText, byExplanation),
+                (RetentionClass.CashFreeText, byCount), (RetentionClass.CashFreeText, byTransaction), (RetentionClass.CashFreeText, byRequestReason),
+                (RetentionClass.CashFreeText, byDecisionNote),
+            },
+            Keys(plan));
+    }
+
+    [Fact]
+    public async Task ATableTransferIsDueFiveYearsAfterItsDateWhileATextRemains()
+    {
+        var due = await SeedTableTransferAsync(Ago(5, 2), "Ali Bey istedi");
+        await SeedTableTransferAsync(Ago(5, 2), "[anonymized]");
+        await SeedTableTransferAsync(Ago(4, 11), "yakin");
+
+        var plan = await _service.PlanAsync(AsOf);
+
+        Assert.Equal(new HashSet<(RetentionClass, Guid)> { (RetentionClass.TableMovementReason, due) }, Keys(plan));
+    }
+
+    private async Task<Guid> SeedCashSessionAsync(
+        string status, DateTimeOffset? closedAt, string? overrideReason = null, string? reconciliationNotes = null, string? differenceExplanation = null,
+        string? countNote = null, string? transactionNote = null, string? requestStatus = null, string? requestReason = null, string? decisionNote = null,
+        DateTimeOffset? opened = null, DateTimeOffset? reconciledAt = null)
+    {
+        var session = Guid.NewGuid();
+        var openedAt = opened ?? closedAt!.Value.AddHours(-8);
+        await _database.ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO cash.cash_sessions (cash_session_id, cashier_user_id, terminal_id, status, opening_balance, opened_at, closed_at,
+                                            is_supervisor_override, override_reason, reconciliation_notes, difference_explanation, created_at, updated_at, reconciled_at)
+            VALUES (@s, gen_random_uuid(), gen_random_uuid(), @st::text, 0, @op, @cl, @ovr::text IS NOT NULL, @ovr::text, @rec::text, @dif::text, @op, @op, @rc);
+            INSERT INTO cash.cash_counts (cash_count_id, cash_session_id, counted_amount, counted_by, notes, counted_at)
+            SELECT gen_random_uuid(), @s, 10, gen_random_uuid(), @cn::text, @op WHERE @cn::text IS NOT NULL;
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, notes, occurred_at)
+            SELECT gen_random_uuid(), @s, 'CashIn', 'In', 5, @tn::text, @op WHERE @tn::text IS NOT NULL;
+            INSERT INTO cash.cash_movement_requests (request_id, cash_session_id, amount, reason, idempotency_key, status, requested_by, requested_at, decided_by, decided_at, decision_note)
+            SELECT gen_random_uuid(), @s, 5, @rr::text, 'k-' || @s::text, @rs::text, gen_random_uuid(), @op,
+                   CASE WHEN @rs::text <> 'Requested' THEN gen_random_uuid() END, CASE WHEN @rs::text <> 'Requested' THEN @op END, @dn::text
+            WHERE @rs::text IS NOT NULL;
+            """,
+            ("s", session), ("st", status), ("op", openedAt), ("cl", (object?)closedAt ?? DBNull.Value), ("ovr", (object?)overrideReason ?? DBNull.Value),
+            ("rec", (object?)reconciliationNotes ?? DBNull.Value), ("dif", (object?)differenceExplanation ?? DBNull.Value), ("cn", (object?)countNote ?? DBNull.Value),
+            ("tn", (object?)transactionNote ?? DBNull.Value), ("rs", (object?)requestStatus ?? DBNull.Value), ("rr", (object?)requestReason ?? "x"),
+            ("dn", (object?)decisionNote ?? DBNull.Value), ("rc", (object?)reconciledAt ?? DBNull.Value));
+        return session;
+    }
+
+    private async Task<Guid> SeedTableTransferAsync(DateTimeOffset at, string reason)
+    {
+        var id = Guid.NewGuid();
+        await _database.ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO table_mgmt.table_transfers (table_transfer_id, source_table_id, target_table_id, reason, transferred_by, transferred_at)
+            VALUES (@id, gen_random_uuid(), gen_random_uuid(), @r, gen_random_uuid(), @at);
+            """,
+            ("id", id), ("r", reason), ("at", at));
+        return id;
+    }
+
     private async Task<Guid> SeedBillAsync(
         string status, DateTimeOffset createdAt, string? cancellationReason = null, string? itemNote = null, string? adjustmentNote = null,
         string? refundStatus = null, string? refundReason = null, string? decisionNote = null)
@@ -380,7 +479,7 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
         Assert.Equal(5, await _database.CountAsync("privacy.retention_run_items"));
         Assert.Equal(5, await _database.CountAsync("privacy.retention_work_items"));
         Assert.Equal(5, await _database.ScalarAsync<int>($"SELECT item_count FROM privacy.retention_runs WHERE run_id = '{run.RunId}'"));
-        Assert.Equal(5, await _database.ScalarAsync<int>($"SELECT count(*)::int FROM privacy.retention_work_items WHERE run_id = '{run.RunId}' AND policy_version = 3 AND status = 'Pending'"));
+        Assert.Equal(5, await _database.ScalarAsync<int>($"SELECT count(*)::int FROM privacy.retention_work_items WHERE run_id = '{run.RunId}' AND policy_version = 4 AND status = 'Pending'"));
     }
 
     [Fact]
@@ -495,21 +594,23 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
             [RetentionClass.InvoicedCustomerProfile] = 10,
             [RetentionClass.Supplier] = 10,
             [RetentionClass.BillFreeText] = 5,
+            [RetentionClass.CashFreeText] = 5,
+            [RetentionClass.TableMovementReason] = 5,
         };
 
         var version = await _service.PublishPolicyAsync(years, "Staff window extended", actor);
         var plan = await _service.PlanAsync(AsOf);
 
-        Assert.Equal(4, version);
-        Assert.Equal(4, plan.PolicyVersion);
+        Assert.Equal(5, version);
+        Assert.Equal(5, plan.PolicyVersion);
         Assert.DoesNotContain((RetentionClass.StaffAccount, due.StaffDue), Keys(plan));
         Assert.Equal(4, plan.Candidates.Count);
 
         years.Remove(RetentionClass.Supplier);
         await Assert.ThrowsAsync<RetentionPolicyIncompleteException>(() => _service.PublishPolicyAsync(years, "Missing", actor));
         Assert.Equal("23514", await SqlStateOfAsync(() => _database.ExecuteAsync(
-            "INSERT INTO privacy.retention_policies (policy_version, note) VALUES (5, 'no rules')")));
-        Assert.Equal(4, await _database.ScalarAsync<int>("SELECT max(policy_version) FROM privacy.retention_policies"));
+            "INSERT INTO privacy.retention_policies (policy_version, note) VALUES (6, 'no rules')")));
+        Assert.Equal(5, await _database.ScalarAsync<int>("SELECT max(policy_version) FROM privacy.retention_policies"));
         Assert.Equal("23000", await SqlStateOfAsync(() => _database.ExecuteAsync("UPDATE privacy.retention_rules SET retention_years = 1")));
     }
 

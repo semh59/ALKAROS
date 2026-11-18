@@ -1,0 +1,21 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Privacy.RetentionExecution.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:03.80]     ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AClosedCashSessionIsDueFiveYearsAfterItWasClosedWhileATextRemainsAndAnOpenOrPendingOneNever [FAIL]
+  Başarısız ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AClosedCashSessionIsDueFiveYearsAfterItWasClosedWhileATextRemainsAndAnOpenOrPendingOneNever [203 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: HashSets differ
+Expected: [Tuple (CashFreeText, 8b651848-e521-493b-aa32-1abe89b2c084), Tuple (CashFreeText, e397422a-64b7-40f2-b6b1-989d0b60a79d), Tuple (CashFreeText, 3db8e6d9-7a36-40c3-8e62-f4aa5853dcde), Tuple (CashFreeText, ed976fd3-43c5-4b9b-9dea-85d22ca66c75), Tuple (CashFreeText, 460f22bf-ddbc-4f96-bbf3-671f1d7cdf7b), ···]
+Actual:   [Tuple (CashFreeText, 3b932ed4-e5f1-425f-b0d5-6a4edb0ce531), Tuple (CashFreeText, 460f22bf-ddbc-4f96-bbf3-671f1d7cdf7b), Tuple (CashFreeText, 8b651848-e521-493b-aa32-1abe89b2c084), Tuple (CashFreeText, e397422a-64b7-40f2-b6b1-989d0b60a79d), Tuple (CashFreeText, e5f59760-62a0-43d5-8828-b1d9e052222a), ···]
+  Yığın İzleme:
+     at ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.AClosedCashSessionIsDueFiveYearsAfterItWasClosedWhileATextRemainsAndAnOpenOrPendingOneNever() in D:\PROJECT\ALKAROS\tests\Modules\Privacy\RetentionExecution\RetentionExecutionTests.cs:line 331
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 203 ms - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)

@@ -448,6 +448,16 @@ public static class Program
                 heldSet.Add(heldReader.GetGuid(0));
         }
 
+        // Transfers made of an excluded order or bill keep their reasons too.
+        await using (var heldMovements = dataSource.CreateCommand(
+            "SELECT table_transfer_id FROM table_mgmt.table_transfers WHERE order_id = ANY(@held) OR bill_id = ANY(@held);"))
+        {
+            heldMovements.Parameters.AddWithValue("held", heldSet.ToArray());
+            await using var movementReader = await heldMovements.ExecuteReaderAsync();
+            while (await movementReader.ReadAsync())
+                heldSet.Add(movementReader.GetGuid(0));
+        }
+
         // The dry run and the apply pick their records through the same versioned policy; only the apply writes.
         var staff = 0;
         var orderNotes = 0;
@@ -500,6 +510,8 @@ public static class Program
             + $"customers={plan.Candidates.Count(c => c.DataClass is RetentionClass.CustomerProfile or RetentionClass.InvoicedCustomerProfile)} "
             + $"suppliers={plan.Candidates.Count(c => c.DataClass == RetentionClass.Supplier)} "
             + $"bill_texts={plan.Candidates.Count(c => c.DataClass == RetentionClass.BillFreeText)} "
+            + $"cash_texts={plan.Candidates.Count(c => c.DataClass == RetentionClass.CashFreeText)} "
+            + $"table_texts={plan.Candidates.Count(c => c.DataClass == RetentionClass.TableMovementReason)} "
             + $"policy={plan.PolicyVersion} "
             + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()} "
             + $"blocked={blocked} failed={failed}");
@@ -932,6 +944,49 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
                   AND ((request_note IS NOT NULL AND request_note <> @m) OR (decision_note IS NOT NULL AND decision_note <> @m));
                 """,
                 "SELECT count(*) FROM payments.manual_card_confirmations WHERE bill_id = @subject AND status IN ('Approved', 'Rejected') AND ((request_note IS NOT NULL AND request_note <> @m) OR (decision_note IS NOT NULL AND decision_note <> @m));"),
+        ], Parameters),
+        // The cash ledger rows keep their amounts, directions, types and dates (the guard accepts only the marker as a note change), so
+        // the session totals and the closing figures are unaffected. A request still waiting for a decision keeps its texts.
+        [RetentionClass.CashFreeText] = new(
+            "SELECT NOT EXISTS (SELECT 1 FROM cash.cash_sessions WHERE cash_session_id = @subject AND status IN ('Closed', 'Reconciled')) "
+            + "OR EXISTS (SELECT 1 FROM cash.cash_movement_requests WHERE cash_session_id = @subject AND status = 'Requested');",
+        [
+            new("cash.cash_transactions",
+                "UPDATE cash.cash_transactions SET notes = @m WHERE cash_session_id = @subject AND notes IS NOT NULL AND notes <> @m;",
+                "SELECT count(*) FROM cash.cash_transactions WHERE cash_session_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+            new("cash.cash_counts",
+                "UPDATE cash.cash_counts SET notes = @m WHERE cash_session_id = @subject AND notes IS NOT NULL AND notes <> @m;",
+                "SELECT count(*) FROM cash.cash_counts WHERE cash_session_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+            new("cash.cash_movement_requests",
+                """
+                UPDATE cash.cash_movement_requests
+                SET reason = @m, decision_note = CASE WHEN decision_note IS NOT NULL THEN @m END
+                WHERE cash_session_id = @subject AND status <> 'Requested' AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """,
+                "SELECT count(*) FROM cash.cash_movement_requests WHERE cash_session_id = @subject AND status <> 'Requested' AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));"),
+            new("cash.cash_sessions",
+                """
+                UPDATE cash.cash_sessions
+                SET override_reason = CASE WHEN override_reason IS NOT NULL THEN @m END,
+                    reconciliation_notes = CASE WHEN reconciliation_notes IS NOT NULL THEN @m END,
+                    difference_explanation = CASE WHEN difference_explanation IS NOT NULL THEN @m END,
+                    row_version = row_version + 1
+                WHERE cash_session_id = @subject AND status IN ('Closed', 'Reconciled')
+                  AND ((override_reason IS NOT NULL AND override_reason <> @m) OR (reconciliation_notes IS NOT NULL AND reconciliation_notes <> @m)
+                       OR (difference_explanation IS NOT NULL AND difference_explanation <> @m));
+                """,
+                """
+                SELECT count(*) FROM cash.cash_sessions
+                WHERE cash_session_id = @subject AND status IN ('Closed', 'Reconciled')
+                  AND ((override_reason IS NOT NULL AND override_reason <> @m) OR (reconciliation_notes IS NOT NULL AND reconciliation_notes <> @m)
+                       OR (difference_explanation IS NOT NULL AND difference_explanation <> @m));
+                """),
+        ], Parameters),
+        [RetentionClass.TableMovementReason] = new(null,
+        [
+            new("table_mgmt.table_transfers",
+                "UPDATE table_mgmt.table_transfers SET reason = @m WHERE table_transfer_id = @subject AND reason <> @m;",
+                "SELECT count(*) FROM table_mgmt.table_transfers WHERE table_transfer_id = @subject AND reason <> @m;"),
         ], Parameters),
         [RetentionClass.ReservationReason] = new(null,
         [

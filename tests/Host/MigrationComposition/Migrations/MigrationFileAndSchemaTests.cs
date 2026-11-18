@@ -360,6 +360,51 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCashLedgerAcceptsOnlyTheMarkerAsANoteChangeAndRollingBackMigration234RestoresTheStrictGuard()
+    {
+        const string marker = "'[anonymized]'";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        var (transactionId, noteless) = (Guid.NewGuid(), Guid.NewGuid());
+        await ExecuteWithoutForeignKeysAsync(source, $"""
+            INSERT INTO cash.cash_transactions (cash_transaction_id, cash_session_id, type, direction, amount, notes, recorded_by, occurred_at)
+            VALUES ('{transactionId}', gen_random_uuid(), 'CashIn', 'In', 5, 'Ali Bey avans', NULL, now()),
+                   ('{noteless}', gen_random_uuid(), 'Opening', 'In', 5, NULL, NULL, now());
+            """);
+
+        foreach (var statement in new[]
+        {
+            $"UPDATE cash.cash_transactions SET amount = 9 WHERE cash_transaction_id = '{transactionId}';",
+            $"UPDATE cash.cash_transactions SET notes = 'baska' WHERE cash_transaction_id = '{transactionId}';",
+            $"UPDATE cash.cash_transactions SET notes = NULL WHERE cash_transaction_id = '{transactionId}';",
+            $"UPDATE cash.cash_transactions SET notes = {marker} WHERE cash_transaction_id = '{noteless}';",
+            $"UPDATE cash.cash_transactions SET notes = {marker}, amount = 9 WHERE cash_transaction_id = '{transactionId}';",
+            $"UPDATE cash.cash_transactions SET notes = {marker}, direction = 'Out', type = 'CashOut' WHERE cash_transaction_id = '{transactionId}';",
+            $"DELETE FROM cash.cash_transactions WHERE cash_transaction_id = '{transactionId}';",
+            "TRUNCATE cash.cash_transactions CASCADE;",
+        })
+        {
+            var failure = await Assert.ThrowsAsync<PostgresException>(() => source.CreateCommand(statement).ExecuteNonQueryAsync());
+            Assert.Equal(PostgresErrorCodes.IntegrityConstraintViolation, failure.SqlState);
+        }
+
+        await source.CreateCommand($"UPDATE cash.cash_transactions SET notes = {marker} WHERE cash_transaction_id = '{transactionId}';").ExecuteNonQueryAsync();
+        Assert.Equal(1L, await ScalarAsync<long>(source,
+            $"SELECT count(*) FROM cash.cash_transactions WHERE cash_transaction_id = '{transactionId}' AND notes = {marker} AND amount = 5 AND type = 'CashIn';"));
+        Assert.Equal(9L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_rules WHERE policy_version = 4;"));
+
+        RollBackDownTo("234");
+        Assert.Equal(0L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_rules WHERE policy_version = 4;"));
+        var strict = await Assert.ThrowsAsync<PostgresException>(() =>
+            source.CreateCommand($"UPDATE cash.cash_transactions SET notes = {marker} WHERE cash_transaction_id = '{transactionId}';").ExecuteNonQueryAsync());
+        Assert.Equal(PostgresErrorCodes.IntegrityConstraintViolation, strict.SqlState);
+
+        Migrate(OrderPath(), MigrationsPath());
+        await source.CreateCommand($"UPDATE cash.cash_transactions SET notes = {marker} WHERE cash_transaction_id = '{transactionId}';").ExecuteNonQueryAsync();
+        Assert.Equal(9L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_rules WHERE policy_version = 4;"));
+    }
+
+    [Fact]
     public async Task RollingBackTheIntegrityMigrationRestoresTheCascadesAndLiftsTheLedgerGuardAndItAppliesOnceMore()
     {
         static string Cascades(char action) => "SELECT count(*) FROM pg_constraint WHERE conname IN ('fk_bill_adjustments_item', 'fk_bill_allocations_item') AND confdeltype = '" + action + "';";
@@ -506,7 +551,7 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         const string classAllowed = "SELECT count(*) FROM pg_constraint WHERE conname IN ('retention_rules_data_class_check', 'legal_holds_data_class_check', 'retention_work_items_data_class_check', 'anonymization_jobs_data_class_check') AND pg_get_constraintdef(oid) LIKE '%BillFreeText%';";
         Migrate(OrderPath(), MigrationsPath());
         await using var source = NpgsqlDataSource.Create(ConnectionString());
-        Assert.Equal("3:5", await ScalarAsync<string>(source, rules));
+        Assert.Equal("3:5,4:5", await ScalarAsync<string>(source, rules));
         Assert.Equal(4L, await ScalarAsync<long>(source, classAllowed));
 
         RollBackDownTo("232");
@@ -515,7 +560,7 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(2L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_policies;"));
 
         Migrate(OrderPath(), MigrationsPath());
-        Assert.Equal("3:5", await ScalarAsync<string>(source, rules));
+        Assert.Equal("3:5,4:5", await ScalarAsync<string>(source, rules));
     }
 
     [Fact]
@@ -551,7 +596,7 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     public async Task TheInvoicedCustomerRetentionClassComesWithANewPolicyAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string rules = "SELECT string_agg(policy_version || ':' || data_class || ':' || retention_years, ',' ORDER BY policy_version, data_class) FROM privacy.retention_rules WHERE data_class IN ('CustomerProfile', 'InvoicedCustomerProfile');";
-        const string withClass = "1:CustomerProfile:10,2:CustomerProfile:2,2:InvoicedCustomerProfile:10,3:CustomerProfile:2,3:InvoicedCustomerProfile:10";
+        const string withClass = "1:CustomerProfile:10,2:CustomerProfile:2,2:InvoicedCustomerProfile:10,3:CustomerProfile:2,3:InvoicedCustomerProfile:10,4:CustomerProfile:2,4:InvoicedCustomerProfile:10";
         const string without = "1:CustomerProfile:10";
         Migrate(OrderPath(), MigrationsPath());
         await using var source = NpgsqlDataSource.Create(ConnectionString());

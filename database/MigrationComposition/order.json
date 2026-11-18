@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "233"
+    "max": "234"
   },
   "migrations": [
     {
@@ -2000,6 +2000,14 @@
       "phase": "B",
       "tables": [
         "payment_reversals"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "234",
+      "phase": "B",
+      "tables": [
+        "cash_transactions"
       ],
       "deferredConstraints": []
     }
