@@ -1,7 +1,7 @@
 # V1-RMD-1167 - Otomatik yedek servisi: saatlik döküm, günlük temel yedek, doğrulama, budama ve ayarlanabilir makine dışı kopya
 
 - Task ID: V1-RMD-1167
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
