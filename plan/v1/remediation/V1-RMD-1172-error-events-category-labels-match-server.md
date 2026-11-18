@@ -35,7 +35,7 @@ V1-RMD-1170 sonrası taramada sunucu kaynaklarında (src/Host/Observability, src
 
 ## Acceptance evidence
 
-1. Kırmızı, yeşil ve mutant çıktıları
+1. Kırmızı, yeşil ve mutant çıktıları; RESULT.md tarama testinin hangi sunucu dizinlerini taradığını ve iki istisnanın gerekçesini yazar
 2. Typecheck, vitest ve istemci derleme kapısı exit code 0; plan audit ve consistency audit 0 hata 0 uyarı
 3. İki ardışık bağımsız qa-* incelemesi
 

@@ -17,7 +17,7 @@ Beşinci bulgu (gerçek hata): V1-RMD-700 `app_db_password`, `restore_db_passwor
 - `evidence/V1-RMD-1171/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - tests/Deployment/test_container_contract.py
-  - .dockerignore
+  - ./.dockerignore
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
