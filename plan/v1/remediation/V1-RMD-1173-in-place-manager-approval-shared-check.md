@@ -13,11 +13,10 @@ Yönetici kullanıcı adı ve şifresiyle yerinde onay denetimi (deneme sınır�
 ## Owned surface
 
 - `evidence/V1-RMD-1173/**`
+- `src/Host/Experience/Billing/InPlaceManagerApproval.cs`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - src/Host/Experience/Billing/InPlaceManagerApproval.cs
   - src/Host/Experience/Billing/BillingSplitApplication.cs
   - src/Host/DualScreen/DualScreenApplication.CashSession.cs
-  - tests/Host/Experience/Billing/InPlaceManagerApprovalTests.cs
   - tests/Host/Experience/Billing/BillingSplitHttpTests.cs
   - tests/Host/Experience/CashSession/CashCloseSafetyHttpTests.cs
   - src/Host/Composition/Errors/ApiErrorCatalog.cs
