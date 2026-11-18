@@ -1,7 +1,7 @@
 # V1-RMD-1162 - Kasa satış ekranında isteğe bağlı ürün notu ("soğansız", "az pişmiş")
 
 - Task ID: V1-RMD-1162
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
