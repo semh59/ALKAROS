@@ -1,7 +1,7 @@
 # V1-RMD-1155 - Kapanışta sayfa yenilenince kayıtlı sayım geri gelir, yeniden giriş düzeltme sayılmaz
 
 - Task ID: V1-RMD-1155
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
