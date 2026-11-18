@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (7 tests | 1 failed) 3875ms
+     × does not offer the note while products go to the kitchen-less path, which carries none 196ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 28 passed (29)
+   Start at  13:08:28
+   Duration  5.63s (transform 1.81s, setup 0ms, import 166ms, tests 3.93s, environment 1.03s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > does not offer the note while products go to the kitchen-less path, which carries none
+AssertionError: expected <button …(3)></button> to be undefined
+
+- Expected:
+undefined
+
++ Received:
+<button
+  aria-expanded="false"
+  class="secondary"
+  data-telemetry-id="b.routes.cashieritemnote.open"
+>
+  Not ekle
+</button>
+
+ ❯ src/routes/Cashier.item-note.test.tsx:185:32
+    183|     await tap(document.querySelector<HTMLButtonElement>(".kitchenless_…
+    184|
+    185|     expect(button("Not ekle")).toBeUndefined();
+       |                                ^
+    186|     expect(noteInput()).toBeNull();
+    187|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

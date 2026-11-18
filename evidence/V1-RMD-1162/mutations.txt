@@ -1,0 +1,12 @@
+M1-api-drops-note killed restored=true (Tests  4 failed | 25 passed (29))
+M2-tap-drops-note killed restored=true (Tests  1 failed | 28 passed (29))
+M3-picker-drops-note killed restored=true (Tests  1 failed | 28 passed (29))
+M4-putback-drops-note killed restored=true (Tests  1 failed | 28 passed (29))
+M6-no-trim killed restored=true (Tests  2 failed | 27 passed (29))
+M7-line-note-hidden killed restored=true (Tests  1 failed | 28 passed (29))
+M8-shown-in-kitchenless killed restored=true (Tests  1 failed | 28 passed (29))
+done
+M10-maxlength-drift restored: Başarısız! - Başarısız:     1, Başarılı:     9, Atlanan:     0, Toplam:    10, Süre: 70 ms - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+M11-queues-tap-with-note-waiting killed restored=true (Tests  1 failed | 7 passed (8))
+M9b-note-never-clears killed restored=true (Tests  1 failed | 7 passed (8))
+M12-kitchenless-keeps-note killed restored=true

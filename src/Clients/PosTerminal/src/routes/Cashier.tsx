@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
 import { isPlainClick, useRouter } from "../router";
 import { focusOnMount } from "../focusOnMount";
 import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
 import { formatDateTime, formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
@@ -24,6 +24,7 @@ import { usePendingChecksAlert } from "../features/pending-checks";
 import { BillingSplitApiError } from "../features/billing";
 import { CashSessionBand, CashSessionLink, NoSaleLink, useCashSessionState } from "../features/cash-session-status";
 import { CashierModifierPicker } from "./CashierModifierPicker";
+import { CashierItemNote } from "./CashierItemNote";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 import { foldSearch } from "../search";
 import { moveBetweenTabs } from "../design-system";
@@ -147,6 +148,10 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
   const headerMenu = useRef<HTMLElement>(null);
   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
+  // The note typed for the next product the cashier taps: null while the field is closed.
+  const [itemNote, setItemNote] = useState<string | null>(null);
+  const lineNote = itemNote?.trim() ?? "";
+
   const [quantityEntry, setQuantityEntry] = useState<{ itemId: string; draft: string } | null>(null);
   // The latest entry for the handlers: Enter and the blur that follows it must send once.
   const quantityEntryRef = useRef<{ itemId: string; draft: string } | null>(null);
@@ -157,6 +162,10 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
   const kitchenlessOrderId = order?.orderId;
+  // The kitchen-less mode hides the note field and carries no note, so a waiting note is dropped instead of reappearing unseen.
+  useEffect(() => {
+    if (kitchenlessReason) setItemNote(null);
+  }, [kitchenlessReason]);
   // A draft that never reached the kitchen has nothing to add to; an order with a sent line takes the kitchen-less path even while a new unsent cart sits on it.
   const kitchenlessAvailable = !!kitchenlessOrderId && (!order?.editable || order.lines.some((line) => !line.unsent));
   useEffect(() => {
@@ -668,7 +677,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     const target = activeOrder;
     if (!target?.orderId || !line.productId) return;
     await execute(
-      () => api.addItem(terminalId, target.orderId!, line.productId!, target.revision, line.modifierIds ?? [], line.quantity),
+      () => api.addItem(terminalId, target.orderId!, line.productId!, target.revision, line.modifierIds ?? [], line.quantity, line.specialInstructions),
       "Kalem geri alındı.",
     );
   };
@@ -695,13 +704,14 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
   const tapQueueable = (product: CatalogProduct) => !kitchenlessReason && !product.modifierGroups?.length;
 
   const chooseProduct = (product: CatalogProduct) => {
-    if (queueOpen.current && tapQueueable(product)) {
+    // A queued tap carries no note, so while a note is waiting the tap goes the normal way, which refuses it plainly during an add.
+    if (queueOpen.current && tapQueueable(product) && !lineNote) {
       queuedTaps.current.set(product.productId, (queuedTaps.current.get(product.productId) ?? 0) + 1);
       setQueuedCount((count) => count + 1);
       return;
     }
     if (product.modifierGroups?.length && !kitchenlessReason) setPickingProduct(product);
-    else void addProduct(product);
+    else void addProduct(product, [], lineNote);
   };
 
   // A typed quantity replaces the tapped one; a missing, zero, negative or unchanged number leaves the line as it is (removing is its own button).
@@ -725,7 +735,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
     chooseProduct(match);
   };
 
-  const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
+  const addProduct = async (product: CatalogProduct, modifierIds: string[] = [], note = "") => {
     if (addingProduct.current) {
       // An add is still in flight and this product (a confirmed option choice, a second tap that beat the redraw) cannot join its queue: say so.
       setFeedbackKind("error");
@@ -784,7 +794,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
         const reused = activeOrder?.editable || activeOrder?.acceptsRound ? activeOrder : null;
         const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await openOrder();
         try {
-          const added = await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);
+          const added = await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds, 1, note);
+          // The note is on the line now, whatever happens to the taps queued behind it; clear it unless the cashier has changed it since.
+          if (note) setItemNote((current) => (current?.trim() === note ? null : current));
           await drainQueuedTaps(target.orderId, added.revision);
         } catch (reason) {
           // The order just opened is the till's active one: show it, so the next tap fills it instead of opening another (a 409 is reloaded by execute).
@@ -1011,6 +1023,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
             </label>
           </div>
 
+          {!kitchenlessReason && <CashierItemNote note={itemNote} onChange={setItemNote} />}
           {queuedCount > 0 && <div className="alert information" role="status">{queuedCount} dokunuş sıraya alındı, ekleniyor…</div>}
           <div className="product-grid">
             {visibleProducts.map((product) => (
@@ -1060,6 +1073,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
                     <div className="ticket-line-main">
                       <strong>{line.name}</strong>
                       <small>{formatMoney(line.lineTotal / line.quantity)} × {formatQuantity(line.quantity)} · KDV dahil</small>
+                      {line.specialInstructions && <small className="ticket-line-note">{itemNoteText.onLine(line.specialInstructions)}</small>}
                     </div>
                     <strong className="line-total">{formatMoney(line.lineTotal)}</strong>
                     {confirmRemoveId === line.itemId ? (
@@ -1204,7 +1218,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
           onCancel={() => setPickingProduct(null)}
           onConfirm={(modifierIds) => {
             setPickingProduct(null);
-            void addProduct(pickingProduct, modifierIds);
+            void addProduct(pickingProduct, modifierIds, lineNote);
           }}
         />
       )}

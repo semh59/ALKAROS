@@ -263,3 +263,22 @@ describe("api.voidSentItem idempotency key", () => {
     expect(new Set(bodies.map((body) => body.idempotencyKey)).size).toBe(4);
   });
 });
+
+describe("addItem line note", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const bodyOf = async (note?: string) => {
+    const fetchMock = vi.fn(async () => jsonResponse({ orderId: "o1", revision: 4 }));
+    vi.stubGlobal("fetch", fetchMock);
+    await api.addItem("t1", "o1", "p1", 3, [], 1, note);
+    return JSON.parse(String((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body)) as Record<string, unknown>;
+  };
+
+  it("sends the note as specialInstructions and sends no such field without one", async () => {
+    expect(await bodyOf("soğansız")).toMatchObject({ productId: "p1", specialInstructions: "soğansız" });
+    expect(await bodyOf()).not.toHaveProperty("specialInstructions");
+    expect(await bodyOf("")).not.toHaveProperty("specialInstructions");
+  });
+});

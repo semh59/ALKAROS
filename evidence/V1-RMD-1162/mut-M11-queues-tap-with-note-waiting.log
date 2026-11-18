@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (8 tests | 1 failed) 4082ms
+     × does not queue a tap behind a running add while a note waits: the tap is refused plainly and the note stays for the next product 226ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:10:14
+   Duration  5.44s (transform 1.78s, setup 0ms, import 117ms, tests 4.08s, environment 991ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > does not queue a tap behind a running add while a note waits: the tap is refused plainly and the note stays for the next product
+AssertionError: expected 'AALKAROSKasa satışBağlantı varMasalar…' to contain 'Ayran eklenmedi'
+
+Expected: "Ayran eklenmedi"
+Received: "AALKAROSKasa satışBağlantı varMasalarHızlı satışBekleyen hesaplarDeniz KayaSınırlı erişim · Diğer ▾⌂Tümü201Ana Yemek102İçecek1HIZLI SİPARİŞTüm ürünler⌕VazgeçNot, dokunacağınız sıradaki ürüne eklenir ve mutfak fişine yazılır. Kişisel bilgi yazmayın.1 dokunuş sıraya alındı, ekleniyor…Ana YemekPideSKU-1₺100,00KDV dahilİçecekAyranSKU-2₺20,00KDV dahilAKTİF SİPARİŞSipariş 10ürünSoldaki katalogdan ürün seçin."
+
+ ❯ src/routes/Cashier.item-note.test.tsx:160:39
+    158|     await typeNote("az pişmiş");
+    159|     await tap(card("Ayran"));
+    160|     expect(document.body.textContent).toContain("Ayran eklenmedi");
+       |                                       ^
+    161|     expect(noteInput()!.value).toBe("az pişmiş");
+    162|     await act(async () => { release(); await new Promise((resolve) => …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

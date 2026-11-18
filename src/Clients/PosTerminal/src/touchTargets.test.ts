@@ -15,6 +15,8 @@ const targets: ReadonlyArray<readonly [file: string, selector: string]> = [
   ["./styles.css", ".pairing-card summary {"],
   ["./styles.css", ".dialog-close {"],
   ["./styles.css", ".search-field input {"],
+  ["./styles.css", ".item-note__row input {"],
+  ["./styles.css", ".item-note button {"],
   ["./features/pending-checks/pending-checks.css", ".pending-checks__recall {"],
   ["./features/recent-sales/recent-sales.css", ".recent-sales__row {"],
   ["./features/recent-sales/recent-sales.css", ".recent-sales__refresh {"],

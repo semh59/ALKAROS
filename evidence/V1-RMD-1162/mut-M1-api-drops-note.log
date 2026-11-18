@@ -1,0 +1,110 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (7 tests | 3 failed) 3933ms
+     × opens one short field with one tap, sends the note with the next product only and closes after the add 319ms
+     × sends the note together with the chosen options of a product that has option groups 314ms
+     × shows a line's note in the cart and puts it back with the line 284ms
+ ❯ src/api.test.ts (22 tests | 1 failed) 62ms
+     × sends the note as specialInstructions and sends no such field without one 8ms
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 25 passed (29)
+   Start at  13:07:34
+   Duration  5.73s (transform 1.83s, setup 0ms, import 166ms, tests 3.99s, environment 1.02s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > addItem line note > sends the note as specialInstructions and sends no such field without one
+AssertionError: expected { productId: 'p1', quantity: 1, …(1) } to match object { productId: 'p1', …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "productId": "p1",
+-   "specialInstructions": "soğansız",
+  }
+
+ ❯ src/api.test.ts:280:38
+    278|
+    279|   it("sends the note as specialInstructions and sends no such field wi…
+    280|     expect(await bodyOf("soğansız")).toMatchObject({ productId: "p1", …
+       |                                      ^
+    281|     expect(await bodyOf()).not.toHaveProperty("specialInstructions");
+    282|     expect(await bodyOf("")).not.toHaveProperty("specialInstructions");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > opens one short field with one tap, sends the note with the next product only and closes after the add
+AssertionError: expected { productId: 'p-ayran', …(2) } to match object { productId: 'p-ayran', …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "productId": "p-ayran",
+-   "specialInstructions": "soğansız",
+  }
+
+ ❯ src/routes/Cashier.item-note.test.tsx:127:22
+    125|
+    126|     expect(added).toHaveLength(2);
+    127|     expect(added[0]).toMatchObject({ productId: "p-ayran", specialInst…
+       |                      ^
+    128|     expect(added[1]).not.toHaveProperty("specialInstructions");
+    129|     expect(noteInput()).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > sends the note together with the chosen options of a product that has option groups
+AssertionError: expected { productId: 'p-pide', …(3) } to match object { productId: 'p-pide', …(2) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -3,7 +3,6 @@
+      {
+        "modifierId": "m-big",
+      },
+    ],
+    "productId": "p-pide",
+-   "specialInstructions": "kenarı ince",
+  }
+
+ ❯ src/routes/Cashier.item-note.test.tsx:160:22
+    158|
+    159|     expect(added).toHaveLength(1);
+    160|     expect(added[0]).toMatchObject({ productId: "p-pide", modifiers: […
+       |                      ^
+    161|   });
+    162|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > shows a line's note in the cart and puts it back with the line
+AssertionError: expected { productId: 'p-ayran', …(2) } to match object { productId: 'p-ayran', …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "productId": "p-ayran",
+-   "specialInstructions": "soğansız",
+  }
+
+ ❯ src/routes/Cashier.item-note.test.tsx:172:22
+    170|
+    171|     expect(added).toHaveLength(1);
+    172|     expect(added[0]).toMatchObject({ productId: "p-ayran", specialInst…
+       |                      ^
+    173|   });
+    174|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

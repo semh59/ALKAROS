@@ -1542,3 +1542,14 @@ export const recentSalesText = {
   methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
   unknownMethod: "Bilinmiyor",
 } as const;
+
+/** Kasa satış ekranında sıradaki ürüne yazılan kısa not (mutfak fişine basılır). */
+export const itemNoteText = {
+  open: "Not ekle",
+  group: "Ürün notu",
+  input: "Sıradaki ürüne not",
+  placeholder: "Örn. soğansız, az pişmiş",
+  close: "Vazgeç",
+  hint: "Not, dokunacağınız sıradaki ürüne eklenir ve mutfak fişine yazılır; eklenince alan kapanır. Kişisel bilgi yazmayın.",
+  onLine: (note: string) => `Not: ${note}`,
+} as const;

@@ -1,0 +1,57 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (7 tests | 2 failed) 3837ms
+     × opens one short field with one tap, sends the note with the next product only and closes after the add 259ms
+     × treats a note of spaces as no note 228ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 27 passed (29)
+   Start at  13:08:13
+   Duration  5.50s (transform 1.81s, setup 0ms, import 183ms, tests 3.90s, environment 915ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > opens one short field with one tap, sends the note with the next product only and closes after the add
+AssertionError: expected { productId: 'p-ayran', …(3) } to match object { productId: 'p-ayran', …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "productId": "p-ayran",
+-   "specialInstructions": "soğansız",
++   "specialInstructions": "  soğansız ",
+  }
+
+ ❯ src/routes/Cashier.item-note.test.tsx:127:22
+    125|
+    126|     expect(added).toHaveLength(2);
+    127|     expect(added[0]).toMatchObject({ productId: "p-ayran", specialInst…
+       |                      ^
+    128|     expect(added[1]).not.toHaveProperty("specialInstructions");
+    129|     expect(noteInput()).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > treats a note of spaces as no note
+AssertionError: expected { productId: 'p-ayran', …(3) } to not have property "specialInstructions"
+
+- Expected:
+undefined
+
++ Received:
+"   "
+
+ ❯ src/routes/Cashier.item-note.test.tsx:139:26
+    137|     await tap(card("Ayran"));
+    138|
+    139|     expect(added[0]).not.toHaveProperty("specialInstructions");
+       |                          ^
+    140|   });
+    141|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Settings.BillAdjustmentCap;
 using ALKAROS.Settings.CashCloseTolerance;
@@ -77,6 +78,15 @@ public sealed class ClientLimitLockTests
         Assert.Equal(1, limits.Count(limit => limit == username));
         Assert.Equal(1, limits.Count(limit => limit == password));
         Assert.Equal(7 + 4 + 2, limits.Length);
+    }
+
+    [Fact]
+    public void TheTillItemNoteInputLimitIsTheServerLineNoteLimit()
+    {
+        var screen = File.ReadAllText(Path.Combine(
+            Root, "src", "Clients", "PosTerminal", "src", "routes", "CashierItemNote.tsx"));
+
+        Assert.Equal([DualScreenStore.MaxSpecialInstructionsLength], Limits(screen));
     }
 
     // Every client file that calls the refund endpoints, found rather than listed, so a new refund screen is covered at once.

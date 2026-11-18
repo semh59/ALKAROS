@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (9 tests | 1 failed) 4505ms
+     × drops a waiting note when the cashier enters the kitchen-less mode, so it cannot reappear on a later product 310ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  13:15:33
+   Duration  5.87s (transform 1.84s, setup 0ms, import 119ms, tests 4.51s, environment 995ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > drops a waiting note when the cashier enters the kitchen-less mode, so it cannot reappear on a later product
+AssertionError: expected <input maxlength="200" …(3)></input> to be null
+
+- Expected:
+null
+
++ Received:
+<input
+  aria-label="Sıradaki ürüne not"
+  maxlength="200"
+  placeholder="Örn. soğansız, az pişmiş"
+  value="soğansız"
+/>
+
+ ❯ src/routes/Cashier.item-note.test.tsx:219:25
+    217|     await tap(button("Normal eklemeye dön")!);
+    218|
+    219|     expect(noteInput()).toBeNull();
+       |                         ^
+    220|     await tap(card("Ayran"));
+    221|     expect(added.at(-1)).not.toHaveProperty("specialInstructions");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

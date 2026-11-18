@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (8 tests | 1 failed) 4345ms
+     × opens one short field with one tap, sends the note with the next product only and closes after the add 306ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  13:10:22
+   Duration  5.73s (transform 1.89s, setup 0ms, import 122ms, tests 4.35s, environment 991ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > opens one short field with one tap, sends the note with the next product only and closes after the add
+AssertionError: expected { productId: 'p-ayran', …(3) } to not have property "specialInstructions"
+
+- Expected:
+undefined
+
++ Received:
+"soğansız"
+
+ ❯ src/routes/Cashier.item-note.test.tsx:129:26
+    127|     expect(added).toHaveLength(2);
+    128|     expect(added[0]).toMatchObject({ productId: "p-ayran", specialInst…
+    129|     expect(added[1]).not.toHaveProperty("specialInstructions");
+       |                          ^
+    130|     expect(noteInput()).toBeNull();
+    131|     expect(button("Not ekle")).toBeDefined();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,40 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.item-note.test.tsx (7 tests | 1 failed) 4205ms
+     × sends the note together with the chosen options of a product that has option groups 326ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 28 passed (29)
+   Start at  13:07:49
+   Duration  5.95s (transform 1.93s, setup 0ms, import 168ms, tests 4.26s, environment 1.03s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > sends the note together with the chosen options of a product that has option groups
+AssertionError: expected { productId: 'p-pide', …(3) } to match object { productId: 'p-pide', …(2) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+@@ -3,7 +3,6 @@
+      {
+        "modifierId": "m-big",
+      },
+    ],
+    "productId": "p-pide",
+-   "specialInstructions": "kenarı ince",
+  }
+
+ ❯ src/routes/Cashier.item-note.test.tsx:160:22
+    158|
+    159|     expect(added).toHaveLength(1);
+    160|     expect(added[0]).toMatchObject({ productId: "p-pide", modifiers: […
+       |                      ^
+    161|   });
+    162|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -156,6 +156,8 @@ export interface DisplayLine {
   modifierIds?: string[];
   /** Added at the till and not yet sent to the kitchen. */
   unsent?: boolean;
+  /** A short preparation note the cashier typed for the line; printed on the kitchen ticket. */
+  specialInstructions?: string;
 }
 
 export interface DisplaySnapshot {

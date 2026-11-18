@@ -216,6 +216,7 @@ export const api = {
     expectedRevision: number,
     modifierIds: string[] = [],
     quantity = 1,
+    specialInstructions = "",
   ) =>
     request<MutationResult>(`/api/v1/terminals/${terminalId}/orders/${orderId}/items`, {
       method: "POST",
@@ -224,6 +225,7 @@ export const api = {
         quantity,
         expectedRevision,
         ...(modifierIds.length > 0 ? { modifiers: modifierIds.map((modifierId) => ({ modifierId })) } : {}),
+        ...(specialInstructions ? { specialInstructions } : {}),
       }),
     }),
   changeQuantity: (

@@ -1,0 +1,136 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/api.test.ts (22 tests | 1 failed) 66ms
+     × sends the note as specialInstructions and sends no such field without one 8ms
+ ❯ src/routes/Cashier.item-note.test.tsx (7 tests | 6 failed) 3426ms
+     × opens one short field with one tap, sends the note with the next product only and closes after the add 95ms
+     × treats a note of spaces as no note 104ms
+     × keeps the note when the add fails, so the same note can be sent again 111ms
+     × sends the note together with the chosen options of a product that has option groups 94ms
+     × shows a line's note in the cart and puts it back with the line 99ms
+     × does not offer the note while products go to the kitchen-less path, which carries none 91ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/api.test.ts > addItem line note > sends the note as specialInstructions and sends no such field without one
+AssertionError: expected { productId: 'p1', quantity: 1, …(1) } to match object { productId: 'p1', …(1) }
+(2 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "productId": "p1",
+-   "specialInstructions": "soğansız",
+  }
+
+ ❯ src/api.test.ts:280:38
+    278|
+    279|   it("sends the note as specialInstructions and sends no such field wi…
+    280|     expect(await bodyOf("soğansız")).toMatchObject({ productId: "p1", …
+       |                                      ^
+    281|     expect(await bodyOf()).not.toHaveProperty("specialInstructions");
+    282|     expect(await bodyOf("")).not.toHaveProperty("specialInstructions");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > opens one short field with one tap, sends the note with the next product only and closes after the add
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.item-note.test.tsx:90:35
+     88| const settle = async () => { for (let i = 0; i < 3; i++) await act(asy…
+     89| const tap = async (element: Element) => {
+     90|   await act(async () => { element.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+     91|   await settle();
+     92| };
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ tap src/routes/Cashier.item-note.test.tsx:90:9
+ ❯ typeNote src/routes/Cashier.item-note.test.tsx:97:9
+ ❯ src/routes/Cashier.item-note.test.tsx:120:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > treats a note of spaces as no note
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.item-note.test.tsx:90:35
+     88| const settle = async () => { for (let i = 0; i < 3; i++) await act(asy…
+     89| const tap = async (element: Element) => {
+     90|   await act(async () => { element.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+     91|   await settle();
+     92| };
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ tap src/routes/Cashier.item-note.test.tsx:90:9
+ ❯ typeNote src/routes/Cashier.item-note.test.tsx:97:9
+ ❯ src/routes/Cashier.item-note.test.tsx:136:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > keeps the note when the add fails, so the same note can be sent again
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.item-note.test.tsx:90:35
+     88| const settle = async () => { for (let i = 0; i < 3; i++) await act(asy…
+     89| const tap = async (element: Element) => {
+     90|   await act(async () => { element.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+     91|   await settle();
+     92| };
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ tap src/routes/Cashier.item-note.test.tsx:90:9
+ ❯ typeNote src/routes/Cashier.item-note.test.tsx:97:9
+ ❯ src/routes/Cashier.item-note.test.tsx:145:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > sends the note together with the chosen options of a product that has option groups
+TypeError: Cannot read properties of undefined (reading 'dispatchEvent')
+ ❯ src/routes/Cashier.item-note.test.tsx:90:35
+     88| const settle = async () => { for (let i = 0; i < 3; i++) await act(asy…
+     89| const tap = async (element: Element) => {
+     90|   await act(async () => { element.dispatchEvent(new MouseEvent("click"…
+       |                                   ^
+     91|   await settle();
+     92| };
+ ❯ Proxy.process.env.NODE_ENV.exports.act node_modules/.pnpm/react@19.2.8/node_modules/react/cjs/react.development.js:814:22
+ ❯ tap src/routes/Cashier.item-note.test.tsx:90:9
+ ❯ typeNote src/routes/Cashier.item-note.test.tsx:97:9
+ ❯ src/routes/Cashier.item-note.test.tsx:154:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > shows a line's note in the cart and puts it back with the line
+AssertionError: expected 'Ayran₺20,00 × 1 · KDV dahil₺20,00−1+K…' to contain 'Not: soğansız'
+
+Expected: "Not: soğansız"
+Received: "Ayran₺20,00 × 1 · KDV dahil₺20,00−1+Kaldır"
+
+ ❯ src/routes/Cashier.item-note.test.tsx:166:65
+    164|     const added = await openTill({ ...emptyOrder, lines: [{ ...ayranLi…
+    165|
+    166|     expect(document.querySelector(".ticket-line")!.textContent).toCont…
+       |                                                                 ^
+    167|     await tap(button("Kaldır")!);
+    168|     await tap(button("Evet, kaldır")!);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/routes/Cashier.item-note.test.tsx > the till's optional line note > does not offer the note while products go to the kitchen-less path, which carries none
+AssertionError: expected undefined to be defined
+ ❯ src/routes/Cashier.item-note.test.tsx:180:32
+    178|       { capabilities: ["orders.create", "orders.add-without-kitchen"] …
+    179|     );
+    180|     expect(button("Not ekle")).toBeDefined();
+       |                                ^
+    181|
+    182|     await tap(button("Mutfağa göndermeden hesaba ekle")!);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  7 failed | 22 passed (29)
+   Start at  13:00:16
+   Duration  6.97s (transform 2.11s, setup 0ms, import 302ms, tests 3.49s, environment 2.32s)
+
+exit 1

@@ -1,0 +1,250 @@
+diff --git a/src/Clients/PosTerminal/src/api.test.ts b/src/Clients/PosTerminal/src/api.test.ts
+index 3fb5209aa..d21191b84 100644
+--- a/src/Clients/PosTerminal/src/api.test.ts
++++ b/src/Clients/PosTerminal/src/api.test.ts
+@@ -263,3 +263,22 @@ describe("api.voidSentItem idempotency key", () => {
+     expect(new Set(bodies.map((body) => body.idempotencyKey)).size).toBe(4);
+   });
+ });
++
++describe("addItem line note", () => {
++  afterEach(() => {
++    vi.unstubAllGlobals();
++  });
++
++  const bodyOf = async (note?: string) => {
++    const fetchMock = vi.fn(async () => jsonResponse({ orderId: "o1", revision: 4 }));
++    vi.stubGlobal("fetch", fetchMock);
++    await api.addItem("t1", "o1", "p1", 3, [], 1, note);
++    return JSON.parse(String((fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1].body)) as Record<string, unknown>;
++  };
++
++  it("sends the note as specialInstructions and sends no such field without one", async () => {
++    expect(await bodyOf("soğansız")).toMatchObject({ productId: "p1", specialInstructions: "soğansız" });
++    expect(await bodyOf()).not.toHaveProperty("specialInstructions");
++    expect(await bodyOf("")).not.toHaveProperty("specialInstructions");
++  });
++});
+diff --git a/src/Clients/PosTerminal/src/api.ts b/src/Clients/PosTerminal/src/api.ts
+index 79309c043..0efc85ec3 100644
+--- a/src/Clients/PosTerminal/src/api.ts
++++ b/src/Clients/PosTerminal/src/api.ts
+@@ -216,6 +216,7 @@ export const api = {
+     expectedRevision: number,
+     modifierIds: string[] = [],
+     quantity = 1,
++    specialInstructions = "",
+   ) =>
+     request<MutationResult>(`/api/v1/terminals/${terminalId}/orders/${orderId}/items`, {
+       method: "POST",
+@@ -224,6 +225,7 @@ export const api = {
+         quantity,
+         expectedRevision,
+         ...(modifierIds.length > 0 ? { modifiers: modifierIds.map((modifierId) => ({ modifierId })) } : {}),
++        ...(specialInstructions ? { specialInstructions } : {}),
+       }),
+     }),
+   changeQuantity: (
+diff --git a/src/Clients/PosTerminal/src/contracts.ts b/src/Clients/PosTerminal/src/contracts.ts
+index a5da168af..5a5b4f981 100644
+--- a/src/Clients/PosTerminal/src/contracts.ts
++++ b/src/Clients/PosTerminal/src/contracts.ts
+@@ -156,6 +156,8 @@ export interface DisplayLine {
+   modifierIds?: string[];
+   /** Added at the till and not yet sent to the kitchen. */
+   unsent?: boolean;
++  /** A short preparation note the cashier typed for the line; printed on the kitchen ticket. */
++  specialInstructions?: string;
+ }
+ 
+ export interface DisplaySnapshot {
+diff --git a/src/Clients/PosTerminal/src/routes/Cashier.tsx b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+index c7739ec2e..11f7d4bc4 100644
+--- a/src/Clients/PosTerminal/src/routes/Cashier.tsx
++++ b/src/Clients/PosTerminal/src/routes/Cashier.tsx
+@@ -13,7 +13,7 @@ import type { CatalogProduct, DisplayLine, DisplaySessionStatus, DisplaySnapshot
+ import { isPlainClick, useRouter } from "../router";
+ import { focusOnMount } from "../focusOnMount";
+ import { takeTableCart, takeWithoutKitchenIntent } from "../tableCart";
+-import { kitchenlessReasons, kitchenlessText, navLabels, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
++import { kitchenlessReasons, kitchenlessText, navLabels, itemNoteText, openBillDeniedText, quantityEntryText, roleLabelFor, sendAndCollectLabel, stateText, type KitchenlessReasonCode } from "../strings";
+ import { formatDateTime, formatMoney, formatQuantity } from "../format";
+ import { savedId } from "../storage";
+ import { playNewItemChime } from "../audioAlerts";
+@@ -24,6 +24,7 @@ import { usePendingChecksAlert } from "../features/pending-checks";
+ import { BillingSplitApiError } from "../features/billing";
+ import { CashSessionBand, CashSessionLink, NoSaleLink, useCashSessionState } from "../features/cash-session-status";
+ import { CashierModifierPicker } from "./CashierModifierPicker";
++import { CashierItemNote } from "./CashierItemNote";
+ import { ExperiencePage, type BackendStatus } from "./workspace";
+ import { foldSearch } from "../search";
+ import { moveBetweenTabs } from "../design-system";
+@@ -147,6 +148,10 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const cancelRemoveButton = useRef<HTMLButtonElement>(null);
+   const headerMenu = useRef<HTMLElement>(null);
+   const [pickingProduct, setPickingProduct] = useState<CatalogProduct | null>(null);
++  // The note typed for the next product the cashier taps: null while the field is closed.
++  const [itemNote, setItemNote] = useState<string | null>(null);
++  const lineNote = itemNote?.trim() ?? "";
++
+   const [quantityEntry, setQuantityEntry] = useState<{ itemId: string; draft: string } | null>(null);
+   // The latest entry for the handlers: Enter and the blur that follows it must send once.
+   const quantityEntryRef = useRef<{ itemId: string; draft: string } | null>(null);
+@@ -157,6 +162,10 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const [kitchenlessPicking, setKitchenlessPicking] = useState(false);
+   const [kitchenlessReason, setKitchenlessReason] = useState<KitchenlessReasonCode | null>(null);
+   const kitchenlessOrderId = order?.orderId;
++  // The kitchen-less mode hides the note field and carries no note, so a waiting note is dropped instead of reappearing unseen.
++  useEffect(() => {
++    if (kitchenlessReason) setItemNote(null);
++  }, [kitchenlessReason]);
+   // A draft that never reached the kitchen has nothing to add to; an order with a sent line takes the kitchen-less path even while a new unsent cart sits on it.
+   const kitchenlessAvailable = !!kitchenlessOrderId && (!order?.editable || order.lines.some((line) => !line.unsent));
+   useEffect(() => {
+@@ -668,7 +677,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     const target = activeOrder;
+     if (!target?.orderId || !line.productId) return;
+     await execute(
+-      () => api.addItem(terminalId, target.orderId!, line.productId!, target.revision, line.modifierIds ?? [], line.quantity),
++      () => api.addItem(terminalId, target.orderId!, line.productId!, target.revision, line.modifierIds ?? [], line.quantity, line.specialInstructions),
+       "Kalem geri alındı.",
+     );
+   };
+@@ -695,13 +704,14 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+   const tapQueueable = (product: CatalogProduct) => !kitchenlessReason && !product.modifierGroups?.length;
+ 
+   const chooseProduct = (product: CatalogProduct) => {
+-    if (queueOpen.current && tapQueueable(product)) {
++    // A queued tap carries no note, so while a note is waiting the tap goes the normal way, which refuses it plainly during an add.
++    if (queueOpen.current && tapQueueable(product) && !lineNote) {
+       queuedTaps.current.set(product.productId, (queuedTaps.current.get(product.productId) ?? 0) + 1);
+       setQueuedCount((count) => count + 1);
+       return;
+     }
+     if (product.modifierGroups?.length && !kitchenlessReason) setPickingProduct(product);
+-    else void addProduct(product);
++    else void addProduct(product, [], lineNote);
+   };
+ 
+   // A typed quantity replaces the tapped one; a missing, zero, negative or unchanged number leaves the line as it is (removing is its own button).
+@@ -725,7 +735,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+     chooseProduct(match);
+   };
+ 
+-  const addProduct = async (product: CatalogProduct, modifierIds: string[] = []) => {
++  const addProduct = async (product: CatalogProduct, modifierIds: string[] = [], note = "") => {
+     if (addingProduct.current) {
+       // An add is still in flight and this product (a confirmed option choice, a second tap that beat the redraw) cannot join its queue: say so.
+       setFeedbackKind("error");
+@@ -784,7 +794,9 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+         const reused = activeOrder?.editable || activeOrder?.acceptsRound ? activeOrder : null;
+         const target = reused ? { orderId: reused.orderId!, revision: reused.revision } : await openOrder();
+         try {
+-          const added = await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds);
++          const added = await api.addItem(terminalId, target.orderId, product.productId, target.revision, modifierIds, 1, note);
++          // The note is on the line now, whatever happens to the taps queued behind it; clear it unless the cashier has changed it since.
++          if (note) setItemNote((current) => (current?.trim() === note ? null : current));
+           await drainQueuedTaps(target.orderId, added.revision);
+         } catch (reason) {
+           // The order just opened is the till's active one: show it, so the next tap fills it instead of opening another (a 409 is reloaded by execute).
+@@ -1011,6 +1023,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+             </label>
+           </div>
+ 
++          {!kitchenlessReason && <CashierItemNote note={itemNote} onChange={setItemNote} />}
+           {queuedCount > 0 && <div className="alert information" role="status">{queuedCount} dokunuş sıraya alındı, ekleniyor…</div>}
+           <div className="product-grid">
+             {visibleProducts.map((product) => (
+@@ -1060,6 +1073,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+                     <div className="ticket-line-main">
+                       <strong>{line.name}</strong>
+                       <small>{formatMoney(line.lineTotal / line.quantity)} × {formatQuantity(line.quantity)} · KDV dahil</small>
++                      {line.specialInstructions && <small className="ticket-line-note">{itemNoteText.onLine(line.specialInstructions)}</small>}
+                     </div>
+                     <strong className="line-total">{formatMoney(line.lineTotal)}</strong>
+                     {confirmRemoveId === line.itemId ? (
+@@ -1204,7 +1218,7 @@ export function Cashier({ navigateToPage = (href: string) => window.location.ass
+           onCancel={() => setPickingProduct(null)}
+           onConfirm={(modifierIds) => {
+             setPickingProduct(null);
+-            void addProduct(pickingProduct, modifierIds);
++            void addProduct(pickingProduct, modifierIds, lineNote);
+           }}
+         />
+       )}
+diff --git a/src/Clients/PosTerminal/src/strings.ts b/src/Clients/PosTerminal/src/strings.ts
+index 89db98d89..4e37dfba3 100644
+--- a/src/Clients/PosTerminal/src/strings.ts
++++ b/src/Clients/PosTerminal/src/strings.ts
+@@ -1542,3 +1542,14 @@ export const recentSalesText = {
+   methods: { Cash: "Nakit", Card: "Kart", Eft: "Havale", Account: "Müşteri hesabı" } as Readonly<Record<string, string>>,
+   unknownMethod: "Bilinmiyor",
+ } as const;
++
++/** Kasa satış ekranında sıradaki ürüne yazılan kısa not (mutfak fişine basılır). */
++export const itemNoteText = {
++  open: "Not ekle",
++  group: "Ürün notu",
++  input: "Sıradaki ürüne not",
++  placeholder: "Örn. soğansız, az pişmiş",
++  close: "Vazgeç",
++  hint: "Not, dokunacağınız sıradaki ürüne eklenir ve mutfak fişine yazılır; eklenince alan kapanır. Kişisel bilgi yazmayın.",
++  onLine: (note: string) => `Not: ${note}`,
++} as const;
+diff --git a/src/Clients/PosTerminal/src/styles.css b/src/Clients/PosTerminal/src/styles.css
+index fb99434d6..a764486c9 100644
+--- a/src/Clients/PosTerminal/src/styles.css
++++ b/src/Clients/PosTerminal/src/styles.css
+@@ -376,6 +376,11 @@ button.operator-card { min-height: 48px; border: 1px solid #4d5e6c; border-radiu
+ .ticket-footer { flex: none; max-height: 60%; overflow-y: auto; }
+ .kitchenless { display: grid; gap: .5rem; margin: 0 1.2rem .75rem; }
+ .kitchenless button { min-height: 48px; }
++.item-note { display: grid; gap: .35rem; margin: 0 0 .75rem; }
++.item-note__row { display: flex; gap: .5rem; }
++.item-note__row input { flex: 1; min-width: 0; min-height: 48px; font-size: 1rem; }
++.item-note button { min-height: 48px; }
++.ticket-line-note { font-style: italic; }
+ .ticket-empty { display: grid; place-items: center; min-height: 130px; color: #8b959e; text-align: center; }
+ .ticket-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .55rem .8rem; padding: 1rem 0; border-bottom: 1px solid #e7eaed; }
+ .ticket-line-main { display: grid; gap: .25rem; }
+diff --git a/src/Clients/PosTerminal/src/touchTargets.test.ts b/src/Clients/PosTerminal/src/touchTargets.test.ts
+index 671b7223c..4eabcd8aa 100644
+--- a/src/Clients/PosTerminal/src/touchTargets.test.ts
++++ b/src/Clients/PosTerminal/src/touchTargets.test.ts
+@@ -15,6 +15,8 @@ const targets: ReadonlyArray<readonly [file: string, selector: string]> = [
+   ["./styles.css", ".pairing-card summary {"],
+   ["./styles.css", ".dialog-close {"],
+   ["./styles.css", ".search-field input {"],
++  ["./styles.css", ".item-note__row input {"],
++  ["./styles.css", ".item-note button {"],
+   ["./features/pending-checks/pending-checks.css", ".pending-checks__recall {"],
+   ["./features/recent-sales/recent-sales.css", ".recent-sales__row {"],
+   ["./features/recent-sales/recent-sales.css", ".recent-sales__refresh {"],
+diff --git a/tests/Host/Experience/CashSession/ClientLimitLockTests.cs b/tests/Host/Experience/CashSession/ClientLimitLockTests.cs
+index d5dfc01ea..fc9e897a8 100644
+--- a/tests/Host/Experience/CashSession/ClientLimitLockTests.cs
++++ b/tests/Host/Experience/CashSession/ClientLimitLockTests.cs
+@@ -2,6 +2,7 @@ using System.Globalization;
+ using System.Text.RegularExpressions;
+ using ALKAROS.Cash.Contracts;
+ using ALKAROS.Cash.TransactionLedger;
++using ALKAROS.Host.DualScreen;
+ using ALKAROS.Host.Experience.Billing;
+ using ALKAROS.Settings.BillAdjustmentCap;
+ using ALKAROS.Settings.CashCloseTolerance;
+@@ -79,6 +80,15 @@ public sealed class ClientLimitLockTests
+         Assert.Equal(7 + 4 + 2, limits.Length);
+     }
+ 
++    [Fact]
++    public void TheTillItemNoteInputLimitIsTheServerLineNoteLimit()
++    {
++        var screen = File.ReadAllText(Path.Combine(
++            Root, "src", "Clients", "PosTerminal", "src", "routes", "CashierItemNote.tsx"));
++
++        Assert.Equal([DualScreenStore.MaxSpecialInstructionsLength], Limits(screen));
++    }
++
+     // Every client file that calls the refund endpoints, found rather than listed, so a new refund screen is covered at once.
+     public static TheoryData<string> RefundScreens()
+     {
