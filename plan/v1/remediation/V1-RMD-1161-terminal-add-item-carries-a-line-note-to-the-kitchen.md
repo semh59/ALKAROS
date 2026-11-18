@@ -1,7 +1,7 @@
 # V1-RMD-1161 - Kasa kalem ekleme ucu isteğe bağlı kalem notu taşır; not mutfak fişine ve panosuna ulaşır
 
 - Task ID: V1-RMD-1161
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing
