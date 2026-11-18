@@ -370,6 +370,68 @@ describe("cash-session.js cash-out requests", () => {
     expect(buttons()).toEqual([]);
   });
 
+  describe("a manager approving at the till with their own password", () => {
+    const fill = (name, secret) => {
+      $(`#approver-name-${REQUEST}`).value = name;
+      $(`#approver-secret-${REQUEST}`).value = secret;
+    };
+    const press = () => document.querySelector(`[data-approve-here="${REQUEST}"]`).click();
+
+    it("offers the fields to the requester who may not approve, with a password-type field and no Onayla", async () => {
+      await open({ capabilities: [], list: request(ME) });
+      expect(buttons()).toEqual(["cancel"]);
+      expect($("#pending-requests").textContent).toContain("Yönetici burada onaylasın");
+      expect($(`#approver-secret-${REQUEST}`).type).toBe("password");
+      expect($(`[data-approve-here="${REQUEST}"]`).textContent).toBe("Yönetici onayı ver");
+    });
+
+    it("does not offer them to an approver or to someone else's request", async () => {
+      await open({ capabilities: ["cash.session.override"], list: request(OTHER) });
+      expect($(`#approver-name-${REQUEST}`)).toBeNull();
+      document.body.innerHTML = "";
+      await open({ capabilities: [], list: request(OTHER) });
+      expect($(`#approver-name-${REQUEST}`)).toBeNull();
+      document.body.innerHTML = "";
+      await open({ capabilities: ["cash.session.override"], list: request(ME, true) });
+      expect($(`#approver-name-${REQUEST}`)).toBeNull();
+    });
+
+    it("sends the typed sign-in, announces the approval, and keeps the password nowhere on the page", async () => {
+      const { calls } = await open({ capabilities: [], list: request(ME) });
+      fill("mudur", "Gizli-Sifre-9");
+      press();
+      await vi.waitFor(() => expect($("#cs-notice")).not.toBeNull());
+
+      const sent = posted(calls, `/cash-movement-requests/${REQUEST}/approve`);
+      expect(sent).toHaveLength(1);
+      expect(sent[0].body).toEqual({ ManagerUsername: "mudur", ManagerPassword: "Gizli-Sifre-9" });
+      expect($("#cs-notice").textContent).toBe("Çıkış onaylandı ve kasadan düşüldü.");
+      expect(document.body.innerHTML).not.toContain("Gizli-Sifre-9");
+    });
+
+    it("says in Turkish when the sign-in is wrong, keeps the name, and empties the password", async () => {
+      await open({
+        capabilities: [], list: request(ME),
+        decideReply: reply(403, { error: { code: "MANAGER_CREDENTIAL_INVALID", message: "RAW" } }),
+      });
+      fill("mudur", "yanlis");
+      press();
+      await vi.waitFor(() => expect($("#pending-requests").textContent).toContain("Yönetici adı veya şifre hatalı."));
+
+      expect($("#pending-requests").textContent).not.toContain("RAW");
+      expect($(`#approver-name-${REQUEST}`).value).toBe("mudur");
+      expect($(`#approver-secret-${REQUEST}`).value).toBe("");
+    });
+
+    it("sends nothing and asks for both fields when one is empty", async () => {
+      const { calls } = await open({ capabilities: [], list: request(ME) });
+      fill("mudur", "");
+      press();
+      await vi.waitFor(() => expect($("#pending-requests").textContent).toContain("Yönetici adı ve şifresini girin."));
+      expect(posted(calls, `/cash-movement-requests/${REQUEST}/approve`)).toHaveLength(0);
+    });
+  });
+
   it.each([
     ["approve", "Çıkış onaylandı ve kasadan düşüldü."],
     ["reject", "Çıkış talebi reddedildi."],

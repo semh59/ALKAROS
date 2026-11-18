@@ -1,0 +1,5 @@
+C1-body-key-renamed:       Tests  1 failed | 71 passed (72)
+C3-empty-check-removed:       Tests  1 failed | 71 passed (72)
+C2-form-shown-to-approvers:       Tests  1 failed | 71 passed (72)
+S1-decider-is-cashier: killed (AManagerTypingHerPassword...)
+S2-confirm-removed: killed (ThreeWrongPasswordsStopTheCashier...)

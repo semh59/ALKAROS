@@ -1,5 +1,6 @@
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
@@ -35,17 +36,33 @@ public static partial class DualScreenApplication
             Guid terminalId,
             Guid cashSessionId,
             Guid requestId,
+            ApproveCashMovementRequestV1? request,
             ICashSessionRepository sessionRepository,
             CashMovementStore movements,
             DualScreenStore store,
             IAuthorizationService authorization,
+            InPlaceManagerApproval approval,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierPermissionAsync(
-                context, terminalId, store, authorization, ApplicationPermissions.CashSessionOverride, cancellationToken);
-            var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
-            return Results.Ok(await movements.ApproveAsync(cashSessionId, requestId, principal.UserId, session.Snapshot.CashierUserId, cancellationToken));
+            // With a typed manager sign-in the cashier at the till only needs the drawer, and the request has to be the
+            // cashier's own; without one the caller's own override permission decides, as before.
+            if (request?.ManagerUsername is null && request?.ManagerPassword is null)
+            {
+                var approver = await RequireCashierPermissionAsync(
+                    context, terminalId, store, authorization, ApplicationPermissions.CashSessionOverride, cancellationToken);
+                var session = await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+                return Results.Ok(await movements.ApproveAsync(cashSessionId, requestId, approver.UserId, session.Snapshot.CashierUserId, cancellationToken));
+            }
+
+            var cashier = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+            await RequireSessionOnTerminalAsync(sessionRepository, cashSessionId, terminalId, cancellationToken);
+            var manager = await approval.VerifyAsync(
+                request!.ManagerUsername, request.ManagerPassword, cashier.UserId, ApplicationPermissions.CashSessionOverride,
+                "cash.movement_request.approval_failed", "CashSession", cashSessionId, context.TraceIdentifier, cancellationToken);
+            var approved = await movements.ApproveAsync(cashSessionId, requestId, manager.UserId, cashier.UserId, cancellationToken);
+            approval.Confirm(cashier.UserId, request.ManagerUsername!);
+            return Results.Ok(approved);
         });
 
         group.MapPost("/{cashSessionId:guid}/cash-movement-requests/{requestId:guid}/reject", async (
@@ -83,6 +100,9 @@ public static partial class DualScreenApplication
         });
     }
 }
+
+/// <summary>The manager's own sign-in when a manager approves a cash-out request at the cashier's till.</summary>
+public sealed record ApproveCashMovementRequestV1(string? ManagerUsername, string? ManagerPassword);
 
 /// <summary>the optional note a manager gives when rejecting a cash-out request.</summary>
 public sealed record RejectCashMovementRequestV1(string? Note);

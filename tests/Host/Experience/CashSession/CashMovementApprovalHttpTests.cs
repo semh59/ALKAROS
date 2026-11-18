@@ -22,6 +22,7 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
 {
     private const string ThresholdKey = "cash.cash_out_approval_threshold";
     private const string SelfApprovalKey = "approvals.manager_self_approval_enabled";
+    private const string ManagerPassword = "Mudur-Sifre-1";
 
     private static readonly string[] DecisionActions = ["approve", "reject", "cancel"];
     private static readonly string[] ManualMovementTypes = ["CashOut", "CashIn"];
@@ -775,6 +776,114 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
 
     private static string CookieFor(string action, Till till, Manager manager) => action == "cancel" ? till.Cashier : manager.Cookie;
 
+    [Fact]
+    public async Task AManagerTypingHerPasswordAtTheTillApprovesTheCashOutAndIsRecordedAsTheDecider()
+    {
+        await using var till = await TillAsync(opening: 2000m);
+        var requestId = await till.RequestAsync(800m, "tedarikçi");
+        var manager = await till.ManagerWithPasswordAsync(ApplicationPermissions.CashSessionOverride);
+
+        var approved = await till.DecideInPlaceAsync(requestId, manager.Username, ManagerPassword);
+
+        Assert.Equal(HttpStatusCode.OK, approved.StatusCode);
+        var body = await approved.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Approved", body.GetProperty("status").GetString());
+        Assert.False(body.GetProperty("selfApproved").GetBoolean());
+        Assert.Equal(manager.UserId, body.GetProperty("decidedBy").GetGuid());
+        Assert.Equal(1200m, await till.ExpectedCashAsync());
+        Assert.Equal(0, await _database.AuditRowsContainingAsync(till.SessionId, ManagerPassword));
+    }
+
+    [Fact]
+    public async Task AWrongManagerPasswordLeavesTheCashOutWaitingAndIsRecordedWithoutThePassword()
+    {
+        await using var till = await TillAsync(opening: 2000m);
+        var requestId = await till.RequestAsync(800m, "tedarikçi");
+        var manager = await till.ManagerWithPasswordAsync(ApplicationPermissions.CashSessionOverride);
+
+        var refused = await till.DecideInPlaceAsync(requestId, manager.Username, "yanlis-sifre");
+
+        await AssertErrorAsync(refused, HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
+        Assert.Equal(2000m, await till.ExpectedCashAsync());
+        Assert.Equal(1, await _database.AuditCountAsync(till.SessionId, "cash.movement_request.approval_failed"));
+        Assert.Equal(0, await _database.AuditRowsContainingAsync(till.SessionId, "yanlis-sifre"));
+    }
+
+    [Fact]
+    public async Task AManagerWithoutTheOverridePermissionCannotApproveInPlace()
+    {
+        await using var till = await TillAsync(opening: 2000m);
+        var requestId = await till.RequestAsync(800m, "tedarikçi");
+        var notManager = await till.ManagerWithPasswordAsync(ApplicationPermissions.CashDrawer);
+
+        var refused = await till.DecideInPlaceAsync(requestId, notManager.Username, ManagerPassword);
+
+        await AssertErrorAsync(refused, HttpStatusCode.Forbidden, "APPROVER_LACKS_PERMISSION", "yetki");
+        Assert.Equal(2000m, await till.ExpectedCashAsync());
+    }
+
+    [Fact]
+    public async Task TheCashierCannotApproveTheirOwnCashOutWithTheirOwnPasswordEvenWhenSelfApprovalIsOn()
+    {
+        await using var till = await TillAsync(opening: 2000m, openedByManager: true);
+        await _database.SetSettingAsync(SelfApprovalKey, "Boolean", "true");
+        var requestId = await till.RequestAsync(800m, "tedarikçi");
+        var cashierId = await _database.UserIdForCookieAsync(till.Cashier);
+        await _database.SetPasswordAsync(cashierId, ManagerPassword);
+
+        var refused = await till.DecideInPlaceAsync(requestId, "csh004-role-" + cashierId.ToString("N")[..8], ManagerPassword);
+
+        await AssertErrorAsync(refused, HttpStatusCode.Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "kendi");
+        Assert.Equal(2000m, await till.ExpectedCashAsync());
+    }
+
+    [Fact]
+    public async Task AnotherCashiersCashOutCannotBeApprovedInPlaceFromThisCashiersScreen()
+    {
+        await using var till = await TillAsync(opening: 2000m);
+        var requestId = await till.RequestAsync(800m, "tedarikçi");
+        var otherCashier = await till.Cookie("other", ApplicationPermissions.CashDrawer);
+        var manager = await till.ManagerWithPasswordAsync(ApplicationPermissions.CashSessionOverride);
+
+        var refused = await till.DecideInPlaceAsync(requestId, manager.Username, ManagerPassword, otherCashier);
+
+        await AssertErrorAsync(refused, HttpStatusCode.Conflict, "CASH_MOVEMENT_REQUEST_NOT_OWN_SESSION", "kendi kasa oturumunda");
+        Assert.Equal(2000m, await till.ExpectedCashAsync());
+    }
+
+    [Fact]
+    public async Task ThreeWrongPasswordsStopTheCashierAndARightOneResetsTheCountForNextTime()
+    {
+        await using var till = await TillAsync(opening: 5000m);
+        var manager = await till.ManagerWithPasswordAsync(ApplicationPermissions.CashSessionOverride);
+        var first = await till.RequestAsync(800m, "birinci");
+        for (var attempt = 0; attempt < 2; attempt++)
+            await AssertErrorAsync(await till.DecideInPlaceAsync(first, manager.Username, "yanlis-" + attempt), HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
+        Assert.Equal(HttpStatusCode.OK, (await till.DecideInPlaceAsync(first, manager.Username, ManagerPassword)).StatusCode);
+
+        var second = await till.RequestAsync(800m, "ikinci");
+        for (var attempt = 0; attempt < 2; attempt++)
+            await AssertErrorAsync(await till.DecideInPlaceAsync(second, manager.Username, "yanlis-" + attempt), HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
+        await AssertErrorAsync(await till.DecideInPlaceAsync(second, manager.Username, "yanlis-son"), HttpStatusCode.Forbidden, "MANAGER_CREDENTIAL_INVALID", "hatalı");
+        var stopped = await till.DecideInPlaceAsync(second, manager.Username, ManagerPassword);
+
+        await AssertErrorAsync(stopped, HttpStatusCode.TooManyRequests, "TOO_MANY_ATTEMPTS", "15 dakika");
+    }
+
+    [Theory]
+    [InlineData("kullanici", null)]
+    [InlineData(null, "sifre")]
+    public async Task ASignInWithOnlyOneFieldIsRefusedAndApprovesNothing(string? username, string? password)
+    {
+        await using var till = await TillAsync(opening: 2000m);
+        var requestId = await till.RequestAsync(800m, "tedarikçi");
+
+        var refused = await till.DecideAsync(requestId, "approve", till.Cashier, new { ManagerUsername = username, ManagerPassword = password });
+
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        Assert.Equal(2000m, await till.ExpectedCashAsync());
+    }
+
     private static async Task AssertErrorAsync(HttpResponseMessage response, HttpStatusCode status, string code, string messagePart)
     {
         Assert.Equal(status, response.StatusCode);
@@ -855,6 +964,16 @@ public sealed class CashMovementApprovalHttpTests : IAsyncLifetime
                     Content = new StringContent(string.Empty, Encoding.UTF8, "application/json"),
                 },
                 cookie);
+
+        public async Task<(Guid UserId, string Username)> ManagerWithPasswordAsync(params string[] permissions)
+        {
+            var userId = await database.UserIdForCookieAsync(await Cookie("approver", permissions));
+            await database.SetPasswordAsync(userId, ManagerPassword);
+            return (userId, "csh004-role-" + userId.ToString("N")[..8]);
+        }
+
+        public Task<HttpResponseMessage> DecideInPlaceAsync(Guid requestId, string username, string password, string? cookie = null)
+            => DecideAsync(requestId, "approve", cookie ?? Cashier, new { ManagerUsername = username, ManagerPassword = password });
 
         public Task<HttpResponseMessage> DecideAsync(Guid requestId, string action, string cookie, object? body = null)
             => SendAsync(SessionPath + $"/cash-movement-requests/{requestId:D}/{action}", cookie, body ?? new { });

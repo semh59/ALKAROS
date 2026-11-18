@@ -1,0 +1,72 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-movement.test.js (72 tests | 4 failed) 13647ms
+       × offers the fields to the requester who may not approve, with a password-type field and no Onayla 125ms
+       × sends the typed sign-in, announces the approval, and keeps the password nowhere on the page 95ms
+       × says in Turkish when the sign-in is wrong, keeps the name, and empties the password 111ms
+       × sends nothing and asks for both fields when one is empty 95ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > a manager approving at the till with their own password > offers the fields to the requester who may not approve, with a password-type field and no Onayla
+AssertionError: expected 'Onay bekleyen çıkışlarTalep Eden · 12…' to contain 'Yönetici burada onaylasın'
+
+Expected: "Yönetici burada onaylasın"
+Received: "Onay bekleyen çıkışlarTalep Eden · 12:00₺800,00avansTalebi geri çek"
+
+ ❯ cash-session-movement.test.js:383:50
+    381|       await open({ capabilities: [], list: request(ME) });
+    382|       expect(buttons()).toEqual(["cancel"]);
+    383|       expect($("#pending-requests").textContent).toContain("Yönetici b…
+       |                                                  ^
+    384|       expect($(`#approver-secret-${REQUEST}`).type).toBe("password");
+    385|       expect($(`[data-approve-here="${REQUEST}"]`).textContent).toBe("…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > a manager approving at the till with their own password > sends the typed sign-in, announces the approval, and keeps the password nowhere on the page
+TypeError: Cannot set properties of null (setting 'value')
+ ❯ fill cash-session-movement.test.js:375:44
+    373|   describe("a manager approving at the till with their own password", …
+    374|     const fill = (name, secret) => {
+    375|       $(`#approver-name-${REQUEST}`).value = name;
+       |                                            ^
+    376|       $(`#approver-secret-${REQUEST}`).value = secret;
+    377|     };
+ ❯ cash-session-movement.test.js:398:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > a manager approving at the till with their own password > says in Turkish when the sign-in is wrong, keeps the name, and empties the password
+TypeError: Cannot set properties of null (setting 'value')
+ ❯ fill cash-session-movement.test.js:375:44
+    373|   describe("a manager approving at the till with their own password", …
+    374|     const fill = (name, secret) => {
+    375|       $(`#approver-name-${REQUEST}`).value = name;
+       |                                            ^
+    376|       $(`#approver-secret-${REQUEST}`).value = secret;
+    377|     };
+ ❯ cash-session-movement.test.js:414:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  cash-session-movement.test.js > cash-session.js cash-out requests > a manager approving at the till with their own password > sends nothing and asks for both fields when one is empty
+TypeError: Cannot set properties of null (setting 'value')
+ ❯ fill cash-session-movement.test.js:375:44
+    373|   describe("a manager approving at the till with their own password", …
+    374|     const fill = (name, secret) => {
+    375|       $(`#approver-name-${REQUEST}`).value = name;
+       |                                            ^
+    376|       $(`#approver-secret-${REQUEST}`).value = secret;
+    377|     };
+ ❯ cash-session-movement.test.js:426:7
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 68 passed (72)
+   Start at  23:47:30
+   Duration  16.73s (transform 2.71s, setup 75ms, import 101ms, tests 13.65s, environment 2.33s)
+

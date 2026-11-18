@@ -48,6 +48,7 @@
     drafts: { amount: '', notes: '', counted: '', countNotes: '', explanation: '', managerUsername: '', acknowledged: false, noSaleNote: '' },
     zeroCountPrompt: false,
     pendingDecision: null,
+    approveHere: { id: null, name: '', error: null },
     userId: null,
     capabilities: [],
     movements: null,
@@ -639,6 +640,33 @@
       });
   }
 
+  // A manager at the till approves with their own sign-in; the password is read from the field when pressed and never stored.
+  function approveHere(requestId) {
+    var name = document.getElementById('approver-name-' + requestId).value.trim();
+    var secret = document.getElementById('approver-secret-' + requestId).value;
+    if (!name || !secret) {
+      state.approveHere = { id: requestId, name: name, error: 'Yönetici adı ve şifresini girin.' };
+      render();
+      return;
+    }
+    setBusy(true);
+    api(movementsBase() + '/cash-movement-requests/' + requestId + '/approve', {
+      method: 'POST', body: { ManagerUsername: name, ManagerPassword: secret },
+    }).then(function (result) {
+      state.busy = false;
+      state.approveHere = result.ok
+        ? { id: null, name: '', error: null }
+        : { id: requestId, name: name, error: describeHttpFailure(result.status, result.body) };
+      state.error = null;
+      state.notice = result.ok ? DECISION_NOTICE.approve : null;
+      return loadMovements();
+    }).catch(function () {
+      state.busy = false;
+      state.approveHere = { id: requestId, name: name, error: 'Bağlantı kesildi. Onay gitmiş olabilir; nakit hareketlerini kontrol edin.' };
+      render();
+    });
+  }
+
   function startCounting() {
     setBusy(true);
     api(cashSessionsBase() + '/' + state.session.cashSessionId + '/start-count', { method: 'POST' })
@@ -1001,6 +1029,9 @@
         decideRequest(decision.id, decision.action, DECISION_NOTICE[decision.action]);
       });
     });
+    Array.prototype.forEach.call(app.querySelectorAll('[data-approve-here]'), function (button) {
+      button.addEventListener('click', function () { approveHere(button.dataset.approveHere); });
+    });
     var back = document.getElementById('request-back');
     if (back) {
       back.addEventListener('click', function () {
@@ -1021,6 +1052,19 @@
     return '<button class="cs-btn ' + cssClass + '" type="button" data-request-action="' + action +
       '" data-request-id="' + request.id + '" aria-label="' + label + ': ' + escapeHtml(formatMoney(request.amount) + who) + '"' +
       (state.busy ? ' disabled' : '') + '>' + label + '</button>';
+  }
+
+  function renderApproveHere(request) {
+    var shown = state.approveHere.id === request.id ? state.approveHere : { name: '', error: null };
+    var disabled = state.busy ? ' disabled' : '';
+    return '<div><span class="cs-field-label">Yönetici burada onaylasın</span>' +
+      (shown.error ? '<div class="cs-field-hint" role="alert">' + escapeHtml(shown.error) + '</div>' : '') +
+      '<label class="cs-field-label" for="approver-name-' + request.id + '">Yönetici kullanıcı adı</label>' +
+      '<input class="cs-input" type="text" id="approver-name-' + request.id + '" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="64" value="' +
+      escapeHtml(shown.name) + '"' + disabled + '>' +
+      '<label class="cs-field-label" for="approver-secret-' + request.id + '">Yönetici şifresi</label>' +
+      '<input class="cs-input" type="password" id="approver-secret-' + request.id + '" autocomplete="new-password" maxlength="256"' + disabled + '>' +
+      '<button class="cs-btn cs-btn-secondary" type="button" data-approve-here="' + request.id + '"' + disabled + '>Yönetici onayı ver</button></div>';
   }
 
   function renderPendingRequests() {
@@ -1052,7 +1096,8 @@
         new Date(r.requestedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + '</span>' +
         '<span class="value">' + formatMoney(r.amount) + '</span></div>' +
         '<div class="cs-note">' + escapeHtml(r.reason) + '</div>' +
-        '<div class="cs-row">' + buttons + '</div></div>';
+        '<div class="cs-row">' + buttons + '</div>' +
+        (own && !canApprove() && !asking ? renderApproveHere(r) : '') + '</div>';
     }).join('');
     return '<div id="pending-requests" role="list" aria-label="Onay bekleyen çıkışlar"><div class="cs-eyebrow">Onay bekleyen çıkışlar</div>' + rows + '</div>';
   }

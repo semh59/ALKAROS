@@ -1,0 +1,15 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\bin\Debug\net8.0\ALKAROS.Host.Experience.CashSession.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:10.08]     ALKAROS.Host.Experience.CashSession.Tests.CashMovementApprovalHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheCashOutAndIsRecordedAsTheDecider [FAIL]
+  Başarısız ALKAROS.Host.Experience.CashSession.Tests.CashMovementApprovalHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheCashOutAndIsRecordedAsTheDecider [5 s]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: OK
+Actual:   Forbidden
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.CashSession.Tests.CashMovementApprovalHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheCashOutAndIsRecordedAsTheDecider() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashMovementApprovalHttpTests.cs:line 788
+   at ALKAROS.Host.Experience.CashSession.Tests.CashMovementApprovalHttpTests.AManagerTypingHerPasswordAtTheTillApprovesTheCashOutAndIsRecordedAsTheDecider() in D:\PROJECT\ALKAROS\tests\Host\Experience\CashSession\CashMovementApprovalHttpTests.cs:line 794
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 5 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+RUN-FINISHED

@@ -1,0 +1,3 @@
+# V1-RMD-1174 qa
+1. qa-guvenlik-yetki: 'onaylayan yonetici kaydi yok / selfApproved yanlis' bulgulari mutant testi sirasinda gecici bozulmus dosya okunarak uretildi (yanlis alarm); gercek kodda decidedBy=yonetici, selfApproved=false, testle kilitli (AManagerTypingHerPassword...). Kismi alan: ArgumentException 400 (test eklendi). Sifre state/DOM'da yok, eski yol ayni.
+2. qa-test-kalitesi: eksikler giderildi: Confirm/sayac sifirlama + 3 yanlis sifre kilidi (ThreeWrongPasswordsStop...; Confirm mutanti olu), kismi govde 400 (Theory), anlamsiz assert kaldirildi. Kalan dusuk: JS catch kolu, busy iken disabled, CashDrawer izni yok / baska terminal / eski yol regresyonu (eski yol mevcut testlerle yesil kalir).
