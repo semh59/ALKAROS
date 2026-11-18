@@ -17,8 +17,9 @@
 ## Owned surface
 
 - `evidence/V1-RMD-1153/**`
-- `tests/Clients/StaticApps/support/setup.js`
-- `tests/Clients/StaticApps/support/page-timer-teardown.test.js`
+- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - tests/Clients/StaticApps/support/setup.js
+  - tests/Clients/StaticApps/support/page-timer-teardown.test.js
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope

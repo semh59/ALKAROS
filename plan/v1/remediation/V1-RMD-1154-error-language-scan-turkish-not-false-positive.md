@@ -16,7 +16,8 @@
 ## Owned surface
 
 - `evidence/V1-RMD-1154/**`
-- `tests/Host/Experience/PaymentTender/ErrorMessageLanguageTests.cs`
+- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
+  - tests/Host/Experience/PaymentTender/ErrorMessageLanguageTests.cs
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
