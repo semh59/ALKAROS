@@ -1,0 +1,24 @@
+S1 KILLED WHERE b.status IN ('Paid', 'Cancelled') -> WHERE TRUE
+S2 KILLED WHERE r.bill_id = b.bill_id AND r.status IN ('Completed', 'Rejected') -> WHERE r.bill_id = b.bill_id
+S3 KILLED WHERE h.order_id = o.order_id AND h.reason IS NOT NULL AND h.reason <> @marker -> WHERE FALSE
+S4 KILLED OR (r.decision_note IS NOT NULL AND r.decision_note <> @marker)))) -> OR FALSE)))
+S5 KILLED WHERE i.bill_id = b.bill_id AND i.notes IS NOT NULL AND i.notes <> @marker) -> WHERE FALSE)
+S6 KILLED WHERE a.bill_id = b.bill_id AND a.notes IS NOT NULL AND a.notes <> @marker) -> WHERE FALSE)
+P1 KILLED WHERE bill_id = @subject AND status IN ('Completed', 'Rejected') AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """, -> WHERE bill_id = @subject AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """,
+P2 KILLED SET reason = @m, decision_note = CASE WHEN decision_note IS NOT NULL THEN @m END -> SET reason = @m
+P3 KILLED UPDATE billing.bill_items SET notes = @m WHERE -> UPDATE billing.bill_items SET notes = notes WHERE
+P4 KILLED UPDATE orders.order_status_history SET reason = @m WHERE -> UPDATE orders.order_status_history SET reason = reason WHERE
+P5 KILLED UPDATE billing.bills SET cancellation_reason = @m WHERE -> UPDATE billing.bills SET cancellation_reason = NULL WHERE
+P6 KILLED UPDATE billing.bill_adjustments SET notes = @m WHERE -> UPDATE billing.bill_adjustments SET notes = NULL WHERE
+P7 KILLED + $"bill_texts={plan.Candidates.Count(c => c.DataClass == RetentionClass.BillFreeText)} " -> + $"bill_texts=0 "
+DONE
+S7 KILLED open-refund exclusion removed from BillFreeText selection
+H1 KILLED                 heldSet.Add(heldReader.GetGuid(0)); ->                 _ = heldReader.GetGuid(0);
+P1b KILLED WHERE bill_id = @subject AND status IN ('Completed', 'Rejected') AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """, -> WHERE bill_id = @subject AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """,
+P2b KILLED SET reason = @m, decision_note = CASE WHEN decision_note IS NOT NULL THEN @m END -> SET reason = @m, decision_note = @m
+H2 KILLED BillOrderLink.Matches("b", "ANY(@ids)") -> BillOrderLink.Matches("b", "ANY(@ids)").Replace("OR EXISTS", "AND EXISTS")
+DONE2

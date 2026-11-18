@@ -56,7 +56,7 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
 
         var plan = await _service.PlanAsync(AsOf);
 
-        Assert.Equal(2, plan.PolicyVersion);
+        Assert.Equal(3, plan.PolicyVersion);
         Assert.Equal(
             new HashSet<(RetentionClass, Guid)>
             {
@@ -100,6 +100,95 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
         Assert.Equal(10, await _database.ScalarAsync<int>("SELECT retention_years FROM privacy.retention_rules WHERE policy_version = 2 AND data_class = 'InvoicedCustomerProfile'"));
         Assert.Equal(10, await _database.ScalarAsync<int>("SELECT retention_years FROM privacy.retention_rules WHERE policy_version = 1 AND data_class = 'CustomerProfile'"));
         Assert.Equal(5, await _database.ScalarAsync<int>("SELECT count(*)::int FROM privacy.retention_rules WHERE policy_version = 1"));
+    }
+
+    [Fact]
+    public async Task ThePublishedPolicyThreeAddsTheBillClassWithTheOrderWindowAndKeepsTheEarlierVersions()
+    {
+        Assert.Equal(7, await _database.ScalarAsync<int>("SELECT count(*)::int FROM privacy.retention_rules WHERE policy_version = 3"));
+        Assert.Equal(5, await _database.ScalarAsync<int>("SELECT retention_years FROM privacy.retention_rules WHERE policy_version = 3 AND data_class = 'BillFreeText'"));
+        Assert.Equal(0, await _database.ScalarAsync<int>(
+            """
+            SELECT count(*)::int FROM privacy.retention_rules n JOIN privacy.retention_rules o ON o.data_class = n.data_class AND o.policy_version = 2
+            WHERE n.policy_version = 3 AND n.retention_years <> o.retention_years
+            """));
+        Assert.Equal(6, await _database.ScalarAsync<int>("SELECT count(*)::int FROM privacy.retention_rules WHERE policy_version = 2"));
+    }
+
+    [Fact]
+    public async Task AClosedBillIsDueFiveYearsAfterCreationOnlyWhileAFreeTextRemains()
+    {
+        var byReason = await SeedBillAsync("Paid", Ago(5, 2), cancellationReason: "Ali Bey");
+        var byItem = await SeedBillAsync("Cancelled", Ago(5, 2), itemNote: "sogansiz");
+        var byAdjustment = await SeedBillAsync("Paid", Ago(5, 2), adjustmentNote: "tanidik");
+        var byRefundReason = await SeedBillAsync("Paid", Ago(5, 2), refundStatus: "Completed", refundReason: "Ali Bey", decisionNote: "[anonymized]");
+        var byDecisionNote = await SeedBillAsync("Paid", Ago(5, 2), refundStatus: "Rejected", refundReason: "[anonymized]", decisionNote: "Ali Bey");
+        await SeedBillAsync("Paid", Ago(4, 11), cancellationReason: "yakin");
+        await SeedBillAsync("Open", Ago(8), cancellationReason: "acik");
+        await SeedBillAsync("Paid", Ago(8), cancellationReason: "[anonymized]", itemNote: "[anonymized]", adjustmentNote: "[anonymized]", refundStatus: "Completed", refundReason: "[anonymized]", decisionNote: "[anonymized]");
+        await SeedBillAsync("Paid", Ago(8));
+        await SeedBillAsync("Paid", Ago(8), refundStatus: "Requested", refundReason: "bekleyen talep");
+        await SeedBillAsync("Paid", Ago(8), cancellationReason: "acik talebi var", refundStatus: "AwaitingManualRefund", refundReason: "bekleyen talep");
+
+        var plan = await _service.PlanAsync(AsOf);
+
+        Assert.Equal(
+            new HashSet<(RetentionClass, Guid)>
+            {
+                (RetentionClass.BillFreeText, byReason),
+                (RetentionClass.BillFreeText, byItem),
+                (RetentionClass.BillFreeText, byAdjustment),
+                (RetentionClass.BillFreeText, byRefundReason),
+                (RetentionClass.BillFreeText, byDecisionNote),
+            },
+            Keys(plan));
+        Assert.Equal(Ago(5, 2).AddYears(5), plan.Candidates.First(c => c.SubjectId == byReason).DueSince);
+    }
+
+    [Fact]
+    public async Task AnOldClosedOrderWhoseOnlyRemainingTextIsAStatusHistoryReasonIsDue()
+    {
+        var withReason = await _database.SeedOrderAsync("Completed", Ago(5, 2), orderNote: "[anonymized]", itemNote: "[anonymized]");
+        var scrubbed = await _database.SeedOrderAsync("Completed", Ago(5, 2), orderNote: "[anonymized]", itemNote: "[anonymized]");
+        var withoutReason = await _database.SeedOrderAsync("Completed", Ago(5, 2), orderNote: "[anonymized]", itemNote: "[anonymized]");
+        var draft = await _database.SeedOrderAsync("Draft", Ago(8), orderNote: "[anonymized]", itemNote: "[anonymized]");
+        foreach (var (order, reason) in new[] { (withReason, "Ali Bey"), (scrubbed, "[anonymized]"), (withoutReason, null), (draft, "Ali Bey") })
+        {
+            await _database.ExecuteAsync(
+                """
+                SET LOCAL session_replication_role = replica;
+                INSERT INTO orders.order_status_history (order_status_history_id, order_id, old_status, new_status, reason, changed_at)
+                VALUES (gen_random_uuid(), @o, 'Active', 'Cancelled', @r, now());
+                """,
+                ("o", order), ("r", (object?)reason ?? DBNull.Value));
+        }
+
+        var plan = await _service.PlanAsync(AsOf);
+
+        Assert.Equal([(RetentionClass.OrderNotes, withReason)], Keys(plan));
+    }
+
+    private async Task<Guid> SeedBillAsync(
+        string status, DateTimeOffset createdAt, string? cancellationReason = null, string? itemNote = null, string? adjustmentNote = null,
+        string? refundStatus = null, string? refundReason = null, string? decisionNote = null)
+    {
+        var billId = Guid.NewGuid();
+        await _database.ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO billing.bills (bill_id, bill_number, status, opened_at, created_at, updated_at, cancellation_reason)
+            VALUES (@b, @num, @st, @at, @at, @at, @cr);
+            INSERT INTO billing.bill_items (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, tax_amount, net_amount, gross_amount, line_type, notes, created_at, updated_at)
+            VALUES (gen_random_uuid(), @b, gen_random_uuid(), gen_random_uuid(), 'Test', 1, 10, 10, 1, 10, 11, 'Sale', @item, @at, @at);
+            INSERT INTO billing.bill_adjustments (bill_adjustment_id, bill_id, adjustment_type, calculation_type, amount, net_amount, gross_amount, is_deduction, reason, authorized_by, notes, created_at)
+            VALUES (gen_random_uuid(), @b, 'DiscountAmount', 'FixedAmount', 1, 1, 1, true, 'Sadakat', gen_random_uuid(), @adj, @at);
+            INSERT INTO payments.refund_requests (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, decision_note, row_version)
+            SELECT gen_random_uuid(), @b, gen_random_uuid(), 1, 'Cash', @rr::text, @rs::text, gen_random_uuid(), @at, @dn::text, 1 WHERE @rs::text IS NOT NULL;
+            """,
+            ("b", billId), ("num", $"B-{billId:N}"[..20]), ("st", status), ("at", createdAt),
+            ("cr", (object?)cancellationReason ?? DBNull.Value), ("item", (object?)itemNote ?? DBNull.Value), ("adj", (object?)adjustmentNote ?? DBNull.Value),
+            ("rs", (object?)refundStatus ?? DBNull.Value), ("rr", (object?)refundReason ?? "x"), ("dn", (object?)decisionNote ?? DBNull.Value));
+        return billId;
     }
 
     [Fact]
@@ -166,7 +255,7 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
         Assert.Equal(5, await _database.CountAsync("privacy.retention_run_items"));
         Assert.Equal(5, await _database.CountAsync("privacy.retention_work_items"));
         Assert.Equal(5, await _database.ScalarAsync<int>($"SELECT item_count FROM privacy.retention_runs WHERE run_id = '{run.RunId}'"));
-        Assert.Equal(5, await _database.ScalarAsync<int>($"SELECT count(*)::int FROM privacy.retention_work_items WHERE run_id = '{run.RunId}' AND policy_version = 2 AND status = 'Pending'"));
+        Assert.Equal(5, await _database.ScalarAsync<int>($"SELECT count(*)::int FROM privacy.retention_work_items WHERE run_id = '{run.RunId}' AND policy_version = 3 AND status = 'Pending'"));
     }
 
     [Fact]
@@ -280,21 +369,22 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
             [RetentionClass.CustomerProfile] = 2,
             [RetentionClass.InvoicedCustomerProfile] = 10,
             [RetentionClass.Supplier] = 10,
+            [RetentionClass.BillFreeText] = 5,
         };
 
         var version = await _service.PublishPolicyAsync(years, "Staff window extended", actor);
         var plan = await _service.PlanAsync(AsOf);
 
-        Assert.Equal(3, version);
-        Assert.Equal(3, plan.PolicyVersion);
+        Assert.Equal(4, version);
+        Assert.Equal(4, plan.PolicyVersion);
         Assert.DoesNotContain((RetentionClass.StaffAccount, due.StaffDue), Keys(plan));
         Assert.Equal(4, plan.Candidates.Count);
 
         years.Remove(RetentionClass.Supplier);
         await Assert.ThrowsAsync<RetentionPolicyIncompleteException>(() => _service.PublishPolicyAsync(years, "Missing", actor));
         Assert.Equal("23514", await SqlStateOfAsync(() => _database.ExecuteAsync(
-            "INSERT INTO privacy.retention_policies (policy_version, note) VALUES (4, 'no rules')")));
-        Assert.Equal(3, await _database.ScalarAsync<int>("SELECT max(policy_version) FROM privacy.retention_policies"));
+            "INSERT INTO privacy.retention_policies (policy_version, note) VALUES (5, 'no rules')")));
+        Assert.Equal(4, await _database.ScalarAsync<int>("SELECT max(policy_version) FROM privacy.retention_policies"));
         Assert.Equal("23000", await SqlStateOfAsync(() => _database.ExecuteAsync("UPDATE privacy.retention_rules SET retention_years = 1")));
     }
 

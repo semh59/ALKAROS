@@ -1,4 +1,5 @@
 using ALKAROS.Audit.PartitionDisposal;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.DualScreen;
@@ -437,6 +438,15 @@ public static class Program
         await using var dataSource = NpgsqlDataSource.Create(connectionString);
         var retention = new PostgresRetentionExecutionService(dataSource);
         var heldSet = excludedOrderIds.ToHashSet();
+        // A bill is a record of its own, so an excluded order also keeps the bills made of it out of the run.
+        await using (var heldBills = dataSource.CreateCommand(
+            $"SELECT b.bill_id FROM billing.bills b WHERE {BillOrderLink.Matches("b", "ANY(@ids)")};"))
+        {
+            heldBills.Parameters.AddWithValue("ids", excludedOrderIds.ToArray());
+            await using var heldReader = await heldBills.ExecuteReaderAsync();
+            while (await heldReader.ReadAsync())
+                heldSet.Add(heldReader.GetGuid(0));
+        }
 
         // The dry run and the apply pick their records through the same versioned policy; only the apply writes.
         var staff = 0;
@@ -489,6 +499,7 @@ public static class Program
             + $"reservation_reasons={reservations} "
             + $"customers={plan.Candidates.Count(c => c.DataClass is RetentionClass.CustomerProfile or RetentionClass.InvoicedCustomerProfile)} "
             + $"suppliers={plan.Candidates.Count(c => c.DataClass == RetentionClass.Supplier)} "
+            + $"bill_texts={plan.Candidates.Count(c => c.DataClass == RetentionClass.BillFreeText)} "
             + $"policy={plan.PolicyVersion} "
             + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()} "
             + $"blocked={blocked} failed={failed}");
@@ -829,6 +840,30 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
             new("orders.order_items",
                 "UPDATE orders.order_items SET notes = @m, updated_at = now() WHERE order_id = @subject AND notes IS NOT NULL AND notes <> @m;",
                 "SELECT count(*) FROM orders.order_items WHERE order_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+            new("orders.order_status_history",
+                "UPDATE orders.order_status_history SET reason = @m WHERE order_id = @subject AND reason IS NOT NULL AND reason <> @m;",
+                "SELECT count(*) FROM orders.order_status_history WHERE order_id = @subject AND reason IS NOT NULL AND reason <> @m;"),
+        ], Parameters),
+        // Only texts change: amounts, states and dates of the bill and its refund requests stay. A bill is selected only once none
+        // of its refund requests is open; the status filter below also guards a request opened between selection and write.
+        [RetentionClass.BillFreeText] = new(null,
+        [
+            new("billing.bill_items",
+                "UPDATE billing.bill_items SET notes = @m WHERE bill_id = @subject AND notes IS NOT NULL AND notes <> @m;",
+                "SELECT count(*) FROM billing.bill_items WHERE bill_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+            new("billing.bill_adjustments",
+                "UPDATE billing.bill_adjustments SET notes = @m WHERE bill_id = @subject AND notes IS NOT NULL AND notes <> @m;",
+                "SELECT count(*) FROM billing.bill_adjustments WHERE bill_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+            new("billing.bills",
+                "UPDATE billing.bills SET cancellation_reason = @m WHERE bill_id = @subject AND cancellation_reason IS NOT NULL AND cancellation_reason <> @m;",
+                "SELECT count(*) FROM billing.bills WHERE bill_id = @subject AND cancellation_reason IS NOT NULL AND cancellation_reason <> @m;"),
+            new("payments.refund_requests",
+                """
+                UPDATE payments.refund_requests
+                SET reason = @m, decision_note = CASE WHEN decision_note IS NOT NULL THEN @m END
+                WHERE bill_id = @subject AND status IN ('Completed', 'Rejected') AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));
+                """,
+                "SELECT count(*) FROM payments.refund_requests WHERE bill_id = @subject AND status IN ('Completed', 'Rejected') AND (reason <> @m OR (decision_note IS NOT NULL AND decision_note <> @m));"),
         ], Parameters),
         [RetentionClass.ReservationReason] = new(null,
         [

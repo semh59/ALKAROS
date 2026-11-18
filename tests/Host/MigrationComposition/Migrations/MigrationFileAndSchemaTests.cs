@@ -500,10 +500,29 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheBillFreeTextRetentionClassComesWithPolicyThreeAndRollingBackRemovesItAndItAppliesOnceMore()
+    {
+        const string rules = "SELECT string_agg(policy_version || ':' || retention_years, ',' ORDER BY policy_version) FROM privacy.retention_rules WHERE data_class = 'BillFreeText';";
+        const string classAllowed = "SELECT count(*) FROM pg_constraint WHERE conname IN ('retention_rules_data_class_check', 'legal_holds_data_class_check', 'retention_work_items_data_class_check', 'anonymization_jobs_data_class_check') AND pg_get_constraintdef(oid) LIKE '%BillFreeText%';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal("3:5", await ScalarAsync<string>(source, rules));
+        Assert.Equal(4L, await ScalarAsync<long>(source, classAllowed));
+
+        RollBackDownTo("232");
+        Assert.Equal(0L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_rules WHERE data_class = 'BillFreeText';"));
+        Assert.Equal(0L, await ScalarAsync<long>(source, classAllowed));
+        Assert.Equal(2L, await ScalarAsync<long>(source, "SELECT count(*) FROM privacy.retention_policies;"));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal("3:5", await ScalarAsync<string>(source, rules));
+    }
+
+    [Fact]
     public async Task TheInvoicedCustomerRetentionClassComesWithANewPolicyAndRollingBackRemovesItAndItAppliesOnceMore()
     {
         const string rules = "SELECT string_agg(policy_version || ':' || data_class || ':' || retention_years, ',' ORDER BY policy_version, data_class) FROM privacy.retention_rules WHERE data_class IN ('CustomerProfile', 'InvoicedCustomerProfile');";
-        const string withClass = "1:CustomerProfile:10,2:CustomerProfile:2,2:InvoicedCustomerProfile:10";
+        const string withClass = "1:CustomerProfile:10,2:CustomerProfile:2,2:InvoicedCustomerProfile:10,3:CustomerProfile:2,3:InvoicedCustomerProfile:10";
         const string without = "1:CustomerProfile:10";
         Migrate(OrderPath(), MigrationsPath());
         await using var source = NpgsqlDataSource.Create(ConnectionString());

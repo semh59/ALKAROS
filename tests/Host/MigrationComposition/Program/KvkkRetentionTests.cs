@@ -93,7 +93,7 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
             Assert.Contains("item_notes=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("reservation_reasons=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("apply=false", dryLine, StringComparison.Ordinal);
-            Assert.Contains("customers=1 suppliers=1 policy=2", dryLine, StringComparison.Ordinal);
+            Assert.Contains("customers=1 suppliers=1 bill_texts=0 policy=3", dryLine, StringComparison.Ordinal);
             Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items;"));
 
             Assert.NotEqual(Marker, await ScalarAsync<string>(
@@ -360,7 +360,198 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         Assert.False(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", customerId)));
     }
 
-    private string Apply()
+    [Fact]
+    public async Task StatusHistoryReasonsOfAnOldClosedOrderAreScrubbedAndEverythingElseStays()
+    {
+        var productId = await SeedProductAsync();
+        var oldOrder = await SeedOrderAsync(productId, status: "Completed", createdAgoYears: 6, note: Marker);
+        var recentOrder = await SeedOrderAsync(productId, status: "Completed", createdAgoYears: 1, note: Marker);
+        var oldDraft = await SeedOrderAsync(productId, status: "Draft", createdAgoYears: 6, note: Marker);
+        var history = new Dictionary<Guid, Guid>();
+        foreach (var order in new[] { oldOrder, recentOrder, oldDraft })
+        {
+            history[order] = Guid.NewGuid();
+            await ExecuteAsync(
+                """
+                INSERT INTO orders.order_status_history (order_status_history_id, order_id, old_status, new_status, reason, changed_by, changed_at)
+                VALUES (@h, @o, 'Active', 'Cancelled', 'Ahmet Bey vazgecti', @by, now() - interval '6 years');
+                """,
+                ("h", history[order]), ("o", order), ("by", Guid.NewGuid()));
+        }
+
+        Assert.Contains("failed=0", Apply(), StringComparison.Ordinal);
+
+        const string Row = "SELECT reason || '|' || old_status || '|' || new_status || '|' || changed_by || '|' || changed_at FROM orders.order_status_history WHERE order_status_history_id = @h;";
+        var scrubbed = await ScalarAsync<string>(Row, ("h", history[oldOrder]));
+        Assert.StartsWith(Marker + "|Active|Cancelled|", scrubbed, StringComparison.Ordinal);
+        Assert.StartsWith("Ahmet Bey vazgecti|", await ScalarAsync<string>(Row, ("h", history[recentOrder])), StringComparison.Ordinal);
+        Assert.StartsWith("Ahmet Bey vazgecti|", await ScalarAsync<string>(Row, ("h", history[oldDraft])), StringComparison.Ordinal);
+
+        Assert.Contains("order_notes=0 item_notes=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal(scrubbed, await ScalarAsync<string>(Row, ("h", history[oldOrder])));
+    }
+
+    [Fact]
+    public async Task EveryBillFreeTextOfAnOldClosedBillIsScrubbedWhileAmountsAndStatesStayAndASecondRunChangesNothing()
+    {
+        var old = await SeedBillAsync("Paid", 6, "Ali Bey vazgecti");
+        var cancelled = await SeedBillAsync("Cancelled", 6, "Veli Bey iptal etti", decisionNote: null);
+        var recent = await SeedBillAsync("Paid", 1, "yakin iptal");
+        var open = await SeedBillAsync("Open", 6, "acik adisyon");
+        var pending = await SeedBillAsync("Paid", 6, "iade bekliyor");
+        var openRefund = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO payments.refund_requests (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, row_version)
+            VALUES (@r, @b, gen_random_uuid(), 5, 'Cash', 'Ali Bey ister', 'Requested', gen_random_uuid(), now() - interval '6 years', 1);
+            """,
+            ("r", openRefund), ("b", pending.BillId));
+
+        var before = new Dictionary<Guid, string>();
+        foreach (var bill in new[] { old, cancelled, recent, open })
+            before[bill.BillId] = await BillAmountsAsync(bill);
+
+        var first = Apply();
+        Assert.Contains("bill_texts=2", first, StringComparison.Ordinal);
+
+        foreach (var bill in new[] { old, cancelled })
+        {
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT notes FROM billing.bill_items WHERE bill_item_id = @id;", ("id", bill.ItemId)));
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT notes FROM billing.bill_adjustments WHERE bill_adjustment_id = @id;", ("id", bill.AdjustmentId)));
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", bill.BillId)));
+            Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", bill.RefundId)));
+            Assert.Equal(bill == cancelled, await ScalarAsync<bool>("SELECT decision_note IS NULL FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", bill.RefundId)));
+            if (bill != cancelled)
+                Assert.Equal(Marker, await ScalarAsync<string>("SELECT decision_note FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", bill.RefundId)));
+            Assert.Equal(before[bill.BillId], await BillAmountsAsync(bill));
+        }
+
+        foreach (var bill in new[] { recent, open })
+        {
+            Assert.NotEqual(Marker, await ScalarAsync<string>("SELECT notes FROM billing.bill_items WHERE bill_item_id = @id;", ("id", bill.ItemId)));
+            Assert.NotEqual(Marker, await ScalarAsync<string>("SELECT notes FROM billing.bill_adjustments WHERE bill_adjustment_id = @id;", ("id", bill.AdjustmentId)));
+            Assert.NotEqual(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", bill.BillId)));
+            Assert.NotEqual(Marker, await ScalarAsync<string>("SELECT reason FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", bill.RefundId)));
+            Assert.NotEqual(Marker, await ScalarAsync<string>("SELECT decision_note FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", bill.RefundId)));
+            Assert.Equal(before[bill.BillId], await BillAmountsAsync(bill));
+        }
+
+        Assert.Equal("Ali Bey ister", await ScalarAsync<string>("SELECT reason FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", openRefund)));
+        Assert.Equal("iade bekliyor", await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", pending.BillId)));
+
+        var second = Apply();
+        Assert.Contains("bill_texts=0", second, StringComparison.Ordinal);
+        Assert.Contains("blocked=0 failed=0", second, StringComparison.Ordinal);
+        Assert.Equal(before[old.BillId], await BillAmountsAsync(old));
+
+        await ExecuteAsync("UPDATE payments.refund_requests SET status = 'Rejected' WHERE refund_request_id = @r;", ("r", openRefund));
+        Assert.Contains("bill_texts=1", Apply(), StringComparison.Ordinal);
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", pending.BillId)));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT reason FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", openRefund)));
+    }
+
+    [Fact]
+    public async Task ABillUnderALegalHoldKeepsItsTexts()
+    {
+        var held = await SeedBillAsync("Paid", 6, "dava konusu");
+        await ExecuteAsync(
+            "INSERT INTO privacy.legal_holds (hold_id, data_class, subject_id, reason, placed_by) VALUES (gen_random_uuid(), 'BillFreeText', @b, 'Vergi incelemesi', gen_random_uuid());",
+            ("b", held.BillId));
+
+        Assert.Contains("bill_texts=0", Apply(), StringComparison.Ordinal);
+        Assert.Equal("dava konusu", await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", held.BillId)));
+    }
+
+    [Fact]
+    public async Task ABillMadeOfAnExcludedOrderKeepsItsTextsWhetherLinkedByTheBillOrByAnItem()
+    {
+        var productId = await SeedProductAsync();
+        var heldOrder = await SeedOrderAsync(productId, status: "Completed", createdAgoYears: 6, note: Marker);
+        var byBill = await SeedBillAsync("Paid", 6, "dava konusu");
+        var byItem = await SeedBillAsync("Paid", 6, "dava konusu");
+        var free = await SeedBillAsync("Paid", 6, "serbest");
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            UPDATE billing.bills SET order_id = @o WHERE bill_id = @b;
+            UPDATE billing.bill_items SET order_item_id = (SELECT order_item_id FROM orders.order_items WHERE order_id = @o) WHERE bill_item_id = @i;
+            """,
+            ("o", heldOrder), ("b", byBill.BillId), ("i", byItem.ItemId));
+        var excludeFile = Path.Combine(Path.GetTempPath(), $"kvkk-hold-{Guid.NewGuid():N}.txt");
+        await File.WriteAllTextAsync(excludeFile, heldOrder + Environment.NewLine);
+        try
+        {
+            Assert.Contains("bill_texts=1", Apply(excludeFile), StringComparison.Ordinal);
+        }
+        finally
+        {
+            File.Delete(excludeFile);
+        }
+
+        Assert.Equal("dava konusu", await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", byBill.BillId)));
+        Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM billing.bill_items WHERE bill_item_id = @id AND notes <> @m;", ("id", byItem.ItemId), ("m", Marker)));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", free.BillId)));
+    }
+
+    [Fact]
+    public async Task ARefundRequestOpenedAfterTheBillWasQueuedKeepsItsTextsWhileTheBillIsScrubbed()
+    {
+        var bill = await SeedBillAsync("Paid", 6, "Ali Bey vazgecti");
+        var late = Guid.NewGuid();
+        await new PostgresRetentionExecutionService(_dataSource!).ExecuteAsync(DateTimeOffset.UtcNow, "queued");
+        await ExecuteAsync(
+            """
+            CREATE FUNCTION public.late_refund() RETURNS trigger LANGUAGE plpgsql AS $f$
+            BEGIN
+                SET LOCAL session_replication_role = replica;
+                INSERT INTO payments.refund_requests (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, row_version)
+                VALUES (@@late@@, NEW.subject_id, gen_random_uuid(), 5, 'Cash', 'sonradan acildi', 'AwaitingManualRefund', gen_random_uuid(), now(), 1);
+                SET LOCAL session_replication_role = origin;
+                RETURN NEW;
+            END $f$;
+            CREATE TRIGGER late_refund AFTER INSERT ON privacy.anonymization_jobs FOR EACH ROW EXECUTE FUNCTION public.late_refund();
+            """.Replace("@@late@@", $"'{late}'", StringComparison.Ordinal));
+
+        Assert.Contains("failed=0", Apply(), StringComparison.Ordinal);
+
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT cancellation_reason FROM billing.bills WHERE bill_id = @id;", ("id", bill.BillId)));
+        Assert.Equal("sonradan acildi", await ScalarAsync<string>("SELECT reason FROM payments.refund_requests WHERE refund_request_id = @id;", ("id", late)));
+    }
+
+    private sealed record SeededBill(Guid BillId, Guid ItemId, Guid AdjustmentId, Guid RefundId);
+
+    private async Task<SeededBill> SeedBillAsync(string status, int createdAgoYears, string cancellationReason, string? decisionNote = "Ali Bey ile konusuldu")
+    {
+        var bill = new SeededBill(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+        await ExecuteAsync(
+            """
+            SET LOCAL session_replication_role = replica;
+            INSERT INTO billing.bills (bill_id, bill_number, status, subtotal, tax_total, payable_amount, paid_amount, opened_at, created_at, updated_at, cancellation_reason)
+            VALUES (@b, @num, @st, 100, 10, 110, 110, now() - make_interval(years => @ago), now() - make_interval(years => @ago), now() - make_interval(years => @ago), @cr);
+            INSERT INTO billing.bill_items (bill_item_id, bill_id, order_item_id, product_id, product_name_snapshot, quantity, unit_price, tax_rate, tax_amount, net_amount, gross_amount, line_type, notes, created_at, updated_at)
+            VALUES (@i, @b, gen_random_uuid(), gen_random_uuid(), 'Test', 1, 100, 10, 10, 100, 110, 'Sale', 'sogansiz, Ali Bey icin', now() - make_interval(years => @ago), now() - make_interval(years => @ago));
+            INSERT INTO billing.bill_adjustments (bill_adjustment_id, bill_id, adjustment_type, calculation_type, amount, net_amount, gross_amount, is_deduction, reason, authorized_by, notes, created_at)
+            VALUES (@a, @b, 'DiscountAmount', 'FixedAmount', 5, 5, 5, true, 'Sadakat', gen_random_uuid(), 'Ali Bey tanidik', now() - make_interval(years => @ago));
+            INSERT INTO payments.refund_requests (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, decided_by, decided_at, decision_note, row_version)
+            VALUES (@r, @b, gen_random_uuid(), 5, 'Cash', 'Ali Bey ister', 'Completed', gen_random_uuid(), now() - make_interval(years => @ago), gen_random_uuid(), now() - make_interval(years => @ago), @dn, 1);
+            """,
+            ("b", bill.BillId), ("i", bill.ItemId), ("a", bill.AdjustmentId), ("r", bill.RefundId),
+            ("num", $"B-{bill.BillId:N}"[..20]), ("st", status), ("ago", createdAgoYears), ("cr", cancellationReason), ("dn", (object?)decisionNote ?? DBNull.Value));
+        return bill;
+    }
+
+    private Task<string> BillAmountsAsync(SeededBill bill) => ScalarAsync<string>(
+        """
+        SELECT concat_ws('|',
+            (SELECT concat_ws(',', status, subtotal, tax_total, payable_amount, paid_amount, opened_at, created_at, row_version) FROM billing.bills WHERE bill_id = @b),
+            (SELECT concat_ws(',', quantity, unit_price, gross_amount, line_type) FROM billing.bill_items WHERE bill_item_id = @i),
+            (SELECT concat_ws(',', adjustment_type, amount, reason, authorized_by) FROM billing.bill_adjustments WHERE bill_adjustment_id = @a),
+            (SELECT concat_ws(',', amount, method, status, decided_by) FROM payments.refund_requests WHERE refund_request_id = @r));
+        """,
+        ("b", bill.BillId), ("i", bill.ItemId), ("a", bill.AdjustmentId), ("r", bill.RefundId));
+
+    private string Apply(string? excludeFile = null)
     {
         using var output = new StringWriter();
         using var errors = new StringWriter();
@@ -370,7 +561,9 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         {
             Console.SetOut(output);
             Console.SetError(errors);
-            var exitCode = ALKAROS.Host.Program.Main(["kvkk-retention", "--db-url", _database.Url, "--apply"]);
+            var exitCode = ALKAROS.Host.Program.Main(excludeFile is null
+                ? ["kvkk-retention", "--db-url", _database.Url, "--apply"]
+                : ["kvkk-retention", "--db-url", _database.Url, "--apply", "--exclude-order-ids-file", excludeFile]);
             Assert.True(exitCode == (int)HostExitCode.Success, output.ToString() + errors.ToString());
         }
         finally

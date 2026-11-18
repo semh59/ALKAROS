@@ -22,7 +22,28 @@ internal static class RetentionSelection
         WHERE o.status IN ('Completed', 'Cancelled', 'Rejected')
           AND ((o.notes IS NOT NULL AND o.notes <> @marker)
                OR EXISTS (SELECT 1 FROM orders.order_items i
-                          WHERE i.order_id = o.order_id AND i.notes IS NOT NULL AND i.notes <> @marker))
+                          WHERE i.order_id = o.order_id AND i.notes IS NOT NULL AND i.notes <> @marker)
+               OR EXISTS (SELECT 1 FROM orders.order_status_history h
+                          WHERE h.order_id = o.order_id AND h.reason IS NOT NULL AND h.reason <> @marker))
+        """;
+
+    // A closed bill's free texts follow the order window. A bill with a refund request still open is not due yet: the request's
+    // texts are needed to process it, and the bill is picked up once the request is closed (a finished work item is never reopened).
+    private const string BillFreeText =
+        """
+        SELECT b.bill_id AS subject_id, b.created_at AS basis_at
+        FROM billing.bills b
+        WHERE b.status IN ('Paid', 'Cancelled')
+          AND NOT EXISTS (SELECT 1 FROM payments.refund_requests o
+                          WHERE o.bill_id = b.bill_id AND o.status IN ('Requested', 'AwaitingManualRefund'))
+          AND ((b.cancellation_reason IS NOT NULL AND b.cancellation_reason <> @marker)
+               OR EXISTS (SELECT 1 FROM billing.bill_items i
+                          WHERE i.bill_id = b.bill_id AND i.notes IS NOT NULL AND i.notes <> @marker)
+               OR EXISTS (SELECT 1 FROM billing.bill_adjustments a
+                          WHERE a.bill_id = b.bill_id AND a.notes IS NOT NULL AND a.notes <> @marker)
+               OR EXISTS (SELECT 1 FROM payments.refund_requests r
+                          WHERE r.bill_id = b.bill_id AND r.status IN ('Completed', 'Rejected')
+                            AND (r.reason <> @marker OR (r.decision_note IS NOT NULL AND r.decision_note <> @marker))))
         """;
 
     private const string ReservationReason =
@@ -74,6 +95,7 @@ internal static class RetentionSelection
         RetentionClass.CustomerProfile => CustomerProfile,
         RetentionClass.InvoicedCustomerProfile => InvoicedCustomerProfile,
         RetentionClass.Supplier => Supplier,
+        RetentionClass.BillFreeText => BillFreeText,
         _ => throw new ArgumentOutOfRangeException(nameof(dataClass), dataClass, "Unknown retention class."),
     };
 

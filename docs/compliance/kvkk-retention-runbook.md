@@ -17,7 +17,9 @@ apply always pick the same records. The multi-store checkpoint/resume workflow i
 | Staff record | `identity.users` — `username`, `display_name`, `email`, `phone`, `password_hash`, `pin_hash` | `active = false` **and** `updated_at` older than **1 year** (employment + 1 yr) | `username -> 'anon-<id8>'`, `display_name -> '[anonymized]'`, `email`/`phone -> NULL`, `password_hash -> '!kvkk-retention-disabled'`, `pin_hash -> NULL`. The row is kept for referential integrity (roles, audit actor, reservation actor). |
 | Order note | `orders.orders.notes` | order `status IN (Completed, Cancelled, Rejected)` **and** `created_at` older than **5 years** | `notes -> '[anonymized]'` |
 | Order line note | `orders.order_items.notes` | parent order past the same window | `notes -> '[anonymized]'` |
+| Order status reason | `orders.order_status_history.reason` (void and complimentary reason and note) | parent order past the same window | `reason -> '[anonymized]'` |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
+| Bill free text (`BillFreeText`, added to the retention policy by migration 232) | `billing.bill_items.notes`, `billing.bill_adjustments.notes`, `billing.bills.cancellation_reason`, `payments.refund_requests.reason` and `decision_note` | bill `status IN (Paid, Cancelled)` **and** `created_at` older than **5 years** (the order window) | each text `-> '[anonymized]'`. A bill with a refund request still `Requested` or `AwaitingManualRefund` is not due until the request is closed. Amounts, states and dates are not touched. |
 
 ### Staff data that is kept, and for how long (V1-RMD-672)
 
@@ -108,21 +110,18 @@ such as a username), so the highest-risk data is not stored in the first place.
 The financial columns of orders and bills are **not** touched — the row stays a
 complete financial record, only the free-text / identifying fields are scrubbed.
 
-## Known gap: void and comp reasons
+## Free-text columns outside this job
 
-The reason (and optional note) of a void or complimentary item is stored in
-`orders.order_status_history.reason`. The retention job does not scrub that column
-(V1-RMD-724, found by the V1-RMD-602 audit); the reason can carry a free-text
-note, which is the exposure. Scrubbing it is a
-production change tracked separately, not done by documentation.
+The job scrubs the columns in the table above and nothing else. These free-text columns have no retention class yet and
+need a Product Owner decision (window, and for the ledger whether it is legal retention) before one can be added:
+`kitchen.kitchen_ticket_items.notes` (a copy of the order line note) and `kitchen.kitchen_tickets.cancellation_reason`,
+`payments.payment_reversals.reason`, `payments.payment_status_history.reason`, `cash.cash_transactions.notes`, the decision
+notes of `cash.cash_movement_requests` and `payments.manual_card_confirmations`, the reasons of table transfers and merges
+in `table_mgmt`, and `customer_account.account_transactions.note` (append-only ledger).
 
-The same applies to these free-text columns in the billing and refund schemas; the retention job does not
-scrub them either, because no code under `src/Modules/Privacy` references them:
-
-- `billing.bill_items.notes`
-- `billing.bill_adjustments.notes`
-- `billing.bills.cancellation_reason`
-- `payments.refund_requests.reason` and `decision_note`
+A record that an earlier run already finished is never selected again (a finished work item is permanent). Orders finished
+by a run before migration 232 therefore keep their `order_status_history.reason`; a deployment younger than the 5-year window
+has no such orders.
 
 ## What it never touches (legal retention)
 
@@ -141,8 +140,8 @@ A legal hold placed in `privacy.legal_holds` (per data class and record) keeps t
 of every plan and run, the database refuses a work item for a held record, and a held record's
 work item cannot be completed until the hold is released. For orders you can also pass
 `--exclude-order-ids-file <path>` — a text file of order GUIDs, one per
-line (`#` comments allowed). Any order in that list, and its line items, are
-skipped (litigation, tax audit, active dispute). Maintain this list from your
+line (`#` comments allowed). Any order in that list, its line items and the bills made of it
+are skipped (litigation, tax audit, active dispute). Maintain this list from your
 open-cases register before every run.
 
 ## Running it
@@ -159,7 +158,7 @@ Output:
 
 ```text
 kvkk-retention: staff=<n> order_notes=<n> item_notes=<n> reservation_reasons=<n> \
-                customers=<n> suppliers=<n> policy=<version> as_of=<date> excluded_orders=<n> apply=false
+                customers=<n> suppliers=<n> bill_texts=<n> policy=<version> as_of=<date> excluded_orders=<n> apply=false
 ```
 
 Review the counts. When they look right, add `--apply` to write. The verb is

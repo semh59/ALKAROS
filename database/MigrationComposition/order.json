@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "231"
+    "max": "232"
   },
   "migrations": [
     {
@@ -1984,6 +1984,14 @@
       "tables": [
         "permissions",
         "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "232",
+      "phase": "B",
+      "tables": [
+        "retention_rules"
       ],
       "deferredConstraints": []
     }
