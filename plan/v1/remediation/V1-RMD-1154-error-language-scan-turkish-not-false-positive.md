@@ -1,7 +1,7 @@
 # V1-RMD-1154 - Hata metni dil taraması Türkçe "not" kelimesini İngilizce saymasın
 
 - Task ID: V1-RMD-1154
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

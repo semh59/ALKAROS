@@ -21,7 +21,7 @@ public sealed class ErrorMessageLanguageTests
         RegexOptions.Compiled);
 
     private static readonly Regex EnglishWord = new(
-        "\\b(the|The|is|was|not|must|cannot|Cannot|already|invalid|Invalid|failed|Failed|error|Error|bill|payment|Payment|please|Please|you|for|with|has|have|refused|exceeds|amount|Amount|should|could|unable|Unable|missing|Missing|required|Required|found|insufficient|Insufficient|denied|Denied|unauthorized|Unauthorized|forbidden|Forbidden|unknown|Unknown|exist|exists|allowed|enough|expired|request|Request|does|are|of|to|be|been)\\b",
+        "\\b(the|The|is|was|not(?!\\s+yaz)|must|cannot|Cannot|already|invalid|Invalid|failed|Failed|error|Error|bill|payment|Payment|please|Please|you|for|with|has|have|refused|exceeds|amount|Amount|should|could|unable|Unable|missing|Missing|required|Required|found|insufficient|Insufficient|denied|Denied|unauthorized|Unauthorized|forbidden|Forbidden|unknown|Unknown|exist|exists|allowed|enough|expired|request|Request|does|are|of|to|be|been)\\b",
         RegexOptions.Compiled);
 
     [Fact]
@@ -35,6 +35,12 @@ public sealed class ErrorMessageLanguageTests
         Assert.True(messages.Length >= 250, $"Only {messages.Length} messages were found; the scan no longer sees the response shapes.");
         Assert.Empty(messages.Where(message => EnglishWord.IsMatch(message.Text)).Select(message => $"{message.Source}: {message.Text}"));
     }
+
+    [Theory]
+    [InlineData("Do not retry.", true)]
+    [InlineData("Bir gerekçe seçin; \"Diğer\" için not yazın.", false)]
+    public void TheTurkishWordNoteIsNotEnglishButTheEnglishNotStillIs(string message, bool english) =>
+        Assert.Equal(english, EnglishWord.IsMatch(message));
 
     private static string FindRoot()
     {
