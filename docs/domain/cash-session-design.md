@@ -178,8 +178,12 @@ by default (`cash.drawer_kick_enabled`) and needs the printer address (`cash.dra
   approver is written to `cash.session.closed` as `overrideApprovedBy`; each failed attempt is a
   `cash.close.approval_failed` event without the password (the attempted name is kept as its first two characters plus a length, in case a password was typed into the name box). Without credentials the caller's own override permission
   is asked, as before.
-- The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount` and `drawerKickFailedCount`.
-  `drawerNoSaleCount` and the warning count only the openings whose pulse reached the printer: the audit record of a
-  no-sale is written before the pulse, so a pulse that failed (a `kick-failed` event of the same correlation id) is
-  counted in `drawerKickFailedCount` instead and never counts towards the warning. From the fifth delivered no-sale
-  opening of a session the answer carries a warning.
+- The `cash.session.closed` audit event carries `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerNoSaleKickFailedCount` and
+  `drawerSaleKickFailedCount`. `drawerNoSaleCount` and the warning count only the openings whose pulse reached the printer:
+  the audit record of a no-sale is written before the pulse, so a pulse that failed (a `kick-failed` event of the same
+  correlation id) is counted in `drawerNoSaleKickFailedCount` instead and never counts towards the warning. A pulse that
+  failed after a cash payment (`kick-failed` with `kind` Sale; the payment stands) is `drawerSaleKickFailedCount`: the
+  two failures are different things (a cashier's attempt, a printer that did not answer a payment) and are never added
+  into one counter. The close answer (`drawer`) carries the same four numbers as `saleOpenCount`, `noSaleCount`,
+  `noSaleKickFailedCount` and `saleKickFailedCount`. From the fifth delivered no-sale opening of a session the answer
+  carries a warning.

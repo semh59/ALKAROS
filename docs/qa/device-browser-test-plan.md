@@ -80,7 +80,7 @@ Gerekenler: çekmece kablosu (RJ11/RJ12) bağlı bir fiş yazıcısı, yazıcın
 | 6 | Kasa oturumu ekranında "Satış yok"a basın; "Bozuk para" seçip "Çekmeceyi aç"a basın. | "Çekmece açıldı." çıkar, çekmece açılır; "Bu vardiyada satışsız açma: 1" görünür; kasadaki beklenen tutar DEĞİŞMEZ. |
 | 7 | "Satış yok" > "Sayım", sonra "Diğer" (not yazmadan deneyin, sonra notla). | Notsuz "Diğer" reddedilir ("“Diğer” için not yazın."); notla açılır. |
 | 8 | Aynı oturumda beş kez "Satış yok" yapın. | Beşincide Türkçe uyarı çıkar ("Bu vardiyada 5 kez satışsız çekmece açıldı."). |
-| 9 | Kasayı sayıp kapatın; yönetici denetim kaydında kapanış olayına bakın (veya geliştiriciden kapanış kaydındaki `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerKickFailedCount` sayılarını isteyin). | Sayılar yaptığınız denemelerle eşleşir. |
+| 9 | Kasayı sayıp kapatın; yönetici denetim kaydında kapanış olayına bakın (veya geliştiriciden kapanış kaydındaki `drawerSaleOpenCount`, `drawerNoSaleCount`, `drawerNoSaleKickFailedCount`, `drawerSaleKickFailedCount` sayılarını isteyin). | Sayılar yaptığınız denemelerle eşleşir: açılamayan satışsız denemeler ile ödeme sırasında açılamayan darbeler ayrı sayılır. |
 | 10 | Ayarı Hayır yapın ve nakit ödeme ile "Satış yok"u yeniden deneyin. | Ödeme normal alınır, çekmece açılmaz; "Satış yok" düğmesi görünmez. |
 
 Sorun giderme:

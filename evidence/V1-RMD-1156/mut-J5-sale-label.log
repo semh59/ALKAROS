@@ -1,0 +1,59 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (11 tests | 2 failed) 3457ms
+     × names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it 327ms
+     × shows both failed lines with their own numbers when both kinds of pulse failed 304ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  09:46:18
+   Duration  5.06s (transform 481ms, setup 38ms, import 38ms, tests 3.46s, environment 1.23s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it
+AssertionError: expected { label: 'Açılamayan çekmece', …(1) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+  {
+-   "label": "Ödeme sırasında açılamayan çekmece",
++   "label": "Açılamayan çekmece",
+    "value": "5",
+  }
+
+ ❯ cash-session-closed-summary.test.js:105:47
+    103|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+    104|     expect($("#closed-drawer-failed")).toBeNull();
+    105|     expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme …
+       |                                               ^
+    106|   });
+    107|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > shows both failed lines with their own numbers when both kinds of pulse failed
+AssertionError: expected { label: 'Açılamayan çekmece', …(1) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+  {
+-   "label": "Ödeme sırasında açılamayan çekmece",
++   "label": "Açılamayan çekmece",
+    "value": "5",
+  }
+
+ ❯ cash-session-closed-summary.test.js:112:47
+    110|
+    111|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+    112|     expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme …
+       |                                               ^
+    113|   });
+    114| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

@@ -61,42 +61,55 @@ describe("cash-session.js closed summary: drawer lines", () => {
     document.body.innerHTML = "";
   });
 
+  const drawer = (saleOpenCount, noSaleCount, noSaleKickFailedCount, saleKickFailedCount) => ({ drawer: { saleOpenCount, noSaleCount, noSaleKickFailedCount, saleKickFailedCount } });
+
   it.each([
     ["no drawer answer at all", {}],
-    ["a drawer that was never used", { drawer: { saleOpenCount: 0, noSaleCount: 0, kickFailedCount: 0 } }],
+    ["a drawer that was never used", drawer(0, 0, 0, 0)],
   ])("shows no drawer line for %s", async (_name, body) => {
     await closeWith(body);
 
     expect(summary().toLowerCase()).not.toContain("çekmece");
     expect($("#closed-drawer-no-sale")).toBeNull();
     expect($("#closed-drawer-failed")).toBeNull();
+    expect($("#closed-drawer-sale-failed")).toBeNull();
   });
 
   it("shows the no-sale count, and only that, when pulses all arrived", async () => {
-    await closeWith({ drawer: { saleOpenCount: 3, noSaleCount: 2, kickFailedCount: 0 } });
+    await closeWith(drawer(3, 2, 0, 0));
 
     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız çekmece açma", value: "2" });
     expect($("#closed-drawer-failed")).toBeNull();
+    expect($("#closed-drawer-sale-failed")).toBeNull();
   });
 
   it("says zero no-sale openings when the drawer was used for sales only", async () => {
-    await closeWith({ drawer: { saleOpenCount: 1, noSaleCount: 0, kickFailedCount: 0 } });
+    await closeWith(drawer(1, 0, 0, 0));
 
     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız çekmece açma", value: "0" });
   });
 
-  it("shows both lines when every pulse failed, so a drawer that never opened is still reported", async () => {
-    await closeWith({ drawer: { saleOpenCount: 0, noSaleCount: 0, kickFailedCount: 2 } });
-
-    expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız çekmece açma", value: "0" });
-    expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan çekmece denemesi", value: "2" });
-  });
-
-  it("adds the failed attempts line when pulses did not arrive", async () => {
-    await closeWith({ drawer: { saleOpenCount: 0, noSaleCount: 1, kickFailedCount: 4 } });
+  it("names a failed no-sale attempt on its own line and never mixes it with payment pulses", async () => {
+    await closeWith(drawer(0, 1, 4, 0));
 
     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız çekmece açma", value: "1" });
-    expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan çekmece denemesi", value: "4" });
+    expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan satışsız çekmece denemesi", value: "4" });
+    expect($("#closed-drawer-sale-failed")).toBeNull();
+  });
+
+  it("names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it", async () => {
+    await closeWith(drawer(0, 0, 0, 5));
+
+    expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız çekmece açma", value: "0" });
+    expect($("#closed-drawer-failed")).toBeNull();
+    expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme sırasında açılamayan çekmece", value: "5" });
+  });
+
+  it("shows both failed lines with their own numbers when both kinds of pulse failed", async () => {
+    await closeWith(drawer(2, 0, 6, 5));
+
+    expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan satışsız çekmece denemesi", value: "6" });
+    expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme sırasında açılamayan çekmece", value: "5" });
   });
 });
 

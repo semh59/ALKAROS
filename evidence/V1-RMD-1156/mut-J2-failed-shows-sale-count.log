@@ -1,0 +1,59 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (11 tests | 2 failed) 3443ms
+     × names a failed no-sale attempt on its own line and never mixes it with payment pulses 321ms
+     × shows both failed lines with their own numbers when both kinds of pulse failed 302ms
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  09:45:56
+   Duration  4.96s (transform 502ms, setup 39ms, import 40ms, tests 3.44s, environment 1.15s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > names a failed no-sale attempt on its own line and never mixes it with payment pulses
+AssertionError: expected { …(2) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+  {
+    "label": "Açılamayan satışsız çekmece denemesi",
+-   "value": "4",
++   "value": "0",
+  }
+
+ ❯ cash-session-closed-summary.test.js:96:42
+     94|
+     95|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+     96|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+       |                                          ^
+     97|     expect($("#closed-drawer-sale-failed")).toBeNull();
+     98|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > shows both failed lines with their own numbers when both kinds of pulse failed
+AssertionError: expected { …(2) } to deeply equal { …(2) }
+
+- Expected
++ Received
+
+  {
+    "label": "Açılamayan satışsız çekmece denemesi",
+-   "value": "6",
++   "value": "5",
+  }
+
+ ❯ cash-session-closed-summary.test.js:111:42
+    109|     await closeWith(drawer(2, 0, 6, 5));
+    110|
+    111|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+       |                                          ^
+    112|     expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme …
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

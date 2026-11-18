@@ -1,0 +1,128 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (11 tests | 5 failed) 3403ms
+     × shows the no-sale count, and only that, when pulses all arrived 306ms
+     × says zero no-sale openings when the drawer was used for sales only 295ms
+     × names a failed no-sale attempt on its own line and never mixes it with payment pulses 300ms
+     × names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it 301ms
+     × shows both failed lines with their own numbers when both kinds of pulse failed 299ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > shows the no-sale count, and only that, when pulses all arrived
+AssertionError: expected null to deeply equal { Object (label, value) }
+
+- Expected:
+{
+  "label": "Satışsız çekmece açma",
+  "value": "2",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:81:43
+     79|     await closeWith(drawer(3, 2, 0, 0));
+     80|
+     81|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     82|     expect($("#closed-drawer-failed")).toBeNull();
+     83|     expect($("#closed-drawer-sale-failed")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > says zero no-sale openings when the drawer was used for sales only
+AssertionError: expected null to deeply equal { Object (label, value) }
+
+- Expected:
+{
+  "label": "Satışsız çekmece açma",
+  "value": "0",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:89:43
+     87|     await closeWith(drawer(1, 0, 0, 0));
+     88|
+     89|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     90|   });
+     91|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > names a failed no-sale attempt on its own line and never mixes it with payment pulses
+AssertionError: expected null to deeply equal { Object (label, value) }
+
+- Expected:
+{
+  "label": "Satışsız çekmece açma",
+  "value": "1",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:95:43
+     93|     await closeWith(drawer(0, 1, 4, 0));
+     94|
+     95|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+     96|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+     97|     expect($("#closed-drawer-sale-failed")).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it
+AssertionError: expected null to deeply equal { Object (label, value) }
+
+- Expected:
+{
+  "label": "Satışsız çekmece açma",
+  "value": "0",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:103:43
+    101|     await closeWith(drawer(0, 0, 0, 5));
+    102|
+    103|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+    104|     expect($("#closed-drawer-failed")).toBeNull();
+    105|     expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > shows both failed lines with their own numbers when both kinds of pulse failed
+AssertionError: expected null to deeply equal { …(2) }
+
+- Expected:
+{
+  "label": "Açılamayan satışsız çekmece denemesi",
+  "value": "6",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:111:42
+    109|     await closeWith(drawer(2, 0, 6, 5));
+    110|
+    111|     expect(row("#closed-drawer-failed")).toEqual({ label: "Açılamayan …
+       |                                          ^
+    112|     expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme …
+    113|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 6 passed (11)
+   Start at  09:43:21
+   Duration  4.84s (transform 504ms, setup 47ms, import 55ms, tests 3.40s, environment 1.06s)
+

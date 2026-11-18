@@ -98,7 +98,8 @@ public sealed class CashCloseStore(NpgsqlDataSource dataSource, IAuditEventStore
                     overrideApprovedBy,
                     closedBy = closed.ClosedBy, tolerance,
                     openBills = unsettled.OpenBills, unsettledPayments = unsettled.UnsettledPayments, unsettledAcknowledged = acknowledged,
-                    drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings, drawerKickFailedCount = drawer.FailedKicks,
+                    drawerSaleOpenCount = drawer.SaleOpenings, drawerNoSaleCount = drawer.NoSaleOpenings,
+                    drawerNoSaleKickFailedCount = drawer.FailedNoSaleKicks, drawerSaleKickFailedCount = drawer.FailedSaleKicks,
                     firstCountedAmount = counts.FirstCountedAmount, countEntries = counts.Entries,
                 }, AuditJson)),
             locked.Connection, locked.Transaction, cancellationToken);

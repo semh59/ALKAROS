@@ -1,0 +1,36 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ cash-session-closed-summary.test.js (11 tests | 1 failed) 3385ms
+     × names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it 312ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 10 passed (11)
+   Start at  09:46:11
+   Duration  5.00s (transform 492ms, setup 38ms, import 44ms, tests 3.38s, environment 1.23s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  cash-session-closed-summary.test.js > cash-session.js closed summary: drawer lines > names a failed pulse after a cash payment on its own line, and the no-sale lines stay out of it
+AssertionError: expected null to deeply equal { Object (label, value) }
+
+- Expected:
+{
+  "label": "Satışsız çekmece açma",
+  "value": "0",
+}
+
++ Received:
+null
+
+ ❯ cash-session-closed-summary.test.js:103:43
+    101|     await closeWith(drawer(0, 0, 0, 5));
+    102|
+    103|     expect(row("#closed-drawer-no-sale")).toEqual({ label: "Satışsız ç…
+       |                                           ^
+    104|     expect($("#closed-drawer-failed")).toBeNull();
+    105|     expect(row("#closed-drawer-sale-failed")).toEqual({ label: "Ödeme …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

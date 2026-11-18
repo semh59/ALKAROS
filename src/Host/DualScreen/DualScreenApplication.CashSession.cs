@@ -417,7 +417,7 @@ public static partial class DualScreenApplication
         try
         {
             var drawer = await CashDrawerService.CountAsync(dataSource, cashSessionId, cancellationToken);
-            return new CloseDrawerSummaryV1(drawer.SaleOpenings, drawer.NoSaleOpenings, drawer.FailedKicks);
+            return new CloseDrawerSummaryV1(drawer.SaleOpenings, drawer.NoSaleOpenings, drawer.FailedNoSaleKicks, drawer.FailedSaleKicks);
         }
         catch (Exception exception) when (exception is NpgsqlException or InvalidOperationException or OperationCanceledException)
         {
@@ -502,8 +502,11 @@ public sealed record CloseCashSessionRequestV1(
     decimal ActualCash, bool IsSupervisorOverride = false, string? OverrideReason = null,
     string? DifferenceExplanation = null, bool AcknowledgeUnsettled = false, string? ManagerUsername = null, string? ManagerPassword = null);
 
-/// <summary>The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and pulses that did not.</summary>
-public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int KickFailedCount);
+/// <summary>
+/// The drawer openings of the closed session: sales, no-sale openings whose pulse arrived, and the pulses that did not, apart:
+/// a cashier's failed no-sale attempt is not the same thing as a printer that did not answer after a cash payment.
+/// </summary>
+public sealed record CloseDrawerSummaryV1(int SaleOpenCount, int NoSaleCount, int NoSaleKickFailedCount, int SaleKickFailedCount);
 
 /// <summary>How the closing amount was counted: the first count, and how many later counts replaced it.</summary>
 public sealed record CloseCountSummaryV1(decimal? FirstCountedAmount, int CorrectionCount);

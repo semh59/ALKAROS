@@ -1,0 +1,11 @@
+J1-label-says-attempt exit=1 restored=True
+J2-failed-shows-sale-count exit=1 restored=True
+J3-sale-row-missing exit=1 restored=True
+J4-sale-only-hides-block exit=1 restored=True
+J5-sale-label exit=1 restored=True
+J6-failed-row-always exit=1 restored=True
+S1-no-sale-failed-counts-all exit=1 restored=True
+S2-sale-failed-counts-all exit=1 restored=True
+S3-columns-swapped exit=1 restored=True
+A1-audit-swapped exit=1 restored=True
+A2-answer-swapped exit=1 restored=True

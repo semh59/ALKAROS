@@ -1482,10 +1482,14 @@
   // Shown only when the drawer was used in this shift, so a till without a drawer sees nothing about it.
   function closedDrawerRows() {
     var drawer = state.closeResult && state.closeResult.drawer;
-    if (!drawer || !(drawer.saleOpenCount + drawer.noSaleCount + drawer.kickFailedCount > 0)) return '';
+    if (!drawer || !(drawer.saleOpenCount + drawer.noSaleCount + drawer.noSaleKickFailedCount + drawer.saleKickFailedCount > 0)) return '';
+    // A cashier's failed no-sale attempt and a printer that did not answer after a cash payment are two different counts.
     return '<div class="cs-summary-row" id="closed-drawer-no-sale"><span>Satışsız çekmece açma</span><span class="value">' + drawer.noSaleCount + '</span></div>' +
-      (drawer.kickFailedCount > 0
-        ? '<div class="cs-summary-row" id="closed-drawer-failed"><span>Açılamayan çekmece denemesi</span><span class="value">' + drawer.kickFailedCount + '</span></div>'
+      (drawer.noSaleKickFailedCount > 0
+        ? '<div class="cs-summary-row" id="closed-drawer-failed"><span>Açılamayan satışsız çekmece denemesi</span><span class="value">' + drawer.noSaleKickFailedCount + '</span></div>'
+        : '') +
+      (drawer.saleKickFailedCount > 0
+        ? '<div class="cs-summary-row" id="closed-drawer-sale-failed"><span>Ödeme sırasında açılamayan çekmece</span><span class="value">' + drawer.saleKickFailedCount + '</span></div>'
         : '');
   }
 

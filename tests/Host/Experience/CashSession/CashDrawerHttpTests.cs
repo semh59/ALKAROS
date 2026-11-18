@@ -316,7 +316,7 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 100m })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/close", new { ActualCash = 100m })).StatusCode);
         var state = await rig.ClosedStateAsync();
-        Assert.Equal((0, 5), (state.GetProperty("drawerNoSaleCount").GetInt32(), state.GetProperty("drawerKickFailedCount").GetInt32()));
+        Assert.Equal((0, 5, 0), (state.GetProperty("drawerNoSaleCount").GetInt32(), state.GetProperty("drawerNoSaleKickFailedCount").GetInt32(), state.GetProperty("drawerSaleKickFailedCount").GetInt32()));
     }
 
     [Fact]
@@ -401,7 +401,7 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
 
         var state = await rig.ClosedStateAsync();
-        Assert.Equal((1, 2, 0), (state.GetProperty("drawerSaleOpenCount").GetInt32(), state.GetProperty("drawerNoSaleCount").GetInt32(), state.GetProperty("drawerKickFailedCount").GetInt32()));
+        Assert.Equal((1, 2, 0, 0), Drawer(state, "drawerSaleOpenCount", "drawerNoSaleCount", "drawerNoSaleKickFailedCount", "drawerSaleKickFailedCount"));
     }
 
     [Fact]
@@ -414,15 +414,18 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, (await rig.NoSaleAsync("ns-a2", "ChangeCoins", null)).StatusCode);
         await _database.SetSettingAsync("cash.drawer_printer_address", "String", $"127.0.0.1:{FreePort()}");
         Assert.False((await (await rig.NoSaleAsync("ns-a3", "Count", null)).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("delivered").GetBoolean());
+        Assert.False((await (await rig.TenderAsync(80m, 100m, "tender-a4")).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("drawerOpened").GetBoolean());
+        Assert.False((await (await rig.TenderAsync(80m, 100m, "tender-a5")).Content.ReadFromJsonAsync<JsonElement>()).GetProperty("drawerOpened").GetBoolean());
         Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/start-count", new { })).StatusCode);
-        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 180m })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await rig.PostAsync("/counts", new { CountedAmount = 340m })).StatusCode);
 
-        var closed = await (await rig.PostAsync("/close", new { ActualCash = 180m })).Content.ReadFromJsonAsync<JsonElement>();
+        var closed = await (await rig.PostAsync("/close", new { ActualCash = 340m })).Content.ReadFromJsonAsync<JsonElement>();
 
-        var drawer = closed.GetProperty("drawer");
-        Assert.Equal((1, 2, 1), (drawer.GetProperty("saleOpenCount").GetInt32(), drawer.GetProperty("noSaleCount").GetInt32(), drawer.GetProperty("kickFailedCount").GetInt32()));
+        // A failed no-sale attempt and a failed pulse after a cash payment are different things and are counted apart.
+        Assert.Equal((1, 2, 1, 2), Drawer(closed.GetProperty("drawer"), "saleOpenCount", "noSaleCount", "noSaleKickFailedCount", "saleKickFailedCount"));
         var record = await rig.ClosedStateAsync();
-        Assert.Equal((1, 2, 1), (record.GetProperty("drawerSaleOpenCount").GetInt32(), record.GetProperty("drawerNoSaleCount").GetInt32(), record.GetProperty("drawerKickFailedCount").GetInt32()));
+        Assert.Equal((1, 2, 1, 2), Drawer(record, "drawerSaleOpenCount", "drawerNoSaleCount", "drawerNoSaleKickFailedCount", "drawerSaleKickFailedCount"));
+        Assert.False(record.TryGetProperty("drawerKickFailedCount", out _));
         Assert.Equal(0m, closed.GetProperty("difference").GetDecimal());
     }
 
@@ -436,7 +439,7 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         var closed = await (await rig.PostAsync("/close", new { ActualCash = 100m })).Content.ReadFromJsonAsync<JsonElement>();
 
         var drawer = closed.GetProperty("drawer");
-        Assert.Equal((0, 0, 0), (drawer.GetProperty("saleOpenCount").GetInt32(), drawer.GetProperty("noSaleCount").GetInt32(), drawer.GetProperty("kickFailedCount").GetInt32()));
+        Assert.Equal((0, 0, 0, 0), Drawer(drawer, "saleOpenCount", "noSaleCount", "noSaleKickFailedCount", "saleKickFailedCount"));
     }
 
     [Fact]
@@ -479,6 +482,9 @@ public sealed class CashDrawerHttpTests : IAsyncLifetime
         rig.SessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
         return rig;
     }
+
+    private static (int, int, int, int) Drawer(JsonElement counts, string saleOpen, string noSale, string noSaleFailed, string saleFailed)
+        => (counts.GetProperty(saleOpen).GetInt32(), counts.GetProperty(noSale).GetInt32(), counts.GetProperty(noSaleFailed).GetInt32(), counts.GetProperty(saleFailed).GetInt32());
 
     private static int FreePort()
     {

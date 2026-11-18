@@ -21,7 +21,7 @@ public sealed record CashDrawerStatusV1(
     bool Enabled, bool CanKick, int NoSaleCount, int WarningCount, IReadOnlyList<CashDrawerReasonV1> Reasons);
 
 /// <summary>The drawer openings the audit trail holds for one cash session, by kind.</summary>
-public sealed record CashDrawerCounts(int SaleOpenings, int NoSaleOpenings, int FailedKicks);
+public sealed record CashDrawerCounts(int SaleOpenings, int NoSaleOpenings, int FailedNoSaleKicks, int FailedSaleKicks);
 
 public sealed class CashDrawerDisabledException()
     : Exception("The cash drawer is switched off or has no printer address.");
@@ -254,7 +254,8 @@ public sealed partial class CashDrawerService(
                                 AND NOT EXISTS (SELECT 1 FROM audit.audit_events f
                                                 WHERE f.aggregate_type = 'CashSession' AND f.aggregate_id = e.aggregate_id
                                                   AND f.event_name = 'cash.drawer.kick-failed' AND f.correlation_id = e.correlation_id)),
-               count(*) FILTER (WHERE e.event_name = 'cash.drawer.kick-failed')
+               count(*) FILTER (WHERE e.event_name = 'cash.drawer.kick-failed' AND e.after_state_json->>'kind' = 'NoSale'),
+               count(*) FILTER (WHERE e.event_name = 'cash.drawer.kick-failed' AND e.after_state_json->>'kind' = 'Sale')
         FROM audit.audit_events e
         WHERE e.aggregate_type = 'CashSession' AND e.aggregate_id = @id
           AND e.event_name IN ('cash.drawer.opened', 'cash.drawer.kick-failed');
@@ -265,7 +266,8 @@ public sealed partial class CashDrawerService(
         command.Parameters.AddWithValue("id", cashSessionId);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         await reader.ReadAsync(cancellationToken);
-        return new CashDrawerCounts(checked((int)reader.GetInt64(0)), checked((int)reader.GetInt64(1)), checked((int)reader.GetInt64(2)));
+        return new CashDrawerCounts(
+            checked((int)reader.GetInt64(0)), checked((int)reader.GetInt64(1)), checked((int)reader.GetInt64(2)), checked((int)reader.GetInt64(3)));
     }
 
     [LoggerMessage(EventId = 6944, Level = LogLevel.Warning, Message = "The cash drawer of session {CashSessionId} did not open: {Failure}.")]
