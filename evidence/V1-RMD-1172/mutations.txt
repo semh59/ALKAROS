@@ -1,0 +1,4 @@
+M1-disk-high-label-removed:       Tests  1 failed | 1 passed (2)
+M2-perf-slowdown-label-removed:       Tests  1 failed | 1 passed (2)
+M3-detector-degraded-removed:       Tests  1 failed | 1 passed (2)
+M4-regex-misses-perf-prefix:       Tests  1 failed | 1 passed (2)

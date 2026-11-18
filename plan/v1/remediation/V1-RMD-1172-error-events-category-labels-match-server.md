@@ -1,7 +1,7 @@
 # V1-RMD-1172 - Hata ekranı: sunucunun ürettiği her olay kategorisinin Türkçe adı vardır ve bir daha ayrışmaz
 
 - Task ID: V1-RMD-1172
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYZLNSUCBpqVmhFZUQZ
 - Work type: implementation
 - Surface state: Existing

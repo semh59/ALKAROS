@@ -33,6 +33,10 @@ export const categoryLabel = label({
   "integration.qr_tunnel_down": "QR bağlantı tüneli kapalı", "integration.store_status_undelivered": "Restoran durumu platforma iletilemedi",
   "kitchen.ticket_not_accepted": "Mutfak fişi kabul edilmedi", "payment.reconciliation_required": "Ödeme mutabakatı gerekiyor", "payment.unknown_outcome": "Ödeme sonucu belirsiz",
   "printer.delivery_unknown": "Yazdırma sonucu belirsiz", "printer.job_failed": "Yazdırma başarısız", "printer.queue_stuck": "Yazdırma kuyruğu takıldı",
+  "resource.disk_high": "Disk dolmak üzere", "resource.memory_high": "Bellek kullanımı yüksek", "outbox.dead_letter": "İşlenemeyen arka plan kaydı var",
+  "monitoring.retention_failed": "Eski kayıt temizliği başarısız", "monitoring.outbox_watch_failed": "Olay kuyruğu izlemesi başarısız",
+  "monitoring.detector_degraded": "Hata izleme bileşeni yanıt vermiyor",
+  "perf.budget_exceeded": "Yanıt süresi sınırı aşıldı", "perf.slowdown": "Önceki günlere göre yavaşlama", "perf.regression_after_release": "Güncellemeden sonra yavaşlama",
 });
 
 export const formatWhen = (iso: string) => formatDateTime(iso);

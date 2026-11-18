@@ -1,0 +1,6 @@
+# V1-RMD-1172 sonuc
+Bulgu duzeltildi: 1170'in "5 kategori" tespiti eksikti; sunucu kaynaklarinda sozlukte olmayan 9 kategori vardi (resource.disk_high, resource.memory_high, outbox.dead_letter, monitoring.retention_failed, monitoring.outbox_watch_failed, monitoring.detector_degraded, perf.budget_exceeded, perf.slowdown, perf.regression_after_release). Dokuzune Turkce ad verildi (models.ts).
+Adlandirilmayan iki istisna (kodla dogrulandi, qa teyit etti): system.unreachable yalniz kritik kesinti kanalina (Telegram) gider, hata listesine yazilmaz; monitoring.exception_reported bir HttpContext.Items anahtaridir.
+Kilit: serverCategoryLabels.test.ts src/Host/Observability ve src/Modules/Observability altindaki .cs dosyalarini (obj/bin ve satir basi // yorumlari haric) tarar, 15 onekli her "onek.ad" degerinin sozlukte olmasini ve her onekin en az bir kez bulunmasini ister.
+Kanit: red-vitest.log (tam 9 kategori kirmizi), green-vitest.log (2/2 ve 40/40), typecheck exit 0, client-build-gate exit 0, mutations.txt (4 mutant olu), plan/consistency audit 0/0.
+Acik risk: onek listesi kapali; yeni bir onekle (ornek order.x) kategori eklenirse test gormez (dusuk); sunucuda yeni onek eklerken test listesi guncellenmeli.
