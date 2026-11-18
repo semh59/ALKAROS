@@ -1,0 +1,263 @@
+diff --git a/src/Host/Composition/Errors/ApiErrorCatalog.cs b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+index 5a01930e3..be89c2f39 100644
+--- a/src/Host/Composition/Errors/ApiErrorCatalog.cs
++++ b/src/Host/Composition/Errors/ApiErrorCatalog.cs
+@@ -677,6 +677,7 @@ public static class ApiErrorCatalog
+         ["currencyCode"] = "Para birimi",
+         ["reason"] = "Gerekçe",
+         ["notes"] = "Not",
++        ["specialInstructions"] = "Not",
+         ["note"] = "Ret notu",
+         ["idempotencyKey"] = "İşlem anahtarı",
+         ["targets"] = "Bölme hedefleri",
+diff --git a/src/Host/DualScreen/DualScreenContracts.cs b/src/Host/DualScreen/DualScreenContracts.cs
+index 755201e7e..8d2620fda 100644
+--- a/src/Host/DualScreen/DualScreenContracts.cs
++++ b/src/Host/DualScreen/DualScreenContracts.cs
+@@ -110,12 +110,15 @@ public sealed record StartOrderResponse(Guid OrderId, string OrderNumber, long R
+ /// <remarks>
+ /// <paramref name="Modifiers"/> are the options picked for the line; name and price delta come from the catalog,
+ /// never from the request. A product whose option group requires a selection is refused without one.
++/// <paramref name="SpecialInstructions"/> is a short preparation note for the kitchen ticket ("no onions"); a note makes the
++/// line its own line.
+ /// </remarks>
+ public sealed record AddOrderItemRequest(
+     Guid ProductId,
+     decimal Quantity,
+     long ExpectedRevision,
+-    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null);
++    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null,
++    string? SpecialInstructions = null);
+ 
+ public sealed record ChangeOrderItemQuantityRequest(decimal Quantity, long ExpectedRevision);
+ 
+@@ -145,7 +148,8 @@ public sealed record CustomerDisplayLineDto(
+     decimal DiscountAmount,
+     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] Guid ProductId = default,
+     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null,
+-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false);
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false,
++    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? SpecialInstructions = null);
+ 
+ /// <remarks>
+ /// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and
+diff --git a/src/Host/DualScreen/DualScreenStore.Display.cs b/src/Host/DualScreen/DualScreenStore.Display.cs
+index c5b1d7c7c..a45857fac 100644
+--- a/src/Host/DualScreen/DualScreenStore.Display.cs
++++ b/src/Host/DualScreen/DualScreenStore.Display.cs
+@@ -274,7 +274,8 @@ public sealed partial class DualScreenStore
+                    COALESCE((SELECT array_agg(m.modifier_id ORDER BY m.modifier_id)
+                              FROM orders.order_item_modifiers m
+                              WHERE m.order_item_id = i.order_item_id), ARRAY[]::uuid[]),
+-                   status = 'Draft'
++                   status = 'Draft',
++                   i.notes
+             FROM orders.order_items i
+             WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
+             ORDER BY created_at, order_item_id;
+@@ -302,7 +303,8 @@ public sealed partial class DualScreenStore
+                     complimentary ? lineTotal : storedDiscount,
+                     includeLineIds ? reader.GetGuid(8) : default,
+                     includeLineIds ? reader.GetFieldValue<Guid[]>(9) : null,
+-                    includeLineIds && reader.GetBoolean(10)));
++                    includeLineIds && reader.GetBoolean(10),
++                    includeLineIds && !reader.IsDBNull(11) ? reader.GetString(11) : null));
+             }
+         }
+ 
+diff --git a/src/Host/DualScreen/DualScreenStore.Orders.cs b/src/Host/DualScreen/DualScreenStore.Orders.cs
+index c0226cfb1..cb47b777c 100644
+--- a/src/Host/DualScreen/DualScreenStore.Orders.cs
++++ b/src/Host/DualScreen/DualScreenStore.Orders.cs
+@@ -241,6 +241,9 @@ public sealed partial class DualScreenStore
+         return new StartOrderResponse(orderId, orderNumber, 1);
+     }
+ 
++    /// <summary>Longest line note the till may send; the till screen's input limit is locked to this number.</summary>
++    public const int MaxSpecialInstructionsLength = 200;
++
+     private const string TerminalHoldsDraftMessage = "Bu kasada başka bir siparişin taslağı açık; önce satış ekranında onu gönderin ya da içindeki ürünleri kaldırın.";
+ 
+     private static readonly TimeZoneInfo RestaurantTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
+@@ -249,6 +252,17 @@ public sealed partial class DualScreenStore
+     public static string OrderNumber(DateTimeOffset utcNow, Guid orderId)
+         => $"POS-{TimeZoneInfo.ConvertTime(utcNow, RestaurantTimeZone):yyyyMMdd-HHmmss}-{orderId:N}"[..32].ToUpperInvariant();
+ 
++    /// <summary>The trimmed note, or null when blank; a note too long or with a control character (it would break the kitchen ticket) is refused.</summary>
++    private static string? NormalizeLineNote(string? specialInstructions)
++    {
++        var note = specialInstructions?.Trim();
++        if (note is { Length: > MaxSpecialInstructionsLength })
++            throw new ArgumentOutOfRangeException(nameof(specialInstructions), note.Length, $"A line note may have at most {MaxSpecialInstructionsLength} characters.");
++        if (note?.Any(c => char.IsControl(c) || char.GetUnicodeCategory(c) is System.Globalization.UnicodeCategory.LineSeparator or System.Globalization.UnicodeCategory.ParagraphSeparator or System.Globalization.UnicodeCategory.Format) == true)
++            throw new ArgumentException("A line note cannot contain control or line-separator characters.", nameof(specialInstructions));
++        return string.IsNullOrEmpty(note) ? null : note;
++    }
++
+     public async Task<OrderMutationResult> AddItemAsync(
+         Guid terminalId,
+         Guid orderId,
+@@ -261,6 +275,7 @@ public sealed partial class DualScreenStore
+             && (selections.Count > TableDraftService.MaximumModifiersPerItem
+                 || selections.Any(s => s.Quantity > TableDraftService.MaximumOrderQuantity)))
+             throw new ArgumentOutOfRangeException(nameof(request), "Too many options or an option quantity is too large.");
++        var note = NormalizeLineNote(request.SpecialInstructions);
+ 
+         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+@@ -313,7 +328,7 @@ public sealed partial class DualScreenStore
+ 
+         // Only a bare line of the same product at today's price takes the extra quantity; a line with modifiers, a
+         // note, a seat, a course or a discount is a different line and would pass its extras on to the new portions.
+-        var existing = modifiers is not null ? null : order.Items.FirstOrDefault(i =>
++        var existing = modifiers is not null || note is not null ? null : order.Items.FirstOrDefault(i =>
+             i.ProductId == request.ProductId
+             && i.Status == OrderItemState.Draft
+             && i.Modifiers.Count == 0
+@@ -336,7 +351,7 @@ public sealed partial class DualScreenStore
+         {
+             var newItem = new OrderItem(
+                 draft.Id, orderId, request.ProductId, product.Name, request.Quantity, product.UnitPrice, product.TaxRate,
+-                skuSnapshot: product.Sku, modifiers: modifiers);
++                skuSnapshot: product.Sku, modifiers: modifiers, notes: note);
+             updated = order.AddRound([newItem]);
+         }
+ 
+diff --git a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
+index a0d647f46..bc33601c2 100644
+--- a/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/CustomerDisplayContractTests.cs
+@@ -58,6 +58,18 @@ public sealed class CustomerDisplayContractTests
+         Assert.Equal(["discountAmount", "itemId", "lineTotal", "modifierIds", "name", "productId", "quantity", "unitPrice"], properties);
+     }
+ 
++    [Fact]
++    public void ALineNoteIsWrittenOnlyWhenTheLineHasOne()
++    {
++        var noted = new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 1, 100, 100, 0, Guid.NewGuid(), [Guid.NewGuid()], false, "soğansız");
++
++        using var json = JsonDocument.Parse(JsonSerializer.Serialize(noted, SerializerOptions));
++        var properties = json.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray();
++
++        Assert.Equal(["discountAmount", "itemId", "lineTotal", "modifierIds", "name", "productId", "quantity", "specialInstructions", "unitPrice"], properties);
++        Assert.Equal("soğansız", json.RootElement.GetProperty("specialInstructions").GetString());
++    }
++
+     [Fact]
+     public void CatalogProductCarriesRealCategoryMetadata()
+     {
+diff --git a/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs b/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+index f45f9bdda..52b07aee6 100644
+--- a/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
++++ b/tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs
+@@ -162,6 +162,110 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
+             ("order_id", order.OrderId)));
+     }
+ 
++    [Fact]
++    public async Task ALineNoteIsStoredTrimmedAndABlankOneIsNoNote()
++    {
++        var terminalId = Guid.NewGuid();
++        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
++
++        var noted = await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, "  soğansız  "), CancellationToken.None);
++        await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, noted.Revision, null, "   "), CancellationToken.None);
++
++        Assert.Equal("soğansız", await ScalarAsync<string>(
++            "SELECT notes FROM orders.order_items WHERE order_id = @order_id AND notes IS NOT NULL;", ("order_id", order.OrderId)));
++        Assert.Equal(1L, await ScalarAsync<long>(
++            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id AND notes IS NULL;", ("order_id", order.OrderId)));
++    }
++
++    [Fact]
++    public async Task ANoteOfTheLimitIsAcceptedAndOneCharacterMoreIsRefusedWithoutChangingTheOrder()
++    {
++        var terminalId = Guid.NewGuid();
++        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
++        var limit = DualScreenStore.MaxSpecialInstructionsLength;
++
++        var accepted = await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, new string('a', limit)), CancellationToken.None);
++        var tooLong = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, accepted.Revision, null, new string('a', limit + 1)), CancellationToken.None));
++
++        Assert.Equal("specialInstructions", tooLong.ParamName);
++        Assert.Equal(1L, await ScalarAsync<long>(
++            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
++        Assert.Equal(accepted.Revision, await ScalarAsync<long>(
++            "SELECT row_version FROM orders.orders WHERE order_id = @order_id;", ("order_id", order.OrderId)));
++    }
++
++    [Theory]
++    [InlineData("soğansız\naz pişmiş")]
++    [InlineData("soğansız\raz pişmiş")]
++    [InlineData("soğansız\u2028az pişmiş")]
++    [InlineData("soğansız\u2029az pişmiş")]
++    [InlineData("soğansız\x200baz pişmiş")]
++    [InlineData("soğansız\taz pişmiş")]
++    public async Task ANoteWithAControlCharacterIsRefusedBecauseItWouldBreakTheKitchenTicket(string note)
++    {
++        var terminalId = Guid.NewGuid();
++        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
++
++        var refused = await Assert.ThrowsAsync<ArgumentException>(() => _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, note), CancellationToken.None));
++
++        Assert.Equal("specialInstructions", refused.ParamName);
++        Assert.Equal(0L, await ScalarAsync<long>(
++            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
++    }
++
++    [Fact]
++    public async Task ANotedAddIsItsOwnLineAndABareAddNeverJoinsANotedLine()
++    {
++        var terminalId = Guid.NewGuid();
++        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
++
++        var revision = order.Revision;
++        foreach (var note in new string?[] { null, "soğansız", null, "soğansız", "az pişmiş" })
++        {
++            revision = (await _store.AddItemAsync(
++                terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, revision, null, note), CancellationToken.None)).Revision;
++        }
++
++        Assert.Equal(
++            "bare=2;soğansız=1;soğansız=1;az pişmiş=1",
++            string.Join(';', (await LineQuantitiesAsync(order.OrderId)).Select(line => $"{line.Note ?? "bare"}={line.Quantity:0.##}")));
++    }
++
++    [Fact]
++    public async Task TheTillSnapshotCarriesALineNoteAndTheCustomerSnapshotNeverDoes()
++    {
++        var terminalId = Guid.NewGuid();
++        var displayId = Guid.NewGuid();
++        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
++        var noted = await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, "soğansız"), CancellationToken.None);
++        await _store.AddItemAsync(
++            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, noted.Revision), CancellationToken.None);
++
++        var forTheTill = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true);
++        var forTheCustomer = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
++
++        Assert.Equal(new string?[] { "soğansız", null }, forTheTill.Lines.Select(line => line.SpecialInstructions).Order().Reverse().ToArray());
++        Assert.All(forTheCustomer.Lines, line => Assert.Null(line.SpecialInstructions));
++    }
++
++    private async Task<IReadOnlyList<(string? Note, decimal Quantity)>> LineQuantitiesAsync(Guid orderId)
++    {
++        await using var command = _dataSource!.CreateCommand(
++            "SELECT notes, quantity FROM orders.order_items WHERE order_id = @order_id ORDER BY created_at, order_item_id;");
++        command.Parameters.AddWithValue("order_id", orderId);
++        var lines = new List<(string?, decimal)>();
++        await using var reader = await command.ExecuteReaderAsync();
++        while (await reader.ReadAsync())
++            lines.Add((reader.IsDBNull(0) ? null : reader.GetString(0), reader.GetDecimal(1)));
++        return lines;
++    }
++
+     [Fact]
+     public async Task ARequiredOptionGroupRefusesALineWithoutASelection()
+     {

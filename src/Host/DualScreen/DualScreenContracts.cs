@@ -110,12 +110,15 @@ public sealed record StartOrderResponse(Guid OrderId, string OrderNumber, long R
 /// <remarks>
 /// <paramref name="Modifiers"/> are the options picked for the line; name and price delta come from the catalog,
 /// never from the request. A product whose option group requires a selection is refused without one.
+/// <paramref name="SpecialInstructions"/> is a short preparation note for the kitchen ticket ("no onions"); a note makes the
+/// line its own line.
 /// </remarks>
 public sealed record AddOrderItemRequest(
     Guid ProductId,
     decimal Quantity,
     long ExpectedRevision,
-    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null);
+    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null,
+    string? SpecialInstructions = null);
 
 public sealed record ChangeOrderItemQuantityRequest(decimal Quantity, long ExpectedRevision);
 
@@ -145,7 +148,8 @@ public sealed record CustomerDisplayLineDto(
     decimal DiscountAmount,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] Guid ProductId = default,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<Guid>? ModifierIds = null,
-    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false);
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] bool Unsent = false,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? SpecialInstructions = null);
 
 /// <remarks>
 /// The figures always add up: the line totals sum to <c>Subtotal</c> (before any discount), and

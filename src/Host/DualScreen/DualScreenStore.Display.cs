@@ -274,7 +274,8 @@ public sealed partial class DualScreenStore
                    COALESCE((SELECT array_agg(m.modifier_id ORDER BY m.modifier_id)
                              FROM orders.order_item_modifiers m
                              WHERE m.order_item_id = i.order_item_id), ARRAY[]::uuid[]),
-                   status = 'Draft'
+                   status = 'Draft',
+                   i.notes
             FROM orders.order_items i
             WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
             ORDER BY created_at, order_item_id;
@@ -302,7 +303,8 @@ public sealed partial class DualScreenStore
                     complimentary ? lineTotal : storedDiscount,
                     includeLineIds ? reader.GetGuid(8) : default,
                     includeLineIds ? reader.GetFieldValue<Guid[]>(9) : null,
-                    includeLineIds && reader.GetBoolean(10)));
+                    includeLineIds && reader.GetBoolean(10),
+                    includeLineIds && !reader.IsDBNull(11) ? reader.GetString(11) : null));
             }
         }
 

@@ -241,6 +241,9 @@ public sealed partial class DualScreenStore
         return new StartOrderResponse(orderId, orderNumber, 1);
     }
 
+    /// <summary>Longest line note the till may send; the till screen's input limit is locked to this number.</summary>
+    public const int MaxSpecialInstructionsLength = 200;
+
     private const string TerminalHoldsDraftMessage = "Bu kasada başka bir siparişin taslağı açık; önce satış ekranında onu gönderin ya da içindeki ürünleri kaldırın.";
 
     private static readonly TimeZoneInfo RestaurantTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
@@ -248,6 +251,17 @@ public sealed partial class DualScreenStore
     /// <summary>The order number carries the restaurant's local date and time; uniqueness comes from the id part.</summary>
     public static string OrderNumber(DateTimeOffset utcNow, Guid orderId)
         => $"POS-{TimeZoneInfo.ConvertTime(utcNow, RestaurantTimeZone):yyyyMMdd-HHmmss}-{orderId:N}"[..32].ToUpperInvariant();
+
+    /// <summary>The trimmed note, or null when blank; a note too long or with a control character (it would break the kitchen ticket) is refused.</summary>
+    private static string? NormalizeLineNote(string? specialInstructions)
+    {
+        var note = specialInstructions?.Trim();
+        if (note is { Length: > MaxSpecialInstructionsLength })
+            throw new ArgumentOutOfRangeException(nameof(specialInstructions), note.Length, $"A line note may have at most {MaxSpecialInstructionsLength} characters.");
+        if (note?.Any(c => char.IsControl(c) || char.GetUnicodeCategory(c) is System.Globalization.UnicodeCategory.LineSeparator or System.Globalization.UnicodeCategory.ParagraphSeparator or System.Globalization.UnicodeCategory.Format) == true)
+            throw new ArgumentException("A line note cannot contain control or line-separator characters.", nameof(specialInstructions));
+        return string.IsNullOrEmpty(note) ? null : note;
+    }
 
     public async Task<OrderMutationResult> AddItemAsync(
         Guid terminalId,
@@ -261,6 +275,7 @@ public sealed partial class DualScreenStore
             && (selections.Count > TableDraftService.MaximumModifiersPerItem
                 || selections.Any(s => s.Quantity > TableDraftService.MaximumOrderQuantity)))
             throw new ArgumentOutOfRangeException(nameof(request), "Too many options or an option quantity is too large.");
+        var note = NormalizeLineNote(request.SpecialInstructions);
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -313,7 +328,7 @@ public sealed partial class DualScreenStore
 
         // Only a bare line of the same product at today's price takes the extra quantity; a line with modifiers, a
         // note, a seat, a course or a discount is a different line and would pass its extras on to the new portions.
-        var existing = modifiers is not null ? null : order.Items.FirstOrDefault(i =>
+        var existing = modifiers is not null || note is not null ? null : order.Items.FirstOrDefault(i =>
             i.ProductId == request.ProductId
             && i.Status == OrderItemState.Draft
             && i.Modifiers.Count == 0
@@ -336,7 +351,7 @@ public sealed partial class DualScreenStore
         {
             var newItem = new OrderItem(
                 draft.Id, orderId, request.ProductId, product.Name, request.Quantity, product.UnitPrice, product.TaxRate,
-                skuSnapshot: product.Sku, modifiers: modifiers);
+                skuSnapshot: product.Sku, modifiers: modifiers, notes: note);
             updated = order.AddRound([newItem]);
         }
 

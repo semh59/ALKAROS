@@ -59,6 +59,18 @@ public sealed class CustomerDisplayContractTests
     }
 
     [Fact]
+    public void ALineNoteIsWrittenOnlyWhenTheLineHasOne()
+    {
+        var noted = new CustomerDisplayLineDto(Guid.NewGuid(), "Çorba", 1, 100, 100, 0, Guid.NewGuid(), [Guid.NewGuid()], false, "soğansız");
+
+        using var json = JsonDocument.Parse(JsonSerializer.Serialize(noted, SerializerOptions));
+        var properties = json.RootElement.EnumerateObject().Select(property => property.Name).Order().ToArray();
+
+        Assert.Equal(["discountAmount", "itemId", "lineTotal", "modifierIds", "name", "productId", "quantity", "specialInstructions", "unitPrice"], properties);
+        Assert.Equal("soğansız", json.RootElement.GetProperty("specialInstructions").GetString());
+    }
+
+    [Fact]
     public void CatalogProductCarriesRealCategoryMetadata()
     {
         var product = new CatalogProductDto(

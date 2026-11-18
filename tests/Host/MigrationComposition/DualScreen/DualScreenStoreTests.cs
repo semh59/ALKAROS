@@ -163,6 +163,110 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ALineNoteIsStoredTrimmedAndABlankOneIsNoNote()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        var noted = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, "  soğansız  "), CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, noted.Revision, null, "   "), CancellationToken.None);
+
+        Assert.Equal("soğansız", await ScalarAsync<string>(
+            "SELECT notes FROM orders.order_items WHERE order_id = @order_id AND notes IS NOT NULL;", ("order_id", order.OrderId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id AND notes IS NULL;", ("order_id", order.OrderId)));
+    }
+
+    [Fact]
+    public async Task ANoteOfTheLimitIsAcceptedAndOneCharacterMoreIsRefusedWithoutChangingTheOrder()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var limit = DualScreenStore.MaxSpecialInstructionsLength;
+
+        var accepted = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, new string('a', limit)), CancellationToken.None);
+        var tooLong = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, accepted.Revision, null, new string('a', limit + 1)), CancellationToken.None));
+
+        Assert.Equal("specialInstructions", tooLong.ParamName);
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+        Assert.Equal(accepted.Revision, await ScalarAsync<long>(
+            "SELECT row_version FROM orders.orders WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+    }
+
+    [Theory]
+    [InlineData("soğansız\naz pişmiş")]
+    [InlineData("soğansız\raz pişmiş")]
+    [InlineData("soğansız\u2028az pişmiş")]
+    [InlineData("soğansız\u2029az pişmiş")]
+    [InlineData("soğansız\x200baz pişmiş")]
+    [InlineData("soğansız\taz pişmiş")]
+    public async Task ANoteWithAControlCharacterIsRefusedBecauseItWouldBreakTheKitchenTicket(string note)
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        var refused = await Assert.ThrowsAsync<ArgumentException>(() => _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, note), CancellationToken.None));
+
+        Assert.Equal("specialInstructions", refused.ParamName);
+        Assert.Equal(0L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+    }
+
+    [Fact]
+    public async Task ANotedAddIsItsOwnLineAndABareAddNeverJoinsANotedLine()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        var revision = order.Revision;
+        foreach (var note in new string?[] { null, "soğansız", null, "soğansız", "az pişmiş" })
+        {
+            revision = (await _store.AddItemAsync(
+                terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, revision, null, note), CancellationToken.None)).Revision;
+        }
+
+        Assert.Equal(
+            "bare=2;soğansız=1;soğansız=1;az pişmiş=1",
+            string.Join(';', (await LineQuantitiesAsync(order.OrderId)).Select(line => $"{line.Note ?? "bare"}={line.Quantity:0.##}")));
+    }
+
+    [Fact]
+    public async Task TheTillSnapshotCarriesALineNoteAndTheCustomerSnapshotNeverDoes()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var noted = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision, null, "soğansız"), CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, noted.Revision), CancellationToken.None);
+
+        var forTheTill = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None, includeLineIds: true);
+        var forTheCustomer = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        Assert.Equal(new string?[] { "soğansız", null }, forTheTill.Lines.Select(line => line.SpecialInstructions).Order().Reverse().ToArray());
+        Assert.All(forTheCustomer.Lines, line => Assert.Null(line.SpecialInstructions));
+    }
+
+    private async Task<IReadOnlyList<(string? Note, decimal Quantity)>> LineQuantitiesAsync(Guid orderId)
+    {
+        await using var command = _dataSource!.CreateCommand(
+            "SELECT notes, quantity FROM orders.order_items WHERE order_id = @order_id ORDER BY created_at, order_item_id;");
+        command.Parameters.AddWithValue("order_id", orderId);
+        var lines = new List<(string?, decimal)>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            lines.Add((reader.IsDBNull(0) ? null : reader.GetString(0), reader.GetDecimal(1)));
+        return lines;
+    }
+
+    [Fact]
     public async Task ARequiredOptionGroupRefusesALineWithoutASelection()
     {
         await SeedOptionGroupAsync(minSelections: 1, maxSelections: 1);

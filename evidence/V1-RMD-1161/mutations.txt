@@ -1,0 +1,9 @@
+M1-note-not-bound restored: Başarısız! - Başarısız:     4, Başarılı:    54, Atlanan:     0, Toplam:    58, Süre: 56 s - ALKAROS.Host.Tests
+M2-no-trim restored: Başarısız! - Başarısız:     1, Başarılı:    57, Atlanan:     0, Toplam:    58, Süre: 54 s - ALKAROS.Host.Tests
+M3-limit-off-by-one restored: Başarısız! - Başarısız:     2, Başarılı:    56, Atlanan:     0, Toplam:    58, Süre: 55 s - ALKAROS.Host.Tests
+M4-control-chars-allowed restored: Başarısız! - Başarısız:     3, Başarılı:    55, Atlanan:     0, Toplam:    58, Süre: 54 s - ALKAROS.Host.Tests
+M5-merge-into-bare restored: Başarısız! - Başarısız:     1, Başarılı:    57, Atlanan:     0, Toplam:    58, Süre: 56 s - ALKAROS.Host.Tests
+M6-till-snapshot-no-note restored: Başarısız! - Başarısız:     1, Başarılı:    57, Atlanan:     0, Toplam:    58, Süre: 59 s - ALKAROS.Host.Tests
+M7-customer-sees-note restored: Başarısız! - Başarısız:     1, Başarılı:    57, Atlanan:     0, Toplam:    58, Süre: 53 s - ALKAROS.Host.Tests
+M8-no-turkish-label restored: Başarısız! - Başarısız:     1, Başarılı:    57, Atlanan:     0, Toplam:    58, Süre: 51 s - ALKAROS.Host.Tests
+done

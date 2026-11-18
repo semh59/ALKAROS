@@ -677,6 +677,7 @@ public static class ApiErrorCatalog
         ["currencyCode"] = "Para birimi",
         ["reason"] = "Gerekçe",
         ["notes"] = "Not",
+        ["specialInstructions"] = "Not",
         ["note"] = "Ret notu",
         ["idempotencyKey"] = "İşlem anahtarı",
         ["targets"] = "Bölme hedefleri",
